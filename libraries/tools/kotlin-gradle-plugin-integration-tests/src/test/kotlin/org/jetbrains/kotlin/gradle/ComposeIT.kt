@@ -410,7 +410,8 @@ class ComposeIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
         ) {
             val composeBase = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
-            composeBase.appendText(
+            composeBase.writeText(
+                //language=kotlin
                 """
                 |package com.example
                 |
@@ -448,12 +449,15 @@ class ComposeIT : KGPBaseTest() {
                 |dependencies {
                 |    implementation("androidx.compose.runtime:runtime:$composeSnapshotVersion")
                 |    implementation("androidx.compose.runtime:runtime-test-utils:$composeSnapshotVersion")
+                |    
+                |    implementation("com.example:dep:1.0")
                 |}
                 """.trimMargin()
             )
 
             val testFile = projectPath.resolve("src/test/kotlin/com/example/ComposeTest.kt")
-            testFile.appendText(
+            testFile.writeText(
+                //language=kotlin
                 """
                 |package com.example
                 |
@@ -498,6 +502,107 @@ class ComposeIT : KGPBaseTest() {
             build("testReleaseUnitTest") {
                 assertTasksExecuted(":compileReleaseUnitTestKotlin")
                 assertOutputContainsExactlyTimes(LEGACY_OPEN_FUNCTION_WARNING, 2)
+            }
+        }
+    }
+
+    @DisplayName("Run source information test with older versions of Compose runtime")
+    @GradleAndroidTest
+    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @OtherGradlePluginTests
+    @TestMetadata("composeMultiModule")
+    fun testComposeSourceInformationOldRuntime(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            projectName = "composeMultiModule",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement()
+        ) {
+            buildGradleKts.appendComposePlugin()
+            buildScriptInjection {
+                project.configurations.getByName("implementation").dependencies.add(
+                    project.dependencies.create("androidx.compose.runtime:runtime:1.8.1")
+                )
+            }
+
+            val testFile = projectPath.resolve("src/test/kotlin/com/example/ComposeTest.kt")
+            testFile.writeText(
+                //language=kotlin
+                """
+                package com.example
+                
+                import androidx.compose.runtime.*
+                import androidx.compose.runtime.tooling.*
+                import kotlinx.coroutines.test.runTest
+                import kotlinx.coroutines.launch
+                import kotlin.coroutines.EmptyCoroutineContext
+                
+                import org.junit.Test
+                import org.junit.Assert.assertEquals
+                
+                class ComposeTest {
+                    @Test
+                    fun test() = runTest {
+                        val clock = object : MonotonicFrameClock {
+                            override suspend fun <R> withFrameNanos(onFrame: (Long) -> R): R {
+                                return onFrame(0L)
+                            }
+                        }
+                        val recomposer = Recomposer(EmptyCoroutineContext)
+                        launch(clock) {
+                            recomposer.runRecomposeAndApplyChanges()
+                        }
+                
+                        val applier = object : AbstractApplier<Unit>(Unit) {
+                            override fun insertBottomUp(index: Int, instance: Unit) {}
+                            override fun insertTopDown(index: Int, instance: Unit) {}
+                            override fun move(from: Int, to: Int, count: Int) {}
+                            override fun remove(index: Int, count: Int) {}
+                            override fun onClear() {}
+                        }
+                
+                        val composition = Composition(applier, recomposer)
+                        var composer: Composer? = null
+                
+                        val content = @Composable {
+                            Text("Hello, World!", 0)
+                        }
+                
+                        composition.setContent {
+                            composer = currentComposer
+                            currentComposer.collectParameterInformation()
+                
+                            content()
+                        }
+                
+                        fun CompositionData.flatten(): List<CompositionGroup> =
+                            compositionGroups.flatMap { it.flatten() + it }
+                
+                        val textGroup = composer!!.compositionData.flatten().find { it.sourceInfo?.contains("Text") == true }
+                        assertEquals(
+                            "C(Text)P(1):ComposeTest.kt#to5c3",
+                            textGroup?.sourceInfo
+                        )
+                
+                        recomposer.cancel()
+                    }
+                }
+                
+                @Composable fun Text(value: String, modifier: Int) {
+                    println(value)
+                    println(modifier)
+                }
+                """.trimIndent()
+            )
+
+            build("testReleaseUnitTest") {
+                assertTasksExecuted(":testReleaseUnitTest")
+                assertOutputDoesNotContain("org.junit.ComparisonFailure")
             }
         }
     }

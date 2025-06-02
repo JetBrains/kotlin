@@ -381,7 +381,7 @@ class ComposableFunctionBodyTransformer(
     stabilityInferencer: StabilityInferencer,
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
-    private val indyJvmLambdasEnabled: Boolean,
+    private val indyEnabled: Boolean,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -587,6 +587,12 @@ class ComposableFunctionBodyTransformer(
                 it.name == ComposeNames.JOINKEY && it.valueParameters.size == 2
             }
     }
+
+    private val sourceInformationCls by guardedLazy {
+        context.referenceClass(ComposeClassIds.SourceInformation)
+    }
+
+    private val emitParameterNames get() = indyEnabled && sourceInformationCls != null
 
     private var currentScope: Scope = Scope.RootScope()
 
@@ -4114,7 +4120,7 @@ class ComposableFunctionBodyTransformer(
             }
 
             private fun parameterInformation(): String =
-                if (!transformer.indyJvmLambdasEnabled) {
+                if (!transformer.emitParameterNames ) {
                     function.parameterInformation()
                 } else {
                     // D8 removes all parameter information when processing invokedynamic.
@@ -5032,7 +5038,7 @@ private fun IrFunction.parameterInformation(): String {
 // Encodes names of the parameters of the function and corresponding value classes
 // in the following format:
 //
-//   parameters: (name [":" inline-class]) ("," name [":" inline-class])*
+//   parameters: "N(" <name> [":" <inline-class>] ["," <name> [":" <inline-class>]]* ")"
 //   name, inline-class: <chars not "," or ":">
 //
 private fun IrFunction.parameterNameInformation(): String {
