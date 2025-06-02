@@ -69,7 +69,7 @@ kotlin {
                 doFirst {
                     this as Exec
                     this.executable(nodeJsExecutable.get())
-                    this.args = listOf("./$projectName.js")
+                    this.setArgs(listOf("./$projectName.js"))
                     workingDir(workDir)
                 }
             }
