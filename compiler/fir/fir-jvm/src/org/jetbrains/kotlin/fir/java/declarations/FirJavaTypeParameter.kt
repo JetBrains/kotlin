@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -53,25 +54,71 @@ class FirJavaTypeParameter(
     /**
      * [JavaTypeParameter.upperBounds] requires resolution, so it should be called on demand.
      */
-    private var initialBounds: Lazy<List<FirTypeRef>>? = lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val session = moduleData.session
-        val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-        javaTypeParameter.upperBounds.map {
-            it.toFirJavaTypeRef(session, fakeSource)
-        }.ifEmpty {
-            val builtinTypes = session.builtinTypes
-            listOf(buildResolvedTypeRef {
-                coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType, isTrivial = true)
-            })
+    @Volatile
+    private var boundsEnhancementState: BoundsEnhancementState = BoundsEnhancementState.NotFinished.NotStarted(
+        lazy(LazyThreadSafetyMode.PUBLICATION) {
+            val session = moduleData.session
+            val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            javaTypeParameter.upperBounds.map {
+                it.toFirJavaTypeRef(session, fakeSource)
+            }.ifEmpty {
+                val builtinTypes = session.builtinTypes
+                listOf(buildResolvedTypeRef {
+                    coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType, isTrivial = true)
+                })
+            }
         }
-    }
+    )
 
     override val annotations: List<FirAnnotation> get() = annotationList
 
-    private enum class BoundsEnhancementState {
-        NOT_STARTED,
-        FIRST_ROUND,
-        COMPLETED
+    /**
+     * The class represents the state of the enhancement process for the type parameter.
+     */
+    private sealed class BoundsEnhancementState {
+        /**
+         * Either the initial bounds or the final enhanced bounds.
+         */
+        abstract val bounds: List<FirTypeRef>
+
+        /**
+         * Either bounds after the [first round][performFirstRoundOfBoundsResolution] of enhancement or the [final enhanced][performSecondRoundOfBoundsResolution] bounds.
+         *
+         * @see storeBoundsAfterFirstRound
+         * @see storeBoundsAfterSecondRound
+         */
+        abstract val enhancedBounds: List<FirResolvedTypeRef>?
+
+        sealed class NotFinished(val initialBounds: Lazy<List<FirTypeRef>>) : BoundsEnhancementState() {
+            override val bounds: List<FirTypeRef> get() = initialBounds.value
+
+            /**
+             * @see performFirstRoundOfBoundsResolution
+             * @see storeBoundsAfterFirstRound
+             */
+            class NotStarted(initialBounds: Lazy<List<FirTypeRef>>) : NotFinished(initialBounds) {
+                override val enhancedBounds: List<FirResolvedTypeRef>? get() = null
+            }
+
+            /**
+             * @see performSecondRoundOfBoundsResolution
+             * @see storeBoundsAfterFirstRound
+             * @see storeBoundsAfterSecondRound
+             */
+            class FirstRound(
+                initialBounds: Lazy<List<FirTypeRef>>,
+                override val enhancedBounds: List<FirResolvedTypeRef>,
+            ) : NotFinished(initialBounds)
+        }
+
+        /**
+         * Contains the final [enhancedBounds].
+         *
+         * @see storeBoundsAfterSecondRound
+         */
+        class Completed(override val enhancedBounds: List<FirResolvedTypeRef>) : BoundsEnhancementState() {
+            override val bounds: List<FirTypeRef> get() = enhancedBounds
+        }
     }
 
     override val variance: Variance
@@ -80,41 +127,42 @@ class FirJavaTypeParameter(
     override val isReified: Boolean
         get() = false
 
-    @Volatile
-    private var enhancedBounds: List<FirResolvedTypeRef>? = null
-
-    @Volatile
-    private var boundsEnhancementState = BoundsEnhancementState.NOT_STARTED
-
     override val bounds: List<FirTypeRef>
         get() {
-            enhancedBounds?.let { return it }
-            if (containingDeclarationSymbol is FirClassSymbol) {
-                val firJavaClass = containingDeclarationSymbol.fir
-                checkWithAttachment(
-                    firJavaClass is FirJavaClass,
-                    { "Unexpected containing declaration: ${firJavaClass::class.simpleName}" }
-                ) {
-                    withFirEntry("class", firJavaClass)
-                }
+            run {
+                val initialState = boundsEnhancementState
+                initialState.enhancedBounds?.let { return it }
 
-                // Explicitly call type parameters which will trigger enhancement
-                firJavaClass.typeParameters
-
-                // Second attempt after enhancement
-                enhancedBounds?.let { return it }
-
-                errorWithAttachment("Attempt to access Java type parameter bounds before their enhancement!") {
-                    withFirEntry("class", firJavaClass)
-                    withEntry("name", name.asString())
+                if (containingDeclarationSymbol !is FirClassSymbol) {
+                    // It's possible to get here for FirJavaMethod via JavaOverrideChecker
+                    // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
+                    // buildTypeParametersSubstitutorIfCompatible -> buildErasure
+                    // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
+                    return initialState.bounds
                 }
             }
 
-            // It's possible to get here for FirJavaMethod via JavaOverrideChecker
-            // Stack trace: (JavaOverrideChecker).isOverriddenFunction -> hasSameValueParameterTypes ->
-            // buildTypeParametersSubstitutorIfCompatible -> buildErasure
-            // For JavaOverrideChecker it's possible to work with not-yet-enhanced bounds
-            return initialBounds!!.value
+            val firJavaClass = containingDeclarationSymbol.fir
+            checkWithAttachment(
+                firJavaClass is FirJavaClass,
+                { "Unexpected containing declaration: ${firJavaClass::class.simpleName}" }
+            ) {
+                withFirEntry("class", firJavaClass)
+            }
+
+            // Explicitly call type parameters which will trigger enhancement
+            firJavaClass.typeParameters
+
+            // Second attempt after enhancement
+            val currentState = boundsEnhancementState
+            currentState.enhancedBounds?.let { return it }
+
+            errorWithAttachment(
+                "Attempt to access Java type parameter bounds before their enhancement! (state: ${currentState::class.simpleName})"
+            ) {
+                withFirEntry("class", firJavaClass)
+                withEntry("name", name.asString())
+            }
         }
 
     init {
@@ -131,11 +179,12 @@ class FirJavaTypeParameter(
         javaTypeParameterStack: JavaTypeParameterStack,
         source: KtSourceElement?,
     ): MutableList<FirResolvedTypeRef>? {
-        if (boundsEnhancementState != BoundsEnhancementState.NOT_STARTED) {
+        val currentState = boundsEnhancementState
+        if (currentState !is BoundsEnhancementState.NotFinished.NotStarted) {
             return null
         }
 
-        return initialBounds!!.value.mapTo(mutableListOf()) {
+        return currentState.bounds.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) as FirResolvedTypeRef
@@ -145,17 +194,16 @@ class FirJavaTypeParameter(
     /**
      * This function is assumed to be called under facade- or method type parameter bounds lock.
      * It never tries to resolve some other type parameter bounds, e.g., for a different class.
-     * Mutates [enhancedBounds].
      *
      * @return true if the bounds were changed, false if the first round had been already performed earlier
      */
     internal fun storeBoundsAfterFirstRound(bounds: List<FirResolvedTypeRef>): Boolean {
-        if (boundsEnhancementState != BoundsEnhancementState.NOT_STARTED) {
+        val currentState = boundsEnhancementState
+        if (currentState !is BoundsEnhancementState.NotFinished.NotStarted) {
             return false
         }
 
-        boundsEnhancementState = BoundsEnhancementState.FIRST_ROUND
-        enhancedBounds = bounds
+        boundsEnhancementState = BoundsEnhancementState.NotFinished.FirstRound(currentState.initialBounds, bounds)
         return true
     }
 
@@ -168,15 +216,19 @@ class FirJavaTypeParameter(
         javaTypeParameterStack: JavaTypeParameterStack,
         source: KtSourceElement?,
     ): MutableList<FirResolvedTypeRef>? {
-        if (boundsEnhancementState != BoundsEnhancementState.FIRST_ROUND) {
-            require(boundsEnhancementState == BoundsEnhancementState.COMPLETED) {
-                "Attempt to miss the first round of Java class type parameter bounds enhancement!" +
-                        " ownerSymbol = $containingDeclarationSymbol typeParameter = $name"
+        val currentState = boundsEnhancementState
+        if (currentState !is BoundsEnhancementState.NotFinished.FirstRound) {
+            requireWithAttachment(currentState is BoundsEnhancementState.Completed, {
+                "Attempt to miss the first round of Java class type parameter bounds enhancement!"
+            }) {
+                withFirEntry("owner", containingDeclarationSymbol.fir)
+                withFirEntry("parameter", this@FirJavaTypeParameter)
             }
+
             return null
         }
 
-        return initialBounds!!.value.mapTo(mutableListOf()) {
+        return currentState.bounds.mapTo(mutableListOf()) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
             ) as FirResolvedTypeRef
@@ -185,18 +237,16 @@ class FirJavaTypeParameter(
 
     /**
      * This function is assumed to be called under facade- or method type parameter bounds lock.
-     * Performs a final mutation of [enhancedBounds].
      *
      * @return **false** if bounds were already enhanced in the past.
      */
     internal fun storeBoundsAfterSecondRound(bounds: List<FirResolvedTypeRef>): Boolean {
-        if (boundsEnhancementState != BoundsEnhancementState.FIRST_ROUND) {
+        val currentState = boundsEnhancementState
+        if (currentState !is BoundsEnhancementState.NotFinished.FirstRound) {
             return false
         }
 
-        boundsEnhancementState = BoundsEnhancementState.COMPLETED
-        enhancedBounds = bounds
-        initialBounds = null
+        boundsEnhancementState = BoundsEnhancementState.Completed(bounds)
         return true
     }
 
