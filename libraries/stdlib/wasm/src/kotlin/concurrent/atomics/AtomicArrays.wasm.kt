@@ -160,19 +160,6 @@ public actual class AtomicIntArray {
     }
 }
 
-/**
- * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicIntArray.updateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -183,20 +170,6 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
     storeAt(index, transform(loadAt(index)))
 }
 
-/**
- * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
- * the updated value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicIntArray.updateAndFetchAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -209,20 +182,6 @@ public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
     return updated
 }
 
-/**
- * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
- * the old value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndUpdateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -386,20 +345,6 @@ public actual class AtomicLongArray {
     }
 }
 
-
-/**
- * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicLongArray.updateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -410,20 +355,6 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
     storeAt(index, transform(loadAt(index)))
 }
 
-/**
- * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
- * the updated value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicLongArray.updateAndFetchAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -436,20 +367,6 @@ public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
     return updated
 }
 
-/**
- * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
- * the old value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndUpdateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -575,19 +492,6 @@ public actual class AtomicArray<T> {
     }
 }
 
-/**
- * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicArray.updateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -598,20 +502,6 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
     storeAt(index, transform(loadAt(index)))
 }
 
-/**
- * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
- * the updated value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicArray.updateAndFetchAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
@@ -624,20 +514,6 @@ public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
     return updated
 }
 
-/**
- * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
- * the old value of the element.
- *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
- *
- * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
- *
- * @sample samples.concurrent.atomics.AtomicArray.fetchAndUpdateAt
- */
 @SinceKotlin("2.2")
 @ExperimentalAtomicApi
 @InlineOnly
