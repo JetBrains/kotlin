@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.generators.kotlinpoet.toNullable
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags.visibility
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.nio.file.Path
@@ -39,13 +40,18 @@ fun main() {
 
 val BTA_PACKAGE = "org.jetbrains.kotlin.build.tools.api"
 
+private const val OUT_PATH = "compiler/build-tools/kotlin-build-tools-api/src/main/kotlin"
+
 fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName? = null): TypeName {
     val className = level.name.capitalizeAsciiOnly()
-    val levelFile = Paths.get("compiler/cli/build/generated/bta")
+    val levelFile = Paths.get(OUT_PATH)
     FileSpec.builder(BTA_PACKAGE, className).apply {
         addType(
             TypeSpec.classBuilder(className).apply {
                 parentClass?.let { superclass(it) }
+                if (level.nestedLevels.isNotEmpty()) {
+                    addModifiers(KModifier.OPEN)
+                }
                 val argument = generateArgumentType(className)
                 val argumentTypeName = ClassName(BTA_PACKAGE, className, argument)
                 generateGetPutFunctions(argumentTypeName)
@@ -89,7 +95,9 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
             annotation<JvmField>()
             addKdoc(argument.description.current)
             if (experimental) {
-                annotation<Deprecated>() // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
+                annotation<Deprecated>() {
+                    addMember("message = %S", "This option is experimental and it may be changed in the future")
+                } // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
             }
             initializer("%T(%S)", argumentTypeName, name)
         }
@@ -122,7 +130,7 @@ fun generateEnum(sourceEnum: EnumEntries<*>) {
                 )
             }
         }.build())
-    }.build().writeTo(Paths.get("compiler/cli/build/generated/bta"))
+    }.build().writeTo(Paths.get(OUT_PATH))
 }
 
 fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
@@ -141,14 +149,31 @@ fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
 }
 
 fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
-//    public operator fun <V> get(key: BaseCompilerArgument<V>): V?
-//    public operator fun <V> set(key: BaseCompilerArgument<V>, value: V)
+//    private val optionsMap: MutableMap<CommonCompilerArgument<*>, Any?> = mutableMapOf()
+//
+//  public operator fun <V> `get`(key: CommonCompilerArgument<V>): V? {
+//    @Suppress("UNCHECKED_CAST")
+//    return optionsMap[key] as V?
+//  }
+//
+//  public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V?) {
+//      optionsMap[key] = value
+//  }
+
+    val mapProperty = property(
+        "optionsMap",
+        ClassName("kotlin.collections", "MutableMap").parameterizedBy(parameter.parameterizedBy(STAR), ANY.copy(nullable = true))
+    ) {
+        addModifiers(KModifier.PRIVATE)
+        initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
+    }
     function("get") {
         val typeParameter = TypeVariableName("V")
         returns(typeParameter.toNullable())
         addModifiers(KModifier.OPERATOR)
         addTypeVariable(typeParameter)
         addParameter("key", parameter.parameterizedBy(typeParameter))
+        addStatement("return %N[%N] as %T?", mapProperty, "key", typeParameter)
     }
     function("set") {
         val typeParameter = TypeVariableName("V")
@@ -156,6 +181,8 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         addTypeVariable(typeParameter)
         addParameter("key", parameter.parameterizedBy(typeParameter))
         addParameter("value", typeParameter)
+        addStatement("%N[%N] = %N", mapProperty, "key", "value")
+
     }
 }
 

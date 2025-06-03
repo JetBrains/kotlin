@@ -345,13 +345,14 @@ private fun TypeSpec.Builder.generateCopyOf(info: ArgumentsInfo) {
 
 private fun TypeSpec.Builder.generateDummyImpl() {
     addType(
-        TypeSpec.classBuilder("DummyImpl").addKdoc("Used only for serialize and deserialize settings. Don't use in other places!")
-            .superclass(ClassName(ARGUMENTS_PACKAGE, "CommonCompilerArguments"))
-            .function("copyOf") {
+        TypeSpec.classBuilder("DummyImpl").addKdoc("Used only for serialize and deserialize settings. Don't use in other places!").apply {
+            superclass(ClassName(ARGUMENTS_PACKAGE, "CommonCompilerArguments"))
+            function("copyOf") {
                 addModifiers(KModifier.OVERRIDE)
                 returns(ClassName(ARGUMENTS_PACKAGE, "Freezable"))
                 addStatement("return %M(this, DummyImpl())", MemberName(ARGUMENTS_PACKAGE, "copyCommonCompilerArguments"))
-            }.property(
+            }
+            property(
                 "configurator", ClassName(ARGUMENTS_PACKAGE, "CommonCompilerArgumentsConfigurator"), KModifier.OVERRIDE
             ) {
                 initializer("%T()", ClassName(ARGUMENTS_PACKAGE, "CommonCompilerArgumentsConfigurator"))
@@ -359,7 +360,8 @@ private fun TypeSpec.Builder.generateDummyImpl() {
                 annotation<com.intellij.util.xmlb.annotations.Transient> {
                     useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
                 }
-            }.build()
+            }
+        }.build()
     )
 }
 

@@ -38,11 +38,8 @@ inline fun TypeSpec.Builder.property(
     typeName: TypeName,
     vararg modifiers: KModifier,
     propertySpec: PropertySpec.Builder.() -> Unit = {},
-): TypeSpec.Builder = apply {
-    addProperty(
-        PropertySpec.builder(name, typeName, *modifiers).apply(propertySpec).build()
-    )
-}
+): PropertySpec =
+    PropertySpec.builder(name, typeName, *modifiers).apply(propertySpec).build().also { addProperty(it) }
 
 /**
  * @param T type of the property. If `T` is generic itself then its parameters will be erased at runtime.
@@ -53,7 +50,7 @@ inline fun TypeSpec.Builder.property(
  */
 inline fun <reified T> TypeSpec.Builder.property(
     name: String, vararg modifiers: KModifier, propertySpec: PropertySpec.Builder.() -> Unit = {},
-): TypeSpec.Builder = property(name, T::class.asTypeName(), *modifiers, propertySpec = propertySpec)
+): PropertySpec = property(name, T::class.asTypeName(), *modifiers, propertySpec = propertySpec)
 
 inline fun <reified T : Annotation> PropertySpec.Builder.annotation(
     annotationSpec: AnnotationSpec.Builder.() -> Unit = {},
