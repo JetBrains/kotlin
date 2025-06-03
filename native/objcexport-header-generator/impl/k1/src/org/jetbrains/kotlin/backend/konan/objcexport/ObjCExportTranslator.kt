@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isInterface
@@ -578,6 +578,14 @@ class ObjCExportTranslatorImpl(
         return ObjCProperty(name, property, type, attributes, setterName, getterName, declarationAttributes, commentOrNull)
     }
 
+    private fun unifyName(initialName: String, usedNames: Set<String>): String {
+        var unique = initialName.toValidObjCSwiftIdentifier()
+        while (unique in usedNames || unique in cKeywords) {
+            unique += "_"
+        }
+        return unique
+    }
+
     internal fun buildMethod(
         method: FunctionDescriptor,
         baseMethod: FunctionDescriptor,
@@ -585,14 +593,6 @@ class ObjCExportTranslatorImpl(
         unavailable: Boolean = false,
     ): ObjCMethod {
         fun collectParameters(baseMethodBridge: MethodBridge, method: FunctionDescriptor): List<ObjCParameter> {
-            fun unifyName(initialName: String, usedNames: Set<String>): String {
-                var unique = initialName.toValidObjCSwiftIdentifier()
-                while (unique in usedNames || unique in cKeywords) {
-                    unique += "_"
-                }
-                return unique
-            }
-
             val valueParametersAssociated = baseMethodBridge.valueParametersAssociated(method)
 
             val parameters = mutableListOf<ObjCParameter>()
@@ -632,10 +632,12 @@ class ObjCExportTranslatorImpl(
                         }
                         ObjCBlockPointerType(
                             returnType = ObjCVoidType,
-                            parameterTypes = listOfNotNull(
+                            parameters = listOfNotNull(
                                 resultType,
                                 ObjCNullableReferenceType(ObjCClassType("NSError"))
-                            )
+                            ).map {
+                                ObjCParameter("", null, it)
+                            }
                         )
                     }
                 }
@@ -984,6 +986,7 @@ class ObjCExportTranslatorImpl(
         objCExportScope: ObjCExportScope,
         returnsVoid: Boolean,
     ): ObjCBlockPointerType {
+        val usedNames = mutableSetOf<String>()
         val parameterTypes = listOfNotNull(functionType.getReceiverTypeFromFunctionType()) +
             functionType.getValueParameterTypesFromFunctionType().map { it.type }
 
@@ -994,10 +997,20 @@ class ObjCExportTranslatorImpl(
                 mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
             },
             parameterTypes.map {
-                mapReferenceType(it, objCExportScope)
-            },
-            extras = mutableExtrasOf().apply {
-                originParameterNames = parameterTypes.map { it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: "" }
+                val uniqueName = when (namer.needsExplicitBlockParameterNames()) {
+                    true -> {
+                        val parameterName = it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: ""
+                        val name = unifyName(parameterName, usedNames)
+                        usedNames += name
+                        name
+                    }
+                    else -> ""
+                }
+                ObjCParameter(
+                    uniqueName,
+                    null,
+                    mapReferenceType(it, objCExportScope)
+                )
             }
         )
     }
