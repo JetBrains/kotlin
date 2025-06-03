@@ -23425,6 +23425,36 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("exposingObjects.kt")
+      public void testExposingObjects() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjects.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingObjectsAfter.kt")
+      public void testExposingObjectsAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingObjectsAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateCallableReferenceInInternal.kt")
+      public void testExposingPrivateCallableReferenceInInternal() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateCallableReferenceInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateCallableReferenceInInternalAfter.kt")
+      public void testExposingPrivateCallableReferenceInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateCallableReferenceInInternalAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateCallableReferenceInPublic.kt")
+      public void testExposingPrivateCallableReferenceInPublic() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateCallableReferenceInPublic.kt");
+      }
+
+      @Test
       @TestMetadata("exposingPrivateTypeInInternal.kt")
       public void testExposingPrivateTypeInInternal() {
         runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternal.kt");
