@@ -348,6 +348,12 @@ private class IrFileValidator(
         super.visitProperty(declaration)
         propertyCheckers.check(declaration, context)
     }
+
+    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+        context.withinAnnotationUsageSubTree {
+            super.visitAnnotationUsage(annotationUsage)
+        }
+    }
 }
 
 private fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
