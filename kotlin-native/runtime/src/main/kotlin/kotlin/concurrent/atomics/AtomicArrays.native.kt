@@ -46,13 +46,6 @@ public actual class AtomicIntArray {
     }
 
     /**
-     * Creates a new [AtomicIntArray] that wraps the given [array].
-     */
-    internal constructor(array: IntArray, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
-        this.array = array
-    }
-
-    /**
      * Returns the number of elements in the array.
      *
      * @sample samples.concurrent.atomics.AtomicIntArray.size
@@ -456,13 +449,6 @@ public actual class AtomicLongArray {
     }
 
     /**
-     * Creates a new [AtomicLongArray] that wraps the given [array].
-     */
-    internal constructor(array: LongArray, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
-        this.array = array
-    }
-
-    /**
      * Returns the number of elements in the array.
      *
      * @sample samples.concurrent.atomics.AtomicLongArray.size
@@ -852,13 +838,6 @@ public actual class AtomicArray<T> {
      */
     public actual constructor(array: Array<T>) {
         this.array = array.copyOf()
-    }
-
-    /**
-     * Creates a new [AtomicArray] that wraps the given [array].
-     */
-    internal constructor(array: Array<T>, @Suppress("UNUSED_PARAMETER") dummy: Any?) {
-        this.array = array
     }
 
     /**
