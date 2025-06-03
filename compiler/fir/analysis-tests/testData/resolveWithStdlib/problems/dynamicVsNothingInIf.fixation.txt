@@ -9,11 +9,11 @@ CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_UPPER
 TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      <: dynamic
      <: dynamic
-     = dynamic
+     = dynamic (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      <: dynamic
      <: dynamic
-     = dynamic
+     = dynamic (inferred during fixation)
     FIXED TO: dynamic
 ********************************

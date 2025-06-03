@@ -64,13 +64,17 @@ class FixationOnlyConstraintsDumper() : FirConstraintsDumper() {
     }
 
     private fun ConstraintsLogger.FixationLogVariableInfo.render(): String {
-        val lines = listOf(readiness.toString()) + constraints.map { constraint ->
+        val lines = listOf(readiness.toString()) + constraints.mapIndexed { index, constraint ->
             val operator = when (constraint.kind) {
                 ConstraintKind.LOWER -> ">:"
                 ConstraintKind.UPPER -> "<:"
                 ConstraintKind.EQUALITY -> "="
             }
-            "     $operator ${constraint.type}"
+            val suffix = when {
+                index >= constraintsBeforeFixationCount -> " (inferred during fixation)"
+                else -> ""
+            }
+            "     $operator ${constraint.type}$suffix"
         }
         return lines.joinToString("\n")
     }
