@@ -67,7 +67,7 @@ fun main() {
         modifyAndExecProtoc(EXT_OPTIONS_PROTO_PATH)
 
         for (protoPath in PROTO_PATHS) {
-            execProtoc(protoPath.file, protoPath.outPath)
+            execProtoc(protoPath.file, protoPath.outPath, liteMode = true)
             renamePackages(protoPath.file, protoPath.outPath)
             modifyAndExecProtoc(protoPath)
         }
@@ -103,9 +103,10 @@ private fun checkVersion() {
     }
 }
 
-private fun execProtoc(protoPath: String, outPath: String) {
+private fun execProtoc(protoPath: String, outPath: String, liteMode: Boolean) {
+    val liteModeOption = if (liteMode) "lite:" else ""
     val commandLine =
-        listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
+        listOf(PROTOC_EXE, protoPath, "--java_out=$liteModeOption$outPath") +
                 PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
     println("running ${commandLine.joinToString(" ")}")
     val (stdout, stderr) = execAndGetOutput(*commandLine.toTypedArray())
@@ -165,7 +166,7 @@ private fun modifyAndExecProtoc(protoPath: ProtoPath) {
         debugProtoFile.deleteOnExit()
 
         val outPath = "build-common/test"
-        execProtoc(debugProtoFile.path, outPath)
+        execProtoc(debugProtoFile.path, outPath, liteMode = false)
         renamePackages(debugProtoFile.path, outPath)
     }
 }
@@ -176,7 +177,6 @@ private fun modifyForDebug(protoPath: ProtoPath): String {
             "option java_outer_classname = \"${protoPath.className}\"",
             "option java_outer_classname = \"${protoPath.debugClassName}\""
         ) // give different name for class
-        .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
     (listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS).forEach {
         val file = it.file
         val newFile = file.replace(".proto", ".debug.proto")
