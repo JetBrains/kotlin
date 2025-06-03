@@ -2017,6 +2017,12 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
     }
 
     @Test
+    @TestMetadata("tryCatchIlt.kt")
+    public void testTryCatchIlt() {
+      runTest("compiler/testData/ir/irText/expressions/tryCatchIlt.kt");
+    }
+
+    @Test
     @TestMetadata("tryCatchWithImplicitCast.kt")
     public void testTryCatchWithImplicitCast() {
       runTest("compiler/testData/ir/irText/expressions/tryCatchWithImplicitCast.kt");
