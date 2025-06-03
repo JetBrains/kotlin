@@ -165,7 +165,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
 }
 
 
-class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
+class Ieee754Equals(val operandType: Type) : CallBasedIntrinsicMethod() {
     private val boxedOperandType = AsmUtil.boxType(operandType)
 
     override fun toCallable(

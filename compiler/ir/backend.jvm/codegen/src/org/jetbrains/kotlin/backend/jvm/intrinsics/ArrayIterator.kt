@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-object ArrayIterator : IntrinsicMethod() {
+object ArrayIterator : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,

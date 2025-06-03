@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
-object Clone : IntrinsicMethod() {
-
+object Clone : CallBasedIntrinsicMethod() {
     private val CLONEABLE_TYPE = Type.getObjectType("java/lang/Cloneable")
 
     override fun toCallable(

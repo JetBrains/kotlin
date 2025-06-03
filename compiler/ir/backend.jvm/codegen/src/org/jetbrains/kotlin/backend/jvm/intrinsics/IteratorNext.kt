@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 
-object IteratorNext : IntrinsicMethod() {
+object IteratorNext : CallBasedIntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {

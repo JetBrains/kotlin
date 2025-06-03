@@ -17,44 +17,26 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.MaterialValue
+import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.backend.jvm.codegen.materializeAt
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object IrIllegalArgumentException : IntrinsicMethod() {
-    val exceptionTypeDescriptor = Type.getType(IllegalArgumentException::class.java)!!
+    private val exceptionTypeDescriptor = Type.getType(IllegalArgumentException::class.java)!!
 
-    override fun toCallable(
-        expression: IrFunctionAccessExpression,
-        signature: JvmMethodSignature,
-        classCodegen: ClassCodegen
-    ): IntrinsicFunction {
-        return object : IntrinsicFunction(expression, signature, classCodegen, listOf(JAVA_STRING_TYPE)) {
-            override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokespecial(
-                    exceptionTypeDescriptor.internalName,
-                    "<init>",
-                    Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE),
-                    false
-                )
-                v.athrow()
-            }
-
-            override fun invoke(
-                v: InstructionAdapter,
-                codegen: ExpressionCodegen,
-                data: BlockInfo,
-                expression: IrFunctionAccessExpression
-            ) {
-                with(codegen) { expression.markLineNumber(startOffset = true) }
-                v.anew(exceptionTypeDescriptor)
-                v.dup()
-                super.invoke(v, codegen, data, expression)
-            }
-        }
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val v = codegen.mv
+        with(codegen) { expression.markLineNumber(startOffset = true) }
+        v.anew(exceptionTypeDescriptor)
+        v.dup()
+        val argument = expression.arguments.single()!!
+        argument.accept(codegen, data).materializeAt(JAVA_STRING_TYPE, argument.type)
+        v.invokespecial(exceptionTypeDescriptor.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE), false)
+        v.athrow()
+        return MaterialValue(codegen, Type.VOID_TYPE, expression.type)
     }
 }
