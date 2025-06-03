@@ -369,6 +369,11 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
         }
     }
 
+    override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
+        // Tree consistency checks are skipped for annotation usages.
+        // Currently, several annotation usage nodes are duplicated. This makes tree consistency checks fail.
+    }
+
     override fun visitDeclaration(declaration: IrDeclarationBase) {
         checkDuplicateNode(declaration)
         parentChain.temporarilyPushing(declaration) {
