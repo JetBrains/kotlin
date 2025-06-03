@@ -70,6 +70,9 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtIntersectionType> INTERSECTION_TYPE =
             new KtPlaceHolderStubElementType<>("INTERSECTION_TYPE", KtIntersectionType.class);
 
+    KtPlaceHolderStubElementType<KtUnionType> UNION_TYPE =
+            new KtPlaceHolderStubElementType<>("UNION_TYPE", KtUnionType.class);
+
     KtPlaceHolderStubElementType<KtTypeReference> TYPE_REFERENCE =
             new KtPlaceHolderStubElementType<>("TYPE_REFERENCE", KtTypeReference.class);
 

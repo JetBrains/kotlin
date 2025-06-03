@@ -176,6 +176,7 @@ public interface KtTokens {
     int INTERPOLATION_PREFIX_Id = 147;
     int ALL_KEYWORD_Id = 148;
     int ERROR_KEYWORD_Id = 149;
+    int OR_Id = 150;
 
     KtToken EOF   = new KtToken("EOF", EOF_Id);
 
@@ -267,6 +268,7 @@ public interface KtTokens {
     KtSingleValueToken EXCLEXCL    = new KtSingleValueToken("EXCLEXCL", "!!", EXCLEXCL_Id);
     KtSingleValueToken ANDAND      = new KtSingleValueToken("ANDAND", "&&", ANDAND_Id);
     KtSingleValueToken AND         = new KtSingleValueToken("AND", "&", AND_Id);
+    KtSingleValueToken OR          = new KtSingleValueToken("OR", "|", OR_Id);
     KtSingleValueToken OROR        = new KtSingleValueToken("OROR", "||", OROR_Id);
     KtSingleValueToken SAFE_ACCESS = new KtSingleValueToken("SAFE_ACCESS", "?.", SAFE_ACCESS_Id);
     KtSingleValueToken ELVIS       = new KtSingleValueToken("ELVIS", "?:", ELVIS_Id);

@@ -2373,6 +2373,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isMarkedNullable = false
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, false)
+                UNION_TYPE -> firType = convertUnionType(typeRefSource, it, false)
                 CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
@@ -2390,6 +2391,36 @@ class LightTreeRawFirDeclarationBuilder(
             calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.convertAnnotations()))
         }
         return calculatedFirType
+    }
+
+    private fun convertUnionType(typeRefSource: KtSourceElement, unionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
+        val children = arrayListOf<FirTypeRef>()
+        unionType.forEachChildren {
+            if (it.tokenType != OR) { //skip in forEachChildren?
+                children.add(convertType(it))
+            }
+        }
+
+        if (children.size != 2) {
+            return buildErrorTypeRef {
+                source = typeRefSource
+                diagnostic = ConeSyntaxDiagnostic("Unexpected parser output")
+            }
+        }
+
+        return buildUnionTypeRef {
+            source = typeRefSource
+            isMarkedNullable = isNullable
+            leftType = children[0]
+            // flattening
+            when (val rt = children[1]) {
+                is FirUnionTypeRef -> {
+                    rightTypes.add(rt.leftType)
+                    rightTypes.addAll(rt.rightTypes)
+                }
+                else -> rightTypes.add(rt)
+            }
+        }
     }
 
     private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
@@ -2450,6 +2481,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isMarkedNullable = true
                 }
                 INTERSECTION_TYPE -> firType = convertIntersectionType(typeRefSource, it, isNullable)
+                UNION_TYPE -> firType = convertUnionType(typeRefSource, it, isNullable)
             }
         }
 

@@ -393,6 +393,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitIntersectionType(intersectionType, null);
     }
 
+    public void visitUnionType(@NotNull KtUnionType intersectionType) {
+        super.visitUnionType(intersectionType, null);
+    }
+
     public void visitTypeProjection(@NotNull KtTypeProjection typeProjection) {
         super.visitTypeProjection(typeProjection, null);
     }
@@ -989,6 +993,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public Void visitIntersectionType(@NotNull KtIntersectionType intersectionType, Void data) {
         visitIntersectionType(intersectionType);
+        return null;
+    }
+
+    @Override
+    public Void visitUnionType(@NotNull KtUnionType unionType, Void data) {
+        visitUnionType(unionType);
         return null;
     }
 

@@ -2251,7 +2251,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
             wasIntersection = true;
         }
 
-        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasFunctionTypeParsed) {
+        boolean wasUnion = false;
+        if (at(OR)) {
+            PsiBuilder.Marker leftTypeRef = typeElementMarker;
+
+            typeElementMarker = typeElementMarker.precede();
+            PsiBuilder.Marker intersectionType = leftTypeRef.precede();
+
+            leftTypeRef.done(TYPE_REFERENCE);
+
+            advance(); // &
+            parseTypeRef(extraRecoverySet, /* allowSimpleIntersectionTypes */ true);
+
+            intersectionType.done(UNION_TYPE);
+            wasUnion = true;
+        }
+
+        if (typeBeforeDot && at(DOT) && !wasIntersection && !wasFunctionTypeParsed && !wasUnion) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^

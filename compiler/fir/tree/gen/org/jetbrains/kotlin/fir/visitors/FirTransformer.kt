@@ -1155,6 +1155,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformIntersectionTypeRef(intersectionTypeRef, data)
     }
 
+    open fun transformUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): FirTypeRef {
+        return transformElement(unionTypeRef, data)
+    }
+
+    final override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): FirTypeRef {
+        return transformUnionTypeRef(unionTypeRef, data)
+    }
+
     open fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement {
         return transformElement(thisReceiverExpression, data)
     }

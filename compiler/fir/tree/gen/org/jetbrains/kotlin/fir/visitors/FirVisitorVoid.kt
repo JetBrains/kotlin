@@ -1155,6 +1155,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(intersectionTypeRef)
     }
 
+    final override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: Nothing?) {
+        visitUnionTypeRef(unionTypeRef)
+    }
+
+    open fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef) {
+        visitElement(unionTypeRef)
+    }
+
     final override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {
         visitThisReceiverExpression(thisReceiverExpression)
     }

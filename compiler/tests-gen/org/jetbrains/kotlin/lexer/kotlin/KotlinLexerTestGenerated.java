@@ -67,6 +67,11 @@ public class KotlinLexerTestGenerated extends AbstractKotlinLexerTest {
       public void testCarriageReturnInStringLiterals() {
         runTest("compiler/testData/lexer/kotlin/whitespaceCharacters/carriageReturn/carriageReturnInStringLiterals.kt");
       }
+
+      @TestMetadata("union.kt")
+      public void testUnion() {
+        runTest("compiler/testData/lexer/kotlin/whitespaceCharacters/carriageReturn/union.kt");
+      }
     }
 
     @TestMetadata("compiler/testData/lexer/kotlin/whitespaceCharacters/lineSeparator")

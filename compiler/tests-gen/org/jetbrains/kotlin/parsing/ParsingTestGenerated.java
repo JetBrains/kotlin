@@ -1026,6 +1026,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/UnderscoredTypeParameters.kt");
     }
 
+    @TestMetadata("union.kt")
+    public void testUnion() {
+      runTest("compiler/testData/psi/union.kt");
+    }
+
     @TestMetadata("UnsignedLiteral.kt")
     public void testUnsignedLiteral() {
       runTest("compiler/testData/psi/UnsignedLiteral.kt");
