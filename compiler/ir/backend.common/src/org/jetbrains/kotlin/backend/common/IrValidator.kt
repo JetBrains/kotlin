@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
@@ -366,6 +368,19 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
         checkDuplicateNode(element)
         parentChain.temporarilyPushing(element) {
             element.acceptChildrenVoid(this)
+        }
+    }
+
+    override fun visitTypeRecursively(container: IrElement, type: IrType) {
+        // Skip `type.annotations` to avoid visiting the same annotation nodes multiple times,
+        // since `IrType` instances can be shared across the IR tree and are not guaranteed to be unique.
+        visitType(container, type)
+        if (type is IrSimpleType) {
+            type.arguments.forEach {
+                if (it is IrTypeProjection) {
+                    visitTypeRecursively(container, it.type)
+                }
+            }
         }
     }
 
