@@ -163,11 +163,8 @@ public actual class AtomicIntArray {
 /**
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -178,7 +175,7 @@ public actual class AtomicIntArray {
 @InlineOnly
 public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -187,11 +184,8 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
  * the updated value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -202,7 +196,7 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
 @InlineOnly
 public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -213,11 +207,8 @@ public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
  * the old value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -228,7 +219,7 @@ public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
 @InlineOnly
 public actual inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))
@@ -389,11 +380,8 @@ public actual class AtomicLongArray {
 /**
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -404,7 +392,7 @@ public actual class AtomicLongArray {
 @InlineOnly
 public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -413,11 +401,8 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
  * the updated value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -428,7 +413,7 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
 @InlineOnly
 public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -439,11 +424,8 @@ public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
  * the old value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -454,7 +436,7 @@ public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
 @InlineOnly
 public actual inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))
@@ -577,11 +559,8 @@ public actual class AtomicArray<T> {
 /**
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -592,7 +571,7 @@ public actual class AtomicArray<T> {
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     storeAt(index, transform(loadAt(index)))
 }
@@ -601,11 +580,8 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
  * the updated value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -616,7 +592,7 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val updated = transform(loadAt(index))
     storeAt(index, updated)
@@ -627,11 +603,8 @@ public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
  * the old value of the element.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
- *
- * It's recommended to keep [transform] fast and free of side effects.
+ * JS does not support multithreading, thus the implementation is trivial,
+ * and [transform] may be invoked more than once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -642,7 +615,7 @@ public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
 @InlineOnly
 public actual inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
     contract {
-        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+        callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
     val old = loadAt(index)
     storeAt(index, transform(old))

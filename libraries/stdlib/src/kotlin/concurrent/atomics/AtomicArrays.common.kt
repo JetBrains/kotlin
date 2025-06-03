@@ -194,7 +194,12 @@ public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAd
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -213,7 +218,12 @@ public expect inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -232,7 +242,12 @@ public expect inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when an integer value at the specified index was concurrently updated while [transform] was applied.
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -429,7 +444,12 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -448,7 +468,12 @@ public expect inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -467,7 +492,12 @@ public expect inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a long value at the specified index was concurrently updated while [transform] was applied.
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -615,7 +645,12 @@ public inline fun <reified T> atomicArrayOfNulls(size: Int): AtomicArray<T?> = A
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -634,7 +669,12 @@ public expect inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -653,7 +693,12 @@ public expect inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example,
- * when a reference at the specified index was concurrently updated while [transform] was applied.
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *

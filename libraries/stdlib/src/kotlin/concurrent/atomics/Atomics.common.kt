@@ -152,7 +152,12 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -168,7 +173,12 @@ public expect inline fun AtomicInt.update(transform: (Int) -> Int): Unit
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -184,7 +194,12 @@ public expect inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -337,9 +352,15 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
+ *
  * @sample samples.concurrent.atomics.AtomicLong.update
  */
 @SinceKotlin("2.2")
@@ -352,7 +373,12 @@ public expect inline fun AtomicLong.update(transform: (Long) -> Long): Unit
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -367,8 +393,12 @@ public expect inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): L
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
  * and returns the new value.
  *
- * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -522,9 +552,12 @@ public expect class AtomicReference<T> public constructor(value: T) {
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
- * It's recommended to keep [transform] fast and free of side effects.
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * @sample samples.concurrent.atomics.AtomicReference.update
  */
@@ -538,7 +571,12 @@ public expect inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -554,7 +592,12 @@ public expect inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) ->
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *

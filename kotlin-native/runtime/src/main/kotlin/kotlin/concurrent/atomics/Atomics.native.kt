@@ -515,7 +515,9 @@ public class AtomicNativePtr(
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -536,7 +538,9 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -561,7 +565,9 @@ public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int 
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -585,7 +591,9 @@ public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int 
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -606,7 +614,9 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -631,7 +641,9 @@ public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): L
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -655,7 +667,9 @@ public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): L
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -676,7 +690,9 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -701,7 +717,9 @@ public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) ->
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  *
@@ -725,7 +743,9 @@ public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) ->
  * Atomically updates the value of this [AtomicNativePtr] with value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  */
@@ -744,7 +764,9 @@ public inline fun AtomicNativePtr.update(transform: (NativePtr) -> NativePtr): U
  * and returns a value replaced with the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  */
@@ -767,7 +789,9 @@ public inline fun AtomicNativePtr.fetchAndUpdate(transform: (NativePtr) -> Nativ
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
- * That may happen, for example, when this pointer was concurrently updated while [transform] was applied.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
  *
  * It's recommended to keep [transform] fast and free of side effects.
  */
