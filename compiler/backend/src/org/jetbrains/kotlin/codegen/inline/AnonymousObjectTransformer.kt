@@ -253,7 +253,9 @@ class AnonymousObjectTransformer(
                 }
                 return@action
             }
-            DescriptorAsmUtil.writeAnnotationData(av, newProto, newStringTable)
+            AsmUtil.writeAnnotationData(
+                av, JvmProtoBufUtil.writeData(newProto, newStringTable), ArrayUtil.toStringArray(newStringTable.strings),
+            )
         }
     }
 

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.mapping.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
@@ -27,7 +26,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.diagnostics.BackendErrors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -400,6 +402,22 @@ class ExpressionCodegen(
         mv.visitLocalVariable(
             name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
         )
+    }
+
+    private fun getNameForReceiverParameter(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): String {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        val callableName =
+            if (descriptor is VariableAccessorDescriptor) descriptor.correspondingVariable.getName()
+            else descriptor.name
+
+        if (callableName.isSpecial) {
+            return RECEIVER_PARAMETER_NAME
+        }
+
+        return getLabeledThisName(callableName.asString(), LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME)
     }
 
     override fun visitBlock(expression: IrBlock, data: BlockInfo): PromisedValue {

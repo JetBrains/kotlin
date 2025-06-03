@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -130,7 +129,9 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
                 with(codegen) {
                     expression.markLineNumber(startOffset = true)
                 }
-                genAreEqualCall(codegen.mv)
+                codegen.mv.invokestatic(
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false,
+                )
                 MaterialValue(codegen, Type.BOOLEAN_TYPE, codegen.context.irBuiltIns.booleanType)
             }
         }
