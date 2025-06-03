@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalReturnsDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
+import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentHoldsInTruths
+import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
@@ -316,8 +318,8 @@ abstract class FirDataFlowAnalyzer(
                 if (function.invocationKind?.canBeRevisited() != false) {
                     enterRepeatableStatement(flow, assignedInside)
                 }
-                function.lambdaArgumentHoldsInTruths?.let {
-                    processInsideLambdaContract(it, flow)
+                function.lambdaArgumentParent?.let {
+                    processConditionalContract(flow, it, null)
                 }
             }
         }
@@ -1127,7 +1129,8 @@ abstract class FirDataFlowAnalyzer(
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
         val conditionalEffects = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalEffectDeclaration }
         val conditionalReturns = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
-        if (conditionalEffects.isEmpty() && conditionalReturns.isEmpty()) return
+        val conditionalHoldsIn = contractDescription.effects.mapNotNull { it.effect as? ConeHoldsInEffectDeclaration }
+        if (conditionalEffects.isEmpty() && conditionalReturns.isEmpty() && conditionalHoldsIn.isEmpty()) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
         val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
@@ -1143,22 +1146,29 @@ abstract class FirDataFlowAnalyzer(
 
         val substitutor = getSubstitutor(callee, qualifiedAccess, originalFunction)
 
+        fun processEffect(condition: ConeBooleanExpression, operation: Operation?) {
+            val statements =
+                logicSystem.approveContractStatement(condition, argumentVariablesForConditionalEffects, substitutor) {
+                    logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
+                } ?: return // TODO: do what if the result is known to be false?
+            if (operation == null) {
+                flow.addAllStatements(statements)
+            } else if (qualifiedAccess is FirExpression) {
+                val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
+                if (functionCallVariable != null) {
+                    flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
+                }
+            }
+        }
+
         if (argumentVariablesForConditionalEffects.any { it != null }) {
             for (conditionalEffect in conditionalEffects) {
                 val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
                 val operation = effect.value.toOperation()
-                val statements =
-                    logicSystem.approveContractStatement(conditionalEffect.condition, argumentVariablesForConditionalEffects, substitutor) {
-                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = operation == null)
-                    } ?: continue // TODO: do what if the result is known to be false?
-                if (operation == null) {
-                    flow.addAllStatements(statements)
-                } else if (qualifiedAccess is FirExpression) {
-                    val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess)
-                    if (functionCallVariable != null) {
-                        flow.addAllConditionally(OperationStatement(functionCallVariable, operation), statements)
-                    }
-                }
+                processEffect(conditionalEffect.condition, operation)
+            }
+            for (conditionHoldsIn in conditionalHoldsIn) {
+                processEffect(conditionHoldsIn.argumentsCondition, null)
             }
         }
 
@@ -1205,20 +1215,6 @@ abstract class FirDataFlowAnalyzer(
         } else {
             val map = originalFunction.symbol.typeParameterSymbols.zip(typeParameters.map { it.symbol.toConeType() }).toMap()
             substitutorByMap(map, components.session).chain(typeArgumentsSubstitutor)
-        }
-    }
-
-    private fun processInsideLambdaContract(truths: List<FirExpression>, flow: MutableFlow) {
-        // contracts has no effect on non-body resolve stages
-        if (!components.transformer.baseTransformerPhase.isBodyResolve) return
-
-        for (conditionExpression in truths) {
-            val conditionVariable = flow.getOrCreateVariable(conditionExpression) ?: continue
-            val statements =
-                logicSystem.approveOperationStatement(
-                    flow, OperationStatement(conditionVariable, Operation.EqTrue), removeApprovedOrImpossible = false
-                )
-            flow.addAllStatements(statements)
         }
     }
 

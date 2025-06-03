@@ -47145,6 +47145,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("lambdaInvariantContractsK2_withErrors.kt")
+        public void testLambdaInvariantContractsK2_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/lambdaInvariantContractsK2_withErrors.kt");
+        }
+
+        @Test
         @TestMetadata("operatorsAllowedInK2.kt")
         public void testOperatorsAllowedInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsAllowedInK2.kt");

@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.contracts.description.KtBooleanValueParameterReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentHoldsInTruths
+import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.types.coneType
@@ -37,7 +36,7 @@ fun FirFunctionCall.replaceLambdaArgumentEffects(session: FirSession) {
     val effects = (function.unwrapFakeOverrides<FirFunction>() as? FirContractDescriptionOwner)?.contractDescription?.effects
 
     val eventOccurencesRangeByParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
-    val conditionParameterByParameter = mutableMapOf<FirValueParameter, FirValueParameter>()
+    val lambdaParametersWithHoldsInEffect = mutableSetOf<FirValueParameter>()
     effects?.forEach { fir ->
         when (val effect = fir.effect) {
             is ConeCallsEffectDeclaration -> {
@@ -47,13 +46,9 @@ fun FirFunctionCall.replaceLambdaArgumentEffects(session: FirSession) {
                 }
             }
             is ConeHoldsInEffectDeclaration -> {
-                val conditionParameterIndex = (effect.argumentsCondition as? KtBooleanValueParameterReference)?.parameterIndex
-                if (conditionParameterIndex != null) {
-                    val conditionParameter = function.valueParameters.getOrNull(conditionParameterIndex)
-                    val lambdaParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)
-                    if (conditionParameter != null && lambdaParameter != null) {
-                        conditionParameterByParameter[lambdaParameter] = conditionParameter
-                    }
+                val lambdaParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex)
+                if (lambdaParameter != null) {
+                    lambdaParametersWithHoldsInEffect += lambdaParameter
                 }
             }
         }
@@ -71,11 +66,8 @@ fun FirFunctionCall.replaceLambdaArgumentEffects(session: FirSession) {
         if (kind != null) {
             lambda.replaceInvocationKind(kind)
         }
-        conditionParameterByParameter[parameter]?.let { conditionParameter ->
-            val conditionExpression = argumentMapping.entries.find { (_, parameter) -> parameter == conditionParameter }?.key?.expression
-            if (conditionExpression != null) {
-                lambda.lambdaArgumentHoldsInTruths = lambda.lambdaArgumentHoldsInTruths.orEmpty() + conditionExpression
-            }
+        if (lambdaParametersWithHoldsInEffect.contains(parameter)) {
+            lambda.lambdaArgumentParent = this
         }
     }
 }
