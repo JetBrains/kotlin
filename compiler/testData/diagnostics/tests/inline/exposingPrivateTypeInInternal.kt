@@ -91,3 +91,6 @@ internal inline fun withAnonymousObject() {
         }
     }.foo("")
 }
+
+private fun foo() = object { fun bar() {} }
+internal inline fun test() = foo().bar()
