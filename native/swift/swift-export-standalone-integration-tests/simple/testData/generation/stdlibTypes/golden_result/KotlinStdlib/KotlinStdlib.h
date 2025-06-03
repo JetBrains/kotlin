@@ -3,9 +3,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(void * self, int32_t index, int8_t value);
+
 int32_t kotlin_ByteArray_size_get(void * self);
 
+uint16_t kotlin_CharArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
+
+void kotlin_CharArray_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(void * self, int32_t index, uint16_t value);
+
 int32_t kotlin_CharArray_size_get(void * self);
+
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t kotlin_CharSequence_length_get(void * self);
 
@@ -54,6 +64,8 @@ void * kotlin_text_StringBuilder_deleteAt__TypesOfArguments__Swift_Int32__(void 
 void * kotlin_text_StringBuilder_deleteRange__TypesOfArguments__Swift_Int32_Swift_Int32__(void * self, int32_t startIndex, int32_t endIndex);
 
 void kotlin_text_StringBuilder_ensureCapacity__TypesOfArguments__Swift_Int32__(void * self, int32_t minimumCapacity);
+
+uint16_t kotlin_text_StringBuilder_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
 int32_t kotlin_text_StringBuilder_indexOf__TypesOfArguments__Swift_String__(void * self, NSString * string);
 
@@ -104,6 +116,8 @@ int32_t kotlin_text_StringBuilder_lastIndexOf__TypesOfArguments__Swift_String_Sw
 int32_t kotlin_text_StringBuilder_length_get(void * self);
 
 void * kotlin_text_StringBuilder_reverse(void * self);
+
+void kotlin_text_StringBuilder_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(void * self, int32_t index, uint16_t value);
 
 void kotlin_text_StringBuilder_setLength__TypesOfArguments__Swift_Int32__(void * self, int32_t newLength);
 

@@ -111,12 +111,28 @@ open class Child: overrides.Parent {
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
     }
+    public static func ==(
+        this: overrides.Child,
+        to: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(to: to)
+    }
     open override func actuallyOverride(
         nullable: Swift.Int32?,
         poly: overrides.Parent,
         nullablePoly: overrides.Parent?
     ) -> Swift.Void {
         return Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil)
+    }
+    open override func contains(
+        element: Swift.Int32
+    ) -> Swift.Bool {
+        return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+    }
+    open override func equals(
+        to: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
@@ -155,6 +171,12 @@ open class Child: overrides.Parent {
     }
     open override func subtypeOptionalPrimitiveFunc() -> Swift.Int32 {
         return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
+    }
+    public static func ~=(
+        this: overrides.Child,
+        element: Swift.Int32
+    ) -> Swift.Bool {
+        this.contains(element: element)
     }
 }
 public final class GrandChild: overrides.Child {
@@ -265,12 +287,28 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public static func ==(
+        this: overrides.Parent,
+        to: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(to: to)
+    }
     open func actuallyOverride(
         nullable: Swift.Int32,
         poly: overrides.Child,
         nullablePoly: overrides.Child
     ) -> Swift.Void {
         return Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef())
+    }
+    open func contains(
+        element: Swift.Int32
+    ) -> Swift.Bool {
+        return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+    }
+    open func equals(
+        to: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     open func finalOverrideFunc() -> Swift.Void {
         return Parent_finalOverrideFunc(self.__externalRCRef())
@@ -315,5 +353,11 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
     open func subtypeOptionalPrimitiveFunc() -> Swift.Int32? {
         return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }
+    }
+    public static func ~=(
+        this: overrides.Parent,
+        element: Swift.Int32
+    ) -> Swift.Bool {
+        this.contains(element: element)
     }
 }

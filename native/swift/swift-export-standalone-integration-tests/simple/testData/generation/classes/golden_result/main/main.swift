@@ -64,10 +64,21 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public static func ==(
+        this: main.DATA_CLASS,
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+    }
+    public func equals(
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -118,12 +129,23 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(__kt, a, b, c.__externalRCRef())
     }
+    public static func ==(
+        this: main.DATA_CLASS_WITH_MANY_FIELDS,
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
     public func copy(
         a: Swift.Int32,
         b: Swift.String,
         c: KotlinRuntime.KotlinBase
     ) -> main.DATA_CLASS_WITH_MANY_FIELDS {
         return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(self.__externalRCRef(), a, b, c.__externalRCRef()))
+    }
+    public func equals(
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_MANY_FIELDS_hashCode(self.__externalRCRef())
@@ -152,10 +174,21 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public static func ==(
+        this: main.DATA_CLASS_WITH_REF,
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
     public func copy(
         o: KotlinRuntime.KotlinBase
     ) -> main.DATA_CLASS_WITH_REF {
         return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+    }
+    public func equals(
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
@@ -507,6 +540,17 @@ public extension ExportedKotlinPackages.namespace.deeper {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE,
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func equals(
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public func foo() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())

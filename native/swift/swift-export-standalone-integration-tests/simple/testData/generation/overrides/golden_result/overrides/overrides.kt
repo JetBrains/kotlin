@@ -44,6 +44,22 @@ public fun Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32_
     __self.actuallyOverride(__nullable, __poly, __nullablePoly)
 }
 
+@ExportedBridge("Child_contains__TypesOfArguments__Swift_Int32__")
+public fun Child_contains__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, element: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __element = element
+    val _result = __self.contains(__element)
+    return _result
+}
+
+@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
+    val _result = __self.equals(__to)
+    return _result
+}
+
 @ExportedBridge("Child_finalOverrideFunc")
 public fun Child_finalOverrideFunc(self: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
@@ -202,6 +218,22 @@ public fun Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Chil
     val __poly = kotlin.native.internal.ref.dereferenceExternalRCRef(poly) as Child
     val __nullablePoly = kotlin.native.internal.ref.dereferenceExternalRCRef(nullablePoly) as Child
     __self.actuallyOverride(__nullable, __poly, __nullablePoly)
+}
+
+@ExportedBridge("Parent_contains__TypesOfArguments__Swift_Int32__")
+public fun Parent_contains__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, element: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __element = element
+    val _result = __self.contains(__element)
+    return _result
+}
+
+@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
+    val _result = __self.equals(__to)
+    return _result
 }
 
 @ExportedBridge("Parent_finalOverrideFunc")

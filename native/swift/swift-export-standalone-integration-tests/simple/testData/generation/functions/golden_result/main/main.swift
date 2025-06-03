@@ -443,6 +443,12 @@ public extension ExportedKotlinPackages.operators {
             this.contains(other: other)
         }
     }
+    public static func invoke(
+        _ receiver: ExportedKotlinPackages.operators.Foo,
+        other: ExportedKotlinPackages.operators.Foo
+    ) -> ExportedKotlinPackages.operators.Foo {
+        return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(receiver.__externalRCRef(), other.__externalRCRef()))
+    }
 }
 public extension ExportedKotlinPackages.overload {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {

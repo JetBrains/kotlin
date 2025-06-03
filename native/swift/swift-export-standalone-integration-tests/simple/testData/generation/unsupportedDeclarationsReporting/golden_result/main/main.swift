@@ -33,6 +33,17 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
+        public static func +(
+            this: main.Foo.Nested,
+            other: Swift.Int32
+        ) -> main.Foo.Nested {
+            this._plus(other: other)
+        }
+        public func _plus(
+            other: Swift.Int32
+        ) -> main.Foo.Nested {
+            return main.Foo.Nested.__createClassWrapper(externalRCRef: Foo_Nested_plus__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), other))
+        }
     }
     public init() {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
@@ -86,5 +97,3 @@ public extension ExportedKotlinPackages.a.b.c {
 // Can't export foo: inline functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
 // Can't export a.b.c.E.values: static functions are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.
-// Can't export Foo.Nested.plus: operators are not supported yet.

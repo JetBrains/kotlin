@@ -170,3 +170,5 @@ data class Foo(var value: Int = 0) {
 
     operator fun invoke(): Foo = this
 }
+
+operator fun Foo.invoke(other: Foo): Foo = other

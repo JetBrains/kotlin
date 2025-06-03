@@ -417,7 +417,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
     private fun SirCallable.printName() = print(
         when (this) {
             is SirInit -> "init"
-            is SirFunction -> "func ${name.takeIf { it.isValidSwiftOperator } ?: name.swiftIdentifier}"
+            is SirFunction -> "func ${name.takeIf { this.fixity != null && it.isValidSwiftOperator } ?: name.swiftIdentifier}"
             is SirGetter,
             is SirSetter,
                 -> ""
