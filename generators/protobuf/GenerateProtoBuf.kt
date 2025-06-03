@@ -64,7 +64,7 @@ fun main() {
     fun generateDebug() {
         val outPath = "build-common/test"
 
-        for (protoPath in PROTO_PATHS + EXT_OPTIONS_PROTO_PATH) {
+        for (protoPath in listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS) {
             val debugProtoFile = createDebugProtoFile(protoPath) ?: continue
 
             execProtoc(debugProtoFile.path, outPath, liteMode = false)
