@@ -2321,8 +2321,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         while (true) {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
 
-            if (expect(IDENTIFIER, "Expecting type name",
-                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
+            if (expect(IDENTIFIER, "Expecting type name", USER_TYPE_NAME_RECOVERY_SET)) {
                 reference.done(REFERENCE_EXPRESSION);
             }
             else {
@@ -2469,6 +2468,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private static final TokenSet NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(COMMA, COLON, EQ, RPAR);
+
+    private static final TokenSet USER_TYPE_NAME_RECOVERY_SET =
+        TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST);
 
     /*
      * functionParameters
