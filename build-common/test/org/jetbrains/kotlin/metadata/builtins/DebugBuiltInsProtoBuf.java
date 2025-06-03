@@ -182,42 +182,41 @@ public final class DebugBuiltInsProtoBuf {
       "\022&org.jetbrains.kotlin.metadata.builtins" +
       "\032&core/metadata/src/metadata.debug.proto" +
       ":@\n\017package_fq_name\022&.org.jetbrains.kotl" +
-      "in.metadata.Package\030\227\001 \001(\005:q\n\020class_anno" +
+      "in.metadata.Package\030\227\001 \001(\005:j\n\020class_anno" +
       "tation\022$.org.jetbrains.kotlin.metadata.C" +
       "lass\030\226\001 \003(\0132).org.jetbrains.kotlin.metad" +
-      "ata.AnnotationB\005\252\001\002\030\002:}\n\026constructor_ann" +
-      "otation\022*.org.jetbrains.kotlin.metadata." +
-      "Constructor\030\226\001 \003(\0132).org.jetbrains.kotli" +
-      "n.metadata.AnnotationB\005\252\001\002\030\002:w\n\023function" +
-      "_annotation\022\'.org.jetbrains.kotlin.metad" +
-      "ata.Function\030\226\001 \003(\0132).org.jetbrains.kotl" +
-      "in.metadata.AnnotationB\005\252\001\002\030\002:w\n\023propert" +
-      "y_annotation\022\'.org.jetbrains.kotlin.meta" +
-      "data.Property\030\226\001 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.AnnotationB\005\252\001\002\030\002:~\n\032proper" +
-      "ty_getter_annotation\022\'.org.jetbrains.kot" +
-      "lin.metadata.Property\030\230\001 \003(\0132).org.jetbr" +
-      "ains.kotlin.metadata.AnnotationB\005\252\001\002\030\002:~" +
-      "\n\032property_setter_annotation\022\'.org.jetbr" +
-      "ains.kotlin.metadata.Property\030\231\001 \003(\0132).o" +
-      "rg.jetbrains.kotlin.metadata.AnnotationB" +
-      "\005\252\001\002\030\002:~\n\022compile_time_value\022\'.org.jetbr" +
-      "ains.kotlin.metadata.Property\030\227\001 \001(\01328.o" +
-      "rg.jetbrains.kotlin.metadata.Annotation." +
-      "Argument.Value:z\n\025enum_entry_annotation\022" +
-      "(.org.jetbrains.kotlin.metadata.EnumEntr" +
-      "y\030\226\001 \003(\0132).org.jetbrains.kotlin.metadata" +
-      ".AnnotationB\005\252\001\002\030\002:~\n\024parameter_annotati" +
-      "on\022-.org.jetbrains.kotlin.metadata.Value" +
-      "Parameter\030\226\001 \003(\0132).org.jetbrains.kotlin." +
-      "metadata.AnnotationB\005\252\001\002\030\002:o\n\017type_annot" +
-      "ation\022#.org.jetbrains.kotlin.metadata.Ty" +
-      "pe\030\226\001 \003(\0132).org.jetbrains.kotlin.metadat" +
-      "a.AnnotationB\005\252\001\002\030\002:\202\001\n\031type_parameter_a" +
-      "nnotation\022,.org.jetbrains.kotlin.metadat" +
-      "a.TypeParameter\030\226\001 \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.AnnotationB\005\252\001\002\030\002B\034B\025Debu" +
-      "gBuiltInsProtoBuf\222\003\002 \003b\010editionsp\350\007"
+      "ata.Annotation:v\n\026constructor_annotation" +
+      "\022*.org.jetbrains.kotlin.metadata.Constru" +
+      "ctor\030\226\001 \003(\0132).org.jetbrains.kotlin.metad" +
+      "ata.Annotation:p\n\023function_annotation\022\'." +
+      "org.jetbrains.kotlin.metadata.Function\030\226" +
+      "\001 \003(\0132).org.jetbrains.kotlin.metadata.An" +
+      "notation:p\n\023property_annotation\022\'.org.je" +
+      "tbrains.kotlin.metadata.Property\030\226\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on:w\n\032property_getter_annotation\022\'.org.j" +
+      "etbrains.kotlin.metadata.Property\030\230\001 \003(\013" +
+      "2).org.jetbrains.kotlin.metadata.Annotat" +
+      "ion:w\n\032property_setter_annotation\022\'.org." +
+      "jetbrains.kotlin.metadata.Property\030\231\001 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion:~\n\022compile_time_value\022\'.org.jetbrai" +
+      "ns.kotlin.metadata.Property\030\227\001 \001(\01328.org" +
+      ".jetbrains.kotlin.metadata.Annotation.Ar" +
+      "gument.Value:s\n\025enum_entry_annotation\022(." +
+      "org.jetbrains.kotlin.metadata.EnumEntry\030" +
+      "\226\001 \003(\0132).org.jetbrains.kotlin.metadata.A" +
+      "nnotation:w\n\024parameter_annotation\022-.org." +
+      "jetbrains.kotlin.metadata.ValueParameter" +
+      "\030\226\001 \003(\0132).org.jetbrains.kotlin.metadata." +
+      "Annotation:h\n\017type_annotation\022#.org.jetb" +
+      "rains.kotlin.metadata.Type\030\226\001 \003(\0132).org." +
+      "jetbrains.kotlin.metadata.Annotation:{\n\031" +
+      "type_parameter_annotation\022,.org.jetbrain" +
+      "s.kotlin.metadata.TypeParameter\030\226\001 \003(\0132)" +
+      ".org.jetbrains.kotlin.metadata.Annotatio" +
+      "nB\034B\025DebugBuiltInsProtoBuf\222\003\002 \003b\010edition" +
+      "sp\350\007"
     };
     descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

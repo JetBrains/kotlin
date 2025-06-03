@@ -44,25 +44,25 @@ public final class DebugJvmProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record> 
         getRecordList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record getRecord(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     int getRecordCount();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder> 
         getRecordOrBuilderList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder getRecordOrBuilder(
         int index);
@@ -72,7 +72,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @return A list containing the localName.
      */
     java.util.List<java.lang.Integer> getLocalNameList();
@@ -81,7 +81,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @return The count of localName.
      */
     int getLocalNameCount();
@@ -90,7 +90,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @param index The index of the element to return.
      * @return The localName at the given index.
      */
@@ -232,7 +232,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @return A list containing the substringIndex.
        */
       java.util.List<java.lang.Integer> getSubstringIndexList();
@@ -243,7 +243,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @return The count of substringIndex.
        */
       int getSubstringIndexCount();
@@ -254,7 +254,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @param index The index of the element to return.
        * @return The substringIndex at the given index.
        */
@@ -266,7 +266,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @return A list containing the replaceChar.
        */
       java.util.List<java.lang.Integer> getReplaceCharList();
@@ -276,7 +276,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @return The count of replaceChar.
        */
       int getReplaceCharCount();
@@ -286,7 +286,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @param index The index of the element to return.
        * @return The replaceChar at the given index.
        */
@@ -621,7 +621,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @return A list containing the substringIndex.
        */
       @java.lang.Override
@@ -636,7 +636,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @return The count of substringIndex.
        */
       public int getSubstringIndexCount() {
@@ -649,7 +649,7 @@ public final class DebugJvmProtoBuf {
        * If an operation is not NONE, it's applied _after_ this substring operation
        * </pre>
        *
-       * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+       * <code>repeated int32 substring_index = 4;</code>
        * @param index The index of the element to return.
        * @return The substringIndex at the given index.
        */
@@ -668,7 +668,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @return A list containing the replaceChar.
        */
       @java.lang.Override
@@ -682,7 +682,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @return The count of replaceChar.
        */
       public int getReplaceCharCount() {
@@ -694,7 +694,7 @@ public final class DebugJvmProtoBuf {
        * of the character to replace, and the second element as the code point of the replacement character
        * </pre>
        *
-       * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+       * <code>repeated int32 replace_char = 5;</code>
        * @param index The index of the element to return.
        * @return The replaceChar at the given index.
        */
@@ -1505,7 +1505,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @return A list containing the substringIndex.
          */
         public java.util.List<java.lang.Integer>
@@ -1520,7 +1520,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @return The count of substringIndex.
          */
         public int getSubstringIndexCount() {
@@ -1533,7 +1533,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @param index The index of the element to return.
          * @return The substringIndex at the given index.
          */
@@ -1547,7 +1547,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @param index The index to set the value at.
          * @param value The substringIndex to set.
          * @return This builder for chaining.
@@ -1568,7 +1568,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @param value The substringIndex to add.
          * @return This builder for chaining.
          */
@@ -1587,7 +1587,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @param values The substringIndex to add.
          * @return This builder for chaining.
          */
@@ -1607,7 +1607,7 @@ public final class DebugJvmProtoBuf {
          * If an operation is not NONE, it's applied _after_ this substring operation
          * </pre>
          *
-         * <code>repeated int32 substring_index = 4 [features = { ... }</code>
+         * <code>repeated int32 substring_index = 4;</code>
          * @return This builder for chaining.
          */
         public Builder clearSubstringIndex() {
@@ -1630,7 +1630,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @return A list containing the replaceChar.
          */
         public java.util.List<java.lang.Integer>
@@ -1644,7 +1644,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @return The count of replaceChar.
          */
         public int getReplaceCharCount() {
@@ -1656,7 +1656,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @param index The index of the element to return.
          * @return The replaceChar at the given index.
          */
@@ -1669,7 +1669,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @param index The index to set the value at.
          * @param value The replaceChar to set.
          * @return This builder for chaining.
@@ -1689,7 +1689,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @param value The replaceChar to add.
          * @return This builder for chaining.
          */
@@ -1707,7 +1707,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @param values The replaceChar to add.
          * @return This builder for chaining.
          */
@@ -1726,7 +1726,7 @@ public final class DebugJvmProtoBuf {
          * of the character to replace, and the second element as the code point of the replacement character
          * </pre>
          *
-         * <code>repeated int32 replace_char = 5 [features = { ... }</code>
+         * <code>repeated int32 replace_char = 5;</code>
          * @return This builder for chaining.
          */
         public Builder clearReplaceChar() {
@@ -1791,14 +1791,14 @@ public final class DebugJvmProtoBuf {
     @SuppressWarnings("serial")
     private java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record> record_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record> getRecordList() {
       return record_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder> 
@@ -1806,21 +1806,21 @@ public final class DebugJvmProtoBuf {
       return record_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     @java.lang.Override
     public int getRecordCount() {
       return record_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record getRecord(int index) {
       return record_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder getRecordOrBuilder(
@@ -1837,7 +1837,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @return A list containing the localName.
      */
     @java.lang.Override
@@ -1850,7 +1850,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @return The count of localName.
      */
     public int getLocalNameCount() {
@@ -1861,7 +1861,7 @@ public final class DebugJvmProtoBuf {
      * Indices of strings which are names of local classes or anonymous objects
      * </pre>
      *
-     * <code>repeated int32 local_name = 5 [features = { ... }</code>
+     * <code>repeated int32 local_name = 5;</code>
      * @param index The index of the element to return.
      * @return The localName at the given index.
      */
@@ -2285,7 +2285,7 @@ public final class DebugJvmProtoBuf {
           org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder> recordBuilder_;
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record> getRecordList() {
         if (recordBuilder_ == null) {
@@ -2295,7 +2295,7 @@ public final class DebugJvmProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public int getRecordCount() {
         if (recordBuilder_ == null) {
@@ -2305,7 +2305,7 @@ public final class DebugJvmProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record getRecord(int index) {
         if (recordBuilder_ == null) {
@@ -2315,7 +2315,7 @@ public final class DebugJvmProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder setRecord(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record value) {
@@ -2332,7 +2332,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder setRecord(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder builderForValue) {
@@ -2346,7 +2346,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder addRecord(org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record value) {
         if (recordBuilder_ == null) {
@@ -2362,7 +2362,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder addRecord(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record value) {
@@ -2379,7 +2379,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder addRecord(
           org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder builderForValue) {
@@ -2393,7 +2393,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder addRecord(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder builderForValue) {
@@ -2407,7 +2407,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder addAllRecord(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record> values) {
@@ -2422,7 +2422,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder clearRecord() {
         if (recordBuilder_ == null) {
@@ -2435,7 +2435,7 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public Builder removeRecord(int index) {
         if (recordBuilder_ == null) {
@@ -2448,14 +2448,14 @@ public final class DebugJvmProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder getRecordBuilder(
           int index) {
         return getRecordFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder getRecordOrBuilder(
           int index) {
@@ -2465,7 +2465,7 @@ public final class DebugJvmProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.RecordOrBuilder> 
            getRecordOrBuilderList() {
@@ -2476,14 +2476,14 @@ public final class DebugJvmProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder addRecordBuilder() {
         return getRecordFieldBuilder().addBuilder(
             org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder addRecordBuilder(
           int index) {
@@ -2491,7 +2491,7 @@ public final class DebugJvmProtoBuf {
             index, org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.StringTableTypes.Record record = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf.StringTableTypes.Record.Builder> 
            getRecordBuilderList() {
@@ -2524,7 +2524,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @return A list containing the localName.
        */
       public java.util.List<java.lang.Integer>
@@ -2537,7 +2537,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @return The count of localName.
        */
       public int getLocalNameCount() {
@@ -2548,7 +2548,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @param index The index of the element to return.
        * @return The localName at the given index.
        */
@@ -2560,7 +2560,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @param index The index to set the value at.
        * @param value The localName to set.
        * @return This builder for chaining.
@@ -2579,7 +2579,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @param value The localName to add.
        * @return This builder for chaining.
        */
@@ -2596,7 +2596,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @param values The localName to add.
        * @return This builder for chaining.
        */
@@ -2614,7 +2614,7 @@ public final class DebugJvmProtoBuf {
        * Indices of strings which are names of local classes or anonymous objects
        * </pre>
        *
-       * <code>repeated int32 local_name = 5 [features = { ... }</code>
+       * <code>repeated int32 local_name = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearLocalName() {
@@ -5586,65 +5586,64 @@ public final class DebugJvmProtoBuf {
       "ug.proto\022!org.jetbrains.kotlin.metadata." +
       "jvm\032)core/metadata/src/ext_options.debug" +
       ".proto\032&core/metadata/src/metadata.debug" +
-      ".proto\"\260\003\n\020StringTableTypes\022Q\n\006record\030\001 " +
+      ".proto\"\224\003\n\020StringTableTypes\022J\n\006record\030\001 " +
       "\003(\0132:.org.jetbrains.kotlin.metadata.jvm." +
-      "StringTableTypes.RecordB\005\252\001\002\030\002\022\031\n\nlocal_" +
-      "name\030\005 \003(\005B\005\252\001\002\030\001\032\255\002\n\006Record\022\020\n\005range\030\001 " +
-      "\001(\005:\0011\022\030\n\020predefined_index\030\002 \001(\005\022\016\n\006stri" +
-      "ng\030\006 \001(\t\022]\n\toperation\030\003 \001(\0162D.org.jetbra" +
-      "ins.kotlin.metadata.jvm.StringTableTypes" +
-      ".Record.Operation:\004NONE\022\036\n\017substring_ind" +
-      "ex\030\004 \003(\005B\005\252\001\002\030\001\022\033\n\014replace_char\030\005 \003(\005B\005\252" +
-      "\001\002\030\001\"K\n\tOperation\022\010\n\004NONE\020\000\022\030\n\024INTERNAL_" +
-      "TO_CLASS_ID\020\001\022\024\n\020DESC_TO_CLASS_ID\020\002\032\004:\002\020" +
-      "\002\"<\n\022JvmMethodSignature\022\022\n\004name\030\001 \001(\005B\004\230" +
-      "\265\030\001\022\022\n\004desc\030\002 \001(\005B\004\230\265\030\001\";\n\021JvmFieldSigna" +
-      "ture\022\022\n\004name\030\001 \001(\005B\004\230\265\030\001\022\022\n\004desc\030\002 \001(\005B\004" +
-      "\230\265\030\001\"\212\003\n\024JvmPropertySignature\022C\n\005field\030\001" +
-      " \001(\01324.org.jetbrains.kotlin.metadata.jvm" +
-      ".JvmFieldSignature\022O\n\020synthetic_method\030\002" +
-      " \001(\01325.org.jetbrains.kotlin.metadata.jvm" +
-      ".JvmMethodSignature\022E\n\006getter\030\003 \001(\01325.or" +
-      "g.jetbrains.kotlin.metadata.jvm.JvmMetho" +
-      "dSignature\022E\n\006setter\030\004 \001(\01325.org.jetbrai" +
-      "ns.kotlin.metadata.jvm.JvmMethodSignatur" +
-      "e\022N\n\017delegate_method\030\005 \001(\01325.org.jetbrai" +
-      "ns.kotlin.metadata.jvm.JvmMethodSignatur" +
-      "e:\200\001\n\025constructor_signature\022*.org.jetbra" +
-      "ins.kotlin.metadata.Constructor\030d \001(\01325." +
-      "org.jetbrains.kotlin.metadata.jvm.JvmMet" +
-      "hodSignature:x\n\020method_signature\022\'.org.j" +
-      "etbrains.kotlin.metadata.Function\030d \001(\0132" +
-      "5.org.jetbrains.kotlin.metadata.jvm.JvmM" +
-      "ethodSignature:O\n\030lambda_class_origin_na" +
-      "me\022\'.org.jetbrains.kotlin.metadata.Funct" +
-      "ion\030e \001(\005B\004\230\265\030\001:|\n\022property_signature\022\'." +
-      "org.jetbrains.kotlin.metadata.Property\030d" +
-      " \001(\01327.org.jetbrains.kotlin.metadata.jvm" +
-      ".JvmPropertySignature:9\n\005flags\022\'.org.jet" +
-      "brains.kotlin.metadata.Property\030e \001(\005:\0010" +
-      ":n\n\017type_annotation\022#.org.jetbrains.kotl" +
-      "in.metadata.Type\030d \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.AnnotationB\005\252\001\002\030\002:3\n\006is_r" +
-      "aw\022#.org.jetbrains.kotlin.metadata.Type\030" +
-      "e \001(\010:\201\001\n\031type_parameter_annotation\022,.or" +
-      "g.jetbrains.kotlin.metadata.TypeParamete" +
-      "r\030d \003(\0132).org.jetbrains.kotlin.metadata." +
-      "AnnotationB\005\252\001\002\030\002:E\n\021class_module_name\022$" +
-      ".org.jetbrains.kotlin.metadata.Class\030e \001" +
-      "(\005B\004\230\265\030\001:r\n\024class_local_variable\022$.org.j" +
-      "etbrains.kotlin.metadata.Class\030f \003(\0132\'.o" +
-      "rg.jetbrains.kotlin.metadata.PropertyB\005\252" +
-      "\001\002\030\002:P\n\034anonymous_object_origin_name\022$.o" +
-      "rg.jetbrains.kotlin.metadata.Class\030g \001(\005" +
-      "B\004\230\265\030\001:@\n\017jvm_class_flags\022$.org.jetbrain" +
-      "s.kotlin.metadata.Class\030h \001(\005:\0010:I\n\023pack" +
-      "age_module_name\022&.org.jetbrains.kotlin.m" +
-      "etadata.Package\030e \001(\005B\004\230\265\030\001:v\n\026package_l" +
-      "ocal_variable\022&.org.jetbrains.kotlin.met" +
-      "adata.Package\030f \003(\0132\'.org.jetbrains.kotl" +
-      "in.metadata.PropertyB\005\252\001\002\030\002B\027B\020DebugJvmP" +
-      "rotoBuf\222\003\002 \003b\010editionsp\350\007"
+      "StringTableTypes.Record\022\022\n\nlocal_name\030\005 " +
+      "\003(\005\032\237\002\n\006Record\022\020\n\005range\030\001 \001(\005:\0011\022\030\n\020pred" +
+      "efined_index\030\002 \001(\005\022\016\n\006string\030\006 \001(\t\022]\n\top" +
+      "eration\030\003 \001(\0162D.org.jetbrains.kotlin.met" +
+      "adata.jvm.StringTableTypes.Record.Operat" +
+      "ion:\004NONE\022\027\n\017substring_index\030\004 \003(\005\022\024\n\014re" +
+      "place_char\030\005 \003(\005\"K\n\tOperation\022\010\n\004NONE\020\000\022" +
+      "\030\n\024INTERNAL_TO_CLASS_ID\020\001\022\024\n\020DESC_TO_CLA" +
+      "SS_ID\020\002\032\004:\002\020\002\"<\n\022JvmMethodSignature\022\022\n\004n" +
+      "ame\030\001 \001(\005B\004\230\265\030\001\022\022\n\004desc\030\002 \001(\005B\004\230\265\030\001\";\n\021J" +
+      "vmFieldSignature\022\022\n\004name\030\001 \001(\005B\004\230\265\030\001\022\022\n\004" +
+      "desc\030\002 \001(\005B\004\230\265\030\001\"\212\003\n\024JvmPropertySignatur" +
+      "e\022C\n\005field\030\001 \001(\01324.org.jetbrains.kotlin." +
+      "metadata.jvm.JvmFieldSignature\022O\n\020synthe" +
+      "tic_method\030\002 \001(\01325.org.jetbrains.kotlin." +
+      "metadata.jvm.JvmMethodSignature\022E\n\006gette" +
+      "r\030\003 \001(\01325.org.jetbrains.kotlin.metadata." +
+      "jvm.JvmMethodSignature\022E\n\006setter\030\004 \001(\01325" +
+      ".org.jetbrains.kotlin.metadata.jvm.JvmMe" +
+      "thodSignature\022N\n\017delegate_method\030\005 \001(\01325" +
+      ".org.jetbrains.kotlin.metadata.jvm.JvmMe" +
+      "thodSignature:\200\001\n\025constructor_signature\022" +
+      "*.org.jetbrains.kotlin.metadata.Construc" +
+      "tor\030d \001(\01325.org.jetbrains.kotlin.metadat" +
+      "a.jvm.JvmMethodSignature:x\n\020method_signa" +
+      "ture\022\'.org.jetbrains.kotlin.metadata.Fun" +
+      "ction\030d \001(\01325.org.jetbrains.kotlin.metad" +
+      "ata.jvm.JvmMethodSignature:O\n\030lambda_cla" +
+      "ss_origin_name\022\'.org.jetbrains.kotlin.me" +
+      "tadata.Function\030e \001(\005B\004\230\265\030\001:|\n\022property_" +
+      "signature\022\'.org.jetbrains.kotlin.metadat" +
+      "a.Property\030d \001(\01327.org.jetbrains.kotlin." +
+      "metadata.jvm.JvmPropertySignature:9\n\005fla" +
+      "gs\022\'.org.jetbrains.kotlin.metadata.Prope" +
+      "rty\030e \001(\005:\0010:g\n\017type_annotation\022#.org.je" +
+      "tbrains.kotlin.metadata.Type\030d \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:3\n" +
+      "\006is_raw\022#.org.jetbrains.kotlin.metadata." +
+      "Type\030e \001(\010:z\n\031type_parameter_annotation\022" +
+      ",.org.jetbrains.kotlin.metadata.TypePara" +
+      "meter\030d \003(\0132).org.jetbrains.kotlin.metad" +
+      "ata.Annotation:E\n\021class_module_name\022$.or" +
+      "g.jetbrains.kotlin.metadata.Class\030e \001(\005B" +
+      "\004\230\265\030\001:k\n\024class_local_variable\022$.org.jetb" +
+      "rains.kotlin.metadata.Class\030f \003(\0132\'.org." +
+      "jetbrains.kotlin.metadata.Property:P\n\034an" +
+      "onymous_object_origin_name\022$.org.jetbrai" +
+      "ns.kotlin.metadata.Class\030g \001(\005B\004\230\265\030\001:@\n\017" +
+      "jvm_class_flags\022$.org.jetbrains.kotlin.m" +
+      "etadata.Class\030h \001(\005:\0010:I\n\023package_module" +
+      "_name\022&.org.jetbrains.kotlin.metadata.Pa" +
+      "ckage\030e \001(\005B\004\230\265\030\001:o\n\026package_local_varia" +
+      "ble\022&.org.jetbrains.kotlin.metadata.Pack" +
+      "age\030f \003(\0132\'.org.jetbrains.kotlin.metadat" +
+      "a.PropertyB\027B\020DebugJvmProtoBuf\222\003\002 \003b\010edi" +
+      "tionsp\350\007"
     };
     descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

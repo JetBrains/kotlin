@@ -34,7 +34,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> 
         getPackagePartsList();
@@ -43,7 +43,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getPackageParts(int index);
     /**
@@ -51,7 +51,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     int getPackagePartsCount();
     /**
@@ -59,7 +59,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
         getPackagePartsOrBuilderList();
@@ -68,7 +68,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
         int index);
@@ -78,7 +78,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> 
         getMetadataPartsList();
@@ -87,7 +87,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getMetadataParts(int index);
     /**
@@ -95,7 +95,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     int getMetadataPartsCount();
     /**
@@ -103,7 +103,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
         getMetadataPartsOrBuilderList();
@@ -112,7 +112,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
         int index);
@@ -123,7 +123,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @return A list containing the jvmPackageName.
      */
     java.util.List<java.lang.String>
@@ -134,7 +134,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @return The count of jvmPackageName.
      */
     int getJvmPackageNameCount();
@@ -144,7 +144,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @param index The index of the element to return.
      * @return The jvmPackageName at the given index.
      */
@@ -155,7 +155,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @param index The index of the value to return.
      * @return The bytes of the jvmPackageName at the given index.
      */
@@ -197,7 +197,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> 
         getAnnotationList();
@@ -206,7 +206,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index);
     /**
@@ -214,7 +214,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     int getAnnotationCount();
     /**
@@ -222,7 +222,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
         getAnnotationOrBuilderList();
@@ -231,7 +231,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
         int index);
@@ -244,7 +244,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Class> 
         getOptionalAnnotationClassList();
@@ -256,7 +256,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Class getOptionalAnnotationClass(int index);
     /**
@@ -267,7 +267,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     int getOptionalAnnotationClassCount();
     /**
@@ -278,7 +278,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder> 
         getOptionalAnnotationClassOrBuilderList();
@@ -290,7 +290,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
         int index);
@@ -347,7 +347,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> getPackagePartsList() {
@@ -358,7 +358,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
@@ -370,7 +370,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     @java.lang.Override
     public int getPackagePartsCount() {
@@ -381,7 +381,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getPackageParts(int index) {
@@ -392,7 +392,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .class files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
@@ -408,7 +408,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> getMetadataPartsList() {
@@ -419,7 +419,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
@@ -431,7 +431,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     @java.lang.Override
     public int getMetadataPartsCount() {
@@ -442,7 +442,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getMetadataParts(int index) {
@@ -453,7 +453,7 @@ public final class DebugJvmModuleProtoBuf {
      * Names of .kotlin_metadata files for each package
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
@@ -471,7 +471,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @return A list containing the jvmPackageName.
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -484,7 +484,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @return The count of jvmPackageName.
      */
     public int getJvmPackageNameCount() {
@@ -496,7 +496,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @param index The index of the element to return.
      * @return The jvmPackageName at the given index.
      */
@@ -509,7 +509,7 @@ public final class DebugJvmModuleProtoBuf {
      * The names here are dot-separated, e.g. "org.foo.bar"
      * </pre>
      *
-     * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+     * <code>repeated string jvm_package_name = 3;</code>
      * @param index The index of the value to return.
      * @return The bytes of the jvmPackageName at the given index.
      */
@@ -578,7 +578,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
@@ -589,7 +589,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
@@ -601,7 +601,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public int getAnnotationCount() {
@@ -612,7 +612,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
@@ -623,7 +623,7 @@ public final class DebugJvmModuleProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
@@ -642,7 +642,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Class> getOptionalAnnotationClassList() {
@@ -656,7 +656,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder> 
@@ -671,7 +671,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     @java.lang.Override
     public int getOptionalAnnotationClassCount() {
@@ -685,7 +685,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.Class getOptionalAnnotationClass(int index) {
@@ -699,7 +699,7 @@ public final class DebugJvmModuleProtoBuf {
      * it to the corresponding class with the resolution capabilities of common modules.
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
@@ -1451,7 +1451,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> getPackagePartsList() {
         if (packagePartsBuilder_ == null) {
@@ -1465,7 +1465,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public int getPackagePartsCount() {
         if (packagePartsBuilder_ == null) {
@@ -1479,7 +1479,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getPackageParts(int index) {
         if (packagePartsBuilder_ == null) {
@@ -1493,7 +1493,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
@@ -1514,7 +1514,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1532,7 +1532,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addPackageParts(org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
         if (packagePartsBuilder_ == null) {
@@ -1552,7 +1552,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
@@ -1573,7 +1573,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addPackageParts(
           org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1591,7 +1591,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1609,7 +1609,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addAllPackageParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> values) {
@@ -1628,7 +1628,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder clearPackageParts() {
         if (packagePartsBuilder_ == null) {
@@ -1645,7 +1645,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder removePackageParts(int index) {
         if (packagePartsBuilder_ == null) {
@@ -1662,7 +1662,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder getPackagePartsBuilder(
           int index) {
@@ -1673,7 +1673,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
           int index) {
@@ -1687,7 +1687,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
            getPackagePartsOrBuilderList() {
@@ -1702,7 +1702,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder addPackagePartsBuilder() {
         return getPackagePartsFieldBuilder().addBuilder(
@@ -1713,7 +1713,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder addPackagePartsBuilder(
           int index) {
@@ -1725,7 +1725,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .class files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder> 
            getPackagePartsBuilderList() {
@@ -1763,7 +1763,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> getMetadataPartsList() {
         if (metadataPartsBuilder_ == null) {
@@ -1777,7 +1777,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public int getMetadataPartsCount() {
         if (metadataPartsBuilder_ == null) {
@@ -1791,7 +1791,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts getMetadataParts(int index) {
         if (metadataPartsBuilder_ == null) {
@@ -1805,7 +1805,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder setMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
@@ -1826,7 +1826,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder setMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1844,7 +1844,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addMetadataParts(org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
         if (metadataPartsBuilder_ == null) {
@@ -1864,7 +1864,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts value) {
@@ -1885,7 +1885,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addMetadataParts(
           org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1903,7 +1903,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder builderForValue) {
@@ -1921,7 +1921,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addAllMetadataParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts> values) {
@@ -1940,7 +1940,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder clearMetadataParts() {
         if (metadataPartsBuilder_ == null) {
@@ -1957,7 +1957,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder removeMetadataParts(int index) {
         if (metadataPartsBuilder_ == null) {
@@ -1974,7 +1974,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder getMetadataPartsBuilder(
           int index) {
@@ -1985,7 +1985,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
           int index) {
@@ -1999,7 +1999,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackagePartsOrBuilder> 
            getMetadataPartsOrBuilderList() {
@@ -2014,7 +2014,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder addMetadataPartsBuilder() {
         return getMetadataPartsFieldBuilder().addBuilder(
@@ -2025,7 +2025,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder addMetadataPartsBuilder(
           int index) {
@@ -2037,7 +2037,7 @@ public final class DebugJvmModuleProtoBuf {
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.DebugJvmModuleProtoBuf.PackageParts.Builder> 
            getMetadataPartsBuilderList() {
@@ -2072,7 +2072,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @return A list containing the jvmPackageName.
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -2086,7 +2086,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @return The count of jvmPackageName.
        */
       public int getJvmPackageNameCount() {
@@ -2098,7 +2098,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param index The index of the element to return.
        * @return The jvmPackageName at the given index.
        */
@@ -2111,7 +2111,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param index The index of the value to return.
        * @return The bytes of the jvmPackageName at the given index.
        */
@@ -2125,7 +2125,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param index The index to set the value at.
        * @param value The jvmPackageName to set.
        * @return This builder for chaining.
@@ -2145,7 +2145,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param value The jvmPackageName to add.
        * @return This builder for chaining.
        */
@@ -2164,7 +2164,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param values The jvmPackageName to add.
        * @return This builder for chaining.
        */
@@ -2183,7 +2183,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearJvmPackageName() {
@@ -2199,7 +2199,7 @@ public final class DebugJvmModuleProtoBuf {
        * The names here are dot-separated, e.g. "org.foo.bar"
        * </pre>
        *
-       * <code>repeated string jvm_package_name = 3 [features = { ... }</code>
+       * <code>repeated string jvm_package_name = 3;</code>
        * @param value The bytes of the jvmPackageName to add.
        * @return This builder for chaining.
        */
@@ -2472,7 +2472,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
         if (annotationBuilder_ == null) {
@@ -2486,7 +2486,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public int getAnnotationCount() {
         if (annotationBuilder_ == null) {
@@ -2500,7 +2500,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -2514,7 +2514,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -2535,7 +2535,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2553,7 +2553,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
         if (annotationBuilder_ == null) {
@@ -2573,7 +2573,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -2594,7 +2594,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2612,7 +2612,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2630,7 +2630,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAllAnnotation(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> values) {
@@ -2649,7 +2649,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder clearAnnotation() {
         if (annotationBuilder_ == null) {
@@ -2666,7 +2666,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder removeAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -2683,7 +2683,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder getAnnotationBuilder(
           int index) {
@@ -2694,7 +2694,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
           int index) {
@@ -2708,7 +2708,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
            getAnnotationOrBuilderList() {
@@ -2723,7 +2723,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder() {
         return getAnnotationFieldBuilder().addBuilder(
@@ -2734,7 +2734,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder(
           int index) {
@@ -2746,7 +2746,7 @@ public final class DebugJvmModuleProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder> 
            getAnnotationBuilderList() {
@@ -2787,7 +2787,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Class> getOptionalAnnotationClassList() {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -2804,7 +2804,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public int getOptionalAnnotationClassCount() {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -2821,7 +2821,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Class getOptionalAnnotationClass(int index) {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -2838,7 +2838,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder setOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Class value) {
@@ -2862,7 +2862,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder setOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder builderForValue) {
@@ -2883,7 +2883,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addOptionalAnnotationClass(org.jetbrains.kotlin.metadata.DebugProtoBuf.Class value) {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -2906,7 +2906,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Class value) {
@@ -2930,7 +2930,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addOptionalAnnotationClass(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder builderForValue) {
@@ -2951,7 +2951,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder builderForValue) {
@@ -2972,7 +2972,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addAllOptionalAnnotationClass(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.Class> values) {
@@ -2994,7 +2994,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder clearOptionalAnnotationClass() {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -3014,7 +3014,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder removeOptionalAnnotationClass(int index) {
         if (optionalAnnotationClassBuilder_ == null) {
@@ -3034,7 +3034,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder getOptionalAnnotationClassBuilder(
           int index) {
@@ -3048,7 +3048,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
           int index) {
@@ -3065,7 +3065,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.ClassOrBuilder> 
            getOptionalAnnotationClassOrBuilderList() {
@@ -3083,7 +3083,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder addOptionalAnnotationClassBuilder() {
         return getOptionalAnnotationClassFieldBuilder().addBuilder(
@@ -3097,7 +3097,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder addOptionalAnnotationClassBuilder(
           int index) {
@@ -3112,7 +3112,7 @@ public final class DebugJvmModuleProtoBuf {
        * it to the corresponding class with the resolution capabilities of common modules.
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Class.Builder> 
            getOptionalAnnotationClassBuilderList() {
@@ -3225,7 +3225,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @return A list containing the shortClassName.
      */
     java.util.List<java.lang.String>
@@ -3238,7 +3238,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @return The count of shortClassName.
      */
     int getShortClassNameCount();
@@ -3250,7 +3250,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @param index The index of the element to return.
      * @return The shortClassName at the given index.
      */
@@ -3263,7 +3263,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @param index The index of the value to return.
      * @return The bytes of the shortClassName at the given index.
      */
@@ -3277,7 +3277,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @return A list containing the multifileFacadeShortNameId.
      */
     java.util.List<java.lang.Integer> getMultifileFacadeShortNameIdList();
@@ -3288,7 +3288,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @return The count of multifileFacadeShortNameId.
      */
     int getMultifileFacadeShortNameIdCount();
@@ -3299,7 +3299,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @param index The index of the element to return.
      * @return The multifileFacadeShortNameId at the given index.
      */
@@ -3314,7 +3314,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return A list containing the multifileFacadeShortName.
      */
     java.util.List<java.lang.String>
@@ -3328,7 +3328,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return The count of multifileFacadeShortName.
      */
     int getMultifileFacadeShortNameCount();
@@ -3341,7 +3341,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @param index The index of the element to return.
      * @return The multifileFacadeShortName at the given index.
      */
@@ -3355,7 +3355,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @param index The index of the value to return.
      * @return The bytes of the multifileFacadeShortName at the given index.
      */
@@ -3368,7 +3368,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return A list containing the classWithJvmPackageNameShortName.
      */
     java.util.List<java.lang.String>
@@ -3379,7 +3379,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return The count of classWithJvmPackageNameShortName.
      */
     int getClassWithJvmPackageNameShortNameCount();
@@ -3389,7 +3389,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameShortName at the given index.
      */
@@ -3400,7 +3400,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @param index The index of the value to return.
      * @return The bytes of the classWithJvmPackageNameShortName at the given index.
      */
@@ -3417,7 +3417,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @return A list containing the classWithJvmPackageNameMultifileFacadeShortNameId.
      */
     java.util.List<java.lang.Integer> getClassWithJvmPackageNameMultifileFacadeShortNameIdList();
@@ -3431,7 +3431,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @return The count of classWithJvmPackageNameMultifileFacadeShortNameId.
      */
     int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount();
@@ -3445,7 +3445,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameMultifileFacadeShortNameId at the given index.
      */
@@ -3461,7 +3461,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @return A list containing the classWithJvmPackageNamePackageId.
      */
     java.util.List<java.lang.Integer> getClassWithJvmPackageNamePackageIdList();
@@ -3475,7 +3475,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @return The count of classWithJvmPackageNamePackageId.
      */
     int getClassWithJvmPackageNamePackageIdCount();
@@ -3489,7 +3489,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNamePackageId at the given index.
      */
@@ -3616,7 +3616,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @return A list containing the shortClassName.
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -3631,7 +3631,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @return The count of shortClassName.
      */
     public int getShortClassNameCount() {
@@ -3645,7 +3645,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @param index The index of the element to return.
      * @return The shortClassName at the given index.
      */
@@ -3660,7 +3660,7 @@ public final class DebugJvmModuleProtoBuf {
      * class_with_jvm_package_name_short_name.
      * </pre>
      *
-     * <code>repeated string short_class_name = 2 [features = { ... }</code>
+     * <code>repeated string short_class_name = 2;</code>
      * @param index The index of the value to return.
      * @return The bytes of the shortClassName at the given index.
      */
@@ -3680,7 +3680,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @return A list containing the multifileFacadeShortNameId.
      */
     @java.lang.Override
@@ -3695,7 +3695,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @return The count of multifileFacadeShortNameId.
      */
     public int getMultifileFacadeShortNameIdCount() {
@@ -3708,7 +3708,7 @@ public final class DebugJvmModuleProtoBuf {
      * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
      * </pre>
      *
-     * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @param index The index of the element to return.
      * @return The multifileFacadeShortNameId at the given index.
      */
@@ -3730,7 +3730,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return A list containing the multifileFacadeShortName.
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -3746,7 +3746,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return The count of multifileFacadeShortName.
      */
     public int getMultifileFacadeShortNameCount() {
@@ -3761,7 +3761,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @param index The index of the element to return.
      * @return The multifileFacadeShortName at the given index.
      */
@@ -3777,7 +3777,7 @@ public final class DebugJvmModuleProtoBuf {
      * otherwise behavior is unspecified.
      * </pre>
      *
-     * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+     * <code>repeated string multifile_facade_short_name = 4;</code>
      * @param index The index of the value to return.
      * @return The bytes of the multifileFacadeShortName at the given index.
      */
@@ -3796,7 +3796,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return A list containing the classWithJvmPackageNameShortName.
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -3809,7 +3809,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return The count of classWithJvmPackageNameShortName.
      */
     public int getClassWithJvmPackageNameShortNameCount() {
@@ -3821,7 +3821,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameShortName at the given index.
      */
@@ -3834,7 +3834,7 @@ public final class DebugJvmModuleProtoBuf {
      * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @param index The index of the value to return.
      * @return The bytes of the classWithJvmPackageNameShortName at the given index.
      */
@@ -3857,7 +3857,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @return A list containing the classWithJvmPackageNameMultifileFacadeShortNameId.
      */
     @java.lang.Override
@@ -3875,7 +3875,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @return The count of classWithJvmPackageNameMultifileFacadeShortNameId.
      */
     public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
@@ -3891,7 +3891,7 @@ public final class DebugJvmModuleProtoBuf {
      * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameMultifileFacadeShortNameId at the given index.
      */
@@ -3914,7 +3914,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @return A list containing the classWithJvmPackageNamePackageId.
      */
     @java.lang.Override
@@ -3932,7 +3932,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @return The count of classWithJvmPackageNamePackageId.
      */
     public int getClassWithJvmPackageNamePackageIdCount() {
@@ -3948,7 +3948,7 @@ public final class DebugJvmModuleProtoBuf {
      * when a bunch of files from the same Kotlin package have the same JVM package name.
      * </pre>
      *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNamePackageId at the given index.
      */
@@ -4681,7 +4681,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @return A list containing the shortClassName.
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -4697,7 +4697,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @return The count of shortClassName.
        */
       public int getShortClassNameCount() {
@@ -4711,7 +4711,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param index The index of the element to return.
        * @return The shortClassName at the given index.
        */
@@ -4726,7 +4726,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param index The index of the value to return.
        * @return The bytes of the shortClassName at the given index.
        */
@@ -4742,7 +4742,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param index The index to set the value at.
        * @param value The shortClassName to set.
        * @return This builder for chaining.
@@ -4764,7 +4764,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param value The shortClassName to add.
        * @return This builder for chaining.
        */
@@ -4785,7 +4785,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param values The shortClassName to add.
        * @return This builder for chaining.
        */
@@ -4806,7 +4806,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearShortClassName() {
@@ -4824,7 +4824,7 @@ public final class DebugJvmModuleProtoBuf {
        * class_with_jvm_package_name_short_name.
        * </pre>
        *
-       * <code>repeated string short_class_name = 2 [features = { ... }</code>
+       * <code>repeated string short_class_name = 2;</code>
        * @param value The bytes of the shortClassName to add.
        * @return This builder for chaining.
        */
@@ -4852,7 +4852,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @return A list containing the multifileFacadeShortNameId.
        */
       public java.util.List<java.lang.Integer>
@@ -4867,7 +4867,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @return The count of multifileFacadeShortNameId.
        */
       public int getMultifileFacadeShortNameIdCount() {
@@ -4880,7 +4880,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @param index The index of the element to return.
        * @return The multifileFacadeShortNameId at the given index.
        */
@@ -4894,7 +4894,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @param index The index to set the value at.
        * @param value The multifileFacadeShortNameId to set.
        * @return This builder for chaining.
@@ -4915,7 +4915,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @param value The multifileFacadeShortNameId to add.
        * @return This builder for chaining.
        */
@@ -4934,7 +4934,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @param values The multifileFacadeShortNameId to add.
        * @return This builder for chaining.
        */
@@ -4954,7 +4954,7 @@ public final class DebugJvmModuleProtoBuf {
        * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
        * </pre>
        *
-       * <code>repeated int32 multifile_facade_short_name_id = 3 [features = { ... }</code>
+       * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearMultifileFacadeShortNameId() {
@@ -4981,7 +4981,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @return A list containing the multifileFacadeShortName.
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -4998,7 +4998,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @return The count of multifileFacadeShortName.
        */
       public int getMultifileFacadeShortNameCount() {
@@ -5013,7 +5013,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param index The index of the element to return.
        * @return The multifileFacadeShortName at the given index.
        */
@@ -5029,7 +5029,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param index The index of the value to return.
        * @return The bytes of the multifileFacadeShortName at the given index.
        */
@@ -5046,7 +5046,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param index The index to set the value at.
        * @param value The multifileFacadeShortName to set.
        * @return This builder for chaining.
@@ -5069,7 +5069,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param value The multifileFacadeShortName to add.
        * @return This builder for chaining.
        */
@@ -5091,7 +5091,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param values The multifileFacadeShortName to add.
        * @return This builder for chaining.
        */
@@ -5113,7 +5113,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearMultifileFacadeShortName() {
@@ -5132,7 +5132,7 @@ public final class DebugJvmModuleProtoBuf {
        * otherwise behavior is unspecified.
        * </pre>
        *
-       * <code>repeated string multifile_facade_short_name = 4 [features = { ... }</code>
+       * <code>repeated string multifile_facade_short_name = 4;</code>
        * @param value The bytes of the multifileFacadeShortName to add.
        * @return This builder for chaining.
        */
@@ -5160,7 +5160,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @return A list containing the classWithJvmPackageNameShortName.
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -5174,7 +5174,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @return The count of classWithJvmPackageNameShortName.
        */
       public int getClassWithJvmPackageNameShortNameCount() {
@@ -5186,7 +5186,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNameShortName at the given index.
        */
@@ -5199,7 +5199,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param index The index of the value to return.
        * @return The bytes of the classWithJvmPackageNameShortName at the given index.
        */
@@ -5213,7 +5213,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param index The index to set the value at.
        * @param value The classWithJvmPackageNameShortName to set.
        * @return This builder for chaining.
@@ -5233,7 +5233,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param value The classWithJvmPackageNameShortName to add.
        * @return This builder for chaining.
        */
@@ -5252,7 +5252,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param values The classWithJvmPackageNameShortName to add.
        * @return This builder for chaining.
        */
@@ -5271,7 +5271,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNameShortName() {
@@ -5287,7 +5287,7 @@ public final class DebugJvmModuleProtoBuf {
        * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        *
-       * <code>repeated string class_with_jvm_package_name_short_name = 5 [features = { ... }</code>
+       * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @param value The bytes of the classWithJvmPackageNameShortName to add.
        * @return This builder for chaining.
        */
@@ -5318,7 +5318,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @return A list containing the classWithJvmPackageNameMultifileFacadeShortNameId.
        */
       public java.util.List<java.lang.Integer>
@@ -5336,7 +5336,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @return The count of classWithJvmPackageNameMultifileFacadeShortNameId.
        */
       public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
@@ -5352,7 +5352,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNameMultifileFacadeShortNameId at the given index.
        */
@@ -5369,7 +5369,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @param index The index to set the value at.
        * @param value The classWithJvmPackageNameMultifileFacadeShortNameId to set.
        * @return This builder for chaining.
@@ -5393,7 +5393,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @param value The classWithJvmPackageNameMultifileFacadeShortNameId to add.
        * @return This builder for chaining.
        */
@@ -5415,7 +5415,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @param values The classWithJvmPackageNameMultifileFacadeShortNameId to add.
        * @return This builder for chaining.
        */
@@ -5438,7 +5438,7 @@ public final class DebugJvmModuleProtoBuf {
        * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNameMultifileFacadeShortNameId() {
@@ -5465,7 +5465,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @return A list containing the classWithJvmPackageNamePackageId.
        */
       public java.util.List<java.lang.Integer>
@@ -5483,7 +5483,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @return The count of classWithJvmPackageNamePackageId.
        */
       public int getClassWithJvmPackageNamePackageIdCount() {
@@ -5499,7 +5499,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNamePackageId at the given index.
        */
@@ -5516,7 +5516,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @param index The index to set the value at.
        * @param value The classWithJvmPackageNamePackageId to set.
        * @return This builder for chaining.
@@ -5540,7 +5540,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @param value The classWithJvmPackageNamePackageId to add.
        * @return This builder for chaining.
        */
@@ -5562,7 +5562,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @param values The classWithJvmPackageNamePackageId to add.
        * @return This builder for chaining.
        */
@@ -5585,7 +5585,7 @@ public final class DebugJvmModuleProtoBuf {
        * when a bunch of files from the same Kotlin package have the same JVM package name.
        * </pre>
        *
-       * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [features = { ... }</code>
+       * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNamePackageId() {
@@ -5668,29 +5668,27 @@ public final class DebugJvmModuleProtoBuf {
       "\n,core/metadata.jvm/src/jvm_module.debug" +
       ".proto\022!org.jetbrains.kotlin.metadata.jv" +
       "m\032&core/metadata/src/metadata.debug.prot" +
-      "o\"\361\003\n\006Module\022M\n\rpackage_parts\030\001 \003(\0132/.or" +
+      "o\"\316\003\n\006Module\022F\n\rpackage_parts\030\001 \003(\0132/.or" +
       "g.jetbrains.kotlin.metadata.jvm.PackageP" +
-      "artsB\005\252\001\002\030\002\022N\n\016metadata_parts\030\002 \003(\0132/.or" +
-      "g.jetbrains.kotlin.metadata.jvm.PackageP" +
-      "artsB\005\252\001\002\030\002\022\037\n\020jvm_package_name\030\003 \003(\tB\005\252" +
-      "\001\002\030\002\022@\n\014string_table\030\004 \001(\0132*.org.jetbrai" +
-      "ns.kotlin.metadata.StringTable\022O\n\024qualif" +
-      "ied_name_table\030\005 \001(\01321.org.jetbrains.kot" +
-      "lin.metadata.QualifiedNameTable\022D\n\nannot" +
-      "ation\030\006 \003(\0132).org.jetbrains.kotlin.metad" +
-      "ata.AnnotationB\005\252\001\002\030\002\022N\n\031optional_annota" +
-      "tion_class\030\020 \003(\0132$.org.jetbrains.kotlin." +
-      "metadata.ClassB\005\252\001\002\030\002\"\343\002\n\014PackageParts\022\036" +
-      "\n\017package_fq_name\030\001 \001(\tB\005\252\001\002\010\003\022\037\n\020short_" +
-      "class_name\030\002 \003(\tB\005\252\001\002\030\002\022-\n\036multifile_fac" +
-      "ade_short_name_id\030\003 \003(\005B\005\252\001\002\030\001\022*\n\033multif" +
-      "ile_facade_short_name\030\004 \003(\tB\005\252\001\002\030\002\0225\n&cl" +
-      "ass_with_jvm_package_name_short_name\030\005 \003" +
-      "(\tB\005\252\001\002\030\002\022I\n:class_with_jvm_package_name" +
-      "_multifile_facade_short_name_id\030\007 \003(\005B\005\252" +
-      "\001\002\030\001\0225\n&class_with_jvm_package_name_pack" +
-      "age_id\030\006 \003(\005B\005\252\001\002\030\001B\035B\026DebugJvmModulePro" +
-      "toBuf\222\003\002 \003b\010editionsp\350\007"
+      "arts\022G\n\016metadata_parts\030\002 \003(\0132/.org.jetbr" +
+      "ains.kotlin.metadata.jvm.PackageParts\022\030\n" +
+      "\020jvm_package_name\030\003 \003(\t\022@\n\014string_table\030" +
+      "\004 \001(\0132*.org.jetbrains.kotlin.metadata.St" +
+      "ringTable\022O\n\024qualified_name_table\030\005 \001(\0132" +
+      "1.org.jetbrains.kotlin.metadata.Qualifie" +
+      "dNameTable\022=\n\nannotation\030\006 \003(\0132).org.jet" +
+      "brains.kotlin.metadata.Annotation\022G\n\031opt" +
+      "ional_annotation_class\030\020 \003(\0132$.org.jetbr" +
+      "ains.kotlin.metadata.Class\"\271\002\n\014PackagePa" +
+      "rts\022\036\n\017package_fq_name\030\001 \001(\tB\005\252\001\002\010\003\022\030\n\020s" +
+      "hort_class_name\030\002 \003(\t\022&\n\036multifile_facad" +
+      "e_short_name_id\030\003 \003(\005\022#\n\033multifile_facad" +
+      "e_short_name\030\004 \003(\t\022.\n&class_with_jvm_pac" +
+      "kage_name_short_name\030\005 \003(\t\022B\n:class_with" +
+      "_jvm_package_name_multifile_facade_short" +
+      "_name_id\030\007 \003(\005\022.\n&class_with_jvm_package" +
+      "_name_package_id\030\006 \003(\005B\035B\026DebugJvmModule" +
+      "ProtoBuf\222\003\002 \003b\010editionsp\350\007"
     };
     descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

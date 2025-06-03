@@ -137,7 +137,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> 
         getAnnotationList();
@@ -146,7 +146,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index);
     /**
@@ -154,7 +154,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     int getAnnotationCount();
     /**
@@ -162,7 +162,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
         getAnnotationOrBuilderList();
@@ -171,7 +171,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
         int index);
@@ -382,7 +382,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
@@ -393,7 +393,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
@@ -405,7 +405,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public int getAnnotationCount() {
@@ -416,7 +416,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
@@ -427,7 +427,7 @@ public final class DebugJsProtoBuf {
      * Annotations on the whole module
      * </pre>
      *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
@@ -1426,7 +1426,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
         if (annotationBuilder_ == null) {
@@ -1440,7 +1440,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public int getAnnotationCount() {
         if (annotationBuilder_ == null) {
@@ -1454,7 +1454,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -1468,7 +1468,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -1489,7 +1489,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -1507,7 +1507,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
         if (annotationBuilder_ == null) {
@@ -1527,7 +1527,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -1548,7 +1548,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -1566,7 +1566,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -1584,7 +1584,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAllAnnotation(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> values) {
@@ -1603,7 +1603,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder clearAnnotation() {
         if (annotationBuilder_ == null) {
@@ -1620,7 +1620,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder removeAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -1637,7 +1637,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder getAnnotationBuilder(
           int index) {
@@ -1648,7 +1648,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
           int index) {
@@ -1662,7 +1662,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
            getAnnotationOrBuilderList() {
@@ -1677,7 +1677,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder() {
         return getAnnotationFieldBuilder().addBuilder(
@@ -1688,7 +1688,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder(
           int index) {
@@ -1700,7 +1700,7 @@ public final class DebugJsProtoBuf {
        * Annotations on the whole module
        * </pre>
        *
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder> 
            getAnnotationBuilderList() {
@@ -1796,25 +1796,25 @@ public final class DebugJsProtoBuf {
     int getId();
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> 
         getAnnotationList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     int getAnnotationCount();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
         getAnnotationOrBuilderList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
         int index);
@@ -1889,14 +1889,14 @@ public final class DebugJsProtoBuf {
     @SuppressWarnings("serial")
     private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> annotation_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
       return annotation_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
@@ -1904,21 +1904,21 @@ public final class DebugJsProtoBuf {
       return annotation_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     @java.lang.Override
     public int getAnnotationCount() {
       return annotation_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
       return annotation_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
@@ -2379,7 +2379,7 @@ public final class DebugJsProtoBuf {
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> annotationBuilder_;
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> getAnnotationList() {
         if (annotationBuilder_ == null) {
@@ -2389,7 +2389,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public int getAnnotationCount() {
         if (annotationBuilder_ == null) {
@@ -2399,7 +2399,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation getAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -2409,7 +2409,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -2426,7 +2426,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2440,7 +2440,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder addAnnotation(org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
         if (annotationBuilder_ == null) {
@@ -2456,7 +2456,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation value) {
@@ -2473,7 +2473,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder addAnnotation(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2487,7 +2487,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder builderForValue) {
@@ -2501,7 +2501,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder addAllAnnotation(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation> values) {
@@ -2516,7 +2516,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder clearAnnotation() {
         if (annotationBuilder_ == null) {
@@ -2529,7 +2529,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public Builder removeAnnotation(int index) {
         if (annotationBuilder_ == null) {
@@ -2542,14 +2542,14 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder getAnnotationBuilder(
           int index) {
         return getAnnotationFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
           int index) {
@@ -2559,7 +2559,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.AnnotationOrBuilder> 
            getAnnotationOrBuilderList() {
@@ -2570,14 +2570,14 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder() {
         return getAnnotationFieldBuilder().addBuilder(
             org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder addAnnotationBuilder(
           int index) {
@@ -2585,7 +2585,7 @@ public final class DebugJsProtoBuf {
             index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.Builder> 
            getAnnotationBuilderList() {
@@ -2662,25 +2662,25 @@ public final class DebugJsProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File> 
         getFileList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File getFile(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     int getFileCount();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder> 
         getFileOrBuilderList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder getFileOrBuilder(
         int index);
@@ -2727,14 +2727,14 @@ public final class DebugJsProtoBuf {
     @SuppressWarnings("serial")
     private java.util.List<org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File> file_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File> getFileList() {
       return file_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder> 
@@ -2742,21 +2742,21 @@ public final class DebugJsProtoBuf {
       return file_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     @java.lang.Override
     public int getFileCount() {
       return file_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File getFile(int index) {
       return file_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder getFileOrBuilder(
@@ -3130,7 +3130,7 @@ public final class DebugJsProtoBuf {
           org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder> fileBuilder_;
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File> getFileList() {
         if (fileBuilder_ == null) {
@@ -3140,7 +3140,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public int getFileCount() {
         if (fileBuilder_ == null) {
@@ -3150,7 +3150,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File getFile(int index) {
         if (fileBuilder_ == null) {
@@ -3160,7 +3160,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder setFile(
           int index, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File value) {
@@ -3177,7 +3177,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder setFile(
           int index, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder builderForValue) {
@@ -3191,7 +3191,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder addFile(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File value) {
         if (fileBuilder_ == null) {
@@ -3207,7 +3207,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder addFile(
           int index, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File value) {
@@ -3224,7 +3224,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder addFile(
           org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder builderForValue) {
@@ -3238,7 +3238,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder addFile(
           int index, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder builderForValue) {
@@ -3252,7 +3252,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder addAllFile(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File> values) {
@@ -3267,7 +3267,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder clearFile() {
         if (fileBuilder_ == null) {
@@ -3280,7 +3280,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public Builder removeFile(int index) {
         if (fileBuilder_ == null) {
@@ -3293,14 +3293,14 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder getFileBuilder(
           int index) {
         return getFileFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder getFileOrBuilder(
           int index) {
@@ -3310,7 +3310,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.FileOrBuilder> 
            getFileOrBuilderList() {
@@ -3321,14 +3321,14 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder addFileBuilder() {
         return getFileFieldBuilder().addBuilder(
             org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder addFileBuilder(
           int index) {
@@ -3336,7 +3336,7 @@ public final class DebugJsProtoBuf {
             index, org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.js.File file = 1;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.File.Builder> 
            getFileBuilderList() {
@@ -3417,7 +3417,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @return A list containing the className.
      */
     java.util.List<java.lang.Integer> getClassNameList();
@@ -3426,7 +3426,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @return The count of className.
      */
     int getClassNameCount();
@@ -3435,7 +3435,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @param index The index of the element to return.
      * @return The className at the given index.
      */
@@ -3488,7 +3488,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @return A list containing the className.
      */
     @java.lang.Override
@@ -3501,7 +3501,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @return The count of className.
      */
     public int getClassNameCount() {
@@ -3512,7 +3512,7 @@ public final class DebugJsProtoBuf {
      * id in StringTable
      * </pre>
      *
-     * <code>repeated int32 class_name = 1 [features = { ... }</code>
+     * <code>repeated int32 class_name = 1;</code>
      * @param index The index of the element to return.
      * @return The className at the given index.
      */
@@ -3863,7 +3863,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @return A list containing the className.
        */
       public java.util.List<java.lang.Integer>
@@ -3876,7 +3876,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @return The count of className.
        */
       public int getClassNameCount() {
@@ -3887,7 +3887,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @param index The index of the element to return.
        * @return The className at the given index.
        */
@@ -3899,7 +3899,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @param index The index to set the value at.
        * @param value The className to set.
        * @return This builder for chaining.
@@ -3918,7 +3918,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @param value The className to add.
        * @return This builder for chaining.
        */
@@ -3935,7 +3935,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @param values The className to add.
        * @return This builder for chaining.
        */
@@ -3953,7 +3953,7 @@ public final class DebugJsProtoBuf {
        * id in StringTable
        * </pre>
        *
-       * <code>repeated int32 class_name = 1 [features = { ... }</code>
+       * <code>repeated int32 class_name = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearClassName() {
@@ -4030,48 +4030,48 @@ public final class DebugJsProtoBuf {
     org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.Library.Kind getKind();
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment> 
         getPackageFragmentList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment getPackageFragment(int index);
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     int getPackageFragmentCount();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder> 
         getPackageFragmentOrBuilderList();
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder getPackageFragmentOrBuilder(
         int index);
 
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @return A list containing the importedModule.
      */
     java.util.List<java.lang.String>
         getImportedModuleList();
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @return The count of importedModule.
      */
     int getImportedModuleCount();
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @param index The index of the element to return.
      * @return The importedModule at the given index.
      */
     java.lang.String getImportedModule(int index);
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @param index The index of the value to return.
      * @return The bytes of the importedModule at the given index.
      */
@@ -4265,14 +4265,14 @@ public final class DebugJsProtoBuf {
     @SuppressWarnings("serial")
     private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment> packageFragment_;
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment> getPackageFragmentList() {
       return packageFragment_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder> 
@@ -4280,21 +4280,21 @@ public final class DebugJsProtoBuf {
       return packageFragment_;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     @java.lang.Override
     public int getPackageFragmentCount() {
       return packageFragment_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment getPackageFragment(int index) {
       return packageFragment_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+     * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder getPackageFragmentOrBuilder(
@@ -4307,7 +4307,7 @@ public final class DebugJsProtoBuf {
     private org.jetbrains.kotlin.protobuf.LazyStringArrayList importedModule_ =
         org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @return A list containing the importedModule.
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -4315,14 +4315,14 @@ public final class DebugJsProtoBuf {
       return importedModule_;
     }
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @return The count of importedModule.
      */
     public int getImportedModuleCount() {
       return importedModule_.size();
     }
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @param index The index of the element to return.
      * @return The importedModule at the given index.
      */
@@ -4330,7 +4330,7 @@ public final class DebugJsProtoBuf {
       return importedModule_.get(index);
     }
     /**
-     * <code>repeated string imported_module = 3 [features = { ... }</code>
+     * <code>repeated string imported_module = 3;</code>
      * @param index The index of the value to return.
      * @return The bytes of the importedModule at the given index.
      */
@@ -4823,7 +4823,7 @@ public final class DebugJsProtoBuf {
           org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder> packageFragmentBuilder_;
 
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment> getPackageFragmentList() {
         if (packageFragmentBuilder_ == null) {
@@ -4833,7 +4833,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public int getPackageFragmentCount() {
         if (packageFragmentBuilder_ == null) {
@@ -4843,7 +4843,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment getPackageFragment(int index) {
         if (packageFragmentBuilder_ == null) {
@@ -4853,7 +4853,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder setPackageFragment(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment value) {
@@ -4870,7 +4870,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder setPackageFragment(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder builderForValue) {
@@ -4884,7 +4884,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder addPackageFragment(org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment value) {
         if (packageFragmentBuilder_ == null) {
@@ -4900,7 +4900,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder addPackageFragment(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment value) {
@@ -4917,7 +4917,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder addPackageFragment(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder builderForValue) {
@@ -4931,7 +4931,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder addPackageFragment(
           int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder builderForValue) {
@@ -4945,7 +4945,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder addAllPackageFragment(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment> values) {
@@ -4960,7 +4960,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder clearPackageFragment() {
         if (packageFragmentBuilder_ == null) {
@@ -4973,7 +4973,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public Builder removePackageFragment(int index) {
         if (packageFragmentBuilder_ == null) {
@@ -4986,14 +4986,14 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder getPackageFragmentBuilder(
           int index) {
         return getPackageFragmentFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder getPackageFragmentOrBuilder(
           int index) {
@@ -5003,7 +5003,7 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragmentOrBuilder> 
            getPackageFragmentOrBuilderList() {
@@ -5014,14 +5014,14 @@ public final class DebugJsProtoBuf {
         }
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder addPackageFragmentBuilder() {
         return getPackageFragmentFieldBuilder().addBuilder(
             org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder addPackageFragmentBuilder(
           int index) {
@@ -5029,7 +5029,7 @@ public final class DebugJsProtoBuf {
             index, org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.getDefaultInstance());
       }
       /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2 [features = { ... }</code>
+       * <code>repeated .org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;</code>
        */
       public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.PackageFragment.Builder> 
            getPackageFragmentBuilderList() {
@@ -5059,7 +5059,7 @@ public final class DebugJsProtoBuf {
         bitField0_ |= 0x00000004;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @return A list containing the importedModule.
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -5068,14 +5068,14 @@ public final class DebugJsProtoBuf {
         return importedModule_;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @return The count of importedModule.
        */
       public int getImportedModuleCount() {
         return importedModule_.size();
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param index The index of the element to return.
        * @return The importedModule at the given index.
        */
@@ -5083,7 +5083,7 @@ public final class DebugJsProtoBuf {
         return importedModule_.get(index);
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param index The index of the value to return.
        * @return The bytes of the importedModule at the given index.
        */
@@ -5092,7 +5092,7 @@ public final class DebugJsProtoBuf {
         return importedModule_.getByteString(index);
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param index The index to set the value at.
        * @param value The importedModule to set.
        * @return This builder for chaining.
@@ -5107,7 +5107,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param value The importedModule to add.
        * @return This builder for chaining.
        */
@@ -5121,7 +5121,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param values The importedModule to add.
        * @return This builder for chaining.
        */
@@ -5135,7 +5135,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearImportedModule() {
@@ -5146,7 +5146,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>repeated string imported_module = 3 [features = { ... }</code>
+       * <code>repeated string imported_module = 3;</code>
        * @param value The bytes of the importedModule to add.
        * @return This builder for chaining.
        */
@@ -5423,71 +5423,68 @@ public final class DebugJsProtoBuf {
     java.lang.String[] descriptorData = {
       "\n\037js/js.config/src/js.debug.proto\022 org.j" +
       "etbrains.kotlin.metadata.js\032&core/metada" +
-      "ta/src/metadata.debug.proto\"\242\002\n\006Header\022\r" +
+      "ta/src/metadata.debug.proto\"\233\002\n\006Header\022\r" +
       "\n\005flags\030\001 \001(\005\022!\n\026js_code_binary_version\030" +
       "\002 \001(\005:\0011\022\027\n\017package_fq_name\030\003 \001(\t\022;\n\007str" +
       "ings\030\004 \001(\0132*.org.jetbrains.kotlin.metada" +
       "ta.StringTable\022J\n\017qualified_names\030\005 \001(\0132" +
       "1.org.jetbrains.kotlin.metadata.Qualifie" +
-      "dNameTable\022D\n\nannotation\030\006 \003(\0132).org.jet" +
-      "brains.kotlin.metadata.AnnotationB\005\252\001\002\030\002" +
-      "\"X\n\004File\022\n\n\002id\030\001 \001(\005\022D\n\nannotation\030\002 \003(\013" +
+      "dNameTable\022=\n\nannotation\030\006 \003(\0132).org.jet" +
+      "brains.kotlin.metadata.Annotation\"Q\n\004Fil" +
+      "e\022\n\n\002id\030\001 \001(\005\022=\n\nannotation\030\002 \003(\0132).org." +
+      "jetbrains.kotlin.metadata.Annotation\"=\n\005" +
+      "Files\0224\n\004file\030\001 \003(\0132&.org.jetbrains.kotl" +
+      "in.metadata.js.File\"\035\n\007Classes\022\022\n\nclass_" +
+      "name\030\001 \003(\005\"\353\001\n\007Library\022C\n\004kind\030\001 \001(\0162..o" +
+      "rg.jetbrains.kotlin.metadata.js.Library." +
+      "Kind:\005PLAIN\022H\n\020package_fragment\030\002 \003(\0132.." +
+      "org.jetbrains.kotlin.metadata.PackageFra" +
+      "gment\022\027\n\017imported_module\030\003 \003(\t\"8\n\004Kind\022\t" +
+      "\n\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020\003\022\007\n\003UMD" +
+      "\020\004\032\004:\002\020\002:@\n\017package_fq_name\022&.org.jetbra" +
+      "ins.kotlin.metadata.Package\030\203\001 \001(\005:j\n\020cl" +
+      "ass_annotation\022$.org.jetbrains.kotlin.me" +
+      "tadata.Class\030\202\001 \003(\0132).org.jetbrains.kotl" +
+      "in.metadata.Annotation:G\n\030class_containi" +
+      "ng_file_id\022$.org.jetbrains.kotlin.metada" +
+      "ta.Class\030\207\001 \001(\005:v\n\026constructor_annotatio" +
+      "n\022*.org.jetbrains.kotlin.metadata.Constr" +
+      "uctor\030\202\001 \003(\0132).org.jetbrains.kotlin.meta" +
+      "data.Annotation:p\n\023function_annotation\022\'" +
+      ".org.jetbrains.kotlin.metadata.Function\030" +
+      "\202\001 \003(\0132).org.jetbrains.kotlin.metadata.A" +
+      "nnotation:M\n\033function_containing_file_id" +
+      "\022\'.org.jetbrains.kotlin.metadata.Functio" +
+      "n\030\207\001 \001(\005:p\n\023property_annotation\022\'.org.je" +
+      "tbrains.kotlin.metadata.Property\030\202\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on:w\n\032property_getter_annotation\022\'.org.j" +
+      "etbrains.kotlin.metadata.Property\030\204\001 \003(\013" +
       "2).org.jetbrains.kotlin.metadata.Annotat" +
-      "ionB\005\252\001\002\030\002\"D\n\005Files\022;\n\004file\030\001 \003(\0132&.org." +
-      "jetbrains.kotlin.metadata.js.FileB\005\252\001\002\030\002" +
-      "\"$\n\007Classes\022\031\n\nclass_name\030\001 \003(\005B\005\252\001\002\030\001\"\371" +
-      "\001\n\007Library\022C\n\004kind\030\001 \001(\0162..org.jetbrains" +
-      ".kotlin.metadata.js.Library.Kind:\005PLAIN\022" +
-      "O\n\020package_fragment\030\002 \003(\0132..org.jetbrain" +
-      "s.kotlin.metadata.PackageFragmentB\005\252\001\002\030\002" +
-      "\022\036\n\017imported_module\030\003 \003(\tB\005\252\001\002\030\002\"8\n\004Kind" +
-      "\022\t\n\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020\003\022\007\n\003U" +
-      "MD\020\004\032\004:\002\020\002:@\n\017package_fq_name\022&.org.jetb" +
-      "rains.kotlin.metadata.Package\030\203\001 \001(\005:q\n\020" +
-      "class_annotation\022$.org.jetbrains.kotlin." +
-      "metadata.Class\030\202\001 \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.AnnotationB\005\252\001\002\030\002:G\n\030class" +
-      "_containing_file_id\022$.org.jetbrains.kotl" +
-      "in.metadata.Class\030\207\001 \001(\005:}\n\026constructor_" +
-      "annotation\022*.org.jetbrains.kotlin.metada" +
-      "ta.Constructor\030\202\001 \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.AnnotationB\005\252\001\002\030\002:w\n\023funct" +
-      "ion_annotation\022\'.org.jetbrains.kotlin.me" +
-      "tadata.Function\030\202\001 \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.AnnotationB\005\252\001\002\030\002:M\n\033func" +
-      "tion_containing_file_id\022\'.org.jetbrains." +
-      "kotlin.metadata.Function\030\207\001 \001(\005:w\n\023prope" +
-      "rty_annotation\022\'.org.jetbrains.kotlin.me" +
-      "tadata.Property\030\202\001 \003(\0132).org.jetbrains.k" +
-      "otlin.metadata.AnnotationB\005\252\001\002\030\002:~\n\032prop" +
-      "erty_getter_annotation\022\'.org.jetbrains.k" +
-      "otlin.metadata.Property\030\204\001 \003(\0132).org.jet" +
-      "brains.kotlin.metadata.AnnotationB\005\252\001\002\030\002" +
-      ":~\n\032property_setter_annotation\022\'.org.jet" +
-      "brains.kotlin.metadata.Property\030\205\001 \003(\0132)" +
-      ".org.jetbrains.kotlin.metadata.Annotatio" +
-      "nB\005\252\001\002\030\002:~\n\022compile_time_value\022\'.org.jet" +
-      "brains.kotlin.metadata.Property\030\203\001 \001(\01328" +
-      ".org.jetbrains.kotlin.metadata.Annotatio" +
-      "n.Argument.Value:M\n\033property_containing_" +
-      "file_id\022\'.org.jetbrains.kotlin.metadata." +
-      "Property\030\207\001 \001(\005:z\n\025enum_entry_annotation" +
-      "\022(.org.jetbrains.kotlin.metadata.EnumEnt" +
-      "ry\030\202\001 \003(\0132).org.jetbrains.kotlin.metadat" +
-      "a.AnnotationB\005\252\001\002\030\002:~\n\024parameter_annotat" +
-      "ion\022-.org.jetbrains.kotlin.metadata.Valu" +
-      "eParameter\030\202\001 \003(\0132).org.jetbrains.kotlin" +
-      ".metadata.AnnotationB\005\252\001\002\030\002:o\n\017type_anno" +
-      "tation\022#.org.jetbrains.kotlin.metadata.T" +
-      "ype\030\202\001 \003(\0132).org.jetbrains.kotlin.metada" +
-      "ta.AnnotationB\005\252\001\002\030\002:\202\001\n\031type_parameter_" +
-      "annotation\022,.org.jetbrains.kotlin.metada" +
-      "ta.TypeParameter\030\202\001 \003(\0132).org.jetbrains." +
-      "kotlin.metadata.AnnotationB\005\252\001\002\030\002:x\n\026pac" +
-      "kage_fragment_files\022..org.jetbrains.kotl" +
-      "in.metadata.PackageFragment\030\202\001 \001(\0132\'.org" +
-      ".jetbrains.kotlin.metadata.js.FilesB\026B\017D" +
-      "ebugJsProtoBuf\222\003\002 \003b\010editionsp\350\007"
+      "ion:w\n\032property_setter_annotation\022\'.org." +
+      "jetbrains.kotlin.metadata.Property\030\205\001 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion:~\n\022compile_time_value\022\'.org.jetbrai" +
+      "ns.kotlin.metadata.Property\030\203\001 \001(\01328.org" +
+      ".jetbrains.kotlin.metadata.Annotation.Ar" +
+      "gument.Value:M\n\033property_containing_file" +
+      "_id\022\'.org.jetbrains.kotlin.metadata.Prop" +
+      "erty\030\207\001 \001(\005:s\n\025enum_entry_annotation\022(.o" +
+      "rg.jetbrains.kotlin.metadata.EnumEntry\030\202" +
+      "\001 \003(\0132).org.jetbrains.kotlin.metadata.An" +
+      "notation:w\n\024parameter_annotation\022-.org.j" +
+      "etbrains.kotlin.metadata.ValueParameter\030" +
+      "\202\001 \003(\0132).org.jetbrains.kotlin.metadata.A" +
+      "nnotation:h\n\017type_annotation\022#.org.jetbr" +
+      "ains.kotlin.metadata.Type\030\202\001 \003(\0132).org.j" +
+      "etbrains.kotlin.metadata.Annotation:{\n\031t" +
+      "ype_parameter_annotation\022,.org.jetbrains" +
+      ".kotlin.metadata.TypeParameter\030\202\001 \003(\0132)." +
+      "org.jetbrains.kotlin.metadata.Annotation" +
+      ":x\n\026package_fragment_files\022..org.jetbrai" +
+      "ns.kotlin.metadata.PackageFragment\030\202\001 \001(" +
+      "\0132\'.org.jetbrains.kotlin.metadata.js.Fil" +
+      "esB\026B\017DebugJsProtoBuf\222\003\002 \003b\010editionsp\350\007"
     };
     descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
