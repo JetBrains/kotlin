@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
@@ -312,6 +313,31 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         return result
     }
 
+    @OptIn(UnresolvedExpressionTypeAccess::class)
+    fun approveTypeStatement(flow: Flow, statement: TypeStatement): Boolean {
+        val variable = statement.variable
+        val typeFromVar =
+            if (variable is SyntheticVariable) variable.fir.coneTypeOrNull
+            else variable.originalType
+        val known = flow.getTypeStatement(variable)
+        val approvedStatements = when {
+            known != null && typeFromVar != null -> mapOf(variable to known.toMutable().also { it.upperTypes += typeFromVar })
+            known != null && typeFromVar == null -> mapOf(variable to known)
+            known == null && typeFromVar != null -> mapOf(variable to MutableTypeStatement(variable, mutableSetOf(typeFromVar)))
+            else -> return false
+        }
+
+        val approvedUpper = approvedStatements.values.getUnifiedUpperType()
+        val approvedLower = approvedStatements.values.getIntersectedLowerType()
+
+        val statementUpper = listOf(statement).getUnifiedUpperType()
+        val statementLower = listOf(statement).getIntersectedLowerType()
+
+        return (approvedUpper == null || statementUpper == null || AbstractTypeChecker.isSubtypeOf(context, approvedUpper, statementUpper))
+            && (approvedLower == null || statementUpper == null || !AbstractTypeChecker.isSubtypeOf(context, statementUpper, approvedLower))
+            && (statementLower == null || approvedUpper == null || !AbstractTypeChecker.isSubtypeOf(context, approvedUpper, statementLower))
+    }
+
     // ------------------------------- Public TypeStatement util functions -------------------------------
 
     fun orForTypeStatements(left: TypeStatements, right: TypeStatements): TypeStatements = when {
@@ -364,10 +390,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val variable = statements.first().variable
         assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
         if (statements.any { it.isEmpty }) return null
-        val intersectedUpperTypes = statements.map { statement ->
-            statement.upperTypesOrNull?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
-        }
-        val unifiedUpperType = context.commonSuperTypeOrNull(intersectedUpperTypes)
+        val unifiedUpperType = statements.getUnifiedUpperType()
         val newUpperTypes = when {
             unifiedUpperType == null -> persistentSetOf()
             unifiedUpperType.isNullableAny -> persistentSetOf()
@@ -375,27 +398,35 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             unifiedUpperType.canBeNull(context.session) -> persistentSetOf()
             else -> persistentSetOf(context.anyType())
         }
-        val intersectedLowerType = statements
-            .flatMap { statement ->
-                statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
-                    ?: listOf(context.nothingType())
-            }
-            .let { ConeTypeIntersector.intersectTypes(context, it) }
-            .takeIf { !it.isNothing }
-            ?.let(DfaType::Cone)
-        val commonExcludedValues = statements
-            .flatMap { it.lowerTypes.filterIsInstance<DfaType.Symbol>() }
-            .groupingBy { it }
-            .eachCount()
-            .filterValues { it == statements.size }
-            .keys
-        val newLowerTypes = (setOfNotNull(intersectedLowerType) + commonExcludedValues).toPersistentSet()
+        val newLowerTypes = setOfNotNull(statements.getIntersectedLowerType()?.let(DfaType::Cone)) + statements.getCommonExcludedValues()
         return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty()) {
-            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes)
+            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet())
         } else {
             null
         }
     }
+
+    private fun Collection<TypeStatement>.getUnifiedUpperType(): ConeKotlinType? {
+        val intersectedUpperTypes = map { statement ->
+            statement.upperTypesOrNull?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
+        }
+        return context.commonSuperTypeOrNull(intersectedUpperTypes)
+    }
+
+    private fun Collection<TypeStatement>.getIntersectedLowerType(): ConeKotlinType? =
+        flatMap { statement ->
+            statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
+                ?: listOf(context.nothingType())
+        }.let {
+            ConeTypeIntersector.intersectTypes(context, it)
+        }.takeIf { !it.isNothing }
+
+    private fun Collection<TypeStatement>.getCommonExcludedValues(): Set<DfaType.Symbol> =
+        flatMap { it.lowerTypes.filterIsInstance<DfaType.Symbol>() }
+            .groupingBy { it }
+            .eachCount()
+            .filterValues { it == size }
+            .keys
 }
 
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
