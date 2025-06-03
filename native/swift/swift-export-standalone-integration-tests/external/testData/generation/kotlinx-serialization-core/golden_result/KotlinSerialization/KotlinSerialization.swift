@@ -631,6 +631,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_overwriteWith__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
     }
+    public static func plus(
+        _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
+        other: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
+    ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
+        return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_plus__TypesOfArguments__ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule_ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModule__(receiver.__externalRCRef(), other.__externalRCRef()))
+    }
 }
 public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     public protocol SerialDescriptor: KotlinRuntime.KotlinBase {

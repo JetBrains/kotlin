@@ -121,6 +121,8 @@ int32_t operators_Foo_value_get(void * self);
 
 void operators_Foo_value_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
+void * operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(void * receiver, void * other);
+
 void * overload_Foo_init_allocate();
 
 void overload_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
