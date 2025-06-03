@@ -83,10 +83,21 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public static func ==(
+        this: main.DATA_CLASS,
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        this.equals(other: other)
+    }
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
+    }
+    public func equals(
+        other: KotlinRuntime.KotlinBase?
+    ) -> Swift.Bool {
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -544,6 +555,17 @@ public extension ExportedKotlinPackages.namespace.deeper {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT,
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public func equals(
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            return namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public func hashCode() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_hashCode(self.__externalRCRef())

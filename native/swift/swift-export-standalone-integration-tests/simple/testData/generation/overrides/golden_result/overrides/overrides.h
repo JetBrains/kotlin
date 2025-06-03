@@ -13,6 +13,10 @@ void AbstractDerived2_abstractFun1(void * self);
 
 void Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(void * self, NSNumber * _Nullable nullable, void * poly, void * _Nullable nullablePoly);
 
+_Bool Child_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
+
+_Bool Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable to);
+
 void Child_finalOverrideFunc(void * self);
 
 NSArray<id> * Child_genericReturnTypeFunc(void * self);
@@ -58,6 +62,10 @@ void OpenDerived1_abstractFun2(void * self);
 int32_t OpenDerived1_abstractVal_get(void * self);
 
 void Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(void * self, int32_t nullable, void * poly, void * nullablePoly);
+
+_Bool Parent_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
+
+_Bool Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable to);
 
 void Parent_finalOverrideFunc(void * self);
 

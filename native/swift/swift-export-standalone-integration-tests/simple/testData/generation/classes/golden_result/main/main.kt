@@ -100,6 +100,14 @@ public fun DATA_CLASS_WITH_MANY_FIELDS_e_get(self: kotlin.native.internal.Native
     return _result.objcPtr()
 }
 
+@ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
+}
+
 @ExportedBridge("DATA_CLASS_WITH_MANY_FIELDS_hashCode")
 public fun DATA_CLASS_WITH_MANY_FIELDS_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_MANY_FIELDS
@@ -120,6 +128,14 @@ public fun DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase_
     val __o = kotlin.native.internal.ref.dereferenceExternalRCRef(o) as kotlin.Any
     val _result = __self.copy(__o)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS_WITH_REF
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
 }
 
 @ExportedBridge("DATA_CLASS_WITH_REF_hashCode")
@@ -156,6 +172,14 @@ public fun DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self: kotlin.native.
     val __a = a
     val _result = __self.copy(__a)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as DATA_CLASS
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
 }
 
 @ExportedBridge("DATA_CLASS_hashCode")
@@ -574,6 +598,14 @@ public fun namespace_NAMESPACED_CLASS_init_allocate(): kotlin.native.internal.Na
 public fun namespace_NAMESPACED_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, namespace.NAMESPACED_CLASS())
+}
+
+@ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.deeper.DATA_OBJECT_WITH_PACKAGE
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
 }
 
 @ExportedBridge("namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo")
