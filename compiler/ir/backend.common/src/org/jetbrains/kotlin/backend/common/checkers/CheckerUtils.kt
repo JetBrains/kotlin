@@ -111,6 +111,10 @@ private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.native.internal.KTypeParameterImpl",  // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
 ).mapTo(hashSetOf(), ::FqName)
 
+// Most of the internal annotations declared in these packages make visibility checks fail (KT-78100)
+private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
+    listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
+
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
     for (excludedFqName in FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS) {
         if (hasEqualFqName(excludedFqName)) return true
@@ -134,6 +138,12 @@ internal fun checkVisibility(
     }
 
     if (referencedDeclarationSymbol.isExcludedFromVisibilityChecks()) {
+        return
+    }
+
+    if (context.withinAnnotationUsageSubTree &&
+        referencedDeclarationSymbol.owner.getPackageFragment()?.packageFqName in EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS
+    ) {
         return
     }
 
