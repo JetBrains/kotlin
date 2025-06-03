@@ -33,6 +33,14 @@ public fun Foo_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawP
     kotlin.native.internal.initInstance(____kt, Foo.Nested())
 }
 
+@ExportedBridge("Foo_Nested_plus__TypesOfArguments__Swift_Int32__")
+public fun Foo_Nested_plus__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, other: Int): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo.Nested
+    val __other = other
+    val _result = __self.plus(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<Foo>()

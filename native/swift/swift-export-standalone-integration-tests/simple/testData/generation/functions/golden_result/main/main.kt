@@ -7,6 +7,7 @@
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import operators.invoke as operators_invoke
 
 @ExportedBridge("Foo_ext__TypesOfArguments__Swift_String__")
 public fun Foo_ext__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Unit {
@@ -433,6 +434,14 @@ public fun operators_Foo_value_set__TypesOfArguments__Swift_Int32__(self: kotlin
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
     val __newValue = newValue
     __self.value = __newValue
+}
+
+@ExportedBridge("operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__")
+public fun operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(`receiver`: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as operators.Foo
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as operators.Foo
+    val _result = __receiver.operators_invoke(__other)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("overload_Foo_init_allocate")

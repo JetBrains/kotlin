@@ -15,6 +15,8 @@ open class Parent(val value: String) {
     open fun subtypeOptionalPrimitiveFunc(): Int? = null
     open fun subtypeOptionalObjectFunc(): Parent? = null
     open fun genericReturnTypeFunc(): List<Parent> = emptyList()
+    open override operator fun equals(to: Any?) = false
+    open operator fun contains(element: Int) = false
 
     open val primitiveTypeVar: Int get() = 42
     open val objectVar: Parent get() = this
@@ -45,6 +47,8 @@ open class Child(value: Int) : Parent("$value") {
     override fun subtypeOptionalPrimitiveFunc(): Int = 42
     override fun subtypeOptionalObjectFunc(): Child = this
     override fun genericReturnTypeFunc(): List<Child> = emptyList()
+    open override operator fun equals(to: Any?) = false
+    override open operator fun contains(element: Int) = false
 
     override val primitiveTypeVar: Int get() = 45
     override val objectVar: Parent get() = this
