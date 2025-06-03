@@ -1125,18 +1125,8 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
-        val initialType = block.resolvedType
-        var resultType = finallySubstituteOrNull(initialType) ?: block.resolvedType
-        (resultType as? ConeIntegerLiteralType)?.let {
-            resultType =
-                it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session))
-        }
-        block.replaceConeTypeOrNull(resultType)
-        session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
         transformElement(block, data)
-        if ((block.resultType as? ConeErrorType)?.diagnostic is ConePostponedInferenceDiagnostic) {
-            // If a lambda was the last expression of the block, it's type may not have been resolved yet.
-            // It should be now, so rewrite the result type for the block.
+        if (!block.isUnitCoerced) {
             block.writeResultType(session)
         }
         return block

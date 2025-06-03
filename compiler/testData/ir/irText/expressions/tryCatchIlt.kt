@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-77774
 
 fun test(): Long {
