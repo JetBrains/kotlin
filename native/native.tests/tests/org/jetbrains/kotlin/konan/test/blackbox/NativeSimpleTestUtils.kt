@@ -291,7 +291,7 @@ internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
     }
 }
 
-internal fun AbstractNativeSimpleTest.generateObjCFrameworkTestCase(
+fun AbstractNativeSimpleTest.generateObjCFrameworkTestCase(
     kind: TestKind,
     extras: TestCase.Extras,
     moduleName: String,
