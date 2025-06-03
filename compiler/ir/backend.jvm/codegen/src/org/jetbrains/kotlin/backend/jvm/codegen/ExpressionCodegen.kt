@@ -638,6 +638,7 @@ class ExpressionCodegen(
 
     private fun IrFunctionAccessExpression.getSuspensionPointKind(): SuspensionPointKind =
         when {
+            this is IrCall && this.originalForReflectiveCall != null -> this.originalForReflectiveCall!!.getSuspensionPointKind()
             !symbol.owner.isSuspend || !irFunction.shouldContainSuspendMarkers() ->
                 SuspensionPointKind.NEVER
             // Copy-pasted bytecode blocks are not suspension points.
