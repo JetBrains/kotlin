@@ -1467,7 +1467,8 @@ open class IrFileSerializer(
         ProtoFileEntry.newBuilder()
             .setName(entry.matchAndNormalizeFilePath())
             .applyIf(includeLineStartOffsets) {
-                relevantLinesRange?.first ?: entry.firstRelevantLineIndex.takeIf { it != 0 }?.let(::setFirstRelevantLineIndex)
+                val firstRelevantLineIndex = relevantLinesRange?.first ?: entry.firstRelevantLineIndex
+                runIf(firstRelevantLineIndex != 0) { setFirstRelevantLineIndex(firstRelevantLineIndex) }
                 addAllLineStartOffset(getRelevantOffsets(entry, relevantLinesRange))
             }
             .build()
