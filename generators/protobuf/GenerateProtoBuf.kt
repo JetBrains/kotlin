@@ -10,21 +10,8 @@ import java.util.regex.Pattern
 import kotlin.system.exitProcess
 
 // This file generates protobuf classes from formal description.
-// To run it, you'll need protoc (protobuf compiler) 2.6.1 installed.
-//
-// * Windows:
-//     Download and unpack binaries from here: https://github.com/protocolbuffers/protobuf/releases/tag/v2.6.1
-// * Linux:
-//     Download and unpack sources from here: https://github.com/protocolbuffers/protobuf/releases/tag/v2.6.1
-//     See README for instructions how to compile the project. Basically something like this should work:
-//       ./autogen.sh
-//       ./configure
-//       make
-//       make install
-// * macOS:
-//     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > protobuf261.rb
-//     brew install protobuf261.rb
-//
+// To run it, you'll need protoc (protobuf compiler) 4.29.3 installed.
+// Follow the instruction to install protoc https://protobuf.dev/installation/
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"
 
