@@ -94,7 +94,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
             extension.uniqId = uniqId.readUniqId()
         }
         proto.getExtensionOrNull(KlibMetadataProtoBuf.propertyFile)?.let { file ->
-            extension.file = file
+            extension.file = c.getSourceFile(file)
         }
         proto.getExtensionOrNull(KlibMetadataProtoBuf.compileTimeValue)?.let { value ->
             value.readAnnotationArgument(c.strings)?.let {
@@ -224,7 +224,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
 
         kmProperty.file?.let { file ->
-            proto.setExtension(KlibMetadataProtoBuf.propertyFile, file)
+            proto.setExtension(KlibMetadataProtoBuf.propertyFile, c.getIndexOf(file))
         }
 
         kmProperty.compileTimeValue?.let { value ->
