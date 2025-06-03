@@ -615,12 +615,10 @@ fun wasmLoweringsOfTheFirstPhase(
         this += upgradeCallableReferences
     }
     if (supportsIrInliner) {
-        // Should inlineCallableReferenceToLambdaPhase be executed without +IrInlinerBeforeKlibSerialization, it would fail tests:
-        // org.jetbrains.kotlin.wasm.test.FirWasmPartialLinkageNoICTestCaseGenerated.testInlineFunctions_noInliningInKlibs
-        // org.jetbrains.kotlin.wasm.test.FirWasmPartialLinkageNoICTestCaseGenerated.testReferencingUnusableDeclarations
+        // KT-74392: Drop inlineCallableReferenceToLambdaPhase and wrapInlineDeclarationsWithReifiedTypeParametersLowering after fix of KT-74392
         this += inlineCallableReferenceToLambdaPhase
+        this += wrapInlineDeclarationsWithReifiedTypeParametersLowering
     }
-    this += wrapInlineDeclarationsWithReifiedTypeParametersLowering
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
 }
 
