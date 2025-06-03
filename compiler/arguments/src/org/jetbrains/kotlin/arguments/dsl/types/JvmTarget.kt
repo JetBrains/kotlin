@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.arguments.serialization.json.KotlinJvmTargetAsNameSe
 enum class JvmTarget(
     val targetName: String,
     override val releaseVersionsMetadata: KotlinReleaseVersionLifecycle
-) : WithKotlinReleaseVersionsMetadata {
+) : WithKotlinReleaseVersionsMetadata, HasStringValue {
     jvm1_6(
         targetName = "1.6",
         releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
@@ -143,6 +143,9 @@ enum class JvmTarget(
         )
     ),
     ;
+
+    override val stringValue: String
+        get() = targetName
 
     companion object {
         internal val CURRENT_SUPPORTED_VERSIONS_DESCRIPTION =

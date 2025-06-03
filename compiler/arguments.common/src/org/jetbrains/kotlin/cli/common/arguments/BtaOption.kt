@@ -23,29 +23,3 @@ enum class StringTypeHint {
     DIRECTORY_LIST,
     FILE_OR_DIRECTORY_LIST;
 }
-
-val StringTypeHint.converter: BtaConverter<*, *>?
-    get() = when (this) {
-        StringTypeHint.NONE -> null
-        StringTypeHint.FILE -> PathStringConverter()
-        StringTypeHint.DIRECTORY -> PathStringConverter()
-        StringTypeHint.FILE_OR_DIRECTORY -> PathStringConverter()
-        StringTypeHint.FILE_LIST -> null
-        StringTypeHint.DIRECTORY_LIST -> null
-        StringTypeHint.FILE_OR_DIRECTORY_LIST -> null
-    }
-
-
-interface BtaConverter<S, T> {
-    fun convert(value: S): T
-}
-
-class NoopConverter : BtaConverter<String, String> {
-    override fun convert(value: String): String = value
-}
-
-class PathStringConverter : BtaConverter<Path, String> {
-    override fun convert(value: Path): String {
-        return value.toString()
-    }
-}

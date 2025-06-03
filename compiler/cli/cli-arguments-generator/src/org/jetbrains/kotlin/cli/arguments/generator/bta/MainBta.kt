@@ -3,16 +3,23 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
+import org.jetbrains.kotlin.arguments.dsl.types.HasStringValue
+import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
+import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.cli.common.arguments.BtaOption
-import org.jetbrains.kotlin.cli.common.arguments.converter
+import org.jetbrains.kotlin.cli.common.arguments.StringTypeHint
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.generators.kotlinpoet.toNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
+import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.enums.EnumEntries
 import kotlin.reflect.KClass
 
 /*
@@ -21,6 +28,7 @@ import kotlin.reflect.KClass
  */
 
 fun main() {
+    generateEnums()
     val levels = mutableListOf<Pair<KotlinCompilerArgumentsLevel, TypeName?>>(kotlinCompilerArguments.topLevel to null)
     while (levels.isNotEmpty()) {
         val level = levels.popLast()
@@ -69,17 +77,52 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
             }
         } ?: argument.valueType::class
             .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-            .arguments.first().type!!.asTypeName()
+            .arguments.first().type!!.let {
+                if (it.classifier in enums) {
+                    ClassName("$BTA_PACKAGE.enums", (it.classifier as KClass<*>).simpleName!!)
+                } else {
+                    it.asTypeName()
+                }
+            }
                 ).copy(nullable = argument.valueType.isNullable.current)
         property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
             annotation<JvmField>()
             addKdoc(argument.description.current)
             if (experimental) {
-                annotation<Deprecated>() // TODO deprecated only as placeholder, should be experimental opt in or something like that, or not generated at all
+                annotation<Deprecated>() // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
             }
             initializer("%T(%S)", argumentTypeName, name)
         }
     }
+}
+
+val enums = listOf(ExplicitApiMode::class, JvmTarget::class, KotlinVersion::class, ReturnValueCheckerMode::class)
+val enumValues: List<EnumEntries<*>> =
+    listOf(ExplicitApiMode.entries, JvmTarget.entries, KotlinVersion.entries, ReturnValueCheckerMode.entries)
+
+fun generateEnums() {
+    enumValues.forEach {
+        generateEnum(it)
+    }
+}
+
+fun generateEnum(sourceEnum: EnumEntries<*>) {
+    val className = ClassName("$BTA_PACKAGE.enums", sourceEnum.first()::class.simpleName!!)
+    FileSpec.builder(className).apply {
+        addType(TypeSpec.enumBuilder(className).apply {
+            property<String>("value") {
+                initializer("value")
+            }
+            primaryConstructor(FunSpec.constructorBuilder().addParameter("value", String::class).build())
+            sourceEnum.forEach {
+                addEnumConstant(
+                    it.name,
+                    TypeSpec.anonymousClassBuilder().addSuperclassConstructorParameter("%S", (it as HasStringValue).stringValue)
+                        .build()
+                )
+            }
+        }.build())
+    }.build().writeTo(Paths.get("compiler/cli/build/generated/bta"))
 }
 
 fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
@@ -116,3 +159,29 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
     }
 }
 
+
+val StringTypeHint.converter: BtaConverter<*, *>?
+    get() = when (this) {
+        StringTypeHint.NONE -> null
+        StringTypeHint.FILE -> PathStringConverter()
+        StringTypeHint.DIRECTORY -> PathStringConverter()
+        StringTypeHint.FILE_OR_DIRECTORY -> PathStringConverter()
+        StringTypeHint.FILE_LIST -> null
+        StringTypeHint.DIRECTORY_LIST -> null
+        StringTypeHint.FILE_OR_DIRECTORY_LIST -> null
+    }
+
+
+interface BtaConverter<S, T> {
+    fun convert(value: S): T
+}
+
+class NoopConverter : BtaConverter<String, String> {
+    override fun convert(value: String): String = value
+}
+
+class PathStringConverter : BtaConverter<Path, String> {
+    override fun convert(value: Path): String {
+        return value.toString()
+    }
+}

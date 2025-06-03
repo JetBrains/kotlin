@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
-import org.jetbrains.kotlin.cli.common.arguments.PathStringConverter
+
 import org.jetbrains.kotlin.cli.common.arguments.StringTypeHint
 import org.jetbrains.kotlin.config.LanguageFeature
 

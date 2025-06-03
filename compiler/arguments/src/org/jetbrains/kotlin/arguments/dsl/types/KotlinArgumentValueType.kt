@@ -156,3 +156,7 @@ class ReturnValueCheckerModeType(
 
 private val String?.valueOrNullStringLiteral: String
     get() = "\"${this}\""
+
+interface HasStringValue {
+    val stringValue: String
+}
