@@ -204,7 +204,7 @@ internal fun invokeSwiftC(
     )
 }
 
-internal fun codesign(path: String) {
+fun codesign(path: String) {
     val executableAbsolutePath = "/usr/bin/codesign"
     val args = arrayOf("--verbose", "-s", "-", path)
     runProcess(executableAbsolutePath, *args) {

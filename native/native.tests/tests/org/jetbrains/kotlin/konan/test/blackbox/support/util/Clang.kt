@@ -27,7 +27,7 @@ import kotlin.time.measureTimedValue
 /**
  * Specifies which Clang should be used for compilation.
  */
-internal enum class ClangDistribution {
+enum class ClangDistribution {
     /**
      * Use Clang from target's toolchain.
      * Note that not all targets do have a toolchain with Clang.
@@ -41,7 +41,7 @@ internal enum class ClangDistribution {
     Llvm
 }
 
-internal enum class ClangMode {
+enum class ClangMode {
     C, CXX
 }
 
@@ -54,7 +54,7 @@ private fun AbstractNativeSimpleTest.defaultClangDistribution(): ClangDistributi
 
 // FIXME: absoluteTargetToolchain might not work correctly with KONAN_USE_INTERNAL_SERVER because
 // :kotlin-native:dependencies:update is not a dependency of :native:native.tests:test where this test runs
-internal fun AbstractNativeSimpleTest.compileWithClang(
+fun AbstractNativeSimpleTest.compileWithClang(
     clangDistribution: ClangDistribution = defaultClangDistribution(),
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
