@@ -6,8 +6,15 @@
 package org.jetbrains.kotlin.integration
 
 import com.intellij.openapi.util.SystemInfo
+import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import kotlin.io.path.createSymbolicLinkPointingTo
 
 class FilePathNormalizationTest : KotlinIntegrationTestBase() {
@@ -72,4 +79,87 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
     }
 
     private operator fun File.div(x: String): File = File(this, x)
+
+    // Check, that the compiler still works, when classpath entry is passed by symlink
+    fun testSymlinkInClasspath() {
+        fun compileWithClasspath(source: String, fileName: String, outputPath: String, classpath: File? = null): File {
+            val programSource = File(tmpdir, fileName)
+            programSource.writeText(source)
+
+            val output = File(tmpdir, outputPath)
+            val (stdout, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+                K2JVMCompiler(),
+                buildList {
+                    add(programSource.path)
+                    add("-d")
+                    add(output.path)
+                    add("-cp")
+                    add(PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath)
+                    if (classpath != null) {
+                        add("-cp")
+                        add(classpath.path)
+                    }
+                }
+            )
+            assertEquals("Compilation failed:\n$stdout", ExitCode.OK, exitCode)
+            return output
+        }
+
+        // Create a symlink, if possible, and return path to it. Otherwise, return input file path.
+        fun createSymlink(from: File, to: File): File = try {
+            to.toPath().createSymbolicLinkPointingTo(from.toPath())
+            to
+        } catch (e: Throwable) {
+            from
+        }
+
+        // Run the compiled file
+        fun run(outDir: File, classpath: File) {
+            val stdout = ProgramWithDependencyOnCompiler.runJava(
+                tmpdir,
+                "-cp",
+                listOf(
+                    PathUtil.kotlinPathsForDistDirectory.compilerPath.absolutePath,
+                    outDir.path,
+                    classpath.path
+                ).joinToString(File.pathSeparator),
+                "MainKt"
+            )
+            assertEquals("OK", stdout)
+        }
+
+        // There are two possible scenarios - when the output is a dir and when it is a jar
+
+        run {
+            val libOut = compileWithClasspath(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputPath = "lib"
+            )
+            val link = createSymlink(libOut, File(tmpdir, "liblink"))
+            val outDir = compileWithClasspath(
+                source = "fun main() { println(foo()) }",
+                fileName = "main.kt",
+                outputPath = "out",
+                classpath = link
+            )
+            run(outDir, link)
+        }
+
+        run {
+            val libOut = compileWithClasspath(
+                source = """fun foo():String = "OK" """,
+                fileName = "lib.kt",
+                outputPath = "lib.jar"
+            )
+            val link = createSymlink(libOut, File(tmpdir, "liblink.jar"))
+            val outDir = compileWithClasspath(
+                source = "fun main() { println(foo()) }",
+                fileName = "main.kt",
+                outputPath = "out",
+                classpath = link
+            )
+            run(outDir, link)
+        }
+    }
 }
