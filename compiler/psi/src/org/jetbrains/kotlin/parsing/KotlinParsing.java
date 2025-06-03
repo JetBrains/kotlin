@@ -863,7 +863,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return true;
         }
 
-        KtKeywordToken targetKeyword = atTargetKeyword();
+        @Nullable KtKeywordToken targetKeyword = atSet(ANNOTATION_TARGETS) ? (KtKeywordToken)myBuilder.getTokenType() : null;
         if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
             return false;
         }
@@ -886,26 +886,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseAnnotationTarget(KtKeywordToken keyword) {
-        String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
-
         PsiBuilder.Marker marker = mark();
 
-        if (!expect(keyword, message)) {
+        if (!expect(keyword)) {
+            error(generateAnnotationTargetErrorMessage(keyword));
             marker.drop();
         }
         else {
             marker.done(ANNOTATION_TARGET);
         }
 
-        expect(COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET);
+        if (!expect(KtTokens.COLON)) {
+            errorWithRecovery(generateAnnotationTargetErrorMessage(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET);
+        }
     }
 
-    @Nullable
-    private KtKeywordToken atTargetKeyword() {
-        for (IElementType target : ANNOTATION_TARGETS.getTypes()) {
-            if (at(target)) return (KtKeywordToken) target;
-        }
-        return null;
+    private static String generateAnnotationTargetErrorMessage(KtKeywordToken keyword) {
+        return "Expecting \"" + keyword + KtTokens.COLON.getValue() + "\" prefix for " + keyword + " annotations";
     }
 
     /*
