@@ -28,6 +28,9 @@ internal class CheckerContext(
     val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
     val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
 
+    var withinAnnotationUsageSubTree: Boolean = false
+        private set
+
     fun error(element: IrElement, message: String) = reportError(file, element, message, parentChain)
 
     fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
@@ -45,5 +48,15 @@ internal class CheckerContext(
             block = block,
             populateScope = populateScope
         )
+    }
+
+    fun withinAnnotationUsageSubTree(block: () -> Unit) {
+        if (withinAnnotationUsageSubTree) {
+            block()
+        } else {
+            withinAnnotationUsageSubTree = true
+            block()
+            withinAnnotationUsageSubTree = false
+        }
     }
 }

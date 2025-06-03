@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
+    if (context.withinAnnotationUsageSubTree) return
+
     val isCorrectArrayOf = (type.isArray() || type.isNullableArray())
             && (type as IrSimpleType).arguments.single().let {
         when (it) {
