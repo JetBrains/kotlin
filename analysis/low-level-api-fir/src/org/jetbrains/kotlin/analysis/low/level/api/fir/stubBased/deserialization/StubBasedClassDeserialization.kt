@@ -168,6 +168,7 @@ internal fun deserializeClassToSymbol(
         isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD)
         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
         isData = classOrObject.hasModifier(KtTokens.DATA_KEYWORD)
+        isError = classOrObject.hasModifier(KtTokens.ERROR_KEYWORD)
         isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)
         isValue = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD)
         isFun = classOrObject.hasModifier(KtTokens.FUN_KEYWORD)

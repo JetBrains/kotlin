@@ -106,6 +106,10 @@ class Fir2IrLazyClass(
         get() = fir.isData
         set(_) = mutationNotSupported()
 
+    override var isError: Boolean
+        get() = fir.isError
+        set(_) = mutationNotSupported()
+
     override var isExternal: Boolean
         get() = fir.isExternal
         set(_) = mutationNotSupported()

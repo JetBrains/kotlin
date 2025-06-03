@@ -45,6 +45,16 @@ abstract class AbstractParserTests<OldParseElement> : AbstractRecognizerTests<
     }
 
     @Test
+    fun testErrorClass() {
+        checkOnKotlinCode("""error class Error {}""")
+    }
+
+    @Test
+    fun testErrorObject() {
+        checkOnKotlinCode("""error object Error {}""")
+    }
+
+    @Test
     fun testLambda() {
         checkOnKotlinCode("""val lambda: (Int) -> Unit = { i -> println(i) }""")
     }

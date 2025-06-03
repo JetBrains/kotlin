@@ -177,6 +177,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val SUSPEND_MODIFIER_ID: Int = CONST_MODIFIER_ID + 1
     const val EXPECT_MODIFIER_ID: Int = SUSPEND_MODIFIER_ID + 1
     const val ACTUAL_MODIFIER_ID: Int = EXPECT_MODIFIER_ID + 1
+    const val ERROR_MODIFIER_ID: Int = ACTUAL_MODIFIER_ID + 1
     // Remember to update the first ID constant in `KtNodeTypes` after adding a new token
 
     private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
@@ -365,6 +366,7 @@ object KtTokens : SyntaxElementTypesWithIds() {
 
     val EXPECT_MODIFIER: SyntaxElementType = registerToken(EXPECT_MODIFIER_ID, "expect", soft = true, modifier = true)
     val ACTUAL_MODIFIER: SyntaxElementType = registerToken(ACTUAL_MODIFIER_ID, "actual", soft = true, modifier = true)
+    val ERROR_MODIFIER: SyntaxElementType = registerToken(ERROR_MODIFIER_ID, "error", soft = true, modifier = true)
 
     private fun registerToken(id: Int, name: String, soft: Boolean, modifier: Boolean): SyntaxElementType {
         return register(id, name).also {

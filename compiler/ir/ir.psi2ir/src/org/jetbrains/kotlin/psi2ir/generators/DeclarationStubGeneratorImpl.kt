@@ -308,6 +308,7 @@ class DeclarationStubGeneratorImpl(
                     isCompanion = isCompanionObject,
                     isInner = isInner,
                     isData = isData,
+                    isError = isError,
                     isExternal = isEffectivelyExternal(),
                     isValue = isValueClass(),
                     isExpect = isExpect,

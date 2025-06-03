@@ -247,6 +247,11 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
     }
 
     @Override
+    public boolean isError() {
+        return original.isError();
+    }
+
+    @Override
     public boolean isInline() {
         return original.isInline();
     }

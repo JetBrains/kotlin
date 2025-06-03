@@ -565,7 +565,7 @@ object FirTree : AbstractFirTreeBuilder() {
         +field(modalityType, nullable = true)
         generateBooleanFields(
             "expect", "actual", "override", "operator", "infix", "inline", "value", "tailRec",
-            "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
+            "external", "const", "lateInit", "inner", "companion", "data", "error", "suspend", "static",
             "fromSealedClass", "fromEnumClass", "fun", "hasStableParameterNames", "hasMustUseReturnValue"
         )
         +field("defaultVisibility", visibilityType, nullable = false)

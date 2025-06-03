@@ -202,6 +202,8 @@ public abstract class KaNamedClassSymbol : KaClassSymbol(),
      */
     public abstract val isData: Boolean
 
+    public abstract val isError: Boolean
+
     /**
      * Whether the class is an [inline class](https://kotlinlang.org/docs/inline-classes.html).
      */

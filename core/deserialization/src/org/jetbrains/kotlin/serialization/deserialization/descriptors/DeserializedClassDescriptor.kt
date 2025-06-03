@@ -112,6 +112,8 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
+    override fun isError() = Flags.IS_ERROR.get(classProto.flags)
+
     override fun isInline() = Flags.IS_VALUE_CLASS.get(classProto.flags) && metadataVersion.isAtMost(1, 4, 1)
 
     override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)

@@ -291,6 +291,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: true
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false

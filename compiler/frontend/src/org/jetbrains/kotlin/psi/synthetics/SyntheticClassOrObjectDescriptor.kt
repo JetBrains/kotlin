@@ -82,6 +82,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun isCompanionObject() = isCompanionObject
     override fun isInner() = false
     override fun isData() = false
+    override fun isError() = false
     override fun isInline() = false
     override fun isExpect() = false
     override fun isActual() = false

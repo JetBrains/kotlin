@@ -587,6 +587,7 @@ symbols/DebugSymbolRenderer.kt:DebugSymbolRenderer:renderType(KaSession, KaType)
 symbols/KaClassLikeSymbol.kt:KaClassKind:isClass
 symbols/KaClassLikeSymbol.kt:KaClassKind:isObject
 symbols/KaClassLikeSymbol.kt:KaClassifierSymbol:abstract name
+symbols/KaClassLikeSymbol.kt:KaNamedClassSymbol:abstract isError
 symbols/KaDeclarationSymbol.kt:@KaExperimentalApi typeParameters
 symbols/KaDeclarationSymbol.kt:KaDeclarationSymbol:@KaExperimentalApi compilerVisibility
 symbols/markers/markers.kt:KaTypeParameterOwnerSymbol:typeParameters

@@ -37,6 +37,9 @@ internal class KaFe10DescNamedClassSymbol(
     override val isData: Boolean
         get() = withValidityAssertion { descriptor.isData }
 
+    override val isError: Boolean
+        get() = withValidityAssertion { descriptor.isError }
+
     override val isInline: Boolean
         get() = withValidityAssertion { descriptor.isInline || descriptor.isValue }
 

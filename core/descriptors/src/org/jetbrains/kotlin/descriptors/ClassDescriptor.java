@@ -70,6 +70,8 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
 
     boolean isData();
 
+    boolean isError();
+
     boolean isInline();
 
     boolean isFun();

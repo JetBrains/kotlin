@@ -83,6 +83,7 @@ public interface KaRendererOtherModifiersProvider {
                     if (symbol.isData) add(KtTokens.DATA_KEYWORD)
                     if (symbol.isFun) add(KtTokens.FUN_KEYWORD)
                     if (symbol.isInner) add(KtTokens.INNER_KEYWORD)
+                    if (symbol.isError) add(KtTokens.ERROR_KEYWORD)
                 }
 
                 if (symbol is KaTypeParameterSymbol) {

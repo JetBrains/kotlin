@@ -44,6 +44,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false

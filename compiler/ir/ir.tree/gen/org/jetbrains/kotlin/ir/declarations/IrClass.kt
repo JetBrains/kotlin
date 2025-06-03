@@ -37,6 +37,8 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrD
 
     abstract var isData: Boolean
 
+    abstract var isError: Boolean
+
     abstract var isValue: Boolean
 
     abstract var isExpect: Boolean

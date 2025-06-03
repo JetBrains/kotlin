@@ -36,6 +36,7 @@ interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val isInner: Boolean
     override val isCompanion: Boolean
     override val isData: Boolean
+    override val isError: Boolean
     override val isSuspend: Boolean
     override val isStatic: Boolean
     override val isFromSealedClass: Boolean

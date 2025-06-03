@@ -33,6 +33,7 @@ class IrLazyClass(
     override var isCompanion: Boolean,
     override var isInner: Boolean,
     override var isData: Boolean,
+    override var isError: Boolean,
     override var isExternal: Boolean,
     override var isValue: Boolean,
     override var isExpect: Boolean,

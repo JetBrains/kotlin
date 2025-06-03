@@ -587,6 +587,8 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
+    override fun isError() = owner.isError
+
     override fun isInline() = owner.isSingleFieldValueClass
 
     override fun isFun() = owner.isFun
@@ -720,6 +722,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
     override fun isCompanionObject() = false
 
     override fun isData() = false
+
+    override fun isError() = false
 
     override fun isInline() = false
 

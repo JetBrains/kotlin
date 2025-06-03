@@ -60,6 +60,7 @@ class SyntheticJavaClassDescriptor(
     override fun getVisibility(): DescriptorVisibility = visibility
     override fun isInner() = isInner
     override fun isData() = false
+    override fun isError() = false
     override fun isInline() = false
     override fun isCompanionObject() = false
     override fun isExpect() = false

@@ -140,6 +140,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isError() {
+        return false;
+    }
+
+    @Override
     public boolean isInline() {
         return false;
     }

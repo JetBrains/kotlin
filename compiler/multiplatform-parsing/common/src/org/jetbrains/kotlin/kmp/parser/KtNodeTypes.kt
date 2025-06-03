@@ -17,7 +17,7 @@ object KtNodeTypes : SyntaxElementTypesWithIds() {
      * They should match corresponding element types.
      * As an example, see [SyntaxElementTypesWithIds.getElementTypeId] usages.
      */
-    const val KT_FILE_ID: Int = KtTokens.ACTUAL_MODIFIER_ID + 1
+    const val KT_FILE_ID: Int = KtTokens.ERROR_MODIFIER_ID + 1
 
     const val CLASS_ID: Int = KT_FILE_ID + 1
     const val FUN_ID: Int = CLASS_ID + 1

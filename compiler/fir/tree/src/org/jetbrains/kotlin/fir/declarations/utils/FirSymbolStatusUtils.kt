@@ -64,6 +64,7 @@ inline val FirClassLikeSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFr
 inline val FirClassLikeSymbol<*>.isFun: Boolean get() = rawStatus.isFun
 inline val FirClassLikeSymbol<*>.isCompanion: Boolean get() = rawStatus.isCompanion
 inline val FirClassLikeSymbol<*>.isData: Boolean get() = rawStatus.isData
+inline val FirClassLikeSymbol<*>.isError: Boolean get() = rawStatus.isError
 inline val FirClassLikeSymbol<*>.isSealed: Boolean get() = resolvedStatus.modality == Modality.SEALED
 
 // ---------------------- common classes ----------------------

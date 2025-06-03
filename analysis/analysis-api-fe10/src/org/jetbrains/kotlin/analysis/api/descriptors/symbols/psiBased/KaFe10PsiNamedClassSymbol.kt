@@ -52,6 +52,9 @@ internal class KaFe10PsiNamedClassSymbol(
     override val isData: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.DATA_KEYWORD) }
 
+    override val isError: Boolean
+        get() = withValidityAssertion { psi.hasModifier(KtTokens.ERROR_KEYWORD) }
+
     override val isInline: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.INLINE_KEYWORD) || psi.hasModifier(KtTokens.VALUE_KEYWORD) }
 

@@ -962,6 +962,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymb
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 	public abstract fun getCompanionObject ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
 	public abstract fun isData ()Z
+	public abstract fun isError ()Z
 	public abstract fun isExternal ()Z
 	public abstract fun isFun ()Z
 	public abstract fun isInline ()Z

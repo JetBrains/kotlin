@@ -81,6 +81,7 @@ class FunctionClassDescriptor(
     override fun isCompanionObject() = false
     override fun isInner() = false
     override fun isData() = false
+    override fun isError() = false
     override fun isInline() = false
     override fun isFun() = false
     override fun isValue() = false

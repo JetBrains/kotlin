@@ -48,7 +48,7 @@ value class ClassFlags(val flags: Long) {
                 val hasEnumEntries = kind == ProtoBuf.Class.Kind.ENUM_CLASS &&
                         languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
                 val flags = IrFlags.getClassFlags(
-                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries
+                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries, isError
                 )
 
                 flags.toLong()

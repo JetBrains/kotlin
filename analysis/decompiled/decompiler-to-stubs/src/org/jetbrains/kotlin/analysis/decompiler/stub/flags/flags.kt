@@ -53,6 +53,7 @@ val LATEINIT = createBooleanFlagToModifier(Flags.IS_LATEINIT, KtTokens.LATEINIT_
 val OPERATOR = createBooleanFlagToModifier(Flags.IS_OPERATOR, KtTokens.OPERATOR_KEYWORD)
 val INFIX = createBooleanFlagToModifier(Flags.IS_INFIX, KtTokens.INFIX_KEYWORD)
 val DATA = createBooleanFlagToModifier(Flags.IS_DATA, KtTokens.DATA_KEYWORD)
+val ERROR = createBooleanFlagToModifier(Flags.IS_ERROR, KtTokens.ERROR_KEYWORD)
 val EXTERNAL_FUN = createBooleanFlagToModifier(Flags.IS_EXTERNAL_FUNCTION, KtTokens.EXTERNAL_KEYWORD)
 val EXTERNAL_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXTERNAL_PROPERTY, KtTokens.EXTERNAL_KEYWORD)
 val EXTERNAL_ACCESSOR = createBooleanFlagToModifier(Flags.IS_EXTERNAL_ACCESSOR, KtTokens.EXTERNAL_KEYWORD)

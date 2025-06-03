@@ -92,6 +92,15 @@ private fun buildCompatibilityMap(): Map<Pair<KtKeywordToken, KtKeywordToken>, C
     // expect / actual are all incompatible
     result += incompatibilityRegister(EXPECT_KEYWORD, ACTUAL_KEYWORD)
 
+    result += incompatibilityRegister(ERROR_KEYWORD, OPEN_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, INNER_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, ABSTRACT_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, SEALED_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, INLINE_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, VALUE_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, EXPECT_KEYWORD)
+    result += incompatibilityRegister(ERROR_KEYWORD, ACTUAL_KEYWORD)
+
     return result
 }
 
@@ -207,6 +216,7 @@ val possibleTargetMap = mapOf(
         KotlinTarget.BACKING_FIELD
     ),
     DATA_KEYWORD to EnumSet.of(KotlinTarget.CLASS_ONLY, KotlinTarget.LOCAL_CLASS, KotlinTarget.STANDALONE_OBJECT),
+    ERROR_KEYWORD to EnumSet.of(KotlinTarget.STANDALONE_OBJECT),
     INLINE_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,

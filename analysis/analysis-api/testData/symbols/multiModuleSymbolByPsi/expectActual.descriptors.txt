@@ -9,6 +9,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: true
   isExternal: false
   isFun: false
@@ -36,6 +37,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: true
   isExternal: false
   isFun: false
@@ -161,6 +163,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: true
   isExternal: false
   isFun: false
@@ -297,6 +300,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: true
   isExternal: false
   isFun: false
@@ -324,6 +328,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: true
   isExternal: false
   isFun: false
@@ -534,6 +539,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: true
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false
@@ -561,6 +567,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: true
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false
@@ -686,6 +693,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: true
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false
@@ -839,6 +847,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false
@@ -866,6 +875,7 @@ KaNamedClassSymbol:
   contextReceivers: []
   isActual: false
   isData: false
+  isError: false
   isExpect: false
   isExternal: false
   isFun: false

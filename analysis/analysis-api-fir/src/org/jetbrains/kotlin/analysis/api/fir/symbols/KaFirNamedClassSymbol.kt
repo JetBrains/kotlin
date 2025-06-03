@@ -100,6 +100,9 @@ internal class KaFirNamedClassSymbol private constructor(
     override val isData: Boolean
         get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.DATA_KEYWORD) ?: firSymbol.isData }
 
+    override val isError: Boolean
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.ERROR_KEYWORD) ?: firSymbol.isError }
+
     override val isInline: Boolean
         get() = withValidityAssertion {
             if (backingPsi != null) {

@@ -57,6 +57,8 @@ class IrClassImpl @IrImplementationDetail constructor(
 
     override var isData: Boolean = false
 
+    override var isError: Boolean = false
+
     override var isValue: Boolean = false
 
     override var isExpect: Boolean = false

@@ -121,6 +121,12 @@ open class FirDeclarationStatusImpl(
             this[DATA] = value
         }
 
+    override var isError: Boolean
+        get() = this[ERROR]
+        set(value) {
+            this[ERROR] = value
+        }
+
     override var isSuspend: Boolean
         get() = this[SUSPEND]
         set(value) {
@@ -184,7 +190,8 @@ open class FirDeclarationStatusImpl(
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
         VALUE(0x80000),
-        HAS_MUST_USE_RETURN_VALUE(0x100000)
+        HAS_MUST_USE_RETURN_VALUE(0x100000),
+        ERROR(0x200000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

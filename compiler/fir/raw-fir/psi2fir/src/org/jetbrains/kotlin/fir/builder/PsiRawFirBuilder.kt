@@ -1727,6 +1727,7 @@ open class PsiRawFirBuilder(
                         isInner = classOrObject.hasInnerModifier() && classOrObject.parent.parent !is KtScript
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
+                        isError = classOrObject.hasModifier(ERROR_KEYWORD)
                         isInline = classOrObject.hasModifier(INLINE_KEYWORD)
                         isValue = classOrObject.hasModifier(VALUE_KEYWORD)
                         isFun = classOrObject.hasModifier(FUN_KEYWORD)
