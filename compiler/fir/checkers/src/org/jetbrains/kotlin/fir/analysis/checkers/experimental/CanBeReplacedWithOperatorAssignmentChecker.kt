@@ -27,10 +27,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TIMES
 
-val PRECEDENCE_MAP: Map<Name, KotlinExpressionParsing.Precedence> = KotlinExpressionParsing.Precedence.entries
-    .flatMap { precedence -> precedence.operations.types.map { it.toBinaryName()?.to(precedence) } }
-    .filterNotNull()
-    .toMap()
+private val BINARY_PRECEDENCE_MAP: Map<Name, KotlinExpressionParsing.BinaryOperationPrecedence> =
+    KotlinExpressionParsing.BinaryOperationPrecedence.entries
+        .flatMap { precedence -> precedence.operations.types.map { it.toBinaryName()?.to(precedence) } }
+        .filterNotNull()
+        .toMap()
 
 object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -89,6 +90,6 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
     }
 
     private fun FirFunctionCall.isSamePrecedenceAs(otherOperator: Name): Boolean {
-        return PRECEDENCE_MAP[calleeReference.name]?.ordinal == PRECEDENCE_MAP[otherOperator]?.ordinal
+        return BINARY_PRECEDENCE_MAP[calleeReference.name]?.ordinal == BINARY_PRECEDENCE_MAP[otherOperator]?.ordinal
     }
 }

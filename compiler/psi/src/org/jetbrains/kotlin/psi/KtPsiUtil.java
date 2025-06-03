@@ -358,42 +358,44 @@ public class KtPsiUtil {
         return null;
     }
 
+    // The resulting priority levels count is higher than the count of all operations (unary and binary operations) precedences by 2.
+    // The super expression is treated as the most prioritized operation.
+    // The declaration or statement is treated as the least prioritized operation.
+    private final static int PRIORITY_LEVELS_COUNT = KotlinExpressionParsing.ALL_OPERATIONS_PRECEDENCE_COUNT + 2;
+    private final static int MAX_PRIORITY = PRIORITY_LEVELS_COUNT - 1;
 
     private static int getPriority(@NotNull KtExpression expression) {
-        int maxPriority = KotlinExpressionParsing.Precedence.values().length + 1;
+        if (expression instanceof KtSuperExpression) {
+            return MAX_PRIORITY; // 15
+        }
 
         // same as postfix operations
         if (expression instanceof KtPostfixExpression ||
             expression instanceof KtQualifiedExpression ||
             expression instanceof KtCallExpression ||
             expression instanceof KtArrayAccessExpression ||
-            expression instanceof KtDoubleColonExpression) {
-            return maxPriority - 1;
+            expression instanceof KtDoubleColonExpression
+        ) {
+            return MAX_PRIORITY - 1 - KotlinExpressionParsing.POSTFIX_OPERATION_PRECEDENCE_ORDINAL; // 14
         }
 
-        if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression) return maxPriority - 2;
-
-        if (expression instanceof KtIfExpression) {
-            return KotlinExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+        if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression || expression instanceof KtIfExpression) {
+            return MAX_PRIORITY - 1 - KotlinExpressionParsing.PREFIX_OPERATION_PRECEDENCE_ORDINAL; // 13
         }
 
-        if (expression instanceof KtSuperExpression) {
-            return maxPriority;
+        IElementType operation = getOperation(expression);
+        if (operation instanceof KtToken) {
+            Integer operationPrecedenceOrdinal = KotlinExpressionParsing.BINARY_OPERATION_TO_PRECEDENCE_ORDINAL.get((KtToken) operation);
+            if (operationPrecedenceOrdinal != null) {
+                return MAX_PRIORITY - 1 - operationPrecedenceOrdinal; // 1..12
+            }
         }
 
         if (expression instanceof KtDeclaration || expression instanceof KtStatementExpression) {
             return 0;
         }
 
-        IElementType operation = getOperation(expression);
-        for (KotlinExpressionParsing.Precedence precedence : KotlinExpressionParsing.Precedence.values()) {
-            if (precedence != KotlinExpressionParsing.Precedence.PREFIX && precedence != KotlinExpressionParsing.Precedence.POSTFIX &&
-                precedence.getOperations().contains(operation)) {
-                return maxPriority - precedence.ordinal() - 1;
-            }
-        }
-
-        return maxPriority;
+        return MAX_PRIORITY;
     }
 
     @SuppressWarnings("unused") // used in intellij repo
