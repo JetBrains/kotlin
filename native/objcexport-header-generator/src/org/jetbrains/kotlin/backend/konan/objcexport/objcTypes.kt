@@ -98,29 +98,19 @@ object ObjCInstanceType : ObjCNonNullReferenceType() {
 
 data class ObjCBlockPointerType(
     val returnType: ObjCType,
-    val parameterTypes: List<ObjCReferenceType>,
+    val parameters: List<ObjCParameter>,
     override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = returnType.render(buildString {
         append("(^")
         append(attrsAndName)
         append(")(")
-        if (parameterTypes.isEmpty()) append("void")
-        var index = 0
-        parameterTypes.joinTo(this) { it.render(getParameterName(index++)) }
+        if (parameters.isEmpty()) append("void")
+        parameters.joinTo(this) {
+            it.type.render(it.name)
+        }
         append(')')
     })
-
-    private fun getParameterName(index: Int): String {
-        // When using suspend functions, additional block parameters are generated,
-        // while the original list of parameter names remains empty.
-        if (originParameterNames.isEmpty()) return ""
-
-        assert(originParameterNames.size == parameterTypes.size) {
-            "ObjC Block parameter type size(${parameterTypes.size}) should equal to originParameterNames size(${originParameterNames.size})."
-        }
-        return originParameterNames[index]
-    }
 }
 
 object ObjCMetaClassType : ObjCNonNullReferenceType() {
