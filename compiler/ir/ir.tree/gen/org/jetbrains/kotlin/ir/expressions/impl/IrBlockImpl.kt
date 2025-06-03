@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -24,7 +23,5 @@ class IrBlockImpl internal constructor(
     override var type: IrType,
     override var origin: IrStatementOrigin?,
 ) : IrBlock() {
-    override var attributeOwnerId: IrElement = this
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 }

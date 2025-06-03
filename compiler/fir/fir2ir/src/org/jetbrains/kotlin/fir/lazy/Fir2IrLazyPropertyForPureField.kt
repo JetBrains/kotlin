@@ -121,8 +121,6 @@ class Fir2IrLazyPropertyForPureField(
     override val containerSource: DeserializedContainerSource?
         get() = null
 
-    override var attributeOwnerId: IrElement = this
-
     override val factory: IrFactory
         get() = IrFactoryImpl
 }

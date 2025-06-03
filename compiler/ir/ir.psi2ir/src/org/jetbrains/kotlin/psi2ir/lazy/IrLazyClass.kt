@@ -110,8 +110,6 @@ class IrLazyClass(
         }
     }
 
-    override var attributeOwnerId: IrElement = this
-
     override val source: SourceElement get() = descriptor.source
 
     override var metadata: MetadataSource?
