@@ -1,0 +1,21 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.api.v2.jvm
+
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmClasspathSnapshottingOperation
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation
+import java.nio.file.Path
+
+public interface JvmPlatformToolchain {
+    /**
+     * Creates a self-contained operation descriptor to be executed by [org.jetbrains.kotlin.buildtools.api.v2.KotlinToolchain.executeOperation]
+     *
+     * Basically, converts sources into class files.
+     */
+    public fun createJvmCompilationOperation(kotlinSources: List<Path>, destinationDirectory: Path): JvmCompilationOperation
+
+    public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
+}

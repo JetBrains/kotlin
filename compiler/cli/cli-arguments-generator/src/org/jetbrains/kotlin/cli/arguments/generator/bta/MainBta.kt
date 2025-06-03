@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.generators.kotlinpoet.toNullable
-import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags.visibility
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.nio.file.Path
@@ -38,9 +37,8 @@ fun main() {
     }
 }
 
-val BTA_PACKAGE = "org.jetbrains.kotlin.build.tools.api"
-
-private const val OUT_PATH = "compiler/build-tools/kotlin-build-tools-api/src/main/kotlin"
+private const val BTA_PACKAGE = "org.jetbrains.kotlin.buildtools.api.v2"
+private const val OUT_PATH = "compiler/build-tools/kotlin-build-tools-api/gen/main/kotlin"
 
 fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName? = null): TypeName {
     val className = level.name.capitalizeAsciiOnly()
@@ -66,16 +64,10 @@ fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: 
 
 private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgument>, argumentTypeName: ClassName) {
     arguments.forEach { argument ->
-        val experimental: Boolean
-        val name = argument.name.uppercase().replace("-", "_").let {
-            if (it.startsWith("X") && it != "X") {
-                experimental = true
-                it.removePrefix("X")
-            } else {
-                experimental = false
-                it
-            }
-        }
+
+        val name = argument.name.uppercase().replace("-", "_")
+        val experimental: Boolean =
+            name.startsWith("X") && name != "X"
 
         val argumentTypeParameter = (argument.additionalAnnotations.filterIsInstance<BtaOption>().singleOrNull()?.let { btaOption ->
             btaOption.stringTypeHint.converter?.let { converter ->
@@ -95,9 +87,10 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
             annotation<JvmField>()
             addKdoc(argument.description.current)
             if (experimental) {
+                // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
                 annotation<Deprecated>() {
                     addMember("message = %S", "This option is experimental and it may be changed in the future")
-                } // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
+                }
             }
             initializer("%T(%S)", argumentTypeName, name)
         }
@@ -169,6 +162,9 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
     }
     function("get") {
         val typeParameter = TypeVariableName("V")
+        annotation<Suppress> {
+            addMember("%S", "UNCHECKED_CAST")
+        }
         returns(typeParameter.toNullable())
         addModifiers(KModifier.OPERATOR)
         addTypeVariable(typeParameter)

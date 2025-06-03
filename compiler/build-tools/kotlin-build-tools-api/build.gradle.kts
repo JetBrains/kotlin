@@ -28,6 +28,10 @@ publish()
 
 standardPublicJars()
 
+kotlin.sourceSets {
+    getByName("main").kotlin.srcDir("gen/main/kotlin")
+}
+
 tasks.compileKotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all")
