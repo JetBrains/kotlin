@@ -831,7 +831,7 @@ class LightTreeRawFirExpressionBuilder(
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
         val firExpressions = mutableListOf<FirExpression>()
-        this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START) {
+        this?.forEachChildren {
             firExpressions.add(getAsFirExpression(it, errorReason))
         }
         return firExpressions
