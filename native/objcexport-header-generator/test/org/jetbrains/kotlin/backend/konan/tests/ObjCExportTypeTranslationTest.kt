@@ -401,7 +401,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("B *(^)(A *a) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("B *(^)(A *) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -415,7 +415,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("C *(^)(A *a, B *b) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test
@@ -429,20 +429,7 @@ class ObjCExportTypeTranslationTest(
         """.trimIndent()
         )
 
-        assertEquals("C *(^)(A *, B *b) -> void", header.renderTypesOfSymbol("foo"))
-    }
-
-    @Test
-    fun `test - function block with same parameter types`() {
-        val header = header(
-            """
-            class A
-            class B
-            fun foo(action: (a: A, foo: A, b: B, bar: B) -> Unit) = Unit
-        """.trimIndent()
-        )
-
-        assertEquals("void (^)(A *a, A *foo, B *b, B *bar) -> void", header.renderTypesOfSymbol("foo"))
+        assertEquals("C *(^)(A *, B *) -> void", header.renderTypesOfSymbol("foo"))
     }
 
     @Test

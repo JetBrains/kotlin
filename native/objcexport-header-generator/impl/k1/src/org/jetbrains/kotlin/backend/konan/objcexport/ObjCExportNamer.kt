@@ -70,6 +70,9 @@ interface ObjCExportNamer {
 
         val explicitMethodFamily: Boolean
             get() = false
+
+        val explicitBlockParameterNames: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -96,6 +99,7 @@ interface ObjCExportNamer {
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
     fun needsExplicitMethodFamily(name: String): Boolean
+    fun needsExplicitBlockParameterNames(): Boolean
 
     companion object {
         @InternalKotlinNativeApi
@@ -322,6 +326,7 @@ class ObjCExportNamerImpl(
         ignoreInterfaceMethodCollisions: Boolean = false,
         nameCollisionMode: ObjCExportNameCollisionMode = ObjCExportNameCollisionMode.NONE,
         explicitMethodFamily: Boolean = false,
+        explicitBlockParameterNames: Boolean = false,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -344,6 +349,9 @@ class ObjCExportNamerImpl(
 
             override val explicitMethodFamily: Boolean
                 get() = explicitMethodFamily
+
+            override val explicitBlockParameterNames: Boolean
+                get() = explicitBlockParameterNames
         },
         builtIns,
         mapper,
@@ -725,6 +733,10 @@ class ObjCExportNamerImpl(
 
     override fun needsExplicitMethodFamily(name: String): Boolean {
         return configuration.explicitMethodFamily && helper.isSpecialFamily(name)
+    }
+
+    override fun needsExplicitBlockParameterNames(): Boolean {
+        return configuration.explicitBlockParameterNames
     }
 
     init {

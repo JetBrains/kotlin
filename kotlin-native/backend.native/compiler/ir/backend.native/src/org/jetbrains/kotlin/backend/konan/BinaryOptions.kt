@@ -44,6 +44,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportExplicitMethodFamily by booleanOption()
 
+    val objcExportBlockExplicitParameterNames by booleanOption()
+
     val dumpObjcSelectorToSignatureMapping by stringOption()
 
     val gc by option<GC>(shortcut = { it.shortcut })
