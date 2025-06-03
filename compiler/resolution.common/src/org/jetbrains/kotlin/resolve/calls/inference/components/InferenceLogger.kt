@@ -43,7 +43,9 @@ abstract class InferenceLogger {
     class FixationLogVariableInfo(
         val readiness: TypeVariableFixationReadiness,
         val constraints: List<Constraint>,
-    )
+    ) {
+        val constraintsBeforeFixationCount = constraints.size
+    }
 
     abstract fun logReadiness(
         fixationLog: FixationLogRecord,
