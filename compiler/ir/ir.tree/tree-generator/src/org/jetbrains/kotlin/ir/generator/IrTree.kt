@@ -114,15 +114,13 @@ object IrTree : AbstractTreeBuilder() {
         +offsetField("start")
         +offsetField("end")
 
-        +field("attributeOwnerId", rootElement, isChild = false) {
-            deepCopyExcludeFromApply = true
-            kDoc = """
-                Original element before copying. Always satisfies the following
-                invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-            """.trimIndent()
-        }
-
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
+
+        generationCallback = {
+            println()
+            printPropertyDeclaration("attributeOwnerId", rootElement, VariableKind.VAR)
+            println()
+        }
     }
     val statement: Element by element(Other)
 

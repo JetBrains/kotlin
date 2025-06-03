@@ -39,6 +39,4 @@ class IrLazyEnumEntryImpl(
     override var correspondingClass: IrClass? = null
 
     override var initializerExpression: IrExpressionBody? = null
-
-    override var attributeOwnerId: IrElement = this
 }

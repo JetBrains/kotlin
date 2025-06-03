@@ -91,8 +91,6 @@ class Fir2IrLazyField(
     override var correspondingPropertySymbol: IrPropertySymbol? = correspondingPropertySymbol
         set(_) = mutationNotSupported()
 
-    override var attributeOwnerId: IrElement = this
-
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")

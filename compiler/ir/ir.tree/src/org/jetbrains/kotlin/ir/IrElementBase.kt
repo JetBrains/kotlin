@@ -41,6 +41,9 @@ abstract class IrElementBase : IrElement {
     }
 
 
+    final override var attributeOwnerId: IrElement = this
+
+
     /**
      * Returns a snapshot of all attributes held by this element.
      * Designated mainly for debugging.

@@ -10,7 +10,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -24,8 +23,6 @@ class IrDoWhileLoopImpl internal constructor(
     override var type: IrType,
     override var origin: IrStatementOrigin?,
 ) : IrDoWhileLoop() {
-    override var attributeOwnerId: IrElement = this
-
     override var body: IrExpression? = null
 
     override lateinit var condition: IrExpression

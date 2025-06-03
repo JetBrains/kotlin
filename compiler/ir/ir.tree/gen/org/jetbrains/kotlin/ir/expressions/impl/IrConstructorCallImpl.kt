@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -30,8 +29,6 @@ class IrConstructorCallImpl internal constructor(
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
 ) : IrConstructorCall() {
-    override var attributeOwnerId: IrElement = this
-
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
 
     override var symbol: IrConstructorSymbol = symbol

@@ -37,10 +37,6 @@ interface IrElement {
      */
     var endOffset: Int
 
-    /**
-     * Original element before copying. Always satisfies the following
-     * invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-     */
     var attributeOwnerId: IrElement
 
     /**
