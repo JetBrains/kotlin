@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -47,7 +48,7 @@ var FirClassLikeDeclaration.sourceElement: SourceElement? by FirDeclarationDataR
 var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(ModuleNameKey)
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
 var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(OriginalReplSnippet)
-var FirAnonymousFunction.lambdaArgumentHoldsInTruths: List<FirExpression>? by FirDeclarationDataRegistry.data(LambdaArgumentHoldsInTruths)
+var FirAnonymousFunction.lambdaArgumentParent: FirQualifiedAccessExpression? by FirDeclarationDataRegistry.data(LambdaArgumentHoldsInTruths)
 
 /**
  * Denotes a declaration on the REPL snippet level - top-level and all nested ones, but not the ones declared inside bodies.
