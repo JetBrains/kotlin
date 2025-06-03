@@ -1168,7 +1168,7 @@ abstract class FirDataFlowAnalyzer(
                 if (effect.value != ConeContractConstantValues.NOT_NULL) continue
                 val statements =
                     logicSystem.approveContractStatement(
-                        conditionalReturn.argumentsCondition, allArgumentVariables, substitutor
+                        conditionalReturn.argumentsCondition, allArgumentVariables, substitutor, typesOnlyFromRealVars = false
                     ) {
                         logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
                     }
