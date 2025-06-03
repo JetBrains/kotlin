@@ -27,6 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
@@ -73,6 +77,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
             ALL_KEYWORD, FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
             RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
+    private static final Map<IElementType, String> ANNOTATION_TARGET_ERROR_MESSAGES;
+    static {
+        Map<IElementType, String> map = new HashMap<>();
+        for (IElementType keyword : ANNOTATION_TARGETS.getTypes()) {
+            map.put(keyword, "Expecting \"" + keyword + KtTokens.COLON.getValue() + "\" prefix for " + keyword + " annotations");
+        }
+        ANNOTATION_TARGET_ERROR_MESSAGES = Collections.unmodifiableMap(map);
+    }
     private static final TokenSet BLOCK_DOC_COMMENT_SET = TokenSet.create(BLOCK_COMMENT, DOC_COMMENT);
     private static final TokenSet SEMICOLON_SET = TokenSet.create(SEMICOLON);
     private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
@@ -863,7 +875,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             return true;
         }
 
-        KtKeywordToken targetKeyword = atTargetKeyword();
+        @Nullable KtKeywordToken targetKeyword = atSet(ANNOTATION_TARGETS) ? (KtKeywordToken)myBuilder.getTokenType() : null;
         if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(targetKeyword == FILE_KEYWORD && lookahead(1) == COLON)) {
             return false;
         }
@@ -886,26 +898,19 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseAnnotationTarget(KtKeywordToken keyword) {
-        String message = "Expecting \"" + keyword.getValue() + COLON.getValue() + "\" prefix for " + keyword.getValue() + " annotations";
-
         PsiBuilder.Marker marker = mark();
 
-        if (!expect(keyword, message)) {
+        if (!expect(keyword)) {
+            error(ANNOTATION_TARGET_ERROR_MESSAGES.get(keyword));
             marker.drop();
         }
         else {
             marker.done(ANNOTATION_TARGET);
         }
 
-        expect(COLON, message, IDENTIFIER_RBRACKET_LBRACKET_SET);
-    }
-
-    @Nullable
-    private KtKeywordToken atTargetKeyword() {
-        for (IElementType target : ANNOTATION_TARGETS.getTypes()) {
-            if (at(target)) return (KtKeywordToken) target;
+        if (!expect(KtTokens.COLON)) {
+            errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.get(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET);
         }
-        return null;
     }
 
     /*
