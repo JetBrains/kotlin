@@ -286,34 +286,20 @@ internal val TestProject.isWithJavaSupported: Boolean
     get() = gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_7)
 
 /**
- * Returns the list of [TestProject]'s subprojects, can be used as a replacement for `subprojects { ... }`.
+ * Returns a list of subprojects for the [TestProject], explicitly specified by their names.
+ * This method can be used as an explicit alternative to `subprojects { ... }`.
+ * If a subproject name is an empty string (`""`) or a single dot (`"."`), it will be replaced by the [TestProject] itself.
+ *
+ * @return A list of subprojects corresponding to the specified names, with special handling for empty or dot names.
  */
-internal fun TestProject.subprojects(
-    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
-): Iterable<GradleProject> = buildScriptReturn {
-    project.subprojects.map { subproject ->
-        subproject.projectDir.relativeTo(project.rootDir).path
-    }
-}
-    .buildAndReturn(deriveBuildOptions = deriveBuildOptions)
-    .map { subProject(it) }
-
-/**
- * Returns the list of all projects inside the [TestProject] (including the root project itself),
- * can be used as a replacement for `allprojects { ... }`.
- */
-internal fun TestProject.allprojects(): Iterable<GradleProject> = buildScriptReturn {
-    project.allprojects.map { subproject ->
-        subproject.projectDir.relativeTo(project.rootDir).path
-    }
-}
-    .buildAndReturn()
-    .map { name ->
+internal fun TestProject.subprojects(firstName: String, vararg names: String): Iterable<GradleProject> {
+    return arrayOf(firstName, *names).map { name ->
         when (name) {
-            "" -> this
+            "", "." -> this
             else -> subProject(name)
         }
     }
+}
 
 /**
  * Injects build script with a lambda that will be executed by every project's build script at configuration time.

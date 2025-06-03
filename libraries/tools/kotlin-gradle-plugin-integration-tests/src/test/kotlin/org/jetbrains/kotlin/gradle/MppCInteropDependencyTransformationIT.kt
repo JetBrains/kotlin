@@ -62,7 +62,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     }
 
     private fun TestProject.setUp() {
-        subprojects().buildScriptInjection {
+        subprojects("p1", "p2", "p3").buildScriptInjection {
             project.afterEvaluate { project ->
                 project.multiplatformExtensionOrNull?.let { kotlin ->
                     val compileAll = project.tasks.register("compileAll")
