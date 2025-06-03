@@ -504,7 +504,7 @@ class IrValidatorTest {
     }
 
     @Test
-    fun `annotations are ignored by IR visibility checker`() {
+    fun `private annotations can't be referenced from a different file`() {
         val file1 = createIrFile("MyAnnotation.kt")
         val annotationClass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyAnnotation")
@@ -540,7 +540,30 @@ class IrValidatorTest {
             )
         )
         file2.addChild(annotatedClass)
-        testValidation(IrVerificationMode.WARNING, file2, emptyList())
+        testValidation(
+            IrVerificationMode.WARNING,
+            file2,
+            listOf(
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
+                      inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                ),
+                Message(
+                    WARNING,
+                    """
+                    [IR VALIDATION] IrValidatorTest: The following element references 'private' declaration that is invisible in the current scope:
+                    CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in org.sample.MyAnnotation' type=org.sample.MyAnnotation origin=null
+                      inside FILE fqName:org.sample fileName:b.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("b.kt", 0, 0, null),
+                ),
+            )
+        )
     }
 
     @Test
