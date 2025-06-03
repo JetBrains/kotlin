@@ -2469,8 +2469,57 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     private static final TokenSet NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = TokenSet.create(COMMA, COLON, EQ, RPAR);
 
+    /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
+            // Prefix
+            MINUS, PLUS, MINUSMINUS, PLUSPLUS,
+            EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
+            // Atomic
+
+            COLONCOLON, // callable reference
+
+            LPAR, // parenthesized
+
+            // literal constant
+            TRUE_KEYWORD, FALSE_KEYWORD,
+            INTERPOLATION_PREFIX, OPEN_QUOTE,
+            INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
+            NULL_KEYWORD,
+
+            LBRACE, // functionLiteral
+            FUN_KEYWORD, // expression function
+
+            THIS_KEYWORD, // this
+            SUPER_KEYWORD, // super
+
+            IF_KEYWORD, // if
+            WHEN_KEYWORD, // when
+            TRY_KEYWORD, // try
+            OBJECT_KEYWORD, // object
+
+            // jump
+            THROW_KEYWORD,
+            RETURN_KEYWORD,
+            CONTINUE_KEYWORD,
+            BREAK_KEYWORD,
+
+            // loop
+            FOR_KEYWORD,
+            WHILE_KEYWORD,
+            DO_KEYWORD,
+
+            IDENTIFIER, // SimpleName
+
+            AT, // Just for better recovery and maybe for annotations
+
+            LBRACKET // Collection literal expression
+    );
+
+    /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
+            EOL_OR_SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
+    );
+
     private static final TokenSet USER_TYPE_NAME_RECOVERY_SET =
-        TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST);
+        TokenSet.orSet(EXPRESSION_FIRST, EXPRESSION_FOLLOW, DECLARATION_FIRST);
 
     /*
      * functionParameters

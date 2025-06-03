@@ -23,8 +23,8 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
+import static org.jetbrains.kotlin.parsing.KotlinParsing.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.DEFAULT;
-import static org.jetbrains.kotlin.parsing.KotlinParsing.PARAMETER_NAME_RECOVERY_SET;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.PRECEDING_ALL_COMMENTS_BINDER;
 import static org.jetbrains.kotlin.parsing.KotlinWhitespaceAndCommentsBindersKt.TRAILING_ALL_COMMENTS_BINDER;
 
@@ -71,51 +71,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             COLON
     );
 
-    /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
-            // Prefix
-            MINUS, PLUS, MINUSMINUS, PLUSPLUS,
-            EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
-            // Atomic
-
-            COLONCOLON, // callable reference
-
-            LPAR, // parenthesized
-
-            // literal constant
-            TRUE_KEYWORD, FALSE_KEYWORD,
-            INTERPOLATION_PREFIX, OPEN_QUOTE,
-            INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
-            NULL_KEYWORD,
-
-            LBRACE, // functionLiteral
-            FUN_KEYWORD, // expression function
-
-            THIS_KEYWORD, // this
-            SUPER_KEYWORD, // super
-
-            IF_KEYWORD, // if
-            WHEN_KEYWORD, // when
-            TRY_KEYWORD, // try
-            OBJECT_KEYWORD, // object
-
-            // jump
-            THROW_KEYWORD,
-            RETURN_KEYWORD,
-            CONTINUE_KEYWORD,
-            BREAK_KEYWORD,
-
-            // loop
-            FOR_KEYWORD,
-            WHILE_KEYWORD,
-            DO_KEYWORD,
-
-            IDENTIFIER, // SimpleName
-
-            AT, // Just for better recovery and maybe for annotations
-
-            LBRACKET // Collection literal expression
-    );
-
     @SuppressWarnings("WeakerAccess")
     public static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
             EXPRESSION_FIRST,
@@ -134,10 +89,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             TokenSet.orSet(
                     TokenSet.andSet(STATEMENT_FIRST, TokenSet.andNot(KEYWORDS, TokenSet.create(IN_KEYWORD))),
                     TokenSet.create(EOL_OR_SEMICOLON));
-
-    /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            EOL_OR_SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
-    );
 
     // typeArguments? valueArguments : typeArguments : arrayAccess
     private static final TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
