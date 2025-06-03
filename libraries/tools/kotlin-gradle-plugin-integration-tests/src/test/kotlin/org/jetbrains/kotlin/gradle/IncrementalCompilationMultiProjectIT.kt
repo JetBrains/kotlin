@@ -661,7 +661,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     @GradleTest
     fun testMoveFunctionFromLibWithRemappedBuildDirs(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
-            allprojects().buildScriptInjection {
+            subprojects(".", "app", "lib").buildScriptInjection {
                 val projectPath = project.path.replace(':', '/')
                 val newBuildDir = File(project.rootDir, "../out$projectPath/build")
                 project.layout.buildDirectory.set(newBuildDir)

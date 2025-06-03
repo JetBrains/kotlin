@@ -240,7 +240,7 @@ class CustomK2Tests : KGPBaseTest() {
     @DisplayName("Native metadata compilation against other klib (KT-65840)")
     fun nativeMetadataCompilationWithAgainstOtherKlib(gradleVersion: GradleVersion) {
         project("k2-common-native-against-other-klib", gradleVersion) {
-            subprojects().buildScriptInjection {
+            subprojects("app", "lib").buildScriptInjection {
                 kotlinMultiplatform.apply {
                     applyDefaultHierarchyTemplate()
                     linuxX64()
