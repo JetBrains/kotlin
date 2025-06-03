@@ -15,9 +15,21 @@ val templateConfig = Pair(
 
 val documentationExtension = extensions.create<PluginsApiDocumentationExtension>(
     "pluginsApiDocumentation",
-    { project: Project ->
-        project.tasks.withType<DokkaTaskPartial>().configureEach {
-            pluginsMapConfiguration.put(templateConfig.first, templateConfig.second)
+    { project: Project, extension: PluginsApiDocumentationExtension ->
+        project.plugins.withId("org.jetbrains.dokka") {
+            project.dependencies {
+                "dokkaPlugin"(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
+            }
+
+            project.tasks.withType<DokkaTaskPartial>().configureEach {
+                pluginsMapConfiguration.put(templateConfig.first, templateConfig.second)
+                pluginsMapConfiguration.put(
+                    "org.jetbrains.dokka.versioning.VersioningPlugin",
+                    extension.documentationOldVersions.map { olderVersionsDir ->
+                        "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile.also { it.mkdirs() }}\" }"
+                    }
+                )
+            }
         }
     }
 )
