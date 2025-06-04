@@ -25974,6 +25974,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("ifWithAssignmentAndNothingBranch.kt")
+    public void testIfWithAssignmentAndNothingBranch() {
+      runTest("compiler/testData/codegen/box/inference/ifWithAssignmentAndNothingBranch.kt");
+    }
+
+    @Test
     @TestMetadata("inferenceWithTypeVariableInsideCapturedType.kt")
     public void testInferenceWithTypeVariableInsideCapturedType() {
       runTest("compiler/testData/codegen/box/inference/inferenceWithTypeVariableInsideCapturedType.kt");
@@ -26112,6 +26118,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt")
+    public void testNoCheckNotNullForFlexibleTypeInWhenAtAssignment() {
+      runTest("compiler/testData/codegen/box/inference/noCheckNotNullForFlexibleTypeInWhenAtAssignment.kt");
+    }
+
+    @Test
     @TestMetadata("noCoercionToUniForNullableLambdaReturnType.kt")
     public void testNoCoercionToUniForNullableLambdaReturnType() {
       runTest("compiler/testData/codegen/box/inference/noCoercionToUniForNullableLambdaReturnType.kt");
@@ -26202,9 +26214,45 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("tryCatchAtAssignment.kt")
+    public void testTryCatchAtAssignment() {
+      runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchAtAssignmentWithSmartCast.kt")
+    public void testTryCatchAtAssignmentWithSmartCast() {
+      runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignmentWithSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("tryWithAssignmentAndNothingTypedCatch.kt")
+    public void testTryWithAssignmentAndNothingTypedCatch() {
+      runTest("compiler/testData/codegen/box/inference/tryWithAssignmentAndNothingTypedCatch.kt");
+    }
+
+    @Test
     @TestMetadata("unsafeVarianceCodegen.kt")
     public void testUnsafeVarianceCodegen() {
       runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
+    }
+
+    @Test
+    @TestMetadata("whenAtAssignment.kt")
+    public void testWhenAtAssignment() {
+      runTest("compiler/testData/codegen/box/inference/whenAtAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("whenAtAssignmentWithSmartCast.kt")
+    public void testWhenAtAssignmentWithSmartCast() {
+      runTest("compiler/testData/codegen/box/inference/whenAtAssignmentWithSmartCast.kt");
+    }
+
+    @Test
+    @TestMetadata("whenAtAssignmentWithSmartCastInsideCapturedLambda.kt")
+    public void testWhenAtAssignmentWithSmartCastInsideCapturedLambda() {
+      runTest("compiler/testData/codegen/box/inference/whenAtAssignmentWithSmartCastInsideCapturedLambda.kt");
     }
 
     @Nested
