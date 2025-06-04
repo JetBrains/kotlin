@@ -639,6 +639,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("frameworkNameWithObjCNameAndExact"), Configuration(frameworkName = "Shared"))
     }
 
+    @Test
+    fun `test - extension of primitive type`() {
+        doTest(headersTestDataDir.resolve("extensionOfPrimitiveType"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

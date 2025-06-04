@@ -64,7 +64,7 @@ internal fun ObjCExportContext.buildObjCMethod(
     val comment = analysisSession.translateToObjCComment(symbol, bridge, parameters)
     val throws = analysisSession.getDefinedThrows(symbol).map { it }.toList()
 
-    val isMethodInstance = if (isExtensionOfMappedObjCType(symbol)) false else bridge.isInstance
+    val isMethodInstance = bridge.isInstance
 
     fun buildAttributes(mangleNameAttribute: (String) -> String = { it }): List<String> {
         val attributes = mutableListOf<String>()
