@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -23,8 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TargetBackend
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import org.opentest4j.TestAbortedException
 import java.io.File
 
@@ -65,14 +62,40 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
             compilerArguments: List<String>,
-        ) = this@AbstractKlibLinkageTest.buildKlib(
-            moduleName,
-            buildDirs.sourceDir,
-            dependencies,
-            klibFile,
-            compilerEdition,
-            compilerArguments
-        )
+        ) {
+            val srcFiles = buildDirs.sourceDir.listFiles()
+            check(srcFiles != null && srcFiles.isNotEmpty()) { "No source files could be found" }
+            val hasKtFiles = srcFiles.any { it.name.endsWith(".kt") }
+            val defFiles = srcFiles.filter { it.name.endsWith(".def") }
+            check(!hasKtFiles || defFiles.isEmpty()) { "Both .kt and .def files are specified" }
+            check(defFiles.size <= 1) { "More than one .def file is specified" }
+
+            if (hasKtFiles) {
+                this@AbstractKlibLinkageTest.buildKlib(
+                    moduleName,
+                    buildDirs.sourceDir,
+                    dependencies,
+                    klibFile,
+                    compilerEdition,
+                    compilerArguments
+                )
+            } else {
+                val klibArtifact = KLIB(klibFile)
+                val compilation = CInteropCompilation(
+                    this@AbstractKlibLinkageTest.targets,
+                    testRunSettings.get(),
+                    TestCompilerArgs(compilerArguments),
+                    srcFiles[0],
+                    sources = srcFiles.filterNot { it == srcFiles[0] },
+                    dependencies = emptyList(),
+                    klibArtifact,
+                )
+
+                compilation.result.assertSuccess() // <-- trigger compilation
+
+                producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
+            }
+        }
 
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
