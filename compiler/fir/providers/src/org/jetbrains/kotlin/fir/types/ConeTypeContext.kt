@@ -527,7 +527,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
         val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.MultiField
+        return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
+    }
+
+    private fun TypeConstructorMarker.isMultiFieldValueClassRecursionAware(
+        fields: List<Pair<Name, RigidTypeMarker>>,
+        visited: MutableSet<TypeConstructorMarker>,
+    ): Boolean {
+        if (fields.size > 1) return true
+        val fieldType = fields.singleOrNull()?.second ?: return false
+        if (!visited.add(this)) return false
+
+        val typeConstructor = fieldType.typeConstructor()
+        return !fieldType.isNullableType() && typeConstructor.getValueClassProperties()?.let {
+            typeConstructor.isMultiFieldValueClassRecursionAware(it, visited)
+        } == true
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {
