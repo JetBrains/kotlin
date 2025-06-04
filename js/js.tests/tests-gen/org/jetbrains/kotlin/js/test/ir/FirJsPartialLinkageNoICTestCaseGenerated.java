@@ -103,6 +103,12 @@ public class FirJsPartialLinkageNoICTestCaseGenerated extends AbstractFirJsParti
   }
 
   @Test
+  @TestMetadata("interop-changedFunction")
+  public void testInterop_changedFunction() {
+    runTest("compiler/testData/klib/partial-linkage/interop-changedFunction/");
+  }
+
+  @Test
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");
