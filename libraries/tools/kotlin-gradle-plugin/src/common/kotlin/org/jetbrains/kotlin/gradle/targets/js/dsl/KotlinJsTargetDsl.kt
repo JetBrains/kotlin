@@ -286,8 +286,23 @@ interface KotlinJsSubTargetDsl {
     @ExperimentalDistributionDsl
     fun distribution(body: Action<Distribution>)
 
+    /**
+     * Configure the default [KotlinJsTest] test task for the execution environment.
+     *
+     * This can be used to modify the configuration of the Kotlin JS test task.
+     *
+     * For more information about test tasks, see https://kotl.in/kotlin-js-test-configuration.
+     */
     fun testTask(body: Action<KotlinJsTest>)
 
+    /**
+     * The container that holds all [KotlinJsPlatformTestRun] executions for the execution environments.
+     *
+     * This can be used to modify the configuration of the test runs.
+     *
+     * @see org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests.testRuns
+     * @see org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl.testRuns
+     */
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
