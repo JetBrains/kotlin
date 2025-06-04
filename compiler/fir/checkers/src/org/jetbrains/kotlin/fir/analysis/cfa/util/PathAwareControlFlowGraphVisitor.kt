@@ -24,8 +24,9 @@ private val EMPTY_NORMAL_PATH_INFO: PathAwareControlFlowInfo<Nothing, Nothing> =
 fun <K : Any, V : Any> emptyNormalPathInfo(): PathAwareControlFlowInfo<K, V> =
     EMPTY_NORMAL_PATH_INFO as PathAwareControlFlowInfo<K, V>
 
-abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any> :
-    ControlFlowGraphVisitor<PathAwareControlFlowInfo<K, V>, PathAwareControlFlowInfo<K, V>>() {
+abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any>(
+    val direction: CfgTraverseDirection = CfgTraverseDirection.Forward,
+) : ControlFlowGraphVisitor<PathAwareControlFlowInfo<K, V>, PathAwareControlFlowInfo<K, V>>() {
 
     abstract fun mergeInfo(a: ControlFlowInfo<K, V>, b: ControlFlowInfo<K, V>, node: CFGNode<*>): ControlFlowInfo<K, V>
 
@@ -50,8 +51,8 @@ abstract class PathAwareControlFlowGraphVisitor<K : Any, V : Any> :
             from is FinallyBlockExitNode -> {
                 if (label == UncaughtExceptionPath) {
                     data.mutate {
-                        for (other in from.followingNodes) {
-                            val otherLabel = from.edgeTo(other).label
+                        for (other in direction.next(from)) {
+                            val otherLabel = direction.edge(from, other).label
                             if (otherLabel != UncaughtExceptionPath) {
                                 it.remove(otherLabel)
                             }
