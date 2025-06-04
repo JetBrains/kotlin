@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.buildtools.internal.v2
 
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 
-open class BuildOperationImpl : BuildOperation<Unit> {
-    override fun <V> get(key: BuildOperation.Option<V>): V? {
-        TODO("Not yet implemented")
-    }
+abstract class BuildOperationImpl<R> : BuildOperation<R> {
+    private val optionsDelegate = OptionsDelegate<BuildOperation.Option<*>>()
 
+    override fun <V> get(key: BuildOperation.Option<V>): V? = optionsDelegate[key]
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
-        TODO("Not yet implemented")
+        optionsDelegate[key] = value
     }
+
+    abstract fun execute(): R
 }

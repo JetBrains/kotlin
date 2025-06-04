@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.v2.BuildOperationImpl
@@ -15,16 +17,19 @@ class JvmCompilationOperationImpl(
     private val kotlinSources: List<Path>,
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArguments = JvmCompilerArguments()
-) : BuildOperationImpl(), JvmCompilationOperation {
-    override fun <V> get(key: JvmCompilationOperation.Option<V>): V? {
-        TODO("Not yet implemented")
-    }
+) : BuildOperationImpl<Unit>(), JvmCompilationOperation {
+    private val optionsDelegate = OptionsDelegate<JvmCompilationOperation.Option<*>>()
 
+    override fun <V> get(key: JvmCompilationOperation.Option<V>): V? = optionsDelegate[key]
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
-        TODO("Not yet implemented")
+        optionsDelegate[key] = value
     }
 
     override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
         TODO("Not yet implemented")
+    }
+
+    override fun execute() {
+        println("Compiling $kotlinSources into $destinationDirectory")
     }
 }

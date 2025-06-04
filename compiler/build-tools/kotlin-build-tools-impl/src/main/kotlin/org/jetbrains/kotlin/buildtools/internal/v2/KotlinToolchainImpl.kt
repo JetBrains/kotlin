@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.buildtools.api.v2.trackers.KotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.v2.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.js.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.jvm.JvmPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.native.NativePlatformToolchainImpl
 
 class KotlinToolchainImpl(
@@ -30,7 +31,9 @@ class KotlinToolchainImpl(
     }
 
     override suspend fun <R> executeOperation(operation: BuildOperation<R>): R {
-        TODO("Not yet implemented")
+        check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+        @Suppress("UNCHECKED_CAST")
+        return operation.execute()
     }
 
     override suspend fun <R> executeOperation(

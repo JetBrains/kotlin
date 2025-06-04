@@ -660,5 +660,17 @@ public class JvmCompilerArguments : CommonCompilerArguments() {
     @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XANNOTATIONS_IN_METADATA: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("XANNOTATIONS_IN_METADATA")
+
+    /**
+     * Select the code generation scheme for type-checking 'when' expressions:
+     * -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+     *                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+     * -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+     * The default value is 'inline'.
+     */
+    @JvmField
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    public val XWHEN_EXPRESSIONS: JvmCompilerArgument<String?> =
+        JvmCompilerArgument("XWHEN_EXPRESSIONS")
   }
 }
