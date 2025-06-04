@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
+import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
@@ -813,8 +815,14 @@ class StaticCacheCompilation(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",
         )
-        if (makePerFileCache)
-            add("-Xmake-per-file-cache")
+
+        if (makePerFileCache) {
+            val isCInterop = createKotlinLibraryComponents(
+                org.jetbrains.kotlin.konan.file.File(dependencies.libraryToCache.path)
+            )[0].isCInteropLibrary()
+            if (!isCInterop) // Making per-file cache is not allowed for cinterop klibs.
+                add("-Xmake-per-file-cache")
+        }
 
         applyPartialLinkageArgs(partialLinkageConfig)
         applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
