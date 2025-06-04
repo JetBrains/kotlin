@@ -103,43 +103,48 @@ private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
         else -> resolvedType
     }
 
-internal fun FirExpression.toArgumentInfo(context: CheckerContext) =
+context(context: CheckerContext)
+internal fun FirExpression.toArgumentInfo() =
     ArgumentInfo(
         this,
-        userType = resolvedType.finalApproximationOrSelf(context),
-        originalType = mostOriginalTypeIfSmartCast.fullyExpandedType(context.session).finalApproximationOrSelf(context),
+        userType = resolvedType.finalApproximationOrSelf(),
+        originalType = mostOriginalTypeIfSmartCast.fullyExpandedType().finalApproximationOrSelf(),
         context.session,
     )
 
 private fun ConeKotlinType.getCounterpartRelativelyToPlatform(session: FirSession): ConeKotlinType? =
     toKotlinTypeIfPlatform(session) ?: toPlatformTypeIfKotlin(session)
 
+context(context: CheckerContext)
 /**
  * This function de-facto replicates a single-side check from [org.jetbrains.kotlin.types.CastDiagnosticsUtil.isRelated].
  */
-private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext): Boolean {
+private fun TypeInfo.isSubtypeOf(other: TypeInfo): Boolean {
     val isDirectSubtype = notNullType.isSubtypeOf(other.notNullType, context.session)
     val counterpart = other.notNullType.getCounterpartRelativelyToPlatform(context.session)
     return isDirectSubtype || counterpart?.let { notNullType.isSubtypeOf(it, context.session) } == true
 }
 
-internal fun areUnrelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean {
-    return !a.isSubtypeOf(b, context) && !b.isSubtypeOf(a, context)
+context(context: CheckerContext)
+internal fun areUnrelated(a: TypeInfo, b: TypeInfo): Boolean {
+    return !a.isSubtypeOf(b) && !b.isSubtypeOf(a)
 }
 
-internal fun areRelated(a: TypeInfo, b: TypeInfo, context: CheckerContext): Boolean = !areUnrelated(a, b, context)
+context(context: CheckerContext)
+internal fun areRelated(a: TypeInfo, b: TypeInfo): Boolean = !areUnrelated(a, b)
 
+context(context: CheckerContext)
 /**
  * See [KT-57779](https://youtrack.jetbrains.com/issue/KT-57779) for more information.
  */
-internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo, context: CheckerContext): Boolean {
+internal fun shouldReportAsPerRules1(l: TypeInfo, r: TypeInfo): Boolean {
     val oneIsFinal = l.isFinal || r.isFinal
     val bothAreConcrete = l.type is ConeClassLikeType && r.type is ConeClassLikeType
     val bothAreClasses = l.isClass && r.isClass
 
     return when {
-        oneIsFinal -> areUnrelated(l, r, context)
-        bothAreConcrete && bothAreClasses -> areUnrelated(l, r, context)
+        oneIsFinal -> areUnrelated(l, r)
+        bothAreConcrete && bothAreClasses -> areUnrelated(l, r)
         else -> false
     }
 }

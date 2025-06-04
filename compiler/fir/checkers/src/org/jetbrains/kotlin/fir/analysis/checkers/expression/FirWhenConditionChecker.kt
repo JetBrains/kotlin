@@ -26,14 +26,15 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
         for (branch in expression.branches) {
             val condition = branch.condition
             if (condition is FirElseIfTrueCondition) continue
-            checkCondition(condition, context, reporter)
+            checkCondition(condition)
         }
         if (expression.subjectVariable != null) {
-            checkDuplicatedLabels(expression, context, reporter)
+            checkDuplicatedLabels(expression)
         }
     }
 
-    private fun checkDuplicatedLabels(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkDuplicatedLabels(expression: FirWhenExpression) {
         // The second part of each pair indicates whether the `is` check is positive or negated.
         val checkedTypes = hashSetOf<Pair<ConeKotlinType, FirOperation>>()
         val checkedConstants = hashSetOf<Any?>()
@@ -54,14 +55,14 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
                             else -> continue
                         }
                         if (!checkedConstants.add(value)) {
-                            reporter.reportOn(condition.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN, context)
+                            reporter.reportOn(condition.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN)
                         }
                     }
                 }
                 is FirTypeOperatorCall -> {
                     val coneType = condition.conversionTypeRef.coneType
                     if (!checkedTypes.add(coneType to condition.operation)) {
-                        reporter.reportOn(condition.conversionTypeRef.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN, context)
+                        reporter.reportOn(condition.conversionTypeRef.source, FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN)
                     }
                 }
             }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 object FirImplementationByDelegationWithDifferentGenericSignatureChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val classScope = declaration.unsubstitutedScope(context)
+        val classScope = declaration.unsubstitutedScope()
         classScope.processAllFunctions { symbol ->
             val delegatedWrapperData = symbol.delegatedWrapperData ?: return@processAllFunctions
             val wrappedGenericFunction = delegatedWrapperData.wrapped

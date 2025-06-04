@@ -73,7 +73,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 extensionOrContextFunctionSupertypeReported = true
             }
 
-            checkAnnotationOnSuperclass(superTypeRef, context, reporter)
+            checkAnnotationOnSuperclass(superTypeRef)
 
             val symbol = expandedSupertype.toSymbol(context.session)
 
@@ -105,56 +105,53 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 }
             }
 
-            checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
-            checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
+            checkClassCannotBeExtendedDirectly(symbol, superTypeRef)
+            checkNamedFunctionTypeParameter(superTypeRef)
 
             val shouldCheckSupertypeOnTypealiasWithTypeProjection = if (originalSupertype.typeArguments.isNotEmpty()) {
-                !checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef, reporter, context)
+                !checkProjectionInImmediateArgumentToSupertype(originalSupertype, superTypeRef)
             } else {
-                !checkExpandedTypeCannotBeInherited(symbol, expandedSupertype, reporter, superTypeRef, originalSupertype, context)
+                !checkExpandedTypeCannotBeInherited(symbol, expandedSupertype, superTypeRef, originalSupertype)
             }
 
             if (shouldCheckSupertypeOnTypealiasWithTypeProjection) {
-                checkSupertypeOnTypeAliasWithTypeProjection(originalSupertype, expandedSupertype, superTypeRef, reporter, context)
+                checkSupertypeOnTypeAliasWithTypeProjection(originalSupertype, expandedSupertype, superTypeRef)
             }
         }
 
-        checkDelegationNotToInterface(declaration, context, reporter)
-        checkDelegationWithoutPrimaryConstructor(declaration, context, reporter)
+        checkDelegationNotToInterface(declaration)
+        checkDelegationWithoutPrimaryConstructor(declaration)
 
         if (declaration is FirRegularClass && declaration.superTypeRefs.size > 1) {
-            checkInconsistentTypeParameters(listOf(null to declaration.symbol), context, reporter, declaration.source, isValues = true)
+            checkInconsistentTypeParameters(listOf(null to declaration.symbol), declaration.source, isValues = true)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationOnSuperclass(
         superTypeRef: FirTypeRef,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for (annotation in superTypeRef.annotations) {
             if (annotation.useSiteTarget != null) {
-                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR, context)
+                reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR)
             }
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkClassCannotBeExtendedDirectly(
         symbol: FirClassifierSymbol<*>?,
-        reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
-        context: CheckerContext,
     ) {
         if (symbol is FirRegularClassSymbol && symbol.classId == StandardClassIds.Enum) {
-            reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol, context)
+            reporter.reportOn(superTypeRef.source, FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY, symbol)
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkProjectionInImmediateArgumentToSupertype(
         coneType: ConeKotlinType,
         superTypeRef: FirTypeRef,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ): Boolean {
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return false
         var result = false
@@ -163,8 +160,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
                 reporter.reportOn(
                     argSource ?: superTypeRef.source,
-                    FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE,
-                    context
+                    FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE
                 )
                 result = true
             }
@@ -172,18 +168,17 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         return result
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkExpandedTypeCannotBeInherited(
         symbol: FirBasedSymbol<*>?,
         fullyExpandedType: ConeKotlinType,
-        reporter: DiagnosticReporter,
         superTypeRef: FirTypeRef,
         coneType: ConeKotlinType,
-        context: CheckerContext,
     ): Boolean {
         if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
             for (typeArgument in fullyExpandedType.typeArguments) {
                 if (typeArgument.isConflictingOrNotInvariant) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
+                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType)
                     return true
                 }
             }
@@ -191,24 +186,22 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
         return false
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkSupertypeOnTypeAliasWithTypeProjection(
         coneType: ConeKotlinType,
         fullyExpandedType: ConeKotlinType,
         superTypeRef: FirTypeRef,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         if (coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
             fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
         ) {
-            reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
+            reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDelegationNotToInterface(
         declaration: FirClass,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         @OptIn(DirectDeclarationsAccess::class)
         for (subDeclaration in declaration.declarations) {
@@ -216,17 +209,16 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
                     val delegatedClassSymbol = subDeclaration.returnTypeRef.toRegularClassSymbol(context.session)
                     if (delegatedClassSymbol != null && delegatedClassSymbol.classKind != ClassKind.INTERFACE) {
-                        reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE, context)
+                        reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE)
                     }
                 }
             }
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkNamedFunctionTypeParameter(
         superTypeRef: FirTypeRef,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val delegatedTypeRef = (superTypeRef as? FirResolvedTypeRef)?.delegatedTypeRef ?: return
         if (delegatedTypeRef !is FirFunctionTypeRef) return
@@ -236,8 +228,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 reporter.reportOn(
                     source,
                     FirErrors.UNSUPPORTED,
-                    "Named parameter in function type as supertype is unsupported.",
-                    context
+                    "Named parameter in function type as supertype is unsupported."
                 )
             }
         }
@@ -257,10 +248,9 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
     }
 
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDelegationWithoutPrimaryConstructor(
         declaration: FirClass,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (declaration.isInterface) return
         if (declaration.isExpect) return
@@ -273,8 +263,7 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Platform) {
                 reporter.reportOn(
                     subDeclaration.source,
                     FirErrors.UNSUPPORTED,
-                    "Delegation without primary constructor is unsupported.",
-                    context
+                    "Delegation without primary constructor is unsupported."
                 )
             }
         }

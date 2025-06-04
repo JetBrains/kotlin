@@ -34,7 +34,7 @@ object FirProtectedConstructorNotInSuperCallChecker : FirFunctionCallChecker(Mpp
         val constructedClass = symbol.getConstructedClass(context.session)
 
         if (
-            !shouldAllowSuchCallNonetheless(symbol, context) &&
+            !shouldAllowSuchCallNonetheless(symbol) &&
             symbol.visibility.normalize() == Visibilities.Protected &&
             // Prevent reporting for already invisible references
             !reference.isError() &&
@@ -44,8 +44,9 @@ object FirProtectedConstructorNotInSuperCallChecker : FirFunctionCallChecker(Mpp
         }
     }
 
+    context(context: CheckerContext)
     @OptIn(PrivateForInline::class, DirectDeclarationsAccess::class, SymbolInternals::class)
-    private fun shouldAllowSuchCallNonetheless(symbol: FirConstructorSymbol, context: CheckerContext): Boolean {
+    private fun shouldAllowSuchCallNonetheless(symbol: FirConstructorSymbol): Boolean {
         val containingFile = context.containingFileSymbol ?: return false
         if (containingFile.fir.declarations.singleOrNull() is FirCodeFragment) return true
         val original = symbol.originalIfFakeOverride() ?: symbol

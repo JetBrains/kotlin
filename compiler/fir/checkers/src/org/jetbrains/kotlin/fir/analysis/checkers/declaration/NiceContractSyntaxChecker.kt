@@ -18,20 +18,23 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 object ContractSyntaxV2FunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirSimpleFunction) {
-        checkFeatureIsEnabled(declaration, context, reporter)
+        checkFeatureIsEnabled(declaration)
     }
 }
 
 object ContractSyntaxV2PropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        declaration.getter?.let { checkFeatureIsEnabled(it, context, reporter) }
-        declaration.setter?.let { checkFeatureIsEnabled(it, context, reporter) }
+        declaration.getter?.let { checkFeatureIsEnabled(it) }
+        declaration.setter?.let { checkFeatureIsEnabled(it) }
     }
 }
 
-private fun checkFeatureIsEnabled(declaration: FirContractDescriptionOwner, context: CheckerContext, reporter: DiagnosticReporter) {
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkFeatureIsEnabled(
+    declaration: FirContractDescriptionOwner,
+) {
     val source = declaration.contractDescription?.source ?: return
     if (source.elementType != KtNodeTypes.CONTRACT_EFFECT_LIST) return
-    source.requireFeatureSupport(LanguageFeature.ContractSyntaxV2, context, reporter)
+    source.requireFeatureSupport(LanguageFeature.ContractSyntaxV2)
 }

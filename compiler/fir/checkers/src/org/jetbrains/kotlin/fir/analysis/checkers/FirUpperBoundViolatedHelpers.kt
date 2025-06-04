@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -135,12 +134,15 @@ fun checkUpperBoundViolated(
                 ) {
                     if (isReportExpansionError && argumentTypeRef == null) {
                         reporter.reportOn(
-                            argumentSource ?: fallbackSource, typealiasDiagnostic, upperBound, argumentType)
+                            argumentSource ?: fallbackSource, typealiasDiagnostic, upperBound, argumentType
+                        )
                     } else {
-                        val extraMessage = if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
+                        val extraMessage =
+                            if (upperBound.unwrapToSimpleTypeUsingLowerBound() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
                         reporter.reportOn(
                             argumentSource ?: fallbackSource, regularDiagnostic,
-                            upperBound, argumentType, extraMessage)
+                            upperBound, argumentType, extraMessage
+                        )
                     }
                 } else {
                     // Only check if the original check was successful to prevent duplicate diagnostics

@@ -55,13 +55,12 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
             else -> error("Should not be there")
         }
 
-        type?.let { checkTypeAndArguments(it, context, reporter, source) }
+        type?.let { checkTypeAndArguments(it, source) }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndArguments(
         type: ConeKotlinType,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         reportOn: KtSourceElement?
     ) {
         val classSymbol = type.toSymbol(context.session)
@@ -72,14 +71,12 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerK
             reporter.reportOn(
                 reportOn,
                 FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED,
-                classSymbol.resolvedSuperTypeRefs.map { it.coneType },
-                context
-            )
+                classSymbol.resolvedSuperTypeRefs.map { it.coneType })
         }
         for (typeArgument in type.typeArguments) {
             checkTypeAndArguments(
                 typeArgument.type ?: continue,
-                context, reporter, reportOn
+                reportOn
             )
         }
     }

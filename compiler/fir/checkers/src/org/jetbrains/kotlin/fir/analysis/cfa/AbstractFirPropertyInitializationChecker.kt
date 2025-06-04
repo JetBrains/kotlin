@@ -12,5 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 abstract class AbstractFirPropertyInitializationChecker(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
-    abstract fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    abstract fun analyze(data: VariableInitializationInfoData)
 }

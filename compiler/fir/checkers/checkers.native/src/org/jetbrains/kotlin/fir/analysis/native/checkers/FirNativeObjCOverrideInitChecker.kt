@@ -73,7 +73,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
             // Remove fake overrides of this init method, also check for explicit overriding:
             firClass.symbol.processAllDeclaredCallables(context.session) {
                 if (it is FirNamedFunctionSymbol &&
-                    initMethod in it.directOverriddenFunctionsSafe(context) &&
+                    initMethod in it.directOverriddenFunctionsSafe() &&
                     !it.isSubstitutionOrIntersectionOverride
                 ) {
                     reporter.reportOn(

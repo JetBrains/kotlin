@@ -30,15 +30,14 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        checkClassLikeSymbol(expression.symbol ?: return, expression, expression.isStandalone(context), context, reporter)
+        checkClassLikeSymbol(expression.symbol ?: return, expression, expression.isStandalone())
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkClassLikeSymbol(
         symbol: FirClassLikeSymbol<*>,
         expression: FirResolvedQualifier,
         isStandalone: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val containingFileSymbol = context.containingFileSymbol ?: return
 
@@ -65,7 +64,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         // Validate standalone references to companion objects are visible. Qualified use is validated
         // by call resolution cone diagnostics in coneDiagnosticToFirDiagnostic.
         if (isStandalone) {
-            val invisibleCompanion = expression.symbol?.fullyExpandedClass(context.session)?.toInvisibleCompanion(context)
+            val invisibleCompanion = expression.symbol?.fullyExpandedClass(context.session)?.toInvisibleCompanion()
             if (invisibleCompanion != null) {
                 if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
                     @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)
@@ -80,16 +79,17 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
 
         if (symbol is FirTypeAliasSymbol) {
             symbol.resolvedExpandedTypeRef.coneType.toClassLikeSymbol(context.session)?.let {
-                checkClassLikeSymbol(it, expression, isStandalone, context, reporter)
+                checkClassLikeSymbol(it, expression, isStandalone)
             }
         }
 
         symbol.getOwnerLookupTag()?.toSymbol(context.session)?.let {
-            checkClassLikeSymbol(it, expression, isStandalone = false, context, reporter)
+            checkClassLikeSymbol(it, expression, isStandalone = false)
         }
     }
 
-    private fun FirRegularClassSymbol.toInvisibleCompanion(context: CheckerContext): FirRegularClassSymbol? {
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.toInvisibleCompanion(): FirRegularClassSymbol? {
         val firFile = context.containingFileSymbol ?: return null
         return resolvedCompanionObjectSymbol?.takeIf {
             !context.session.visibilityChecker.isClassLikeVisible(

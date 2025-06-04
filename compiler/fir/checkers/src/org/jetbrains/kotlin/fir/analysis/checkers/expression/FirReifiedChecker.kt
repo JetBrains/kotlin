@@ -60,7 +60,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit = isExplicit,
                     isArray = false,
                     isPlaceHolder = isPlaceHolder,
-                    reporter,
                     fullyExpandedType = typeArgument,
                 )
             } else if (
@@ -104,7 +103,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 
-    context(context: CheckerContext)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkArgumentAndReport(
         typeArgument: ConeKotlinType,
         typeParameter: FirTypeParameterSymbol,
@@ -112,7 +111,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
         isExplicit: Boolean,
         isArray: Boolean,
         isPlaceHolder: Boolean,
-        reporter: DiagnosticReporter,
         fullyExpandedType: ConeKotlinType = typeArgument.fullyExpandedType(),
     ) {
         if (fullyExpandedType.classId == StandardClassIds.Array) {
@@ -126,7 +124,6 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
                     isExplicit,
                     isArray = true,
                     isPlaceHolder = isPlaceHolder,
-                    reporter,
                 )
             }
             return

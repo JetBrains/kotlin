@@ -76,7 +76,8 @@ import org.jetbrains.kotlin.name.SpecialNames
  * assignments are considered unused.
  */
 object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
         @Suppress("UNCHECKED_CAST")
         val properties = data.properties as Set<FirPropertySymbol>
         val ownData = Data(properties)
@@ -93,10 +94,10 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
                 val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
                 variablesWithUnobservedWrites.add(variableSymbol)
                 // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
-                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
+                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ)
             } else if (statement is FirProperty) {
                 if (statement.symbol !in ownData.variablesWithoutReads && !statement.symbol.ignoreWarnings) {
-                    reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
+                    reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT)
                 }
             }
         }
@@ -105,7 +106,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
             if (symbol.ignoreWarnings) continue
             if ((fir.initializer as? FirFunctionCall)?.isIterator == true || fir.isCatchParameter == true) continue
             val error = if (symbol in variablesWithUnobservedWrites) FirErrors.VARIABLE_NEVER_READ else FirErrors.UNUSED_VARIABLE
-            reporter.reportOn(fir.source, error, context)
+            reporter.reportOn(fir.source, error)
         }
     }
 

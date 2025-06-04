@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 object FirPropertyHidesJavaFieldChecker : FirClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val scope = declaration.unsubstitutedScope(context)
+        val scope = declaration.unsubstitutedScope()
         scope.processAllProperties { propertySymbol ->
             if (propertySymbol !is FirPropertySymbol) return@processAllProperties
             if (propertySymbol.getContainingClassSymbol() != declaration.symbol) return@processAllProperties

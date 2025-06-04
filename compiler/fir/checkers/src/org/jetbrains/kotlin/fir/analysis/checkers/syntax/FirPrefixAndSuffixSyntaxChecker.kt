@@ -30,28 +30,26 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
     override fun isApplicable(element: FirStatement, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind && (source.elementType == KtNodeTypes.STRING_TEMPLATE || source.elementType in literalConstants)
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirStatement,
         source: KtPsiSourceElement,
         psi: KtExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        psi.prevLeaf()?.let { checkLiteralPrefixOrSuffix(it, context, reporter) }
-        psi.nextLeaf()?.let { checkLiteralPrefixOrSuffix(it, context, reporter) }
+        psi.prevLeaf()?.let { checkLiteralPrefixOrSuffix(it) }
+        psi.nextLeaf()?.let { checkLiteralPrefixOrSuffix(it) }
     }
 
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirStatement,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         source.lighterASTNode.prevLeaf(source.treeStructure)
-            ?.let { checkLiteralPrefixOrSuffix(it, source, context, reporter) }
+            ?.let { checkLiteralPrefixOrSuffix(it, source) }
         source.lighterASTNode.nextLeaf(source.treeStructure)
-            ?.let { checkLiteralPrefixOrSuffix(it, source, context, reporter) }
+            ?.let { checkLiteralPrefixOrSuffix(it, source) }
     }
 
     private enum class Direction(val offset: Int) {
@@ -92,25 +90,23 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
         return getLeaf(Direction.NEXT, treeStructure)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkLiteralPrefixOrSuffix(
         prefixOrSuffix: PsiElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (illegalLiteralPrefixOrSuffix(prefixOrSuffix.node.elementType)) {
-            report(prefixOrSuffix.toKtPsiSourceElement(), context, reporter)
+            report(prefixOrSuffix.toKtPsiSourceElement())
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkLiteralPrefixOrSuffix(
         prefixOrSuffix: LighterASTNode,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val elementType = prefixOrSuffix.tokenType ?: return
         if (illegalLiteralPrefixOrSuffix(elementType)) {
-            report(prefixOrSuffix.toKtLightSourceElement(source.treeStructure), context, reporter)
+            report(prefixOrSuffix.toKtLightSourceElement(source.treeStructure))
         }
     }
 
@@ -118,7 +114,8 @@ object FirPrefixAndSuffixSyntaxChecker : FirExpressionSyntaxChecker<FirStatement
         (elementType === KtTokens.IDENTIFIER || elementType === KtTokens.INTEGER_LITERAL || elementType === KtTokens.FLOAT_LITERAL || elementType is KtKeywordToken)
 
 
-    private fun report(source: KtSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.", context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun report(source: KtSourceElement) {
+        reporter.reportOn(source, FirErrors.UNSUPPORTED, "Literals must be surrounded by whitespace.")
     }
 }

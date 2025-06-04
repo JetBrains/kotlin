@@ -31,7 +31,7 @@ object FirArrayOfNullableNothingTypeChecker : FirResolvedTypeRefChecker(MppCheck
         val isVararg = (lastContainingDeclaration as? FirValueParameterSymbol)?.isVararg == true
         if (!isVararg && fullyExpandedType.isArrayOfNullableNothing()) {
             if (lastContainingDeclaration !is FirTypeAliasSymbol ||
-                lastContainingDeclaration.resolvedExpandedTypeRef.coneType.isMalformedExpandedType(context, allowNullableNothing = false)
+                lastContainingDeclaration.resolvedExpandedTypeRef.coneType.isMalformedExpandedType(allowNullableNothing = false)
             ) {
                 reporter.reportOn(typeRef.source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.")
             }

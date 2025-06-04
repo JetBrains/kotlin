@@ -91,7 +91,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
 
     context(context: CheckerContext)
     private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(): FirNamedFunctionSymbol? {
-        val scope = symbol.unsubstitutedScope(context)
+        val scope = symbol.unsubstitutedScope()
 
         val members = scope.collectAllFunctions()
             .filterIsInstance<FirIntersectionOverrideFunctionSymbol>()

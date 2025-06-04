@@ -53,7 +53,7 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
 
         // property must be declared in one of the outer lexical scopes
-        val containingSymbol = calleeVariableSymbol.containingClassOrFile(context)
+        val containingSymbol = calleeVariableSymbol.containingClassOrFile()
         if (context.containingDeclarations.none { it == containingSymbol }) {
             reporter.reportOn(
                 source,
@@ -69,11 +69,11 @@ object FirLateinitIntrinsicApplicabilityChecker : FirQualifiedAccessExpressionCh
         }
     }
 
+    context(context: CheckerContext)
     /**
      * Returns the containing class or file if the property is top-level.
      */
     private fun FirVariableSymbol<*>.containingClassOrFile(
-        context: CheckerContext
     ): FirBasedSymbol<*>? {
         return getContainingClassSymbol()
             ?: context.session.firProvider.getFirCallableContainerFile(this)?.symbol

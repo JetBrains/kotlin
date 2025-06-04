@@ -17,6 +17,6 @@ object FirLoopConditionChecker : FirLoopExpressionChecker(MppCheckerKind.Common)
     override fun check(expression: FirLoop) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
-        checkCondition(condition, context, reporter)
+        checkCondition(condition)
     }
 }

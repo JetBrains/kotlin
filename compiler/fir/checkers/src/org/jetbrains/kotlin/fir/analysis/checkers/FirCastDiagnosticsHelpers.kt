@@ -21,16 +21,18 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker.findCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {
+context(context: CheckerContext)
+fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
     val typeContext = context.session.typeContext
 
     val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()
-    val isUpcast = isUpcast(context, supertype, subtype)
+    val isUpcast = isUpcast(supertype, subtype)
 
     // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
     if (isNonReifiedTypeParameter && !isUpcast) {
         // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
-        val nullableToDefinitelyNotNull = !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
+        val nullableToDefinitelyNotNull =
+            !subtype.canBeNull(context.session) && supertype.withNullability(nullable = false, typeContext) == subtype
         if (!nullableToDefinitelyNotNull) {
             return true
         }
@@ -40,8 +42,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     if ((supertype !is ConeErrorType && supertype.isMarkedNullable) || (subtype !is ConeErrorType && subtype.isMarkedNullable)) {
         return isCastErased(
             supertype.withNullability(nullable = false, typeContext),
-            subtype.withNullability(nullable = false, typeContext),
-            context
+            subtype.withNullability(nullable = false, typeContext)
         )
     }
 
@@ -61,7 +62,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
         return true
     }
 
-    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol, context)
+    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
     // In this case, we can't guarantee anything, so the cast is considered to be erased
@@ -95,10 +96,10 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
  * subtype = List<...>
  * result = List<*>, some arguments were not inferred, replaced with '*'
  */
+context(context: CheckerContext)
 fun findStaticallyKnownSubtype(
     supertype: ConeKotlinType,
-    subTypeClassSymbol: FirRegularClassSymbol,
-    context: CheckerContext
+    subTypeClassSymbol: FirRegularClassSymbol
 ): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
 
@@ -182,11 +183,12 @@ fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
     return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
 }
 
-fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+context(context: CheckerContext)
+fun isUpcast(candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false)
 
+context(context: CheckerContext)
 internal fun isRefinementUseless(
-    context: CheckerContext,
     lhsType: ConeKotlinType,
     targetType: ConeKotlinType,
     expression: FirTypeOperatorCall,
@@ -212,14 +214,15 @@ internal fun isRefinementUseless(
                 } else {
                     targetType
                 }
-            isExactTypeCast(context, lhsType, refinedTargetType)
+            isExactTypeCast(lhsType, refinedTargetType)
         }
         FirOperation.IS, FirOperation.NOT_IS -> {
-            isUpcast(context, lhsType, targetType)
+            isUpcast(lhsType, targetType)
         }
         else -> throw AssertionError("Should not be here: ${expression.operation}")
     }
 }
 
-private fun isExactTypeCast(context: CheckerContext, lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
+context(context: CheckerContext)
+private fun isExactTypeCast(lhsType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.equalTypes(context.session.typeContext, lhsType, targetType, stubTypesEqualToAnything = false)

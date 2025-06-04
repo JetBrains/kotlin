@@ -63,11 +63,11 @@ sealed class FirJsMultipleInheritanceChecker(mppKind: MppCheckerKind) : FirClass
             return
         }
 
-        val scope = unsubstitutedScope(context)
+        val scope = unsubstitutedScope()
         val overridesWithSameName = scope.getFunctions(functionToCheck)
 
         for (function in overridesWithSameName) {
-            val overridden = function.overriddenFunctions(symbol, context)
+            val overridden = function.overriddenFunctions(symbol)
             if (
                 overridden.size > 1 &&
                 overridden.any { it.callableId.classId == supertype.classId }

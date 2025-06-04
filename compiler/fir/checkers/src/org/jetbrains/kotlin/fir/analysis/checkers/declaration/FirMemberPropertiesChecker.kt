@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val info = declaration.collectInitializationInfo(context, reporter)
+        val info = declaration.collectInitializationInfo()
         var reachedDeadEnd =
             (declaration as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph?.enterNode?.isDead == true
         // Order is important here, so we have to use declarations directly
@@ -48,7 +48,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
             if (innerDeclaration is FirProperty) {
                 val symbol = innerDeclaration.symbol
                 val isDefinitelyAssignedInConstructor = info?.get(symbol)?.isDefinitelyVisited() == true
-                checkProperty(declaration, symbol, isDefinitelyAssignedInConstructor, context, reporter, !reachedDeadEnd)
+                checkProperty(declaration, symbol, isDefinitelyAssignedInConstructor, !reachedDeadEnd)
             }
             // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.
             reachedDeadEnd = reachedDeadEnd ||
@@ -56,7 +56,9 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun FirClass.collectInitializationInfo(context: CheckerContext, reporter: DiagnosticReporter): VariableInitializationInfo? {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirClass.collectInitializationInfo(
+    ): VariableInitializationInfo? {
         val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
         val memberPropertySymbols = mutableSetOf<FirPropertySymbol>()
         symbol.processAllDeclaredCallables(context.session) { symbol ->
@@ -67,17 +69,16 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         if (memberPropertySymbols.isEmpty()) return null
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
         val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
-        PropertyInitializationCheckProcessor.check(data, isForInitialization = true, context, reporter)
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = true)
         return data.getValue(graph.exitNode)[NormalPath]
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkProperty(
     containingDeclaration: FirClass?,
     propertySymbol: FirPropertySymbol,
     isDefinitelyAssigned: Boolean,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     reachable: Boolean,
 ) {
     if (propertySymbol is FirErrorPropertySymbol) {
@@ -95,8 +96,6 @@ internal fun checkProperty(
         propertySymbol,
         modifierList,
         isDefinitelyAssigned,
-        reporter,
-        context,
         reachable
     )
 
@@ -109,7 +108,7 @@ internal fun checkProperty(
             propertySymbol.getterSymbol?.isDefault != false
         ) {
             propertySymbol.source?.let {
-                reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
+                reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE)
             }
         }
 
@@ -120,17 +119,16 @@ internal fun checkProperty(
                         it,
                         FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
                         propertySymbol,
-                        containingDeclaration.symbol,
-                        context
+                        containingDeclaration.symbol
                     )
                     return
                 }
             }
             propertySymbol.initializerSource?.let {
-                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
+                reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER)
             }
             propertySymbol.delegate?.source?.let {
-                reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
+                reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY)
             }
         }
 
@@ -139,10 +137,10 @@ internal fun checkProperty(
             containingDeclaration.isInterface &&
             !hasAbstractModifier &&
             propertySymbol.isAbstract &&
-            !isInsideExpectClass(containingDeclaration.symbol, context)
+            !isInsideExpectClass(containingDeclaration.symbol)
         ) {
             propertySymbol.source?.let {
-                reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+                reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE)
             }
         }
     }

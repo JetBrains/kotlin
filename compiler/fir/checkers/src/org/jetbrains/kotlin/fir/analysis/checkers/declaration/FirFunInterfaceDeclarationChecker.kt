@@ -44,7 +44,7 @@ sealed class FirFunInterfaceDeclarationChecker(mppKind: MppCheckerKind) : FirReg
     override fun check(declaration: FirRegularClass) {
         if (!declaration.isInterface || !declaration.isFun) return
 
-        val scope = declaration.unsubstitutedScope(context)
+        val scope = declaration.unsubstitutedScope()
         val classSymbol = declaration.symbol
 
         var abstractFunctionSymbol: FirNamedFunctionSymbol? = null

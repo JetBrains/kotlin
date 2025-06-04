@@ -19,25 +19,23 @@ object FirDelegationInExpectClassSyntaxChecker : FirDeclarationSyntaxChecker<Fir
 
     override fun isApplicable(element: FirRegularClass, source: KtSourceElement): Boolean = element.isExpect
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirRegularClass,
         source: KtPsiSourceElement,
         psi: KtClassOrObject,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         for (superTypeRef in element.superTypeRefs) {
             val superSource = superTypeRef.source ?: continue
             val parent = superSource.psi?.parent as? KtDelegatedSuperTypeEntry ?: continue
-            reporter.reportOn(KtRealPsiSourceElement(parent), FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS, context)
+            reporter.reportOn(KtRealPsiSourceElement(parent), FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirRegularClass,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         for (superTypeRef in element.superTypeRefs) {
             val superSource = superTypeRef.source ?: continue
@@ -45,8 +43,7 @@ object FirDelegationInExpectClassSyntaxChecker : FirDeclarationSyntaxChecker<Fir
             if (parent.tokenType == KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY) {
                 reporter.reportOn(
                     parent.toKtLightSourceElement(superSource.treeStructure),
-                    FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS,
-                    context
+                    FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
                 )
             }
         }

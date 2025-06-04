@@ -36,7 +36,8 @@ object FirContextParametersLanguageVersionSettingsChecker : FirLanguageVersionSe
         }
     }
 
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             return
         }

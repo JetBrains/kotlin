@@ -101,18 +101,17 @@ fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClass
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkRepeatedAnnotation(
     useSiteTarget: AnnotationUseSiteTarget?,
     existingTargetsForAnnotation: MutableList<AnnotationUseSiteTarget?>,
     annotation: FirAnnotation,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     annotationSource: KtSourceElement?,
 ) {
     val duplicated = useSiteTarget in existingTargetsForAnnotation
             || existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
     if (duplicated && !annotation.isRepeatable(context.session)) {
-        reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION, context)
+        reporter.reportOn(annotationSource, FirErrors.REPEATED_ANNOTATION)
     }
 }
 
@@ -124,16 +123,17 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
     return session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session)
 }
 
+context(context: CheckerContext)
 fun FirAnnotationContainer.getDefaultUseSiteTarget(
-    annotation: FirAnnotation,
-    context: CheckerContext
+    annotation: FirAnnotation
 ): AnnotationUseSiteTarget? {
-    return getImplicitUseSiteTargetList(context).firstOrNull {
+    return getImplicitUseSiteTargetList().firstOrNull {
         KotlinTarget.USE_SITE_MAPPING[it] in annotation.getAllowedAnnotationTargets(context.session)
     }
 }
 
-fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext): List<AnnotationUseSiteTarget> {
+context(context: CheckerContext)
+fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> {
     return when (this) {
         is FirValueParameter -> {
             return if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
@@ -150,11 +150,10 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(context: CheckerContext)
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkRepeatedAnnotation(
     annotationContainer: FirAnnotationContainer?,
     annotations: List<FirAnnotation>,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
     annotationSources: Map<FirAnnotation, KtSourceElement?>,
     defaultSource: KtSourceElement?,
 ) {
@@ -163,12 +162,12 @@ fun checkRepeatedAnnotation(
     val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
     for (annotation in annotations) {
-        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
-        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
+        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation)
+        val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType()
         val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 
         val source = annotationSources[annotation] ?: defaultSource
-        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, source)
+        checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, source)
         existingTargetsForAnnotation.add(useSiteTarget)
     }
 }

@@ -49,7 +49,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         }
 
         declaration.processAllDeclarations(context.session) { member ->
-            checkAnnotationClassMember(member, context, reporter)
+            checkAnnotationClassMember(member)
         }
 
         val session = context.session
@@ -60,30 +60,31 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
             reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR)
         }
 
-        checkCyclesInParameters(declaration.symbol, context, reporter)
+        checkCyclesInParameters(declaration.symbol)
     }
 
-    private fun checkAnnotationClassMember(member: FirBasedSymbol<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkAnnotationClassMember(member: FirBasedSymbol<*>) {
         when {
             member is FirConstructorSymbol && member.isPrimary -> {
                 for (parameter in member.valueParameterSymbols) {
                     val source = parameter.source ?: continue
                     if (!source.hasValOrVar()) {
-                        reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER, context)
+                        reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
                     } else if (source.hasVar()) {
-                        reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
+                        reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER)
                     }
                     if (parameter.hasDefaultValue && !canBeEvaluatedAtCompileTime(
                             parameter.resolvedDefaultValue, context.session, allowErrors = true, calledOnCheckerStage = true
                         )
                     ) {
                         reporter.reportOn(
-                            parameter.defaultValueSource, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, context
+                            parameter.defaultValueSource, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
                         )
                     }
 
                     val typeRef = parameter.resolvedReturnTypeRef
-                    val coneType = typeRef.coneType.fullyExpandedType(context.session)
+                    val coneType = typeRef.coneType.fullyExpandedType()
                     val classId = coneType.classId
 
                     when {
@@ -91,7 +92,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                             // DO NOTHING: error types already have diagnostics which are reported elsewhere.
                         }
                         coneType.isMarkedNullable -> {
-                            reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
+                            reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
                         }
                         coneType.isPrimitiveOrNullablePrimitive -> {
                             // DO NOTHING: primitives are allowed as annotation class parameter
@@ -113,16 +114,16 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                         }
                         classId == StandardClassIds.Array -> {
                             if (!isAllowedArray(coneType, context.session)) {
-                                reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
+                                reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
                             } else if (!parameter.isVararg && coneType.typeArguments.firstOrNull()?.variance != Variance.INVARIANT) {
-                                reporter.reportOn(typeRef.source, FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER, context)
+                                reporter.reportOn(typeRef.source, FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER)
                             }
                         }
                         isAllowedClassKind(coneType, context.session) -> {
                             // DO NOTHING: annotation or enum classes are allowed
                         }
                         else -> {
-                            reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
+                            reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
                         }
                     }
                 }
@@ -137,7 +138,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
                 // DO NOTHING to avoid reporting synthetic functions
             }
             else -> {
-                reporter.reportOn(member.source, FirErrors.ANNOTATION_CLASS_MEMBER, context)
+                reporter.reportOn(member.source, FirErrors.ANNOTATION_CLASS_MEMBER)
             }
         }
     }
@@ -180,12 +181,15 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
         return false
     }
 
-    private fun checkCyclesInParameters(annotation: FirRegularClassSymbol, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCyclesInParameters(
+        annotation: FirRegularClassSymbol,
+    ) {
         val primaryConstructor = annotation.primaryConstructorIfAny(context.session) ?: return
         val checker = CycleChecker(annotation, context.session)
         for (valueParameter in primaryConstructor.valueParameterSymbols) {
             if (checker.parameterHasCycle(annotation, valueParameter)) {
-                reporter.reportOn(valueParameter.source, CYCLE_IN_ANNOTATION_PARAMETER, context)
+                reporter.reportOn(valueParameter.source, CYCLE_IN_ANNOTATION_PARAMETER)
             }
         }
     }

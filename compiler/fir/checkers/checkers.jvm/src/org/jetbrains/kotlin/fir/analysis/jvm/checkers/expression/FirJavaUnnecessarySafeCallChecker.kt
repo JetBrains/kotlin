@@ -21,7 +21,7 @@ object FirJavaUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker
             .substituteOrNull(expression.receiver.resolvedType)
             ?.fullyExpandedType() ?: return
 
-        checkSafeCallReceiverType(receiverType, expression.source, context, reporter)
+        checkSafeCallReceiverType(receiverType, expression.source)
     }
 }
 

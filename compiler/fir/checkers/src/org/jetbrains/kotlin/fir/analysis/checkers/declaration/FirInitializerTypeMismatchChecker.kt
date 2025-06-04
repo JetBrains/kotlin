@@ -26,6 +26,6 @@ object FirInitializerTypeMismatchChecker : FirPropertyChecker(MppCheckerKind.Com
         if (declaration.returnTypeRef.source?.kind != KtRealSourceElementKind) return
         val propertyType = declaration.returnTypeRef.coneType
 
-        checkTypeMismatch(propertyType, null, initializer, context, source, reporter, true)
+        checkTypeMismatch(propertyType, null, initializer, source, true)
     }
 }

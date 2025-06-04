@@ -20,28 +20,26 @@ object FirLocalVariableTypeParametersSyntaxChecker : FirDeclarationSyntaxChecker
     override fun isApplicable(element: FirProperty, source: KtSourceElement): Boolean =
         source.kind !is KtFakeSourceElementKind && element.isLocal
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsi(
         element: FirProperty,
         source: KtPsiSourceElement,
         psi: KtExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (psi is KtProperty && psi.typeParameterList != null) {
-            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkLightTree(
         element: FirProperty,
         source: KtLightSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val node = source.lighterASTNode
         if (node.tokenType != KtNodeTypes.PROPERTY) return
         source.treeStructure.typeParametersList(source.lighterASTNode)?.let { _ ->
-            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, context)
+            reporter.reportOn(source, FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS)
         }
     }
 }

@@ -41,7 +41,7 @@ sealed class FirNativeObjCNameCallableChecker(mppKind: MppCheckerKind) : FirCall
         containingClass: FirClassSymbol<*>,
     ) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
-        val firTypeScope = containingClass.unsubstitutedScope(context)
+        val firTypeScope = containingClass.unsubstitutedScope()
         FirNativeObjCNameUtilities.checkCallableMember(firTypeScope, declaration.symbol, declaration)
     }
 }

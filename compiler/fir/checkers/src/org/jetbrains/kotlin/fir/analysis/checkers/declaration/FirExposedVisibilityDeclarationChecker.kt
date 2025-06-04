@@ -46,13 +46,13 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkClass(declaration: FirRegularClass) {
         checkSupertypes(declaration)
         checkParameterBounds(declaration, declaration.effectiveVisibility)
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkSupertypes(declaration: FirRegularClass) {
         val classVisibility = declaration.effectiveVisibility
 
@@ -79,7 +79,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkParameterBounds(
         declaration: FirTypeParameterRefsOwner,
         visibility: EffectiveVisibility,
@@ -123,7 +123,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkTypeAlias(declaration: FirTypeAlias) {
         val expandedType = declaration.expandedConeType
         val typeAliasVisibility = declaration.effectiveVisibility
@@ -141,7 +141,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         )
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkFunction(declaration: FirFunction) {
         if (declaration.source?.kind is KtFakeSourceElementKind) {
             return
@@ -184,7 +184,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         checkParameterBounds(declaration, functionVisibility)
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkProperty(declaration: FirProperty) {
         if (declaration.fromPrimaryConstructor == true) return
         if (declaration.isLocal) return
@@ -212,8 +212,10 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun FirValueParameter.checkExposure(declarationVisibility: EffectiveVisibility) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun FirValueParameter.checkExposure(
+        declarationVisibility: EffectiveVisibility,
+    ) {
         if (declarationVisibility != EffectiveVisibility.Local) {
             returnTypeRef.coneType
                 .findVisibilityExposure(declarationVisibility)?.let { (restricting, restrictingVisibility, relation) ->
@@ -259,8 +261,11 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     }
 
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkMemberReceiver(typeRef: FirTypeRef?, memberDeclaration: FirCallableDeclaration?) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkMemberReceiver(
+        typeRef: FirTypeRef?,
+        memberDeclaration: FirCallableDeclaration?,
+    ) {
         if (typeRef == null || memberDeclaration == null) return
         val receiverParameterType = typeRef.coneType
         val memberVisibility = memberDeclaration.effectiveVisibility

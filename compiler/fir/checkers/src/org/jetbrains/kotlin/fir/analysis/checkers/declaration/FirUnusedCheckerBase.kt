@@ -23,27 +23,28 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    abstract fun isEnabled(context: CheckerContext): Boolean
+    context(context: CheckerContext)
+    abstract fun isEnabled(): Boolean
 
     /**
      * If this function returns true, a corresponding warning should be issued using [reporter].
      * If this function returns false, the visitor continues to visit the children of [expression].
      */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     abstract fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         source: KtSourceElement?,
     ): Boolean
 
-    protected open fun createVisitor(context: CheckerContext, reporter: DiagnosticReporter): UsageVisitorBase =
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    protected open fun createVisitor(): UsageVisitorBase =
         UsageVisitorBase(context, reporter)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        if (!isEnabled(context)) return
-        val visitor = createVisitor(context, reporter)
+        if (!isEnabled()) return
+        val visitor = createVisitor()
         when (declaration) {
             // A "used" FirBlock is one that uses the last statement as an implicit return.
             // If the containing element of the block is an FirFunction or FirAnonymousInitializer, the block is unused.
@@ -84,7 +85,11 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
                 element is FirExpression &&
                 source != null
             ) {
-                if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), context, reporter, source)) return
+                with(context) {
+                    with(reporter) {
+                        if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), source)) return
+                    }
+                }
             }
 
             element.acceptChildren(this, UsageState.Used)

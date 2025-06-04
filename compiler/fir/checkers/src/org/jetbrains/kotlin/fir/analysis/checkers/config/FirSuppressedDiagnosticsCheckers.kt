@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.diagnosticRendererFactory
 import org.jetbrains.kotlin.fir.languageVersionSettings
 
 object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
         val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
         if (warningLevelMap.isEmpty()) return
 

@@ -105,7 +105,8 @@ private class DeclarationBuckets {
     val extensionProperties = mutableListOf<Pair<FirPropertySymbol, String>>()
 }
 
-private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: CheckerContext): Map<Name, DeclarationBuckets> {
+context(context: CheckerContext)
+private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, DeclarationBuckets> {
     val groups = mutableMapOf<Name, DeclarationBuckets>()
     for (declaration in declarations) {
         if (!declaration.symbol.isCollectable()) continue
@@ -128,7 +129,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>, context: Che
                 val group = groups.getOrPut(declaration.nameOrSpecialName, ::DeclarationBuckets)
                 group.classLikes += declaration.symbol to representation
 
-                declaration.symbol.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                declaration.symbol.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
                     if (expandedClass.classKind == ClassKind.OBJECT) {
                         return@let
                     }
@@ -156,11 +157,11 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
     val declarationShadowedViaContextParameters: HashMap<D, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 }
 
-fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirClassSymbol<*>) {
+fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirClassSymbol<*>): Unit = with(context) {
     val otherDeclarations = mutableMapOf<String, MutableSet<FirBasedSymbol<*>>>()
     val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
-    val declaredMemberScope = klass.declaredMemberScope(context)
-    val unsubstitutedScope = klass.unsubstitutedScope(context)
+    val declaredMemberScope = klass.declaredMemberScope()
+    val unsubstitutedScope = klass.unsubstitutedScope()
 
     declaredMemberScope.processAllFunctions { declaredFunction ->
         if (!declaredFunction.isCollectable()) {
@@ -218,7 +219,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
             return
         }
 
-        it.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+        it.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
             // Objects have implicit FirPrimaryConstructors
             if (expandedClass.classKind == ClassKind.OBJECT) {
                 return@let
@@ -255,7 +256,10 @@ private val FirClassifierSymbol<*>.name: Name
         is FirTypeParameterSymbol -> name
     }
 
-fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContext): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
+context(context: CheckerContext)
+fun collectConflictingLocalFunctionsFrom(
+    block: FirBlock
+): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
     val collectables =
         block.statements.filter {
             (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
@@ -271,7 +275,7 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
             is FirSimpleFunction ->
                 inspector.collect(collectable.symbol, FirRedeclarationPresenter.represent(collectable.symbol), functionDeclarations)
             is FirClassLikeDeclaration -> {
-                collectable.symbol.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                collectable.symbol.expandedClassWithConstructorsScope()?.let { (_, scopeWithConstructors) ->
                     scopeWithConstructors.processDeclaredConstructors {
                         inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable.symbol), functionDeclarations)
                     }
@@ -336,9 +340,11 @@ private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
  * | properties              |                 |              | X          | X          | X                   |
  */
 @Suppress("GrazieInspection")
-fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, packageMemberScope: FirPackageMemberScope) {
+fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
+    file: FirFile, packageMemberScope: FirPackageMemberScope
+): Unit = with(context) {
     @OptIn(DirectDeclarationsAccess::class)
-    for ((declarationName, group) in groupTopLevelByName(file.declarations, context)) {
+    for ((declarationName, group) in groupTopLevelByName(file.declarations)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
         val groupHasSimpleFunctions = group.simpleFunctions.isNotEmpty()
 
@@ -375,7 +381,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
                     return
                 }
 
-                conflictingSymbol.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
+                conflictingSymbol.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
                     if (expandedClass.classKind == ClassKind.OBJECT || expandedClass.classKind == ClassKind.ENUM_ENTRY) {
                         return
                     }
@@ -429,7 +435,8 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(file: FirFile, pa
     }
 }
 
-private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(context: CheckerContext): Pair<FirRegularClassSymbol, FirScope>? =
+context(context: CheckerContext)
+private fun FirClassLikeSymbol<*>.expandedClassWithConstructorsScope(): Pair<FirRegularClassSymbol, FirScope>? =
     expandedClassWithConstructorsScope(context.session, context.scopeSession, FirResolvePhase.STATUS)
 
 private fun shouldCheckForMultiplatformRedeclaration(dependency: FirBasedSymbol<*>, dependent: FirBasedSymbol<*>): Boolean {
@@ -559,8 +566,9 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
     }
 }
 
-/** Checks for redeclarations of value and type parameters, and local variables. */
-fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {
+context(context: CheckerContext, reporter: DiagnosticReporter)
+        /** Checks for redeclarations of value and type parameters, and local variables. */
+fun checkForLocalRedeclarations(elements: List<FirElement>) {
     if (elements.size <= 1) return
 
     val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
@@ -572,7 +580,9 @@ fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerCont
                 if (element.isReplSnippetDeclaration == true && element.delegate != null && element.receiverParameter != null) {
                     // TODO: relying on an unreliable debug representation of the cone type; see KT-77396
                     element.symbol to Name.identifier("${element.receiverParameter?.typeRef?.coneType}.${element.name}")
-                } else { element.symbol to element.name }
+                } else {
+                    element.symbol to element.name
+                }
             }
             is FirVariable -> element.symbol to element.name
             is FirOuterClassTypeParameterRef -> continue
@@ -587,7 +597,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>, context: CheckerCont
         val conflictingElements = multimap[key]
         if (conflictingElements.size > 1) {
             for (conflictingElement in conflictingElements) {
-                reporter.reportOn(conflictingElement.source, FirErrors.REDECLARATION, conflictingElements, context)
+                reporter.reportOn(conflictingElement.source, FirErrors.REDECLARATION, conflictingElements)
             }
         }
     }

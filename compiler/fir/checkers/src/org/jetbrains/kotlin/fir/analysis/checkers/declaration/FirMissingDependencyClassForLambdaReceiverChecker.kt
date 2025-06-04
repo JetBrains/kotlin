@@ -21,9 +21,9 @@ object FirMissingDependencyClassForLambdaReceiverChecker :
         val receiverType = declaration.receiverType ?: return
 
         val missingTypes = mutableSetOf<ConeClassLikeType>()
-        considerType(receiverType, missingTypes, context)
+        considerType(receiverType, missingTypes)
         reportMissingTypes(
-            declaration.source, missingTypes, context, reporter,
+            declaration.source, missingTypes,
             missingTypeOrigin = FirMissingDependencyClassProxy.MissingTypeOrigin.LambdaReceiver
         )
     }

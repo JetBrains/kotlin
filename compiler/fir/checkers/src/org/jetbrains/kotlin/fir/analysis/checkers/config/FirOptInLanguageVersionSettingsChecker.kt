@@ -18,15 +18,20 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecker() {
-    override fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    override fun check(reporter: BaseDiagnosticsCollector.RawReporter) {
         context.languageVersionSettings.getFlag(AnalysisFlags.optIn).forEach { fqNameAsString ->
             if (fqNameAsString != OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()) {
-                checkOptInMarkerArgument(context, fqNameAsString, reporter)
+                checkOptInMarkerArgument(fqNameAsString, reporter)
             }
         }
     }
 
-    private fun checkOptInMarkerArgument(context: CheckerContext, fqNameAsString: String, reporter: BaseDiagnosticsCollector.RawReporter) {
+    context(context: CheckerContext)
+    private fun checkOptInMarkerArgument(
+        fqNameAsString: String,
+        reporter: BaseDiagnosticsCollector.RawReporter
+    ) {
         val packageOrClass = resolveToPackageOrClass(context.session.symbolProvider, FqName(fqNameAsString))
         val symbol = (packageOrClass as? PackageResolutionResult.PackageOrClass)?.classSymbol
 

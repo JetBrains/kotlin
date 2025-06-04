@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -60,34 +59,32 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         if (!backingField.isSubtypeOf(declaration, typeCheckerContext)) {
-            checkAsFieldNotSubtype(declaration, context, reporter)
+            checkAsFieldNotSubtype(declaration)
         }
 
         if (!declaration.isSubtypeOf(backingField, typeCheckerContext)) {
-            checkAsPropertyNotSubtype(declaration, context, reporter)
+            checkAsPropertyNotSubtype(declaration)
         }
     }
 
     private val FirPropertyAccessor?.isNotExplicit
         get() = this == null || this is FirDefaultPropertyAccessor
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAsPropertyNotSubtype(
         property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (property.isVar && property.setter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_SETTER, context)
+            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_SETTER)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAsFieldNotSubtype(
         property: FirProperty,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (property.getter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER, context)
+            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER)
         }
     }
 }

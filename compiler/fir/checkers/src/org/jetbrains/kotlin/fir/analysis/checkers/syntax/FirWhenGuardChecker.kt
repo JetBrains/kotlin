@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -18,40 +17,37 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirWhenGuardChecker : FirExpressionSyntaxChecker<FirWhenExpression, PsiElement>() {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirWhenExpression,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for (branch in element.branches) {
-            checkBranch(element, branch, context, reporter)
+            checkBranch(element, branch)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBranch(
         element: FirWhenExpression,
         branch: FirWhenBranch,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (!branch.hasGuard) return
         val source = branch.source ?: return
 
         source.requireFeatureSupport(
-            LanguageFeature.WhenGuards, context, reporter,
+            LanguageFeature.WhenGuards,
             positioningStrategy = SourceElementPositioningStrategies.WHEN_GUARD,
         )
 
         if (element.subjectVariable == null) {
-            reporter.reportOn(source, FirErrors.WHEN_GUARD_WITHOUT_SUBJECT, context)
+            reporter.reportOn(source, FirErrors.WHEN_GUARD_WITHOUT_SUBJECT)
         } else {
             if (source.getChild(KtTokens.COMMA, depth = 1) != null) {
-                reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD, context)
+                reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD)
             }
         }
     }

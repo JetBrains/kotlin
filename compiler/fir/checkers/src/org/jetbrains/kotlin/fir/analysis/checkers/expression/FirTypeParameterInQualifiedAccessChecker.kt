@@ -21,14 +21,13 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        checkExplicitReceiver(expression, context, reporter)
-        checkExpressionItself(expression, context, reporter)
+        checkExplicitReceiver(expression)
+        checkExpressionItself(expression)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExpressionItself(
         expression: FirQualifiedAccessExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         // Ignore T::class where our expression is T
         if (context.getClassCalls.lastOrNull()?.argument == expression) return
@@ -41,13 +40,12 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
 
         val diagnostic = expression.resolvedType.coneTypeParameterInQualifiedAccess ?: return
         val source = expression.calleeReference.source ?: return
-        reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, diagnostic.symbol, context)
+        reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, diagnostic.symbol)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExplicitReceiver(
         expression: FirQualifiedAccessExpression,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val explicitReceiver = expression.explicitReceiver
         val typeParameterSymbol =
@@ -55,9 +53,9 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 ?: explicitReceiver?.resolvedType?.coneTypeParameterInQualifiedAccess?.symbol
                 ?: return
         if (expression is FirCallableReferenceAccess) {
-            reporter.reportOn(expression.source, FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS, context)
+            reporter.reportOn(expression.source, FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS)
         } else {
-            reporter.reportOn(explicitReceiver?.source, FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT, typeParameterSymbol, context)
+            reporter.reportOn(explicitReceiver?.source, FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT, typeParameterSymbol)
         }
     }
 

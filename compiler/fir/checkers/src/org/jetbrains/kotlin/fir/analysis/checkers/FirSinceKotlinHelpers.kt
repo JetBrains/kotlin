@@ -34,7 +34,8 @@ private data class FirSinceKotlinValue(
     val wasExperimentalMarkerClasses: List<FirRegularClassSymbol>
 )
 
-fun FirBasedSymbol<*>.checkSinceKotlinVersionAccessibility(context: CheckerContext): FirSinceKotlinAccessibility {
+context(context: CheckerContext)
+fun FirBasedSymbol<*>.checkSinceKotlinVersionAccessibility(): FirSinceKotlinAccessibility {
     val value = getOwnSinceKotlinVersion(context.session)
     val version = value?.apiVersion
     val languageVersionSettings = context.session.languageVersionSettings

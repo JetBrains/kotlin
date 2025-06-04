@@ -35,7 +35,7 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
         }
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClassSymbol<*>
         if (containingClass != null) {
-            val firTypeScope = containingClass.unsubstitutedScope(context)
+            val firTypeScope = containingClass.unsubstitutedScope()
             FirNativeObjCRefinementOverridesChecker.check(
                 firTypeScope,
                 declaration.symbol,

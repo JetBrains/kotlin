@@ -40,7 +40,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         val source = declaration.source ?: return
         // val (...) = `destructuring_declaration`
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
-            checkInitializer(source, declaration.initializer, reporter, context)
+            checkInitializer(source, declaration.initializer)
             return
         }
 
@@ -87,8 +87,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 diagnostic,
                 declaration,
                 componentCall,
-                reporter,
-                context,
             )
         }
 
@@ -96,20 +94,17 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             originalDestructuringDeclarationOrInitializerSource,
             declaration,
             originalDestructuringDeclaration,
-            componentCall,
-            reporter,
-            context
+            componentCall
         )
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkInitializer(
         source: KtSourceElement,
         initializer: FirExpression?,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         if (initializer.isMissingInitializer()) {
-            reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, context)
+            reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION)
         }
     }
 
@@ -117,6 +112,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         return this == null || this is FirErrorExpression && diagnostic is ConeSyntaxDiagnostic
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     @OptIn(ApplicabilityDetail::class)
     private fun reportGivenDiagnostic(
         source: KtSourceElement,
@@ -124,8 +120,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         diagnostic: ConeDiagnostic,
         property: FirProperty,
         componentCall: FirComponentCall,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         when (diagnostic) {
             is ConeUnresolvedNameError -> {
@@ -133,8 +127,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source,
                     FirErrors.COMPONENT_FUNCTION_MISSING,
                     diagnostic.name,
-                    destructuringDeclarationType,
-                    context
+                    destructuringDeclarationType
                 )
             }
             is ConeHiddenCandidateError -> {
@@ -142,8 +135,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source,
                     FirErrors.COMPONENT_FUNCTION_MISSING,
                     diagnostic.candidate.callInfo.name,
-                    destructuringDeclarationType,
-                    context
+                    destructuringDeclarationType
                 )
             }
             is ConeInapplicableWrongReceiver -> {
@@ -151,8 +143,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source,
                     FirErrors.COMPONENT_FUNCTION_MISSING,
                     diagnostic.candidates.first().callInfo.name,
-                    destructuringDeclarationType,
-                    context
+                    destructuringDeclarationType
                 )
             }
             is ConeAmbiguityError if diagnostic.applicability.isSuccess -> {
@@ -160,29 +151,25 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source,
                     FirErrors.COMPONENT_FUNCTION_AMBIGUITY,
                     diagnostic.name,
-                    diagnostic.candidates.map { it.symbol },
-                    context
-                )
+                    diagnostic.candidates.map { it.symbol })
             }
             is ConeAmbiguityError -> {
                 reporter.reportOn(
                     source,
                     FirErrors.COMPONENT_FUNCTION_MISSING,
                     diagnostic.name,
-                    destructuringDeclarationType,
-                    context
+                    destructuringDeclarationType
                 )
             }
             is ConeInapplicableCandidateError -> {
-                if (destructuringDeclarationType.fullyExpandedType(context.session).isMarkedNullable) {
+                if (destructuringDeclarationType.fullyExpandedType().isMarkedNullable) {
                     reporter.reportOn(
                         source,
                         FirErrors.COMPONENT_FUNCTION_ON_NULLABLE,
-                        (diagnostic.candidate.symbol as FirNamedFunctionSymbol).callableId.callableName,
-                        context
+                        (diagnostic.candidate.symbol as FirNamedFunctionSymbol).callableId.callableName
                     )
                 } else {
-                    reportDefaultDiagnostics(diagnostic, componentCall, reporter, context)
+                    reportDefaultDiagnostics(diagnostic, componentCall)
                 }
             }
             is ConeConstraintSystemHasContradiction -> {
@@ -192,8 +179,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                         source,
                         FirErrors.COMPONENT_FUNCTION_MISSING,
                         diagnostic.candidates.first().callInfo.name,
-                        destructuringDeclarationType,
-                        context
+                        destructuringDeclarationType
                     )
                     return
                 }
@@ -202,18 +188,17 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 reporter.report(diagnostic.symbol.toInvisibleReferenceDiagnostic(property.source, context.session), context)
             }
             else -> {
-                reportDefaultDiagnostics(diagnostic, componentCall, reporter, context)
+                reportDefaultDiagnostics(diagnostic, componentCall)
             }
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkComponentTypeMismatch(
         source: KtSourceElement,
         property: FirProperty,
         destructuringDeclaration: FirVariable,
         componentCall: FirComponentCall,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         val componentType = componentCall.resolvedType
 
@@ -231,17 +216,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
                 componentCall.calleeReference.name,
                 componentType,
-                expectedType,
-                context
+                expectedType
             )
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportDefaultDiagnostics(
         diagnostic: ConeDiagnostic,
         componentCall: FirComponentCall,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         for (coneDiagnostic in diagnostic.toFirDiagnostics(context.session, componentCall.source, null)) {
             reporter.report(coneDiagnostic, context)

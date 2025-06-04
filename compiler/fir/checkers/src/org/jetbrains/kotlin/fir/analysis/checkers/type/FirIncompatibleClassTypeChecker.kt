@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirIncompatibleClassExpressionChecker
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 object FirIncompatibleClassTypeChecker : FirResolvedTypeRefChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirResolvedTypeRef) {
-        FirIncompatibleClassExpressionChecker.checkType(typeRef.coneType, typeRef, context, reporter)
+        FirIncompatibleClassExpressionChecker.checkType(typeRef.coneType, typeRef)
     }
 }

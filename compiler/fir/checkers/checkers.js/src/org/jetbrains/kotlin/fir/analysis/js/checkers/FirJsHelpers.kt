@@ -41,7 +41,7 @@ context(context: CheckerContext)
 fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(): Boolean {
     if (!isSubstitutionOrIntersectionOverride && modality == Modality.ABSTRACT) return false
 
-    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctionsSafe(context) ?: return false
+    val overridden = (this as? FirNamedFunctionSymbol)?.directOverriddenFunctionsSafe() ?: return false
 
     for (overriddenFunction in overridden.filter { it.isEffectivelyExternal() }) {
         if (overriddenFunction.valueParameterSymbols.any { it.hasDefaultValue }) return true

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        if (!expression.isStandalone(context)) return
+        if (!expression.isStandalone()) return
 
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
         if (!expression.resolvedType.isUnit) {
@@ -35,20 +35,23 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             return
         }
 
-        expression.symbol.reportErrorOn(expression.source, context, reporter)
+        expression.symbol.reportErrorOn(expression.source)
     }
 
-    private fun FirBasedSymbol<*>?.reportErrorOn(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirBasedSymbol<*>?.reportErrorOn(
+        source: KtSourceElement?,
+    ) {
         when (this) {
             is FirRegularClassSymbol -> {
                 if (classKind == ClassKind.OBJECT) return
-                reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, this, context)
+                reporter.reportOn(source, FirErrors.NO_COMPANION_OBJECT, this)
             }
             is FirTypeAliasSymbol -> {
-                fullyExpandedClass(context.session)?.reportErrorOn(source, context, reporter)
+                fullyExpandedClass(context.session)?.reportErrorOn(source)
             }
             null -> {
-                reporter.reportOn(source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND, context)
+                reporter.reportOn(source, FirErrors.EXPRESSION_EXPECTED_PACKAGE_FOUND)
             }
             else -> {}
         }

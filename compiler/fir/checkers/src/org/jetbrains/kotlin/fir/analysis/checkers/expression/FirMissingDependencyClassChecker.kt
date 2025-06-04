@@ -45,8 +45,7 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
                     } && !context.session.languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent)
                 considerType(
                     type = it,
-                    missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression,
-                    context
+                    missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression
                 )
             }
         }
@@ -59,30 +58,30 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         ) return
 
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return
-        considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes, context)
+        considerType(symbol.resolvedReturnTypeRef.coneType, missingTypes)
         symbol.resolvedReceiverType?.let { type ->
-            considerType(type, missingTypes, context)
+            considerType(type, missingTypes)
             type.forEachType {
-                considerType(it, missingTypesFromExpression, context)
+                considerType(it, missingTypesFromExpression)
             }
         }
         if (expression is FirFunctionCall) {
             val argumentList = expression.argumentList as? FirResolvedArgumentList
             argumentList?.mapping?.forEach { (_, parameter) ->
                 val type = parameter.returnTypeRef.coneType
-                considerType(type, missingTypes, context)
+                considerType(type, missingTypes)
                 type.forEachType {
-                    considerType(it, missingTypesFromExpression, context)
+                    considerType(it, missingTypesFromExpression)
                 }
             }
         }
         reportMissingTypes(
-            expression.source, missingTypes, context, reporter,
+            expression.source, missingTypes,
             missingTypeOrigin = Other
         )
         if (missingTypes.isEmpty()) {
             reportMissingTypes(
-                expression.source, missingTypesFromExpression, context, reporter,
+                expression.source, missingTypesFromExpression,
                 missingTypeOrigin = Expression
             )
         }
@@ -104,7 +103,8 @@ internal interface FirMissingDependencyClassProxy {
         }
     }
 
-    fun considerType(type: ConeKotlinType, missingTypes: MutableSet<ConeClassLikeType>, context: CheckerContext) {
+    context(context: CheckerContext)
+    fun considerType(type: ConeKotlinType, missingTypes: MutableSet<ConeClassLikeType>) {
         var hasError = false
         var missingClasses: MutableSet<ConeClassLikeType>? = null
         type.forEachClassLikeType { type ->
@@ -113,7 +113,7 @@ internal interface FirMissingDependencyClassProxy {
                 if (delegatedType == null) {
                     hasError = true
                 } else {
-                    considerType(delegatedType, missingTypes, context)
+                    considerType(delegatedType, missingTypes)
                 }
             } else if (type.lookupTag.toSymbol(context.session) == null) {
                 (missingClasses ?: mutableSetOf<ConeClassLikeType>().also { missingClasses = it }) +=
@@ -133,11 +133,10 @@ internal interface FirMissingDependencyClassProxy {
         object Other : MissingTypeOrigin()
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     fun reportMissingTypes(
         source: KtSourceElement?,
         missingTypes: MutableSet<ConeClassLikeType>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         missingTypeOrigin: MissingTypeOrigin
     ) {
         val languageVersionSettings = context.session.languageVersionSettings
@@ -148,19 +147,19 @@ internal interface FirMissingDependencyClassProxy {
                 missingTypeOrigin is LambdaParameter && missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(
-                        source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, missingType, missingTypeOrigin.name, context
+                        source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, missingType, missingTypeOrigin.name
                     )
                 }
                 missingTypeOrigin is LambdaReceiver && missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
-                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, missingType, context)
+                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, missingType)
                 }
                 missingTypeOrigin is Expression &&
                         !languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent) -> {
-                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE, missingType, context)
+                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE, missingType)
                 }
                 else -> {
-                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS, missingType, context)
+                    reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS, missingType)
                 }
             }
         }

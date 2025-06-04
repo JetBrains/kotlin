@@ -35,8 +35,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        PropertyInitializationCheckProcessor.check(data, isForInitialization = false, context, reporter)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
+        PropertyInitializationCheckProcessor.check(data, isForInitialization = false)
     }
 }
 
@@ -94,11 +95,10 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         require(symbol is FirPropertySymbol)
         val capturedInitializationError = if (receiver != null)
@@ -106,7 +106,7 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
         else
             FirErrors.CAPTURED_VAL_INITIALIZATION
 
-        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, capturedInitializationError, symbol)
     }
 
     override fun FirQualifiedAccessExpression.hasMatchingReceiver(data: VariableInitializationInfoData): Boolean {
@@ -115,32 +115,29 @@ object PropertyInitializationCheckProcessor : VariableInitializationCheckProcess
                 (expression as? FirResolvedQualifier)?.symbol == data.receiver
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportUninitializedVariable(
-        reporter: DiagnosticReporter,
         expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
-        context: CheckerContext,
     ) {
         require(symbol is FirPropertySymbol)
-        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
+        reporter.reportOn(expression.source, FirErrors.UNINITIALIZED_VARIABLE, symbol)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         require(symbol is FirPropertySymbol)
-        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, FirErrors.NON_INLINE_MEMBER_VAL_INITIALIZATION, symbol)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     override fun reportValReassignment(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
-        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+        reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol)
     }
 }

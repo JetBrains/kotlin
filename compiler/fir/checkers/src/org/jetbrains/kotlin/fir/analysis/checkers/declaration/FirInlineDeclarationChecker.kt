@@ -504,7 +504,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun checkCallableDeclaration(declaration: FirCallableDeclaration) {
         if (declaration is FirPropertyAccessor) return
-        val directOverriddenSymbols = declaration.symbol.directOverriddenSymbolsSafe(context)
+        val directOverriddenSymbols = declaration.symbol.directOverriddenSymbolsSafe()
         if (declaration is FirSimpleFunction) {
             checkParameters(declaration, directOverriddenSymbols)
             checkNothingToInline(declaration)

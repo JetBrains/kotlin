@@ -39,19 +39,23 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
 
         val actualContainingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
         val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
-        checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass, context, reporter)
+        checkAnnotationsMatch(expectSymbol, actualSymbol, expectContainingClass)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationsMatch(
         expectSymbol: FirBasedSymbol<*>,
         actualSymbol: FirBasedSymbol<*>,
         expectContainingClass: FirRegularClassSymbol?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
         val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, expectContainingClass, matchingContext) ?: return
+            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(
+                expectSymbol,
+                actualSymbol,
+                expectContainingClass,
+                matchingContext
+            ) ?: return
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
 
         reporter.reportOn(
@@ -60,8 +64,6 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
             incompatibility.expectSymbol as FirBasedSymbol<*>,
             incompatibility.actualSymbol as FirBasedSymbol<*>,
             actualAnnotationTargetSourceElement,
-            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
-            context
-        )
+            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation })
     }
 }

@@ -33,7 +33,8 @@ object FirUpperBoundViolatedDeclarationChecker : FirBasicDeclarationChecker(MppC
         } else if (declaration is FirCallableDeclaration) {
             if (declaration.returnTypeRef.source?.kind !is KtFakeSourceElementKind) {
                 checkUpperBoundViolated(
-                    declaration.returnTypeRef, isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol
+                    declaration.returnTypeRef,
+                    isIgnoreTypeParameters = context.containingDeclarations.lastOrNull() is FirTypeAliasSymbol
                 )
             }
 

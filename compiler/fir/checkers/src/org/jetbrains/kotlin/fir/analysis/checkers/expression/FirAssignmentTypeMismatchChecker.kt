@@ -21,9 +21,7 @@ object FirAssignmentTypeMismatchChecker : FirVariableAssignmentChecker(MppChecke
             coneType,
             expression,
             expression.rValue,
-            context,
             source,
-            reporter,
             false,
         )
     }

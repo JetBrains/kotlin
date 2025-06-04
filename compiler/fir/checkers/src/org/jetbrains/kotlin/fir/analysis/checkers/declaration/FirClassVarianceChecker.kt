@@ -147,7 +147,8 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
                     typeParameterSymbol,
                     typeParameterSymbol.variance,
                     variance,
-                    containingType)
+                    containingType
+                )
             }
             return
         }

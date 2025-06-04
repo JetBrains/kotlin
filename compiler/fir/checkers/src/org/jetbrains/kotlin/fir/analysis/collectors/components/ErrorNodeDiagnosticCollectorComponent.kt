@@ -121,7 +121,9 @@ class ErrorNodeDiagnosticCollectorComponent(
             ) return
         }
 
-        source = source?.delegatedPropertySourceOrThis(context)
+        with(context) {
+            source = source?.delegatedPropertySourceOrThis()
+        }
 
         reportFirDiagnostic(diagnostic, source, context, callOrAssignment?.source)
     }

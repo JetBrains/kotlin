@@ -14,22 +14,20 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 
 abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     protected fun checkSafeCallReceiverType(
         receiverType: ConeKotlinType,
         source: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (!receiverType.canBeNull(context.session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
+                reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType)
             }
         }
     }
@@ -43,6 +41,6 @@ object FirUnnecessarySafeCallChecker : AbstractFirUnnecessarySafeCallChecker() {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL)
             return
         }
-        checkSafeCallReceiverType(receiverType, expression.source, context, reporter)
+        checkSafeCallReceiverType(receiverType, expression.source)
     }
 }

@@ -30,19 +30,19 @@ import org.jetbrains.kotlin.name.ClassId
 abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
     private val platformDependentAnnotation = ClassId.fromString("kotlin/internal/PlatformDependent")
 
+    context(context: CheckerContext)
     open fun overrideCanBeOmitted(
-        overriddenMemberSymbols: List<FirCallableSymbol<*>>,
-        context: CheckerContext
+        overriddenMemberSymbols: List<FirCallableSymbol<*>>
     ): Boolean {
         // Members could share the same common interface up in the hierarchy. Hence, we track the visited members to avoid redundant work.
         val visitedSymbols = hashSetOf<FirCallableSymbol<*>>()
-        return overriddenMemberSymbols.all { isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(it, visitedSymbols, context) }
+        return overriddenMemberSymbols.all { isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(it, visitedSymbols) }
     }
 
+    context(context: CheckerContext)
     private fun isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(
         symbol: FirCallableSymbol<*>,
-        visitedSymbols: MutableSet<FirCallableSymbol<*>>,
-        context: CheckerContext
+        visitedSymbols: MutableSet<FirCallableSymbol<*>>
     ): Boolean {
         if (symbol.isFinal) return false
 
@@ -63,9 +63,9 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
             }
         }
 
-        val overriddenSymbols = originalMemberSymbol.directOverriddenSymbolsSafe(context)
+        val overriddenSymbols = originalMemberSymbol.directOverriddenSymbolsSafe()
         if (overriddenSymbols.isEmpty()) return false
-        return overriddenSymbols.all { isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(it, visitedSymbols, context) }
+        return overriddenSymbols.all { isPlatformSpecificSymbolThatCanBeImplicitlyOverridden(it, visitedSymbols) }
     }
 
     protected open fun additionalCheck(member: FirCallableSymbol<*>): Boolean? = null
