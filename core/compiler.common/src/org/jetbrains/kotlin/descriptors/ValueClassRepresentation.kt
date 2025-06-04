@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
@@ -34,13 +35,34 @@ fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKi
     else -> {
         val type = fields.single().second
         with(this) {
+            val typeConstructor = type.typeConstructor()
             when {
                 type.isNullableType() -> Inline
-                !type.typeConstructor().isMultiFieldValueClass() -> Inline
+                isRecursiveSingleFieldValueClassType(typeConstructor) -> Inline
+                !typeConstructor.isMultiFieldValueClass() -> Inline
                 else -> MultiField
             }
         }
     }
+}
+
+fun TypeSystemCommonBackendContext.isRecursiveSingleFieldValueClassType(typeConstructorMarker: TypeConstructorMarker): Boolean =
+    isRecursiveSingleFieldValueClassType(typeConstructorMarker, hashSetOf())
+
+private fun TypeSystemCommonBackendContext.isRecursiveSingleFieldValueClassType(
+    typeConstructor: TypeConstructorMarker,
+    visited: HashSet<TypeConstructorMarker>
+): Boolean {
+    val valueClassProperties = typeConstructor.getValueClassProperties() ?: return false
+
+    if (valueClassProperties.size > 1) {
+        return false
+    }
+
+    return !visited.add(typeConstructor) || valueClassProperties.any { classProperty ->
+        val propertyTypeConstructor = classProperty.second.typeConstructor()
+        isRecursiveSingleFieldValueClassType(propertyTypeConstructor, visited)
+    }.also { visited.remove(typeConstructor) }
 }
 
 fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
