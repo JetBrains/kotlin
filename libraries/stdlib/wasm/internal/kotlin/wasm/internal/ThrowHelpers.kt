@@ -5,8 +5,30 @@
 
 package kotlin.wasm.internal
 
+import kotlin.reflect.KClass
+
 internal fun THROW_CCE(): Nothing {
     throw ClassCastException()
+}
+
+internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolean): Nothing {
+    val targetType = klass.qualifiedName ?: klass.simpleName ?: "<unknown>"
+
+    if (!isNullable && obj == null) {
+        throw ClassCastException("Cannot cast null to $targetType: target type is non-nullable")
+    }
+
+    if (obj != null) {
+        val valueType = (obj::class).let { it.qualifiedName ?: it.simpleName } ?: "<unknown>"
+        if (klass == Nothing::class && isNullable) {
+            throw ClassCastException("Expected null (Nothing?), got an instance of $valueType")
+        } else {
+            val targetTypeWithNullability = if (isNullable) "$targetType?" else targetType
+            throw ClassCastException("Cannot cast instance of $valueType to $targetTypeWithNullability: incompatible types")
+        }
+    }
+
+    THROW_CCE()
 }
 
 internal fun THROW_NPE(): Nothing {
