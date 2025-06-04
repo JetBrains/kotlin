@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.utils;
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 internal inline val <reified T : SirClassMemberDeclaration> T.overridableCandidates: List<T>
     get() =
@@ -30,6 +31,10 @@ internal fun SirType.isSubtypeOf(other: SirType): Boolean = when (this) {
         }
         else -> false
     }
+    is SirFunctionalType -> other is SirFunctionalType
+            && this.returnType.isSubtypeOf(other.returnType)
+            && this.parameterTypes.zipIfSizesAreEqual(other.parameterTypes)?.all { it.second.isSubtypeOf(it.first) } ?: false
+
     else -> false
 }
 
