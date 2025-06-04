@@ -106,12 +106,20 @@ private class Degrade(val rootProject: Project) {
 
         while (true) {
             val line = nextLine() ?: break
-            if (line != "Main class = $kotlinNativeEntryPointClass"
-                    && !line.startsWith("Entry point method = $kotlinNativeEntryPointClass.")) continue
+            val toolName = listOf(
+                    "Run \"(.*)\" tool in a separate JVM process",
+                    "Run in-process tool \"(.*)\""
+            ).map { Regex(it) }.firstNotNullOfOrNull {
+                it.find(line)?.groups?.get(1)?.value
+            } ?: continue
+            val secondLine = nextLine() ?: break
+
+            if (secondLine != "Main class = $kotlinNativeEntryPointClass"
+                    && !secondLine.startsWith("Entry point method = $kotlinNativeEntryPointClass.")) continue
 
             generateSequence(nextLine)
-                    .firstOrNull { it.startsWith("Transformed arguments = ") }
-                    .takeIf { it == "Transformed arguments = [" }
+                    .firstOrNull { it.startsWith("Arguments = ") }
+                    .takeIf { it == "Arguments = [" }
                     ?: continue
 
             val transformedArguments = generateSequence(nextLine)
@@ -128,7 +136,7 @@ private class Degrade(val rootProject: Project) {
                     }
                     .toList()
 
-            result += KotlinNativeCommand(transformedArguments)
+            result += KotlinNativeCommand(listOf(toolName) + transformedArguments)
         }
 
         return result
