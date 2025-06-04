@@ -246,6 +246,9 @@ fun buildTree(
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
                     expression.dispatchReceiver!!.acceptChildren(this, chainNode)
                     chainNode.addChild(ExpressionNode(expression))
+                } else if (expression.origin == IrStatementOrigin.EXCLEXCL) {
+                    // Skip displaying results of '!!' operator.
+                    expression.acceptChildren(this, data)
                 } else if (expression.isEqualOperator() && expression.arguments.getOrNull(0)?.isWhenSubjectAccess() == true) {
                     // Exclude equality call for when-with-subject branches.
                     val chainNode = data as? ChainNode ?: ChainNode().also { data.addChild(it) }
