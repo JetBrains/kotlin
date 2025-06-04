@@ -55,7 +55,7 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                 if (!compileTask.compilerOptions.usesK2.get()) return@provider emptyList()
                 val project = compilation.project
 
-                val rawFragments = compilation.allKotlinSourceSets
+                compilation.allKotlinSourceSets
                     .groupBy { it.fragmentName() }
                     .map { (fragmentName, sourceSets) ->
                         val sourceFiles = sourceSets.map { it.kotlin.asFileTree }
@@ -70,12 +70,6 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                             }
                         )
                     }
-
-                if (project.kotlinPropertiesProvider.separateKmpCompilationDeduplicateDependencies.get()) {
-                    project.deduplicateFragmentDependencies(rawFragments, compileTask.multiplatformStructure.refinesEdges.get())
-                } else {
-                    rawFragments
-                }
             })
 
             compileTask.multiplatformStructure.defaultFragmentName.set(compilation.defaultSourceSet.fragmentName())
@@ -89,67 +83,10 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
             buildSet {
                 for (sourceSet in sourceSets) {
                     if (!sourceSet.internal.isSharedSourceSet()) continue
-                    add(sourceSet.retrieveExternalDependencies())
+                    // We do not need transitive dependencies defined on higher levels of the hierarchy here
+                    add(sourceSet.retrieveExternalDependencies(transitive = false))
                 }
             }
         }.getOrThrow()
-    }
-
-    /**
-     * Removes duplicate dependency definitions based on the refinement hierarchy.
-     * If a dependency is defined in a parent fragment (via refinement relationship),
-     * it's unnecessary to redefine it in the child fragment.
-     */
-    private fun Project.deduplicateFragmentDependencies(
-        fragments: List<K2MultiplatformStructure.Fragment>,
-        refinesEdges: Set<K2MultiplatformStructure.RefinesEdge>,
-    ): List<K2MultiplatformStructure.Fragment> {
-        val refinementGraph = buildMap<String, MutableSet<String>> {
-            refinesEdges.forEach { edge ->
-                getOrPut(edge.fromFragmentName) { mutableSetOf() }.add(edge.toFragmentName)
-            }
-        }
-
-        // Compute all transitive parent fragments for each fragment
-        val allParentFragments: Map<String, Set<String>> = buildMap {
-            fun collectParents(fragmentName: String): Set<String> {
-                this[fragmentName]?.let { return it }
-
-                val parents = mutableSetOf<String>()
-                val directParents = refinementGraph[fragmentName] ?: emptySet()
-
-                parents.addAll(directParents)
-                directParents.forEach { parent ->
-                    parents.addAll(collectParents(parent))
-                }
-
-                this[fragmentName] = parents
-                return parents
-            }
-
-            fragments.forEach { fragment ->
-                getOrPut(fragment.fragmentName) { collectParents(fragment.fragmentName) }
-            }
-        }
-
-        val perFragmentDependencies = fragments.associate { fragment ->
-            fragment.fragmentName to fragment.dependencies
-        }
-
-        return fragments.map {
-            K2MultiplatformStructure.Fragment(
-                it.fragmentName,
-                it.sources,
-                filesProvider {
-                    val fragmentName = it.fragmentName
-                    val dependencies = perFragmentDependencies[fragmentName]!!
-                    val parentDependencies = objects.fileCollection()
-                    for (parentFragmentName in allParentFragments.getValue(fragmentName)) {
-                        parentDependencies.from(perFragmentDependencies.getValue(parentFragmentName))
-                    }
-                    dependencies - parentDependencies
-                }
-            )
-        }
     }
 }

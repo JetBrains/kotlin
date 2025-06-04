@@ -220,11 +220,14 @@ class KotlinMetadataTargetConfigurator :
         // Metadata from visible source sets within dependsOn closure
         compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
-        compilation.compileDependencyFiles += sourceSet.retrieveExternalDependencies()
+        compilation.compileDependencyFiles += sourceSet.retrieveExternalDependencies(transitive = true)
     }
 }
 
-internal suspend fun KotlinSourceSet.retrieveExternalDependencies(): ConfigurableFileCollection {
+/**
+ * @param transitive Specifies whether it should contain dependencies from other related source sets of the hierarchy
+ */
+internal suspend fun KotlinSourceSet.retrieveExternalDependencies(transitive: Boolean): ConfigurableFileCollection {
     val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(this)
 
     val dependencies = project.files()
@@ -233,10 +236,16 @@ internal suspend fun KotlinSourceSet.retrieveExternalDependencies(): Configurabl
     dependencies.from(project.files(artifacts.map { artifactsSet -> artifactsSet.filterNot { it.isMpp }.map { it.file } }))
 
     // Transformed Multiplatform Libraries based on source set visibility
-    dependencies.from(project.files(transformationTask.map { it.allTransformedLibraries() }))
+    dependencies.from(
+        if (transitive) {
+            project.files(transformationTask.map { it.allTransformedLibraries() })
+        } else {
+            project.files(transformationTask.map { it.ownTransformedLibraries() })
+        }
+    )
 
     if (this is DefaultKotlinSourceSet && this.sharedCommonizerTarget.await() is SharedCommonizerTarget) {
-        dependencies.from(project.createCInteropMetadataDependencyClasspath(this))
+        dependencies.from(project.createCInteropMetadataDependencyClasspath(this, transitive))
     }
     return dependencies
 }

@@ -13,33 +13,45 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
 
-internal suspend fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet): FileCollection {
-    return createCInteropMetadataDependencyClasspath(sourceSet, forIde = false)
+internal suspend fun Project.createCInteropMetadataDependencyClasspath(
+    sourceSet: DefaultKotlinSourceSet,
+    transitive: Boolean,
+): FileCollection {
+    return createCInteropMetadataDependencyClasspath(sourceSet, forIde = false, transitive = transitive)
 }
 
 internal suspend fun Project.createCInteropMetadataDependencyClasspathForIde(sourceSet: DefaultKotlinSourceSet): FileCollection {
-    return createCInteropMetadataDependencyClasspath(sourceSet, forIde = true)
+    return createCInteropMetadataDependencyClasspath(sourceSet, forIde = true, transitive = true)
 }
 
 /**
- * @param forIde: A different task for dependency transformation will be used. This task will not use the regular 'build' directory
+ * @param forIde A different task for dependency transformation will be used. This task will not use the regular 'build' directory
  * as transformation output to ensure IDE still being able to resolve the dependencies even when the project is cleaned.
+ * @param transitive Specifies whether it should contain classpath from other related source sets or not
  */
-internal suspend fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet, forIde: Boolean): FileCollection {
+private suspend fun Project.createCInteropMetadataDependencyClasspath(
+    sourceSet: DefaultKotlinSourceSet,
+    forIde: Boolean,
+    transitive: Boolean,
+): FileCollection {
     val dependencyTransformationTask = if (forIde) locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)
     else locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet)
     if (dependencyTransformationTask == null) return project.files()
 
     val dependencyTransformationTaskOutputs = project.files(dependencyTransformationTask.map { it.outputLibraryFiles })
 
-    return dependencyTransformationTaskOutputs +
-            createCInteropMetadataDependencyClasspathFromAssociatedCompilations(sourceSet, forIde) +
-            createCommonizedCInteropDependencyConfigurationView(sourceSet)
+    val ownClasspath = dependencyTransformationTaskOutputs + createCommonizedCInteropDependencyConfigurationView(sourceSet)
+    return if (transitive) {
+        ownClasspath + createCInteropMetadataDependencyClasspathFromAssociatedCompilations(sourceSet, forIde, true)
+    } else {
+        ownClasspath
+    }
 }
 
 private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompilations(
     sourceSet: DefaultKotlinSourceSet,
     forIde: Boolean,
+    transitive: Boolean,
 ): FileCollection {
     return filesProvider files@{
         val commonizerTarget = sourceSet.sharedCommonizerTarget.getOrThrow() ?: return@files emptySet<File>()
@@ -55,7 +67,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
             .filter { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.containsAll(commonizerTarget.targets) }
             .minByOrNull { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.size } ?: return@files emptySet<File>()
 
-        project.future { createCInteropMetadataDependencyClasspath(associatedSourceSet, forIde) }.getOrThrow()
+        project.future { createCInteropMetadataDependencyClasspath(associatedSourceSet, forIde, transitive) }.getOrThrow()
     }
 }
 
