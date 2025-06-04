@@ -149,7 +149,7 @@ public fun AtomicInt.decrementAndFetch(): Int = this.addAndFetch(-1)
 public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 
 /**
- * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
@@ -169,8 +169,8 @@ public fun AtomicInt.fetchAndDecrement(): Int = this.fetchAndAdd(-1)
 public expect inline fun AtomicInt.update(transform: (Int) -> Int): Unit
 
 /**
- * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
@@ -190,7 +190,7 @@ public expect inline fun AtomicInt.update(transform: (Int) -> Int): Unit
 public expect inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int
 
 /**
- * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.
@@ -349,7 +349,7 @@ public fun AtomicLong.decrementAndFetch(): Long = this.addAndFetch(-1)
 public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
 
 /**
- * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
@@ -369,8 +369,8 @@ public fun AtomicLong.fetchAndDecrement(): Long = this.fetchAndAdd(-1)
 public expect inline fun AtomicLong.update(transform: (Long) -> Long): Unit
 
 /**
- * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
@@ -390,7 +390,7 @@ public expect inline fun AtomicLong.update(transform: (Long) -> Long): Unit
 public expect inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long
 
 /**
- * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
  * and returns the new value.
  *
  * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
@@ -549,7 +549,7 @@ public expect class AtomicReference<T> public constructor(value: T) {
 }
 
 /**
- * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
@@ -567,8 +567,8 @@ public expect class AtomicReference<T> public constructor(value: T) {
 public expect inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit
 
 /**
- * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
  *
  * [transform] may be invoked more than once to recompute a result.
  * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
@@ -588,7 +588,7 @@ public expect inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
 public expect inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T
 
 /**
- * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
  * and returns the new value.
  *
  * [transform] may be invoked more than once to recompute a result.

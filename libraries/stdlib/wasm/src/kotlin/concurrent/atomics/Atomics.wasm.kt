@@ -346,7 +346,7 @@ public actual class AtomicReference<T> public actual constructor(private var val
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicInt.update
  */
@@ -362,10 +362,10 @@ public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
 
 /**
  * Atomically updates the value of this [AtomicInt] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * and returns the value replaced by the updated one.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
  */
@@ -386,7 +386,7 @@ public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int 
  * and returns the new value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
  */
@@ -406,7 +406,7 @@ public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int 
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicLong.update
  */
@@ -422,10 +422,10 @@ public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
 
 /**
  * Atomically updates the value of this [AtomicLong] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * and returns the value replaced by the updated one.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
  */
@@ -446,7 +446,7 @@ public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): L
  * and returns the new value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
  */
@@ -466,7 +466,7 @@ public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): L
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicReference.update
  */
@@ -482,10 +482,10 @@ public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Uni
 
 /**
  * Atomically updates the value of this [AtomicReference] with value obtained by calling the [transform] function on the current value
- * and returns a value replaced with the updated one.
+ * and returns the value replaced by the updated one.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
  */
@@ -506,7 +506,7 @@ public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) ->
  * and returns the new value.
  *
  * Wasm does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will only be invoked once to compute the result.
  *
  * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
  */
