@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2.js
 
-import org.jetbrains.kotlin.buildtools.api.JsBinaryLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.JsKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.v2.js.operations.JsBinaryLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.v2.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.v2.js.JsPlatformToolchain
 import java.nio.file.Path
 

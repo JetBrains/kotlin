@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api
+package org.jetbrains.kotlin.buildtools.api.v2.js.arguments
 
-import org.jetbrains.kotlin.buildtools.api.JsCompilerArguments.JsCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.v2.js.arguments.JsCompilerArguments.JsCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.v2.arguments.EcmascriptVersion
 import org.jetbrains.kotlin.buildtools.api.v2.arguments.SourceMapNamesPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.BaseToolArguments

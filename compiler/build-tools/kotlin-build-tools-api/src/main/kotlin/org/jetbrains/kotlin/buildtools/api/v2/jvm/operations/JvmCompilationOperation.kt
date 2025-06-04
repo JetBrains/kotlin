@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.v2.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.v2.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.v2.trackers.SourceToOutputsTracker
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.JvmCompilerArguments
 
-public interface JvmCompilationOperation : BuildOperation<Unit> {
+public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
     public class Option<V> internal constructor(public val id: String)
 
     public operator fun <V> get(key: Option<V>): V?

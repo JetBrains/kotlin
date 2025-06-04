@@ -40,6 +40,6 @@ public interface KotlinToolchain {
     public companion object {
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
-            loadImplementation(KotlinToolchain::class, classLoader)
+            org.jetbrains.kotlin.buildtools.api.loadImplementation(KotlinToolchain::class, classLoader)
     }
 }

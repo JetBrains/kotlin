@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.buildtools.api
+package org.jetbrains.kotlin.buildtools.api.v2.js.operations
 
+import org.jetbrains.kotlin.buildtools.api.v2.js.arguments.JsCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 
 public interface JsKlibCompilationOperation : BuildOperation<Unit> {

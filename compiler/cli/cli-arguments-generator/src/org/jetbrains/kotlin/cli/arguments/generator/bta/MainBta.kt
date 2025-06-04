@@ -5,11 +5,14 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.HasStringValue
+import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.arguments.dsl.types.StringPathType
+import org.jetbrains.kotlin.cli.arguments.generator.calculateName
+import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
@@ -20,6 +23,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.enums.EnumEntries
 import kotlin.reflect.KClass
+import kotlin.reflect.full.allSuperclasses
 
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -49,19 +53,32 @@ fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: 
                 if (level.nestedLevels.isNotEmpty()) {
                     addModifiers(KModifier.OPEN)
                 }
+                val converterFun = FunSpec.builder("toCompilerArguments").apply {
+                    val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
+                    val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
+                    returns(compilerArgumentsClass)
+                    addStatement("val arguments = %T()", compilerArgumentsClass)
+                }
+
                 val argument = generateArgumentType(className)
                 val argumentTypeName = ClassName(BTA_PACKAGE, className, argument)
                 generateGetPutFunctions(argumentTypeName)
                 addType(TypeSpec.companionObjectBuilder().apply {
-                    generateOptions(level.arguments, argumentTypeName)
+                    generateOptions(level.arguments, argumentTypeName, converterFun)
                 }.build())
+                converterFun.addStatement("return arguments")
+                addFunction(converterFun.build())
             }.build()
         )
     }.build().writeTo(levelFile)
     return ClassName(BTA_PACKAGE, className)
 }
 
-private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgument>, argumentTypeName: ClassName) {
+private fun TypeSpec.Builder.generateOptions(
+    arguments: Set<KotlinCompilerArgument>,
+    argumentTypeName: ClassName,
+    converterFun: FunSpec.Builder,
+) {
     arguments.forEach { argument ->
 
         val name = argument.name.uppercase().replace("-", "_")
@@ -84,7 +101,7 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
                 }
             }
             .copy(nullable = argument.valueType.isNullable.current)
-        property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
+        val prop = property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
             annotation<JvmField>()
             addKdoc(argument.description.current)
             if (experimental) {
@@ -95,6 +112,26 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
             }
             initializer("%T(%S)", argumentTypeName, name)
         }
+        val clazz = argument.valueType::class
+            .supertypes.single { it.classifier == KotlinArgumentValueType::class }
+            .arguments.first().type!!.classifier as KClass<*>
+
+        when {
+            HasStringValue::class in clazz.allSuperclasses -> converterFun.addStatement(
+                "if (%N in optionsMap) { arguments.%N = get(%N)${if (argument.valueType.isNullable.current) "?" else ""}.value }",
+                prop,
+                calculateName(argument),
+                prop
+            )
+            argument.valueType is StringPathType || argument.valueType is IntType -> converterFun.addStatement(
+                "if (%N in optionsMap) { arguments.%N = get(%N)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
+                prop,
+                calculateName(argument),
+                prop
+            )
+            else -> converterFun.addStatement("if (%N in optionsMap) { arguments.%N = get(%N) }", prop, calculateName(argument), prop)
+        }
+
     }
 }
 
@@ -154,6 +191,8 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
 //      optionsMap[key] = value
 //  }
 
+    // TODO public val arguments: Set<JvmCompilerArgument<*>> get() = optionsMap.keys
+
     val mapProperty = property(
         "optionsMap",
         ClassName("kotlin.collections", "MutableMap").parameterizedBy(parameter.parameterizedBy(STAR), ANY.copy(nullable = true))
@@ -166,11 +205,11 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         annotation<Suppress> {
             addMember("%S", "UNCHECKED_CAST")
         }
-        returns(typeParameter.toNullable())
+        returns(typeParameter)
         addModifiers(KModifier.OPERATOR)
         addTypeVariable(typeParameter)
         addParameter("key", parameter.parameterizedBy(typeParameter))
-        addStatement("return %N[%N] as %T?", mapProperty, "key", typeParameter)
+        addStatement("return %N[%N] as %T", mapProperty, "key", typeParameter)
     }
     function("set") {
         val typeParameter = TypeVariableName("V")

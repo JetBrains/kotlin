@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2.js
 
-import org.jetbrains.kotlin.buildtools.api.WasmBinaryLinkingOperation
-import org.jetbrains.kotlin.buildtools.api.WasmKlibCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.v2.js.operations.WasmBinaryLinkingOperation
+import org.jetbrains.kotlin.buildtools.api.v2.js.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.v2.js.WasmPlatformToolchain
 import java.nio.file.Path
 
