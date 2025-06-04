@@ -3659,6 +3659,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCallTestGenerated ext
       }
 
       @Test
+      @TestMetadata("FunctionContextParameter.kt")
+      public void testFunctionContextParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionContextParameter.kt");
+      }
+
+      @Test
       @TestMetadata("FunctionTypeParameter.kt")
       public void testFunctionTypeParameter() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionTypeParameter.kt");

@@ -3781,6 +3781,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
       }
 
       @Test
+      @TestMetadata("FunctionContextParameter.kt")
+      public void testFunctionContextParameter() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionContextParameter.kt");
+      }
+
+      @Test
       @TestMetadata("FunctionTypeParameter.kt")
       public void testFunctionTypeParameter() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/parameters/FunctionTypeParameter.kt");
@@ -4260,6 +4266,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveReferenceTestGenerate
       @Test
       public void testAllFilesPresentInWithErrors() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
+      }
+
+      @Test
+      @TestMetadata("duplicatedContextParameters.kt")
+      public void testDuplicatedContextParameters() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/withErrors/duplicatedContextParameters.kt");
       }
 
       @Test
