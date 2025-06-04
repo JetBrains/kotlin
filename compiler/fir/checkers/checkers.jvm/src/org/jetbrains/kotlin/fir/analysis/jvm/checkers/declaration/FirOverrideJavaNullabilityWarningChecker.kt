@@ -60,7 +60,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 val enhancedOverrides = scope
                     .getDirectOverriddenFunctions(memberSymbol)
                     .map {
-                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor) ?: return@map it
                         anyBaseEnhanced = true
 
                         if (!anyReported && !context.session.firOverrideChecker.isOverriddenFunction(memberSymbol, substitutedBase)) {
@@ -87,7 +87,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                 val enhancedOverrides = scope
                     .getDirectOverriddenProperties(memberSymbol)
                     .map {
-                        val substitutedBase = it.substituteOrNull(substitutor, context) ?: return@map it
+                        val substitutedBase = it.substituteOrNull(substitutor) ?: return@map it
                         anyBaseEnhanced = true
 
                         if (!anyReported && !context.session.firOverrideChecker.isOverriddenProperty(memberSymbol, substitutedBase)) {
@@ -115,20 +115,22 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
     }
 }
 
+context(context: CheckerContext)
 /**
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideFunction
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
  */
 private fun FirSimpleFunction.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirSimpleFunction? {
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 
     val newParameterTypes = valueParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newContextReceiverTypes = contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
+    val newContextReceiverTypes =
+        contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
+    val newReturnType =
+        substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }
 
@@ -149,29 +151,31 @@ private fun FirSimpleFunction.substituteOrNull(
     }
 }
 
+context(context: CheckerContext)
 private fun FirNamedFunctionSymbol.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirNamedFunctionSymbol? {
     // Ok, because `substituteOrNull` calls lazyResolveToPhase
     @OptIn(SymbolInternals::class)
-    return fir.substituteOrNull(substitutor, context)?.symbol
+    return fir.substituteOrNull(substitutor)?.symbol
 }
 
+context(context: CheckerContext)
 /**
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutionOverrideProperty
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope.createSubstitutedData
  */
 private fun FirProperty.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirProperty? {
     if (!isJavaOrEnhancement) return null
     symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
     var isEnhanced = false
 
-    val newContextReceiverTypes = contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
-    val newReturnType = substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
+    val newContextReceiverTypes =
+        contextParameters.map { substitutor.substituteOrNull(it.returnTypeRef.coneType)?.also { isEnhanced = true } }
+    val newReturnType =
+        substitutor.substituteOrNull(context.returnTypeCalculator.tryCalculateReturnType(this).coneType)?.also { isEnhanced = true }
     val newExtensionReceiverType =
         receiverParameter?.typeRef?.coneType?.let { substitutor.substituteOrNull(it) }?.also { isEnhanced = true }
 
@@ -190,11 +194,11 @@ private fun FirProperty.substituteOrNull(
     }
 }
 
+context(context: CheckerContext)
 private fun FirPropertySymbol.substituteOrNull(
     substitutor: EnhancedForWarningConeSubstitutor,
-    context: CheckerContext,
 ): FirPropertySymbol? {
     // Ok, because `substituteOrNull` calls `lazyResolveToPhase`
     @OptIn(SymbolInternals::class)
-    return fir.substituteOrNull(substitutor, context)?.symbol
+    return fir.substituteOrNull(substitutor)?.symbol
 }

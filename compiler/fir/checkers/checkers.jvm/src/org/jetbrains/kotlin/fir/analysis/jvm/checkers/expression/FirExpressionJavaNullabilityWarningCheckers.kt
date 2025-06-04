@@ -37,8 +37,6 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         ) {
             expression.dispatchReceiver?.checkExpressionForEnhancedTypeMismatch(
                 expectedType = symbol.dispatchReceiverType,
-                reporter,
-                context,
                 FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             )
         }
@@ -46,16 +44,12 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
         val receiverType = symbol.resolvedReceiverType
         expression.extensionReceiver?.checkExpressionForEnhancedTypeMismatch(
             expectedType = receiverType?.let(substitutor::substituteOrSelf),
-            reporter,
-            context,
             FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
 
         for ((contextArgument, contextParameter) in expression.contextArguments.zip(symbol.contextParameterSymbols)) {
             contextArgument.checkExpressionForEnhancedTypeMismatch(
                 expectedType = substitutor.substituteOrSelf(contextParameter.resolvedReturnType),
-                reporter,
-                context,
                 FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
             )
         }
@@ -64,8 +58,6 @@ object FirQualifiedAccessJavaNullabilityWarningChecker : FirQualifiedAccessExpre
             expression.resolvedArgumentMapping?.forEach { (argument, parameter) ->
                 argument.checkExpressionForEnhancedTypeMismatch(
                     expectedType = substitutor.substituteOrSelf(parameter.returnTypeRef.coneType),
-                    reporter,
-                    context,
                     FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
                 )
             }
@@ -85,8 +77,6 @@ object FirThrowJavaNullabilityWarningChecker : FirThrowExpressionChecker(MppChec
     override fun check(expression: FirThrowExpression) {
         expression.exception.checkExpressionForEnhancedTypeMismatch(
             expectedType = context.session.builtinTypes.throwableType.coneType,
-            reporter,
-            context,
             FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
     }
@@ -97,8 +87,6 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
     override fun check(expression: FirVariableAssignment) {
         expression.rValue.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.lValue.resolvedType,
-            reporter,
-            context,
             FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
         )
     }
@@ -107,8 +95,8 @@ object FirAssignmentJavaNullabilityWarningChecker : FirVariableAssignmentChecker
 object FirLogicExpressionTypeJavaNullabilityWarningChecker : FirBooleanOperatorExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirBooleanOperatorExpression) {
-        expression.leftOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
-        expression.rightOperand.checkConditionForEnhancedTypeMismatch(context, reporter)
+        expression.leftOperand.checkConditionForEnhancedTypeMismatch()
+        expression.rightOperand.checkConditionForEnhancedTypeMismatch()
     }
 }
 
@@ -117,7 +105,7 @@ object FirLoopConditionJavaNullabilityWarningChecker : FirLoopExpressionChecker(
     override fun check(expression: FirLoop) {
         if (expression is FirErrorLoop) return
         val condition = expression.condition
-        condition.checkConditionForEnhancedTypeMismatch(context, reporter)
+        condition.checkConditionForEnhancedTypeMismatch()
     }
 }
 
@@ -127,7 +115,7 @@ object FirWhenConditionJavaNullabilityWarningChecker : FirWhenExpressionChecker(
         for (branch in expression.branches) {
             val condition = branch.condition
             if (condition is FirElseIfTrueCondition) continue
-            condition.checkConditionForEnhancedTypeMismatch(context, reporter)
+            condition.checkConditionForEnhancedTypeMismatch()
         }
     }
 }
@@ -137,32 +125,28 @@ object FirReturnJavaNullabilityWarningChecker : FirReturnExpressionChecker(MppCh
     override fun check(expression: FirReturnExpression) {
         expression.result.checkExpressionForEnhancedTypeMismatch(
             expectedType = expression.target.labeledElement.returnTypeRef.coneType,
-            reporter,
-            context,
             FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
         )
     }
 }
 
-private fun FirExpression.checkConditionForEnhancedTypeMismatch(context: CheckerContext, reporter: DiagnosticReporter) {
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun FirExpression.checkConditionForEnhancedTypeMismatch() {
     checkExpressionForEnhancedTypeMismatch(
         context.session.builtinTypes.booleanType.coneType,
-        reporter,
-        context,
         FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
     )
 }
 
+context(reporter: DiagnosticReporter, context: CheckerContext)
 internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
     expectedType: ConeKotlinType?,
-    reporter: DiagnosticReporter,
-    context: CheckerContext,
     factory: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, String>,
 ) {
     if (expectedType == null) return
     val actualType = resolvedType
 
-    val (actualTypeForComparison, expectedTypeForComparison) = getEnhancedTypesForComparison(actualType, expectedType, context)
+    val (actualTypeForComparison, expectedTypeForComparison) = getEnhancedTypesForComparison(actualType, expectedType)
         ?: return
 
     if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison) &&
@@ -179,17 +163,17 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
                 }
             }
         }
-        reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix, context)
+        reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix)
     }
 }
 
 private fun ConeKotlinType.isMadeFlexibleSynthetically(): Boolean =
     attributes.explicitTypeArgumentIfMadeFlexibleSynthetically != null
 
+context(context: CheckerContext)
 private fun getEnhancedTypesForComparison(
     actualType: ConeKotlinType?,
     expectedType: ConeKotlinType?,
-    context: CheckerContext,
 ): Pair<ConeKotlinType, ConeKotlinType>? {
     if (actualType == null || expectedType == null) return null
     if (actualType is ConeErrorType || expectedType is ConeErrorType) return null

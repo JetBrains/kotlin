@@ -26,22 +26,21 @@ object FirArrayOfNullableNothingExpressionChecker : FirQualifiedAccessExpression
     override fun check(expression: FirQualifiedAccessExpression) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)) return
         val resolvedType = expression.resolvedType
-        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source, context, reporter)
+        checkTypeAndTypeArguments(resolvedType, expression.calleeReference.source)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkTypeAndTypeArguments(
         type: ConeKotlinType,
         source: KtSourceElement?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
-        val fullyExpandedType = type.fullyExpandedType(context.session)
+        val fullyExpandedType = type.fullyExpandedType()
         if (fullyExpandedType.isArrayOfNullableNothing()) {
-            reporter.reportOn(source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.", context)
+            reporter.reportOn(source, FirErrors.UNSUPPORTED, "'Array<Nothing?>' is not supported on the JVM.")
         } else {
             for (typeArg in fullyExpandedType.typeArguments) {
                 val typeArgType = typeArg.type ?: continue
-                checkTypeAndTypeArguments(typeArgType, source, context, reporter)
+                checkTypeAndTypeArguments(typeArgType, source)
             }
         }
     }

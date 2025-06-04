@@ -29,11 +29,15 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
         val javaTarget = declaration.getAnnotationByClassId(Java.Target, context.session) ?: return
         when (val kotlinTarget = declaration.getTargetAnnotation(context.session)) {
             null -> reporter.reportOn(javaTarget.source, FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA)
-            else -> reportIncompatibleTargets(kotlinTarget, javaTarget, context, reporter)
+            else -> reportIncompatibleTargets(kotlinTarget, javaTarget)
         }
     }
 
-    fun reportIncompatibleTargets(kotlinTarget: FirAnnotation, javaTarget: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    fun reportIncompatibleTargets(
+        kotlinTarget: FirAnnotation,
+        javaTarget: FirAnnotation,
+    ) {
         val correspondingJavaTargets = kotlinTarget.extractArguments(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets)
             .groupBy { KOTLIN_TO_JAVA_ANNOTATION_TARGETS[it] }.toMutableMap()
         // remove things which are included in the Java @Target annotation
@@ -45,8 +49,7 @@ object FirIncompatibleAnnotationsChecker : FirClassChecker(MppCheckerKind.Common
                 javaTarget.source,
                 FirJvmErrors.INCOMPATIBLE_ANNOTATION_TARGETS,
                 correspondingJavaTargets.keys.filterNotNull(),
-                correspondingJavaTargets.values.flatten(),
-                context
+                correspondingJavaTargets.values.flatten()
             )
         }
     }

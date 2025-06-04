@@ -46,14 +46,13 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         }
 
         if (isInline) {
-            checkInlineTargetVersion(callableSymbol, context, reporter, expression)
+            checkInlineTargetVersion(callableSymbol, expression)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInlineTargetVersion(
         callableSymbol: FirCallableSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         element: FirElement,
     ) {
         val currentJvmTarget = context.session.jvmTargetProvider?.jvmTarget ?: return
@@ -78,8 +77,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
                 element.toReference(context.session)?.source ?: element.source,
                 FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM,
                 JvmTarget.getDescription(inlinedVersion),
-                JvmTarget.getDescription(currentVersion),
-                context,
+                JvmTarget.getDescription(currentVersion)
             )
         }
     }

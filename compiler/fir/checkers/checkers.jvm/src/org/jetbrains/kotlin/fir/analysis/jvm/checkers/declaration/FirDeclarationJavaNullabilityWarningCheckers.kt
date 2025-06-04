@@ -8,17 +8,13 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirValueParameterChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.checkExpressionForEnhancedTypeMismatch
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -27,8 +23,6 @@ object FirPropertyJavaNullabilityWarningChecker : FirPropertyChecker(MppCheckerK
         if (declaration.symbol.hasExplicitReturnType) {
             declaration.initializer?.checkExpressionForEnhancedTypeMismatch(
                 declaration.returnTypeRef.coneType,
-                reporter,
-                context,
                 FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
             )
         }
@@ -40,8 +34,6 @@ object FirValueParameterJavaNullabilityWarningChecker : FirValueParameterChecker
     override fun check(declaration: FirValueParameter) {
         declaration.defaultValue?.checkExpressionForEnhancedTypeMismatch(
             declaration.returnTypeRef.coneType,
-            reporter,
-            context,
             FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
         )
     }

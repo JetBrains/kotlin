@@ -17,7 +17,7 @@ object FirJvmModuleAccessibilityResolvedQualifierChecker : FirResolvedQualifierC
     override fun check(expression: FirResolvedQualifier) {
         val symbol = expression.symbol
         if (symbol is FirClassSymbol<*>) {
-            FirJvmModuleAccessibilityQualifiedAccessChecker.checkClassAccess(context, symbol, expression, reporter)
+            FirJvmModuleAccessibilityQualifiedAccessChecker.checkClassAccess(symbol, expression)
         }
     }
 }

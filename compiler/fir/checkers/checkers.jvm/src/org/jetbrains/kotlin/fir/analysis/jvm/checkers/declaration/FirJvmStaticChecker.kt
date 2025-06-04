@@ -46,7 +46,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         fun checkIfAnnotated(it: FirDeclaration) {
             val annotation = it.findAnnotation(JvmStandardClassIds.Annotations.JvmStatic, context.session) ?: return
             val targetSource = annotation.source ?: it.source ?: declaration.source
-            checkAnnotated(it, context, reporter, targetSource, declaration as? FirProperty)
+            checkAnnotated(it, targetSource, declaration as? FirProperty)
         }
 
         checkIfAnnotated(declaration)
@@ -56,10 +56,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotated(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
@@ -75,22 +74,21 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             container.classKind != ClassKind.OBJECT ||
             !container.isCompanion() && containerIsAnonymous
         ) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION, context)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION)
         } else if (
             container.isCompanion() &&
             context.containerIsInterface(1)
         ) {
-            checkForInterface(declaration, context, reporter, targetSource)
+            checkForInterface(declaration, targetSource)
         }
 
-        checkOverrideCannotBeStatic(declaration, context, reporter, targetSource, outerProperty)
-        checkStaticOnConstOrJvmField(declaration, context, reporter, targetSource)
+        checkOverrideCannotBeStatic(declaration, targetSource, outerProperty)
+        checkStaticOnConstOrJvmField(declaration, targetSource)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkForInterface(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirCallableDeclaration) {
@@ -110,9 +108,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         if (visibility != Visibilities.Public) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER, context)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER)
         } else if (isExternal) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, context)
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_EXTERNAL_IN_INTERFACE)
         }
     }
 
@@ -153,10 +151,9 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkOverrideCannotBeStatic(
         declaration: FirMemberDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
         outerProperty: FirProperty? = null,
     ) {
@@ -166,18 +163,21 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
             return
         }
 
-        reporter.reportOn(targetSource, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC, context)
+        reporter.reportOn(targetSource, FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkStaticOnConstOrJvmField(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirProperty) return
-        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(JvmStandardClassIds.Annotations.JvmField, context.session) == true) {
-            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
+        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(
+                JvmStandardClassIds.Annotations.JvmField,
+                context.session
+            ) == true
+        ) {
+            reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD)
         }
     }
 
