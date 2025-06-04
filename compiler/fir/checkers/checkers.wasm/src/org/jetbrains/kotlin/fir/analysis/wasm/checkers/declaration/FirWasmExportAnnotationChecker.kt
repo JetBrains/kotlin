@@ -46,7 +46,7 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
                     reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
             }
-            checkWasmInteropSignature(declaration, context, reporter)
+            checkWasmInteropSignature(declaration)
         }
     }
 }
