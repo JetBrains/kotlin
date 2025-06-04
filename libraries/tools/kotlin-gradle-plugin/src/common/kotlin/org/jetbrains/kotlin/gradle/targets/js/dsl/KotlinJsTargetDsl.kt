@@ -266,7 +266,7 @@ interface KotlinTargetWithNodeJsDsl {
 /**
  * Common options for the configuring execution environments for Kotlin JS and Wasm targets.
  *
- * For more information on execution environments, see https://kotl.in/kotlin-js-execution-environments
+ * For more information about execution environments, see https://kotl.in/kotlin-js-execution-environments
  *
  * **Note:** This interface is not intended for implementation by build script or plugin authors.
  */
@@ -279,7 +279,7 @@ interface KotlinJsSubTargetDsl {
      * Control the output of the bundle produced for Kotlin JS and Wasm targets.
      *
      * By default, the results of a Kotlin/JS project build reside in the
-     * `/build/dist/<targetName>/<binaryName>` directory within the project root.
+     * `build/dist/<targetName>/<binaryName>` directory within the project root.
      *
      * KGP will save the output bundle in the specified location.
      */
@@ -306,16 +306,80 @@ interface KotlinJsSubTargetDsl {
     val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
 }
 
+/**
+ * Browser execution environment options for Kotlin JS and Wasm targets.
+ *
+ * For more information about execution environments, see https://kotl.in/kotlin-js-execution-environments
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
+
+    /**
+     * Configure the default Webpack configuration for the browser execution environment.
+     *
+     * By default, Webpack is used by tasks used to [run][runTask],
+     * [bundle][webpackTask], and [test][testTask] the Kotlin JS and Wasm targets.
+     *
+     * For more information about how Kotlin JS and Wasm use Webpack, see
+     * https://kotl.in/js-project-setup/webpack-bundling
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+     */
     fun commonWebpackConfig(body: Action<KotlinWebpackConfig>)
 
+    /**
+     * Configure the default [KotlinWebpack] task that **runs** the Kotlin JS or Wasm target.
+     *
+     * This task will serve the compiled Kotlin JS or Wasm target webpack's local development server.
+     * For more information about the run task, see
+     * https://kotl.in/js-project-setup-run-task
+     *
+     * The common webpack configuration options for all [KotlinWebpack] tasks
+     * can also be configured using [commonWebpackConfig].
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
     fun runTask(body: Action<KotlinWebpack>)
 
+    /**
+     * Configure the default [KotlinWebpack] task that **bundles** the Kotlin JS or Wasm target.
+     *
+     * This task will bundle the compiled Kotlin JS or Wasm target.
+     *
+     * The common webpack configuration options for all [KotlinWebpack] tasks
+     * can also be configured using [commonWebpackConfig].
+     *
+     * For more information about how Kotlin JS and Wasm use Webpack, see
+     * https://kotl.in/js-project-setup/webpack-bundling
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
+    // https://kotlinlang.org/docs/js-project-setup.html#webpack-task
     fun webpackTask(body: Action<KotlinWebpack>)
-
 }
 
+/**
+ * [Node.js](https://nodejs.org/) execution environment options for Kotlin JS and Wasm targets.
+ *
+ * For more information about execution environments, see
+ * https://kotl.in/kotlin-js-execution-environments
+ * For more information about the Node.js execution environments, see
+ * https://kotl.in/js-project-setup-node-js
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
+
+    /**
+     * Configure the default [NodeJsExec] task that **runs** the Kotlin JS or Wasm target
+     * using Node.js.
+     *
+     * For more information about the run task, see
+     * https://kotl.in/js-project-setup-run-task
+     *
+     * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+     */
     fun runTask(body: Action<NodeJsExec>)
 
     /**
@@ -333,7 +397,6 @@ interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
      */
     @ExperimentalMainFunctionArgumentsDsl
     fun passProcessArgvToMainFunction()
-
 
     /**
      * _This option is only relevant for JS targets._

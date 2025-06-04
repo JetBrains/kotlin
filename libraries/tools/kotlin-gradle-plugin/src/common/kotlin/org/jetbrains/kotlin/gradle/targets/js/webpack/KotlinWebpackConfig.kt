@@ -21,6 +21,23 @@ import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 
+/**
+ * Configuration options used to generate [webpack](https://webpack.js.org/)
+ * configuration used to bundle Kotlin JS and Wasm targets.
+ *
+ * Some options are directly translated to webpack configuration options,
+ * while others are specific to Kotlin.
+ *
+ * Be aware that changing these options can result in a broken bundle,
+ * or produce subtly broken JS code.
+ * If you are not sure: do not configure these options,
+ * the defaults should work for most use cases.
+ *
+ * For more information about how Kotlin JS and Wasm use Webpack, see
+ * https://kotl.in/js-project-setup/webpack-bundling
+ *
+ * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+ */
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
     val npmProjectDir: Provider<File>? = null,
