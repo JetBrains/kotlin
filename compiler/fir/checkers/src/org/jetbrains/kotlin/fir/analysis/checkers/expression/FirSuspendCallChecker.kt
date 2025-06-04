@@ -32,22 +32,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
-    private val BUILTIN_SUSPEND_NAME = StandardClassIds.Callables.suspend.callableName
-
-    internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val reference = expression.calleeReference.resolved ?: return
         val symbol = reference.resolvedSymbol as? FirCallableSymbol ?: return
-        if (reference.name == BUILTIN_SUSPEND_NAME ||
-            symbol is FirNamedFunctionSymbol && symbol.name == BUILTIN_SUSPEND_NAME
+        if (reference.name == StandardClassIds.Callables.suspend.callableName ||
+            symbol is FirNamedFunctionSymbol && symbol.name == StandardClassIds.Callables.suspend.callableName
         ) {
             checkSuspendModifierForm(expression, reference, symbol)
         }
@@ -93,14 +89,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         reference: FirResolvedNamedReference,
         symbol: FirCallableSymbol<*>,
     ) {
-        if (symbol.callableId == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID) {
-            if (reference.name != BUILTIN_SUSPEND_NAME ||
+        if (symbol.callableId == StandardClassIds.Callables.suspend) {
+            if (reference.name != StandardClassIds.Callables.suspend.callableName ||
                 expression.explicitReceiver != null ||
                 expression.formOfSuspendModifierForLambdaOrFun() == null
             ) {
                 reporter.reportOn(expression.source, FirErrors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND)
             }
-        } else if (reference.name == BUILTIN_SUSPEND_NAME) {
+        } else if (reference.name == StandardClassIds.Callables.suspend.callableName) {
             when (expression.formOfSuspendModifierForLambdaOrFun()) {
                 SuspendCallArgumentKind.FUN -> {
                     reporter.reportOn(expression.source, FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN)
