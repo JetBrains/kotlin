@@ -214,6 +214,18 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGe
   }
 
   @Test
+  @TestMetadata("recursiveMultiValueClass.kt")
+  public void testRecursiveMultiValueClass() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/recursiveMultiValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveSingleValueClass.kt")
+  public void testRecursiveSingleValueClass() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/recursiveSingleValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("recursiveValueClass.kt")
   public void testRecursiveValueClass() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/recursiveValueClass.kt");
