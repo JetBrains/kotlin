@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extra
 
-import kotlinx.collections.immutable.PersistentSet
-import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -29,6 +28,53 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 
+/**
+ * A checker for tracking local variable assignments which are unused.
+ *
+ * ## In-place Assignments
+ *
+ * Using the control-flow graph of a declaration, this checker tracks all local variable assignments
+ * and marks them as used or unused at each variable access. When assignments happen in-place with
+ * variable access, only the most recent assignments are considered used. When code branches and
+ * joins, it is possible to have multiple recent assignments.
+ *
+ * ## Captured Assignments
+ *
+ * Consider the following graph:
+ * ```
+ *       |
+ *       * < (1)
+ *       |\
+ *       | \
+ * (2) > *  * < (3)
+ *       |  |
+ * ```
+ * Where nodes (1), (2), and (3) represent parts of the following code:
+ * ```kotlin
+ * fun example() {
+ *     // (1)
+ *     invokeLater { /* (3) */ }
+ *     // (2)
+ * }
+ * ```
+ *
+ * Given some local variables defined in (1) and that the execution order of (2) and (3) is
+ * undetermined, assignments within (2) could be visible by accessors in (3). Similarly, assignments
+ * within (3) could be visible by accessors in (2). This means that future assignments to local
+ * variables need to flow into non-in-place parts of the control-flow graph.
+ *
+ * ## Implementation Details
+ *
+ * Gathering the *visible assignments* for each node within the control-flow graph works in two
+ * phases:
+ * 1. Back-propagate ***all*** variable assignments to previous nodes as captured assignments.
+ * 2. Forward-propagate the ***most recent in-place*** variable assignments and combine this with
+ * ***all captured*** assignments from non-in-place subgraphs and parent graphs from step 1.
+ *
+ * Now that the visible assignments are known for each node, traverse the graph a final time to find
+ * each variable access node and mark the assignments visible to that node as used. Any unmarked
+ * assignments are considered unused.
+ */
 object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         @Suppress("UNCHECKED_CAST")
@@ -36,19 +82,18 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
         val ownData = Data(properties)
         data.graph.traverse(AddAllWrites(ownData))
         if (ownData.unreadWrites.isNotEmpty()) {
-            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(properties))
+            val capturedWrites = data.graph.traverseToFixedPoint(FindCapturedWrites(properties))
+            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(capturedWrites, properties))
         }
         data.graph.traverse(RemoveVisibleWrites(ownData))
 
         val variablesWithUnobservedWrites = mutableSetOf<FirPropertySymbol>()
-        for ((statement, scope) in ownData.unreadWrites) {
+        for (statement in ownData.unreadWrites) {
             if (statement is FirVariableAssignment) {
                 val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
                 variablesWithUnobservedWrites.add(variableSymbol)
-                if (variableSymbol in ownData.variablesWithoutReads || scope == ownData.variableScopes[variableSymbol]) {
-                    // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
-                    reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
-                }
+                // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
+                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
             } else if (statement is FirProperty) {
                 if (statement.symbol !in ownData.variablesWithoutReads && !statement.symbol.ignoreWarnings) {
                     reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
@@ -75,8 +120,8 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
                 initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
 
     private class Data(val localProperties: Set<FirPropertySymbol>) {
-        var writesByNode: Map<CFGNode<*>, PathAwareVariableWriteInfo> = emptyMap()
-        val unreadWrites: MutableMap<FirStatement /* FirProperty | FirVariableAssignment */, ControlFlowGraph> = mutableMapOf()
+        var writesByNode: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>> = emptyMap()
+        val unreadWrites: MutableSet<FirStatement /* FirProperty | FirVariableAssignment */> = mutableSetOf()
         val variableScopes: MutableMap<FirPropertySymbol, ControlFlowGraph> = hashMapOf()
         val variablesWithoutReads: MutableMap<FirPropertySymbol, FirProperty> = mutableMapOf()
     }
@@ -96,7 +141,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
 
             val graph = node.owner.nearestNonInPlaceGraph()
             if (node.fir.initializer != null) {
-                data.unreadWrites[node.fir] = graph
+                data.unreadWrites.add(node.fir)
             }
             data.variableScopes[node.fir.symbol] = graph
             data.variablesWithoutReads[node.fir.symbol] = node.fir
@@ -107,31 +152,134 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             if (propertySymbol.name.isSpecial) return
 
             if (propertySymbol in data.localProperties) {
-                data.unreadWrites[node.fir] = node.owner.nearestNonInPlaceGraph()
+                data.unreadWrites.add(node.fir)
             }
         }
     }
 
-    private class FindVisibleWrites(private val properties: Set<FirPropertySymbol>) :
-        PathAwareControlFlowGraphVisitor<FirPropertySymbol, VariableWrites>() {
+    /**
+     * Back-propagate all variable assignments as [PropertyAccessType.Captured]. This information
+     * is then used when calculating visible assignments for each node.
+     */
+    private class FindCapturedWrites(
+        private val properties: Set<FirPropertySymbol>,
+    ) : PathAwareControlFlowGraphVisitor<PropertyAccessType, VariableWriteData>(CfgTraverseDirection.Backward) {
 
-        override fun mergeInfo(a: VariableWriteInfo, b: VariableWriteInfo, node: CFGNode<*>): VariableWriteInfo =
-            a.merge(b, VariableWrites::addAll)
+        override fun mergeInfo(
+            a: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
+            b: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
+            node: CFGNode<*>,
+        ): ControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            return a.merge(b, VariableWriteData::plus)
+        }
 
-        private fun PathAwareVariableWriteInfo.overwrite(symbol: FirPropertySymbol, data: VariableWrites): PathAwareVariableWriteInfo =
-            transformValues { it.put(symbol, data) }
+        override fun visitEdge(
+            from: CFGNode<*>, to: CFGNode<*>, metadata: Edge,
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            if (metadata.label == CapturedByValue) return data // Ignore CapturedByValue edges.
+            return super.visitEdge(from, to, metadata, data)
+        }
+
+        private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.add(
+            type: PropertyAccessType,
+            symbol: FirPropertySymbol,
+            node: CFGNode<*>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            return transformValues { oldData ->
+                oldData.put(type, oldData[type]?.add(symbol, node) ?: VariableWriteData(symbol, node))
+            }
+        }
 
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
-            data: PathAwareVariableWriteInfo,
-        ): PathAwareVariableWriteInfo =
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            return when {
+                node.fir.name.isSpecial || node.fir.initializer == null -> data
+                else -> data.add(PropertyAccessType.Captured, node.fir.symbol, node)
+            }
+        }
+
+        override fun visitVariableAssignmentNode(
+            node: VariableAssignmentNode,
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            val symbol = node.fir.calleeReference?.toResolvedPropertySymbol()?.takeIf { it in properties } ?: return data
+            if (symbol.name.isSpecial) return data
+            return data.add(PropertyAccessType.Captured, symbol, node)
+        }
+    }
+
+    /**
+     * Forward-propagates the most recent assignments as [PropertyAccessType.InPlace] for each node
+     * and combines this with [PropertyAccessType.Captured] assignments from [FindCapturedWrites].
+     */
+    private class FindVisibleWrites(
+        private val futureWrites: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>>,
+        private val properties: Set<FirPropertySymbol>,
+    ) : PathAwareControlFlowGraphVisitor<PropertyAccessType, VariableWriteData>() {
+
+        override fun mergeInfo(
+            a: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
+            b: ControlFlowInfo<PropertyAccessType, VariableWriteData>,
+            node: CFGNode<*>,
+        ): ControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            return a.merge(b, VariableWriteData::plus)
+        }
+
+        override fun visitEdge(
+            from: CFGNode<*>, to: CFGNode<*>, metadata: Edge,
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+            if (metadata.label == CapturedByValue) return data // Ignore CapturedByValue edges.
+            val result = super.visitEdge(from, to, metadata, data)
+
+            val fromGraph = from.owner.nearestNonInPlaceGraph()
+            return when {
+                // Inherit parent-graph captured writes to properties as visible writes.
+                // Care must be taken to gather captured writes from the *in-place following nodes*
+                // of the 'from' node, since the 'from' node will contain captured writes for the
+                // 'to' node as well.
+                fromGraph != to.owner.nearestNonInPlaceGraph() -> {
+                    var data = data
+                    for (node in from.followingCfgNodes) {
+                        if (fromGraph == node.owner.nearestNonInPlaceGraph()) {
+                            val nodeData = super.visitEdge(from, node, metadata, futureWrites[node] ?: continue)
+                            data = data.merge(nodeData) { a, b -> mergeInfo(a, b, to) }
+                        }
+                    }
+                    data
+                }
+
+                // Inherit non-in-place subgraph captured writes to properties as visible writes.
+                from is CFGNodeWithSubgraphs<*> -> {
+                    var data = data
+                    for (subGraph in from.subGraphs) {
+                        if (fromGraph != subGraph.nearestNonInPlaceGraph()) {
+                            val node = subGraph.enterNode
+                            val nodeData = super.visitEdge(from, node, metadata, futureWrites[node] ?: continue)
+                            data = data.merge(nodeData) { a, b -> mergeInfo(a, b, to) }
+                        }
+                    }
+                    data
+                }
+
+                else -> result
+            }
+        }
+
+        override fun visitVariableDeclarationNode(
+            node: VariableDeclarationNode,
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> =
             if (node.fir.name.isSpecial) data
             else data.overwrite(node.fir.symbol, if (node.fir.initializer != null) persistentSetOf(node) else persistentSetOf())
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
-            data: PathAwareVariableWriteInfo,
-        ): PathAwareVariableWriteInfo {
+            data: PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>,
+        ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol()?.takeIf { it in properties } ?: return data
             if (symbol.name.isSpecial) return data
             return data.overwrite(symbol, persistentSetOf(node))
@@ -174,13 +322,49 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.C
             val symbol = fir.calleeReference.toResolvedPropertySymbol() ?: return
             if (symbol.name.isSpecial) return
             data.variablesWithoutReads.remove(symbol)
-            data.writesByNode[node]?.values?.forEach { dataForLabel ->
-                dataForLabel[symbol]?.forEach { data.unreadWrites.remove(it.fir) }
+            for (visibleByLabel in data.writesByNode[node]?.values.orEmpty()) {
+                for (visible in visibleByLabel.values) {
+                    visible[symbol]?.forEach { data.unreadWrites.remove(it.fir) }
+                }
             }
         }
     }
 }
 
-private typealias VariableWrites = PersistentSet<CFGNode<*>>
-private typealias VariableWriteInfo = ControlFlowInfo<FirPropertySymbol, VariableWrites>
-private typealias PathAwareVariableWriteInfo = PathAwareControlFlowInfo<FirPropertySymbol, VariableWrites>
+private enum class PropertyAccessType {
+    InPlace,
+    Captured,
+}
+
+@JvmInline
+private value class VariableWriteData(val value: PersistentMap<FirPropertySymbol, PersistentSet<CFGNode<*>>>) {
+    constructor(symbol: FirPropertySymbol, node: CFGNode<*>) : this(persistentMapOf(symbol to persistentSetOf(node)))
+    constructor(symbol: FirPropertySymbol, data: PersistentSet<CFGNode<*>>) : this(persistentMapOf(symbol to data))
+
+    operator fun get(symbol: FirPropertySymbol): PersistentSet<CFGNode<*>>? = value[symbol]
+
+    operator fun plus(other: VariableWriteData): VariableWriteData {
+        return VariableWriteData(value.merge(other.value, PersistentSet<CFGNode<*>>::addAll))
+    }
+
+    fun add(symbol: FirPropertySymbol, node: CFGNode<*>): VariableWriteData {
+        val nodes = value[symbol] ?: persistentSetOf()
+        return VariableWriteData(value.put(symbol, nodes.add(node)))
+    }
+
+    operator fun iterator(): Iterator<Map.Entry<FirPropertySymbol, PersistentSet<CFGNode<*>>>> {
+        return value.iterator()
+    }
+}
+
+private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.overwrite(
+    symbol: FirPropertySymbol, nodes: PersistentSet<CFGNode<*>>,
+): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
+    return transformValues {
+        val data = when (val data = it[PropertyAccessType.InPlace]) {
+            null -> VariableWriteData(symbol, nodes)
+            else -> VariableWriteData(data.value.put(symbol, nodes))
+        }
+        it.put(PropertyAccessType.InPlace, data)
+    }
+}
