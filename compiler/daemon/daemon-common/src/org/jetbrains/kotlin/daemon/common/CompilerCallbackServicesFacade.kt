@@ -68,7 +68,19 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
+    fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String>
+
+    @Throws(RemoteException::class)
+    fun incrementalCache_getPackagePartData(target: TargetId, partInternalName: String): JvmPackagePartProto?
+
+    @Throws(RemoteException::class)
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
+
+    @Throws(RemoteException::class)
+    fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
+
+    @Throws(RemoteException::class)
+    fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String
 
     @Throws(RemoteException::class)
     fun incrementalCache_close(target: TargetId)

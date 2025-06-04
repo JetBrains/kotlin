@@ -100,6 +100,10 @@ open class IncrementalJvmCache(
     fun isMultifileFacade(className: JvmClassName): Boolean =
         className in multifileFacadeToParts
 
+    override fun getClassFilePath(internalClassName: String): String {
+        return toSystemIndependentName(File(outputDir, "$internalClassName.class").normalize().absolutePath)
+    }
+
     override fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl) {
         if (icContext.useCompilerMapsOnly) return
         super.updateComplementaryFiles(dirtyFiles, expectActualTracker)
@@ -326,6 +330,22 @@ open class IncrementalJvmCache(
         val obsoletePackageParts = dirtyOutputClassesMap.getDirtyOutputClasses().filter(packagePartMap::isPackagePart)
         debugLog("Obsolete package parts: $obsoletePackageParts")
         return obsoletePackageParts.map { it.internalName }
+    }
+
+    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? {
+        return protoMap[JvmClassName.byInternalName(partInternalName)]?.let { value ->
+            JvmPackagePartProto(value.bytes, value.strings)
+        }
+    }
+
+    override fun getObsoleteMultifileClasses(): Collection<String> {
+        val obsoleteMultifileClasses = linkedSetOf<String>()
+        for (dirtyClass in dirtyOutputClassesMap.getDirtyOutputClasses()) {
+            val dirtyFacade = partToMultifileFacade[dirtyClass] ?: continue
+            obsoleteMultifileClasses.add(dirtyFacade)
+        }
+        debugLog("Obsolete multifile class facades: $obsoleteMultifileClasses")
+        return obsoleteMultifileClasses
     }
 
     override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? {
