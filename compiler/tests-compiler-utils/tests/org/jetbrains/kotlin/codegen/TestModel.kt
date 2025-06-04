@@ -21,6 +21,7 @@ class ProjectInfo(
     val ignoredGranularities: Set<JsGenerationGranularity>,
     val callMain: Boolean,
     val checkTypeScriptDefinitions: Boolean,
+    val targetBackend: TargetBackend?,
     val ignoreK1Backends: Set<TargetBackend>,
     val ignoreK2Backends: Set<TargetBackend>,
 ) {
@@ -97,6 +98,7 @@ private const val TYPESCRIPT_DEFINITIONS = "TYPESCRIPT_DEFINITIONS"
 private const val IGNORE_BACKEND = "IGNORE_BACKEND"
 private const val IGNORE_BACKEND_K1 = "IGNORE_BACKEND_K1"
 private const val IGNORE_BACKEND_K2 = "IGNORE_BACKEND_K2"
+private const val TARGET_BACKEND = "TARGET_BACKEND"
 
 const val MODULE_INFO_FILE = "module.info"
 private const val DEPENDENCIES = "dependencies"
@@ -209,6 +211,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
         var moduleKind = ModuleKind.ES
         val ignoreBackendsK1 = mutableSetOf<TargetBackend>()
         val ignoreBackendsK2 = mutableSetOf<TargetBackend>()
+        var targetBackend: TargetBackend? = null
 
         loop { line ->
             lineCounter++
@@ -235,6 +238,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 op == MODULES_KIND -> moduleKind = split[1].trim()
                     .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
                     .let { moduleKindMap[it] ?: error("Unknown MODULE_KIND value '$it'") }
+                op == TARGET_BACKEND -> targetBackend = TargetBackend.valueOf(split[1].trim())
                 op in arrayOf(IGNORE_BACKEND, IGNORE_BACKEND_K1, IGNORE_BACKEND_K2) -> {
                     val backends = split[1].trim().split(", ").map { TargetBackend.valueOf(it) }
                     if (op == IGNORE_BACKEND || op == IGNORE_BACKEND_K1) ignoreBackendsK1 += backends
@@ -268,7 +272,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
         return ProjectInfo(
             entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain, checkTypeScriptDefinitions,
-            ignoreBackendsK1, ignoreBackendsK2
+            targetBackend, ignoreBackendsK1, ignoreBackendsK2
         )
     }
 }

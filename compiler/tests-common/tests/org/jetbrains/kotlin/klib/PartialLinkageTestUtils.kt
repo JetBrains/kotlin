@@ -47,6 +47,7 @@ object PartialLinkageTestUtils {
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
             if (projectInfo.muted) return true
             val compatibleBackends = generateSequence(targetBackend) { if (it == TargetBackend.ANY) null else it.compatibleWith }.toSet()
+            projectInfo.targetBackend?.let { return it !in compatibleBackends }
             val ignoredBackends = if (isK2) projectInfo.ignoreK2Backends else projectInfo.ignoreK1Backends
             return ignoredBackends.intersect(compatibleBackends).isNotEmpty()
         }
