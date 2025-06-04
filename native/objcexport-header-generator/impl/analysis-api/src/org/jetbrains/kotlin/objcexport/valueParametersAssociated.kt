@@ -81,6 +81,7 @@ private fun KaSession.addReceiver(
 
     val receiverType = getObjCReceiverType(function)
     val receiverTypeName = getObjCReceiverTypeName(receiverType)
+    val receiverObjCNameAnnotation = function.receiverParameter?.resolveObjCNameAnnotation()
 
     if (receiverType != null && receiverTypeName != null) {
         list.add(
@@ -89,7 +90,8 @@ private fun KaSession.addReceiver(
                 isVararg = false,
                 type = receiverType,
                 isReceiver = true,
-                swiftName = null
+                receiverSwiftName = receiverObjCNameAnnotation?.swiftName,
+                receiverObjCName = receiverObjCNameAnnotation?.objCName
             )
         )
     }
@@ -112,7 +114,8 @@ private fun KtObjCExportSession.mapBridgeToFunctionParameters(
             isVararg = functionParameter.isVararg,
             type = functionParameter.returnType,
             isReceiver = false,
-            swiftName = objcNameAnnotation?.swiftName
+            receiverSwiftName = objcNameAnnotation?.swiftName,
+            receiverObjCName = objcNameAnnotation?.objCName,
         )
     } else bridgeParameter to null
 }
@@ -122,7 +125,8 @@ data class KtObjCParameterData(
     val isVararg: Boolean,
     val type: KaType,
     val isReceiver: Boolean,
-    val swiftName: String?
+    val receiverSwiftName: String?,
+    val receiverObjCName: String?,
 )
 
 /**

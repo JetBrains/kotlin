@@ -141,14 +141,14 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
-                    parameter?.isReceiver == true -> "_"
+                    parameter?.isReceiver == true -> parameter.receiverSwiftName ?: parameter.receiverObjCName ?: "_"
                     method is KaPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
                     else -> {
                         if (parameter == null) continue@parameters
-                        else if (parameter.isReceiver) "_" else parameter.swiftName ?: parameter.name
+                        else if (parameter.isReceiver) "_" else parameter.receiverSwiftName ?: parameter.receiverObjCName ?: parameter.name
                     }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
@@ -238,7 +238,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
-                parameter?.isReceiver == true -> ""
+                parameter?.isReceiver == true -> parameter.receiverObjCName ?: ""
                 method is KaPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"
