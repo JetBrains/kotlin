@@ -279,6 +279,10 @@ fun main(args: Array<String>) {
                 model("stepping")
             }
 
+            testClass<AbstractFirJsSteppingWithInlinedFunInKlibTest> {
+                model("stepping")
+            }
+
             testClass<AbstractIrJsLocalVariableTest>(
                 annotations = listOf(
                     *legacyFrontend(),

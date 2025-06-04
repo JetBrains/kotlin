@@ -204,9 +204,11 @@ open class AbstractFirMultiModuleOrderTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsSteppingTest : AbstractFirJsTest(
+open class AbstractFirJsSteppingTest(
+    testGroupOutputDirPrefix: String = "debug/firStepping/"
+) : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/debug/stepping/",
-    testGroupOutputDirPrefix = "debug/firStepping/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override val enableBoxHandlers: Boolean
         get() = false
@@ -214,6 +216,19 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureSteppingTests()
+    }
+}
+
+open class AbstractFirJsSteppingWithInlinedFunInKlibTest : AbstractFirJsSteppingTest(
+    testGroupOutputDirPrefix = "debug/firSteppingWithInlinedFunInKlib/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 
