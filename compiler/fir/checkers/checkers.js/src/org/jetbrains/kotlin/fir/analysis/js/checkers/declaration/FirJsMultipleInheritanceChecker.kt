@@ -46,21 +46,18 @@ sealed class FirJsMultipleInheritanceChecker(mppKind: MppCheckerKind) : FirClass
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = OperatorNameConventions.GET,
             supertype = context.session.builtinTypes.charSequenceType.coneType,
-            context, reporter,
         )
 
         declaration.checkFunctionIfSubtypeOf(
             functionToCheck = StandardNames.NEXT_CHAR,
             supertype = context.session.builtinTypes.charIteratorType.coneType,
-            context, reporter,
         )
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun FirClass.checkFunctionIfSubtypeOf(
         functionToCheck: Name,
         supertype: ConeKotlinType,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (!defaultType().isSubtypeOf(supertype, context.session)) {
             return
@@ -75,7 +72,7 @@ sealed class FirJsMultipleInheritanceChecker(mppKind: MppCheckerKind) : FirClass
                 overridden.size > 1 &&
                 overridden.any { it.callableId.classId == supertype.classId }
             ) {
-                reporter.reportOn(source, FirJsErrors.WRONG_MULTIPLE_INHERITANCE, function, context)
+                reporter.reportOn(source, FirJsErrors.WRONG_MULTIPLE_INHERITANCE, function)
             }
         }
     }

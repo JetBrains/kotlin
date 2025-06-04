@@ -17,17 +17,20 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
-    override fun isWholeReflectionApiAvailable(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    override fun isWholeReflectionApiAvailable(): Boolean {
         return false
     }
 
-    override fun isAllowedReflectionApi(name: Name, containingClassId: ClassId, context: CheckerContext): Boolean {
-        return super.isAllowedReflectionApi(name, containingClassId, context) ||
+    context(context: CheckerContext)
+    override fun isAllowedReflectionApi(name: Name, containingClassId: ClassId): Boolean {
+        return super.isAllowedReflectionApi(name, containingClassId) ||
                 containingClassId in StandardClassIds.Annotations.associatedObjectAnnotations ||
                 name == StandardNames.FqNames.findAssociatedObject.shortName()
     }
 
-    override fun report(source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED, "This reflection API is not supported in Kotlin JS.", context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun report(source: KtSourceElement?) {
+        reporter.reportOn(source, FirErrors.UNSUPPORTED, "This reflection API is not supported in Kotlin JS.")
     }
 }

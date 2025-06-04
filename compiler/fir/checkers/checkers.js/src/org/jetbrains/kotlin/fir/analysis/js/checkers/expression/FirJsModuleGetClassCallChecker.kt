@@ -19,6 +19,6 @@ object FirJsModuleGetClassCallChecker : FirGetClassCallChecker(MppCheckerKind.Co
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirGetClassCall) {
         val callee = expression.argument.resolvedType.toSymbol(context.session) ?: return
-        checkJsModuleUsage(callee, context, reporter, expression.source)
+        checkJsModuleUsage(callee, expression.source)
     }
 }

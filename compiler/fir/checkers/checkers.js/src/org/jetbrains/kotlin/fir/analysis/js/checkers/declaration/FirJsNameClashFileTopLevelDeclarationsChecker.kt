@@ -19,17 +19,17 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext)
     private fun MutableMap<String, MutableList<FirJsStableName>>.addStableName(
-        symbol: FirBasedSymbol<*>,
-        context: CheckerContext
+        symbol: FirBasedSymbol<*>
     ) {
         val stableName = FirJsStableName.createStableNameOrNull(symbol, context.session)
         if (stableName != null) {
             getOrPut(stableName.name) { mutableListOf() }.add(stableName)
         }
         if (symbol is FirPropertySymbol) {
-            symbol.getterSymbol?.let { getter -> addStableName(getter, context) }
-            symbol.setterSymbol?.let { setter -> addStableName(setter, context) }
+            symbol.getterSymbol?.let { getter -> addStableName(getter) }
+            symbol.setterSymbol?.let { setter -> addStableName(setter) }
         }
     }
 
@@ -38,7 +38,7 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppChecker
         val topLevelDeclarationsWithStableName = mutableMapOf<String, MutableList<FirJsStableName>>()
         @OptIn(DirectDeclarationsAccess::class)
         for (topLevelDeclaration in declaration.declarations) {
-            topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol, context)
+            topLevelDeclarationsWithStableName.addStableName(topLevelDeclaration.symbol)
         }
         for ((name, stableNames) in topLevelDeclarationsWithStableName.entries) {
             for (symbol in stableNames) {
