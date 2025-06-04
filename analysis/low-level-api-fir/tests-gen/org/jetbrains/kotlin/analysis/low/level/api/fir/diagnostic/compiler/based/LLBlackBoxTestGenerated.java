@@ -6403,6 +6403,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("asToNothing.kt")
+    public void testAsToNothing() {
+      runTest("compiler/testData/codegen/box/casts/asToNothing.kt");
+    }
+
+    @Test
     @TestMetadata("asUnit.kt")
     public void testAsUnit() {
       runTest("compiler/testData/codegen/box/casts/asUnit.kt");
@@ -6622,6 +6628,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @TestMetadata("unitNullableCast.kt")
     public void testUnitNullableCast() {
       runTest("compiler/testData/codegen/box/casts/unitNullableCast.kt");
+    }
+
+    @Test
+    @TestMetadata("wasmCastMessages.kt")
+    public void testWasmCastMessages() {
+      runTest("compiler/testData/codegen/box/casts/wasmCastMessages.kt");
     }
 
     @Nested
