@@ -296,8 +296,13 @@ private fun parseCodeOwners(file: File): CodeOwners {
                 // ```
                 // In such pattern it is impossible to distinguish between file ".../Read Me.md" or file ".../Read" owned by "Me.md"
                 // See SPACE-17772
-                val (pattern, owners) = line.split(' ', limit = 2)
-                patterns += OwnershipPattern.Pattern(pattern, parseOwnerNames(owners), lineNumber)
+                val splitLine = line.split(' ', limit = 2)
+                // Not assigning an owner to a pattern is a valid syntax which denotes that given file does not require any specific team
+                // to approve the change - in which case we do not add an OwnershipPattern
+                if (splitLine.size == 2) {
+                    val (pattern, owners) = splitLine
+                    patterns += OwnershipPattern.Pattern(pattern, parseOwnerNames(owners), lineNumber)
+                }
             }
         }
     }
