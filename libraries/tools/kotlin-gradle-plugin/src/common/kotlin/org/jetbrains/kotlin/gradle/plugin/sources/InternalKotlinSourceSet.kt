@@ -31,7 +31,7 @@ internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<Ko
 }
 
 private suspend fun InternalKotlinSourceSet.awaitMetadataCompilations(): Set<KotlinCompilation<*>> {
-    KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
+    KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     return compilations.filter { it is KotlinMetadataCompilation }.toSet()
 }
 
