@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.objcexport
 
-import com.intellij.util.containers.addIfNotNull
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
