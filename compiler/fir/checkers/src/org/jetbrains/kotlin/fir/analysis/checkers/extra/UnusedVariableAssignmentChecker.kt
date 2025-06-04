@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.name.SpecialNames
  * each variable access node and mark the assignments visible to that node as used. Any unmarked
  * assignments are considered unused.
  */
-object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
+object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         @Suppress("UNCHECKED_CAST")
         val properties = data.properties as Set<FirPropertySymbol>
