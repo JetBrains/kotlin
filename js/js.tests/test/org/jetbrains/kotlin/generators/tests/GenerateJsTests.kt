@@ -255,6 +255,10 @@ fun main(args: Array<String>) {
                 model("boxWasmJsInterop")
             }
 
+            testClass<AbstractFirJsCodegenWasmJsInteropWithInlinedFunInKlibTest> {
+                model("boxWasmJsInterop")
+            }
+
             testClass<AbstractFirJsES6CodegenWasmJsInteropTest>(annotations = listOf(*es6())) {
                 model("boxWasmJsInterop")
             }
