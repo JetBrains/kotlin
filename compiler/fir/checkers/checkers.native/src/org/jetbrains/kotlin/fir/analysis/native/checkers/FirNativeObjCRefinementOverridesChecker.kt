@@ -53,21 +53,20 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
         val baseScope = declaration.unsubstitutedScope(context)
         baseScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, emptyList(), emptyList())
         }
         baseScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            check(baseScope, symbol, declaration, context, reporter, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, emptyList(), emptyList())
         }
     }
 
     companion object {
+        context(context: CheckerContext, reporter: DiagnosticReporter)
         fun check(
             baseScope: FirTypeScope,
             memberSymbol: FirCallableSymbol<*>,
             declarationToReport: FirDeclaration,
-            context: CheckerContext,
-            reporter: DiagnosticReporter,
             objCAnnotations: List<FirAnnotation>,
             swiftAnnotations: List<FirAnnotation>
         ) {
@@ -83,10 +82,10 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
                 if (superIsRefinedInSwift) isRefinedInSwift = true else supersNotRefinedInSwift.add(symbol)
             }
             if (isHiddenFromObjC && supersNotHiddenFromObjC.isNotEmpty()) {
-                reporter.reportIncompatibleOverride(declarationToReport, objCAnnotations, supersNotHiddenFromObjC, context)
+                reporter.reportIncompatibleOverride(declarationToReport, objCAnnotations, supersNotHiddenFromObjC)
             }
             if (isRefinedInSwift && supersNotRefinedInSwift.isNotEmpty()) {
-                reporter.reportIncompatibleOverride(declarationToReport, swiftAnnotations, supersNotRefinedInSwift, context)
+                reporter.reportIncompatibleOverride(declarationToReport, swiftAnnotations, supersNotRefinedInSwift)
             }
         }
 
@@ -123,18 +122,19 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             return hasObjC to hasSwift
         }
 
+        context(context: CheckerContext)
         private fun DiagnosticReporter.reportIncompatibleOverride(
             declaration: FirDeclaration,
             annotations: List<FirAnnotation>,
-            notRefinedSupers: List<FirCallableSymbol<*>>,
-            context: CheckerContext
+            notRefinedSupers: List<FirCallableSymbol<*>>
         ) {
-            val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
+            val containingDeclarations =
+                notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
             if (annotations.isEmpty()) {
-                reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
+                reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations)
             } else {
                 for (annotation in annotations) {
-                    reportOn(annotation.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
+                    reportOn(annotation.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations)
                 }
             }
         }

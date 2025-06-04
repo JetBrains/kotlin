@@ -40,11 +40,11 @@ sealed class FirNativeObjCNameOverridesChecker(mppKind: MppCheckerKind) : FirCla
         val firTypeScope = declaration.unsubstitutedScope(context)
         firTypeScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            checkCallableMember(firTypeScope, symbol, declaration, context, reporter)
+            checkCallableMember(firTypeScope, symbol, declaration)
         }
         firTypeScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            checkCallableMember(firTypeScope, symbol, declaration, context, reporter)
+            checkCallableMember(firTypeScope, symbol, declaration)
         }
     }
 }

@@ -30,13 +30,13 @@ object FirNativeThreadLocalChecker : FirBasicDeclarationChecker(MppCheckerKind.P
         val isOk = declaration is FirVariable &&
                 (declaration is FirProperty && declaration.hasBackingField || declaration.delegate != null) || isObject
         if (!isOk) {
-            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL, context)
+            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL)
         }
 
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
         if (!context.isTopLevel && !isObject) {
-            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, context)
+            reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL)
         }
     }
 }

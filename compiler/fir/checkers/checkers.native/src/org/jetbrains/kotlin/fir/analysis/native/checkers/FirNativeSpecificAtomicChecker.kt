@@ -29,32 +29,31 @@ object FirNativeSpecificAtomicChecker : FirCallableDeclarationChecker(MppChecker
     override fun check(declaration: FirCallableDeclaration) {
         if (!declaration.visibility.isPublicAPI || declaration is FirValueParameter || declaration is FirAnonymousFunction) return
         declaration.receiverParameter?.typeRef?.let {
-            checkType(it, context, reporter)
+            checkType(it)
         }
         declaration.contextParameters.forEach {
-            checkType(it.returnTypeRef, context, reporter)
+            checkType(it.returnTypeRef)
         }
         declaration.returnTypeRef.takeIf { it.source?.kind is KtRealSourceElementKind }?.let {
-            checkType(it, context, reporter)
+            checkType(it)
         }
         // Note: not much sense to check type parameter bounds, or class supertypes: all atomics are final types
         if (declaration !is FirFunction || declaration is FirPropertyAccessor) return
         declaration.valueParameters.forEach {
-            checkType(it.returnTypeRef, context, reporter)
+            checkType(it.returnTypeRef)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkType(
         typeRef: FirTypeRef,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         val classId = typeRef.coneType.fullyExpandedClassId(context.session) ?: return
         if (classId.packageFqName != CONCURRENT_PACKAGE) return
         if (classId.parentClassId != null) return
         val name = classId.shortClassName
         if (name !in CONCURRENT_NAME_SET) return
-        reporter.reportOn(typeRef.source, FirNativeErrors.NATIVE_SPECIFIC_ATOMIC, name, context)
+        reporter.reportOn(typeRef.source, FirNativeErrors.NATIVE_SPECIFIC_ATOMIC, name)
     }
 
     private val CONCURRENT_PACKAGE = FqName("kotlin.concurrent")

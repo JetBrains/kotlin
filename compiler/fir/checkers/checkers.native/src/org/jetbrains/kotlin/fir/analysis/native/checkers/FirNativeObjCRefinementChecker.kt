@@ -40,8 +40,6 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
                 firTypeScope,
                 declaration.symbol,
                 declaration,
-                context,
-                reporter,
                 objCAnnotations,
                 swiftAnnotations
             )
