@@ -24,13 +24,14 @@ abstract class FirAbstractNativeRttiChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {
         when (expression) {
-            is FirGetClassCall -> checkGetClassCall(expression, context, reporter)
-            is FirTypeOperatorCall -> checkTypeOperatorCall(expression, context, reporter)
+            is FirGetClassCall -> checkGetClassCall(expression)
+            is FirTypeOperatorCall -> checkTypeOperatorCall(expression)
             else -> {}
         }
     }
 
-    private fun checkGetClassCall(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkGetClassCall(expression: FirGetClassCall) {
         val declarationToCheck = expression.argument.resolvedType.toRegularClassSymbol(context.session) ?: return
 
         if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
@@ -38,11 +39,12 @@ abstract class FirAbstractNativeRttiChecker(
         }
 
         if (webCheckerUtils.isNativeOrExternalInterface(declarationToCheck, context.session)) {
-            reporter.reportOn(expression.source, FirWebCommonErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL, context)
+            reporter.reportOn(expression.source, FirWebCommonErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL)
         }
     }
 
-    private fun checkTypeOperatorCall(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkTypeOperatorCall(expression: FirTypeOperatorCall) {
         val targetTypeRef = expression.conversionTypeRef
         val declarationToCheck = targetTypeRef.toRegularClassSymbol(context.session) ?: return
 
@@ -55,14 +57,12 @@ abstract class FirAbstractNativeRttiChecker(
                 expression.source,
                 FirWebCommonErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE,
                 expression.argument.resolvedType,
-                targetTypeRef.coneType,
-                context,
+                targetTypeRef.coneType
             )
             FirOperation.IS, FirOperation.NOT_IS -> reporter.reportOn(
                 expression.source,
                 FirWebCommonErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE,
-                targetTypeRef.coneType,
-                context,
+                targetTypeRef.coneType
             )
             else -> {}
         }
