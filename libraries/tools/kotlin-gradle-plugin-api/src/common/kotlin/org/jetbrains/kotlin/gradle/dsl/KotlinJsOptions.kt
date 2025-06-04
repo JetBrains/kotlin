@@ -178,17 +178,6 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
         set(value) = options.target.set(value)
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in a future release.
-     *
-     * Default value: false
-     */
-    @Deprecated(message = "Only for legacy backend.", level = DeprecationLevel.ERROR)
-    var typedArrays: kotlin.Boolean
-        get() = options.typedArrays.get()
-        set(value) = options.typedArrays.set(value)
-
-    /**
      * Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
      *
      * Default value: null
