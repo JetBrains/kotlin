@@ -86,23 +86,44 @@ class NativeCompilerInvocationTestArtifactBuilder(
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
+        val srcFiles = module.sourceDir.listFiles()
+        check(srcFiles != null && srcFiles.isNotEmpty()) { "No source files could be found" }
+        val hasKtFiles = srcFiles.any { it.name.endsWith(".kt") }
+        val defFiles = srcFiles.filter { it.name.endsWith(".def") }
+        check(!hasKtFiles || defFiles.isEmpty()) { "Both .kt and .def files are specified" }
+        check(defFiles.size <= 1) { "More than one .def file is specified" }
+
         val klibArtifact = KLIB(module.klibFile)
 
-        val testCase = createTestCase(
-            moduleName = module.moduleInfo.moduleName,
-            moduleSourceDir = module.sourceDir,
-            compilerArgs = COMPILER_ARGS.plusCompilerArgs(compilerArguments)
-        )
+        if (hasKtFiles) {
+            val testCase = createTestCase(
+                moduleName = module.moduleInfo.moduleName,
+                moduleSourceDir = module.sourceDir,
+                compilerArgs = COMPILER_ARGS.plusCompilerArgs(compilerArguments)
+            )
 
-        val compilation = LibraryCompilation(
-            settings = settings,
-            freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
-            dependencies = createLibraryDependencies(dependencies),
-            expectedArtifact = klibArtifact
-        )
+            val compilation = LibraryCompilation(
+                settings = settings,
+                freeCompilerArgs = testCase.freeCompilerArgs,
+                sourceModules = testCase.modules,
+                dependencies = createLibraryDependencies(dependencies),
+                expectedArtifact = klibArtifact
+            )
 
-        compilation.result.assertSuccess() // <-- trigger compilation
+            compilation.result.assertSuccess() // <-- trigger compilation
+        } else {
+            val compilation = CInteropCompilation(
+                settings.get(),
+                settings.get(),
+                TestCompilerArgs(compilerArguments),
+                srcFiles[0],
+                sources = srcFiles.filterNot { it == srcFiles[0] },
+                dependencies = emptyList(),
+                klibArtifact,
+            )
+
+            compilation.result.assertSuccess() // <-- trigger compilation
+        }
 
         // Remember the artifact with its dependencies.
         producedKlibs += ProducedKlib(
