@@ -3025,6 +3025,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("generticReferences.kt")
+      public void testGenerticReferences() {
+        runTest("compiler/testData/codegen/box/callableReference/generticReferences.kt");
+      }
+
+      @Test
       @TestMetadata("inlineArrayConstructors.kt")
       public void testInlineArrayConstructors() {
         runTest("compiler/testData/codegen/box/callableReference/inlineArrayConstructors.kt");
@@ -5645,6 +5651,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("implementingInterfaceByParentClass.kt")
+      public void testImplementingInterfaceByParentClass() {
+        runTest("compiler/testData/codegen/box/classes/implementingInterfaceByParentClass.kt");
+      }
+
+      @Test
       @TestMetadata("inheritance.kt")
       public void testInheritance() {
         runTest("compiler/testData/codegen/box/classes/inheritance.kt");
@@ -7765,6 +7777,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("choosingTheNearestContext.kt")
+      public void testChoosingTheNearestContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/choosingTheNearestContext.kt");
+      }
+
+      @Test
       @TestMetadata("classCastException.kt")
       public void testClassCastException() {
         runTest("compiler/testData/codegen/box/contextParameters/classCastException.kt");
@@ -7795,6 +7813,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("contextOnInvokeResolve.kt")
+      public void testContextOnInvokeResolve() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextOnInvokeResolve.kt");
+      }
+
+      @Test
       @TestMetadata("contextParameterToDefaultArgument.kt")
       public void testContextParameterToDefaultArgument() {
         runTest("compiler/testData/codegen/box/contextParameters/contextParameterToDefaultArgument.kt");
@@ -7804,6 +7828,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("contextPropertyInInterface.kt")
       public void testContextPropertyInInterface() {
         runTest("compiler/testData/codegen/box/contextParameters/contextPropertyInInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("contextResolveDependingOnCallSite.kt")
+      public void testContextResolveDependingOnCallSite() {
+        runTest("compiler/testData/codegen/box/contextParameters/contextResolveDependingOnCallSite.kt");
       }
 
       @Test
@@ -7849,9 +7879,33 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("dispatchExtensionAndContextReceiverResolve.kt")
+      public void testDispatchExtensionAndContextReceiverResolve() {
+        runTest("compiler/testData/codegen/box/contextParameters/dispatchExtensionAndContextReceiverResolve.kt");
+      }
+
+      @Test
       @TestMetadata("functionalType.kt")
       public void testFunctionalType() {
         runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
+      }
+
+      @Test
+      @TestMetadata("ImplicitReceiverWithTheSameContextAndExtension.kt")
+      public void testImplicitReceiverWithTheSameContextAndExtension() {
+        runTest("compiler/testData/codegen/box/contextParameters/ImplicitReceiverWithTheSameContextAndExtension.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineContextualReceiverLambda.kt")
+      public void testInlineContextualReceiverLambda() {
+        runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");
+      }
+
+      @Test
+      @TestMetadata("invokeOnTypeWithContext.kt")
+      public void testInvokeOnTypeWithContext() {
+        runTest("compiler/testData/codegen/box/contextParameters/invokeOnTypeWithContext.kt");
       }
 
       @Test
@@ -7906,6 +7960,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("sameNameWithPropertyName.kt")
       public void testSameNameWithPropertyName() {
         runTest("compiler/testData/codegen/box/contextParameters/sameNameWithPropertyName.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendContextParemetersWithExtension.kt")
+      public void testSuspendContextParemetersWithExtension() {
+        runTest("compiler/testData/codegen/box/contextParameters/suspendContextParemetersWithExtension.kt");
       }
 
       @Test
@@ -14109,6 +14169,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         }
 
         @Test
+        @TestMetadata("clashingNames.kt")
+        public void testClashingNames() {
+          runTest("compiler/testData/codegen/box/defaultArguments/private/clashingNames.kt");
+        }
+
+        @Test
         @TestMetadata("memberExtensionFunction.kt")
         public void testMemberExtensionFunction() {
           runTest("compiler/testData/codegen/box/defaultArguments/private/memberExtensionFunction.kt");
@@ -14428,6 +14494,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("lazy.kt")
       public void testLazy() {
         runTest("compiler/testData/codegen/box/delegatedProperty/lazy.kt");
+      }
+
+      @Test
+      @TestMetadata("lazyDelegateInObject.kt")
+      public void testLazyDelegateInObject() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/lazyDelegateInObject.kt");
       }
 
       @Test
@@ -14886,6 +14958,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         }
 
         @Test
+        @TestMetadata("localDelegatedPropertyCall.kt")
+        public void testLocalDelegatedPropertyCall() {
+          runTest("compiler/testData/codegen/box/delegatedProperty/local/localDelegatedPropertyCall.kt");
+        }
+
+        @Test
         @TestMetadata("localVal.kt")
         public void testLocalVal() {
           runTest("compiler/testData/codegen/box/delegatedProperty/local/localVal.kt");
@@ -15193,6 +15271,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("delegationToIntersectionType.kt")
       public void testDelegationToIntersectionType() {
         runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType.kt");
+      }
+
+      @Test
+      @TestMetadata("delegationToIntersectionType3.kt")
+      public void testDelegationToIntersectionType3() {
+        runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType3.kt");
       }
 
       @Test
@@ -18020,6 +18104,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("toLong.kt")
       public void testToLong() {
         runTest("compiler/testData/codegen/box/fir/toLong.kt");
+      }
+
+      @Test
+      @TestMetadata("unnamedLocalVariable.kt")
+      public void testUnnamedLocalVariable() {
+        runTest("compiler/testData/codegen/box/fir/unnamedLocalVariable.kt");
       }
 
       @Nested
@@ -21303,6 +21393,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("crossModuleTypeOf.kt")
+      public void testCrossModuleTypeOf() {
+        runTest("compiler/testData/codegen/box/inline/crossModuleTypeOf.kt");
+      }
+
+      @Test
       @TestMetadata("crossinlineLambdaAllocation.kt")
       public void testCrossinlineLambdaAllocation() {
         runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
@@ -21630,6 +21726,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("twiceInlinedObject.kt")
       public void testTwiceInlinedObject() {
         runTest("compiler/testData/codegen/box/inline/twiceInlinedObject.kt");
+      }
+
+      @Test
+      @TestMetadata("typeParameterSymbolIsUnbound.kt")
+      public void testTypeParameterSymbolIsUnbound() {
+        runTest("compiler/testData/codegen/box/inline/typeParameterSymbolIsUnbound.kt");
       }
 
       @Test
@@ -27511,6 +27613,71 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed")
+      @TestDataPath("$PROJECT_ROOT")
+      @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+      @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+      @UseExtTestCaseGroupProvider()
+      public class JvmExposeBoxed {
+        @Test
+        public void testAllFilesPresentInJvmExposeBoxed() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class Directive {
+          @Test
+          public void testAllFilesPresentInDirective() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class FeatureInteraction {
+          @Test
+          public void testAllFilesPresentInFeatureInteraction() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit")
+        @TestDataPath("$PROJECT_ROOT")
+        @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+        @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+        @UseExtTestCaseGroupProvider()
+        public class Inherit {
+          @Test
+          public void testAllFilesPresentInInherit() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Nested
+          @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child")
+          @TestDataPath("$PROJECT_ROOT")
+          @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
+          @EnforcedProperty(property = ClassLevelProperty.TEST_MODE, propertyValue = "TWO_STAGE_MULTI_MODULE")
+          @UseExtTestCaseGroupProvider()
+          public class Child {
+            @Test
+            public void testAllFilesPresentInChild() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+          }
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
       @TestDataPath("$PROJECT_ROOT")
       @EnforcedProperty(property = ClassLevelProperty.COMPATIBILITY_TEST_MODE, propertyValue = "BACKWARD")
@@ -32779,8 +32946,140 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         @UseExtTestCaseGroupProvider()
         public class Hmpp {
           @Test
+          @TestMetadata("abstractExpectedActual2-2.kt")
+          public void testAbstractExpectedActual2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/abstractExpectedActual2-2.kt");
+          }
+
+          @Test
           public void testAllFilesPresentInHmpp() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2/hmpp"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+
+          @Test
+          @TestMetadata("expectActualChain2-2.kt")
+          public void testExpectActualChain2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
+          }
+
+          @Test
+          @TestMetadata("expectActualChain2-3.kt")
+          public void testExpectActualChain2_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-3.kt");
+          }
+
+          @Test
+          @TestMetadata("expectActualChain3-3.kt")
+          public void testExpectActualChain3_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3.kt");
+          }
+
+          @Test
+          @TestMetadata("expectActualChain3-3-error.kt")
+          public void testExpectActualChain3_3_error() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-3-error.kt");
+          }
+
+          @Test
+          @TestMetadata("expectActualChain3-4.kt")
+          public void testExpectActualChain3_4() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain3-4.kt");
+          }
+
+          @Test
+          @TestMetadata("expectActualChain4-4.kt")
+          public void testExpectActualChain4_4() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain4-4.kt");
+          }
+
+          @Test
+          @TestMetadata("expectRefinement.kt")
+          public void testExpectRefinement() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectRefinement.kt");
+          }
+
+          @Test
+          @TestMetadata("iheritanceFromExpected2-2.kt")
+          public void testIheritanceFromExpected2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpected2-3.kt")
+          public void testInheritanceFromExpected2_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected2-3.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpected3-3.kt")
+          public void testInheritanceFromExpected3_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-3.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpected3-4.kt")
+          public void testInheritanceFromExpected3_4() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected3-4.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpected4-4.kt")
+          public void testInheritanceFromExpected4_4() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpected4-4.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpectedInApp2-2.kt")
+          public void testInheritanceFromExpectedInApp2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-2.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpectedInApp2-3.kt")
+          public void testInheritanceFromExpectedInApp2_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp2-3.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromExpectedInApp3-3.kt")
+          public void testInheritanceFromExpectedInApp3_3() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromExpectedInApp3-3.kt");
+          }
+
+          @Test
+          @TestMetadata("inheritanceFromLibraryExpectClass.kt")
+          public void testInheritanceFromLibraryExpectClass() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/inheritanceFromLibraryExpectClass.kt");
+          }
+
+          @Test
+          @TestMetadata("mutlipleExpectsForOneActual.kt")
+          public void testMutlipleExpectsForOneActual() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/mutlipleExpectsForOneActual.kt");
+          }
+
+          @Test
+          @TestMetadata("openExpectedActual2-2.kt")
+          public void testOpenExpectedActual2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/openExpectedActual2-2.kt");
+          }
+
+          @Test
+          @TestMetadata("sameLibraryInTwoEdgesOfDiamond.kt")
+          public void testSameLibraryInTwoEdgesOfDiamond() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/sameLibraryInTwoEdgesOfDiamond.kt");
+          }
+
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/simple.kt");
+          }
+
+          @Test
+          @TestMetadata("typealiasActualisation2-2.kt")
+          public void testTypealiasActualisation2_2() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
           }
         }
 
@@ -33208,6 +33507,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("initializerBlockResetToDefault.kt")
       public void testInitializerBlockResetToDefault() {
         runTest("compiler/testData/codegen/box/objects/initializerBlockResetToDefault.kt");
+      }
+
+      @Test
+      @TestMetadata("innerClassInsideAnonymousObject.kt")
+      public void testInnerClassInsideAnonymousObject() {
+        runTest("compiler/testData/codegen/box/objects/innerClassInsideAnonymousObject.kt");
       }
 
       @Test
@@ -42277,6 +42582,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         }
 
         @Test
+        @TestMetadata("multiplatformKClassCreation.kt")
+        public void testMultiplatformKClassCreation() {
+          runTest("compiler/testData/codegen/box/reflection/classes/multiplatformKClassCreation.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedName.kt")
         public void testQualifiedName() {
           runTest("compiler/testData/codegen/box/reflection/classes/qualifiedName.kt");
@@ -42796,6 +43107,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
         @TestMetadata("intersectionType.kt")
         public void testIntersectionType() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/intersectionType.kt");
+        }
+
+        @Test
+        @TestMetadata("localClass.kt")
+        public void testLocalClass() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
         }
 
         @Test
@@ -44498,6 +44815,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("multipleSmartCast.kt")
       public void testMultipleSmartCast() {
         runTest("compiler/testData/codegen/box/smartCasts/multipleSmartCast.kt");
+      }
+
+      @Test
+      @TestMetadata("negativesmartCastAugmentedAssignment.kt")
+      public void testNegativesmartCastAugmentedAssignment() {
+        runTest("compiler/testData/codegen/box/smartCasts/negativesmartCastAugmentedAssignment.kt");
       }
 
       @Test
@@ -46797,6 +47120,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("nullableSmartcastUnsignedArray.kt")
+      public void testNullableSmartcastUnsignedArray() {
+        runTest("compiler/testData/codegen/box/unsignedTypes/nullableSmartcastUnsignedArray.kt");
+      }
+
+      @Test
       @TestMetadata("nullableUnsignedEqualsLiteral.kt")
       public void testNullableUnsignedEqualsLiteral() {
         runTest("compiler/testData/codegen/box/unsignedTypes/nullableUnsignedEqualsLiteral.kt");
@@ -46984,6 +47313,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("doNotCopyImmediatelyCreatedArrays.kt")
       public void testDoNotCopyImmediatelyCreatedArrays() {
         runTest("compiler/testData/codegen/box/vararg/doNotCopyImmediatelyCreatedArrays.kt");
+      }
+
+      @Test
+      @TestMetadata("emptyVarArg.kt")
+      public void testEmptyVarArg() {
+        runTest("compiler/testData/codegen/box/vararg/emptyVarArg.kt");
       }
 
       @Test
@@ -50761,6 +51096,18 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("localDelegatedProperty.kt")
+      public void testLocalDelegatedProperty() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("localDelegatedPropertyWithInlinedFunInKlib.kt")
+      public void testLocalDelegatedPropertyWithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyWithInlinedFunInKlib.kt");
+      }
+
+      @Test
       @TestMetadata("localFunInLambda.kt")
       public void testLocalFunInLambda() {
         runTest("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
@@ -51632,6 +51979,12 @@ public class FirNativeCodegenBoxBackwardCompatibilityTestGenerated extends Abstr
       @TestMetadata("kt8095.kt")
       public void testKt8095() {
         runTest("compiler/testData/codegen/boxInline/private/kt8095.kt");
+      }
+
+      @Test
+      @TestMetadata("privateFakeOverride.kt")
+      public void testPrivateFakeOverride() {
+        runTest("compiler/testData/codegen/boxInline/private/privateFakeOverride.kt");
       }
 
       @Test
