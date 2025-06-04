@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.DefaultCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadabilityHelperImpl
-import org.jetbrains.kotlin.fir.resolve.inference.FirConstraintsLogger
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
@@ -73,10 +72,9 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 // -------------------------- Required components --------------------------
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings, dumpConstraints: Boolean = false) {
+fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings) {
     register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
     register(TypeComponents::class, TypeComponents(this))
-    if (dumpConstraints) register(FirConstraintsLogger::class, FirConstraintsLogger())
     register(InferenceComponents::class, InferenceComponents(this))
 
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider(this))
