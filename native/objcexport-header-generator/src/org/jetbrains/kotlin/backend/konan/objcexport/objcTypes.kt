@@ -106,9 +106,7 @@ data class ObjCBlockPointerType(
         append(attrsAndName)
         append(")(")
         if (parameters.isEmpty()) append("void")
-        parameters.joinTo(this) {
-            it.type.render(it.name)
-        }
+        parameters.joinTo(this) { it.type.render(it.name) }
         append(')')
     })
 }
