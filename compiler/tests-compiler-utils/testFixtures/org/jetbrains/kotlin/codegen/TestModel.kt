@@ -21,6 +21,7 @@ class ProjectInfo(
     val ignoredGranularities: Set<JsGenerationGranularity>,
     val callMain: Boolean,
     val checkTypeScriptDefinitions: Boolean,
+    val targetBackend: TargetBackend?,
     val ignoreBackends: Set<TargetBackend>,
 ) {
 
@@ -94,6 +95,7 @@ private const val IGNORE_PER_FILE = "IGNORE_PER_FILE"
 private const val IGNORE_PER_MODULE = "IGNORE_PER_MODULE"
 private const val TYPESCRIPT_DEFINITIONS = "TYPESCRIPT_DEFINITIONS"
 private const val IGNORE_BACKEND = "IGNORE_BACKEND"
+private const val TARGET_BACKEND = "TARGET_BACKEND"
 
 const val MODULE_INFO_FILE = "module.info"
 private const val DEPENDENCIES = "dependencies"
@@ -205,6 +207,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
         var checkTypeScriptDefinitions = false
         var moduleKind = ModuleKind.ES
         val ignoreBackends = mutableSetOf<TargetBackend>()
+        var targetBackend: TargetBackend? = null
 
         loop { line ->
             lineCounter++
@@ -231,6 +234,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
                 op == MODULES_KIND -> moduleKind = split[1].trim()
                     .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
                     .let { moduleKindMap[it] ?: error("Unknown MODULE_KIND value '$it'") }
+                op == TARGET_BACKEND -> targetBackend = TargetBackend.valueOf(split[1].trim())
                 op in arrayOf(IGNORE_BACKEND) -> {
                     val backends = split[1].trim().split(", ").map { TargetBackend.valueOf(it) }
                     if (op == IGNORE_BACKEND) ignoreBackends += backends
@@ -263,7 +267,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
         return ProjectInfo(
             entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain, checkTypeScriptDefinitions,
-            ignoreBackends
+            targetBackend, ignoreBackends
         )
     }
 }

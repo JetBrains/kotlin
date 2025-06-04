@@ -34,6 +34,7 @@ object KlibCompilerInvocationTestUtils {
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
             if (projectInfo.muted) return true
             val compatibleBackends = generateSequence(targetBackend) { if (it == TargetBackend.ANY) null else it.compatibleWith }.toSet()
+            projectInfo.targetBackend?.let { return it !in compatibleBackends }
             return projectInfo.ignoreBackends.intersect(compatibleBackends).isNotEmpty()
         }
 
