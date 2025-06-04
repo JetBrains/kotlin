@@ -1,7 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FIR_IDENTICAL
 // FREE_COMPILER_ARGS: -XXLanguage:-IrInlinerBeforeKlibSerialization
-// ^^^ KT-76547: TODO: Create and fix the variant with +IrInlinerBeforeKlibSerialization, where exception happens at weird kt42208-1.kt:9:72
+// ^^^ KT-76763: When fixed, please remove FREE_COMPILER_ARGS directive, and test `kt42208WithInlinedFunInKlib.kt`
 // FILE: kt42208-1.kt
 fun main() {
     foo()()
