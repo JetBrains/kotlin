@@ -38,7 +38,7 @@ public class JvmCompilerArguments : CommonCompilerArguments() {
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField
-    public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")
+    public val CLASSPATH: JvmCompilerArgument<Path?> = JvmCompilerArgument("CLASSPATH")
 
     /**
      * Include the Kotlin runtime in the resulting JAR.
@@ -154,7 +154,7 @@ public class JvmCompilerArguments : CommonCompilerArguments() {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may be changed in the future")
-    public val XMODULE_PATH: JvmCompilerArgument<String?> = JvmCompilerArgument("XMODULE_PATH")
+    public val XMODULE_PATH: JvmCompilerArgument<Path?> = JvmCompilerArgument("XMODULE_PATH")
 
     /**
      * Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.
@@ -212,7 +212,7 @@ public class JvmCompilerArguments : CommonCompilerArguments() {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may be changed in the future")
-    public val XBUILD_FILE: JvmCompilerArgument<Path?> = JvmCompilerArgument("XBUILD_FILE")
+    public val XBUILD_FILE: JvmCompilerArgument<String?> = JvmCompilerArgument("XBUILD_FILE")
 
     /**
      * Compile multifile classes as a hierarchy of parts and a facade.

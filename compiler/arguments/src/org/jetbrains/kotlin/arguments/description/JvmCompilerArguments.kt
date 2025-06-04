@@ -15,14 +15,12 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
-import org.jetbrains.kotlin.cli.common.arguments.BtaOption
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
-
-import org.jetbrains.kotlin.cli.common.arguments.StringTypeHint
 import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
@@ -30,9 +28,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "d"
         compilerName = "destination"
         description = "Destination for generated class files.".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = StringPathType.defaultNull
         valueDescription = "<directory|jar>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.FILE_OR_DIRECTORY))
 
         stubLifecycle()
     }
@@ -41,9 +38,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "classpath"
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user class files.".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = StringPathType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.FILE_OR_DIRECTORY_LIST))
 
         stubLifecycle()
     }
@@ -59,9 +55,8 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
     compilerArgument {
         name = "jdk-home"
         description = "Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = StringPathType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.DIRECTORY))
 
         stubLifecycle()
     }
@@ -242,9 +237,8 @@ The default value is 1.""".asReleaseDependent()
         name = "Xmodule-path"
         compilerName = "javaModulePath"
         description = "Paths to Java 9+ modules.".asReleaseDependent()
-        valueType = StringType.defaultNull
+        valueType = StringPathType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.DIRECTORY_LIST)) //TODO just dir? or file?
 
         stubLifecycle()
     }
@@ -313,7 +307,6 @@ default: legacy""".asReleaseDependent()
         description = "Path to the .xml build file to compile.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.FILE))
 
         stubLifecycle()
     }
@@ -401,7 +394,6 @@ This can be used in the event of problems with the new implementation.""".asRele
         description = "Paths to directories with Java source files.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
-        additionalAnnotations(BtaOption(StringTypeHint.DIRECTORY_LIST))
         stubLifecycle()
     }
 

@@ -90,7 +90,21 @@ class KotlinJvmTargetType(
  * A value which accepts [String] type.
  */
 @Serializable
-class StringType(
+open class StringType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<String> {
+    override fun stringRepresentation(value: String?): String? {
+        if (value == null) return null
+        return "\"$value\""
+    }
+}
+
+/**
+ * A value which accepts [String] type that represents a path on the filesystem.
+ */
+@Serializable
+open class StringPathType(
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
     override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
 ) : KotlinArgumentValueType<String> {

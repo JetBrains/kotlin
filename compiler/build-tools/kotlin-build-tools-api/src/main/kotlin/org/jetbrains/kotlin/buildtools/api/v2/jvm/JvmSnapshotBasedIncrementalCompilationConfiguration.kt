@@ -14,7 +14,7 @@ public interface JvmIncrementalCompilationConfiguration
  * @property workingDirectory the working directory for the IC operation to store internal objects.
  * @property sourcesChanges changes in the source files, which can be unknown, to-be-calculated, or known.
  * @property dependenciesSnapshotFiles a list of paths to dependency snapshot files produced by [JvmPlatformToolchain.calculateClasspathSnapshot].
- * @property options an option set produced by [org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.makeSnapshotBasedIcOptions]
+ * @property options an option set produced by [org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.createSnapshotBasedIcOptions]
  */
 public class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val workingDirectory: Path,

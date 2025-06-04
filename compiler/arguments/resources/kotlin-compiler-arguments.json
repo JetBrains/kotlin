@@ -3274,7 +3274,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
@@ -3305,7 +3305,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
@@ -3367,7 +3367,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []
@@ -3801,7 +3801,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathType",
                                     "isNullable": {
                                         "current": true,
                                         "valueInVersions": []

@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
-import org.jetbrains.kotlin.cli.common.arguments.BtaOption
-import org.jetbrains.kotlin.cli.common.arguments.StringTypeHint
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
@@ -69,20 +68,22 @@ private fun TypeSpec.Builder.generateOptions(arguments: Set<KotlinCompilerArgume
         val experimental: Boolean =
             name.startsWith("X") && name != "X"
 
-        val argumentTypeParameter = (argument.additionalAnnotations.filterIsInstance<BtaOption>().singleOrNull()?.let { btaOption ->
-            btaOption.stringTypeHint.converter?.let { converter ->
-                (converter::class.supertypes.first().arguments.first().type!!.classifier as KClass<*>).asTypeName()
-            }
-        } ?: argument.valueType::class
+        val argumentTypeParameter = argument.valueType::class
             .supertypes.single { it.classifier == KotlinArgumentValueType::class }
             .arguments.first().type!!.let {
-                if (it.classifier in enums) {
-                    ClassName("$BTA_PACKAGE.enums", (it.classifier as KClass<*>).simpleName!!)
-                } else {
-                    it.asTypeName()
+                when (it.classifier) {
+                    in enums -> {
+                        ClassName("$BTA_PACKAGE.enums", (it.classifier as KClass<*>).simpleName!!)
+                    }
+                    String::class if argument.valueType is StringPathType -> {
+                        Path::class.asTypeName()
+                    }
+                    else -> {
+                        it.asTypeName()
+                    }
                 }
             }
-                ).copy(nullable = argument.valueType.isNullable.current)
+            .copy(nullable = argument.valueType.isNullable.current)
         property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
             annotation<JvmField>()
             addKdoc(argument.description.current)
@@ -181,19 +182,6 @@ fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
 
     }
 }
-
-
-val StringTypeHint.converter: BtaConverter<*, *>?
-    get() = when (this) {
-        StringTypeHint.NONE -> null
-        StringTypeHint.FILE -> PathStringConverter()
-        StringTypeHint.DIRECTORY -> PathStringConverter()
-        StringTypeHint.FILE_OR_DIRECTORY -> PathStringConverter()
-        StringTypeHint.FILE_LIST -> null
-        StringTypeHint.DIRECTORY_LIST -> null
-        StringTypeHint.FILE_OR_DIRECTORY_LIST -> null
-    }
-
 
 interface BtaConverter<S, T> {
     fun convert(value: S): T

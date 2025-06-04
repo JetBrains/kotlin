@@ -38,7 +38,7 @@ public interface JvmCompilationOperation : BuildOperation<Unit> {
      * ```
      * @see org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
      */
-    public fun makeSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
+    public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {
         @JvmField
