@@ -52,7 +52,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
     override fun check(expression: FirFunctionCall) {
         val function = expression.calleeReference.toResolvedCallableSymbol() ?: return
         when (function.callableId) {
-            synchronizedCallableId -> checkSynchronizedCall(expression, context, reporter)
+            synchronizedCallableId -> checkSynchronizedCall(expression)
 
             in operationsToCheckFirstArgCallableIds -> {
                 val type = expression.arguments.firstOrNull()?.resolvedType ?: return
@@ -75,24 +75,23 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSynchronizedCall(
         expression: FirFunctionCall,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         for ((argument, parameter) in expression.resolvedArgumentMapping?.entries ?: return) {
             if (parameter.name != lockParameterName) continue
             val type = argument.resolvedType
             if (type.isPrimitive || type.isValueClass(context.session)) {
-                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type, context)
+                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
             }
             if (type.isJavaValueBasedClassAndWarningsEnabled(context.session)) {
-                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type, context)
+                reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
             }
             if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives) &&
                 type.isFlexiblePrimitive()
             ) {
-                reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type, context)
+                reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
             }
         }
     }

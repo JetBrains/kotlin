@@ -48,7 +48,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             checkParametersInNotInline(declaration)
             return
         }
-        if (context.session.inlineCheckerExtension?.isGenerallyOk(declaration, context, reporter) == false) return
+        if (context.session.inlineCheckerExtension?.isGenerallyOk(declaration) == false) return
         if (declaration !is FirPropertyAccessor && declaration !is FirSimpleFunction) return
 
         checkCallableDeclaration(declaration)
@@ -416,7 +416,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (param.isNoinline) continue
 
             if (function.isSuspend && defaultValue != null && isSuspendFunctionType) {
-                context.session.inlineCheckerExtension?.checkSuspendFunctionalParameterWithDefaultValue(param, context, reporter)
+                context.session.inlineCheckerExtension?.checkSuspendFunctionalParameterWithDefaultValue(param)
             }
 
             if (isSuspendFunctionType && !param.isCrossinline && !function.isSuspend) {
@@ -451,7 +451,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         //check for inherited default values
         context.session.inlineCheckerExtension?.checkFunctionalParametersWithInheritedDefaultValues(
-            function, context, reporter, overriddenSymbols
+            function, overriddenSymbols
         )
     }
 

@@ -61,7 +61,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
                 } else {
                     return
                 }
-            containingClassSymbol == null && isInsideJvmMultifileClassFile(context) ->
+            containingClassSymbol == null && isInsideJvmMultifileClassFile() ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
             declaration.returnTypeRef.needsMultiFieldValueClassFlattening(session) -> RETURN_TYPE_IS_VALUE_CLASS
@@ -129,7 +129,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
         return backingFieldSymbol?.hasAnnotationWithClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) == true
     }
 
-    private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun isInsideJvmMultifileClassFile(): Boolean {
         return context.containingFileSymbol?.hasAnnotation(JVM_MULTIFILE_CLASS_ID, context.session) == true
     }
 }

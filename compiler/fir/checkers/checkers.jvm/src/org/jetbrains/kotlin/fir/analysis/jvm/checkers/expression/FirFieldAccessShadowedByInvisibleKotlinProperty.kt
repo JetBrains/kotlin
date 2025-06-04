@@ -31,21 +31,20 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 object FirFieldAccessShadowedByInvisibleKotlinProperty : FirPropertyAccessExpressionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
-        checkFieldAccess(expression, context, reporter)
+        checkFieldAccess(expression)
     }
 }
 
 object FirFieldReferenceShadowedByInvisibleKotlinProperty : FirCallableReferenceAccessChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirCallableReferenceAccess) {
-        checkFieldAccess(expression, context, reporter)
+        checkFieldAccess(expression)
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun checkFieldAccess(
     expression: FirQualifiedAccessExpression,
-    context: CheckerContext,
-    reporter: DiagnosticReporter,
 ) {
     if (context.languageVersionSettings.supportsFeature(ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty)) return
     val fieldSymbol = expression.toResolvedCallableSymbol() as? FirFieldSymbol ?: return
@@ -53,16 +52,15 @@ private fun checkFieldAccess(
 
     val containingFile = context.containingFileSymbol ?: return
     val dispatchReceiver = expression.dispatchReceiver ?: return
-    checkClashWithInvisibleProperty(context, fieldSymbol, containingFile, dispatchReceiver, reporter, expression)
-    checkClashWithCompanionProperty(context, fieldSymbol, reporter, expression)
+    checkClashWithInvisibleProperty(fieldSymbol, containingFile, dispatchReceiver, expression)
+    checkClashWithCompanionProperty(fieldSymbol, expression)
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun checkClashWithInvisibleProperty(
-    context: CheckerContext,
     fieldSymbol: FirFieldSymbol,
     containingFileSymbol: FirFileSymbol,
     dispatchReceiver: FirExpression,
-    reporter: DiagnosticReporter,
     expression: FirQualifiedAccessExpression,
 ) {
     val scope = dispatchReceiver.resolvedType.scope(
@@ -83,16 +81,15 @@ private fun checkClashWithInvisibleProperty(
             dispatchReceiver,
         )
         if (!isVisible) {
-            reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, property, context)
+            reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, property)
             break
         }
     }
 }
 
+context(context: CheckerContext, reporter: DiagnosticReporter)
 private fun checkClashWithCompanionProperty(
-    context: CheckerContext,
     fieldSymbol: FirFieldSymbol,
-    reporter: DiagnosticReporter,
     expression: FirQualifiedAccessExpression,
 ) {
     val dispatchReceiverClass = expression.dispatchReceiver?.resolvedType?.toRegularClassSymbol(context.session) ?: return
@@ -102,7 +99,7 @@ private fun checkClashWithCompanionProperty(
     for (property in properties) {
         if (property !is FirPropertySymbol) continue
         if (property.hasBackingField) {
-            reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, property, context)
+            reporter.reportOn(expression.source, JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY, property)
             break
         }
     }

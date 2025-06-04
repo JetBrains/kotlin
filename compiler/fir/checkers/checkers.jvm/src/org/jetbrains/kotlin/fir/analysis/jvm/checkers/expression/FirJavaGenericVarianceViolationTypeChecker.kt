@@ -109,8 +109,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
             // actually created because of type projection from `get`. Hence, to workaround this problem, we simply remove all the out
             // projection and type capturing and compare the types after such erasure. This way, we won't incorrectly reject any valid code
             // though we may accept some invalid code. But in presence of the unsound flexible types, we are allowing invalid code already.
-            val argTypeWithoutOutProjection = argType.approximate(context).removeOutProjection(context.session.typeContext, isCovariant = true)
-            val lowerBoundWithoutCapturing = lowerBound.approximate(context)
+            val argTypeWithoutOutProjection = argType.approximate().removeOutProjection(context.session.typeContext, isCovariant = true)
+            val lowerBoundWithoutCapturing = lowerBound.approximate()
 
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeContext,
@@ -123,7 +123,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
         }
     }
 
-    private fun ConeKotlinType.approximate(context: CheckerContext): ConeKotlinType {
+    context(context: CheckerContext)
+    private fun ConeKotlinType.approximate(): ConeKotlinType {
         return context.session.typeApproximator.approximateToSuperType(
             this,
             TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference

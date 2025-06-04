@@ -29,21 +29,20 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirPropertyAccessor) return
-        checkInternal(declaration, null, null, context, reporter)
+        checkInternal(declaration, null, null)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInternal(
         declaration: FirDeclaration,
         reportSource: KtSourceElement?,
         modality: Modality?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (declaration !is FirMemberDeclaration) return
 
         if (declaration is FirProperty) {
             declaration.getter?.let {
-                checkInternal(it, declaration.source, declaration.modality, context, reporter)
+                checkInternal(it, declaration.source, declaration.modality)
             }
         }
 
@@ -60,7 +59,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
             }
             val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
             externalModifier?.let {
-                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target)
             }
             return
         }
@@ -68,18 +67,18 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
         val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)
         if (containingClassSymbol != null) {
             if (containingClassSymbol.isInterface) {
-                reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE, context)
+                reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE)
             } else if ((modality ?: declaration.modality) == Modality.ABSTRACT) {
-                reporter.reportOn(reportSource ?: declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT, context)
+                reporter.reportOn(reportSource ?: declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT)
             }
         }
 
         if (declaration !is FirConstructor && declaration.body != null) {
-            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY, context)
+            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY)
         }
 
         if (declaration.isInline) {
-            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED, context)
+            reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_CANNOT_BE_INLINED)
         }
     }
 }
