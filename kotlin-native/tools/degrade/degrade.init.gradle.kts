@@ -88,7 +88,7 @@ private class Degrade(val rootProject: Project) {
                 appendLine(""""${"$"}kotlinNativeDist/bin/run_konan" \""")
                 command.transformedArguments.forEachIndexed { index, argument ->
                     append("    ")
-                    append(argument)
+                    append(argument.replace(konanHome.toString(), "\$kotlinNativeDist"))
                     if (index != command.transformedArguments.lastIndex) {
                         appendLine(" \\")
                     }
