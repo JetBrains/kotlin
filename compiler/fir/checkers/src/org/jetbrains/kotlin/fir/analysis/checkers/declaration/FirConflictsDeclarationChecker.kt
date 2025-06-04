@@ -31,17 +31,17 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartSet
 
 interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent {
+    context(context: CheckerContext)
     fun getDiagnostic(
         conflictingDeclaration: FirBasedSymbol<*>,
-        symbols: SmartSet<FirBasedSymbol<*>>,
-        context: CheckerContext
+        symbols: SmartSet<FirBasedSymbol<*>>
     ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>?
 
     object DEFAULT : PlatformConflictDeclarationsDiagnosticDispatcher {
+        context(context: CheckerContext)
         override fun getDiagnostic(
             conflictingDeclaration: FirBasedSymbol<*>,
-            symbols: SmartSet<FirBasedSymbol<*>>,
-            context: CheckerContext
+            symbols: SmartSet<FirBasedSymbol<*>>
         ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> {
             return when {
                 conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol -> {
@@ -68,8 +68,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         when (declaration) {
             is FirFile -> {
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)
-                checkFile(declaration, inspector, context)
-                reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
+                checkFile(declaration, inspector)
+                reportConflicts(inspector.declarationConflictingSymbols, declaration)
             }
             is FirClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
@@ -77,7 +77,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 }
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)
                 inspector.collectClassMembers(declaration.symbol)
-                reportConflicts(reporter, context, inspector.declarationConflictingSymbols, declaration)
+                reportConflicts(inspector.declarationConflictingSymbols, declaration)
             }
             else -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind && declaration is FirTypeParameterRefsOwner) {
@@ -113,9 +113,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun reportConflicts(
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
         declarationConflictingSymbols: Map<FirBasedSymbol<*>, SmartSet<FirBasedSymbol<*>>>,
         container: FirDeclaration,
     ) {
@@ -139,15 +138,16 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
             ) return@forEach
 
             if (symbols.singleOrNull()?.let { isExpectAndNonExpect(conflictingDeclaration, it) } == true) {
-                reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration, context)
+                reporter.reportOn(source, FirErrors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE, conflictingDeclaration)
                 return@forEach
             }
 
-            val dispatcher = context.session.conflictDeclarationsDiagnosticDispatcher ?: PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT
-            val factory = dispatcher.getDiagnostic(conflictingDeclaration, symbols, context)
+            val dispatcher =
+                context.session.conflictDeclarationsDiagnosticDispatcher ?: PlatformConflictDeclarationsDiagnosticDispatcher.DEFAULT
+            val factory = dispatcher.getDiagnostic(conflictingDeclaration, symbols)
 
             if (factory != null) {
-                reporter.reportOn(source, factory, symbols, context)
+                reporter.reportOn(source, factory, symbols)
             }
         }
     }
@@ -170,7 +170,8 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
     private val FirBasedSymbol<*>.isPrimaryConstructor: Boolean
         get() = this is FirConstructorSymbol && isPrimary || origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
-    private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>, context: CheckerContext) {
+    context(context: CheckerContext)
+    private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirBasedSymbol<*>>) {
         val packageMemberScope: FirPackageMemberScope =
             context.sessionHolder.scopeSession.getOrBuild(file.packageFqName to context.session, PACKAGE_MEMBER) {
                 FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)

@@ -26,13 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -45,42 +39,46 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Plat
                 reporter.reportOn(objCName.annotation.source, INAPPLICABLE_OBJC_NAME)
             }
         }
-        objCNames.forEach { checkObjCName(it, declaration, context, reporter) }
+        objCNames.forEach { checkObjCName(it, declaration) }
     }
 
     // We only allow valid ObjC identifiers (even for Swift names)
     private val validFirstChars = ('A'..'Z').toSet() + ('a'..'z').toSet() + '_'
     private val validChars = validFirstChars + ('0'..'9').toSet()
 
-    private fun checkObjCName(objCName: ObjCName, declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkObjCName(
+        objCName: ObjCName,
+        declaration: FirDeclaration,
+    ) {
         val annotationSource = objCName.annotation.source
         for ((_, argument) in objCName.annotation.argumentMapping.mapping) {
             if (argument is FirLiteralExpression) continue
-            reporter.reportOn(argument.source, NON_LITERAL_OBJC_NAME_ARG, context)
+            reporter.reportOn(argument.source, NON_LITERAL_OBJC_NAME_ARG)
         }
         if (objCName.name == null && objCName.swiftName == null) {
-            reporter.reportOn(annotationSource, INVALID_OBJC_NAME, context)
+            reporter.reportOn(annotationSource, INVALID_OBJC_NAME)
         }
         val invalidNameFirstChar = objCName.name?.firstOrNull()?.takeUnless(validFirstChars::contains)
         val invalidSwiftNameFirstChar = objCName.swiftName?.firstOrNull()?.takeUnless(validFirstChars::contains)
         val invalidFirstChars = setOfNotNull(invalidNameFirstChar, invalidSwiftNameFirstChar)
         if (invalidFirstChars.isNotEmpty()) {
-            reporter.reportOn(annotationSource, INVALID_OBJC_NAME_FIRST_CHAR, invalidFirstChars.joinToString(""), context)
+            reporter.reportOn(annotationSource, INVALID_OBJC_NAME_FIRST_CHAR, invalidFirstChars.joinToString(""))
         }
         if (objCName.name?.isEmpty() == true || objCName.swiftName?.isEmpty() == true) {
-            reporter.reportOn(annotationSource, EMPTY_OBJC_NAME, context)
+            reporter.reportOn(annotationSource, EMPTY_OBJC_NAME)
         }
         val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: emptySet()
         val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: emptySet()
         val invalidChars = invalidNameChars + invalidSwiftNameChars
         if (invalidChars.isNotEmpty()) {
-            reporter.reportOn(annotationSource, INVALID_OBJC_NAME_CHARS, invalidFirstChars.joinToString(""), context)
+            reporter.reportOn(annotationSource, INVALID_OBJC_NAME_CHARS, invalidFirstChars.joinToString(""))
         }
         if (objCName.exact && (declaration !is FirClass || declaration.classKind == ClassKind.ENUM_ENTRY)) {
-            reporter.reportOn(annotationSource, INAPPLICABLE_EXACT_OBJC_NAME, context)
+            reporter.reportOn(annotationSource, INAPPLICABLE_EXACT_OBJC_NAME)
         }
         if (objCName.exact && objCName.name == null) {
-            reporter.reportOn(annotationSource, MISSING_EXACT_OBJC_NAME, context)
+            reporter.reportOn(annotationSource, MISSING_EXACT_OBJC_NAME)
         }
     }
 }

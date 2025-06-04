@@ -33,8 +33,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKi
                     reporter.reportIfHasAnnotation(
                         declaration,
                         sharedImmutableClassId,
-                        FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
-                        context
+                        FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
                     )
                 }
             }
@@ -44,8 +43,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKi
             reporter.reportIfHasAnnotation(
                 declaration,
                 sharedImmutableClassId,
-                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY,
-                context
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_PROPERTY
             )
 
             return
@@ -55,8 +53,7 @@ object FirNativeSharedImmutableChecker : FirBasicDeclarationChecker(MppCheckerKi
             reporter.reportIfHasAnnotation(
                 declaration,
                 sharedImmutableClassId,
-                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL,
-                context
+                FirNativeErrors.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL
             )
         }
     }

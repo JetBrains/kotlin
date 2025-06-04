@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 
+context(context: CheckerContext)
 fun DiagnosticReporter.reportIfHasAnnotation(
     declaration: FirDeclaration,
     annotationClassId: ClassId,
-    error: KtDiagnosticFactory0,
-    context: CheckerContext
+    error: KtDiagnosticFactory0
 ) {
     val annotation = declaration.getAnnotationByClassId(annotationClassId, context.session)
     if (annotation != null) {
-        reportOn(annotation.source, error, context)
+        reportOn(annotation.source, error)
     }
 }
 

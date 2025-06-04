@@ -71,7 +71,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
     override fun check(declaration: FirDeclaration) {
         val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId, context.session)
 
-        if (!checkInheritance(declaration, throwsAnnotation, context, reporter)) return
+        if (!checkInheritance(declaration, throwsAnnotation)) return
 
         if (throwsAnnotation.hasUnresolvedArgument()) return
 
@@ -91,23 +91,20 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkInheritance(
         declaration: FirDeclaration,
         throwsAnnotation: FirAnnotation?,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ): Boolean {
         if (declaration !is FirSimpleFunction) return true
 
-        val inherited = getInheritedThrows(declaration, throwsAnnotation, context).entries.distinctBy { it.value }
+        val inherited = getInheritedThrows(declaration, throwsAnnotation).entries.distinctBy { it.value }
 
         if (inherited.size >= 2) {
             reporter.reportOn(
                 declaration.source,
                 FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED,
-                inherited.mapNotNull { it.key.containingClassLookupTag()?.toRegularClassSymbol(context.session) },
-                context
-            )
+                inherited.mapNotNull { it.key.containingClassLookupTag()?.toRegularClassSymbol(context.session) })
             return false
         }
 
@@ -117,7 +114,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
             val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol(context.session)
             if (containingClassSymbol != null) {
-                reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
+                reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol)
             }
             return false
         }
@@ -125,10 +122,10 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         return true
     }
 
+    context(context: CheckerContext)
     private fun getInheritedThrows(
         function: FirSimpleFunction,
-        throwsAnnotation: FirAnnotation?,
-        context: CheckerContext
+        throwsAnnotation: FirAnnotation?
     ): Map<FirNamedFunctionSymbol, ThrowsFilter> {
         val visited = mutableSetOf<FirNamedFunctionSymbol>()
         val result = mutableMapOf<FirNamedFunctionSymbol, ThrowsFilter>()

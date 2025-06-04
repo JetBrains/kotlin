@@ -22,9 +22,7 @@ object FirNativePackageDirectiveChecker : FirFileChecker(MppCheckerKind.Common) 
         declaration.packageDirective.source?.forEachChildOfType(setOf(REFERENCE_EXPRESSION), depth = -1) {
             checkNameAndReport(
                 Name.identifier(it.text.toString()),
-                it,
-                context,
-                reporter
+                it
             )
         }
     }
