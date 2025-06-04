@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature.MultiPlatformProjects
+import org.jetbrains.kotlin.config.dumpConstraints
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.resolve.inference.FirConstraintsLogger
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -421,6 +423,9 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 ).also(::registerExtraComponents)
             }
             else -> error("Unsupported")
+        }.also {
+            @OptIn(SessionConfiguration::class)
+            if (configuration.dumpConstraints) it.register(FirConstraintsLogger::class, FirConstraintsLogger())
         }
     }
 
