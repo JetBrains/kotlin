@@ -84,15 +84,41 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     fun testReleaseCompilerAgainstPreReleaseFeatureJs() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
 
-        val result = compileJsLibrary(
-            libraryName = "library",
+        val poisonedLibrary = compileJsLibrary(
+            libraryName = "poisonedLibrary",
             additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+        ) {}
+
+        val library = compileJsLibrary(
+            libraryName = "library"
         ) {}
 
         compileKotlin(
             fileName = "source.kt",
             output = File(tmpdir, "usage.js"),
-            classpath = listOf(result),
+            classpath = listOf(poisonedLibrary, library),
+            compiler = K2JSCompiler()
+        ) { compilerOutput ->
+            compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
+        }
+    }
+
+    fun testReleaseCompilerWithoutUsageOfPreReleaseFeatureJs() {
+        val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled() } ?: return
+
+        val poisonedLibrary = compileJsLibrary(
+            libraryName = "poisonedLibrary",
+            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+        ) {}
+
+        val library = compileJsLibrary(
+            libraryName = "library"
+        ) {}
+
+        compileKotlin(
+            fileName = "source.kt",
+            output = File(tmpdir, "usage.js"),
+            classpath = listOf(poisonedLibrary, library),
             compiler = K2JSCompiler()
         ) { compilerOutput ->
             compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
