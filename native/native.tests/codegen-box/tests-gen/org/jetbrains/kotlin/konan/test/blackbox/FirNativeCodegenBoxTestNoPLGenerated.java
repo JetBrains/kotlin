@@ -20089,6 +20089,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("ifWithAssignmentAndNothingBranch.kt")
+      public void testIfWithAssignmentAndNothingBranch() {
+        runTest("compiler/testData/codegen/box/inference/ifWithAssignmentAndNothingBranch.kt");
+      }
+
+      @Test
       @TestMetadata("inferenceWithTypeVariableInsideCapturedType.kt")
       public void testInferenceWithTypeVariableInsideCapturedType() {
         runTest("compiler/testData/codegen/box/inference/inferenceWithTypeVariableInsideCapturedType.kt");
@@ -20245,9 +20251,33 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("tryCatchAtAssignment.kt")
+      public void testTryCatchAtAssignment() {
+        runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchAtAssignmentWithSmartCast.kt")
+      public void testTryCatchAtAssignmentWithSmartCast() {
+        runTest("compiler/testData/codegen/box/inference/tryCatchAtAssignmentWithSmartCast.kt");
+      }
+
+      @Test
       @TestMetadata("unsafeVarianceCodegen.kt")
       public void testUnsafeVarianceCodegen() {
         runTest("compiler/testData/codegen/box/inference/unsafeVarianceCodegen.kt");
+      }
+
+      @Test
+      @TestMetadata("whenAtAssignment.kt")
+      public void testWhenAtAssignment() {
+        runTest("compiler/testData/codegen/box/inference/whenAtAssignment.kt");
+      }
+
+      @Test
+      @TestMetadata("whenAtAssignmentWithSmartCast.kt")
+      public void testWhenAtAssignmentWithSmartCast() {
+        runTest("compiler/testData/codegen/box/inference/whenAtAssignmentWithSmartCast.kt");
       }
 
       @Nested
