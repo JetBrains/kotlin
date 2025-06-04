@@ -56,7 +56,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
-    kotlinxCoroutinesCoreGradlePluginClasspath(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core")) { isTransitive = true }
+    kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
