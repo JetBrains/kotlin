@@ -89,7 +89,7 @@ fun DefinitelyNotNullTypeMarker.makeDefinitelyNotNullOrNotNull(): DefinitelyNotN
 
 context(c: TypeSystemContext)
 fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker =
-    with(c) { makeDefinitelyNotNullOrNotNull() }
+    with(c) { makeDefinitelyNotNullOrNotNull(preserveAttributes) }
 
 context(c: TypeSystemContext)
 fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker = with(c) { makeDefinitelyNotNullOrNotNull() }
@@ -225,7 +225,7 @@ context(c: TypeSystemContext)
 fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker = with(c) { getTypeConstructor() }
 
 context(c: TypeSystemContext)
-fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean = with(c) { hasRecursiveBounds() }
+fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker? = null): Boolean = with(c) { hasRecursiveBounds(selfConstructor) }
 
 context(c: TypeSystemContext)
 fun TypeConstructorMarker.isDenotable(): Boolean = with(c) { isDenotable() }
