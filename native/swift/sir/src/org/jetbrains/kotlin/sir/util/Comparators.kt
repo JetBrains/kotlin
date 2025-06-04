@@ -24,6 +24,12 @@ object Comparators {
         { mangleParameters(it.parameters) },
     )
 
+    val stableSubscriptComparator: Comparator<SirSubscript> = compareBy(
+        { it.returnType.swift },
+        { it.parameters.size },
+        { mangleParameters(it.parameters) },
+    )
+
     val stableCallableComparator: Comparator<SirCallable> = compareBy<SirCallable> {
         when (it) {
             is SirInit -> 0
