@@ -13,7 +13,7 @@ fun test() {
         use(foo)
     }
 
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
+    foo = 5
     usage()
 }
 
@@ -25,7 +25,7 @@ fun test2() {
         use(foo)
     }
 
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
+    foo = 5
 }
 
 fun test3() {
@@ -42,15 +42,15 @@ fun test3() {
     use(foo)
 
     invokeLater {
-        foo = 6
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 6
         foo = 7
         use(foo)
         invokeLater {
             use(foo)
             invokeLater {
-                foo = 8
+                <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 8
             }
-            foo = 9
+            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 9
         }
     }
 }
@@ -63,7 +63,7 @@ fun test4() {
         use(foo)
     }
 
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
+    foo = 5
     foo = 6
     use(foo)
 }
@@ -72,21 +72,21 @@ fun test5() {
     var foo = 1
     use(foo)
     invokeLater {
-        foo = 2
+        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 2
         foo = 3
         use(foo)
         invokeLater {
             use(foo)
             invokeLater {
-                foo = 4
+                <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 4
             }
-            foo = 5
+            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
         }
         foo = 6
         foo = 7
     }
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 8
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 9
+    foo = 8
+    foo = 9
 }
 
 fun test6() {
@@ -114,24 +114,24 @@ fun test7() {
     } catch (_: Throwable) {
         invokeLater {
             use(foo)
-            foo = 4
+            <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 4
         }
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
+        foo = 5
     } finally {
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 6
+        foo = 6
     }
 }
 
 fun test8() {
     var foo = 1
     invokeLater { use(foo) }
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 2
+    foo = 2
     try {
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 3
+        foo = 3
     } catch (_: Throwable) {
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 5
+        foo = 5
     } finally {
-        <!ASSIGNED_VALUE_IS_NEVER_READ!>foo<!> = 6
+        foo = 6
     }
 }
 
