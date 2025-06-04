@@ -153,9 +153,11 @@ open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsES6TypeScriptExportTest : AbstractFirJsES6Test(
+open class AbstractFirJsES6TypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/fir-es6"
+) : AbstractFirJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
-    testGroupOutputDirPrefix = "typescript-export/fir-es6"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
