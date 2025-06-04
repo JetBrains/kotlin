@@ -164,7 +164,7 @@ public actual class AtomicIntArray {
  * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -185,7 +185,7 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
  * the updated value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -208,7 +208,7 @@ public actual inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: 
  * the old value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -381,7 +381,7 @@ public actual class AtomicLongArray {
  * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -402,7 +402,7 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
  * the updated value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -425,7 +425,7 @@ public actual inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform:
  * the old value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -560,7 +560,7 @@ public actual class AtomicArray<T> {
  * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -581,7 +581,7 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
  * the updated value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
@@ -604,7 +604,7 @@ public actual inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transfo
  * the old value of the element.
  *
  * JS does not support multithreading, thus the implementation is trivial,
- * and [transform] may be invoked more than once to recompute a result.
+ * and [transform] will be invoked at most once to recompute a result.
  *
  * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
  *
