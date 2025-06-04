@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -115,6 +116,41 @@ open class JsKlibVersionsTest {
                 it.contains("error: invalid metadata version")
             })
         }
+    }
+
+    @Test
+    fun testReleaseCompilerAgainstPreReleaseFeature() {
+        val testDataDir = File("compiler/testData/klib/resolve/release-compiler-with-pre-release-dependency")
+        val klibDir = createKlibDir("lib")
+        val poisonedKlibDir = createKlibDir("poisonedLib")
+        val appDir = createKlibDir("app")
+
+        compileKlib(
+            sourceFile = testDataDir.resolve("lib.kt"),
+            outputFile = klibDir
+        )
+        compileKlib(
+            sourceFile = testDataDir.resolve("poisonedLib.kt"),
+            outputFile = poisonedKlibDir,
+            extraArgs = arrayOf(K2JSCompilerArguments::irInlinerBeforeKlibSerialization.cliArgument)
+        )
+
+        val result = compileKlib(
+            sourceFile = testDataDir.resolve("app1.kt"),
+            dependencies = arrayOf(klibDir, poisonedKlibDir),
+            outputFile = appDir
+        )
+        result.assertFailure()
+        val compilerOutputLines = result.output.lines()
+        assertTrue(compilerOutputLines.any {
+            it.contains("Enabled pre-release features:")
+        })
+
+        compileKlib(
+            sourceFile = testDataDir.resolve("app2.kt"),
+            dependencies = arrayOf(klibDir, poisonedKlibDir),
+            outputFile = appDir
+        ).assertSuccess()
     }
 
     private fun createKlibDir(name: String): File =
