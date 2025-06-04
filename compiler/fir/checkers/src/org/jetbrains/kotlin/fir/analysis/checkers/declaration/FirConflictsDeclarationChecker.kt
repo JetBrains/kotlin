@@ -41,20 +41,14 @@ interface PlatformConflictDeclarationsDiagnosticDispatcher : FirSessionComponent
         override fun getDiagnostic(
             conflictingDeclaration: FirBasedSymbol<*>,
             symbols: SmartSet<FirBasedSymbol<*>>,
-            context: CheckerContext
+            context: CheckerContext,
         ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> {
-            return when {
-                conflictingDeclaration is FirNamedFunctionSymbol || conflictingDeclaration is FirConstructorSymbol -> {
-                    FirErrors.CONFLICTING_OVERLOADS
-                }
-                conflictingDeclaration is FirClassLikeSymbol<*> &&
-                        conflictingDeclaration.getContainingClassSymbol() == null &&
-                        symbols.any { it is FirClassLikeSymbol<*> } -> {
-                    FirErrors.CLASSIFIER_REDECLARATION
-                }
-                else -> {
-                    FirErrors.REDECLARATION
-                }
+            return when (conflictingDeclaration) {
+                is FirNamedFunctionSymbol, is FirConstructorSymbol -> FirErrors.CONFLICTING_OVERLOADS
+                is FirClassLikeSymbol<*>
+                    if conflictingDeclaration.getContainingClassSymbol() == null && symbols.any { it is FirClassLikeSymbol<*> }
+                    -> FirErrors.CLASSIFIER_REDECLARATION
+                else -> FirErrors.REDECLARATION
             }
         }
     }
