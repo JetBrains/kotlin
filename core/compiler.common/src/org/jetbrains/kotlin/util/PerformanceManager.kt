@@ -204,9 +204,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         // However, some pipelines are written in a way where `BackendGeneration` executed before `Analysis` or `IrLowering` (Web).
         // TODO: KT-75227 Consider using multiple `PerformanceManager` for measuring times per each unit
         // or fixing a time measurement bug where `BackendGeneration` is executed before `Analysis` or `IrLowering`
-        if (!targetPlatform.isJs()) {
-            assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
-        }
+        // Also NativeCompilerDriver creates header klib, and then continues pre-lowering of parent module.
+        // Also there are some race conditions, preventing precise check of phase order.
+        // So the commented check below deserves some tuning before re-enabling
+        // if (!targetPlatform.isJs()) {
+        //     assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+        // }
 
         phaseStartTime = currentTime()
         currentPhaseType = newPhaseType
