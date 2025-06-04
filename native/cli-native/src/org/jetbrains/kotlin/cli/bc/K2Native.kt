@@ -125,7 +125,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         val konanDriver =
-            KonanDriver(environment.project, environment, configuration, childPerfManager, object : CompilationSpawner {
+            KonanDriver(environment.project, environment, configuration, childPerfManager ?: mainPerfManager, object : CompilationSpawner {
                 override fun spawn(configuration: CompilerConfiguration) {
                     val spawnedArguments = K2NativeCompilerArguments()
                     parseCommandLineArguments(emptyList(), spawnedArguments)
