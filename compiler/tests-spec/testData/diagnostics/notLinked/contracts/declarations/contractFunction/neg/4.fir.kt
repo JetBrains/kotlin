@@ -15,7 +15,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 val Boolean.case_1: () -> Unit
     get() {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             returns() implies (this@case_1)
         }
         return {}
@@ -24,7 +24,7 @@ val Boolean.case_1: () -> Unit
 // TESTCASE NUMBER: 2
 val (() -> Unit).case_2: () -> Unit
     get() {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             callsInPlace(this@case_2, InvocationKind.EXACTLY_ONCE)
         }
         return {}
@@ -36,7 +36,7 @@ var Boolean.case_3: () -> Unit
         return {}
     }
     set(value) {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             <!WRONG_INVOCATION_KIND!>callsInPlace(value, InvocationKind.EXACTLY_ONCE)<!>
         }
     }
@@ -47,7 +47,7 @@ var (() -> Unit).case_4: () -> Unit
         return {}
     }
     set(value) {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             callsInPlace(this@case_4, InvocationKind.EXACTLY_ONCE)
         }
     }
@@ -55,7 +55,7 @@ var (() -> Unit).case_4: () -> Unit
 // TESTCASE NUMBER: 5
 val Boolean.case_5: () -> Unit
     get() {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+        contract {
             returns() implies (this@case_5)
         }
 
