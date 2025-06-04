@@ -24,17 +24,16 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertContains
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
 @DisplayName("Separate KMP compilation a.k.a. the new KMP compilation scheme: KT-77546")
 class SeparateKmpCompilationIT : KGPBaseTest() {
-    @DisplayName("fragment dependencies are not duplicated if they are defined higher in the hierarchy by default")
+    @DisplayName("fragment dependencies are not duplicated if they are defined higher in the hierarchy")
     @GradleTest
     fun fragmentDependenciesAreDeduplicated(gradleVersion: GradleVersion) {
-        doTestFragmentDependenciesArg(gradleVersion, true) { fragmentDependencies ->
+        doTestFragmentDependenciesArg(gradleVersion) { fragmentDependencies ->
             val visitedDependencies = mutableSetOf<String>()
             for ((_, dependencies) in fragmentDependencies) {
                 for (dependency in dependencies) {
@@ -46,17 +45,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("if deduplication is disabled, fragment dependencies occur only on shared source sets")
-    @GradleTest
-    fun duplicatedFragmentDependenciesOnlyOnSharedSourceSets(gradleVersion: GradleVersion) {
-        doTestFragmentDependenciesArg(gradleVersion, false) { fragmentDependencies ->
-            assertEquals(setOf("commonMain", "jvmAndJs"), fragmentDependencies.keys)
-        }
-    }
-
     private fun doTestFragmentDependenciesArg(
         gradleVersion: GradleVersion,
-        deduplicate: Boolean,
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
         project("empty", gradleVersion) {
@@ -64,14 +54,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
             enableSeparateCompilation()
-            if (!deduplicate) {
-                gradleProperties.appendText(
-                    """
-                    |${org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION_DEDUPLICATE_DEPENDENCIES}=false
-                    |
-                    """.trimMargin()
-                )
-            }
             buildScriptInjection {
                 with(project) {
                     applyMultiplatform {
