@@ -187,6 +187,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsES6TypeScriptExportTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractFirJsES6TypeScriptExportWithInlinedFunInKlibTest>(annotations = listOf(*es6())) {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {

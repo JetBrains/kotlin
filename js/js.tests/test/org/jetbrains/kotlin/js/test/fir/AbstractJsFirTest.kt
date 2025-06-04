@@ -153,13 +153,28 @@ open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
     }
 }
 
-open class AbstractFirJsES6TypeScriptExportTest : AbstractFirJsES6Test(
+open class AbstractFirJsES6TypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/fir-es6"
+) : AbstractFirJsES6Test(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
-    testGroupOutputDirPrefix = "typescript-export/fir-es6"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureJsTypeScriptExportTest()
+    }
+}
+
+open class AbstractFirJsES6TypeScriptExportWithInlinedFunInKlibTest : AbstractFirJsES6TypeScriptExportTest(
+    testGroupOutputDirPrefix = "typescript-export/fir-es6WithInlinedFunInKlib"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 
