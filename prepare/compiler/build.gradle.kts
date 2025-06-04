@@ -261,7 +261,13 @@ publish()
 val distSbomTask = configureSbom(
     target = "Dist",
     documentName = "Kotlin Compiler Distribution",
-    setOf(configurations.runtimeClasspath.name, libraries.name, librariesKotlinTest.name, librariesStripVersion.name, compilerPlugins.name)
+    setOf(
+        configurations.runtimeClasspath.name,
+        libraries.name, librariesKotlinTest.name, librariesStripVersion.name,
+        compilerPlugins.name,
+        fatJarContents.name, fatJarContentsStripServices.name, fatJarContentsStripMetadata.name, fatJarContentsStripVersions.name,
+        proguardLibraries.name,
+    )
 )
 
 val packCompiler by task<Jar> {
