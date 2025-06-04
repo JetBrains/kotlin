@@ -2307,6 +2307,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("conflictingOverloads.kt")
+        public void testConflictingOverloads() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/conflictingOverloads.kt");
+        }
+
+        @Test
         @TestMetadata("contextParameterNameChanged.kt")
         public void testContextParameterNameChanged() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/diagnostics/contextParameterNameChanged.kt");
