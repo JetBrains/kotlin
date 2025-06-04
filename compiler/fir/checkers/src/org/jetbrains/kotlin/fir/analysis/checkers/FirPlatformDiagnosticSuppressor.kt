@@ -10,5 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 
 interface FirPlatformDiagnosticSuppressor : FirSessionComponent {
-    fun shouldReportNoBody(declaration: FirCallableDeclaration, context: CheckerContext): Boolean
+    context(context: CheckerContext)
+    fun shouldReportNoBody(declaration: FirCallableDeclaration): Boolean
 }

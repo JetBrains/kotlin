@@ -24,35 +24,37 @@ object FirWasmExternalChecker : FirWebCommonExternalChecker(allowCompanionInInte
         return symbol.isEffectivelyExternal(session)
     }
 
-    override fun reportExternalEnum(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "enum class", context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun reportExternalEnum(declaration: FirDeclaration) {
+        reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "enum class")
     }
 
-    override fun additionalCheck(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun additionalCheck(declaration: FirDeclaration) {
         if (declaration is FirFunction) {
             if (declaration.isInline) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION, context)
+                reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION)
             }
             if (declaration.isTailRec) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "tailrec function", context)
+                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "tailrec function")
             }
             if (declaration.isSuspend) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "suspend function", context)
+                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "suspend function")
             }
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 if (declaration.contextParameters.isNotEmpty()) {
-                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
             }
         }
 
         if (declaration is FirProperty) {
             if (declaration.isLateInit) {
-                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "lateinit property", context)
+                reporter.reportOn(declaration.source, FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION, "lateinit property")
             }
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
                 if (declaration.contextParameters.isNotEmpty()) {
-                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS, context)
+                    reporter.reportOn(declaration.source, FirWasmErrors.EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
             }
         }

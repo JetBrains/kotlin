@@ -44,7 +44,7 @@ object FirJsExportedActualMatchExpectChecker : FirBasicDeclarationChecker(MppChe
         }
 
 
-        if (correspondingExpectDeclaration.isExportedObject(context) && !correspondingActualDeclaration.isExportedObject(context)) {
+        if (correspondingExpectDeclaration.isExportedObject() && !correspondingActualDeclaration.isExportedObject()) {
             reporter.reportOn(declaration.source, FirJsErrors.NOT_EXPORTED_ACTUAL_DECLARATION_WHILE_EXPECT_IS_EXPORTED)
         }
     }

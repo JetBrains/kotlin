@@ -43,7 +43,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val declarationAnnotation = declaration.findAnnotation(JsStandardClassIds.Annotations.JsStatic, context.session)
 
         if (declarationAnnotation != null) {
-            checkAnnotated(declaration, context, reporter, declaration.source)
+            checkAnnotated(declaration, declaration.source)
         }
 
         fun checkIfAnnotated(it: FirDeclaration) {
@@ -51,7 +51,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 return
             }
             val targetSource = it.source ?: declaration.source
-            checkAnnotated(it, context, reporter, targetSource)
+            checkAnnotated(it, targetSource)
         }
 
         if (declaration is FirProperty) {
@@ -60,10 +60,9 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotated(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirMemberDeclaration) {
@@ -73,17 +72,16 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         val container = declaration.getContainingClassSymbol() ?: return
 
         if (!container.isCompanion() || container.containerIsInterface()) {
-            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION, context)
+            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_NOT_IN_CLASS_COMPANION)
         }
 
-        checkStaticOnConst(declaration, context, reporter, targetSource)
-        checkVisibility(declaration, context, reporter, targetSource)
+        checkStaticOnConst(declaration, targetSource)
+        checkVisibility(declaration, targetSource)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkVisibility(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirCallableDeclaration) {
@@ -97,7 +95,7 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         if (visibility != Visibilities.Public) {
-            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER, context)
+            reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_NON_PUBLIC_MEMBER)
         }
     }
 
@@ -124,14 +122,13 @@ object FirJsStaticChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkStaticOnConst(
         declaration: FirDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
         if (declaration !is FirProperty) return
-        if (declaration.isConst) reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_CONST, context)
+        if (declaration.isConst) reporter.reportOn(targetSource, FirJsErrors.JS_STATIC_ON_CONST)
     }
 
     private fun FirClassLikeSymbol<*>.containerIsInterface(): Boolean {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        checkSuperClass(declaration, context, reporter)
+        checkSuperClass(declaration)
 
         if (declaration is FirFile || !declaration.isEitherModuleOrNonModule(context.session)) return
 
@@ -37,7 +37,7 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
 
-        if (!closestNonLocal.isNativeObject(context)) {
+        if (!closestNonLocal.isNativeObject()) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE)
         }
 
@@ -46,14 +46,15 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun checkSuperClass(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSuperClass(declaration: FirDeclaration) {
         val classDeclaration = declaration as? FirClass ?: return
         val superClassSymbol = classDeclaration.superClassNotAny(context.session)?.toSymbol(context.session) ?: return
 
         val superClassRef = classDeclaration.superTypeRefs.firstOrNull {
             it.coneTypeOrNull?.toSymbol(context.session) == superClassSymbol
         }
-        checkJsModuleUsage(superClassSymbol, context, reporter, superClassRef?.source ?: declaration.source)
+        checkJsModuleUsage(superClassSymbol, superClassRef?.source ?: declaration.source)
     }
 
     private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession): Boolean {

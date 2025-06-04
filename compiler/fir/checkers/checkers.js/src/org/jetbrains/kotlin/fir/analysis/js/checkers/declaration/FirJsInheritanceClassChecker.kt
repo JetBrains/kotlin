@@ -61,7 +61,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         }
 
         if (!isEffectivelyExternal) {
-            val fakeOverriddenMethod = declaration.findFakeMethodOverridingExternalWithOptionalParams(context)
+            val fakeOverriddenMethod = declaration.findFakeMethodOverridingExternalWithOptionalParams()
 
             if (fakeOverriddenMethod != null) {
                 reporter.reportOn(
@@ -89,7 +89,8 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
         return with(session.typeContext) { isTypeOrSubtypeOf { it.isSuspendOrKSuspendFunctionType(session) } }
     }
 
-    private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(context: CheckerContext): FirNamedFunctionSymbol? {
+    context(context: CheckerContext)
+    private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(): FirNamedFunctionSymbol? {
         val scope = symbol.unsubstitutedScope(context)
 
         val members = scope.collectAllFunctions()
@@ -100,7 +101,7 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
             }
 
         return members.firstOrNull {
-            it.isOverridingExternalWithOptionalParams(context)
+            it.isOverridingExternalWithOptionalParams()
         }
     }
 }

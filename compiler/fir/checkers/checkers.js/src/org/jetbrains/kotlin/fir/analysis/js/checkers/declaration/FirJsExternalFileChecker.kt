@@ -25,7 +25,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
     override fun check(declaration: FirDeclaration) {
         val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
 
-        if (closestNonLocal.isNativeObject(context) || closestNonLocal is FirTypeAliasSymbol || !context.isTopLevel) {
+        if (closestNonLocal.isNativeObject() || closestNonLocal is FirTypeAliasSymbol || !context.isTopLevel) {
             return
         }
 

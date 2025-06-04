@@ -38,7 +38,7 @@ object FirNonMemberFunctionsChecker : FirFunctionChecker(MppCheckerKind.Common) 
         if (declaration.isExternal) return
         if (!declaration.hasBody &&
             !declaration.isExpect &&
-            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration, context) != false
+            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration) != false
         ) {
             reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol)
         }

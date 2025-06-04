@@ -39,7 +39,8 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
         }
     }
 
-    private fun FirClass.forEachParents(context: CheckerContext, f: (FirRegularClassSymbol) -> Unit) {
+    context(context: CheckerContext)
+    private fun FirClass.forEachParents(f: (FirRegularClassSymbol) -> Unit) {
         val todo = superConeTypes.toMutableList()
         val done = hashSetOf<FirRegularClassSymbol>()
 
@@ -54,8 +55,8 @@ sealed class FirJsExternalInheritorOnlyChecker(mppKind: MppCheckerKind) : FirCla
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        if (!declaration.symbol.isEffectivelyExternal(context)) {
-            declaration.forEachParents(context) { parent ->
+        if (!declaration.symbol.isEffectivelyExternal()) {
+            declaration.forEachParents() { parent ->
                 if (parent.hasAnnotation(JsExternalInheritorsOnly, context.session)) {
                     reporter.reportOn(
                         declaration.source,

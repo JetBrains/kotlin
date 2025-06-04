@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-private fun FirDeclaration.isLexicallyInsideJsNative(context: CheckerContext): Boolean {
+context(context: CheckerContext)
+private fun FirDeclaration.isLexicallyInsideJsNative(): Boolean {
     return JsStandardClassIds.Annotations.nativeAnnotations.any { hasAnnotationOrInsideAnnotatedClass(it, context.session) }
 }
 
 class FirJsPlatformDiagnosticSuppressor : FirPlatformDiagnosticSuppressor {
-    override fun shouldReportNoBody(declaration: FirCallableDeclaration, context: CheckerContext): Boolean =
-        !declaration.isLexicallyInsideJsNative(context)
+    context(context: CheckerContext)
+    override fun shouldReportNoBody(declaration: FirCallableDeclaration): Boolean =
+        !declaration.isLexicallyInsideJsNative()
 }

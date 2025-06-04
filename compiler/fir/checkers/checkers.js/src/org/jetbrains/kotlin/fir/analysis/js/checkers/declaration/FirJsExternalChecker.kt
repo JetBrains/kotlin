@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -22,27 +20,27 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
-import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNative
-import org.jetbrains.kotlin.psi.KtParameter
 
 object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterface = true) {
     override fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
         return symbol.isNativeObject(session)
     }
 
-    override fun reportExternalEnum(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        reporter.reportOn(declaration.source, FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun reportExternalEnum(declaration: FirDeclaration, ) {
+        reporter.reportOn(declaration.source, FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING)
     }
 
-    override fun additionalCheck(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun additionalCheck(declaration: FirDeclaration, ) {
         if (declaration is FirFunction && declaration.isInline) {
-            reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION, context)
+            reporter.reportOn(declaration.source, FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION)
         }
 
         fun reportOnParametersAndReturnTypesIf(
@@ -59,7 +57,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
 
             fun checkTypeIsNotInlineClass(type: ConeKotlinType, elementToReport: KtSourceElement?) {
                 if (condition(type)) {
-                    reporter.reportOn(elementToReport, diagnosticFactory, context)
+                    reporter.reportOn(elementToReport, diagnosticFactory)
                 }
             }
 
@@ -102,7 +100,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
             )
         }
 
-        declaration.checkEnumEntry(context, reporter)
+        declaration.checkEnumEntry()
     }
 
     override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean {
@@ -122,10 +120,11 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
             else -> returnTypeRef.coneType.typeArguments.firstOrNull()?.type
         }
 
-    private fun FirDeclaration.checkEnumEntry(context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun FirDeclaration.checkEnumEntry() {
         if (this !is FirEnumEntry) return
         initializer?.let {
-            reporter.reportOn(it.source, FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY, context)
+            reporter.reportOn(it.source, FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY)
         }
     }
 }

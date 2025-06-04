@@ -37,7 +37,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
         val callee = expression.calleeReference.resolved ?: return
 
         if (callee.resolvedSymbol.origin !is FirDeclarationOrigin.DynamicScope) {
-            return checkSpreadOperator(expression, context, reporter)
+            return checkSpreadOperator(expression)
         }
 
         val symbol = callee.toResolvedCallableSymbol()
@@ -56,7 +56,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
             expression is FirComponentCall -> reporter.reportOn(
                 expression.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "`destructuring declaration"
             )
-            else -> checkIdentifier(callee, reporter, context)
+            else -> checkIdentifier(callee)
         }
 
         forAllSpreadArgumentsOf(expression) {
@@ -89,10 +89,13 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
                     && origin == FirFunctionCallOrigin.Operator
         }
 
-    private fun checkSpreadOperator(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSpreadOperator(
+        expression: FirQualifiedAccessExpression,
+    ) {
         forAllSpreadArgumentsOf(expression) {
             if (it.resolvedType is ConeDynamicType) {
-                reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator", context)
+                reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator")
             }
         }
     }
@@ -112,13 +115,16 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
         }
     }
 
-    private fun checkIdentifier(namedReference: FirResolvedNamedReference, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    private fun checkIdentifier(
+        namedReference: FirResolvedNamedReference,
+    ) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
             return
         }
         val name = namedReference.name.identifierOrNullIfSpecial ?: return
         if (sanitizeName(name) != name) {
-            reporter.reportOn(namedReference.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
+            reporter.reportOn(namedReference.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS)
         }
     }
 }
