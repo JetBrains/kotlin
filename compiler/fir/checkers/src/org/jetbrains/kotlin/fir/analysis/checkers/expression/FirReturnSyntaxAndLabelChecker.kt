@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -50,7 +51,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                 val functionCall = context.callsOrAssignments.asReversed().find {
                     it is FirFunctionCall &&
                             (it.calleeReference.toResolvedNamedFunctionSymbol())?.callableId ==
-                            FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID
+                            StandardClassIds.Callables.suspend
                 }
                 if (functionCall is FirFunctionCall &&
                     functionCall.arguments.any {
