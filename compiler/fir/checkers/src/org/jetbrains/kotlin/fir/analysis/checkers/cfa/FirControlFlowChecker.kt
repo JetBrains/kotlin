@@ -12,5 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
 abstract class FirControlFlowChecker(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
-    abstract fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext)
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    abstract fun analyze(graph: ControlFlowGraph)
 }

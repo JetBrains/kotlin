@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
-import org.jetbrains.kotlin.fir.analysis.cfa.util.VariableInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
@@ -42,15 +41,19 @@ class ControlFlowAnalysisDiagnosticComponent(
     private val variableAssignmentCheckers = declarationCheckers.variableAssignmentCfaBasedCheckers
 
     private fun analyze(declaration: FirControlFlowGraphOwner, context: CheckerContext) {
-        val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
-        if (graph.isSubGraph) return
-        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
+        with(context) {
+            with(reporter) {
+                val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
+                if (graph.isSubGraph) return
+                cfaCheckers.forEach { it.analyze(graph) }
 
-        val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
-        val properties = collector.properties
-        if (properties.isNotEmpty()) {
-            val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
-            variableAssignmentCheckers.forEach { it.analyze(data, reporter, context) }
+                val collector = LocalPropertyCollector().apply { declaration.acceptChildren(this, graph.subGraphs.toSet()) }
+                val properties = collector.properties
+                if (properties.isNotEmpty()) {
+                    val data = PropertyInitializationInfoData(properties, collector.conditionallyInitializedProperties, receiver = null, graph)
+                    variableAssignmentCheckers.forEach { it.analyze(data) }
+                }
+            }
         }
     }
 

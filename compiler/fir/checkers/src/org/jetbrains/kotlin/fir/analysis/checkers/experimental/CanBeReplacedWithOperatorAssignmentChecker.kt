@@ -47,7 +47,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
         if (rValueResolvedSymbol.dispatchReceiverClassTypeOrNull()?.isPrimitive != true) return
 
-        if (canBeReplaced(lValue, rValue, context)) {
+        if (canBeReplaced(lValue, rValue)) {
             reporter.reportOn(expression.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
         }
     }
@@ -57,7 +57,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
             it == null || it is FirSuperReceiverExpression
         }
 
-    private fun canBeReplaced(callee: FirReference, expression: FirFunctionCall, context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun canBeReplaced(callee: FirReference, expression: FirFunctionCall): Boolean {
         // What we want to support:
         // 1. a = a + 1 + 1
         // 2. a = 1 + a + 1
@@ -83,7 +84,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
             isCommutative && righter is FirQualifiedAccessExpression && righter.calleeReference.symbol == callee.symbol -> true
             // Without parentheses, `lefter` is definitely not higher, otherwise
             // we wouldn't have parsed the expression as [[a ? b] ? c] in the first place.
-            lefter is FirFunctionCall && lefter.isSamePrecedenceAs(operatorName) -> canBeReplaced(callee, lefter, context)
+            lefter is FirFunctionCall && lefter.isSamePrecedenceAs(operatorName) -> canBeReplaced(callee, lefter)
             else -> false
         }
     }

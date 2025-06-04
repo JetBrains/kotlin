@@ -34,7 +34,7 @@ object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKi
         val containingClass = declaration.getContainingClass() ?: return
 
         var reported = false
-        containingClass.unsubstitutedScope(context).processFunctionsByName(name) {
+        containingClass.unsubstitutedScope().processFunctionsByName(name) {
             @OptIn(SymbolInternals::class)
             val hiddenFir = it.fir
             if (!reported && hiddenFir.isHiddenToOvercomeSignatureClash == true && !hiddenFir.isFinal) {

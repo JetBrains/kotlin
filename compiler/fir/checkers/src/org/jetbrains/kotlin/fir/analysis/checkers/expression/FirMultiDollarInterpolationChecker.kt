@@ -23,7 +23,7 @@ abstract class FirMultiDollarInterpolationChecker<E : FirExpression> : FirExpres
         // no interpolation prefix => always OK
         if (expression.getInterpolationPrefix().isNullOrEmpty()) return
 
-        expression.requireFeatureSupport(LanguageFeature.MultiDollarInterpolation, context, reporter)
+        expression.requireFeatureSupport(LanguageFeature.MultiDollarInterpolation)
     }
 }
 

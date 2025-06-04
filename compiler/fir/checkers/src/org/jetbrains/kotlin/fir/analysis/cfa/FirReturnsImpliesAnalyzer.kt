@@ -37,10 +37,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
 
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
         // Not quadratic since we don't traverse the graph, we only care about (declaration, exit node) pairs.
         for (subGraph in graph.subGraphs) {
-            analyze(subGraph, reporter, context)
+            analyze(subGraph)
         }
 
         val function = graph.declaration as? FirFunction ?: return
@@ -73,22 +74,22 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
             val coneEffect = firEffect.effect as? ConeConditionalEffectDeclaration ?: continue
             val returnValue = coneEffect.effect as? ConeReturnsEffectDeclaration ?: continue
             val wrongCondition = graph.exitNode.previousCfgNodes.any {
-                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, argumentVariables, context)
+                isWrongConditionOnNode(it, coneEffect, returnValue, function, logicSystem, argumentVariables)
             }
             if (wrongCondition) {
-                reporter.reportOn(firEffect.source, FirErrors.WRONG_IMPLIES_CONDITION, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_IMPLIES_CONDITION)
             }
         }
     }
 
+    context(context: CheckerContext)
     private fun isWrongConditionOnNode(
         node: CFGNode<*>,
         effectDeclaration: ConeConditionalEffectDeclaration,
         effect: ConeReturnsEffectDeclaration,
         function: FirFunction,
         logicSystem: LogicSystem,
-        argumentVariables: Array<RealVariable?>,
-        context: CheckerContext
+        argumentVariables: Array<RealVariable?>
     ): Boolean {
         val builtinTypes = context.session.builtinTypes
         val typeContext = context.session.typeContext
@@ -101,7 +102,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) 
 
         if (isReturn && resultExpression is FirWhenExpression) {
             return node.collectBranchExits().any {
-                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, argumentVariables, context)
+                isWrongConditionOnNode(it, effectDeclaration, effect, function, logicSystem, argumentVariables)
             }
         }
 

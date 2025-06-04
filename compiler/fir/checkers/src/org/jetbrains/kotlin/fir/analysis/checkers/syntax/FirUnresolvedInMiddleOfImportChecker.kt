@@ -25,13 +25,20 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 
 object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFile, KtFile>() {
-    override fun checkPsiOrLightTree(element: FirFile, source: KtSourceElement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun checkPsiOrLightTree(
+        element: FirFile,
+        source: KtSourceElement,
+    ) {
         for (import in element.imports) {
-            if (import is FirResolvedImport) processPossiblyUnresolvedImport(import, context, reporter)
+            if (import is FirResolvedImport) processPossiblyUnresolvedImport(import)
         }
     }
 
-    private fun processPossiblyUnresolvedImport(import: FirResolvedImport, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun processPossiblyUnresolvedImport(
+        import: FirResolvedImport,
+    ) {
         if (import.source?.kind?.shouldSkipErrorTypeReporting == true) return
 
         val referencedClass = import.resolvedParentClassId ?: return
@@ -51,8 +58,7 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
                     reporter.reportOn(
                         source,
                         FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON,
-                        parentClassId.shortClassName,
-                        context,
+                        parentClassId.shortClassName
                     )
                     return
                 }
@@ -74,8 +80,7 @@ object FirUnresolvedInMiddleOfImportChecker : FirDeclarationSyntaxChecker<FirFil
                 reporter.reportOn(
                     unresolvedSource,
                     FirErrors.UNRESOLVED_IMPORT,
-                    parentClassId.getOutermostClassName(),
-                    context,
+                    parentClassId.getOutermostClassName()
                 )
             }
             else -> {

@@ -61,7 +61,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
                 classKind == ClassKind.INTERFACE && modality == Modality.OPEN
         val classSymbol = declaration.symbol
 
-        val classScope = declaration.unsubstitutedScope(context)
+        val classScope = declaration.unsubstitutedScope()
 
         val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
         val notImplementedIntersectionSymbols = mutableListOf<FirCallableSymbol<*>>()

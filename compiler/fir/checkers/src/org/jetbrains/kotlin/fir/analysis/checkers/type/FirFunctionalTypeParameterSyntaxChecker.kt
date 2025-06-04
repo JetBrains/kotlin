@@ -19,7 +19,7 @@ abstract class FirFunctionalTypeParameterSyntaxChecker : FirFunctionTypeRefCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirFunctionTypeRef) {
         for (parameter in typeRef.parameters) {
-            checkSyntax(parameter, context, reporter)
+            checkSyntax(parameter)
         }
     }
 }

@@ -24,13 +24,12 @@ object FirFunctionReturnChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
-        checkHasReturnIfBlock(declaration, reporter, context)
+        checkHasReturnIfBlock(declaration)
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun checkHasReturnIfBlock(
         declaration: FirFunction,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         if (declaration is FirPropertyAccessor && declaration.isSetter) return
         if (declaration is FirConstructor) return
@@ -41,7 +40,7 @@ object FirFunctionReturnChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         val blockExitNode = graph.exitNode.previousNodes.lastOrNull { it is BlockExitNode } ?: return
         if (!blockExitNode.isDead) {
-            reporter.reportOn(declaration.source, FirErrors.NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, context)
+            reporter.reportOn(declaration.source, FirErrors.NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY)
         }
     }
 }

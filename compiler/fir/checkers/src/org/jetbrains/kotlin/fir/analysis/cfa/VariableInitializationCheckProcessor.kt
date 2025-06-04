@@ -34,17 +34,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class VariableInitializationCheckProcessor {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     fun check(
         data: VariableInitializationInfoData,
         isForInitialization: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val filtered = filterProperties(data, isForInitialization)
         if (filtered.isEmpty()) return
 
         data.runCheck(
-            data.graph, filtered, context, reporter, scope = null,
+            data.graph, filtered, scope = null,
             isForInitialization,
             doNotReportUninitializedVariable = false,
             doNotReportConstantUninitialized = true,
@@ -52,12 +51,11 @@ abstract class VariableInitializationCheckProcessor {
         )
     }
 
-    // TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+// TODO: move this to PropertyInitializationInfoData (the collector also does this check when visiting assignments)
     private fun VariableInitializationInfoData.runCheck(
         graph: ControlFlowGraph,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         scope: FirDeclaration?,
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
@@ -66,17 +64,16 @@ abstract class VariableInitializationCheckProcessor {
     ) {
         for (node in graph.nodes) {
             if (node.isUnion) {
-                processUnionNode(node, properties, context, reporter)
+                processUnionNode(node, properties)
             }
 
             when (node) {
                 is VariableDeclarationNode -> processVariableDeclaration(node, scope, properties, scopes)
-                is VariableAssignmentNode -> processVariableAssignment(node, properties, reporter, context, scope, scopes)
+                is VariableAssignmentNode -> processVariableAssignment(node, properties, scope, scopes)
                 is QualifiedAccessNode -> processQualifiedAccess(
                     node, node.fir, properties,
                     doNotReportUninitializedVariable,
-                    doNotReportConstantUninitialized,
-                    reporter, context
+                    doNotReportConstantUninitialized
                 )
                 is FunctionCallEnterNode -> {
                     val call = node.fir
@@ -88,15 +85,14 @@ abstract class VariableInitializationCheckProcessor {
                             processQualifiedAccess(
                                 receiverExitNode, receiver, properties,
                                 doNotReportUninitializedVariable,
-                                doNotReportConstantUninitialized,
-                                reporter, context
+                                doNotReportConstantUninitialized
                             )
                         }
                     }
                 }
                 is CFGNodeWithSubgraphs<*> -> {
                     processSubGraphs(
-                        graph, node, properties, context, reporter,
+                        graph, node, properties,
                         scope, isForInitialization,
                         doNotReportUninitializedVariable,
                         doNotReportConstantUninitialized,
@@ -108,11 +104,10 @@ abstract class VariableInitializationCheckProcessor {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun VariableInitializationInfoData.processUnionNode(
         node: CFGNode<*>,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         fun CFGNode<*>.reportErrorsOnInitializationsInInputs(
             symbol: FirVariableSymbol<*>,
@@ -120,13 +115,13 @@ abstract class VariableInitializationCheckProcessor {
             visited: PersistentSet<CFGNode<*>>,
         ) {
             val newVisited = visited.add(this)
-            require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol, context) }
+            require(newVisited !== visited) { buildRecursionErrorMessage(this, symbol) }
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
                 when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
-                    is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol, reporter, context)
+                    is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
                         assignmentNode?.reportErrorsOnInitializationsInInputs(symbol, path, newVisited)
                 }
@@ -162,11 +157,10 @@ abstract class VariableInitializationCheckProcessor {
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun VariableInitializationInfoData.processVariableAssignment(
         node: VariableAssignmentNode,
         properties: Set<FirVariableSymbol<*>>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
         scope: FirDeclaration?,
         scopes: MutableMap<FirVariableSymbol<*>, FirDeclaration?>,
     ) {
@@ -176,29 +170,28 @@ abstract class VariableInitializationCheckProcessor {
         val info = getValue(node)
         when {
             info.values.any { it[symbol]?.canBeRevisited() == true } -> {
-                reportValReassignment(node, symbol, reporter, context)
+                reportValReassignment(node, symbol)
             }
             scope != scopes[symbol] -> {
-                reportCapturedInitialization(node, symbol, reporter, context)
+                reportCapturedInitialization(node, symbol)
             }
             !symbol.isLocal && !node.owner.isInline(until = symbol.getContainingSymbol(context.session)) -> {
                 // If the assignment is inside INVOKE_ONCE lambda and the lambda is not inlined,
                 // backend generates either separate function or separate class for the lambda.
                 // If we try to initialize non-static final field there, we will get exception at
                 // runtime, since we can initialize such fields only inside constructors.
-                reportNonInlineMemberValInitialization(node, symbol, reporter, context)
+                reportNonInlineMemberValInitialization(node, symbol)
             }
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     private fun VariableInitializationInfoData.processQualifiedAccess(
         node: CFGNode<*>,
         expression: FirQualifiedAccessExpression,
         properties: Set<FirVariableSymbol<*>>,
         doNotReportUninitializedVariable: Boolean,
         doNotReportConstantUninitialized: Boolean,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     ) {
         if (doNotReportUninitializedVariable) return
         if (expression is FirWhenSubjectExpression) return
@@ -212,7 +205,7 @@ abstract class VariableInitializationCheckProcessor {
             symbol in properties &&
             !symbol.isInitializedAt(node, data = this)
         ) {
-            reportUninitializedVariable(reporter, expression, symbol, context)
+            reportUninitializedVariable(expression, symbol)
         }
     }
 
@@ -222,12 +215,11 @@ abstract class VariableInitializationCheckProcessor {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun VariableInitializationInfoData.processSubGraphs(
         graph: ControlFlowGraph,
         node: CFGNodeWithSubgraphs<*>,
         properties: Set<FirVariableSymbol<*>>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         scope: FirDeclaration?,
         isForInitialization: Boolean,
         doNotReportUninitializedVariable: Boolean,
@@ -253,7 +245,7 @@ abstract class VariableInitializationCheckProcessor {
 
             val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
             runCheck(
-                subGraph, properties, context, reporter, newScope,
+                subGraph, properties, newScope,
                 isForInitialization,
                 doNotReportUninitializedVariable = doNotReportUninitializedVariable || doNotReportForSubGraph,
                 doNotReportConstantUninitialized = doNotReportConstantUninitialized && !isSubGraphConstProperty,
@@ -264,32 +256,28 @@ abstract class VariableInitializationCheckProcessor {
 
     // ------------------------------------ reporting ------------------------------------
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun VariableInitializationInfoData.reportCapturedInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportUninitializedVariable(
-        reporter: DiagnosticReporter,
         expression: FirQualifiedAccessExpression,
         symbol: FirVariableSymbol<*>,
-        context: CheckerContext,
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportNonInlineMemberValInitialization(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     )
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     protected abstract fun reportValReassignment(
         node: VariableAssignmentNode,
         symbol: FirVariableSymbol<*>,
-        reporter: DiagnosticReporter,
-        context: CheckerContext,
     )
 
     // ------------------------------------ utilities ------------------------------------
@@ -344,10 +332,10 @@ private val FirVariableSymbol<*>.isLocal: Boolean
 val FirVariableSymbol<*>.isCapturedByValue: Boolean
     get() = isVal && isLocal
 
+context(context: CheckerContext)
 fun buildRecursionErrorMessage(
     problemNode: CFGNode<*>,
     symbol: FirVariableSymbol<*>,
-    context: CheckerContext,
 ): String {
     return buildString {
         appendLine("Node has already been visited and could result in infinite recursion.")

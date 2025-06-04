@@ -37,7 +37,7 @@ object FirUnsupportedSyntheticCallableReferenceChecker : FirExpressionChecker<Fi
             // That's why we need to do an additional check in K2 checker, while in K1 we didn't need to do it
             resolvedSymbol !is FirJavaOverriddenSyntheticPropertySymbol
         ) {
-            expression.calleeReference.requireFeatureSupport(LanguageFeature.ReferencesToSyntheticJavaProperties, context, reporter)
+            expression.calleeReference.requireFeatureSupport(LanguageFeature.ReferencesToSyntheticJavaProperties)
         }
     }
 }

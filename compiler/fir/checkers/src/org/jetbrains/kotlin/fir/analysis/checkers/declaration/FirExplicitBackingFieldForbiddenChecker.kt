@@ -26,7 +26,7 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
         }
 
         if (declaration.propertySymbol.isAbstract) {
-            reporter.reportOn(declaration.source, getProperDiagnostic(context))
+            reporter.reportOn(declaration.source, getProperDiagnostic())
         }
 
         if (declaration.propertySymbol.isExtension) {
@@ -34,7 +34,8 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
         }
     }
 
-    private fun getProperDiagnostic(context: CheckerContext): KtDiagnosticFactory0 {
+    context(context: CheckerContext)
+    private fun getProperDiagnostic(): KtDiagnosticFactory0 {
         return if (context.findClosestClassOrObject()?.classKind == ClassKind.INTERFACE) {
             FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
         } else {

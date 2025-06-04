@@ -73,7 +73,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
             }
             is FirClass -> {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
-                    checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
+                    checkForLocalRedeclarations(declaration.typeParameters)
                 }
                 val inspector = FirDeclarationCollector<FirBasedSymbol<*>>(context)
                 inspector.collectClassMembers(declaration.symbol)
@@ -83,9 +83,9 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
                 if (declaration.source?.kind !is KtFakeSourceElementKind && declaration is FirTypeParameterRefsOwner) {
                     if (declaration is FirFunction || declaration is FirProperty) {
                         val destructuredParameters = getDestructuredParameters(declaration)
-                        checkForLocalRedeclarations(destructuredParameters, context, reporter)
+                        checkForLocalRedeclarations(destructuredParameters)
                     }
-                    checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
+                    checkForLocalRedeclarations(declaration.typeParameters)
                 }
             }
         }

@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
-    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(data: VariableInitializationInfoData) {
         val isForInitialization = data.graph.kind == ControlFlowGraph.Kind.Class || data.graph.kind == ControlFlowGraph.Kind.File
         val collector = ReassignedVariableCollector(data, isForInitialization).apply { data.graph.traverse(this) }
         val iterator = data.properties.iterator()
@@ -48,7 +49,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
                     symbol.isLateInit -> FirErrors.CAN_BE_VAL_LATEINIT
                     else -> FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION
                 }
-                reporter.reportOn(source, diagnostic, context)
+                reporter.reportOn(source, diagnostic)
             }
         }
     }

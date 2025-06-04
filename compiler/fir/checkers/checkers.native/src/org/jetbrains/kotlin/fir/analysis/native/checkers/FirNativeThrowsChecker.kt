@@ -151,7 +151,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             }
         }
 
-        val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context)
+        val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope()
         if (currentScope != null) {
             currentScope.processFunctionsByName(function.name) {}
             getInheritedThrows(throwsAnnotation, MemberWithBaseScope(function.symbol, currentScope))

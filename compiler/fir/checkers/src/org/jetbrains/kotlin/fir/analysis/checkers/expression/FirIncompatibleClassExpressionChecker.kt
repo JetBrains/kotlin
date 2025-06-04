@@ -26,44 +26,48 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
     override fun check(expression: FirQualifiedAccessExpression) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
 
-        checkType(symbol.resolvedReturnType, expression, context, reporter)
+        checkType(symbol.resolvedReturnType, expression)
         for (parameter in symbol.contextParameterSymbols) {
-            checkType(parameter.resolvedReturnType, expression, context, reporter)
+            checkType(parameter.resolvedReturnType, expression)
         }
-        checkType(symbol.resolvedReceiverType, expression, context, reporter)
+        checkType(symbol.resolvedReceiverType, expression)
         if (symbol is FirFunctionSymbol) {
             for (parameter in symbol.valueParameterSymbols) {
-                checkType(parameter.resolvedReturnTypeRef.coneType, expression, context, reporter)
+                checkType(parameter.resolvedReturnTypeRef.coneType, expression)
             }
         }
 
-        checkSourceElement(symbol.containerSource, expression, context, reporter)
+        checkSourceElement(symbol.containerSource, expression)
     }
 
-    internal fun checkType(type: ConeKotlinType?, element: FirElement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun checkType(type: ConeKotlinType?, element: FirElement) {
         val classSymbol = type?.toRegularClassSymbol(context.session)
-        checkSourceElement(classSymbol?.sourceElement, element, context, reporter)
+        checkSourceElement(classSymbol?.sourceElement, element)
     }
 
-    private fun checkSourceElement(source: SourceElement?, element: FirElement, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkSourceElement(
+        source: SourceElement?,
+        element: FirElement,
+    ) {
         if (source !is DeserializedContainerSource) return
 
         val incompatibility = source.incompatibility
         if (incompatibility != null) {
-            reporter.reportOn(element.source, FirErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility, context)
+            reporter.reportOn(element.source, FirErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility)
         }
         if (source.preReleaseInfo.isInvisible) {
             reporter.reportOn(
                 element.source,
                 FirErrors.PRE_RELEASE_CLASS,
                 source.presentableString,
-                source.preReleaseInfo.poisoningFeatures,
-                context
+                source.preReleaseInfo.poisoningFeatures
             )
 
         }
         if (source.abiStability == DeserializedContainerAbiStability.UNSTABLE) {
-            reporter.reportOn(element.source, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString, context)
+            reporter.reportOn(element.source, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString)
         }
     }
 }

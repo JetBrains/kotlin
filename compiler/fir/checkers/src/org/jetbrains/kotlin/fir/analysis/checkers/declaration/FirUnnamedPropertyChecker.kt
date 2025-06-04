@@ -37,7 +37,7 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         if (!isDesugaredComponentCall && declaration.isCatchParameter != true) {
             declaration.requireFeatureSupport(
-                LanguageFeature.UnnamedLocalVariables, context, reporter,
+                LanguageFeature.UnnamedLocalVariables,
                 positioningStrategy = SourceElementPositioningStrategies.NAME_IDENTIFIER,
             )
         }

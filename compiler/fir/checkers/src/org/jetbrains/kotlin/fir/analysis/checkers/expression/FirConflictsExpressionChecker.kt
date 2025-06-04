@@ -21,19 +21,22 @@ object FirConflictsExpressionChecker : FirBlockChecker(MppCheckerKind.Common) {
         val elements =
             if (expression.statements.none { it.isDestructuredParameter() }) expression.statements // optimization
             else expression.statements.filterNot { it.isDestructuredParameter() }
-        checkForLocalRedeclarations(elements, context, reporter)
-        checkForLocalConflictingFunctions(expression, context, reporter)
+        checkForLocalRedeclarations(elements)
+        checkForLocalConflictingFunctions(expression)
     }
 
-    private fun checkForLocalConflictingFunctions(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
-        val conflictingFunctions = collectConflictingLocalFunctionsFrom(expression, context)
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkForLocalConflictingFunctions(
+        expression: FirBlock,
+    ) {
+        val conflictingFunctions = collectConflictingLocalFunctionsFrom(expression)
 
         for ((function, otherFunctionsThatConflictWithIt) in conflictingFunctions) {
             if (otherFunctionsThatConflictWithIt.isEmpty()) {
                 continue
             }
 
-            reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt, context)
+            reporter.reportOn(function.source, FirErrors.CONFLICTING_OVERLOADS, otherFunctionsThatConflictWithIt)
         }
     }
 }

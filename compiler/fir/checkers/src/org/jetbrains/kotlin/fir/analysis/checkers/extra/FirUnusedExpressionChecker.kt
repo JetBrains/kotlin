@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
 
 object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
-    override fun isEnabled(context: CheckerContext): Boolean = true // Controlled by FIR_EXTRA_CHECKERS
+    context(context: CheckerContext)
+    override fun isEnabled(): Boolean = true // Controlled by FIR_EXTRA_CHECKERS
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun reportUnusedExpressionIfNeeded(
         expression: FirExpression,
         hasSideEffects: Boolean,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
         source: KtSourceElement?,
     ): Boolean {
         if (hasSideEffects) return false
@@ -30,7 +30,7 @@ object FirUnusedExpressionChecker : FirUnusedCheckerBase() {
                 -> FirErrors.UNUSED_LAMBDA_EXPRESSION
             else -> FirErrors.UNUSED_EXPRESSION
         }
-        reporter.reportOn(source, factory, context)
+        reporter.reportOn(source, factory)
         return true
     }
 }

@@ -44,7 +44,7 @@ sealed class FirNotImplementedOverrideSimpleEnumEntryChecker(mppKind: MppChecker
         val enumEntries = declaration.collectEnumEntries(context.session).filter { it.initializer == null && it.source != null }
         if (enumEntries.isEmpty()) return
 
-        val enumScope = declaration.unsubstitutedScope(context)
+        val enumScope = declaration.unsubstitutedScope()
 
         val notImplemented = mutableListOf<FirCallableSymbol<*>>()
         enumScope.processAllCallables { symbol ->

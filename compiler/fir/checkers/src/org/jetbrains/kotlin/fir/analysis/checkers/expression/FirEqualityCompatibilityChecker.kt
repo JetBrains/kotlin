@@ -26,18 +26,18 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }
 
-        val l = arguments[0].toArgumentInfo(context)
-        val r = arguments[1].toArgumentInfo(context)
+        val l = arguments[0].toArgumentInfo()
+        val r = arguments[1].toArgumentInfo()
 
-        checkSenselessness(l.smartCastType, r.smartCastType, context, expression, reporter)
+        checkSenselessness(l.smartCastType, r.smartCastType, expression)
 
-        val checkApplicability = when (expression.operation) {
-            FirOperation.EQ, FirOperation.NOT_EQ -> ::checkEqualityApplicability
-            FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> ::checkIdentityApplicability
+        val checkApplicability: (TypeInfo, TypeInfo) -> Applicability = when (expression.operation) {
+            FirOperation.EQ, FirOperation.NOT_EQ -> { a, b -> checkEqualityApplicability(a, b) }
+            FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> { a, b -> checkIdentityApplicability(a, b) }
             else -> error("Invalid operator of FirEqualityOperatorCall")
         }
 
-        checkApplicability(l.originalTypeInfo, r.originalTypeInfo, context).ifInapplicable {
+        checkApplicability(l.originalTypeInfo, r.originalTypeInfo).ifInapplicable {
             // K1 checks consist of 2 parts: reporting a
             // diagnostic if the intersection is empty,
             // and otherwise reporting a diagnostic if
@@ -52,7 +52,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, forceWarning = isCaseMissedByK1 && replicateK1Behavior,
                 l.originalTypeInfo, r.originalTypeInfo,
-                l.userType, r.userType, context,
+                l.userType, r.userType,
             )
         }
 
@@ -60,16 +60,17 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             return
         }
 
-        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo, context).ifInapplicable {
+        checkApplicability(l.smartCastTypeInfo, r.smartCastTypeInfo).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, forceWarning = true,
                 l.smartCastTypeInfo, r.smartCastTypeInfo,
-                l.userType, r.userType, context,
+                l.userType, r.userType,
             )
         }
     }
 
-    private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
+    context(context: CheckerContext)
+    private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo): Applicability {
         val oneIsBuiltin = l.isBuiltin || r.isBuiltin
         val oneIsIdentityLess = l.isIdentityLess(context.session) || r.isIdentityLess(context.session)
 
@@ -79,18 +80,19 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         // the list of special fqNames described in RULES1
 
         return when {
-            (oneIsBuiltin || oneIsIdentityLess) && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
+            (oneIsBuiltin || oneIsIdentityLess) && shouldReportAsPerRules1(l, r) -> getInapplicabilityFor(l, r)
             else -> Applicability.APPLICABLE
         }
     }
 
-    private fun checkIdentityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
+    context(context: CheckerContext)
+    private fun checkIdentityApplicability(l: TypeInfo, r: TypeInfo): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             l.type.isNullableNothing || r.type.isNullableNothing -> Applicability.APPLICABLE
             l.isIdentityLess(context.session) || r.isIdentityLess(context.session) -> Applicability.INAPPLICABLE_AS_IDENTITY_LESS
-            oneIsNotNull && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
+            oneIsNotNull && shouldReportAsPerRules1(l, r) -> getInapplicabilityFor(l, r)
             else -> Applicability.APPLICABLE
         }
     }
@@ -132,18 +134,18 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         else -> FirErrors.EQUALITY_NOT_APPLICABLE
     }
 
+    context(context: CheckerContext)
     private fun getIdentityLessInapplicabilityDiagnostic(
         l: TypeInfo,
         r: TypeInfo,
         forceWarning: Boolean,
-        context: CheckerContext,
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
         val areBothPrimitives = l.isNotNullPrimitive && r.isNotNullPrimitive
         val areSameTypes = l.type.classId == r.type.classId
         val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
         // In this case K1 reports nothing
-        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && areRelated(l, r, context)
+        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && areRelated(l, r)
                 && !shouldProperlyReportError
 
         return when {
@@ -167,11 +169,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         else -> FirErrors.INCOMPATIBLE_TYPES
     }
 
+    context(context: CheckerContext)
     private fun getEnumInapplicabilityDiagnostic(
         l: TypeInfo,
         r: TypeInfo,
         forceWarning: Boolean,
-        context: CheckerContext,
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
         // In this corner case K1 reports nothing
         val bothNullableEnums = l.isNullableEnum && r.isNullableEnum
@@ -191,6 +193,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         }
     }
 
+    context(context: CheckerContext)
     private fun DiagnosticReporter.reportInapplicabilityDiagnostic(
         expression: FirEqualityOperatorCall,
         applicability: Applicability,
@@ -200,34 +203,45 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         r: TypeInfo,
         lUserType: ConeKotlinType,
         rUserType: ConeKotlinType,
-        context: CheckerContext,
     ): Unit = when {
         applicability == Applicability.INAPPLICABLE_AS_IDENTITY_LESS -> reportOn(
-            expression.source, getIdentityLessInapplicabilityDiagnostic(l, r, forceWarning, context),
-            lUserType, rUserType, context,
+            expression.source,
+            getIdentityLessInapplicabilityDiagnostic(
+                l,
+                r,
+                forceWarning
+            ),
+            lUserType,
+            rUserType
         )
         applicability == Applicability.INAPPLICABLE_AS_ENUMS -> reportOn(
-            expression.source, getEnumInapplicabilityDiagnostic(l, r, forceWarning, context),
-            lUserType, rUserType, context,
+            expression.source,
+            getEnumInapplicabilityDiagnostic(l, r, forceWarning),
+            lUserType,
+            rUserType
         )
         // This check ensures K2 reports the same diagnostics as K1 used to.
         expression.source?.kind !is KtRealSourceElementKind -> reportOn(
-            expression.source, getSourceLessInapplicabilityDiagnostic(forceWarning),
-            lUserType, rUserType, context,
+            expression.source,
+            getSourceLessInapplicabilityDiagnostic(forceWarning),
+            lUserType,
+            rUserType
         )
         applicability == Applicability.GENERALLY_INAPPLICABLE -> reportOn(
-            expression.source, getGeneralInapplicabilityDiagnostic(forceWarning),
-            operation.operator, lUserType, rUserType, context,
+            expression.source,
+            getGeneralInapplicabilityDiagnostic(forceWarning),
+            operation.operator,
+            lUserType,
+            rUserType
         )
         else -> error("Shouldn't be here")
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSenselessness(
         lType: ConeKotlinType,
         rType: ConeKotlinType,
-        context: CheckerContext,
-        expression: FirEqualityOperatorCall,
-        reporter: DiagnosticReporter
+        expression: FirEqualityOperatorCall
     ) {
         val type = when {
             rType.isNullableNothing -> lType
@@ -248,9 +262,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         // only intended for cases where the branch condition contains a null. Also, the error message for SENSELESS_NULL_IN_WHEN
         // says the value is *never* equal to null, so we can't report it if the value is *always* equal to null.
         if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType && !compareResult) {
-            reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN, context)
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN)
         } else {
-            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, compareResult, context)
+            reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, compareResult)
         }
     }
 }

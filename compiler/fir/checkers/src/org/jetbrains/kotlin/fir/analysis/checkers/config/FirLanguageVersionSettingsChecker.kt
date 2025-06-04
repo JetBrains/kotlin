@@ -15,5 +15,6 @@ abstract class FirLanguageVersionSettingsChecker {
      * [rawReport] allows to report a diagnostic directly to a message collector.
      * This function accepts isError: Boolean and message: String as parameters.
      */
-    abstract fun check(context: CheckerContext, reporter: BaseDiagnosticsCollector.RawReporter)
+    context(context: CheckerContext)
+    abstract fun check(reporter: BaseDiagnosticsCollector.RawReporter)
 }

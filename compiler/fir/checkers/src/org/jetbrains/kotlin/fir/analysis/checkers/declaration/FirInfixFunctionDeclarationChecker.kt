@@ -19,16 +19,16 @@ object FirInfixFunctionDeclarationChecker : FirFunctionChecker(MppCheckerKind.Co
         if (!declaration.status.isInfix) return
         if (
             (declaration.valueParameters.size != 1) ||
-            !hasExtensionOrDispatchReceiver(declaration, context) ||
+            !hasExtensionOrDispatchReceiver(declaration) ||
             declaration.valueParameters.single().isVararg
         ) {
             reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_INFIX_MODIFIER)
         }
     }
 
+    context(context: CheckerContext)
     private fun hasExtensionOrDispatchReceiver(
-        function: FirFunction,
-        context: CheckerContext
+        function: FirFunction
     ): Boolean {
         if (function.receiverParameter != null) return true
         return context.containingDeclarations.lastOrNull() is FirClassSymbol

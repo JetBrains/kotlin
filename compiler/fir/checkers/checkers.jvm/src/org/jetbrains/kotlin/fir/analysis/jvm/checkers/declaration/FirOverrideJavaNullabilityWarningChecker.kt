@@ -46,7 +46,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         val substitutor = EnhancedForWarningConeSubstitutor(context.session.typeContext)
-        val scope = declaration.unsubstitutedScope(context)
+        val scope = declaration.unsubstitutedScope()
         val typeCheckerState = context.session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
@@ -77,7 +77,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
                             memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )
@@ -104,7 +104,7 @@ sealed class FirOverrideJavaNullabilityWarningChecker(mppKind: MppCheckerKind) :
                     }
 
                 if (anyBaseEnhanced && !anyReported) {
-                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState, context)?.let {
+                    memberSymbol.checkReturnType(enhancedOverrides, typeCheckerState)?.let {
                         reporter.reportOn(
                             memberSymbol.source, FirJvmErrors.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE, memberSymbol, it
                         )

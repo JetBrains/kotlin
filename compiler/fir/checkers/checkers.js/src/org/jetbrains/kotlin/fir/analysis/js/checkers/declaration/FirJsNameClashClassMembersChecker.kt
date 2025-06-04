@@ -142,7 +142,7 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
                 }
             }
 
-            val scope = declaration.symbol.unsubstitutedScope(context)
+            val scope = declaration.symbol.unsubstitutedScope()
 
             scope.processDeclaredConstructors(allSymbols::add)
             addAllSymbolsFrom(scope.collectAllFunctions(), context.sessionHolder)

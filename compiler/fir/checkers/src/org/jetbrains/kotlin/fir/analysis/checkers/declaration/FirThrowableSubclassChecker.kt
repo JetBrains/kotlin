@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        if (!declaration.hasThrowableSupertype(context))
+        if (!declaration.hasThrowableSupertype())
             return
 
         if (declaration.typeParameters.isNotEmpty()) {
@@ -40,15 +40,17 @@ object FirThrowableSubclassChecker : FirClassChecker(MppCheckerKind.Common) {
             if (shouldReport) {
                 reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
             }
-        } else if (declaration.hasGenericOuterDeclaration(context)) {
+        } else if (declaration.hasGenericOuterDeclaration()) {
             reporter.reportOn(declaration.source, FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS)
         }
     }
 
-    private fun FirClass.hasThrowableSupertype(context: CheckerContext) =
+    context(context: CheckerContext)
+    private fun FirClass.hasThrowableSupertype() =
         superConeTypes.any { it !is ConeErrorType && it.isSubtypeOfThrowable(context.session) }
 
-    private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun FirClass.hasGenericOuterDeclaration(): Boolean {
         if (!classId.isLocal) return false
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             val hasTypeParameters = when (containingDeclaration) {

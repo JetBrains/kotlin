@@ -41,7 +41,7 @@ object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.C
             !isOverride && valueParameterSymbols.any { it.hasDefaultValue }
 
         val isCallWithDefaultValues = functionSymbol.hasDefaultValues()
-                || containingClass.anyOverriddenOf(functionSymbol, context) { it.hasDefaultValues() }
+                || containingClass.anyOverriddenOf(functionSymbol) { it.hasDefaultValues() }
         val arguments = expression.argumentList as? FirResolvedArgumentList ?: return
 
         if (isCallWithDefaultValues && arguments.arguments.size < functionSymbol.valueParameterSymbols.size) {
@@ -53,12 +53,12 @@ object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker(MppCheckerKind.C
         }
     }
 
+    context(context: CheckerContext)
     private fun FirClassSymbol<*>.anyOverriddenOf(
         functionSymbol: FirNamedFunctionSymbol,
-        context: CheckerContext,
         predicate: (FirNamedFunctionSymbol) -> Boolean
     ): Boolean {
-        val containingScope = unsubstitutedScope(context)
+        val containingScope = unsubstitutedScope()
         // Without it, `LLReversedDiagnosticsFe10TestGenerated.testSuperCallsWithDefaultArguments` fails
         // because the maps in the scope are empty.
         containingScope.processFunctionsByName(functionSymbol.name) { }

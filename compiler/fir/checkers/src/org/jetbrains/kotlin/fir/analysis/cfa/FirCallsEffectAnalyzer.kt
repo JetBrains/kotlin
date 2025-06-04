@@ -34,10 +34,11 @@ import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 
 object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
         // TODO, KT-59816: this is quadratic due to `graph.traverse`, surely there is a better way?
         for (subGraph in graph.subGraphs) {
-            analyze(subGraph, reporter, context)
+            analyze(subGraph)
         }
 
         val function = graph.declaration as? FirFunction ?: return
@@ -69,9 +70,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         )
 
         for ((symbol, uses) in leakedSymbols) {
-            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+            reporter.reportOn(argumentsCalledInPlace[symbol]?.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             for (use in uses) {
-                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol, context)
+                reporter.reportOn(use.source, FirErrors.LEAKED_IN_PLACE_LAMBDA, symbol)
             }
         }
 
@@ -80,7 +81,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
             val foundRange = invocationData.getValue(graph.exitNode)[NormalPath]?.get(symbol)?.withoutMarker ?: EventOccurrencesRange.ZERO
             val coercedFoundRange = foundRange.coerceToInvocationKind()
             if (foundRange !in requiredRange) {
-                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange, context)
+                reporter.reportOn(firEffect.source, FirErrors.WRONG_INVOCATION_KIND, symbol, requiredRange, coercedFoundRange)
             }
         }
     }

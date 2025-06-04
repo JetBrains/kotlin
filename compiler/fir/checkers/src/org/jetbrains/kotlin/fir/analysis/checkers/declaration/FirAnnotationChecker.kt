@@ -385,7 +385,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     private fun checkDeclaredRepeatedAnnotations(annotationContainer: FirAnnotationContainer) {
         val annotationSources = annotationContainer.annotations.keysToMap { it.source }
         checkRepeatedAnnotation(
-            annotationContainer, annotationContainer.annotations, context, reporter,
+            annotationContainer, annotationContainer.annotations,
             annotationSources, defaultSource = null,
         )
     }
@@ -396,7 +396,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         val useSiteSource = typeRef.source
 
         typeRef.coneType.forEachExpandedType(context.session) { type ->
-            checkRepeatedAnnotation(null, type.typeAnnotations, context, reporter, annotationSources, useSiteSource)
+            checkRepeatedAnnotation(null, type.typeAnnotations, annotationSources, useSiteSource)
         }
     }
 
@@ -413,7 +413,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         )
 
         for (annotation in property.annotations) {
-            val useSiteTarget = annotation.useSiteTarget ?: property.getDefaultUseSiteTarget(annotation, context)
+            val useSiteTarget = annotation.useSiteTarget ?: property.getDefaultUseSiteTarget(annotation)
             val existingAnnotations = propertyAnnotations[useSiteTarget] ?: continue
 
             if (annotation.annotationTypeRef.coneType in existingAnnotations && !annotation.isRepeatable(context.session)) {

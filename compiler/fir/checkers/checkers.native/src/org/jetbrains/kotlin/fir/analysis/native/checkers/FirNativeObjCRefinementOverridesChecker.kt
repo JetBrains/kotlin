@@ -50,7 +50,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
         // We just need to check intersection overrides, all other declarations are checked by FirNativeObjCRefinementChecker
-        val baseScope = declaration.unsubstitutedScope(context)
+        val baseScope = declaration.unsubstitutedScope()
         baseScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
             check(baseScope, symbol, declaration, emptyList(), emptyList())

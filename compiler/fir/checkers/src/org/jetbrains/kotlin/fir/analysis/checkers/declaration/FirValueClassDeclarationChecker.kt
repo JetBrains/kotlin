@@ -160,7 +160,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
-        val classScope = declaration.unsubstitutedScope(context)
+        val classScope = declaration.unsubstitutedScope()
         for (reservedName in reservedNames) {
             classScope.processFunctionsByName(Name.identifier(reservedName)) {
                 val functionSymbol = it.unwrapFakeOverrides()

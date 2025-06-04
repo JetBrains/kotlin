@@ -33,11 +33,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclaration, KtDeclaration>() {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirDeclaration,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val sourceKindIsReal = source.kind is KtRealSourceElementKind
         if (!sourceKindIsReal &&
@@ -69,33 +68,33 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         }
 
         if (explicitApiState != null) {
-            checkVisibilityModifier(explicitApiState, element, source, context, reporter)
+            checkVisibilityModifier(explicitApiState, element, source)
         }
 
         if (sourceKindIsReal && element is FirCallableDeclaration) {
             // Don't check fake property from parameter because they always have an explicit type (otherwise it's a compiler error)
-            checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source, context, reporter)
+            checkExplicitReturnType(explicitApiState ?: explicitReturnTypesState!!, element, source)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkVisibilityModifier(
         state: ExplicitApiMode,
         declaration: FirMemberDeclaration,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val visibilityModifier = source.getChild(KtNodeTypes.MODIFIER_LIST, depth = 1)?.getChild(KtTokens.VISIBILITY_MODIFIERS)
         if (visibilityModifier != null) return
 
-        if (explicitVisibilityIsNotRequired(declaration, context)) return
+        if (explicitVisibilityIsNotRequired(declaration)) return
         val factory = if (state == ExplicitApiMode.STRICT)
             FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE
         else
             FirErrors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING
-        reporter.reportOn(source, factory, context)
+        reporter.reportOn(source, factory)
     }
 
+    context(context: CheckerContext)
     /**
      * Exclusion list:
      * 1. Primary constructors of public API classes
@@ -107,12 +106,13 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 7. An anonymous function
      * 8. A local named function
      */
-    private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration, context: CheckerContext): Boolean {
+    private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration): Boolean {
         return when (declaration) {
             is FirPrimaryConstructor, // 1,
             is FirPropertyAccessor, // 4
             is FirValueParameter, // 6
-            is FirAnonymousFunction -> true // 7
+            is FirAnonymousFunction
+                -> true // 7
             is FirCallableDeclaration -> {
                 val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol
                 // 2, 5
@@ -129,12 +129,11 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkExplicitReturnType(
         state: ExplicitApiMode,
         declaration: FirCallableDeclaration,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         if (!declaration.returnTypeCheckIsApplicable()) return
 
@@ -143,7 +142,7 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
                 FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE
             else
                 FirErrors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING
-        reporter.reportOn(source, factory, context)
+        reporter.reportOn(source, factory)
     }
 
     private fun FirCallableDeclaration.returnTypeCheckIsApplicable(): Boolean {

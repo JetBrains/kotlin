@@ -46,7 +46,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
         val inRealBlock = expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
 
         for (annotation in annotations) {
-            val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation, context)
+            val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation)
             val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
 
             val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
@@ -57,7 +57,7 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION)
             }
 
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter, annotation.source)
+            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, annotation.source)
 
             existingTargetsForAnnotation.add(useSiteTarget)
         }

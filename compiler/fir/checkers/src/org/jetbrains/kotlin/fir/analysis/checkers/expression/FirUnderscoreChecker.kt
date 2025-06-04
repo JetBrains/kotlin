@@ -21,11 +21,11 @@ object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
         when (expression) {
             is FirResolvable -> {
                 if (diagnosticsCheckNeeded(expression)) {
-                    checkUnderscoreDiagnostics(expression.calleeReference.source, context, reporter, true)
+                    checkUnderscoreDiagnostics(expression.calleeReference.source, true)
                 }
             }
             is FirResolvedQualifier -> {
-                checkUnderscoreDiagnostics(expression.source, context, reporter, true)
+                checkUnderscoreDiagnostics(expression.source, true)
             }
         }
     }

@@ -39,7 +39,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         val isInline = when (callableSymbol) {
             is FirFunctionSymbol<*> -> callableSymbol.isInline
             is FirPropertySymbol -> {
-                val accessor = if (expression.isLhsOfAssignment(context)) callableSymbol.setterSymbol else callableSymbol.getterSymbol
+                val accessor = if (expression.isLhsOfAssignment()) callableSymbol.setterSymbol else callableSymbol.getterSymbol
                 accessor != null && accessor.isInline
             }
             else -> false

@@ -21,35 +21,40 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        checkNotAcceptedExperimentalities(expression, context, reporter)
-        checkMarkerUsedAsQualifier(expression, context, reporter)
+        checkNotAcceptedExperimentalities(expression)
+        checkMarkerUsedAsQualifier(expression)
     }
 
-    private fun checkNotAcceptedExperimentalities(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkNotAcceptedExperimentalities(
+        expression: FirResolvedQualifier,
+    ) {
         val symbol = expression.symbol ?: return
         with(FirOptInUsageBaseChecker) {
-            val experimentalities = symbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType = null)
-            reportNotAcceptedExperimentalities(experimentalities, expression, context, reporter)
+            val experimentalities = symbol.loadExperimentalities(fromSetter = false, dispatchReceiverType = null)
+            reportNotAcceptedExperimentalities(experimentalities, expression)
         }
     }
 
-    private fun checkMarkerUsedAsQualifier(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkMarkerUsedAsQualifier(
+        expression: FirResolvedQualifier,
+    ) {
         val containingElements = context.containingElements
         val parentExpression = containingElements.lastOrNull { it is FirQualifiedAccessExpression && it.dispatchReceiver == expression }
         val source = parentExpression?.source ?: return
-        expression.symbol?.checkContainingClasses(source, context, reporter)
+        expression.symbol?.checkContainingClasses(source)
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     private tailrec fun FirClassLikeSymbol<*>.checkContainingClasses(
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter,
     ) {
         if (isExperimentalMarker(context.session) && context.containingDeclarations.none { it == this }) {
-            reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN, context)
+            reporter.reportOn(source, FirErrors.OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN)
         }
 
         val containingClassSymbol = this.getContainingClassLookupTag()?.toSymbol(context.session) ?: return
-        containingClassSymbol.checkContainingClasses(source, context, reporter)
+        containingClassSymbol.checkContainingClasses(source)
     }
 }

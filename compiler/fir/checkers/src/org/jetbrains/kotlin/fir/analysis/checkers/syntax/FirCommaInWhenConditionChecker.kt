@@ -23,22 +23,22 @@ object FirCommaInWhenConditionChecker : FirExpressionSyntaxChecker<FirWhenExpres
         return element.subjectVariable == null
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun checkPsiOrLightTree(
         element: FirWhenExpression,
         source: KtSourceElement,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         for (branch in element.branches) {
             if (branch.condition is FirElseIfTrueCondition) continue
-            checkCommaInBranchCondition(branch, context, reporter)
+            checkCommaInBranchCondition(branch)
         }
     }
 
-    private fun checkCommaInBranchCondition(branch: FirWhenBranch, context: CheckerContext, reporter: DiagnosticReporter) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCommaInBranchCondition(branch: FirWhenBranch) {
         val source = branch.source
         if (source?.elementType == KtNodeTypes.WHEN_ENTRY && source?.getChild(KtTokens.COMMA, depth = 1) != null) {
-            reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, context)
+            reporter.reportOn(source, FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT)
         }
     }
 }

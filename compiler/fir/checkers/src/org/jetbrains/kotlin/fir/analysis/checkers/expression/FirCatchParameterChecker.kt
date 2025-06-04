@@ -52,7 +52,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             }
 
             val session = context.session
-            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(context, coneType)) {
+            if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(coneType)) {
                 reporter.reportOn(
                     source,
                     FirErrors.THROWABLE_TYPE_MISMATCH,
@@ -66,7 +66,8 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
         }
     }
 
-    private fun isProhibitedNothing(context: CheckerContext, coneType: ConeKotlinType): Boolean {
+    context(context: CheckerContext)
+    private fun isProhibitedNothing(coneType: ConeKotlinType): Boolean {
         return context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNothingAsCatchParameter) && coneType.isNothing
     }
 }

@@ -46,12 +46,13 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         val primaryConstructorSymbol = declaration.primaryConstructorIfAny(context.session)
 
         if (primaryConstructorSymbol == null || primaryConstructorSymbol.isErrorPrimaryConstructor) {
-            checkSupertypeInitializedWithoutPrimaryConstructor(declaration, reporter, context)
+            checkSupertypeInitializedWithoutPrimaryConstructor(declaration)
         } else {
-            checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration, context, reporter)
+            checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration)
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
     /**
      *  SUPERTYPE_NOT_INITIALIZED is reported on code like the following. It's skipped if `A` has `()` after it, in which case any
      *  diagnostics for that constructor call will be reported, if applicable.
@@ -64,8 +65,6 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
     private fun checkSuperTypeNotInitialized(
         primaryConstructorSymbol: FirConstructorSymbol,
         regularClass: FirClass,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
     ) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClassSymbol>()
         val delegatedConstructorCall = primaryConstructorSymbol.resolvedDelegatedConstructorCall ?: return
@@ -75,8 +74,8 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         val superClassSymbol = constructedTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
         // Subclassing a singleton should be reported as SINGLETON_IN_SUPERTYPE
         if (superClassSymbol.classKind.isSingleton) return
-        if (regularClass.isEffectivelyExpect(containingClass, context) ||
-            regularClass.isEffectivelyExternal(containingClass, context)
+        if (regularClass.isEffectivelyExpect(containingClass) ||
+            regularClass.isEffectivelyExternal(containingClass)
         ) {
             return
         }
@@ -86,10 +85,11 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
             .supertypesThatDontNeedInitializationInSubtypesConstructors
         if (superClassSymbol.classId in supertypesToSkip) return
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
-            reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)
+            reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED)
         }
     }
 
+    context(reporter: DiagnosticReporter, context: CheckerContext)
     /**
      * SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR is reported on code like the following, where `B` does not have a primary
      * constructor, in which case, one can not call the delegated constructor of `A` in the super type list. `B` doesn't have a primary
@@ -105,13 +105,14 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
      */
     private fun checkSupertypeInitializedWithoutPrimaryConstructor(
         regularClass: FirClass,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
     ) {
         with(SourceNavigator.forElement(regularClass)) {
             for (superTypeRef in regularClass.superTypeRefs) {
                 if (superTypeRef.isInConstructorCallee()) {
-                    reporter.reportOn(superTypeRef.source ?: regularClass.source, FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, context)
+                    reporter.reportOn(
+                        superTypeRef.source ?: regularClass.source,
+                        FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
+                    )
                 }
             }
         }

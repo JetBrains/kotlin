@@ -74,7 +74,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
         }
 
         if (argument !is FirResolvedQualifier) return
-        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral()) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
@@ -111,7 +111,8 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
             return (this as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedTypeParameterSymbol()
         }
 
-    private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
+    context(context: CheckerContext)
+    private fun ConeKotlinType.isAllowedInClassLiteral(): Boolean =
         when (this) {
             is ConeClassLikeType -> {
                 val isPlatformThatAllowsNonPrimitiveArrays = context.session.firGenericArrayClassLiteralSupport.isEnabled
@@ -119,7 +120,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true
-                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral(context)
+                            is ConeKotlinTypeProjection -> !typeArgument.type.isAllowedInClassLiteral()
                         }
                     }
                 } else

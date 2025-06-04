@@ -38,8 +38,7 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
         if (fullyExpandedCallableId in problematicCallableIds) {
             reportAtomicToPrimitiveProblematicAccess(
                 receiverType, expression.source,
-                atomicReferenceClassId, appropriateCandidatesForArgument,
-                context, reporter
+                atomicReferenceClassId, appropriateCandidatesForArgument
             )
         }
     }

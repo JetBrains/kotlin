@@ -16,7 +16,7 @@ object FirIncompatibleProjectionsOnTypeArgumentChecker : FirQualifiedAccessExpre
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         for (it in expression.typeArguments) {
-            checkModifiersCompatibility(it, context, reporter)
+            checkModifiersCompatibility(it)
         }
     }
 }

@@ -124,7 +124,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         kotlinRepeatable: FirAnnotation,
         declaration: FirRegularClass,
     ) {
-        val unsubsitutedScope = declaration.unsubstitutedScope(context)
+        val unsubsitutedScope = declaration.unsubstitutedScope()
         if (unsubsitutedScope.getSingleClassifier(REPEATABLE_ANNOTATION_CONTAINER_NAME) != null) {
             reporter.reportOn(kotlinRepeatable.source, FirJvmErrors.REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER_ERROR)
         }

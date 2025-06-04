@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.resolve.Compatibility
 import org.jetbrains.kotlin.resolve.compatibility
 
 
+context(reporter: DiagnosticReporter, context: CheckerContext)
 internal fun checkCompatibilityType(
     firstModifier: FirModifier<*>,
     secondModifier: FirModifier<*>,
-    reporter: DiagnosticReporter,
     reportedNodes: MutableSet<FirModifier<*>>,
-    owner: FirElement?,
-    context: CheckerContext
+    owner: FirElement?
 ) {
     val firstModifierToken = firstModifier.token
     val secondModifierToken = secondModifier.token
@@ -32,15 +31,14 @@ internal fun checkCompatibilityType(
         }
         Compatibility.REPEATED ->
             if (reportedNodes.add(secondModifier)) {
-                reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
+                reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken)
             }
         Compatibility.REDUNDANT -> {
             reporter.reportOn(
                 secondModifier.source,
                 FirErrors.REDUNDANT_MODIFIER,
                 secondModifierToken,
-                firstModifierToken,
-                context
+                firstModifierToken
             )
         }
         Compatibility.REVERSE_REDUNDANT -> {
@@ -48,8 +46,7 @@ internal fun checkCompatibilityType(
                 firstModifier.source,
                 FirErrors.REDUNDANT_MODIFIER,
                 firstModifierToken,
-                secondModifierToken,
-                context
+                secondModifierToken
             )
         }
         Compatibility.DEPRECATED -> {
@@ -57,15 +54,13 @@ internal fun checkCompatibilityType(
                 firstModifier.source,
                 FirErrors.DEPRECATED_MODIFIER_PAIR,
                 firstModifierToken,
-                secondModifierToken,
-                context
+                secondModifierToken
             )
             reporter.reportOn(
                 secondModifier.source,
                 FirErrors.DEPRECATED_MODIFIER_PAIR,
                 secondModifierToken,
-                firstModifierToken,
-                context
+                firstModifierToken
             )
         }
         Compatibility.INCOMPATIBLE, Compatibility.COMPATIBLE_FOR_CLASSES_ONLY -> {
@@ -77,8 +72,7 @@ internal fun checkCompatibilityType(
                     firstModifier.source,
                     FirErrors.INCOMPATIBLE_MODIFIERS,
                     firstModifierToken,
-                    secondModifierToken,
-                    context
+                    secondModifierToken
                 )
             }
             if (reportedNodes.add(secondModifier)) {
@@ -86,30 +80,29 @@ internal fun checkCompatibilityType(
                     secondModifier.source,
                     FirErrors.INCOMPATIBLE_MODIFIERS,
                     secondModifierToken,
-                    firstModifierToken,
-                    context
+                    firstModifierToken
                 )
             }
         }
     }
 }
 
+context(reporter: DiagnosticReporter, context: CheckerContext)
 private fun checkModifiersCompatibility(
     owner: FirElement,
     modifierList: FirModifierList,
-    reporter: DiagnosticReporter,
     reportedNodes: MutableSet<FirModifier<*>>,
-    context: CheckerContext,
 ) {
     val modifiers = modifierList.modifiers
     for ((secondIndex, secondModifier) in modifiers.withIndex()) {
         for (firstIndex in 0..<secondIndex) {
-            checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
+            checkCompatibilityType(modifiers[firstIndex], secondModifier, reportedNodes, owner)
         }
     }
 }
 
-fun checkModifiersCompatibility(typeArgument: FirTypeProjection, context: CheckerContext, reporter: DiagnosticReporter) {
+context(context: CheckerContext, reporter: DiagnosticReporter)
+fun checkModifiersCompatibility(typeArgument: FirTypeProjection) {
     val source = typeArgument.source?.takeIf { it.kind is KtRealSourceElementKind } ?: return
     val modifierList = source.getModifierList() ?: return
 
@@ -117,5 +110,5 @@ fun checkModifiersCompatibility(typeArgument: FirTypeProjection, context: Checke
     // therefore, a track of nodes with already reported errors should be kept
     val reportedNodes = hashSetOf<FirModifier<*>>()
 
-    checkModifiersCompatibility(typeArgument, modifierList, reporter, reportedNodes, context)
+    checkModifiersCompatibility(typeArgument, modifierList, reportedNodes)
 }

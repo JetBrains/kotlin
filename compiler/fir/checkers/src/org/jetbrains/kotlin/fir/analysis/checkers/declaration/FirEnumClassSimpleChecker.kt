@@ -25,7 +25,7 @@ object FirEnumClassSimpleChecker : FirRegularClassChecker(MppCheckerKind.Common)
             return
         }
 
-        declaration.findNonInterfaceSupertype(context)
+        declaration.findNonInterfaceSupertype()
             // Ignore Enum itself
             // If it's explicit, CLASS_CANNOT_BE_EXTENDED_DIRECTLY will be reported instead.
             // If it's implicit, it's fine.

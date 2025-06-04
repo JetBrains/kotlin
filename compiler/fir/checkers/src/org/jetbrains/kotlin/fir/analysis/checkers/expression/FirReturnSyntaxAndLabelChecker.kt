@@ -40,7 +40,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
             reporter.reportOn(source, FirErrors.NOT_A_FUNCTION_LABEL)
         } else if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.UnresolvedLabel) {
             reporter.reportOn(source, FirErrors.UNRESOLVED_LABEL)
-        } else if (!isReturnAllowed(targetSymbol, context)) {
+        } else if (!isReturnAllowed(targetSymbol)) {
             reporter.reportOn(source, FirErrors.RETURN_NOT_ALLOWED)
         }
 
@@ -72,7 +72,8 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         }
     }
 
-    private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+    context(context: CheckerContext)
+    private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>): Boolean {
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             when (containingDeclaration) {
                 // return from member of local class or anonymous object

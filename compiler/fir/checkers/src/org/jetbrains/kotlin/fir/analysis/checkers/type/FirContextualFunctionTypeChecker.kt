@@ -48,7 +48,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         }
 
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-            if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session), context)) {
+            if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session))) {
                 reporter.reportOn(
                     source,
                     FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
@@ -57,7 +57,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             val message = FirContextParametersLanguageVersionSettingsChecker.getMessage(context.languageVersionSettings)
             reporter.reportOn(typeRef.source, FirErrors.CONTEXT_RECEIVERS_DEPRECATED, message)
         } else {
-            source.requireFeatureSupport(LanguageFeature.ContextParameters, context, reporter)
+            source.requireFeatureSupport(LanguageFeature.ContextParameters)
         }
     }
 

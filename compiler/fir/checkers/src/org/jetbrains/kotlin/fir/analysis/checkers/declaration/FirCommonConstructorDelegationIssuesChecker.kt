@@ -28,10 +28,10 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker(MppC
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClassSymbol>()
-        if (declaration.isEffectivelyExternal(containingClass, context)) return
+        if (declaration.isEffectivelyExternal(containingClass)) return
         val cyclicConstructors = mutableSetOf<FirConstructorSymbol>()
         var hasPrimaryConstructor = false
-        val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol, context)
+        val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol)
 
         // secondary; non-cyclic;
         // candidates for further analysis
