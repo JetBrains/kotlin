@@ -231,6 +231,13 @@ internal object KDocReferenceResolver {
                 add(owner.symbol)
             }
         }
+
+        owner.modifierList?.contextReceiverLists?.flatMap { it.contextParameters() }?.forEach { contextParameter ->
+            if (contextParameter.nameAsName == name) {
+                add(contextParameter.symbol)
+            }
+        }
+
         if (owner is KtTypeParameterListOwner) {
             for (typeParameter in owner.typeParameters) {
                 if (typeParameter.nameAsName == name) {
