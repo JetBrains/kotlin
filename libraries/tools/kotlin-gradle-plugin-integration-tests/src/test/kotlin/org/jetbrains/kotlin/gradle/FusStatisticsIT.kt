@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFile
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -423,6 +424,7 @@ class FusStatisticsIT : KGPBaseTest() {
     @JvmGradlePluginTests
     @GradleTest
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_1, TestVersions.Gradle.G_8_2])
+    @Disabled("KT-78390: Requires an updated AtomicFU that would use a newer kotlin-metadata-jvm")
     fun testKotlinxPlugins(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
