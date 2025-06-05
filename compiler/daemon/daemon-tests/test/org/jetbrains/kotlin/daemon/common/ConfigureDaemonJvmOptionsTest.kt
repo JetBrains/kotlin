@@ -22,6 +22,9 @@ class ConfigureDaemonJvmOptionsTest {
             inheritAdditionalProperties = true
         )
         assertNotEquals("", opts.maxMemory)
+        assertEquals("", opts.maxRam)
+        assertEquals("", opts.maxRamFraction)
+        assertEquals("", opts.maxRamPercentage)
     }
 
     @Test
@@ -33,5 +36,69 @@ class ConfigureDaemonJvmOptionsTest {
             inheritAdditionalProperties = true
         )
         assertEquals("maxMemoryValue", opts.maxMemory)
+        assertEquals("", opts.maxRam)
+        assertEquals("", opts.maxRamFraction)
+        assertEquals("", opts.maxRamPercentage)
+    }
+
+    @Test
+    fun `inheritMemoryLimits should keep maxRam`() {
+        val opts = configureDaemonJVMOptions(
+            DaemonJVMOptions(maxRam = "maxRamValue"),
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = true,
+            inheritAdditionalProperties = true
+        )
+        assertEquals("", opts.maxMemory)
+        assertEquals("maxRamValue", opts.maxRam)
+        assertEquals("", opts.maxRamFraction)
+        assertEquals("", opts.maxRamPercentage)
+    }
+
+    @Test
+    fun `inheritMemoryLimits should keep maxRamFraction`() {
+        val opts = configureDaemonJVMOptions(
+            DaemonJVMOptions(maxRamFraction = "maxRamFractionValue"),
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = true,
+            inheritAdditionalProperties = true
+        )
+        assertEquals("", opts.maxMemory)
+        assertEquals("", opts.maxRam)
+        assertEquals("maxRamFractionValue", opts.maxRamFraction)
+        assertEquals("", opts.maxRamPercentage)
+    }
+
+    @Test
+    fun `inheritMemoryLimits should keep maxRamPercentage`() {
+        val opts = configureDaemonJVMOptions(
+            DaemonJVMOptions(maxRamPercentage = "maxRamPercentageValue"),
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = true,
+            inheritAdditionalProperties = true
+        )
+        assertEquals("", opts.maxMemory)
+        assertEquals("", opts.maxRam)
+        assertEquals("", opts.maxRamFraction)
+        assertEquals("maxRamPercentageValue", opts.maxRamPercentage)
+    }
+
+    @Test
+    fun `inheritMemoryLimits should keep all limits`() {
+        val opts = configureDaemonJVMOptions(
+            DaemonJVMOptions(
+                maxMemory = "maxMemoryValue",
+                maxRam = "maxRamValue",
+                maxRamFraction = "maxRamFractionValue",
+                maxRamPercentage = "maxRamPercentageValue"
+            ),
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = true,
+            inheritAdditionalProperties = true
+        )
+        assertEquals("maxMemoryValue", opts.maxMemory)
+        assertEquals("maxRamValue", opts.maxRam)
+        assertEquals("maxRamFractionValue", opts.maxRamFraction)
+        assertEquals("maxRamPercentageValue", opts.maxRamPercentage)
     }
 }
