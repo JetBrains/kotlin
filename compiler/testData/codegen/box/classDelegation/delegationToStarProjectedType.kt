@@ -1,4 +1,5 @@
 // ISSUE: KT-72585
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 interface A<out T : Any> {
     fun foo(): String

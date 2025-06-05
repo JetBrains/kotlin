@@ -1,5 +1,6 @@
 // ISSUE: KT-74819
 // WITH_STDLIB
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 fun foo(x: List<String>) =
     buildList {

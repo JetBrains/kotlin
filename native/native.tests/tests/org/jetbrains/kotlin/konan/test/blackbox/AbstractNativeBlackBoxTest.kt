@@ -50,8 +50,10 @@ abstract class AbstractNativeBlackBoxTest {
             if (compatibilityTestMode == CompatibilityTestMode.OldArtifactNewCompiler) {
                 ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
                     if (it.isFirstPhase) {
-                        // 1st phase of klib backward testing may fail, since old compiler not necessarily can compile newer code
-                        return
+                        reason = "Old compiler fails to compile a test into klib. Consider ignoring this test with:\n" +
+                                "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
+                                "When unclear, which of grouped tests has caused the crash, use `-Pkotlin.internal.native.test.forceStandalone=true` Gradle parameter.\n" +
+                                "Error was: $reason"
                     } else {
                         reason = possibleABICompatibilityIssueMessage(
                             "current compiler fails to compile klib made by an older compiler.",

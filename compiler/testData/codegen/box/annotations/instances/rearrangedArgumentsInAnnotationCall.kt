@@ -1,6 +1,7 @@
 // ISSUE: KT-73845
 
 // JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 annotation class A
 annotation class B(

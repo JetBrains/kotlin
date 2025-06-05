@@ -1,5 +1,6 @@
 // DUMP_IR
 // ISSUE: KT-73454
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 class Foo<T> {
     inner class Inner(val p: String)

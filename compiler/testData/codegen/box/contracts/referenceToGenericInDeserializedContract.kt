@@ -1,6 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // WITH_STDLIB
 // ISSUE: KT-76301
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 // MODULE: lib
 // FILE: lib.kt

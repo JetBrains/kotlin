@@ -48,17 +48,34 @@ val Settings.releasedCompilerVersion: LanguageVersion
     }
 
 internal fun Settings.isDisabledByFutureFeature(languageSettings: Set<String>): Boolean {
-    if (get<CompatibilityTestMode>() == CompatibilityTestMode.None)
-        return false
-    val features = languageSettings.map {
-        LanguageFeature.valueOf(it.substring(1))
+    return when (get<CompatibilityTestMode>()) {
+        CompatibilityTestMode.None -> false
+        CompatibilityTestMode.OldArtifactNewCompiler -> {
+            languageSettings.any {
+                val feature = LanguageFeature.valueOf(it.substring(1))
+                when (val sinceVersion = feature.sinceVersion) {
+                    null -> {
+                        when (releasedCompilerVersion) {
+                            LanguageVersion.KOTLIN_1_9 -> TODO("Insert here language features unsupported by Kotlin 1.9")
+                            LanguageVersion.KOTLIN_2_0 -> TODO("Insert here language features unsupported by Kotlin 2.0")
+                            LanguageVersion.KOTLIN_2_1 -> feature == LanguageFeature.NestedTypeAliases
+                                    || feature == LanguageFeature.ContextReceivers
+                                    || feature == LanguageFeature.ContextParameters
+                                    || feature == LanguageFeature.ExpectRefinement
+                                    || feature == LanguageFeature.FunctionalTypeWithExtensionAsSupertype
+                                    || feature == LanguageFeature.ContextSensitiveResolutionUsingExpectedType
+                                    || feature == LanguageFeature.UnnamedLocalVariables
+                                    || feature == LanguageFeature.IrInlinerBeforeKlibSerialization
+                            LanguageVersion.KOTLIN_2_2 -> TODO("Insert here language features unsupported by Kotlin 2.2")
+                            LanguageVersion.KOTLIN_2_3 -> TODO("Insert here language features unsupported by Kotlin 2.3")
+                            else -> false
+                        }
+                    }
+                    else -> sinceVersion > releasedCompilerVersion
+                }
+            }
+        }
     }
-    val any = features.any { feature ->
-        feature.sinceVersion?.let {
-            it > releasedCompilerVersion
-        } ?: (feature == LanguageFeature.ContextReceivers)
-    }
-    return any
 }
 
 // Note: this method would accept DISABLED_NATIVE without parameters as an unconditional test exclusion: don't even try to compile

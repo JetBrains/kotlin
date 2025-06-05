@@ -1,5 +1,6 @@
 // DUMP_IR
 // ISSUE: KT-74107
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 class C {
     inner class Inner

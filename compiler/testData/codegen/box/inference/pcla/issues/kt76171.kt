@@ -1,5 +1,6 @@
 // ISSUE: KT-76171
 // WITH_STDLIB
+// IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
 
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
