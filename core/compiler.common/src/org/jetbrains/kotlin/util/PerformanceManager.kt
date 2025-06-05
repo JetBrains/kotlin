@@ -130,8 +130,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun addOtherUnitStats(otherUnitStats: UnitStats?) {
-        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
-        stringBuilder.append("addOtherUnitStats(name=$presentableName) ${hashCode()}: phaseStartTime=$phaseStartTime" + "callstack=\n$callstack\n")
+        val callstack = Throwable().stackTrace[1]
+        stringBuilder.append("addOtherUnitStats(name=$presentableName, otherUnitStats.name=${otherUnitStats?.name}/${otherUnitStats?.filesCount}/${otherUnitStats?.linesCount}) ${hashCode()}: phaseStartTime=$phaseStartTime" + "callstack=\n$callstack\n")
         ensureNotFinalizedAndSameThread()
 
         if (otherUnitStats == null) return
@@ -144,7 +144,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         otherUnitStats.forEachPhaseMeasurement { phaseType, time ->
             if (time != null) {
-                stringBuilder.append("addOtherUnitStats add phaseMeasurements: $phaseType <- $time\n")
                 phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
             }
         }
