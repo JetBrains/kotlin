@@ -74,9 +74,9 @@ sealed class JpsStatisticsReportService {
             )
         }
 
-        private fun initJsonReportSettings(): JsonReportSettings? {
+        private fun initJsonReportSettings(prettyPrinting: Boolean = true): JsonReportSettings? {
             return System.getProperty("kotlin.build.report.json.output_dir")?.let {
-                JsonReportSettings(File(it))
+                JsonReportSettings(File(it), prettyPrinting)
             }
         }
     }
@@ -177,7 +177,7 @@ class JpsStatisticsReportServiceImpl(
             )
         }
         jsonReportSettings?.also {
-            JsonReportService(it.buildReportDir, context.projectDescriptor.project.name)
+            JsonReportService(it.buildReportDir, context.projectDescriptor.project.name, prettyPrinting = it.prettyPrinting)
                 .process(finishedModuleStatisticData, loggerAdapter)
         }
     }
