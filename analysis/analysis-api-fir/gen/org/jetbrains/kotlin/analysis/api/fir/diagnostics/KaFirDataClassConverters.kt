@@ -6742,6 +6742,45 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL) { firDiagnostic ->
+        InvalidVersioningOnNonOptionalImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.NONFINAL_VERSIONED_FUNCTION) { firDiagnostic ->
+        NonfinalVersionedFunctionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY) { firDiagnostic ->
+        InvalidDefaultValueDependencyImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION) { firDiagnostic ->
+        ConflictWithJvmOverloadsAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION) { firDiagnostic ->
+        InvalidNonOptionalParameterPositionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION) { firDiagnostic ->
+        NonAscendingVersionAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.INAPPLICABLE_JVM_FIELD) { firDiagnostic ->
         InapplicableJvmFieldImpl(
             firDiagnostic.a,

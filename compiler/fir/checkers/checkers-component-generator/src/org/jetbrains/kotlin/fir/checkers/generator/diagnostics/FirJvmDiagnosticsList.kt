@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -76,6 +77,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
+
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
@@ -250,6 +252,20 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("inlinedBytecodeVersion")
             parameter<String>("currentModuleBytecodeVersion")
         }
+    }
+
+    val VERSION_OVERLOADS by object : DiagnosticGroup("Version Overloads") {
+        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
+        val NONFINAL_VERSIONED_FUNCTION by error<PsiElement>()
+        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<PsiElement>() {
+            parameter<FirCallableSymbol<*>>("dependOn")
+            parameter<String>("dependOnVersion")
+            parameter<String>("maxVersion")
+        }
+
+        val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by warning<PsiElement>()
+        val NON_ASCENDING_VERSION_ANNOTATION by warning<PsiElement>()
     }
 
     val MISC by object : DiagnosticGroup("Misc") {

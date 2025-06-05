@@ -58,4 +58,5 @@ object JvmLoweredDeclarationOrigin {
     val PROXY_FUN_FOR_METAFACTORY by IrDeclarationOriginImpl
     val SYNTHETIC_PROXY_FUN_FOR_METAFACTORY by IrDeclarationOriginImpl.Synthetic
     val DESERIALIZE_LAMBDA_FUN by IrDeclarationOriginImpl.Synthetic
+    val VERSION_OVERLOAD_WRAPPER by IrDeclarationOriginImpl.Synthetic
 }

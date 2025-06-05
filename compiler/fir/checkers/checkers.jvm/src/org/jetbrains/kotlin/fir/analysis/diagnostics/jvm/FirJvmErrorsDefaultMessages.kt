@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DEPRECATED_JAVA_ANNOTATION
@@ -45,6 +46,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INLINE_FROM_HIGHER_PLATFORM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_CLASS_ON_COMPANION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY
@@ -80,6 +84,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.LOCAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.MISSING_BUILT_IN_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NONFINAL_VERSIONED_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_DATA_CLASS_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_FINAL_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION
@@ -503,6 +509,41 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
             "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
             RENDER_TYPE,
+        )
+
+        map.put(
+            INVALID_VERSIONING_ON_NON_OPTIONAL,
+            message = "'@IntroducedAt' annotation can only be added to parameters with default values."
+        )
+
+        map.put(
+            factory = NONFINAL_VERSIONED_FUNCTION,
+            message = "'@IntroducedAt' annotation cannot be added to abstract or overridable methods."
+        )
+
+        map.put(
+            factory = INVALID_DEFAULT_VALUE_DEPENDENCY,
+            message = "Invalid default value dependency: parameter ''{0}'' is introduced at ''{1}'', which is a newer version than ''{2}''.",
+            rendererA = SYMBOL,
+            rendererB = STRING,
+            rendererC = STRING
+        )
+
+        map.put(
+            factory = CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION,
+            message = "'@JvmOverloads' annotation may generate conflicting overloads with the '@IntroducedAt' annotation."
+        )
+
+        map.put(
+            factory = INVALID_NON_OPTIONAL_PARAMETER_POSITION,
+            message = "A non-optional parameter appears after an optional parameter annotated with '@IntroducedAt',"
+                    + " which may cause source-level incompatibility.",
+        )
+
+        map.put(
+            factory = NON_ASCENDING_VERSION_ANNOTATION,
+            message = "'@IntroducedAt' annotation appears in a non-ascending order, which may cause source-level incompatibility"
+                    + " if the arguments are given by positions instead of by names."
         )
     }
 }
