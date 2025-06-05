@@ -19,10 +19,10 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
@@ -226,7 +226,7 @@ class MetricContainer : Serializable {
 }
 
 private val Project.buildServiceShouldBeCreated
-    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection
+    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && !isCiBuild()
 
 internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
     if (generalMetricsFinalized.get()) return
