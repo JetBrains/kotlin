@@ -32,7 +32,6 @@ abstract class AbstractLightTreeRawFirBuilder(
         protected val ignoredTokens: TokenSet = TokenSet.orSet(
             COMMENTS,
             TokenSet.create(WHITE_SPACE, SEMICOLON, TokenType.ERROR_ELEMENT, TokenType.BAD_CHARACTER),
-            TokenSet.create(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START),
         )
     }
 
