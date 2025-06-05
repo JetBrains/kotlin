@@ -197,12 +197,18 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 
 data class DaemonJVMOptions(
         var maxMemory: String = "",
+        var maxRam: String = "",
+        var maxRamFraction: String = "",
+        var maxRamPercentage: String = "",
         var maxMetaspaceSize: String = "",
         var reservedCodeCacheSize: String = "320m",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = "").keepIf { hasMaxHeapSize },
+                       StringPropMapper(this, DaemonJVMOptions::maxRam, listOf("XX:MaxRAM"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
+                       StringPropMapper(this, DaemonJVMOptions::maxRamFraction, listOf("XX:MaxRAMFraction"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
+                       StringPropMapper(this, DaemonJVMOptions::maxRamPercentage, listOf("XX:MaxRAMPercentage"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
                        StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "=").keepIf { it.isNotEmpty() },
                        StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "=").keepIf { it.isNotEmpty() },
                        restMapper)
@@ -211,7 +217,7 @@ data class DaemonJVMOptions(
         get() = RestPropMapper(this, DaemonJVMOptions::jvmParams)
 
     internal val hasMaxHeapSize: Boolean
-        get() = maxMemory.isNotBlank()
+        get() = maxMemory.isNotBlank() || maxRam.isNotBlank() || maxRamFraction.isNotBlank() || maxRamPercentage.isNotBlank()
 }
 
 
@@ -403,7 +409,8 @@ private fun String.memToBytes(): Long? =
 
 
 private val daemonJVMOptionsMemoryProps =
-    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize)
+    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize,
+           DaemonJVMOptions::maxRam, DaemonJVMOptions::maxRamFraction, DaemonJVMOptions::maxRamPercentage)
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
         daemonJVMOptionsMemoryProps
