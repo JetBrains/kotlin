@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_REFLECT
-// JVM_ABI_K1_K2_DIFF: K2 names companion objects in metadata correctly
 
 import kotlin.reflect.KType
 import kotlin.reflect.full.memberProperties
