@@ -16,7 +16,7 @@ dependencies {
     api(project(":native:swift:sir-providers"))
     implementation(project(":native:analysis-api-based-export-common"))
 
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
 
     testApi(platform(libs.junit.bom))

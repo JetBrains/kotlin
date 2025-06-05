@@ -14,7 +14,7 @@ projectTest {
 
 dependencies {
     api(project(":core:deserialization"))
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":analysis:decompiled:decompiler-to-file-stubs"))
     api(project(":analysis:decompiled:decompiler-to-psi"))
 

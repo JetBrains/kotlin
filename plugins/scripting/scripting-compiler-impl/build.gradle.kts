@@ -10,7 +10,7 @@ plugins {
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:ir.serialization.js"))

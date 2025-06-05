@@ -12,7 +12,7 @@ dependencies {
      *   diagnostics framework from FE 1.0
      */
     implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:fir:fir-native"))
 
     compileOnly(project(":core:compiler.common.native"))

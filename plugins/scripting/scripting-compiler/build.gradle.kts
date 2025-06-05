@@ -12,7 +12,7 @@ val kotlinxSerializationGradlePluginClasspath by configurations.creating
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":compiler:psi"))
+    compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))

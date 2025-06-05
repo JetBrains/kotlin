@@ -8,7 +8,7 @@ plugins {
 val scriptingTestDefinition by configurations.creating
 
 dependencies {
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:ir.serialization.common"))

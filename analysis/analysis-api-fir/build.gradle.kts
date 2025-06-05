@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:psi"))
+    api(project(":compiler:psi:psi-api"))
     api(project(":compiler:fir:fir2ir"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:fir:resolve"))

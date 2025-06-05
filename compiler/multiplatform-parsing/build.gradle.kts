@@ -36,7 +36,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation(project(":compiler:psi"))
+                implementation(project(":compiler:psi:psi-api"))
                 implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
                 implementation(intellijCore())
                 runtimeOnly(libs.intellij.fastutil)
