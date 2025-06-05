@@ -17,3 +17,5 @@ fun test1() {
         foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue@L1<!> }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, functionDeclaration, functionalType, inline, lambdaLiteral, noinline, whileLoop */

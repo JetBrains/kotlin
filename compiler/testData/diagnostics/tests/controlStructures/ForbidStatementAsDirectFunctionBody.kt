@@ -10,3 +10,6 @@ fun foo3() = when (b()) {
 }
 
 fun b(): Boolean = true
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, localProperty, progressionExpression,
+propertyDeclaration, whenExpression, whenWithSubject, whileLoop */

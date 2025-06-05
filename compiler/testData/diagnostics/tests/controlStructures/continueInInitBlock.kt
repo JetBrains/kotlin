@@ -11,3 +11,6 @@ fun test(b: Boolean)  {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, continue, functionDeclaration, init, localClass, secondaryConstructor,
+whileLoop */

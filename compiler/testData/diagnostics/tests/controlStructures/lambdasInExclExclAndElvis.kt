@@ -15,3 +15,5 @@ fun test() {
     1 <!USELESS_ELVIS!>?: { }<!>
     use(1 <!USELESS_ELVIS!>?: { }<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, lambdaLiteral, nullableType */

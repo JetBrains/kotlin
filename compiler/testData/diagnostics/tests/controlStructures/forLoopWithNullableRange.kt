@@ -15,3 +15,6 @@ fun test(c: Coll?) {
     for(x in <!DEBUG_INFO_SMARTCAST!>c<!>) {}
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, forLoop, functionDeclaration, ifExpression, localProperty,
+nullableType, operator, progressionExpression, propertyDeclaration */

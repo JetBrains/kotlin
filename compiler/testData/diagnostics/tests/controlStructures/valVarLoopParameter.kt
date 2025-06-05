@@ -32,3 +32,6 @@ fun f() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, localProperty, operator,
+progressionExpression, propertyDeclaration, whileLoop */

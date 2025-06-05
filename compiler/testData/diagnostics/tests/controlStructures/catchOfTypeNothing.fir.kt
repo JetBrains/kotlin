@@ -10,3 +10,5 @@ fun foo() {
     } catch (<!THROWABLE_TYPE_MISMATCH!>x: Nothing?<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, tryExpression */

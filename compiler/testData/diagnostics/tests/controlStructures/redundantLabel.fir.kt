@@ -38,3 +38,6 @@ fun testHighOrderFunctionCallLabel() {
 
 fun testAnonymousObjectLabel() =
     L@ object {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, doWhileLoop, forLoop,
+functionDeclaration, lambdaLiteral, localProperty, progressionExpression, propertyDeclaration, whileLoop */

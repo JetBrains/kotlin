@@ -29,3 +29,6 @@ fun test_4(x: String?, y: String?) {
         val b = x ?: <!NO_ELSE_IN_WHEN!>when<!> (y) { "hello" -> break }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, elvisExpression, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject, whileLoop */

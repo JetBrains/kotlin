@@ -52,3 +52,6 @@ class Test7 {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: break, classDeclaration, continue, functionDeclaration, localProperty, progressionExpression,
+propertyDeclaration, whileLoop */

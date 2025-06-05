@@ -21,3 +21,6 @@ fun test_2(x: String?, y: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, elvisExpression, equalityExpression, functionDeclaration, ifExpression, lambdaLiteral,
+nullableType, safeCall, smartcast, whenExpression, whileLoop */

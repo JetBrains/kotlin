@@ -32,3 +32,6 @@ fun example() {
 
     return <!RETURN_TYPE_MISMATCH!>if (true) true else {}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localFunction, localProperty,
+propertyDeclaration */

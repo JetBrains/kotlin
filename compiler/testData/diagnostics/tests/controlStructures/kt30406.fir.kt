@@ -14,3 +14,7 @@ fun test(a: Int): Option<Any> =
         Some("239")
     else
         None()
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, interfaceDeclaration, nullableType, out, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

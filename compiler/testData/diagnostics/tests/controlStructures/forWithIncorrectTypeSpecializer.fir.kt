@@ -8,3 +8,6 @@ fun main() {
     for (derived: <!INITIALIZER_TYPE_MISMATCH!>Derived<!> in derivedList) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, progressionExpression, propertyDeclaration,
+whileLoop */

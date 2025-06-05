@@ -17,3 +17,6 @@ fun f2() {
         }
     } while (true)
 }
+
+/* GENERATED_FIR_TAGS: break, continue, doWhileLoop, functionDeclaration, functionalType, lambdaLiteral, localFunction,
+whileLoop */
