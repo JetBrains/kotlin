@@ -184,8 +184,7 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
         }
 
         fun getName(): String {
-            return (((functionReferenceReflectionTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
-                    ?: functionReferenceReflectionTarget.name).asString()
+            return functionReferenceReflectionTarget.name.asString()
         }
 
         fun getArity(): Int {
