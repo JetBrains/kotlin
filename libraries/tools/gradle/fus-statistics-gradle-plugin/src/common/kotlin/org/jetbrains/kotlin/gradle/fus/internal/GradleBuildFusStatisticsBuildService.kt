@@ -34,6 +34,10 @@ fun registerGradleBuildFusStatisticsServiceIfAbsent(
     }
 }
 
+fun Project.isTeamcityBuild(): Boolean {
+    return providers.gradleProperty("teamcity").orElse(System.getenv("TEAMCITY_VERSION")).orNull == "true"
+}
+
 private fun registerIfAbsent(
     project: Project,
     uidService: Provider<BuildUidService>,
@@ -45,13 +49,15 @@ private fun registerIfAbsent(
     val customPath: String =
         project.providers.gradleProperty(FUS_STATISTICS_PATH).orNull ?: project.gradle.gradleUserHomeDir.path
 
-
     return if (!statisticsIsEnabled || customPath.isBlank()) {
         log.info(
             "Fus metrics wont be collected as statistic was " +
                     (if (statisticsIsEnabled) "enabled" else "disabled") +
                     if (customPath.isBlank()) " and custom path is blank" else ""
         )
+        project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
+    } else if (project.isTeamcityBuild()) {
+        log.info("Fus metrics won't be collected on TeamCity build.")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
     } else if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildCloseFusStatisticsBuildService::class.java) {
