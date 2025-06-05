@@ -16,9 +16,10 @@ import java.nio.file.Path
  *
  * @param contextFile The [KtFile] from which the [TestSymbolTarget] should be resolved. See [TestSymbolTarget.create].
  */
-fun KaSession.getTestTargetSymbols(testDataPath: Path, contextFile: KtFile): List<KaSymbol> {
+context(session: KaSession)
+fun getTestTargetSymbols(testDataPath: Path, contextFile: KtFile): List<KaSymbol> {
     val target = TestSymbolTarget.parse(testDataPath, contextFile)
-    return KaSymbolTestSymbolTargetResolver(this).resolveTarget(target)
+    return KaSymbolTestSymbolTargetResolver(session).resolveTarget(target)
 }
 
 /**
@@ -28,7 +29,8 @@ fun KaSession.getTestTargetSymbols(testDataPath: Path, contextFile: KtFile): Lis
  * @param contextFile The [KtFile] from which the [TestSymbolTarget] should be resolved. [contextFile] must be from the same module as the
  *  [KaSession].
  */
-inline fun <reified S : KaSymbol> KaSession.getSingleTestTargetSymbolOfType(testDataPath: Path, contextFile: KtFile): S {
+context(_: KaSession)
+inline fun <reified S : KaSymbol> getSingleTestTargetSymbolOfType(testDataPath: Path, contextFile: KtFile): S {
     val symbols = getTestTargetSymbols(testDataPath, contextFile)
     return symbols.singleOrNull() as? S
         ?: error("Expected a single target `${S::class.simpleName}` to be specified, but found the following symbols: $symbols")

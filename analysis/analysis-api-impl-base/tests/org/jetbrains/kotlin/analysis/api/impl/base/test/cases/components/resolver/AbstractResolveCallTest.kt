@@ -21,6 +21,6 @@ abstract class AbstractResolveCallTest : AbstractResolveByElementTest() {
             assertStableResult(testServices, call, secondCall)
         }
 
-        call?.let(::stringRepresentation) ?: "null"
+        stringRepresentation(call)
     }
 }

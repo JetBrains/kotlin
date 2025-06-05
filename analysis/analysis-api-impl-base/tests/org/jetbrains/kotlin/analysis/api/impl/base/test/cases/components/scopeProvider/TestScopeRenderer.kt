@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.Name
@@ -64,14 +65,16 @@ internal object TestScopeRenderer {
         }
     }
 
-    private fun KaSession.appendSymbol(propertyName: String, printer: PrettyPrinter, symbol: KaSymbol): Unit = with(printer) {
+    context(_: KaSession)
+    private fun appendSymbol(propertyName: String, printer: PrettyPrinter, symbol: KaSymbol): Unit = with(printer) {
         appendLine("$propertyName = ${renderFrontendIndependentKClassNameOf(symbol)}:")
         withIndent {
             append(stringRepresentation(symbol))
         }
     }
 
-    fun KaSession.renderForTests(
+    context(_: KaSession)
+    fun renderForTests(
         scope: KaScope,
         printer: PrettyPrinter,
         printPretty: Boolean,
@@ -80,7 +83,8 @@ internal object TestScopeRenderer {
         renderScopeMembers(scope, printer, printPretty, additionalSymbolInfo)
     }
 
-    private fun KaSession.renderType(
+    context(_: KaSession)
+    private fun renderType(
         type: KaType,
         printPretty: Boolean
     ): String = prettyPrint {
@@ -91,7 +95,8 @@ internal object TestScopeRenderer {
         }
     }
 
-    private fun KaSession.renderScopeContext(
+    context(_: KaSession)
+    private fun renderScopeContext(
         scopeContext: KaScopeContext,
         printer: PrettyPrinter,
         printPretty: Boolean,
@@ -103,7 +108,8 @@ internal object TestScopeRenderer {
         }
     }
 
-    private fun KaSession.renderForTests(
+    context(_: KaSession)
+    private fun renderForTests(
         scope: KaScope,
         scopeKind: KaScopeKind,
         printer: PrettyPrinter,
@@ -123,27 +129,28 @@ internal object TestScopeRenderer {
         }
     }
 
-    private fun KaSession.renderScopeMembers(
+    context(_: KaSession)
+    private fun renderScopeMembers(
         scope: KaScope,
         printer: PrettyPrinter,
         printPretty: Boolean,
-        additionalSymbolInfo: KaSession.(KaSymbol) -> String?,
+        additionalSymbolInfo: context(KaSession) (KaSymbol) -> String?,
     ) {
         fun <T : KaSymbol> List<T>.renderAll(
             symbolKind: String,
-            renderPrettySymbol: KaSession.(T) -> String,
+            renderPrettySymbol: context(KaSession) (T) -> String,
         ) = with(printer) {
             appendLine("$symbolKind: $size")
             withIndent {
                 forEach {
                     appendLine(
                         if (printPretty) {
-                            this@renderScopeMembers.renderPrettySymbol(it)
+                            renderPrettySymbol(it)
                         } else {
                             debugRenderer.render(useSiteSession, it)
                         }
                     )
-                    this@renderScopeMembers.additionalSymbolInfo(it)?.let {
+                    additionalSymbolInfo(it)?.let {
                         withIndent { appendLine(it) }
                     }
                 }
@@ -162,7 +169,8 @@ internal object TestScopeRenderer {
     private fun prettyRenderPackage(symbol: KaPackageSymbol): String =
         symbol.fqName.asString()
 
-    private fun KaSession.prettyRenderDeclaration(symbol: KaDeclarationSymbol): String =
+    context(_: KaSession)
+    private fun prettyRenderDeclaration(symbol: KaDeclarationSymbol): String =
         symbol.render(prettyPrintSymbolRenderer)
 
     private val debugRenderer = DebugSymbolRenderer()

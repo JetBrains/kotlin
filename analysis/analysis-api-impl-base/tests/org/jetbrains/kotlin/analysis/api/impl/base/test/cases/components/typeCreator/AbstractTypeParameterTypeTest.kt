@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCr
 import com.intellij.psi.JavaPsiFacade
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.analysisScope
+import org.jetbrains.kotlin.analysis.api.components.namedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.findClass
 import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.useSiteModule
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -62,7 +66,8 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    private fun KaSession.findClassJavaAware(classId: ClassId): KaClassSymbol? {
+    context(_: KaSession)
+    private fun findClassJavaAware(classId: ClassId): KaClassSymbol? {
         val javaClass = JavaPsiFacade.getInstance(useSiteModule.project)
             .findClass(classId.asSingleFqName().asString(), analysisScope)
 

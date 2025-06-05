@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.render
+import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -56,7 +59,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    private fun KaSession.getCallableSymbol(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): KaCallableSymbol {
+    context(_: KaSession)
+    private fun getCallableSymbol(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices): KaCallableSymbol {
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtDeclaration>(mainFile)
         if (declaration != null) {
             return declaration.symbol as KaCallableSymbol
@@ -74,7 +78,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         return getSingleTestTargetSymbolOfType<KaCallableSymbol>(testDataPath, mainFile)
     }
 
-    private fun KaSession.renderSignature(symbol: KaCallableSymbol): String = buildString {
+    context(_: KaSession)
+    private fun renderSignature(symbol: KaCallableSymbol): String = buildString {
         append(renderDeclarationQualifiedName(symbol))
         if (symbol is KaNamedFunctionSymbol) {
             append("(")
@@ -92,7 +97,8 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
         append(symbol.returnType.render(KaTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
     }
 
-    private fun KaSession.renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
+    context(_: KaSession)
+    private fun renderDeclarationQualifiedName(symbol: KaCallableSymbol): String {
         val parentsWithSelf = generateSequence<KaSymbol>(symbol) { it.containingDeclaration }
             .toList()
             .asReversed()
