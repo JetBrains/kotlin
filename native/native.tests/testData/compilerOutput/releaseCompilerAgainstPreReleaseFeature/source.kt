@@ -1,6 +1,7 @@
-package usage
+package usage.A
 
 import a.*
+import b.*
 
 fun baz(param: A, nested: A.Nested) {
     val constructor = A()
