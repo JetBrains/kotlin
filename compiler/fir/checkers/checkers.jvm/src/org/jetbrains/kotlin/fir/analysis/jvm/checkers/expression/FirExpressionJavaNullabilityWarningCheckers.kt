@@ -172,10 +172,10 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
         val suffix = buildString {
             when {
                 actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation -> {
-                    appendDeprecationWarningSuffix(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced, "KT-63209")
+                    appendDeprecationWarningSuffix(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced)
                 }
                 actualType.isMadeFlexibleSynthetically() || expectedType.isMadeFlexibleSynthetically() -> {
-                    appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible, "KT-71718")
+                    appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)
                 }
             }
         }

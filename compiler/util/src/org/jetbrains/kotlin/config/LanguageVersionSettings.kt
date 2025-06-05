@@ -565,7 +565,7 @@ enum class LanguageFeature(
  * Placeholder for old language features for which the ticket was not specified.
  * Please never use it for new features.
  */
-private const val NO_ISSUE_SPECIFIED = "No YT issue"
+const val NO_ISSUE_SPECIFIED = "No YT issue"
 
 enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, LanguageOrApiVersion {
     KOTLIN_1_0(1, 0),
