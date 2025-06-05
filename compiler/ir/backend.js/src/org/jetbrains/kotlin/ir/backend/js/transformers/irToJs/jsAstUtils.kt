@@ -571,7 +571,7 @@ private fun JsLocation.withEmbeddedSource(
 }
 
 fun IrElement.getStartSourceLocation(container: IrDeclaration): JsLocation? {
-    val fileEntry = container.fileOrNull?.fileEntry ?: return null
+    val fileEntry = container.getSourceFile() ?: return null
     return getStartSourceLocation(fileEntry)
 }
 
