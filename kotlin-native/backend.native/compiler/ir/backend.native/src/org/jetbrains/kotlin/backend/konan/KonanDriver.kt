@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.util.*
 
 private val softDeprecatedTargets = setOf(
@@ -129,7 +129,9 @@ class KonanDriver(
         performanceManager?.apply {
             targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
             addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            notifyPhaseFinished(PhaseType.Initialization)
+            // there's a chance `cacheBuilder.build()` already finishes this phase at the beginning of spawned `runKonanDriver()`
+            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
+            notifyCurrentPhaseFinishedIfNeeded()
         }
 
         NativeCompilerDriver(performanceManager).run(konanConfig, environment)
