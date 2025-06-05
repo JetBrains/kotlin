@@ -640,6 +640,22 @@ allprojects {
             }
         }
 
+        // must be first, otherwise Gradle tries to fetch POM files from the cache-redirector repos,
+        // which fails because cache-director doesn't support HEAD requests.
+        ivy("https://registry.npmjs.org/") {
+            name = "npm repo for gradle-node-plugin"
+            patternLayout {
+                artifact("[orgPath]/-/[module]-[revision].[ext]")
+//                artifact("[orgPath]/-/[module]-[revision].[ext]")
+            }
+            metadataSources {
+                artifact()
+            }
+            content {
+                onlyForAttribute(Usage.USAGE_ATTRIBUTE, objects.named("npm-dependencies-cache"))
+            }
+        }
+
         mirrorRepo?.let(::maven)
 
         maven(intellijRepo) {
@@ -687,6 +703,29 @@ allprojects {
                 includeGroup("androidx.annotation")
             }
         }
+
+//        exclusiveContent {
+//            forRepository {
+////                ivy("https://packages.jetbrains.team/") { // packages.jetbrains.team doesn't support HEAD?
+//                ivy("https://registry.npmjs.org/") {
+//                    name = "npm repo for gradle-node-plugin"
+//                    patternLayout {
+//                        // https://packages.jetbrains.team/npm/p/kt/kotlin-dependencies/@rollup/rollup-linux-loongarch64-gnu/-/rollup-linux-loongarch64-gnu-4.40.0.tgz
+//                        artifact("[orgPath]/-/@[module]-[revision].[ext]")
+//                        artifact("[orgPath]/-/[module]-[revision].[ext]")
+//                    }
+//                    metadataSources {
+//                        artifact()
+//                    }
+////                    content {
+////                        onlyForAttribute(Usage.USAGE_ATTRIBUTE, objects.named("npm-dependencies-cache"))
+////                    }
+//                }
+//            }
+//            filter {
+//                includeGroupAndSubgroups("npm.p.kt.kotlin-dependencies")
+//            }
+//        }
 
         mavenCentral()
     }

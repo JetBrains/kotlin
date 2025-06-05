@@ -153,7 +153,8 @@ val cacheMap: Map<String, String> = mapOf(
     "https://jcenter.bintray.com" to "https://cache-redirector.jetbrains.com/jcenter.bintray.com",
     "https://jcenter.bintray.com" to "https://cache-redirector.jetbrains.com/jcenter",
     "https://www.python.org/ftp" to "https://cache-redirector.jetbrains.com/www.python.org/ftp",
-    "https://registry.npmjs.org" to "https://cache-redirector.jetbrains.com/registry.npmjs.org",
+    // cache-redirector.jetbrains doesn't support HEAD requests :(
+    //"https://registry.npmjs.org" to "https://cache-redirector.jetbrains.com/registry.npmjs.org",
     "https://maven.google.com" to "https://cache-redirector.jetbrains.com/maven.google.com",
     "https://dl.google.com/go" to "https://cache-redirector.jetbrains.com/dl.google.com/go",
     "https://dl.google.com/go" to "https://cache-redirector.jetbrains.com/dl.google.com.go",
