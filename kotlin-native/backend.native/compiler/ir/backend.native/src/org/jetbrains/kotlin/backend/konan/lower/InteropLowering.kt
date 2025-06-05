@@ -46,30 +46,31 @@ internal class InteropLowering(val generationState: NativeGenerationState) : Fil
         // TODO: merge these lowerings.
         InteropLoweringPart1(generationState).lower(irFile)
         InteropLoweringPart2(generationState).lower(irFile)
+        InteropBridgesNameInventor(generationState).lower(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         InteropLoweringPart1(generationState).lower(irBody, container)
         InteropLoweringPart2(generationState).lower(irBody, container)
+        InteropBridgesNameInventor(generationState).lower(irBody, container)
     }
 }
 
-private fun getUniqueName(packageFragment: IrPackageFragment, fileName: String) =
-        packageFragment.moduleDescriptor.name.asString().let { it.substring(1, it.lastIndex) } + fileName
-
-private val IrFile.uniqueName: String
-    get() = getUniqueName(this, fileEntry.name)
-
-private fun IrDeclaration.getUniqueName(context: Context) =
-        getUniqueName(this.getPackageFragment(), context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this))
+private class CounterHolder {
+    var counter = 0
+}
 
 private abstract class BaseInteropIrTransformer(
         protected val generationState: NativeGenerationState,
         protected val irFile: IrFile?,
-        private val uniqueName: String,
 ) : IrBuildingTransformer(generationState.context) {
     protected val context = generationState.context
     protected val symbols = context.symbols
+    private val counterHolder = CounterHolder()
+
+    protected fun resetCounter() {
+        counterHolder.counter = 0
+    }
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
             owner: IrDeclarationContainer,
@@ -92,6 +93,7 @@ private abstract class BaseInteropIrTransformer(
             element: IrElement? = null,
             block: KotlinStubs.() -> IrExpression
     ): IrExpression {
+        resetCounter()
         val addedDeclarations = mutableListOf<IrDeclaration>()
         val result = createKotlinStubs(element) {
             it.parent = parent
@@ -99,34 +101,23 @@ private abstract class BaseInteropIrTransformer(
         }.block()
         return if (addedDeclarations.isEmpty())
             result
-        else irBlock {
-            addedDeclarations.forEach {
-                it.transform(this@BaseInteropIrTransformer, null)
-                (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
-                +it
+        else irCall(symbols.interopCallMarker, result.type, listOf(result.type)).apply {
+            arguments[0] = irBlock {
+                addedDeclarations.forEach {
+                    it.transform(this@BaseInteropIrTransformer, null)
+                    (it as? IrDeclarationWithVisibility)?.visibility = DescriptorVisibilities.LOCAL
+                    +it
+                }
+                +result
             }
-            +result
         }
     }
 
     private fun createKotlinStubs(element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
-        val location = if (element != null && irFile != null) {
-            element.getCompilerMessageLocation(irFile)
-        } else {
-            builder.getCompilerMessageLocation()
-        }
-
-        val uniquePrefix = buildString {
-            append('_')
-            uniqueName.toByteArray().joinTo(this, "") {
-                (0xFF and it.toInt()).toString(16).padStart(2, '0')
-            }
-            append('_')
-        }
-
         return object : KotlinStubs {
             private val context = generationState.context
-            private val cStubsManager = generationState.cStubsManager
+            private val scopes = mutableListOf<MutableList<String>>()
+            private val counterHolder = this@BaseInteropIrTransformer.counterHolder
 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.symbols
@@ -146,11 +137,22 @@ private abstract class BaseInteropIrTransformer(
             }
 
             override fun addC(lines: List<String>) {
-                cStubsManager.addStub(location, lines, language)
+                scopes.peek()!!.addAll(lines)
             }
 
-            override fun getUniqueCName(prefix: String) =
-                    "$uniquePrefix${cStubsManager.getUniqueName(prefix)}"
+            override fun getC(): List<String> {
+                return scopes.peek()!!
+            }
+
+            override fun enterScope() {
+                scopes.add(mutableListOf())
+            }
+
+            override fun exitScope() {
+                scopes.pop()
+            }
+
+            override fun getUniqueCName(prefix: String) = "\$$prefix${++counterHolder.counter}\$"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     generationState.fileLowerState.getFunctionReferenceImplUniqueName(prefix)
@@ -175,7 +177,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     private var topLevelInitializersCounter = 0
 
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart1(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart1(generationState, irFile)
         irFile.transformChildrenVoid(transformer)
         transformer.eagerTopLevelInitializersForObjCClasses.forEach {
             irFile.addTopLevelInitializer(it, threadLocal = false, eager = true)
@@ -183,7 +185,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart1(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart1(generationState, container.fileOrNull)
         container.transform(transformer, null)
         require(transformer.eagerTopLevelInitializersForObjCClasses.isEmpty()) { "A local Obj-C class in an inline function is not supported" }
     }
@@ -217,8 +219,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 private class InteropTransformerPart1(
         generationState: NativeGenerationState,
         irFile: IrFile?,
-        uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(generationState, irFile) {
     val eagerTopLevelInitializersForObjCClasses = mutableListOf<IrExpression>()
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
@@ -737,12 +738,12 @@ private class InteropLoweringPart2(val generationState: NativeGenerationState) :
     private val context = generationState.context
 
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformerPart2(generationState, irFile, irFile.uniqueName)
+        val transformer = InteropTransformerPart2(generationState, irFile)
         irFile.transformChildrenVoid(transformer)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val transformer = InteropTransformerPart2(generationState, container.fileOrNull, container.getUniqueName(context))
+        val transformer = InteropTransformerPart2(generationState, container.fileOrNull)
         container.transform(transformer, null)
     }
 }
@@ -750,11 +751,11 @@ private class InteropLoweringPart2(val generationState: NativeGenerationState) :
 private class InteropTransformerPart2(
         generationState: NativeGenerationState,
         irFile: IrFile?,
-        uniqueName: String,
-) : BaseInteropIrTransformer(generationState, irFile, uniqueName) {
+) : BaseInteropIrTransformer(generationState, irFile) {
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
-        if (declaration.isKotlinObjCClass()) {
+        if (declaration.isKotlinObjCClass()) { // MyNSOpenGLView (codegen.cinterop.objc.kt55653)
+            resetCounter()
             val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
                 function.overriddenSymbols.mapNotNull {
