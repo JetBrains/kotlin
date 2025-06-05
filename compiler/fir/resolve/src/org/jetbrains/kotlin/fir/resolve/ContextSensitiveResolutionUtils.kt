@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -72,6 +73,17 @@ fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: 
     }
 }
 
+fun FirRegularClassSymbol.getParentChainForContextSensitiveResolution(session: FirSession): Sequence<FirRegularClassSymbol> = sequence {
+    var current: FirRegularClassSymbol? = this@getParentChainForContextSensitiveResolution
+
+    while (current != null) {
+        yield(current)
+        current = (current.getContainingDeclaration(session) as? FirRegularClassSymbol)
+            ?.takeIf { it.isSealed }
+            ?.takeIf { isSubclassOf(it.toLookupTag(), session, isStrict = true, lookupInterfaces = true) }
+    }
+}
+
 /**
  * @return not-nullable value when resolution was successful
  */
@@ -83,35 +95,36 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
         expectedType.getClassRepresentativeForContextSensitiveResolution(session)
             ?: return null
 
-    val additionalQualifier = buildResolvedQualifier {
-        symbol = representativeClass
-        packageFqName = representativeClass.classId.packageFqName
-        relativeClassFqName = representativeClass.classId.relativeClassName
-        source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
-    }.apply {
-        setTypeOfQualifier(this@runContextSensitiveResolutionForPropertyAccess)
-    }
-
-    val newAccess = buildPropertyAccessExpression {
-        explicitReceiver = additionalQualifier
-        source = originalExpression.source
-        calleeReference = buildSimpleNamedReference {
-            source = originalExpression.calleeReference.source
-            name = originalExpression.calleeReference.name
+    for (representativeClass in representativeClass.getParentChainForContextSensitiveResolution(session)) {
+        val additionalQualifier = buildResolvedQualifier {
+            symbol = representativeClass
+            packageFqName = representativeClass.classId.packageFqName
+            relativeClassFqName = representativeClass.classId.relativeClassName
+            source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
+        }.apply {
+            setTypeOfQualifier(this@runContextSensitiveResolutionForPropertyAccess)
         }
-    }
 
-    val newExpression = callResolver.resolveVariableAccessAndSelectCandidate(
-        newAccess,
-        isUsedAsReceiver = false, isUsedAsGetClassReceiver = false,
-        callSite = newAccess,
-        ResolutionMode.ContextIndependent,
-    )
+        val newAccess = buildPropertyAccessExpression {
+            explicitReceiver = additionalQualifier
+            source = originalExpression.source
+            calleeReference = buildSimpleNamedReference {
+                source = originalExpression.calleeReference.source
+                name = originalExpression.calleeReference.name
+            }
+        }
 
-    return newExpression.takeIf {
-        when (it) {
+        val newExpression = callResolver.resolveVariableAccessAndSelectCandidate(
+            newAccess,
+            isUsedAsReceiver = false, isUsedAsGetClassReceiver = false,
+            callSite = newAccess,
+            ResolutionMode.ContextIndependent,
+        )
+
+
+        val shouldTakeNewExpression = when (newExpression) {
             is FirPropertyAccessExpression -> {
-                val newCalleeReference = it.calleeReference
+                val newCalleeReference = newExpression.calleeReference
                 newCalleeReference is FirResolvedNamedReference && newCalleeReference !is FirResolvedErrorReference
             }
 
@@ -121,7 +134,11 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
             // Non-trivial FIR element
             else -> false
         }
+
+        if (shouldTakeNewExpression) return newExpression
     }
+
+    return null
 }
 
 fun FirPropertyAccessExpression.shouldBeResolvedInContextSensitiveMode(): Boolean {
