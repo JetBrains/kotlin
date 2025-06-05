@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 abstract class PluginsApiDocumentationExtension @Inject constructor(
     objectFactory: ObjectFactory,
-    private val childProjectConfiguration: (Project) -> Unit
+    private val childProjectConfiguration: (Project, PluginsApiDocumentationExtension) -> Unit
 ) {
     abstract val documentationOutput: DirectoryProperty
     abstract val documentationOldVersions: DirectoryProperty
@@ -23,6 +23,6 @@ abstract class PluginsApiDocumentationExtension @Inject constructor(
 
     fun addGradlePluginProject(project: Project) {
         gradlePluginsProjects.add(project)
-        childProjectConfiguration(project)
+        childProjectConfiguration(project, this)
     }
 }
