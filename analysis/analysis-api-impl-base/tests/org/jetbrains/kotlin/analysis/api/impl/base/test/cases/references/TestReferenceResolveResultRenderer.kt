@@ -9,6 +9,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -37,7 +39,8 @@ object TestReferenceResolveResultRenderer {
     /**
      * Empty [symbols] list equals to unresolved reference.
      */
-    fun KaSession.renderResolvedTo(
+    context(_: KaSession)
+    fun renderResolvedTo(
         symbols: Collection<KaSymbol>,
         renderer: KaDeclarationRenderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES,
         additionalInfo: KaSession.(KaSymbol) -> String? = { null }
@@ -54,10 +57,11 @@ object TestReferenceResolveResultRenderer {
             .joinToString(separator = "\n") { "${it.index}: ${it.value}" }
     }
 
-    private fun KaSession.renderResolveResult(
+    context(_: KaSession)
+    private fun renderResolveResult(
         symbol: KaSymbol,
         renderer: KaDeclarationRenderer,
-        additionalInfo: KaSession.(KaSymbol) -> String?
+        additionalInfo: context(KaSession) (KaSymbol) -> String?
     ): String {
         return buildString {
             symbolContainerFqName(symbol)?.let { fqName ->
@@ -80,7 +84,8 @@ object TestReferenceResolveResultRenderer {
     }
 
     @Suppress("unused")// KaSession receiver
-    private fun KaSession.symbolContainerFqName(symbol: KaSymbol): String? {
+    context(_: KaSession)
+    private fun symbolContainerFqName(symbol: KaSymbol): String? {
         if (symbol is KaPackageSymbol || symbol is KaParameterSymbol) return null
         val nonLocalFqName = when (symbol) {
             is KaConstructorSymbol -> symbol.containingClassId?.asSingleFqName()

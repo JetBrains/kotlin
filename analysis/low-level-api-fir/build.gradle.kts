@@ -117,6 +117,7 @@ allprojects {
                 "org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals",
                 "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
                 "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
             )
         )
     }
