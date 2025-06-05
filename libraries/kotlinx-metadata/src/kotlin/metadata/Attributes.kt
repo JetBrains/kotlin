@@ -374,7 +374,7 @@ public var KmPropertyAccessorAttributes.visibility: Visibility by visibilityDele
 public var KmPropertyAccessorAttributes.modality: Modality by modalityDelegate(KmPropertyAccessorAttributes::flags)
 
 /**
- * Indicates that the corresponding property accessor is not default, i.e., it has a body and/or annotations in the source code,
+ * Indicates that the corresponding property accessor is not default, i.e., it has a body in the source code
  * or the property is delegated.
  */
 public var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_NOT_DEFAULT))
