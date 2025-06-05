@@ -726,6 +726,47 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Verify that the metric for native in-process compilation")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testMetricForNativeProjectInProcess(gradleVersion: GradleVersion) {
+        nativeProject(
+            "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                ),
+                buildReport = listOf(BuildReportType.JSON)
+            )
+        ) {
+            build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
+                val jsonReportFile = projectPath.getSingleFileInDir("report")
+                assertTrue { jsonReportFile.exists() }
+                val jsonReport = readJsonReport(jsonReportFile)
+                assertContains(jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
+
+                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
+                val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys.filter { it in compilerMetrics }
+
+                assertEquals(
+                    listOf(
+                        GradleBuildTime.COMPILER_INITIALIZATION,
+                        GradleBuildTime.CODE_ANALYSIS,
+                        GradleBuildTime.TRANSLATION_TO_IR,
+                        GradleBuildTime.IR_PRE_LOWERING,
+                        GradleBuildTime.IR_SERIALIZATION,
+                        GradleBuildTime.KLIB_WRITING,
+                        GradleBuildTime.IR_LOWERING,
+                        GradleBuildTime.BACKEND,
+                    ),
+                    reportedCompilerMetrics.sorted()
+                )
+            }
+        }
+    }
+
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
     }
