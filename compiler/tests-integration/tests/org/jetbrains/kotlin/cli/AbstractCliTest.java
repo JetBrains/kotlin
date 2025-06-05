@@ -209,7 +209,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         @NotNull String actualPerfReport = perfManager.createPerformanceReport(isJson);
 
-        NumberAgnosticSanitizer sanitizer = new NumberAgnosticSanitizer(actualPerfReport);
+        ValueAgnosticSanitizer sanitizer = new ValueAgnosticSanitizer(actualPerfReport);
 
         String expectedText =
                 KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, sanitizer::generateExpectedText);
