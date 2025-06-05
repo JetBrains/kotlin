@@ -1,4 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
+// FIR_IDENTICAL
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-77648
 
 @DslMarker
@@ -16,4 +17,22 @@ fun test2() {
             <!DSL_SCOPE_VIOLATION!>stringExtension<!>()
         })
     })
+}
+
+
+fun annotatedFunctionTypeVararg(vararg block: @MyMarker String.() -> Unit) {}
+fun annotatedFunctionTypeVararg2(vararg block: @MyMarker Int.() -> Unit) {}
+
+fun test3() {
+    annotatedFunctionTypeVararg(
+        block = arrayOf(
+            {
+                annotatedFunctionTypeVararg2(
+                    block = arrayOf(
+                        {
+                            <!DSL_SCOPE_VIOLATION!>stringExtension<!>()
+                        })
+                )
+            })
+    )
 }
