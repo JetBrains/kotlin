@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.isResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.components.resolveExtensionNavigationElements
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.KtResolveExtensionTestSupport
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.getDescription
@@ -38,7 +40,8 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         }
     }
 
-    private fun KaSession.renderSymbolsWithExtendedPsiInfo(scope: KaScope, printPretty: Boolean) = prettyPrint {
+    context(_: KaSession)
+    private fun renderSymbolsWithExtendedPsiInfo(scope: KaScope, printPretty: Boolean) = prettyPrint {
         renderForTests(scope, this@prettyPrint, printPretty) { symbol ->
             if (symbol is KaDeclarationSymbol) {
                 getPsiDeclarationInfo(symbol)
@@ -48,7 +51,8 @@ abstract class AbstractResolveExtensionInfoProviderTest : AbstractAnalysisApiBas
         }
     }
 
-    private fun KaSession.getPsiDeclarationInfo(symbol: KaDeclarationSymbol): String = prettyPrint {
+    context(_: KaSession)
+    private fun getPsiDeclarationInfo(symbol: KaDeclarationSymbol): String = prettyPrint {
         val ktElement = symbol.psi as? KtElement
         val containingVirtualFile = ktElement?.containingFile?.virtualFile
         appendLine("PSI: ${ktElement?.getDescription()} [from ${containingVirtualFile?.name}]")

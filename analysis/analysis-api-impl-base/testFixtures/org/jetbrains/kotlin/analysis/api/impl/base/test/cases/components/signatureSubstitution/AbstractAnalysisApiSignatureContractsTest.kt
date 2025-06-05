@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signat
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.asSignature
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
+import org.jetbrains.kotlin.analysis.api.components.substitute
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -59,7 +61,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         }
     }
 
-    private fun KaSession.testContractsOnDeclarationSymbol(
+    context(_: KaSession)
+    private fun testContractsOnDeclarationSymbol(
         symbol: KaCallableSymbol,
         substitutor: KaSubstitutor,
         testServices: TestServices,
@@ -95,7 +98,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         }
     }
 
-    private fun KaSession.checkSubstitutionResult(
+    context(_: KaSession)
+    private fun checkSubstitutionResult(
         symbol: KaFunctionSymbol,
         signature: KaFunctionSignature<*>,
         substitutor: KaSubstitutor,
@@ -108,7 +112,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         checkParameterSubstitutionResult(symbol.contextParameters, signature.contextParameters, substitutor, testServices)
     }
 
-    private fun <T : KaParameterSymbol> KaSession.checkParameterSubstitutionResult(
+    context(_: KaSession)
+    private fun <T : KaParameterSymbol> checkParameterSubstitutionResult(
         fromSymbol: List<T>,
         fromSignature: List<KaVariableSignature<T>>,
         substitutor: KaSubstitutor,
@@ -120,7 +125,8 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         }
     }
 
-    private fun KaSession.checkSubstitutionResult(
+    context(_: KaSession)
+    private fun checkSubstitutionResult(
         symbol: KaVariableSymbol,
         signature: KaVariableSignature<*>,
         substitutor: KaSubstitutor,

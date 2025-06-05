@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.name.CallableId
 
-internal fun KaSession.findMatchingCallableSymbols(callableId: CallableId, classSymbol: KaClassSymbol): List<KaCallableSymbol> {
+context(_: KaSession)
+internal fun findMatchingCallableSymbols(callableId: CallableId, classSymbol: KaClassSymbol): List<KaCallableSymbol> {
     val declaredSymbols = classSymbol.combinedDeclaredMemberScope
         .callables(callableId.callableName)
         .toList()

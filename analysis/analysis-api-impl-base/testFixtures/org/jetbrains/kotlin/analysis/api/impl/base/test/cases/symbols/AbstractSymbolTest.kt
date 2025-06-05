@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.canBeAnalysed
+import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseIllegalPsiException
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer.Companion.isCacheable
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBasePsiSymbolPointer
@@ -189,7 +191,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KaSession.checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
+    context(_: KaSession)
+    private fun checkContainingFiles(symbols: List<KaSymbol>, mainFile: KtFile, testServices: TestServices) {
         val allowedContainingFileSymbols = getAllowedContainingFiles(mainFile, testServices).mapToSetOrEmpty {
             it.takeIf { it.canBeAnalysed() }?.symbol
         }

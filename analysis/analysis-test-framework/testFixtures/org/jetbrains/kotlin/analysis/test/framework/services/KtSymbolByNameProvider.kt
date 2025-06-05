@@ -7,18 +7,21 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 
-inline fun <reified S : KaSymbol> KaSession.getSymbolByNameSafe(scope: KtElement, name: String): S? {
+context(_: KaSession)
+inline fun <reified S : KaSymbol> getSymbolByNameSafe(scope: KtElement, name: String): S? {
     return scope.collectDescendantsOfType<KtDeclaration> { it.name == name }
         .map { it.symbol }
         .filterIsInstance<S>()
         .singleOrNull()
 }
 
-inline fun <reified S : KaSymbol> KaSession.getSymbolByName(scope: KtElement, name: String): S {
+context(_: KaSession)
+inline fun <reified S : KaSymbol> getSymbolByName(scope: KtElement, name: String): S {
     return getSymbolByNameSafe(scope, name)
         ?: error("Symbol with $name was not found in scope")
 }

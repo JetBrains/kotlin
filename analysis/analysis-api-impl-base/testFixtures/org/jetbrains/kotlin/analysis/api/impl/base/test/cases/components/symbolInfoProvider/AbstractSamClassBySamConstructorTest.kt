@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.resolveToCall
 import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
@@ -38,7 +39,8 @@ abstract class AbstractSamClassBySamConstructorTest : AbstractAnalysisApiBasedTe
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    private fun KaSession.getSamConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaSamConstructorSymbol? {
+    context(_: KaSession)
+    private fun getSamConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaSamConstructorSymbol? {
         val callExpression = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtCallExpression>(mainFile)
         val constructorSymbol = callExpression?.calleeExpression?.resolveToCall()
             ?.singleFunctionCallOrNull()?.partiallyAppliedSymbol?.symbol as? KaSamConstructorSymbol

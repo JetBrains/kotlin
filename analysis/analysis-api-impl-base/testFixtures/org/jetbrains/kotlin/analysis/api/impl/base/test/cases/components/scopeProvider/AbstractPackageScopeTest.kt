@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.packageScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
@@ -14,7 +15,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractPackageScopeTest : AbstractScopeTestBase() {
-    override fun KaSession.getScope(mainFile: KtFile, testServices: TestServices): KaScope =
+    context(_: KaSession)
+    override fun getScope(mainFile: KtFile, testServices: TestServices): KaScope =
         getSingleTestTargetSymbolOfType<KaPackageSymbol>(testDataPath, mainFile).packageScope
 
     override fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> {

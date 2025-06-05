@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolver
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.resolveToCallCandidates
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableSymbolResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compareCalls
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -38,7 +39,8 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         }
     }
 
-    private fun KaSession.checkConsistencyWithResolveCall(
+    context(_: KaSession)
+    private fun checkConsistencyWithResolveCall(
         callInfo: KaCallInfo?,
         candidates: List<KaCallCandidateInfo>,
         testServices: TestServices,
@@ -67,7 +69,8 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
         }
     }
 
-    private fun KaSession.collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
+    context(_: KaSession)
+    private fun collectCallCandidates(element: KtElement): List<KaCallCandidateInfo> {
         val candidates = element.resolveToCallCandidates()
         return candidates.sortedWith { candidate1, candidate2 ->
             compareCalls(candidate1.candidate, candidate2.candidate)

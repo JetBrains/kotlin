@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
+import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -32,7 +33,8 @@ abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedT
         }
     }
 
-    private fun KaSession.render(
+    context(_: KaSession)
+    private fun render(
         importingScope: KaScopeContext,
         renderDefaultImportingScope: Boolean,
         printPretty: Boolean = false,

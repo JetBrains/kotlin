@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
+import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -33,7 +34,8 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedTes
         }
     }
 
-    private fun KaSession.renderForTests(
+    context(_: KaSession)
+    private fun renderForTests(
         element: KtElement,
         scopeContext: KaScopeContext,
         printPretty: Boolean = false,

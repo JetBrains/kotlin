@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.buildClassType
+import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -13,7 +15,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 object TypeParser {
-    fun KaSession.parseTypeFromString(
+    context(_: KaSession)
+    fun parseTypeFromString(
         stringType: String,
         contextElement: KtElement,
         scopeForTypeParameters: KtElement,
@@ -22,7 +25,8 @@ object TypeParser {
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
-    private fun KaSession.convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
+    context(_: KaSession)
+    private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {
             is KtUserType -> {
                 val qualifier = fullQualifier(type)
