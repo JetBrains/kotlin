@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -25,6 +26,8 @@ annotation class JvmIrInlineExperimental
 var IrInlinedFunctionBlock.inlineCall: IrFunctionAccessExpression? by irAttribute(copyByDefault = true)
 @JvmIrInlineExperimental
 var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefault = true)
+
+var IrDeclaration.sourceFileWhenInlined: IrFileEntry? by irAttribute(copyByDefault = true)
 
 var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
 
