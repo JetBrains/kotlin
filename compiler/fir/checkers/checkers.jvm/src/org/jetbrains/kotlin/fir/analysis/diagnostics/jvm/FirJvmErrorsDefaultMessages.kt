@@ -350,7 +350,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EXTERNAL_DECLARATION_CANNOT_BE_INLINED, "Inline functions cannot be external.")
 
         map.put(INAPPLICABLE_JVM_FIELD, "{0}.", STRING)
-        map.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}. This warning will become an error in future releases.", STRING)
+        map.put(INAPPLICABLE_JVM_FIELD_WARNING, "{0}.".toDeprecationWarningMessage(LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters), STRING)
 
         map.put(JVM_SYNTHETIC_ON_DELEGATE, "'@JvmSynthetic' annotation cannot be used on delegated properties.")
 
