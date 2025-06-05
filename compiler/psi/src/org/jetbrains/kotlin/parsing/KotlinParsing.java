@@ -77,14 +77,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
             ALL_KEYWORD, FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
             RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD, DELEGATE_KEYWORD);
-    private static final Map<IElementType, String> ANNOTATION_TARGET_ERROR_MESSAGES;
-    static {
-        Map<IElementType, String> map = new HashMap<>();
-        for (IElementType keyword : ANNOTATION_TARGETS.getTypes()) {
-            map.put(keyword, "Expecting \"" + keyword + KtTokens.COLON.getValue() + "\" prefix for " + keyword + " annotations");
-        }
-        ANNOTATION_TARGET_ERROR_MESSAGES = Collections.unmodifiableMap(map);
-    }
     private static final TokenSet BLOCK_DOC_COMMENT_SET = TokenSet.create(BLOCK_COMMENT, DOC_COMMENT);
     private static final TokenSet SEMICOLON_SET = TokenSet.create(SEMICOLON);
     private static final TokenSet COMMA_COLON_GT_SET = TokenSet.create(COMMA, COLON, GT);
@@ -901,7 +893,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker marker = mark();
 
         if (!expect(keyword)) {
-            error(ANNOTATION_TARGET_ERROR_MESSAGES.get(keyword));
+            error(generateAnnotationTargetErrorMessage(keyword));
             marker.drop();
         }
         else {
@@ -909,8 +901,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
 
         if (!expect(KtTokens.COLON)) {
-            errorWithRecovery(ANNOTATION_TARGET_ERROR_MESSAGES.get(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET);
+            errorWithRecovery(generateAnnotationTargetErrorMessage(keyword), IDENTIFIER_RBRACKET_LBRACKET_SET);
         }
+    }
+
+    private static String generateAnnotationTargetErrorMessage(KtKeywordToken keyword) {
+        return "Expecting \"" + keyword + KtTokens.COLON.getValue() + "\" prefix for " + keyword + " annotations";
     }
 
     /*
