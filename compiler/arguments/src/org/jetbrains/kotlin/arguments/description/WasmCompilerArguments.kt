@@ -132,16 +132,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-source-map-include-mappings-from-unavailable-sources"
-        compilerName = "includeUnavailableSourcesIntoSourceMap"
-        description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
-    }
-
-    compilerArgument {
         name = "Xwasm-preserve-ic-order"
         compilerName = "preserveIcOrder"
         description = "Preserve wasm file structure between IC runs.".asReleaseDependent()
