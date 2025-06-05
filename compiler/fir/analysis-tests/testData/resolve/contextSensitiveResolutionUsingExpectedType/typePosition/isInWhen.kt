@@ -20,7 +20,7 @@ fun testIsInWhen(instance: SealedClass): String {
         instance is Inner -> instance.innerProp
         instance is IndirectSealedInheritor -> instance.prop1
         instance !is SealedInheritor2 -> "100"
-        instance !is <!UNRESOLVED_REFERENCE!>SealedSealedInheritor1<!> -> "100"
+        <!USELESS_IS_CHECK!>instance !is SealedSealedInheritor1<!> -> "100"
         else -> "100"
     }
 }
@@ -31,14 +31,14 @@ fun testIsInWhenWithSubject(instance: SealedClass): String {
         is Inner -> instance.innerProp
         is IndirectSealedInheritor -> instance.prop1
         !is SealedInheritor2 -> "100"
-        !is <!UNRESOLVED_REFERENCE!>SealedSealedInheritor1<!> -> "100"
+        <!USELESS_IS_CHECK!>!is SealedSealedInheritor1<!> -> "100"
         else -> "100"
     }
 }
 
 fun testIsInWhenGuard(instance: SealedClass): String {
     return <!RETURN_TYPE_MISMATCH!>when (instance) {
-        is SealedInheritor1 if instance is <!UNRESOLVED_REFERENCE!>IndirectSealedInheritor<!> -> instance.prop1
+        is SealedInheritor1 if instance is IndirectSealedInheritor -> instance.prop1
         // KT-75977
         !is SealedInheritor1 if instance is SealedInheritor2 -> instance.prop2
         !is SealedInheritor2 if instance is SealedInheritor1 -> instance.prop1

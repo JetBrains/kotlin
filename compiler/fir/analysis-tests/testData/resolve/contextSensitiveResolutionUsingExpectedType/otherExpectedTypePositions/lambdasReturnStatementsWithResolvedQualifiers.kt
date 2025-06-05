@@ -53,6 +53,6 @@ fun main(b: Boolean) {
 
     myRun {
         if (b) return@myRun MySealed.X
-        <!UNRESOLVED_REFERENCE!>Y<!>
+        <!ARGUMENT_TYPE_MISMATCH!>Y<!>
     }
 }
