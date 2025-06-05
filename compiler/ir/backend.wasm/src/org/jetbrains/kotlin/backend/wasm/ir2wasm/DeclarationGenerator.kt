@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.originalFqName
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
@@ -36,7 +37,7 @@ class DeclarationGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
-) : IrVisitorVoid() {
+) : IrVisitor<Unit, DeclarationGenerator.Context>() {
 
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -44,19 +45,19 @@ class DeclarationGenerator(
     private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
     private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
 
-    override fun visitElement(element: IrElement) {
+    override fun visitElement(element: IrElement, data: Context) {
         error("Unexpected element of type ${element::class}")
     }
 
-    override fun visitProperty(declaration: IrProperty) {
+    override fun visitProperty(declaration: IrProperty, data: Context) {
         require(declaration.isExternal)
     }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias) {
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Context) {
         // Type aliases are not material
     }
 
-    override fun visitFunction(declaration: IrFunction) {
+    override fun visitFunction(declaration: IrFunction, data: Context) {
         // Constructor of inline class or with `@WasmPrimitiveConstructor` is empty
         if (declaration is IrConstructor &&
             (backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass) || declaration.hasWasmPrimitiveConstructorAnnotation())
@@ -130,8 +131,8 @@ class DeclarationGenerator(
         }
 
         val locationTarget = declaration.locationTarget
-        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
-        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
+        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileEntry)
+        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileEntry, LocationType.END)
 
         val function = WasmFunction.Defined(
             watName,
@@ -145,7 +146,8 @@ class DeclarationGenerator(
             backendContext,
             wasmFileCodegenContext,
             wasmModuleTypeTransformer,
-            skipCommentInstructions
+            declaration.sourceFileWhenInlined ?: data.sourceFileEntry,
+            skipCommentInstructions,
         )
 
         for (irParameter in irParameters) {
@@ -438,7 +440,7 @@ class DeclarationGenerator(
         wasmFileCodegenContext.defineGlobalClassITable(klass.symbol, wasmClassIFaceGlobal)
     }
 
-    override fun visitClass(declaration: IrClass) {
+    override fun visitClass(declaration: IrClass, data: Context) {
         if (declaration.isExternal) return
         val symbol = declaration.symbol
 
@@ -499,7 +501,7 @@ class DeclarationGenerator(
         }
 
         for (member in declaration.declarations) {
-            member.acceptVoid(this)
+            member.accept(this, data.copy(declaration.sourceFileWhenInlined ?: data.sourceFileEntry))
         }
     }
 
@@ -528,7 +530,7 @@ class DeclarationGenerator(
         )
     }
 
-    override fun visitField(declaration: IrField) {
+    override fun visitField(declaration: IrField, data: Context) {
         // Member fields are generated as part of struct type
         if (!declaration.isStatic) return
 
@@ -545,7 +547,7 @@ class DeclarationGenerator(
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    initValue.getSourceLocation(declaration.symbol, data.sourceFileEntry)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
@@ -555,6 +557,7 @@ class DeclarationGenerator(
                     backendContext,
                     wasmFileCodegenContext,
                     wasmModuleTypeTransformer,
+                    data.sourceFileEntry,
                     skipCommentInstructions,
                 )
                 val bodyGenerator = BodyGenerator(
@@ -585,6 +588,8 @@ class DeclarationGenerator(
 
         wasmFileCodegenContext.defineGlobalField(declaration.symbol, global)
     }
+
+    data class Context(val sourceFileEntry: IrFileEntry)
 }
 
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) =
