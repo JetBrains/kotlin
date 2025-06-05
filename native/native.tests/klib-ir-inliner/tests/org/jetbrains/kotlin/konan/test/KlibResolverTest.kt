@@ -155,6 +155,37 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    @DisplayName("Test poisoned klib error (KT-76145)")
+    fun testReleaseCompilerAgainstPreReleaseFeature() {
+        val modules = createModules(
+            Module("a"),
+            Module("b"),
+            Module("c", "a", "b"),
+        )
+        var poisonedKlib: KLIB? = null
+        listOf(modules[1]).compileModules(
+            produceUnpackedKlibs = true,
+            useLibraryNamesInCliArguments = false,
+            extraCmdLineParams = listOf(K2NativeCompilerArguments::irInlinerBeforeKlibSerialization.cliArgument)
+        ) { _, successKlib ->
+            poisonedKlib = successKlib.resultingArtifact
+        }
+
+        var klib: KLIB? = null
+        modules.compileModules(
+            produceUnpackedKlibs = false,
+            useLibraryNamesInCliArguments = true
+        )
+        { module, successKlib ->
+            when (module.name) {
+                "a" -> {}
+                "b" -> {}
+                "c" -> {}
+            }
+        }
+    }
+
+    @Test
     @DisplayName("Test resolving all dependencies recorded in `depends` / `dependency_version` properties (KT-63931)")
     fun testResolvingDependenciesRecordedInManifest() {
         val modules = createModules(
