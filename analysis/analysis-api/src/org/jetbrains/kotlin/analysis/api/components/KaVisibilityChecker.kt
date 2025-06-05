@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
@@ -87,4 +88,37 @@ public interface KaUseSiteVisibilityChecker : KaLifetimeOwner {
      */
     @KaExperimentalApi
     public fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean
+}
+
+/**
+ * @see KaVisibilityChecker.createUseSiteVisibilityChecker
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun createUseSiteVisibilityChecker(
+    useSiteFile: KaFileSymbol,
+    receiverExpression: KtExpression? = null,
+    position: PsiElement,
+): KaUseSiteVisibilityChecker {
+    return with(context) { createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position) }
+}
+
+/**
+ * @see KaVisibilityChecker.isVisibleInClass
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean {
+    return with(context) { isVisibleInClass(classSymbol) }
+}
+
+/**
+ * @see KaVisibilityChecker.isPublicApi
+ */
+@KaContextParameterApi
+context(context: KaVisibilityChecker)
+public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean {
+    return with(context) { isPublicApi(symbol) }
 }

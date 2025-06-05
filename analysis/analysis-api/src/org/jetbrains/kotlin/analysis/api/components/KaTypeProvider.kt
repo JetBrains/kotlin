@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
@@ -375,3 +376,217 @@ public abstract class KaBuiltinTypes : KaLifetimeOwner {
     /** The [Annotation] type. */
     public abstract val annotationType: KaType
 }
+
+/**
+ * @see KaTypeProvider.builtinTypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val builtinTypes: KaBuiltinTypes
+    get() = with(context) { builtinTypes }
+
+/**
+ * @see KaTypeProvider.approximateToSuperPublicDenotable
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+@Deprecated("Use `approximateToSuperDenotable` instead", ReplaceWith("this.approximateToSuperDenotable(!approximateLocalTypes)"))
+public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? {
+    return with(context) {
+        @Suppress("DEPRECATION")
+        approximateToSuperPublicDenotable(approximateLocalTypes)
+    }
+}
+
+/**
+ * @see KaTypeProvider.approximateToSuperPublicDenotableOrSelf
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+@Deprecated(
+    "Use `approximateToSuperDenotableOrSelf` instead",
+    ReplaceWith("this.approximateToSuperDenotableOrSelf(!approximateLocalTypes)")
+)
+context(context: KaTypeProvider)
+public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType {
+    return with(context) {
+        @Suppress("DEPRECATION")
+        approximateToSuperPublicDenotableOrSelf(approximateLocalTypes)
+    }
+}
+
+/**
+ * @see KaTypeProvider.approximateToSubPublicDenotable
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? {
+    return with(context) { approximateToSubPublicDenotable(approximateLocalTypes) }
+}
+
+/**
+ * @see KaTypeProvider.approximateToSubPublicDenotableOrSelf
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType {
+    return with(context) { approximateToSubPublicDenotableOrSelf(approximateLocalTypes) }
+}
+
+/**
+ * @see KaTypeProvider.enhancedType
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaType.enhancedType: KaType?
+    get() = with(context) { enhancedType }
+
+/**
+ * @see KaTypeProvider.enhancedTypeOrSelf
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaType.enhancedTypeOrSelf: KaType?
+    get() = with(context) { enhancedTypeOrSelf }
+
+/**
+ * @see KaTypeProvider.defaultType
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaClassifierSymbol.defaultType: KaType
+    get() = with(context) { defaultType }
+
+/**
+ * @see KaTypeProvider.commonSupertype
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val Iterable<KaType>.commonSupertype: KaType
+    get() = with(context) { commonSupertype }
+
+/**
+ * @see KaTypeProvider.commonSupertype
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val Array<KaType>.commonSupertype: KaType
+    get() = with(context) { commonSupertype }
+
+/**
+ * @see KaTypeProvider.type
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KtTypeReference.type: KaType
+    get() = with(context) { type }
+
+/**
+ * @see KaTypeProvider.receiverType
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KtDoubleColonExpression.receiverType: KaType?
+    get() = with(context) { receiverType }
+
+/**
+ * @see KaTypeProvider.withNullability
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.withNullability(isMarkedNullable: Boolean): KaType {
+    return with(context) { withNullability(isMarkedNullable) }
+}
+
+/**
+ * @see KaTypeProvider.upperBoundIfFlexible
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.upperBoundIfFlexible(): KaType {
+    return with(context) { upperBoundIfFlexible() }
+}
+
+/**
+ * @see KaTypeProvider.lowerBoundIfFlexible
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.lowerBoundIfFlexible(): KaType {
+    return with(context) { lowerBoundIfFlexible() }
+}
+
+/**
+ * @see KaTypeProvider.hasCommonSubtypeWith
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean {
+    return with(context) { hasCommonSubtypeWith(that) }
+}
+
+/**
+ * @see KaTypeProvider.collectImplicitReceiverTypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
+    return with(context) { collectImplicitReceiverTypes(position) }
+}
+
+/**
+ * @see KaTypeProvider.directSupertypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
+    return with(context) { directSupertypes(shouldApproximate) }
+}
+
+/**
+ * @see KaTypeProvider.directSupertypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaType.directSupertypes: Sequence<KaType>
+    get() = with(context) { directSupertypes }
+
+/**
+ * @see KaTypeProvider.allSupertypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
+    return with(context) { allSupertypes(shouldApproximate) }
+}
+
+/**
+ * @see KaTypeProvider.allSupertypes
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaType.allSupertypes: Sequence<KaType>
+    get() = with(context) { allSupertypes }
+
+/**
+ * @see KaTypeProvider.dispatchReceiverType
+ */
+@Suppress("DeprecatedCallableAddReplaceWith", "DEPRECATION")
+@Deprecated("Avoid using this function")
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaCallableSymbol.dispatchReceiverType: KaType?
+    get() = with(context) { dispatchReceiverType }
+
+/**
+ * @see KaTypeProvider.arrayElementType
+ */
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public val KaType.arrayElementType: KaType?
+    get() = with(context) { arrayElementType }

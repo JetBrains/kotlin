@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -506,4 +507,138 @@ public class KaScopeWithKindImpl(
     }
 
     override fun hashCode(): Int = Objects.hash(backingScope, backingKind)
+}
+
+/**
+ * @see KaScopeProvider.memberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.memberScope: KaScope
+    get() = with(context) { memberScope }
+
+/**
+ * @see KaScopeProvider.staticMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
+    get() = with(context) { staticMemberScope }
+
+/**
+ * @see KaScopeProvider.combinedMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
+    get() = with(context) { combinedMemberScope }
+
+/**
+ * @see KaScopeProvider.declaredMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
+    get() = with(context) { declaredMemberScope }
+
+/**
+ * @see KaScopeProvider.staticDeclaredMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
+    get() = with(context) { staticDeclaredMemberScope }
+
+/**
+ * @see KaScopeProvider.combinedDeclaredMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
+    get() = with(context) { combinedDeclaredMemberScope }
+
+/**
+ * @see KaScopeProvider.delegatedMemberScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
+    get() = with(context) { delegatedMemberScope }
+
+/**
+ * @see KaScopeProvider.fileScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaFileSymbol.fileScope: KaScope
+    get() = with(context) { fileScope }
+
+/**
+ * @see KaScopeProvider.packageScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaPackageSymbol.packageScope: KaScope
+    get() = with(context) { packageScope }
+
+/**
+ * @see KaScopeProvider.asCompositeScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public fun List<KaScope>.asCompositeScope(): KaScope {
+    return with(context) { asCompositeScope() }
+}
+
+/**
+ * @see KaScopeProvider.scope
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaType.scope: KaTypeScope?
+    get() = with(context) { scope }
+
+/**
+ * @see KaScopeProvider.declarationScope
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaTypeScope.declarationScope: KaScope
+    get() = with(context) { declarationScope }
+
+/**
+ * @see KaScopeProvider.syntheticJavaPropertiesScope
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
+    get() = with(context) { syntheticJavaPropertiesScope }
+
+/**
+ * @see KaScopeProvider.scopeContext
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
+    return with(context) { scopeContext(position) }
+}
+
+/**
+ * @see KaScopeProvider.importingScopeContext
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public val KtFile.importingScopeContext: KaScopeContext
+    get() = with(context) { importingScopeContext }
+
+/**
+ * @see KaScopeProvider.compositeScope
+ */
+@KaContextParameterApi
+context(context: KaScopeProvider)
+public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
+    return with(context) { compositeScope(filter) }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaCallInfo
@@ -61,4 +62,49 @@ public interface KaResolver : KaSessionComponent {
      * passing all compatibility checks.
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
+}
+
+/**
+ * @see KaResolver.resolveToSymbols
+ */
+@KaContextParameterApi
+context(context: KaResolver)
+public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
+    return with(context) { resolveToSymbols() }
+}
+
+/**
+ * @see KaResolver.resolveToSymbol
+ */
+@KaContextParameterApi
+context(context: KaResolver)
+public fun KtReference.resolveToSymbol(): KaSymbol? {
+    return with(context) { resolveToSymbol() }
+}
+
+/**
+ * @see KaResolver.isImplicitReferenceToCompanion
+ */
+@KaContextParameterApi
+context(context: KaResolver)
+public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
+    return with(context) { isImplicitReferenceToCompanion() }
+}
+
+/**
+ * @see KaResolver.resolveToCall
+ */
+@KaContextParameterApi
+context(context: KaResolver)
+public fun KtElement.resolveToCall(): KaCallInfo? {
+    return with(context) { resolveToCall() }
+}
+
+/**
+ * @see KaResolver.resolveToCallCandidates
+ */
+@KaContextParameterApi
+context(context: KaResolver)
+public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
+    return with(context) { resolveToCallCandidates() }
 }

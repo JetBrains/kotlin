@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
@@ -122,4 +123,41 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
      * @see KaTypeInformationProvider.isMarkedNullable
      */
     public var isMarkedNullable: Boolean
+}
+
+/**
+ * @see KaTypeCreator.buildClassType
+ */
+@KaContextParameterApi
+context(context: KaTypeCreator)
+public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
+    return with(context) { buildClassType(classId, init) }
+}
+
+/**
+ * @see KaTypeCreator.buildClassType
+ */
+@KaContextParameterApi
+context(context: KaTypeCreator)
+public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
+    return with(context) { buildClassType(symbol, init) }
+}
+
+/**
+ * @see KaTypeCreator.buildTypeParameterType
+ */
+@KaContextParameterApi
+context(context: KaTypeCreator)
+public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType {
+    return with(context) { buildTypeParameterType(symbol, init) }
+}
+
+/**
+ * @see KaTypeCreator.buildStarTypeProjection
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeCreator)
+public fun buildStarTypeProjection(): KaStarTypeProjection {
+    return with(context) { buildStarTypeProjection() }
 }

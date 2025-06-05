@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -102,3 +103,51 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      */
     public val KtExpression.isDefinitelyNotNull: Boolean
 }
+
+/**
+ * @see KaExpressionTypeProvider.expressionType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.expressionType: KaType?
+    get() = with(context) { expressionType }
+
+/**
+ * @see KaExpressionTypeProvider.returnType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtDeclaration.returnType: KaType
+    get() = with(context) { returnType }
+
+/**
+ * @see KaExpressionTypeProvider.functionType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtFunction.functionType: KaType
+    get() = with(context) { functionType }
+
+/**
+ * @see KaExpressionTypeProvider.expectedType
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val PsiElement.expectedType: KaType?
+    get() = with(context) { expectedType }
+
+/**
+ * @see KaExpressionTypeProvider.isDefinitelyNull
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.isDefinitelyNull: Boolean
+    get() = with(context) { isDefinitelyNull }
+
+/**
+ * @see KaExpressionTypeProvider.isDefinitelyNotNull
+ */
+@KaContextParameterApi
+context(context: KaExpressionTypeProvider)
+public val KtExpression.isDefinitelyNotNull: Boolean
+    get() = with(context) { isDefinitelyNotNull }

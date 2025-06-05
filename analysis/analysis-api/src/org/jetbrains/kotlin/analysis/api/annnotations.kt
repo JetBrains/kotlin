@@ -83,3 +83,14 @@ public annotation class KaExperimentalApi
 )
 @RequiresOptIn("An API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.")
 public annotation class KaPlatformInterface
+
+/**
+ * Marks an API that uses context parameters, an experimental language feature.
+ * The API is intended for user consumption, but it's based on a non-stable language feature that may change or be removed in the future.
+ */
+@Target(
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.FUNCTION,
+)
+@RequiresOptIn("An API using the experimental 'context parameters' language feature.")
+public annotation class KaContextParameterApi

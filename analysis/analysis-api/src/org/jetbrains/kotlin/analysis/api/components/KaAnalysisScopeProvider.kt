@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -26,4 +27,21 @@ public interface KaAnalysisScopeProvider : KaSessionComponent {
      * For example, a [KaSymbol] can only be built for this [PsiElement] if it can be analyzed.
      */
     public fun PsiElement.canBeAnalysed(): Boolean
+}
+
+/**
+ * @see KaAnalysisScopeProvider.analysisScope
+ */
+@KaContextParameterApi
+context(context: KaAnalysisScopeProvider)
+public val analysisScope: GlobalSearchScope
+    get() = with(context) { analysisScope }
+
+/**
+ * @see KaAnalysisScopeProvider.canBeAnalysed
+ */
+@KaContextParameterApi
+context(context: KaAnalysisScopeProvider)
+public fun PsiElement.canBeAnalysed(): Boolean {
+    return with(context) { canBeAnalysed() }
 }

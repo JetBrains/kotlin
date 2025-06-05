@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension
@@ -53,3 +54,39 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
     @KaExperimentalApi
     public val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
 }
+
+/**
+ * @see KaResolveExtensionInfoProvider.resolveExtensionScopeWithTopLevelDeclarations
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaResolveExtensionInfoProvider)
+public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
+    get() = with(context) { resolveExtensionScopeWithTopLevelDeclarations }
+
+/**
+ * @see KaResolveExtensionInfoProvider.isResolveExtensionFile
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaResolveExtensionInfoProvider)
+public val VirtualFile.isResolveExtensionFile: Boolean
+    get() = with(context) { isResolveExtensionFile }
+
+/**
+ * @see KaResolveExtensionInfoProvider.isFromResolveExtension
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaResolveExtensionInfoProvider)
+public val KtElement.isFromResolveExtension: Boolean
+    get() = with(context) { isFromResolveExtension }
+
+/**
+ * @see KaResolveExtensionInfoProvider.resolveExtensionNavigationElements
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaResolveExtensionInfoProvider)
+public val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
+    get() = with(context) { resolveExtensionNavigationElements }

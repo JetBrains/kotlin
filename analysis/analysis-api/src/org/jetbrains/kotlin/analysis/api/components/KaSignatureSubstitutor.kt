@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
@@ -59,4 +60,64 @@ public interface KaSignatureSubstitutor : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S>
+}
+
+/**
+ * @see KaSignatureSubstitutor.substitute
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> {
+    return with(context) { substitute(substitutor) }
+}
+
+/**
+ * @see KaSignatureSubstitutor.substitute
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> {
+    return with(context) { substitute(substitutor) }
+}
+
+/**
+ * @see KaSignatureSubstitutor.substitute
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> {
+    return with(context) { substitute(substitutor) }
+}
+
+/**
+ * @see KaSignatureSubstitutor.asSignature
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
+    return with(context) { asSignature() }
+}
+
+/**
+ * @see KaSignatureSubstitutor.asSignature
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
+    return with(context) { asSignature() }
+}
+
+/**
+ * @see KaSignatureSubstitutor.asSignature
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSignatureSubstitutor)
+public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> {
+    return with(context) { asSignature() }
 }

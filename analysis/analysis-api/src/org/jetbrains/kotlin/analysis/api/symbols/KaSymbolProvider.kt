@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
@@ -199,3 +200,217 @@ public interface KaSymbolProvider : KaSessionComponent {
      */
     public val rootPackageSymbol: KaPackageSymbol
 }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtDeclaration.symbol: KaDeclarationSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtParameter.symbol: KaVariableSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtNamedFunction.symbol: KaFunctionSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtConstructor<*>.symbol: KaConstructorSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtTypeParameter.symbol: KaTypeParameterSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtTypeAlias.symbol: KaTypeAliasSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtEnumEntry.symbol: KaEnumEntrySymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtProperty.symbol: KaVariableSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.classSymbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtClassOrObject.classSymbol: KaClassSymbol?
+    get() = with(context) { classSymbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtObjectDeclaration.symbol: KaClassSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.namedClassSymbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
+    get() = with(context) { namedClassSymbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtClassInitializer.symbol: KaClassInitializerSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtFile.symbol: KaFileSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtScript.symbol: KaScriptSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.symbol
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val KtContextReceiver.symbol: KaContextParameterSymbol
+    get() = with(context) { symbol }
+
+/**
+ * @see KaSymbolProvider.findPackage
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public fun findPackage(fqName: FqName): KaPackageSymbol? {
+    return with(context) { findPackage(fqName) }
+}
+
+/**
+ * @see KaSymbolProvider.findClass
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public fun findClass(classId: ClassId): KaClassSymbol? {
+    return with(context) { findClass(classId) }
+}
+
+/**
+ * @see KaSymbolProvider.findTypeAlias
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? {
+    return with(context) { findTypeAlias(classId) }
+}
+
+/**
+ * @see KaSymbolProvider.findClassLike
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
+    return with(context) { findClassLike(classId) }
+}
+
+/**
+ * @see KaSymbolProvider.findTopLevelCallables
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<KaCallableSymbol> {
+    return with(context) { findTopLevelCallables(packageFqName, name) }
+}
+
+/**
+ * @see KaSymbolProvider.rootPackageSymbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolProvider)
+public val rootPackageSymbol: KaPackageSymbol
+    get() = with(context) { rootPackageSymbol }
