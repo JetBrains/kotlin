@@ -89,3 +89,11 @@ private class SomeBaz : Baz {
 var value: Baz = SomeBaz()
 
 fun identity(baz: Baz): Baz = baz
+
+// FILE: functional_interface.kt
+
+fun interface FunctionalInterface {
+    fun getNumber(): Int
+}
+
+fun testFunctionalInterface(arg: FunctionalInterface): Int = arg.getNumber()

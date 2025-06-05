@@ -31,7 +31,8 @@ public class SirDeclarationFromKtSymbolProvider(
                         declaration = protocol,
                         bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
                         markerDeclaration = protocol.existentialMarker,
-                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol)
+                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
+                        samConverter = protocol.samConverter,
                     )
                 } else {
                     createSirClassFromKtSymbol(

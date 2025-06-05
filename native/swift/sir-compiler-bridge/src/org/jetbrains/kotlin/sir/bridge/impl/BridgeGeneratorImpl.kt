@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyGetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSamConstructorSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.*
 import org.jetbrains.kotlin.sir.mangler.mangledNameOrNull
@@ -68,6 +69,10 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                             }
                             is KaNamedFunctionSymbol -> {
                                 val actualArgs = if (extensionReceiverParameter != null) args.drop(1) else args
+                                buildCall("(${actualArgs.joinToString()})")
+                            }
+                            is KaSamConstructorSymbol -> {
+                                val actualArgs = args
                                 buildCall("(${actualArgs.joinToString()})")
                             }
                             else -> error("Unexpected Kotlin symbol: ${kaSymbol}")

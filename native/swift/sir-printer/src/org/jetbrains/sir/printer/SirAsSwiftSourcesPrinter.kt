@@ -338,7 +338,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
                     printVisibility()
                 }
                 if (callableKind == SirCallableKind.CLASS_METHOD) {
-                    print("class ")
+                    print(if (this.parent is SirClass) "class " else "static ")
                 }
             }
             SirModality.FINAL -> {
@@ -355,7 +355,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
             SirModality.UNSPECIFIED -> {
                 printVisibility()
                 if (callableKind == SirCallableKind.CLASS_METHOD) {
-                    print("class ")
+                    print(if (this.parent is SirClass) "class " else "static ")
                 }
             }
         }

@@ -129,3 +129,36 @@ sealed interface SealedFoeble {
 sealed interface SealedBazzable: SealedFoeble
 
 object SomeBazzable: SealedBazzable
+
+// MODULE: funinterface
+// FILE: functional_interface.kt
+
+package funinterface
+
+fun interface FunctionalInterface {
+    operator fun invoke(): Int
+}
+
+class FunctorClass: FunctionalInterface {
+    override fun invoke(): Int = 42
+}
+
+fun interface _FunctionalInterfaceWithLeadingUnderscore {
+    operator fun invoke(): Int
+}
+
+fun interface _123FunctionalInterfaceWithLeadingNumbers {
+    operator fun invoke(): Int
+}
+
+fun interface XMLFunctionalInterfaceWithLeadingAbbreviation {
+    operator fun invoke(): Int
+}
+
+fun interface _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
+    operator fun invoke(): Int
+}
+
+fun interface functionalInterfaceWithAlreadyLowercaseLeading {
+    operator fun invoke(): Int
+}

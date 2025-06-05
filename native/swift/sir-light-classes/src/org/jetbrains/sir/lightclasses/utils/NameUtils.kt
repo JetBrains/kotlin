@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.sir.util.swiftParentNamePrefix
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import kotlin.math.max
 
 
 internal inline fun <reified S : KaNamedClassSymbol, reified T> T.relocatedDeclarationNamePrefix(): String? where T : SirFromKtSymbol<S>, T : SirDeclaration =
@@ -26,3 +27,15 @@ internal inline fun <reified S : KaNamedClassSymbol, reified T> T.relocatedDecla
             }?.let { "_${it}_" }
         }
     }
+
+internal fun decapitalizeNameSemantically(name: String): String {
+    val length = name.length
+    val start = name.indexOfFirst { it.isLetter() }.takeIf { it != -1 } ?: return name
+
+    val end = (start until length).firstOrNull() { name[it].isLowerCase() }
+        ?.let { it.takeIf { it != start } ?: return name }
+        ?.let { max(start + 1, it - 1) }
+        ?: length
+
+    return name.substring(0, start) + name.substring(start, end).lowercase() + name.substring(end)
+}

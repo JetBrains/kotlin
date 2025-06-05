@@ -19,10 +19,10 @@ import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 
-internal class SirFunctionFromKtSymbol(
-    override val ktSymbol: KaNamedFunctionSymbol,
+internal open class SirFunctionFromKtSymbol(
+    override val ktSymbol: KaFunctionSymbol,
     override val sirSession: SirSession,
-) : SirFunction(), SirFromKtSymbol<KaNamedFunctionSymbol> {
+) : SirFunction(), SirFromKtSymbol<KaFunctionSymbol> {
 
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val origin: SirOrigin by lazy {
@@ -55,7 +55,7 @@ internal class SirFunctionFromKtSymbol(
     private val overrideStatus: OverrideStatus<SirFunction>? by lazy { computeIsOverride() }
 
     override val isInstance: Boolean
-        get() = !ktSymbol.isTopLevel && !ktSymbol.isStatic
+        get() = !ktSymbol.isTopLevel && (ktSymbol as KaNamedFunctionSymbol)?.let { !it.isStatic } ?: false
 
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality

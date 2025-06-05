@@ -113,3 +113,11 @@ func testShouldWrapPrivateTypesIntoKotlinExistentialsInVariables() throws {
 
     value = original
 }
+
+@Test
+func testSAMConverterShouldBridge() throws {
+    let expected: Int32 = 42
+    let value: any FunctionalInterface = functionalInterface { expected }
+    let actual = testFunctionalInterface(arg: value)
+    #expect(actual == expected)
+}

@@ -27,6 +27,7 @@ import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
+import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -94,6 +95,18 @@ internal open class SirProtocolFromKtSymbol(
     internal val existentialMarker: SirProtocol by lazy {
         SirMarkerProtocolFromKtSymbol(this)
             .also { it.parent = this.parent }
+    }
+
+    internal val samConverter: SirDeclaration? by lazyWithSessions {
+        ktSymbol.samConstructor?.let {
+            SirRelocatedFunction(SirFunctionFromKtSymbol(it, sirSession)).also {
+                it.parent = this@SirProtocolFromKtSymbol.parent
+                it.name = this@SirProtocolFromKtSymbol.name.let { name ->
+                    val decapitalized = decapitalizeNameSemantically(name)
+                    decapitalized.takeIf { it != name } ?: "${decapitalized}FromFunction"
+                }
+            }
+        }
     }
 }
 
@@ -174,8 +187,9 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     }
 }
 
+
 /**
- * Relocatied function
+ * Relocated function
  * Mirrors the `source` declaration, but allows for changing parent.
  *
  * @property source The original declaration
@@ -188,10 +202,13 @@ private class SirRelocatedFunction(
     override val origin: SirOrigin get() = source.origin
     override val visibility: SirVisibility get() = source.visibility
     override val documentation: String? get() = source.documentation
-    override val name: String get() = source.name
+    private var _name: String? = null
+    override var name: String
+        get() = _name ?: source.name
+        set(newValue) { _name = newValue }
     override val returnType: SirType get() = source.returnType
     override val isOverride: Boolean get() = false
-    override val isInstance: Boolean get() = true
+    override val isInstance: Boolean get() = source.isInstance
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
     override val extensionReceiverParameter: SirParameter? get() = source.extensionReceiverParameter
