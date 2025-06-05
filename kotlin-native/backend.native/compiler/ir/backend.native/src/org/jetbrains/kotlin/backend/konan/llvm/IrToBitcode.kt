@@ -814,20 +814,7 @@ internal class CodeGeneratorVisitor(
         // Some special functions may have empty body, they are handled separately.
         val body = declaration.body ?: return
 
-        val file = run {
-            val originalFunction = when (val original = declaration.attributeOwnerId) {
-                is IrFunctionExpression -> original.function
-                is IrFunction -> original
-                else -> return@run null
-            }
-            context.irLinker.getFileOf(originalFunction)
-        }
-        val scope = if (file != null && file.fileEntry != fileEntry()) {
-            FileScope(file, file.fileEntry)
-        } else {
-            null
-        }
-        using(scope) {
+        usingFileScope(declaration.sourceFileWhenInlined) {
             generateFunction(codegen, declaration,
                     declaration.location(start = true),
                     declaration.location(start = false)) {
@@ -874,17 +861,20 @@ internal class CodeGeneratorVisitor(
     override fun visitClass(declaration: IrClass) {
         context.log{"visitClass                     : ${ir2string(declaration)}"}
 
-        if (!declaration.requiresCodeGeneration()) {
-            // For non-generated annotation classes generate only nested classes.
-            declaration.declarations
-                    .filterIsInstance<IrClass>()
-                    .forEach { it.acceptVoid(this) }
-            return
-        }
-        using(ClassScope(declaration)) {
-            runAndProcessInitializers(declaration.konanLibrary) {
-                declaration.declarations.forEach {
-                    it.acceptVoid(this)
+        usingFileScope(declaration.sourceFileWhenInlined) {
+            if (!declaration.requiresCodeGeneration()) {
+                // For non-generated annotation classes generate only nested classes.
+                declaration.declarations
+                        .filterIsInstance<IrClass>()
+                        .forEach { it.acceptVoid(this) }
+                return
+            }
+
+            using(ClassScope(declaration)) {
+                runAndProcessInitializers(declaration.konanLibrary) {
+                    declaration.declarations.forEach {
+                        it.acceptVoid(this)
+                    }
                 }
             }
         }
@@ -2045,6 +2035,15 @@ internal class CodeGeneratorVisitor(
     }
 
     //-------------------------------------------------------------------------//
+
+    private inline fun <R> usingFileScope(fileEntry: IrFileEntry?, block: () -> R): R {
+        val fileScope = if (fileEntry != null && fileEntry != fileEntry()) {
+            FileScope(null, fileEntry)
+        } else {
+            null
+        }
+        return using(fileScope, block)
+    }
 
     private open inner class FileScope(private val file: IrFile?, val fileEntry: IrFileEntry) : InnerScopeImpl() {
         override fun fileScope(): CodeContext? = this
