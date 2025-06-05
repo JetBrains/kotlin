@@ -35,6 +35,8 @@ object JvmStandardClassIds {
     val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
     val JVM_OVERLOADS_CLASS_ID = ClassId.topLevel(JVM_OVERLOADS_FQ_NAME)
     val JVM_STATIC_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
+    val JVM_INTRODUCED_AT_FQ_NAME = FqName("kotlin.jvm.IntroducedAt")
+    val JVM_INTRODUCED_AT_CLASS_ID = ClassId.topLevel(JVM_INTRODUCED_AT_FQ_NAME)
 
     val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
     val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")

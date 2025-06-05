@@ -225,3 +225,16 @@ public actual annotation class JvmRecord
     AnnotationTarget.CLASS,
 )
 public actual annotation class JvmExposeBoxed(actual val jvmName: String)
+
+/**
+ * TODO: docs
+ * Instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
+ *
+ * If a method has N parameters and M of which have default values, M overloads are generated: the first one
+ * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.SOURCE)
+@ExperimentalStdlibApi
+@MustBeDocumented
+public actual annotation class IntroducedAt(actual val version: String)

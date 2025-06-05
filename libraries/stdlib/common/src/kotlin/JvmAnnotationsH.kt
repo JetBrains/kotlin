@@ -256,3 +256,18 @@ public expect annotation class JvmSerializableLambda()
     CLASS,
 )
 public expect annotation class JvmExposeBoxed(val jvmName: String = "")
+
+
+
+/**
+ * TODO: docs
+ * Instructs the Kotlin compiler to generate overloads for this function that substitute default parameter values.
+ *
+ * If a method has N parameters and M of which have default values, M overloads are generated: the first one
+ * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
+ */
+@Target(VALUE_PARAMETER)
+@MustBeDocumented
+@ExperimentalStdlibApi
+@OptionalExpectation
+public expect annotation class IntroducedAt(val version: String)
