@@ -133,7 +133,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             project.reportDiagnosticOncePerBuild(
                 KotlinToolingDiagnostics.ExperimentalFeatureWarning(
                     "Separate KMP compilation",
-                    "https://kotl.in/3lhnmu",
+                    "https://kotl.in/experimental-separate-kmp-compilation",
                 ),
                 key = "SeparateKmpCompilation"
             )
