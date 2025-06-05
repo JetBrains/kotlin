@@ -3,14 +3,14 @@
     "projectName": "kotlinProject",
     "taskName": "kotlinProject",
     "taskResult": "NOTHING_DONE",
-    "startTimeMs": $TIME$,
-    "durationMs": $TIME$,
+    "startTimeMs": $UINT$,
+    "durationMs": $UINT$,
     "tags": [],
     "changes": [],
-    "buildUuid": "$BUILD_ID$",
+    "buildUuid": $QUOTEDSTRING$,
     "kotlinVersion": "kotlin_version",
-    "hostName": "$HOST$",
-    "finishTime": $TIME$,
+    "hostName": $QUOTEDSTRING$,
+    "finishTime": $UINT$,
     "compilerArguments": [],
     "nonIncrementalAttributes": [],
     "buildTimesMetrics": {},
@@ -26,20 +26,20 @@
     "projectName": "kotlinProject",
     "taskName": "kotlinProject",
     "taskResult": "CHUNK_REBUILD_REQUIRED",
-    "startTimeMs": $TIME$,
-    "durationMs": $TIME$,
+    "startTimeMs": $UINT$,
+    "durationMs": $UINT$,
     "tags": [],
     "changes": [
-      "$KSecondPath$"
+      $QUOTEDSTRING$
     ],
-    "buildUuid": "$BUILD_ID$",
+    "buildUuid": $QUOTEDSTRING$,
     "kotlinVersion": "kotlin_version",
-    "hostName": "$HOST$",
-    "finishTime": $TIME$,
+    "hostName": $QUOTEDSTRING$,
+    "finishTime": $UINT$,
     "compilerArguments": [],
     "nonIncrementalAttributes": [],
     "buildTimesMetrics": {
-      "JPS_ITERATION": $TIME$
+      "JPS_ITERATION": $UINT$
     },
     "performanceMetrics": {},
     "gcTimeMetrics": {},
@@ -53,21 +53,21 @@
     "projectName": "kotlinProject",
     "taskName": "kotlinProject",
     "taskResult": "OK",
-    "startTimeMs": $TIME$,
-    "durationMs": $TIME$,
+    "startTimeMs": $UINT$,
+    "durationMs": $UINT$,
     "tags": [],
     "changes": [
-      "$KSecondPath$"
+      $QUOTEDSTRING$
     ],
-    "buildUuid": "$BUILD_ID$",
+    "buildUuid": $QUOTEDSTRING$,
     "kotlinVersion": "kotlin_version",
     "kotlinLanguageVersion": "2.2",
-    "hostName": "$HOST$",
-    "finishTime": $TIME$,
+    "hostName": $QUOTEDSTRING$,
+    "finishTime": $UINT$,
     "compilerArguments": [],
     "nonIncrementalAttributes": [],
     "buildTimesMetrics": {
-      "JPS_ITERATION": $TIME$
+      "JPS_ITERATION": $UINT$
     },
     "performanceMetrics": {},
     "gcTimeMetrics": {},

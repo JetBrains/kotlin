@@ -1025,29 +1025,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         withSystemProperty("kotlin.build.report.json.output_dir",reportDir.absolutePath) {
             buildAllModules()
         }
-        assertEquals(1, reportDir.listFiles().size)
 
-        //Unfortunately, NumberAgnosticSanitizer is not enough
-        val expected = workDir.resolve("expectedReport.json").readText()
-            .replace("{", "\\{")
-            .replace("}", "\\}")
-            .replace("[", "\\[")
-            .replace("]", "\\]")
-            .replace("\$KSecondPath\$", workDir.resolve("src/kotlin/KSecond.kt").absolutePath)
-            .replace("\$BUILD_ID\$", "[a-zA-Z0-9_-]+")
-            .replace("\$TIME\$", "[0-9]+")
-            .replace("\$HOST\$", ".*")
+        val expectedJsonTemplate = originalProjectDir.resolve("expectedReport.json")
+        val actualJson = reportDir.listFiles()!!.single().readText()
 
-        val jsonReport = reportDir.listFiles().first().readText()
-        val matches = Regex(expected).find(jsonReport)
-        assertNotNull(
-            """
-                Build report:
-                $jsonReport
-                does not fit the expected pattern:
-                $expected
-            """.trimIndent(), matches
-        )
+        KotlinTestUtils.assertValueAgnosticEqualsToFile(expectedJsonTemplate, actualJson)
     }
 
     private fun BuildResult.checkErrors() {
