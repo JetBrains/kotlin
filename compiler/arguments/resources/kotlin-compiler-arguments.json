@@ -3258,6 +3258,37 @@
                             "deprecatedVersion": null,
                             "removedVersion": null
                         }
+                    },
+                    {
+                        "name": "Xallow-reified-type-in-catch",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Allow 'catch' parameters to have reified types.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.2.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
                     }
                 ],
                 "nestedLevels": [
