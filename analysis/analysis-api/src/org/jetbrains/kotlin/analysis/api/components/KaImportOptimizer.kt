@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -39,3 +40,22 @@ public class KaImportOptimizerResult(
     public val usedDeclarations: Map<FqName, Set<Name>> = emptyMap(),
     public val unresolvedNames: Set<Name> = emptySet(),
 )
+
+/**
+ * @see KaImportOptimizer.analyzeImportsToOptimize
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaImportOptimizer)
+public fun analyzeImportsToOptimize(file: KtFile): KaImportOptimizerResult {
+    return with(context) { analyzeImportsToOptimize(file) }
+}
+
+/**
+ * @see KaImportOptimizer.importableFqName
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaImportOptimizer)
+public val KaSymbol.importableFqName: FqName?
+    get() = with(context) { importableFqName }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -212,3 +213,138 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      */
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
 }
+
+/**
+ * @see KaSymbolRelationProvider.containingSymbol
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaSymbol.containingSymbol: KaSymbol?
+    get() = with(context) { containingSymbol }
+
+/**
+ * @see KaSymbolRelationProvider.containingDeclaration
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaSymbol.containingDeclaration: KaDeclarationSymbol?
+    get() = with(context) { containingDeclaration }
+
+/**
+ * @see KaSymbolRelationProvider.containingFile
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaSymbol.containingFile: KaFileSymbol?
+    get() = with(context) { containingFile }
+
+/**
+ * @see KaSymbolRelationProvider.containingModule
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaSymbol.containingModule: KaModule
+    get() = with(context) { containingModule }
+
+/**
+ * @see KaSymbolRelationProvider.samConstructor
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
+    get() = with(context) { samConstructor }
+
+/**
+ * @see KaSymbolRelationProvider.constructedClass
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
+    get() = with(context) { constructedClass }
+
+/**
+ * @see KaSymbolRelationProvider.originalConstructorIfTypeAliased
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolRelationProvider)
+public val KaConstructorSymbol.originalConstructorIfTypeAliased: KaConstructorSymbol?
+    get() = with(context) { originalConstructorIfTypeAliased }
+
+/**
+ * @see KaSymbolRelationProvider.allOverriddenSymbols
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaCallableSymbol.allOverriddenSymbols: Sequence<KaCallableSymbol>
+    get() = with(context) { allOverriddenSymbols }
+
+/**
+ * @see KaSymbolRelationProvider.directlyOverriddenSymbols
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaCallableSymbol.directlyOverriddenSymbols: Sequence<KaCallableSymbol>
+    get() = with(context) { directlyOverriddenSymbols }
+
+/**
+ * @see KaSymbolRelationProvider.isSubClassOf
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public fun KaClassSymbol.isSubClassOf(superClass: KaClassSymbol): Boolean {
+    return with(context) { isSubClassOf(superClass) }
+}
+
+/**
+ * @see KaSymbolRelationProvider.isDirectSubClassOf
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean {
+    return with(context) { isDirectSubClassOf(superClass) }
+}
+
+/**
+ * @see KaSymbolRelationProvider.intersectionOverriddenSymbols
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
+    get() = with(context) { intersectionOverriddenSymbols }
+
+/**
+ * @see KaSymbolRelationProvider.getImplementationStatus
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolRelationProvider)
+public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {
+    return with(context) { getImplementationStatus(parentClassSymbol) }
+}
+
+/**
+ * @see KaSymbolRelationProvider.fakeOverrideOriginal
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaCallableSymbol.fakeOverrideOriginal: KaCallableSymbol
+    get() = with(context) { fakeOverrideOriginal }
+
+/**
+ * @see KaSymbolRelationProvider.getExpectsForActual
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolRelationProvider)
+public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> {
+    return with(context) { getExpectsForActual() }
+}
+
+/**
+ * @see KaSymbolRelationProvider.sealedClassInheritors
+ */
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
+    get() = with(context) { sealedClassInheritors }

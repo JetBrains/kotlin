@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
@@ -25,4 +26,23 @@ public interface KaEvaluator : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue?
+}
+
+/**
+ * @see KaEvaluator.evaluate
+ */
+@KaContextParameterApi
+context(context: KaEvaluator)
+public fun KtExpression.evaluate(): KaConstantValue? {
+    return with(context) { evaluate() }
+}
+
+/**
+ * @see KaEvaluator.evaluateAsAnnotationValue
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaEvaluator)
+public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? {
+    return with(context) { evaluateAsAnnotationValue() }
 }
