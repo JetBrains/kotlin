@@ -246,7 +246,6 @@ class NewConstraintSystemImpl(
         private val beforeErrorsCount: Int,
         private val beforeMaxTypeDepthFromInitialConstraints: Int,
         private val beforeTypeVariablesTransactionSize: Int,
-        private val beforeMissedConstraintsCount: Int,
         private val beforeConstraintCountByVariables: Map<TypeConstructorMarker, Int>,
         private val beforeConstraintsFromAllForks: Int,
     ) : ConstraintSystemTransaction() {
@@ -263,7 +262,6 @@ class NewConstraintSystemImpl(
             }
             storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
             storage.errors.trimToSize(beforeErrorsCount)
-            storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
             storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
             val addedInitialConstraints = storage.initialConstraints.subList(
@@ -292,7 +290,6 @@ class NewConstraintSystemImpl(
             beforeErrorsCount = storage.errors.size,
             beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints,
             beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
-            beforeMissedConstraintsCount = storage.missedConstraints.size,
             beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount },
             beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size,
         ).also {
@@ -690,9 +687,6 @@ class NewConstraintSystemImpl(
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
 
-        // Substitute freshly fixed type variable into missed constraints
-        substituteMissedConstraints()
-
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
@@ -729,16 +723,6 @@ class NewConstraintSystemImpl(
         addError(
             errorFactory(upperTypes.toList(), emptyIntersectionTypeInfo.casingTypes.toList(), variable, emptyIntersectionTypeInfo.kind)
         )
-    }
-
-    private fun substituteMissedConstraints() {
-        val substitutor = buildCurrentSubstitutor()
-        for ((_, constraints) in storage.missedConstraints) {
-            for ((index, variableWithConstraint) in constraints.withIndex()) {
-                val (typeVariable, constraint) = variableWithConstraint
-                constraints[index] = typeVariable to constraint.replaceType(substitutor.safeSubstitute(constraint.type))
-            }
-        }
     }
 
     private fun ConstraintSystemUtilContext.postponeOnlyInputTypesCheck(
