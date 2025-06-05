@@ -48,12 +48,12 @@
   },
   "gcStats": [
     {
-      "kind": "PS MarkSweep",
+      "kind": $QUOTEDSTRING$,
       "count": $UINT$,
       "millis": $UINT$
     },
     {
-      "kind": "PS Scavenge",
+      "kind": $QUOTEDSTRING$,
       "count": $UINT$,
       "millis": $UINT$
     }
