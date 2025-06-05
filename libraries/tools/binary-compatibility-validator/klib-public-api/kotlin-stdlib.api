@@ -247,6 +247,13 @@ open annotation class kotlin/IgnorableReturnValue : kotlin/Annotation { // kotli
     constructor <init>() // kotlin/IgnorableReturnValue.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/IntroducedAt : kotlin/Annotation { // kotlin/IntroducedAt|null[0]
+    constructor <init>(kotlin/String) // kotlin/IntroducedAt.<init>|<init>(kotlin.String){}[0]
+
+    final val version // kotlin/IntroducedAt.version|{}version[0]
+        final fun <get-version>(): kotlin/String // kotlin/IntroducedAt.version.<get-version>|<get-version>(){}[0]
+}
+
 open annotation class kotlin/MustUseReturnValue : kotlin/Annotation { // kotlin/MustUseReturnValue|null[0]
     constructor <init>() // kotlin/MustUseReturnValue.<init>|<init>(){}[0]
 }

@@ -4424,6 +4424,57 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val containingDeclarationName: Name
     }
 
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
+    }
+
+    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonfinalFunction::class
+    }
+
+    interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
+    }
+
+    interface InvalidVersioningOnLocalFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnLocalFunction::class
+    }
+
+    interface InvalidVersioningOnAnnotationClass : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnAnnotationClass::class
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+        val dependOn: KaCallableSymbol
+        val dependOnVersion: String
+        val maxVersion: String
+    }
+
+    interface ConflictWithJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ConflictWithJvmOverloadsAnnotation::class
+    }
+
+    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
+    }
+
+    interface InvalidVersioningOnReceiverOrContextParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnReceiverOrContextParameterPosition::class
+    }
+
+    interface InvalidVersioningOnVararg : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnVararg::class
+    }
+
+    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnValueClassParameter::class
+    }
+
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonAscendingVersionAnnotation::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }
