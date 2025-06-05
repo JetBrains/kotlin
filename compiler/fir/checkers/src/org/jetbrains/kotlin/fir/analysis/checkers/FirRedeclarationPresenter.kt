@@ -40,9 +40,7 @@ internal object FirRedeclarationPresenter {
     }
 
     private fun StringBuilder.appendRepresentationBeforeCallableId(it: FirCallableSymbol<*>) {
-        repeat(it.contextParameterSymbols.size) {
-            append(',')
-        }
+        if (it.contextParameterSymbols.isNotEmpty()) append(',')
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')
@@ -100,9 +98,7 @@ internal object FirRedeclarationPresenter {
     }
 
     fun represent(it: FirConstructorSymbol, owner: FirClassLikeSymbol<*>) = buildString {
-        repeat(it.contextParameterSymbols.size) {
-            append(',')
-        }
+        if (it.contextParameterSymbols.isNotEmpty()) append(',')
         append('<')
         repeat(it.typeParameterSymbols.size) {
             append(',')

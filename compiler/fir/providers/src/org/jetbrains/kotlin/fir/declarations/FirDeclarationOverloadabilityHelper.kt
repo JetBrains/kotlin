@@ -11,9 +11,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 
 interface FirDeclarationOverloadabilityHelper : FirSessionComponent {
-    fun isOverloadable(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>): Boolean
+    fun isConflicting(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>, ignoreContextParameters: Boolean): Boolean
 
-    fun createSignature(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>>
+    enum class ContextParameterShadowing {
+        None,
+        Shadowing,
+        BothWays,
+    }
+
+    fun getContextParameterShadowing(a: FirCallableSymbol<*>, b: FirCallableSymbol<*>): ContextParameterShadowing
+
+    fun createSignature(declaration: FirCallableSymbol<*>, ignoreContextParameters: Boolean = false): FlatSignature<FirCallableSymbol<*>>
     fun createSignatureForPossiblyShadowedExtension(declaration: FirCallableSymbol<*>): FlatSignature<FirCallableSymbol<*>>
 
     fun isEquallyOrMoreSpecific(

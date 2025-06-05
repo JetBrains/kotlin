@@ -488,6 +488,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION: KtDiagnosticFactory1<FirCallableSymbol<*>> = KtDiagnosticFactory1("CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val MULTIPLE_CONTEXT_LISTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTIPLE_CONTEXT_LISTS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val CONTEXTUAL_OVERLOAD_SHADOWED: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CONTEXTUAL_OVERLOAD_SHADOWED", WARNING, SourceElementPositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS, KtElement::class, getRendererFactory())
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 = KtDiagnosticFactory0("RECURSION_IN_IMPLICIT_TYPES", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

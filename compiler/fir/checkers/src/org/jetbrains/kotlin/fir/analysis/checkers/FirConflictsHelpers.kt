@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTr
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
@@ -151,6 +153,7 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
     internal val session: FirSession get() = context.sessionHolder.session
 
     val declarationConflictingSymbols: HashMap<D, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
+    val declarationShadowedViaContextParameters: HashMap<D, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 }
 
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirClassSymbol<*>) {
@@ -292,14 +295,25 @@ private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
         }
 
         val conflicts = SmartSet.create<FirBasedSymbol<*>>()
+        val shadowing = SmartSet.create<FirBasedSymbol<*>>()
+
         for (otherDeclaration in it) {
-            if (otherDeclaration != declaration && !areNonConflictingCallables(declaration, otherDeclaration)) {
-                conflicts.add(otherDeclaration)
-                declarationConflictingSymbols.getOrPut(otherDeclaration) { SmartSet.create() }.add(declaration)
+            if (otherDeclaration != declaration) {
+                when (getConflictState(declaration, otherDeclaration)) {
+                    ConflictState.Conflict -> {
+                        conflicts.add(otherDeclaration)
+                        declarationConflictingSymbols.getOrPut(otherDeclaration) { SmartSet.create() }.add(declaration)
+                    }
+                    ConflictState.ContextParameterShadowing -> {
+                        shadowing.add(otherDeclaration)
+                    }
+                    ConflictState.NoConflict -> {}
+                }
             }
         }
 
         declarationConflictingSymbols[declaration] = conflicts
+        declarationShadowedViaContextParameters[declaration] = shadowing
     }
 }
 
@@ -458,9 +472,12 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         conflicting is FirMemberDeclaration &&
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
     ) return
-    if (areNonConflictingCallables(declaration, conflictingSymbol)) return
 
-    declarationConflictingSymbols.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
+    when (getConflictState(declaration, conflictingSymbol)) {
+        ConflictState.Conflict -> declarationConflictingSymbols
+        ConflictState.ContextParameterShadowing -> declarationShadowedViaContextParameters
+        ConflictState.NoConflict -> return
+    }.getOrPut(declaration) { SmartSet.create() }.add(conflictingSymbol)
 }
 
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
@@ -487,30 +504,59 @@ private fun areCompatibleMainFunctions(
         && declaration1.representsMainFunctionAllowingConflictingOverloads(session)
         && declaration2.representsMainFunctionAllowingConflictingOverloads(session)
 
-private fun FirDeclarationCollector<*>.areNonConflictingCallables(
+private enum class ConflictState {
+    Conflict,
+    ContextParameterShadowing,
+    NoConflict,
+}
+
+private fun FirDeclarationCollector<*>.getConflictState(
     declaration: FirBasedSymbol<*>,
     conflicting: FirBasedSymbol<*>,
-): Boolean {
-    if (isAtLeastOneExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return true
+): ConflictState {
+    if (isAtLeastOneExpect(declaration, conflicting) && declaration.moduleData != conflicting.moduleData) return ConflictState.NoConflict
 
     val declarationIsLowPriority = hasLowPriorityAnnotation(declaration.resolvedAnnotationsWithClassIds)
     val conflictingIsLowPriority = hasLowPriorityAnnotation(conflicting.resolvedAnnotationsWithClassIds)
-    if (declarationIsLowPriority != conflictingIsLowPriority) return true
+    if (declarationIsLowPriority != conflictingIsLowPriority) return ConflictState.NoConflict
 
-    if (declaration !is FirCallableSymbol<*> || conflicting !is FirCallableSymbol<*>) return false
+    if (declaration !is FirCallableSymbol<*> || conflicting !is FirCallableSymbol<*>) return ConflictState.Conflict
 
     val declarationIsFinal = declaration.isEffectivelyFinal()
     val conflictingIsFinal = conflicting.isEffectivelyFinal()
 
     if (declarationIsFinal && conflictingIsFinal) {
         val declarationIsHidden = declaration.isDeprecationLevelHidden(session)
-        if (declarationIsHidden) return true
+        if (declarationIsHidden) return ConflictState.NoConflict
 
         val conflictingIsHidden = conflicting.isDeprecationLevelHidden(session)
-        if (conflictingIsHidden) return true
+        if (conflictingIsHidden) return ConflictState.NoConflict
     }
 
-    return session.declarationOverloadabilityHelper.isOverloadable(declaration, conflicting)
+    val overloadabilityHelper = session.declarationOverloadabilityHelper
+
+    return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+        overloadabilityHelper.getConflictStateWithContextParameters(declaration, conflicting)
+    } else if (overloadabilityHelper.isConflicting(declaration, conflicting, ignoreContextParameters = false)) {
+        ConflictState.Conflict
+    } else {
+        ConflictState.NoConflict
+    }
+}
+
+private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParameters(
+    declaration: FirCallableSymbol<*>,
+    conflicting: FirCallableSymbol<*>,
+): ConflictState {
+    if (!isConflicting(declaration, conflicting, ignoreContextParameters = true)) {
+        return ConflictState.NoConflict
+    }
+
+    return when (getContextParameterShadowing(declaration, conflicting)) {
+        BothWays -> ConflictState.Conflict
+        Shadowing -> ConflictState.ContextParameterShadowing
+        None -> ConflictState.NoConflict
+    }
 }
 
 /** Checks for redeclarations of value and type parameters, and local variables. */
