@@ -9,6 +9,7 @@ import java.util.regex.Pattern
 
 /**
  * It can be used for comparing data that have numbers that can be changed on each run (for instance, performance reports comparison).
+ * Also, it supports quoted strings (single or double) to handle user-specific data (absolute project path, computer name).
  * String printing with padding is also supported, both left and right.
  * The following placeholder means that printing code uses `String.format("%8s")` with left padding (right alignment) up to 8 spaces:
  *
@@ -21,102 +22,131 @@ import java.util.regex.Pattern
  *
  * In the number of padding spaces less than 8 in expected data, comparison failure is reported as well.
  *
- * Apart from number placeholders, regular number literals are also supported.
+ * Apart from number placeholders, regular number and quoted string literals are also supported.
  *
  * See [NumberAgnosticSanitizerTest] for more detail.
  */
 class NumberAgnosticSanitizer(val actualText: String) {
     companion object {
-        const val NUMBER_PLACEHOLDER_START: String = "$"
-        const val NUMBER_PLACEHOLDER_END: String = "$"
+        const val PLACEHOLDER_START: String = "$"
+        const val PLACEHOLDER_END: String = "$"
         const val INT_MARKER: String = "INT"
         const val UINT_MARKER: String = "UINT"
         const val REAL_MARKER: String = "REAL"
+        const val QUOTED_STRING_MAKER = "QUOTEDSTRING" // No underscore, because regexes don't support them in captured group names
 
         const val LEFT_ALIGNMENT_MARKER: String = "<<"
         const val RIGHT_ALIGNMENT_MARKER: String = ">>"
 
         const val TYPE_GROUP_NAME: String = "Type"
-        const val NUMBER_GROUP_NAME: String = "Number"
         const val ALIGNMENT_GROUP_NAME: String = "Alignment"
 
-        const val NUMBER_PATTERN_STRING: String = """-?(\d+(\.\d*)?|\.\d+)"""
+        const val VALUE_PATTERN_STRING =
+            """(?<$REAL_MARKER>-?(\d+\.\d*|\.\d+))|""" +
+                    """(?<$INT_MARKER>-\d+)|""" +
+                    """(?<$UINT_MARKER>\d+)|""" +
+                    """(?<$QUOTED_STRING_MAKER>(?<QUOTE>["'])(\\.|.)*?\k<QUOTE>)""" // Matches single- and double-quoted strings. Also, it supports escaping like "\""
 
-        val NUMBER_PATTERN: Pattern = Pattern.compile(NUMBER_PATTERN_STRING)
-        val NUMBER_PLACEHOLDER_PATTERN: Pattern = Pattern.compile(
+        val VALUE_PATTERN: Pattern = Pattern.compile(VALUE_PATTERN_STRING)
+        val PLACEHOLDER_PATTERN: Pattern = Pattern.compile(
             "(" +
-                    Regex.escape(NUMBER_PLACEHOLDER_START) +
-                    "(?<$TYPE_GROUP_NAME>$INT_MARKER|$UINT_MARKER|$REAL_MARKER)" +
+                    Regex.escape(PLACEHOLDER_START) +
+                    "(?<$TYPE_GROUP_NAME>$INT_MARKER|$UINT_MARKER|$REAL_MARKER|$QUOTED_STRING_MAKER)" +
                     "(?<$ALIGNMENT_GROUP_NAME>$LEFT_ALIGNMENT_MARKER|$RIGHT_ALIGNMENT_MARKER)?" +
-                    Regex.escape(NUMBER_PLACEHOLDER_END) +
-                    "|" +
-                    "(?<$NUMBER_GROUP_NAME>$NUMBER_PATTERN_STRING)" + // Number placeholder also matches regular numbers
+                    Regex.escape(PLACEHOLDER_END) +
+                    "|" + VALUE_PATTERN_STRING + // Placeholders also match regular numbers and quoted strings
                     ")"
         )
 
         internal fun generatePlaceholder(numberType: CharSequence, alignment: Alignment = Alignment.None): String {
-            return NUMBER_PLACEHOLDER_START +
+            return PLACEHOLDER_START +
                     numberType +
                     alignment.value +
-                    NUMBER_PLACEHOLDER_END
+                    PLACEHOLDER_END
         }
     }
 
     private val matchFragments: List<MatchFragment>
 
     init {
-        val numberMatcherOnActual = NUMBER_PATTERN.matcher(actualText)
+        val valueMatcherOnActual = VALUE_PATTERN.matcher(actualText)
 
         matchFragments = buildList {
             var previousIndex = 0
-            while (numberMatcherOnActual.find()) {
-                add(StringFragment(actualText.subSequence(previousIndex, numberMatcherOnActual.start())))
+            while (valueMatcherOnActual.find()) {
+                add(TextFragment(actualText.subSequence(previousIndex, valueMatcherOnActual.start())))
 
-                val matchedNumberString = numberMatcherOnActual.group()
-                val numberType = when {
-                    matchedNumberString.contains('.') -> {
-                        matchedNumberString.toDouble() // Make sure it's correct numbers that doesn't exceed maximal value
-                        NumberType.Real
-                    }
-                    else -> {
-                        val value = matchedNumberString.toLong()
-                        if (value >= 0) NumberType.UInt else NumberType.Int
+                val valueString: String
+                val value: Any
+                val valueType: ValueType
+
+                val uintGroup = valueMatcherOnActual.group(UINT_MARKER)
+                if (uintGroup != null) {
+                    valueString = uintGroup
+                    value = uintGroup.toULong()
+                    valueType = ValueType.UInt
+                } else {
+                    var intGroup = valueMatcherOnActual.group(INT_MARKER)
+                    if (intGroup != null) {
+                        valueString = intGroup
+                        value = intGroup.toLong()
+                        valueType = ValueType.Int
+                    } else {
+                        val realGroup = valueMatcherOnActual.group(REAL_MARKER)
+                        if (realGroup != null) {
+                            valueString = realGroup
+                            value = realGroup.toDouble()
+                            valueType = ValueType.Real
+                        } else {
+                            val quotedStringGroup = valueMatcherOnActual.group(QUOTED_STRING_MAKER)
+                            if (quotedStringGroup != null) {
+                                valueString = quotedStringGroup
+                                value = quotedStringGroup
+                                valueType = ValueType.QuotedString
+                            } else {
+                                error("The value $valueMatcherOnActual is matched by ${VALUE_PATTERN::class.simpleName}, but it doesn't have a handler.")
+                            }
+                        }
                     }
                 }
 
-                add(NumberFragment(matchedNumberString, numberType))
+                add(ValueFragment(valueString, valueType, value))
 
-                previousIndex = numberMatcherOnActual.end()
+                previousIndex = valueMatcherOnActual.end()
             }
 
             // Remember to add the trailing fragment (it could have zero lengths)
-            add(StringFragment(actualText.subSequence(previousIndex, actualText.length)))
+            add(TextFragment(actualText.subSequence(previousIndex, actualText.length)))
         }
     }
 
-    fun generateExpectedTextBasedOnActualNumbers(): String = generatedSanitizedActualTextBasedOnExpectPlaceholders("")
+    /**
+     * Used when an expected file is missing.
+     * The function tries to recognize placeholders that are based on number or quoted string regexes.
+     */
+    fun generateExpectedText(): String = generateSanitizedActualTextBasedOnExpectPlaceholders("")
 
     /**
      * It walks by actual text fragments and sanitizes them according to expected text to avoid discrepancy in padding spaces
      * Never touch expected text for consistency, sanitize only actual text.
      */
-    fun generatedSanitizedActualTextBasedOnExpectPlaceholders(expectedText: String): String {
-        val expectPlaceholderMatcher = NUMBER_PLACEHOLDER_PATTERN.matcher(expectedText)
+    fun generateSanitizedActualTextBasedOnExpectPlaceholders(expectedText: String): String {
+        val expectPlaceholderMatcher = PLACEHOLDER_PATTERN.matcher(expectedText)
 
         return buildString {
             for (matchFragment in matchFragments) {
-                if (matchFragment is StringFragment) {
+                if (matchFragment is TextFragment) {
                     // Plain string fragments are appended without change
                     append(matchFragment.charSequence)
                     continue
                 }
 
-                require(matchFragment is NumberFragment)
+                require(matchFragment is ValueFragment)
 
-                // If expect-actual placeholder-number doesn't match, use generated placeholder from actual data
+                // If the expect-actual placeholder-number doesn't match, use generated placeholder from actual data
                 // It's especially useful when expect data doesn't exist, but it's convenient to get it with minimal effort.
                 if (!expectPlaceholderMatcher.find()) {
-                    append(generatePlaceholder(matchFragment.numberType.value))
+                    append(generatePlaceholder(matchFragment.valueType.value))
                     continue
                 }
 
@@ -128,15 +158,15 @@ class NumberAgnosticSanitizer(val actualText: String) {
                 val normalizedActualFragment = if (expectPlaceholderType != null) {
                     // Match a placeholder in expected text -> extract placeholder from actual considering alignment marker
                     // It causes test data failure if placeholders don't match
-                    val numberType = if (matchFragment.numberType == NumberType.UInt && expectPlaceholderType == NumberType.Int.value) {
+                    val valueType = if (matchFragment.valueType == ValueType.UInt && expectPlaceholderType == ValueType.Int.value) {
                         // `Int` type includes `UInt` -> coerce `UInt` to `Int` in actual
-                        NumberType.Int.value
+                        ValueType.Int.value
                     } else {
-                        matchFragment.numberType.value
+                        matchFragment.valueType.value
                     }
-                    generatePlaceholder(numberType, alignment)
+                    generatePlaceholder(valueType, alignment)
                 } else {
-                    // Match a number literal in expected data -> use plain literal from actual data
+                    // Match a literal in expected data -> use plain literal from actual data
                     matchFragment.charSequence
                 }
 
@@ -162,14 +192,15 @@ class NumberAgnosticSanitizer(val actualText: String) {
         override fun toString(): String = charSequence.toString()
     }
 
-    private class StringFragment(charSequence: CharSequence) : MatchFragment(charSequence)
+    private class TextFragment(charSequence: CharSequence) : MatchFragment(charSequence)
 
-    private class NumberFragment(charSequence: CharSequence, val numberType: NumberType) : MatchFragment(charSequence)
+    private class ValueFragment(charSequence: CharSequence, val valueType: ValueType, val value: Any) : MatchFragment(charSequence)
 
-    private enum class NumberType(val value: String) {
+    private enum class ValueType(val value: String) {
         Int(INT_MARKER),
         UInt(UINT_MARKER),
         Real(REAL_MARKER),
+        QuotedString(QUOTED_STRING_MAKER),
     }
 
     enum class Alignment(val value: String) {
