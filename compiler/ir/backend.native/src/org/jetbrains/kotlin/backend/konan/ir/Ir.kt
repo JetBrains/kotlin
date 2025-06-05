@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.types.Variance
@@ -377,6 +378,9 @@ class KonanSymbols(
     val filterExceptions = ClassIds.filterExceptions.classSymbol()
     val exportForCppRuntime = ClassIds.exportForCppRuntime.classSymbol()
     val typedIntrinsic = ClassIds.typedIntrinsic.classSymbol()
+    val cToKotlinBridge = symbolFinder.topLevelClass(NativeRuntimeNames.Annotations.cToKotlinBridgeClassId)
+    val kotlinToCBridge = symbolFinder.topLevelClass(NativeRuntimeNames.Annotations.kotlinToCBridgeClassId)
+    val interopCallMarker = symbolFinder.topLevelFunction(RuntimeNames.kotlinxCInteropInternalPackageName, "interopCallMarker")
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
 

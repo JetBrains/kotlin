@@ -35,6 +35,8 @@ internal class FileLowerState {
 
     fun getCStubUniqueName(prefix: String) =
             "$prefix${cStubCount++}"
+
+    fun getCStubIndex() = cStubCount++
 }
 
 internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
