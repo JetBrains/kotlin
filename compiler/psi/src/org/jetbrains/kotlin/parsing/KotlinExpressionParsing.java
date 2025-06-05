@@ -148,7 +148,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         MULTIPLICATIVE(AS, TokenSet.create(MUL, DIV, PERC)),
         ADDITIVE(MULTIPLICATIVE, TokenSet.create(PLUS, MINUS)),
         RANGE(ADDITIVE, TokenSet.create(KtTokens.RANGE, RANGE_UNTIL)),
-        INFIX(RANGE, TokenSet.orSet(TokenSet.create(IDENTIFIER))),
+        INFIX(RANGE, TokenSet.create(IDENTIFIER)),
         ELVIS(INFIX, TokenSet.create(KtTokens.ELVIS)),
         IN_OR_IS(ELVIS, TokenSet.create(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS)),
         COMPARISON(IN_OR_IS, TokenSet.create(LT, GT, LTEQ, GTEQ)),
@@ -343,11 +343,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         parsePrefixExpression();
 
         // Match all possible operations with the current or higher precedence at once.
-        // For instance, if the precedence is COMPARISON, we can match ADDITIVE, MULTIPLICATIVE but cannot parse CONJUNCTION.
+        // For instance, if the precedence is COMPARISON, we can match ADDITIVE, MULTIPLICATIVE but cannot match CONJUNCTION.
         // The lowest precedence is ASSIGNMENT.
         // All Kotlin binary operations are syntactically left-associative,
         // that's why always use higher precedence on recursive `parseBinaryExpression` call.
-        // If a right-associative operation existed, the same precedence instead of the highest would be passed to the recursive call.
+        // If a right-associative operation existed, the same precedence instead of the highest should be passed to the recursive call.
         Map<KtToken, BinaryOperationPrecedence> originalOperationsToPrecedences =
                 BINARY_PRECEDENCES_TO_CURRENT_AND_HIGHER_OPERATIONS.get(precedence.ordinal());
         Map<KtToken, BinaryOperationPrecedence> possibleOperationsToPrecedences = originalOperationsToPrecedences;
@@ -394,8 +394,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                     break;
                 }
                 default: {
-                    // Parse operations with higher precedences greedily.
-                    // It handles precedences correctly.
+                    // Parse operations with higher precedences greedily. It handles precedences correctly.
                     lastResultIsIsOperation = parseBinaryExpression(currentPrecedence.higher);
                     resultType = KtNodeTypes.BINARY_EXPRESSION;
                     break;
