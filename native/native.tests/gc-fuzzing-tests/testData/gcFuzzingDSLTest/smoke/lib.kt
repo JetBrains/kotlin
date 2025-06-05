@@ -16,7 +16,7 @@ private fun Any.loadField(index: Int) = when (this) {
 private fun Any.storeField(index: Int, value: Any?) = when (this) {
     is KotlinIndexAccess -> storeKotlinField(index, value)
     is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-    else -> Unit
+    else -> error("Invalid storeField call")
 }
 
 private fun spawnThread(block: () -> Unit) {

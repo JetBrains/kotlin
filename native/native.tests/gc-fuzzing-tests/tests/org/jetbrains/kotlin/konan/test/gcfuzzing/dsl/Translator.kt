@@ -70,7 +70,7 @@ private fun TranslateContext.appendDefaultContents() {
             |private fun Any.storeField(index: Int, value: Any?) = when (this) {
             |    is KotlinIndexAccess -> storeKotlinField(index, value)
             |    is ObjCIndexAccessProtocol -> storeObjCField(index, value)
-            |    else -> Unit
+            |    else -> error("Invalid storeField call")
             |}
             |
             |private fun spawnThread(block: () -> Unit) {
@@ -119,6 +119,34 @@ private fun TranslateContext.appendDefaultContents() {
             |#import <Foundation/Foundation.h>
             |
             |#include "KotlinObjCFramework.h"
+            |
+            |@implementation NSObject (LoadStoreFieldsAdditions)
+            |
+            |- (id)loadField:(int32_t)index {
+            |    id this = self;
+            |    if (!this) return nil;
+            |    if ([this respondsToSelector:@selector(loadKotlinFieldIndex:)]) {
+            |        return [this loadKotlinFieldIndex:index];
+            |    }
+            |    if ([this respondsToSelector:@selector(loadObjCField:)]) {
+            |        return [this loadObjCField:index];
+            |    }
+            |    @throw [NSException exceptionWithName:NSGenericException reason:@"Invalid loadField call" userInfo:nil];
+            |}
+            |
+            |- (void)storeField:(int32_t)index value:(id)value {
+            |    id this = self;
+            |    if (!this) return;
+            |    if ([this respondsToSelector:@selector(storeKotlinFieldIndex:value:)]) {
+            |        [this storeKotlinFieldIndex:index value:value];
+            |    }
+            |    if ([this respondsToSelector:@selector(storeObjCField:value:)]) {
+            |        [this storeObjCField:index value:value];
+            |    }
+            |    @throw [NSException exceptionWithName:NSGenericException reason:@"Invalid storeField call" userInfo:nil];
+            |}
+            |
+            |@end
             |
             |void spawnThread(void (^block)()) {
             |    [NSThread detachNewThreadWithBlock:block];
@@ -523,7 +551,7 @@ private fun BodyTranslateContext.translateLoadWithPath(name: String, path: Path)
             }
             contents.append(name)
             path.accessors.forEach {
-                contents.append(" loadObjCField:$it]")
+                contents.append(" loadField:$it]")
             }
         }
     }
@@ -568,7 +596,7 @@ private fun BodyTranslateContext.translateStoreWithPath(name: String, path: Path
             is TargetLanguage.ObjC -> {
                 contents.append("[")
                 translateLoadWithPath(name, loadPath)
-                contents.append(" storeObjCField:$storeAccessor value:")
+                contents.append(" storeField:$storeAccessor value:")
                 translateLoadExpression(from)
                 contents.append("]")
             }

@@ -6,6 +6,34 @@
 
 #include "KotlinObjCFramework.h"
 
+@implementation NSObject (LoadStoreFieldsAdditions)
+
+- (id)loadField:(int32_t)index {
+    id this = self;
+    if (!this) return nil;
+    if ([this respondsToSelector:@selector(loadKotlinFieldIndex:)]) {
+        return [this loadKotlinFieldIndex:index];
+    }
+    if ([this respondsToSelector:@selector(loadObjCField:)]) {
+        return [this loadObjCField:index];
+    }
+    @throw [NSException exceptionWithName:NSGenericException reason:@"Invalid loadField call" userInfo:nil];
+}
+
+- (void)storeField:(int32_t)index value:(id)value {
+    id this = self;
+    if (!this) return;
+    if ([this respondsToSelector:@selector(storeKotlinFieldIndex:value:)]) {
+        [this storeKotlinFieldIndex:index value:value];
+    }
+    if ([this respondsToSelector:@selector(storeObjCField:value:)]) {
+        [this storeObjCField:index value:value];
+    }
+    @throw [NSException exceptionWithName:NSGenericException reason:@"Invalid storeField call" userInfo:nil];
+}
+
+@end
+
 void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
 }
@@ -58,7 +86,7 @@ id fun5(id l0, id l1) {
         return nil;
     }
     g3 = l0;
-    [l1 storeObjCField:0 value:[g3 loadObjCField:1]];
+    [l1 storeField:0 value:[g3 loadField:1]];
     spawnThread(^{
         fun7(l1);
     });
@@ -73,5 +101,5 @@ id fun7(id l0) {
     id l2 = [[Class1 alloc] initWithF0:nil f1:nil ];
     id l3 = [KOCFLibKt fun6L0:l0 ];
     leaveFrame();
-    return [[[l1 loadObjCField:1] loadObjCField:3] loadObjCField:4];
+    return [[[l1 loadField:1] loadField:3] loadField:4];
 }
