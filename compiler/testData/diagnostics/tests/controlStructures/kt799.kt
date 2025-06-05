@@ -24,3 +24,5 @@ fun f(mi: Int = if (true) 0 else <!RETURN_NOT_ALLOWED!>return<!>) {}
 
 fun doSmth(i: Int) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

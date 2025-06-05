@@ -30,3 +30,5 @@ fun testWrappedExpressions() =
         else {
             (((((42)) + 1)))
         }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, nullableType, typeParameter, whenExpression */

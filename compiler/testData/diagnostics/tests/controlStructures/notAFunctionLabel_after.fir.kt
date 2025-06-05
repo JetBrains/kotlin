@@ -70,3 +70,6 @@ fun testMultipleLabelsWithNestedLambda() {
         return@l2
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, comparisonExpression, forLoop, functionDeclaration,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

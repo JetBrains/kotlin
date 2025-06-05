@@ -84,3 +84,6 @@ fun foo2() {
     }
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, break, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter,
+whenExpression, whileLoop */

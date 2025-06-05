@@ -159,3 +159,8 @@ fun testStatementInExpressionContext() {
 fun testStatementInExpressionContext2() {
     val a2: Unit = <!EXPRESSION_EXPECTED!>while(true) {}<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, flexibleType,
+forLoop, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression, integerLiteral,
+intersectionType, javaFunction, javaProperty, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+rangeExpression, stringLiteral, whenExpression, whenWithSubject, whileLoop */

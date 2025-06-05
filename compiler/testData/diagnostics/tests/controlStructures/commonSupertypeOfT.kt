@@ -30,3 +30,6 @@ fun <T: Tr> fn(t1: T, t2: T?) {
     val y = t2 ?: t1
     y.foo()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, safeCall, typeConstraint, typeParameter */

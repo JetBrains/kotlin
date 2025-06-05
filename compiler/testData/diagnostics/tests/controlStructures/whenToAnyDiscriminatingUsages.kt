@@ -82,3 +82,6 @@ val testUsage5: Any get() =
             true -> 42
             else -> println()
         }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter, whenExpression */

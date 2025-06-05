@@ -53,3 +53,7 @@ fun bindNoGeneric(r: SimpleOption): SimpleOption {
     }
     else r
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, typeParameter, typeWithExtension,
+whenExpression, whenWithSubject */

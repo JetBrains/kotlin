@@ -16,3 +16,6 @@ fun test() {
 
     return <!INVALID_IF_AS_EXPRESSION!>if<!> (true);
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration */

@@ -19,3 +19,6 @@ fun g() = object : ClassData {
         return 6
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, getter, ifExpression, init, integerLiteral,
+interfaceDeclaration, propertyDeclaration */

@@ -52,3 +52,6 @@ class Test7 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, classDeclaration, continue, forLoop, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, rangeExpression, whileLoop */

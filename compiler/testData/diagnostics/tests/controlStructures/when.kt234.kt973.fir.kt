@@ -40,3 +40,6 @@ fun foo4(x: Int) = when(x) {
     2 -> x
     else -> 3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nullableType, primaryConstructor, smartcast, typeParameter, whenExpression, whenWithSubject */

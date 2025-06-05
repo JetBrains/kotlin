@@ -46,3 +46,7 @@ val foo: Int
 fun test(): Int = run {
     return <!RETURN_TYPE_MISMATCH!>""<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, ifExpression, inline, integerLiteral, lambdaLiteral, localFunction,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

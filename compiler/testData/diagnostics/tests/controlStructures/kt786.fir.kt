@@ -25,3 +25,6 @@ fun fff(): Int {
 }
 
 fun bar(): Int = 8
+
+/* GENERATED_FIR_TAGS: assignment, disjunctionExpression, equalityExpression, functionDeclaration,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, whenExpression, whenWithSubject */

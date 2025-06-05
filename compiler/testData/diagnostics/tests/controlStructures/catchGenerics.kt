@@ -32,3 +32,7 @@ fun <T : Nothing?> test1() {
     } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>x: T & Any<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, functionalType, inline, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, reified, starProjection, tryExpression,
+typeConstraint, typeParameter */

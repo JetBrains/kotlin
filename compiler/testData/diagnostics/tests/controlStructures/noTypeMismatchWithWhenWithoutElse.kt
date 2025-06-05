@@ -10,3 +10,6 @@ fun exhaust(ee: ExhaustiveEnum) {
     }
     v = <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (ee == ExhaustiveEnum.ONE) 2<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, propertyDeclaration, whenExpression, whenWithSubject */

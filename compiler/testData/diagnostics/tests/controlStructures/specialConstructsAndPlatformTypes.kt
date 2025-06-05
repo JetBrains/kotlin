@@ -38,3 +38,6 @@ val testWhen2: String? = when { else -> J.s }
 
 val testWhen3: String = when { else -> <!TYPE_MISMATCH!>J.m[""]<!> }
 val testWhen4: String? = when { else -> J.m[""] }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, ifExpression, javaProperty, lambdaLiteral, nullableType,
+propertyDeclaration, safeCall, stringLiteral, whenExpression */

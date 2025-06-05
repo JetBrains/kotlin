@@ -60,3 +60,6 @@ val testUsage3 =
 
 val testUsage4: Any get() =
         if (true) 42 else println()
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, getter, ifExpression, integerLiteral, lambdaLiteral,
+nullableType, propertyDeclaration, typeParameter */

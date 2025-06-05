@@ -26,3 +26,5 @@ fun bar() : Int =
 
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, tryExpression */

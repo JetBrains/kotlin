@@ -10,3 +10,5 @@ fun test(a: Boolean, b: Boolean): Int {
         }
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral */

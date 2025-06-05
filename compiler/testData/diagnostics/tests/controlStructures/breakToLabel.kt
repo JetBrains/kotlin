@@ -19,3 +19,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, break, equalityExpression, forLoop, functionDeclaration, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whileLoop */
