@@ -44,7 +44,6 @@ class SourceMapGenerator(
             sourceMapsInfo.sourceRoots,
             sourceMapsInfo.sourceMapPrefix,
             sourceMapsInfo.outputDir,
-            sourceMapsInfo.includeUnavailableSourcesIntoSourceMap
         )
 
         var prev: SourceLocation? = null
