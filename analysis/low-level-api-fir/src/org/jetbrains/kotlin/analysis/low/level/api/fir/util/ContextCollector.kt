@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 object ContextCollector {
     enum class ContextKind {
@@ -329,7 +330,9 @@ private class ContextCollectorVisitor(
                     continue
                 }
 
-                smartCasts[typeStatement.variable as RealVariable] = typeStatement.upperTypes
+                val typeStatementVariable = typeStatement.variable
+                requireWithAttachment(typeStatementVariable is RealVariable, { "Expecting a RealVariable, got $typeStatementVariable" })
+                smartCasts[typeStatementVariable] = typeStatement.upperTypes
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
                 // Here we emulate such behavior. Unlike the compiler, though, modified types are only reflected in the created snapshot.
