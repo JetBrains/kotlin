@@ -8553,12 +8553,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
-      @TestMetadata("tryCatchReifiedType.kt")
-      public void testTryCatchReifiedType() {
-        runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
-      }
-
-      @Test
       @TestMetadata("tryFinally.kt")
       public void testTryFinally() {
         runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");
@@ -43430,6 +43424,24 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         @TestMetadata("jaggedDeep.kt")
         public void testJaggedDeep() {
           runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @UseExtTestCaseGroupProvider()
+      @Tag("codegen-box")
+      public class CatchParameter {
+        @Test
+        public void testAllFilesPresentInCatchParameter() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("tryCatchReifiedType.kt")
+        public void testTryCatchReifiedType() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
         }
       }
     }
