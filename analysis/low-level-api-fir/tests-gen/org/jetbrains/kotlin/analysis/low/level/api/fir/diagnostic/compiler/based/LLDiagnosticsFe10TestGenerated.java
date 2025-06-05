@@ -37066,6 +37066,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("dslMarkerNamedArgumentLambda.kt")
+        public void testDslMarkerNamedArgumentLambda() {
+          runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerNamedArgumentLambda.kt");
+        }
+
+        @Test
         @TestMetadata("dslMarkerOnExpectedTypeForInvokeExtensionCall.kt")
         public void testDslMarkerOnExpectedTypeForInvokeExtensionCall() {
           runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/dslMarkerOnExpectedTypeForInvokeExtensionCall.kt");
