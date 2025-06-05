@@ -300,27 +300,28 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrSymbol(symbol: IrSymbol, isDeclared: Boolean = false): Long {
-        val signature: IdSignature = runIf(settings.reuseExistingSignaturesForSymbols) { symbol.signature }
-            ?: when (symbol) {
-                is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
-                else -> {
-                    val symbolOwner = symbol.owner
+        val signature: IdSignature = when {
+            !symbol.isBound && settings.reuseExistingSignaturesForSymbols -> symbol.signature
+                ?: error("Given symbol is unbound and have no signature: $symbol")
+            symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
+            else -> {
+                val symbolOwner = symbol.owner
 
-                    // Compute the signature:
-                    when {
-                        symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
-                            declaration = symbolOwner,
-                            compatibleMode = false,
-                            recordInSignatureClashDetector = isDeclared
-                        )
+                // Compute the signature:
+                when {
+                    symbolOwner is IrDeclaration -> declarationTable.signatureByDeclaration(
+                        declaration = symbolOwner,
+                        compatibleMode = false,
+                        recordInSignatureClashDetector = isDeclared
+                    )
 
-                        symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
-                            declarationTable.signatureByReturnableBlock(symbolOwner)
+                    symbolOwner is IrReturnableBlock && settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2) ->
+                        declarationTable.signatureByReturnableBlock(symbolOwner)
 
-                        else -> error("Expected symbol owner: ${symbolOwner.render()}")
-                    }
+                    else -> error("Expected symbol owner: ${symbolOwner.render()}")
                 }
             }
+        }
 
         val signatureId = idSignatureSerializer.protoIdSignature(signature)
         val symbolKind = protoSymbolKind(symbol)
