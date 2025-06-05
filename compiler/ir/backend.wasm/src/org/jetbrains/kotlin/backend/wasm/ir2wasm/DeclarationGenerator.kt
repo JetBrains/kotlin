@@ -131,9 +131,10 @@ class DeclarationGenerator(
             return
         }
 
+        val sourceFile = declaration.getSourceFile()!!
         val locationTarget = declaration.locationTarget
-        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull)
-        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, declaration.fileOrNull, LocationType.END)
+        val functionStartLocation = locationTarget.getSourceLocation(declaration.symbol, sourceFile)
+        val functionEndLocation = locationTarget.getSourceLocation(declaration.symbol, sourceFile, LocationType.END)
 
         val function = WasmFunction.Defined(
             watName,
@@ -147,6 +148,7 @@ class DeclarationGenerator(
             backendContext,
             wasmFileCodegenContext,
             wasmModuleTypeTransformer,
+            sourceFile,
             skipCommentInstructions
         )
 
@@ -545,13 +547,14 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
+            val sourceFile = declaration.getSourceFile()!!
             if (initValue is IrConst && initValue.kind !is IrConstKind.String) {
                 generateConstExpression(
                     initValue,
                     wasmExpressionGenerator,
                     wasmFileCodegenContext,
                     backendContext,
-                    initValue.getSourceLocation(declaration.symbol, declaration.fileOrNull)
+                    initValue.getSourceLocation(declaration.symbol, sourceFile)
                 )
             } else {
                 val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
@@ -561,6 +564,7 @@ class DeclarationGenerator(
                     backendContext,
                     wasmFileCodegenContext,
                     wasmModuleTypeTransformer,
+                    sourceFile,
                     skipCommentInstructions,
                 )
                 val bodyGenerator = BodyGenerator(

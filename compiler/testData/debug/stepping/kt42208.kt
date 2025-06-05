@@ -30,10 +30,10 @@ inline fun foo() = {
 // test.kt:6 $box (4)
 
 // EXPECTATIONS ClassicFrontend WASM
-// test.kt:8 $box$lambda.invoke (42)
+// test1.kt:11 $box$lambda.invoke (0)
 
 // EXPECTATIONS FIR WASM
-// test.kt:8 $box$lambda.invoke (43)
+// test1.kt:11 $box$lambda.invoke (1)
 
 // EXPECTATIONS WASM
 // test.kt:6 $box (4)
