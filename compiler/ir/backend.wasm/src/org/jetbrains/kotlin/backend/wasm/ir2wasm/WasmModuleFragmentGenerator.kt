@@ -83,7 +83,7 @@ private fun compileIrFile(
         skipCommentInstructions,
     )
     for (irDeclaration in irFile.declarations) {
-        irDeclaration.acceptVoid(generator)
+        irDeclaration.accept(generator, DeclarationGenerator.Context(irFile.fileEntry))
     }
 
     val fileContext = backendContext.getFileContext(irFile)
