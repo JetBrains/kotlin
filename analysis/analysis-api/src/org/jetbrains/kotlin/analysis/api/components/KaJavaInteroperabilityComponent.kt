@@ -9,6 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -125,3 +126,103 @@ public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     @KaExperimentalApi
     public val KaPropertySymbol.javaSetterName: Name?
 }
+
+/**
+ * @see KaJavaInteroperabilityComponent.asPsiType
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public fun KaType.asPsiType(
+    useSitePosition: PsiElement,
+    allowErrorTypes: Boolean,
+    mode: KaTypeMappingMode = KaTypeMappingMode.DEFAULT,
+    isAnnotationMethod: Boolean = false,
+    suppressWildcards: Boolean? = null,
+    preserveAnnotations: Boolean = true,
+    allowNonJvmPlatforms: Boolean = false,
+): PsiType? {
+    return with(context) {
+        asPsiType(
+            useSitePosition,
+            allowErrorTypes,
+            mode,
+            isAnnotationMethod,
+            suppressWildcards,
+            preserveAnnotations,
+            allowNonJvmPlatforms
+        )
+    }
+}
+
+/**
+ * @see KaJavaInteroperabilityComponent.asKaType
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
+    return with(context) { asKaType(useSitePosition) }
+}
+
+/**
+ * @see KaJavaInteroperabilityComponent.mapToJvmType
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type {
+    return with(context) { mapToJvmType(mode) }
+}
+
+/**
+ * @see KaJavaInteroperabilityComponent.isPrimitiveBacked
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public val KaType.isPrimitiveBacked: Boolean
+    get() = with(context) { isPrimitiveBacked }
+
+/**
+ * @see KaJavaInteroperabilityComponent.namedClassSymbol
+ */
+@KaContextParameterApi
+context(context: KaJavaInteroperabilityComponent)
+public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
+    get() = with(context) { namedClassSymbol }
+
+/**
+ * @see KaJavaInteroperabilityComponent.callableSymbol
+ */
+@KaContextParameterApi
+context(context: KaJavaInteroperabilityComponent)
+public val PsiMember.callableSymbol: KaCallableSymbol?
+    get() = with(context) { callableSymbol }
+
+/**
+ * @see KaJavaInteroperabilityComponent.containingJvmClassName
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public val KaCallableSymbol.containingJvmClassName: String?
+    get() = with(context) { containingJvmClassName }
+
+/**
+ * @see KaJavaInteroperabilityComponent.javaGetterName
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public val KaPropertySymbol.javaGetterName: Name
+    get() = with(context) { javaGetterName }
+
+/**
+ * @see KaJavaInteroperabilityComponent.javaSetterName
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaJavaInteroperabilityComponent)
+public val KaPropertySymbol.javaSetterName: Name?
+    get() = with(context) { javaSetterName }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -81,3 +82,67 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     public val KaKotlinPropertySymbol.isInline: Boolean
 }
+
+/**
+ * @see KaSymbolInformationProvider.deprecationStatus
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaSymbol.deprecationStatus: DeprecationInfo?
+    get() = with(context) { deprecationStatus }
+
+/**
+ * @see KaSymbolInformationProvider.canBeOperator
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaNamedFunctionSymbol.canBeOperator: Boolean
+    get() = with(context) { canBeOperator }
+
+/**
+ * @see KaSymbolInformationProvider.deprecationStatus
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
+    return with(context) { deprecationStatus(annotationUseSiteTarget) }
+}
+
+/**
+ * @see KaSymbolInformationProvider.getterDeprecationStatus
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
+    get() = with(context) { getterDeprecationStatus }
+
+/**
+ * @see KaSymbolInformationProvider.setterDeprecationStatus
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
+    get() = with(context) { setterDeprecationStatus }
+
+/**
+ * @see KaSymbolInformationProvider.annotationApplicableTargets
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+    get() = with(context) { annotationApplicableTargets }
+
+/**
+ * @see KaSymbolInformationProvider.isInline
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSymbolInformationProvider)
+public val KaKotlinPropertySymbol.isInline: Boolean
+    get() = with(context) { isInline }
