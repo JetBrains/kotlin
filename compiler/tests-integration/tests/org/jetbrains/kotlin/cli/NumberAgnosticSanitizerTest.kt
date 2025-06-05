@@ -14,34 +14,74 @@ class NumberAgnosticSanitizerTest : TestCase() {
         private val INT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.INT_MARKER)
         private val UINT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER)
         private val REAL = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.REAL_MARKER)
+        private val QUOTED_STRING = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.QUOTED_STRING_MAKER)
     }
 
     fun testPlaceholders() {
-        assertExpectEqualsActual("$UINT   $UINT   $INT   $REAL   $REAL", "0   123   -65   45.67   .89")
+        assertExpectEqualsActual(
+            "$UINT   $UINT   $INT   $REAL   $REAL   $REAL   $QUOTED_STRING   $QUOTED_STRING",
+            """0   123   -65   45.67   .89   -0.9   "a\"b c"   'd\'e f'"""
+        )
     }
 
     fun testMismatchedTypes() {
-        assertExpectNotEqualsActual("$INT $UINT $REAL", "0.25 -54 54", "$REAL $INT $UINT")
+        assertExpectNotEqualsActual(
+            "$INT $UINT $REAL $INT $UINT ",
+            """0.25 -54 54 'str' "str2" """,
+            "$REAL $INT $UINT $QUOTED_STRING $QUOTED_STRING "
+        )
     }
 
-    fun testNumberLiterals() {
-        assertExpectEqualsActual("42 0.53 -67", "42 0.53 -67")
+    fun testLiterals() {
+        assertExpectEqualsActual(
+            """42 0.53 -67 "a\"b" 'c\'d'""",
+            """42 0.53 -67 "a\"b" 'c\'d'"""
+        )
     }
 
-    fun testMismatchedNumberLiterals() {
-        assertExpectNotEqualsActual("5 32.0 -7", "43 0.85 -8", "43 0.85 -8")
+    fun testMismatchedLiterals() {
+        assertExpectNotEqualsActual(
+            """5 32.0 -7 "expected_str1" 'expected_str2' 'single_quoted_str' """,
+            """43 0.85 -8 "actual_str1" 'actual_str2' "double_quoted_str" """,
+            """43 0.85 -8 "actual_str1" 'actual_str2' "double_quoted_str" """,
+        )
     }
 
     fun testEmptyExpect() {
         // Generate placeholders on nonexisting/empty expected file
-        assertExpectNotEqualsActual("", "1234 56.68 -123", "$UINT $REAL $INT")
+        assertExpectNotEqualsActual(
+            "",
+            """1234 56.68 -123 'str' "str2" """,
+            "$UINT $REAL $INT $QUOTED_STRING $QUOTED_STRING "
+        )
     }
 
     fun testUIntInActualMatchesIntInExpect() {
         assertExpectEqualsActual(INT, "123")
     }
 
-    fun testMismatchedPlaceholdersAndNumbers() {
+    fun testSingleQuotedStringDoesntMatchDoubleQuotedString() {
+        assertExpectNotEqualsActual(
+            """ 'single_quoted_str' """,
+            """ "double_quoted_str" """,
+            """ "double_quoted_str" """,
+        )
+    }
+
+    fun testMixedQuotesInStringLiterals() {
+        assertExpectNotEqualsActual(
+            """ $QUOTED_STRING """,
+            """ "str_with_mixed_quotes' """,
+            """ "str_with_mixed_quotes' """,
+        )
+    }
+
+    fun testQuotedStringMatchingIsNotGreedy() {
+        assertExpectEqualsActual(""" $QUOTED_STRING: $QUOTED_STRING """, """ 'kind': 'string' """)
+        assertExpectEqualsActual(""" $QUOTED_STRING: $QUOTED_STRING """, """ "kind": "string" """)
+    }
+
+    fun testMismatchedPlaceholdersAndLiterals() {
         assertExpectNotEqualsActual(
             """
             first_line
@@ -214,7 +254,5 @@ private fun assertExpectNotEqualsActual(expected: String, actual: String, result
 
 private fun getSanitizedActual(expectedText: String, actualText: String): String {
     val comparer = NumberAgnosticSanitizer(actualText)
-    return comparer.generatedSanitizedActualTextBasedOnExpectPlaceholders(expectedText)
+    return comparer.generateSanitizedActualTextBasedOnExpectPlaceholders(expectedText)
 }
-
-

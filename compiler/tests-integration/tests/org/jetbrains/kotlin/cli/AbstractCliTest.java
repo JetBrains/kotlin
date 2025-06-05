@@ -212,12 +212,12 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         NumberAgnosticSanitizer sanitizer = new NumberAgnosticSanitizer(actualPerfReport);
 
         String expectedText =
-                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, sanitizer::generateExpectedTextBasedOnActualNumbers);
+                KotlinTestUtils.tryLoadExpectedFile(expectedPerfLogFile, sanitizer::generateExpectedText);
         String expectedSanitizedText = KotlinTestUtils.applyDefaultAndCustomSanitizer(expectedText, s -> s);
 
         String sanitizedActualBasedOnExpectPlaceholders =
                 KotlinTestUtils.applyDefaultAndCustomSanitizer(
-                        sanitizer.generatedSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText), s -> s);
+                        sanitizer.generateSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText), s -> s);
 
         KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
                 expectedPerfLogFile,
