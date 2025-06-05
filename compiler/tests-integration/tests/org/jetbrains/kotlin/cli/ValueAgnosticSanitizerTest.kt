@@ -9,12 +9,12 @@ import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 
-class NumberAgnosticSanitizerTest : TestCase() {
+class ValueAgnosticSanitizerTest : TestCase() {
     companion object {
-        private val INT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.INT_MARKER)
-        private val UINT = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER)
-        private val REAL = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.REAL_MARKER)
-        private val QUOTED_STRING = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.QUOTED_STRING_MAKER)
+        private val INT = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.INT_MARKER)
+        private val UINT = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.UINT_MARKER)
+        private val REAL = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.REAL_MARKER)
+        private val QUOTED_STRING = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.QUOTED_STRING_MAKER)
     }
 
     fun testPlaceholders() {
@@ -115,49 +115,49 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
 
     // Typical case: a value fits padding count
     fun testRightAlignmentTypical() {
-        checkAlignmentTypical(NumberAgnosticSanitizer.Alignment.Right)
+        checkAlignmentTypical(ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // Expect template is incorrect -> it requires increasing/decreasing the number of spaces left to $UINT$ placeholder
     fun testRightAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
-        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, NumberAgnosticSanitizer.Alignment.Right)
-        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, NumberAgnosticSanitizer.Alignment.Right)
+        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, ValueAgnosticSanitizer.Alignment.Right)
+        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // A value exceeds padding count -> it requires increasing the number of padding spaces in code that prints this string
     fun testRightAlignmentWhenPrintedStringExceedsPaddingSpaces() {
-        checkAlignmentWhenPrintedStringExceedPaddingSpaces(NumberAgnosticSanitizer.Alignment.Right)
+        checkAlignmentWhenPrintedStringExceedPaddingSpaces(ValueAgnosticSanitizer.Alignment.Right)
     }
 
     // Incorrect marker in expect template -> it requires fixing the marker
     fun testRightAlignmentWhenExpectAlignmentMarkerIsIncorrect() {
-        checkAlignmentWhenIncorrectMarkerInExpect(NumberAgnosticSanitizer.Alignment.Right, NumberAgnosticSanitizer.Alignment.Left)
-        checkAlignmentWhenIncorrectMarkerInExpect(NumberAgnosticSanitizer.Alignment.Right, NumberAgnosticSanitizer.Alignment.None)
+        checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Right, ValueAgnosticSanitizer.Alignment.Left)
+        checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Right, ValueAgnosticSanitizer.Alignment.None)
     }
 
     // Typical case: a value fits padding count
     fun testLeftAlignmentTypical() {
-        checkAlignmentTypical(NumberAgnosticSanitizer.Alignment.Left)
+        checkAlignmentTypical(ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // Expect template is incorrect -> it requires increasing/decreasing the number of spaces right to $UINT$ placeholder
     fun testLeftAlignmentWhenPaddingSpacesInExpectAreIncorrect() {
-        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, NumberAgnosticSanitizer.Alignment.Left)
-        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, NumberAgnosticSanitizer.Alignment.Left)
+        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectSmallPaddingInExpect, ValueAgnosticSanitizer.Alignment.Left)
+        checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectBigPaddingInExpect, ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // A value exceeds padding count -> it requires increasing the number of padding spaces in code that prints this string
     fun testLeftAlignmentWhenPrintedStringExceedsPaddingSpaces() {
-        checkAlignmentWhenPrintedStringExceedPaddingSpaces(NumberAgnosticSanitizer.Alignment.Left)
+        checkAlignmentWhenPrintedStringExceedPaddingSpaces(ValueAgnosticSanitizer.Alignment.Left)
     }
 
     // Incorrect marker in expect template -> it requires fixing the marker
     fun testLeftAlignmentWhenExpectAlignmentMarkerIsIncorrect() {
-        checkAlignmentWhenIncorrectMarkerInExpect(NumberAgnosticSanitizer.Alignment.Left, NumberAgnosticSanitizer.Alignment.Right)
-        checkAlignmentWhenIncorrectMarkerInExpect(NumberAgnosticSanitizer.Alignment.Left, NumberAgnosticSanitizer.Alignment.None)
+        checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Left, ValueAgnosticSanitizer.Alignment.Right)
+        checkAlignmentWhenIncorrectMarkerInExpect(ValueAgnosticSanitizer.Alignment.Left, ValueAgnosticSanitizer.Alignment.None)
     }
 
-    private fun checkAlignmentTypical(alignment: NumberAgnosticSanitizer.Alignment) {
+    private fun checkAlignmentTypical(alignment: ValueAgnosticSanitizer.Alignment) {
         val expectedText =
             textBefore + generateIntPlaceholderWithPaddingSpaces(standardPaddingCount, alignment) + textAfter
         val actualNormalText =
@@ -166,20 +166,20 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
     }
 
     private fun checkAlignmentWhenIncorrectMarkerInExpect(
-        alignment: NumberAgnosticSanitizer.Alignment,
-        incorrectAlignment: NumberAgnosticSanitizer.Alignment
+        alignment: ValueAgnosticSanitizer.Alignment,
+        incorrectAlignment: ValueAgnosticSanitizer.Alignment
     ) {
         assert(alignment != incorrectAlignment)
         val sanitizedPlaceholderLeftPaddingLength: Int
         val sanitizedPlaceholderRightPaddingLength: Int
         val numberToString = numberThatFitsPadding.toString()
-        if (alignment == NumberAgnosticSanitizer.Alignment.Right) {
+        if (alignment == ValueAgnosticSanitizer.Alignment.Right) {
             sanitizedPlaceholderLeftPaddingLength = standardPaddingCount - numberToString.length
             sanitizedPlaceholderRightPaddingLength =
-                if (incorrectAlignment == NumberAgnosticSanitizer.Alignment.Left) numberToString.length else 0
+                if (incorrectAlignment == ValueAgnosticSanitizer.Alignment.Left) numberToString.length else 0
         } else {
             sanitizedPlaceholderLeftPaddingLength =
-                if (incorrectAlignment == NumberAgnosticSanitizer.Alignment.Right) numberToString.length else 0
+                if (incorrectAlignment == ValueAgnosticSanitizer.Alignment.Right) numberToString.length else 0
             sanitizedPlaceholderRightPaddingLength = standardPaddingCount - numberToString.length
         }
         val expectedText = textBefore +
@@ -190,13 +190,13 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
                 textAfter
         val sanitizedActualText = textBefore +
                 buildPaddingString(sanitizedPlaceholderLeftPaddingLength) +
-                NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER, incorrectAlignment) +
+                ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.UINT_MARKER, incorrectAlignment) +
                 buildPaddingString(sanitizedPlaceholderRightPaddingLength) +
                 textAfter
         assertExpectNotEqualsActual(expectedText, actualNormalText, sanitizedActualText)
     }
 
-    private fun checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectPaddingCountInExpect: Int, alignment: NumberAgnosticSanitizer.Alignment) {
+    private fun checkAlignmentWhenPaddingSpacesInExpectIsIncorrect(incorrectPaddingCountInExpect: Int, alignment: ValueAgnosticSanitizer.Alignment) {
         val incorrectExpectedText = textBefore +
                 generateIntPlaceholderWithPaddingSpaces(incorrectPaddingCountInExpect, alignment) +
                 textAfter
@@ -209,7 +209,7 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
         assertExpectNotEqualsActual(incorrectExpectedText, actualText, sanitizedActualText)
     }
 
-    private fun checkAlignmentWhenPrintedStringExceedPaddingSpaces(alignment: NumberAgnosticSanitizer.Alignment) {
+    private fun checkAlignmentWhenPrintedStringExceedPaddingSpaces(alignment: ValueAgnosticSanitizer.Alignment) {
         val bigNumberToString = generateStringFormat(numberThatDoesntFitPadding, alignment)
 
         val expectedText = textBefore +
@@ -224,17 +224,17 @@ class NumberAgnosticComparerAlignmentTest : TestCase() {
         assertExpectNotEqualsActual(expectedText, actualText, sanitizedActualText)
     }
 
-    private fun generateIntPlaceholderWithPaddingSpaces(count: Int, alignment: NumberAgnosticSanitizer.Alignment): String {
-        val placeholder = NumberAgnosticSanitizer.generatePlaceholder(NumberAgnosticSanitizer.UINT_MARKER, alignment)
-        return if (alignment == NumberAgnosticSanitizer.Alignment.Right) {
+    private fun generateIntPlaceholderWithPaddingSpaces(count: Int, alignment: ValueAgnosticSanitizer.Alignment): String {
+        val placeholder = ValueAgnosticSanitizer.generatePlaceholder(ValueAgnosticSanitizer.UINT_MARKER, alignment)
+        return if (alignment == ValueAgnosticSanitizer.Alignment.Right) {
             buildPaddingString(count) + placeholder
         } else {
             placeholder + buildPaddingString(count)
         }
     }
 
-    private fun generateStringFormat(number: Long, alignment: NumberAgnosticSanitizer.Alignment): String {
-        val paddingFormatInfix = if (alignment == NumberAgnosticSanitizer.Alignment.Right) "" else "-"
+    private fun generateStringFormat(number: Long, alignment: ValueAgnosticSanitizer.Alignment): String {
+        val paddingFormatInfix = if (alignment == ValueAgnosticSanitizer.Alignment.Right) "" else "-"
         val paddingFormat = "%${paddingFormatInfix}${standardPaddingCount}s"
         return String.format(paddingFormat, number)
     }
@@ -253,6 +253,6 @@ private fun assertExpectNotEqualsActual(expected: String, actual: String, result
 }
 
 private fun getSanitizedActual(expectedText: String, actualText: String): String {
-    val comparer = NumberAgnosticSanitizer(actualText)
+    val comparer = ValueAgnosticSanitizer(actualText)
     return comparer.generateSanitizedActualTextBasedOnExpectPlaceholders(expectedText)
 }

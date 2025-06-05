@@ -24,9 +24,9 @@ import java.util.regex.Pattern
  *
  * Apart from number placeholders, regular number and quoted string literals are also supported.
  *
- * See [NumberAgnosticSanitizerTest] for more detail.
+ * See [ValueAgnosticSanitizerTest] for more detail.
  */
-class NumberAgnosticSanitizer(val actualText: String) {
+class ValueAgnosticSanitizer(val actualText: String) {
     companion object {
         const val PLACEHOLDER_START: String = "$"
         const val PLACEHOLDER_END: String = "$"
