@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli
+package org.jetbrains.kotlin.test
 
 import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
