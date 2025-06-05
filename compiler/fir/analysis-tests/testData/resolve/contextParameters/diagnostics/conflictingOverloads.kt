@@ -10,9 +10,17 @@ interface TypeB
 context(a: TypeA, b: TypeB) <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 context(b: TypeB, a: TypeA) <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
 
+context(a: TypeA, b: TypeB) fun foo2() {}
+@Deprecated("", level = DeprecationLevel.HIDDEN)
+context(b: TypeB, a: TypeA) fun foo2() {}
+
 class C {
     context(a: TypeA, b: TypeB) <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
     context(b: TypeB, a: TypeA) <!CONFLICTING_OVERLOADS!>fun foo()<!> {}
+
+    context(a: TypeA, b: TypeB) fun foo2() {}
+    @Deprecated("", level = DeprecationLevel.HIDDEN)
+    context(b: TypeB, a: TypeA) fun foo2() {}
 }
 
 // FILE: subtypes.kt
