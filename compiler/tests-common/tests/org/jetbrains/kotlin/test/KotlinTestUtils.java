@@ -248,6 +248,26 @@ public class KotlinTestUtils {
         assertEqualsToFile(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, expectedFile, actual, sanitizer);
     }
 
+    public static void assertValueAgnosticEqualsToFile(File expectedFile, @NotNull String actual) {
+        ValueAgnosticSanitizer sanitizer = new ValueAgnosticSanitizer(actual);
+
+        String expectedText = tryLoadExpectedFile(expectedFile, sanitizer::generateExpectedText);
+        String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, s -> s);
+
+        String sanitizedActualBasedOnExpectPlaceholders =
+                applyDefaultAndCustomSanitizer(
+                        sanitizer.generateSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText), s -> s);
+
+        KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
+                expectedFile,
+                expectedText,
+                expectedSanitizedText,
+                sanitizedActualBasedOnExpectPlaceholders
+        );
+
+        failIfNotEqual(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, comparisonResult);
+    }
+
     public static FileComparisonResult compareExpectFileWithActualText(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         Function0<String> getActualSanitizedText = () -> applyDefaultAndCustomSanitizer(actual, sanitizer);
 
