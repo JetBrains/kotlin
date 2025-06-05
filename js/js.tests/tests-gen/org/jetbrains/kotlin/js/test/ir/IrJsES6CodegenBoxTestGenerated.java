@@ -40846,6 +40846,30 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
       }
 
       @Test
+      @TestMetadata("nestedReifiedCatch.kt")
+      public void testNestedReifiedCatch() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nestedReifiedCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableExceptionType.kt")
+      public void testNullableExceptionType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableExceptionType.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableNothing.kt")
+      public void testNullableNothing() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("reificationClash.kt")
+      public void testReificationClash() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/reificationClash.kt");
+      }
+
+      @Test
       @TestMetadata("tryCatchReifiedType.kt")
       public void testTryCatchReifiedType() {
         runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
