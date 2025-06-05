@@ -33,6 +33,7 @@ data class HttpReportSettings(
 
 data class JsonReportSettings(
     val buildReportDir: File,
+    val prettyPrinting: Boolean,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1

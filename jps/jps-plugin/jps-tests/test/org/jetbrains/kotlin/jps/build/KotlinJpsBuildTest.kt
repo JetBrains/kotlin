@@ -1037,7 +1037,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             .replace("\$BUILD_ID\$", "[a-zA-Z0-9_-]+")
             .replace("\$TIME\$", "[0-9]+")
             .replace("\$HOST\$", ".*")
-            .replace("\$TAGS\$", "[\"INCREMENTAL\"]*")
 
         val jsonReport = reportDir.listFiles().first().readText()
         val matches = Regex(expected).find(jsonReport)

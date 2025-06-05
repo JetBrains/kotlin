@@ -12,8 +12,10 @@ import java.lang.reflect.Type
 class JsonReportService(
     buildReportDir: File,
     projectName: String,
+    prettyPrinting: Boolean = false,
 ) : FileReportService<Any>(buildReportDir, projectName, "json") {
     private val gson = GsonBuilder()
+        .apply { if (prettyPrinting) setPrettyPrinting() }
         .registerTypeAdapter(File::class.java, object : JsonSerializer<File> {
             override fun serialize(src: File?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
                 return src?.path?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE
