@@ -72,7 +72,7 @@ private val IrSymbol?.shouldIgnore: Boolean
 
 fun IrElement.getSourceLocation(
     declaration: IrSymbol?,
-    file: IrFile?,
+    fileEntry: IrFileEntry?,
     type: LocationType = LocationType.START
 ): SourceLocation {
     if (declaration.shouldIgnore) {
@@ -81,8 +81,6 @@ fun IrElement.getSourceLocation(
         else SourceLocation.IgnoredLocation
     }
 
-    val fileEntry = file?.fileEntry
-
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
     if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
@@ -90,8 +88,6 @@ fun IrElement.getSourceLocation(
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
 
     return SourceLocation.DefinedLocation(
-        // TODO Drop "file" usages after KT-58406 fix and replace IrFile with IrFileEntry
-        file.module.name.asString(),
         path,
         line,
         column
