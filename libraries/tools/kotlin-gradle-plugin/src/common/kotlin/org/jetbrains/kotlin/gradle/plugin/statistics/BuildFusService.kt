@@ -19,15 +19,18 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.fus.internal.detectedCiProperty
+import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
+import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsConfiguration.Companion.CUSTOM_LOGGER_ROOT_PATH
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -105,6 +108,13 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     }
                 }
             } else {
+                val reason = when {
+                    project.isInIdeaSync.get() -> "Idea sync is in progress"
+                    !project.kotlinPropertiesProvider.enableFusMetricsCollection -> "Fus was disabled for the build"
+                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
+                    else -> "BuildFusService should not be created."
+                }
+                project.logger.debug("Fus metrics won't be collected: $reason.")
                 null
             }
 
@@ -226,7 +236,10 @@ class MetricContainer : Serializable {
 }
 
 private val Project.buildServiceShouldBeCreated
-    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection
+    get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathIsProvided || !isCiBuild())
+
+private val Project.isCustomLoggerRootPathIsProvided
+    get() = PropertiesBuildService.registerIfAbsent(this).get().get(CUSTOM_LOGGER_ROOT_PATH, this) != null
 
 internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
     if (generalMetricsFinalized.get()) return

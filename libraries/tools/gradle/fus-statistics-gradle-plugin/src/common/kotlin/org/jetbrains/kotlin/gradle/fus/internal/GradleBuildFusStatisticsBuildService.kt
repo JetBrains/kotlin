@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.services.internal.RegisteredBuildServiceProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
@@ -45,13 +44,16 @@ private fun registerIfAbsent(
     val customPath: String =
         project.providers.gradleProperty(FUS_STATISTICS_PATH).orNull ?: project.gradle.gradleUserHomeDir.path
 
-
     return if (!statisticsIsEnabled || customPath.isBlank()) {
         log.info(
             "Fus metrics wont be collected as statistic was " +
                     (if (statisticsIsEnabled) "enabled" else "disabled") +
                     if (customPath.isBlank()) " and custom path is blank" else ""
         )
+        project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
+    } else if (customPath.isBlank() && isCiBuild()) {
+        val ciProperty = detectedCiProperty()
+        log.debug("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
     } else if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildCloseFusStatisticsBuildService::class.java) {
