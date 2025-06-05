@@ -6279,6 +6279,40 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ReturnInExpressionBodies {
+      @Test
+      public void testAllFilesPresentInReturnInExpressionBodies() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("returnInExpressionBodyBefore.kt")
+      public void testReturnInExpressionBodyBefore() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyBefore.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInExpressionBodyPhase1.kt")
+      public void testReturnInExpressionBodyPhase1() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyPhase1.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInExpressionBodyPhase2.kt")
+      public void testReturnInExpressionBodyPhase2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyPhase2.kt");
+      }
+
+      @Test
+      @TestMetadata("returnInExpressionBodyProgressiveMode.kt")
+      public void testReturnInExpressionBodyProgressiveMode() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/returnInExpressionBodies/returnInExpressionBodyProgressiveMode.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConstructors")
     @TestDataPath("$PROJECT_ROOT")
     public class SamConstructors {
