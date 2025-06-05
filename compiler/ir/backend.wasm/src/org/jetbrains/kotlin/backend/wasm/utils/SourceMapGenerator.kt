@@ -76,8 +76,7 @@ class SourceMapGenerator(
                 }
                 is SourceLocation.WithFileAndLineNumberInformation -> {
                     val relativePath = if (sourceLocation is SourceLocation.DefinedLocation) {
-                        pathResolver
-                            .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
+                        pathResolver.getPathRelativeToSourceRootsIfExists(File(sourceLocation.file))
                             ?: continue
                     } else sourceLocation.file
 

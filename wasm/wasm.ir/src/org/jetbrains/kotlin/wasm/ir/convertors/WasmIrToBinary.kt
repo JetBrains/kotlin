@@ -676,7 +676,6 @@ class WasmIrToBinary(
     ) : SourceLocationMapping() {
         override val generatedLocation by lazy {
             SourceLocation.DefinedLocation(
-                module = "",
                 file = "",
                 line = 0,
                 column = offsets.sumOf {
