@@ -12564,6 +12564,9 @@ final fun <#A: kotlin/Any?> kotlin.test/assertSame(#A, #A, kotlin/String? = ...)
 final fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?> kotlinx.cinterop.internal/interopCallMarker(#A): #A // kotlinx.cinterop.internal/interopCallMarker|interopCallMarker(0:0){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?> kotlinx.cinterop/interpretObjCPointerOrNull(kotlin.native.internal/NativePtr): #A? // kotlinx.cinterop/interpretObjCPointerOrNull|interpretObjCPointerOrNull(kotlin.native.internal.NativePtr){0§<kotlin.Any?>}[0]
 
 // Targets: [native]

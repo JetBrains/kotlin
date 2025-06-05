@@ -50,8 +50,11 @@ internal interface KotlinStubs {
 
     val isSwiftExportEnabled: Boolean
 
+    fun enterScope()
+    fun exitScope()
     fun addKotlin(declaration: IrDeclaration)
     fun addC(lines: List<String>)
+    fun flushC(): List<String>
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
 
@@ -105,14 +108,25 @@ private fun KotlinToCCallBuilder.addArgument(
 
 private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberAccessExpression<*>) -> IrExpression = { it }): IrExpression =
         bridgeCallBuilder.build(
-                bridgeBuilder.buildKotlinBridge().also {
+                bridgeBuilder.getKotlinBridge().also {
                     this.stubs.addKotlin(it)
                 },
                 transformCall
         )
 
-internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
-                                       foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default): IrExpression {
+private inline fun <R> KotlinStubs.scoped(block: () -> R): R {
+    enterScope()
+    return try {
+        block()
+    } finally {
+        exitScope()
+    }
+}
+
+internal fun KotlinStubs.generateCCall(
+        expression: IrCall, builder: IrBuilderWithScope, isInvoke: Boolean,
+        foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
+): IrExpression = scoped {
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false, foreignExceptionMode)
 
     val callee = expression.symbol.owner
@@ -174,9 +188,9 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
         this.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     }
 
-    callBuilder.emitCBridge()
+    callBuilder.finishBuilding()
 
-    return result
+    result
 }
 
 private fun KotlinToCCallBuilder.addArguments(arguments: List<IrExpression?>, callee: IrFunction) {
@@ -280,6 +294,21 @@ private fun KotlinToCCallBuilder.emitCBridge() {
     stubs.addC(cLines)
 }
 
+private fun KotlinToCCallBuilder.finishBuilding(): IrSimpleFunction {
+    emitCBridge()
+
+    val bridge = bridgeBuilder.getKotlinBridge()
+
+    val allC = stubs.flushC()
+
+    bridge.annotations += buildSimpleAnnotation(
+            stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge.owner,
+            stubs.language, allC.joinToString("\n") { it }
+    )
+
+    return bridge
+}
+
 private fun KotlinToCCallBuilder.buildCall(
         targetFunctionName: String,
         returnValuePassing: ValueReturning
@@ -302,107 +331,109 @@ internal fun KotlinStubs.generateObjCCall(
         superQualifier: IrClassSymbol?,
         receiver: ObjCCallReceiver,
         arguments: List<IrExpression?>
-) = builder.irBlock {
-    val resolved = method.resolveFakeOverrideMaybeAbstract() ?: method
-    val isDirect = directSymbolName != null
+) = scoped {
+    builder.irBlock {
+        val resolved = method.resolveFakeOverrideMaybeAbstract() ?: method
+        val isDirect = directSymbolName != null
 
-    val exceptionMode = ForeignExceptionMode.byValue(
-            resolved.konanLibrary?.manifestProperties
-                    ?.getProperty(ForeignExceptionMode.manifestKey)
-    )
+        val exceptionMode = ForeignExceptionMode.byValue(
+                resolved.konanLibrary?.manifestProperties
+                        ?.getProperty(ForeignExceptionMode.manifestKey)
+        )
 
-    val callBuilder = KotlinToCCallBuilder(builder, this@generateObjCCall, isObjCMethod = true, exceptionMode)
+        val callBuilder = KotlinToCCallBuilder(builder, this@generateObjCCall, isObjCMethod = true, exceptionMode)
 
-    val superClass = irTemporary(
-            superQualifier?.let { getObjCClass(symbols, it) } ?: irNullNativePtr(symbols),
-            isMutable = true
-    )
+        val superClass = irTemporary(
+                superQualifier?.let { getObjCClass(symbols, it) } ?: irNullNativePtr(symbols),
+                isMutable = true
+        )
 
-    val targetPtrParameter = if (!isDirect) {
-        val messenger = irCall(if (isStret) {
-            symbols.interopGetMessengerStret
+        val targetPtrParameter = if (!isDirect) {
+            val messenger = irCall(if (isStret) {
+                symbols.interopGetMessengerStret
+            } else {
+                symbols.interopGetMessenger
+            }.owner).apply {
+                this.arguments[0] = irGet(superClass) // TODO: check superClass statically.
+            }
+
+            callBuilder.passThroughBridge(
+                    messenger,
+                    symbols.interopCPointer.starProjectedType,
+                    CTypes.voidPtr
+            ).name
         } else {
-            symbols.interopGetMessenger
-        }.owner).apply {
-            this.arguments[0] = irGet(superClass) // TODO: check superClass statically.
+            null
         }
 
-        callBuilder.passThroughBridge(
-                messenger,
-                symbols.interopCPointer.starProjectedType,
-                CTypes.voidPtr
-        ).name
-    } else {
-        null
-    }
-
-    val preparedReceiver = if (method.objCConsumesReceiver()) {
-        when (receiver) {
-            is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
-                this.arguments[0] = receiver.rawPtr
-            }
-
-            is ObjCCallReceiver.Retained -> receiver.rawPtr
-        }
-    } else {
-        when (receiver) {
-            is ObjCCallReceiver.Regular -> receiver.rawPtr
-
-            is ObjCCallReceiver.Retained -> {
-                // Note: shall not happen: Retained is used only for alloc result currently,
-                // which is used only as receiver for init methods, which are always receiver-consuming.
-                // Can't even add a test for the code below.
-                val rawPtrVar = scope.createTemporaryVariable(receiver.rawPtr)
-                callBuilder.bridgeCallBuilder.prepare += rawPtrVar
-                callBuilder.bridgeCallBuilder.cleanup += {
-                    irCall(symbols.interopObjCRelease).apply {
-                        this.arguments[0] = irGet(rawPtrVar) // Balance retained pointer.
-                    }
+        val preparedReceiver = if (method.objCConsumesReceiver()) {
+            when (receiver) {
+                is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
+                    this.arguments[0] = receiver.rawPtr
                 }
-                irGet(rawPtrVar)
+
+                is ObjCCallReceiver.Retained -> receiver.rawPtr
+            }
+        } else {
+            when (receiver) {
+                is ObjCCallReceiver.Regular -> receiver.rawPtr
+
+                is ObjCCallReceiver.Retained -> {
+                    // Note: shall not happen: Retained is used only for alloc result currently,
+                    // which is used only as receiver for init methods, which are always receiver-consuming.
+                    // Can't even add a test for the code below.
+                    val rawPtrVar = scope.createTemporaryVariable(receiver.rawPtr)
+                    callBuilder.bridgeCallBuilder.prepare += rawPtrVar
+                    callBuilder.bridgeCallBuilder.cleanup += {
+                        irCall(symbols.interopObjCRelease).apply {
+                            this.arguments[0] = irGet(rawPtrVar) // Balance retained pointer.
+                        }
+                    }
+                    irGet(rawPtrVar)
+                }
             }
         }
-    }
 
-    val receiverOrSuper = if (superQualifier != null) {
-        irCall(symbols.interopCreateObjCSuperStruct.owner).apply {
-            this.arguments[0] = preparedReceiver
-            this.arguments[1] = irGet(superClass)
+        val receiverOrSuper = if (superQualifier != null) {
+            irCall(symbols.interopCreateObjCSuperStruct.owner).apply {
+                this.arguments[0] = preparedReceiver
+                this.arguments[1] = irGet(superClass)
+            }
+        } else {
+            preparedReceiver
         }
-    } else {
-        preparedReceiver
-    }
 
-    callBuilder.cCallBuilder.arguments += callBuilder.passThroughBridge(
-            receiverOrSuper, symbols.nativePtrType, CTypes.voidPtr).name
-    callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
-
-    if (!isDirect) {
-        callBuilder.cCallBuilder.arguments += "@selector($selector)"
+        callBuilder.cCallBuilder.arguments += callBuilder.passThroughBridge(
+                receiverOrSuper, symbols.nativePtrType, CTypes.voidPtr).name
         callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
+
+        if (!isDirect) {
+            callBuilder.cCallBuilder.arguments += "@selector($selector)"
+            callBuilder.cFunctionBuilder.addParameter(CTypes.voidPtr)
+        }
+
+        callBuilder.addArguments(arguments, method)
+
+        val returnValuePassing = mapReturnType(method.returnType, call, signature = method)
+
+        val targetFunctionName = getUniqueCName("knbridge_targetPtr")
+
+        val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
+
+        if (isDirect) {
+            // This declares a function
+            val targetFunctionVariable = CVariable(callBuilder.cFunctionBuilder.getType(), targetFunctionName)
+            callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable __asm(\"$directSymbolName\");")
+
+        } else {
+            val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
+            callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
+        }
+
+        callBuilder.finishBuilding()
+
+        +result
     }
-
-    callBuilder.addArguments(arguments, method)
-
-    val returnValuePassing = mapReturnType(method.returnType, call, signature = method)
-
-    val targetFunctionName = getUniqueCName("knbridge_targetPtr")
-
-    val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
-
-    if (isDirect) {
-        // This declares a function
-        val targetFunctionVariable = CVariable(callBuilder.cFunctionBuilder.getType(), targetFunctionName)
-        callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable __asm(\"$directSymbolName\");")
-
-    } else {
-        val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
-        callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
-    }
-
-    callBuilder.emitCBridge()
-
-    +result
 }
 
 internal fun IrBuilderWithScope.getObjCClass(symbols: KonanSymbols, symbol: IrClassSymbol): IrExpression {
@@ -475,13 +506,16 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
         returnValue(kotlinCall)
     }
 
-    val kotlinBridge = bridgeBuilder.buildKotlinBridge()
+    val kotlinBridge = bridgeBuilder.getKotlinBridge()
     kotlinBridge.body = bridgeBuilder.kotlinIrBuilder.irBlockBody {
         kotlinBridgeStatements.forEach { +it }
     }
+    val cBridgeDeclaration = "${buildCBridge()};"
+    kotlinBridge.annotations += listOf(
+            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
+                    stubs.language, cBridgeDeclaration)
+    )
     stubs.addKotlin(kotlinBridge)
-
-    stubs.addC(listOf("${buildCBridge()};"))
 }
 
 private fun CCallbackBuilder.buildCFunction(): String {
@@ -555,9 +589,9 @@ internal fun KotlinStubs.generateCFunctionAndFakeKotlinExternalFunction(
         signature: IrSimpleFunction,
         isObjCMethod: Boolean,
         location: IrElement
-): IrSimpleFunction {
+): IrSimpleFunction = scoped {
     val cFunction = generateCFunction(function, signature, isObjCMethod, location)
-    return createFakeKotlinExternalFunction(signature, cFunction, isObjCMethod)
+    createFakeKotlinExternalFunction(signature, cFunction, isObjCMethod)
 }
 
 private fun KotlinStubs.createFakeKotlinExternalFunction(
@@ -583,14 +617,16 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
             isExternal = true,
     )
 
-    bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            symbols.symbolName.owner, cFunctionName)
-
     if (isObjCMethod) {
         val methodInfo = signature.getObjCMethodInfo()!!
         bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 symbols.objCMethodImp.owner, methodInfo.selector, methodInfo.encoding)
     }
+
+    val allC = flushC()
+
+    bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it })
 
     return bridge
 }
@@ -1275,7 +1311,7 @@ private class ObjCBlockPointerValuePassing(
         return constructor
     }
 
-    private fun IrBuilderWithScope.callBlock(blockPtr: IrExpression, arguments: List<IrExpression>): IrExpression {
+    private fun IrBuilderWithScope.callBlock(blockPtr: IrExpression, arguments: List<IrExpression>): IrExpression = stubs.scoped {
         val callBuilder = KotlinToCCallBuilder(this, stubs, isObjCMethod = false, ForeignExceptionMode.default)
 
         val rawBlockPointerParameter =  callBuilder.passThroughBridge(blockPtr, blockPtr.type, CTypes.id)
@@ -1291,9 +1327,9 @@ private class ObjCBlockPointerValuePassing(
         val blockVariable = CVariable(blockVariableType, blockVariableName)
         callBuilder.cBridgeBodyLines.add(0, "$blockVariable = ${rawBlockPointerParameter.name};")
 
-        callBuilder.emitCBridge()
+        callBuilder.finishBuilding()
 
-        return result
+        result
     }
 
     override fun bridgedToC(expression: String): String {

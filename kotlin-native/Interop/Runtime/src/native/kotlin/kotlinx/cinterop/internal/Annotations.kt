@@ -111,3 +111,14 @@ public annotation class CEnumEntryAlias(val entryName: String)
 @InternalForKotlinNative
 @Retention(AnnotationRetention.BINARY)
 public annotation class CEnumVarTypeSize(val size: Int)
+
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@PublishedApi
+internal annotation class CToKotlinBridge(val language: String, val declaration: String)
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@PublishedApi
+internal annotation class KotlinToCBridge(val language: String, val impl: String)
