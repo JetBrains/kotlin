@@ -5,48 +5,21 @@
 
 package org.jetbrains.kotlin.konan.test.gcfuzzing.dsl
 
-enum class FileKind {
-    KOTLIN,
-    DEF,
-    HEADER,
-    OBJC_SOURCE,
-}
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.CInteropOutput
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.KotlinOutput
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.ObjCOutput
+import java.io.File
 
-class File(
-    val filename: String,
-    val kind: FileKind,
-    val contents: String,
-)
-
-typealias Output = List<File>
-
-val Output.kotlinFilename: String
-    get() = find { it.kind == FileKind.KOTLIN }!!.filename
-
-val Output.kotlinFrameworkName: String
-    get() = "KotlinObjCFramework"
-
-val Output.kotlinFrameworkArgs: List<String>
-    get() = listOf("-Xstatic-framework", "-Xbinary=bundleId=${kotlinFrameworkName}")
-
-val Output.defFilename: String
-    get() = find { it.kind == FileKind.DEF }!!.filename
-
-val Output.cinteropArgs: List<String>
-    get() = emptyList()
-
-val Output.headerFilename: String
-    get() = find { it.kind == FileKind.HEADER }!!.filename
-
-val Output.objcSourceFilename: String
-    get() = find { it.kind == FileKind.OBJC_SOURCE }!!.filename
-
-val Output.objcSourceArgs: List<String>
-    get() = listOf("-fobjc-arc")
-
-fun Output.save(root: java.io.File) {
-    root.mkdirs()
-    forEach {
-        root.resolve(it.filename).writeText(it.contents)
+class Output(
+    val kotlin: KotlinOutput,
+    val cinterop: CInteropOutput,
+    val objc: ObjCOutput,
+) {
+    fun save(root: File) {
+        root.mkdirs()
+        root.resolve(kotlin.filename).writeText(kotlin.contents)
+        root.resolve(cinterop.defFilename).writeText(cinterop.defContents)
+        root.resolve(cinterop.headerFilename).writeText(cinterop.headerContents)
+        root.resolve(objc.filename).writeText(objc.contents)
     }
 }

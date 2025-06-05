@@ -34,13 +34,13 @@
 
 @end
 
-void spawnThread(void (^block)()) {
+static void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
 }
 
-_Thread_local int64_t frameCount = 100;
+static _Thread_local int64_t frameCount = 100;
 
-bool tryEnterFrame(void) {
+static bool tryEnterFrame(void) {
     if (frameCount-- <= 0) {
         ++frameCount;
         return false;
@@ -48,7 +48,7 @@ bool tryEnterFrame(void) {
     return true;
 }
 
-void leaveFrame(void) {
+static void leaveFrame(void) {
     ++frameCount;
 }
 
@@ -97,9 +97,9 @@ id fun7(id l0) {
     if (!tryEnterFrame()) {
         return nil;
     }
-    id l1 = [[KOCFClass0 alloc] initWithF0:nil f1:nil ];
-    id l2 = [[Class1 alloc] initWithF0:nil f1:nil ];
-    id l3 = [KOCFLibKt fun6L0:l0 ];
+    id l1 = [[KOCFClass0 alloc] initWithF0:nil f1:nil];
+    id l2 = [[Class1 alloc] initWithF0:nil f1:nil];
+    id l3 = [KOCFLibKt fun6L0:l0];
     leaveFrame();
     return [[[l1 loadField:1] loadField:3] loadField:4];
 }

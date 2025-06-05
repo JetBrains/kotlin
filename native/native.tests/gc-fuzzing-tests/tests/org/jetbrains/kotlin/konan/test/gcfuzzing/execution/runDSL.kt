@@ -26,13 +26,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Output
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.cinteropArgs
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.defFilename
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.kotlinFilename
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.kotlinFrameworkArgs
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.kotlinFrameworkName
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.objcSourceArgs
-import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.objcSourceFilename
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.time.Duration
@@ -48,16 +41,16 @@ fun AbstractNativeSimpleTest.runDSL(
     Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
     val cinterop = cinteropToLibrary(
         testRunSettings.get<KotlinNativeTargets>(),
-        dslGeneratedDir.resolve(dslOutput.defFilename),
+        dslGeneratedDir.resolve(dslOutput.cinterop.defFilename),
         buildDir,
-        freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = dslOutput.cinteropArgs),
+        freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = dslOutput.cinterop.args),
     ).assertSuccess()
     val objcFrameworkTestCase = generateObjCFrameworkTestCase(
         TestKind.STANDALONE_NO_TR,
         TestCase.NoTestRunnerExtras(),
-        dslOutput.kotlinFrameworkName,
-        listOf(dslGeneratedDir.resolve(dslOutput.kotlinFilename)),
-        TestCompilerArgs(dslOutput.kotlinFrameworkArgs),
+        dslOutput.kotlin.frameworkName,
+        listOf(dslGeneratedDir.resolve(dslOutput.kotlin.filename)),
+        TestCompilerArgs(dslOutput.kotlin.args),
         setOf(TestModule.Given(cinterop.resultingArtifact.klibFile)),
         checks = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.MayExceed(executionTimeout),
@@ -71,11 +64,11 @@ fun AbstractNativeSimpleTest.runDSL(
     val objCFramework = TestCompilationFactory().testCaseToObjCFrameworkCompilation(objcFrameworkTestCase, testRunSettings).result.assertSuccess()
     codesign(objCFramework.resultingArtifact.frameworkDir.absolutePath)
     val finalExecutable = compileWithClang(
-        sourceFiles = listOf(dslGeneratedDir.resolve(dslOutput.objcSourceFilename)),
+        sourceFiles = listOf(dslGeneratedDir.resolve(dslOutput.objc.filename)),
         outputFile = buildDir.resolve("main.exe"),
-        additionalClangFlags = dslOutput.objcSourceArgs + listOf("-framework", dslOutput.kotlinFrameworkName),
+        additionalClangFlags = dslOutput.objc.args + listOf("-framework", dslOutput.kotlin.frameworkName),
         frameworkDirectories = listOf(buildDir),
-        includeDirectories = listOf(buildDir.resolve("${dslOutput.kotlinFrameworkName}.framework").resolve("Headers"))
+        includeDirectories = listOf(buildDir.resolve("${dslOutput.kotlin.frameworkName}.framework").resolve("Headers"))
     ).assertSuccess()
     val testExecutable = TestExecutable(
         finalExecutable.resultingArtifact,

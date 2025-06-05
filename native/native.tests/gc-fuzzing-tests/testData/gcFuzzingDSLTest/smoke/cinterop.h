@@ -9,7 +9,7 @@
 @interface Class1 : NSObject<ObjCIndexAccess>
 @property id f0;
 @property id f1;
-- (instancetype)initWithF0:(id)f0 f1:(id)f1 ;
+- (instancetype)initWithF0:(id)f0 f1:(id)f1;
 @end
 id fun5(id l0, id l1);
 id fun7(id l0);
