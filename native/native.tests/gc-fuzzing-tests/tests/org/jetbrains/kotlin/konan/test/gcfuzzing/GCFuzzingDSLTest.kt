@@ -148,6 +148,9 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                             LoadExpression.Local(0, Path(listOf())),
                             LoadExpression.Local(1, Path(listOf(67))),
                         )
+                    ),
+                    BodyStatement.Call(
+                        6, listOf()
                     )
                 )
             )

@@ -77,6 +77,21 @@ private fun TranslateContext.appendDefaultContents() {
             |   Worker.start().executeAfter(0L, block)
             |}
             |
+            |@ThreadLocal
+            |private var frameCount = 100;
+            |
+            |private fun tryEnterFrame(): Boolean {
+            |    if (frameCount-- <= 0) {
+            |        frameCount++
+            |        return false
+            |    }
+            |    return true
+            |}
+            |
+            |private fun leaveFrame() {
+            |    frameCount++
+            |}
+            |
             """.trimMargin()
         )
     }
@@ -99,12 +114,28 @@ private fun TranslateContext.appendDefaultContents() {
             """
             |#include "${files[FileKind.HEADER]!!.filename}"
             |
+            |#include <stdbool.h>
+            |
             |#import <Foundation/Foundation.h>
             |
             |#include "KotlinObjCFramework.h"
             |
             |void spawnThread(void (^block)()) {
             |    [NSThread detachNewThreadWithBlock:block];
+            |}
+            |
+            |_Thread_local int64_t frameCount = 100;
+            |
+            |bool tryEnterFrame(void) {
+            |    if (frameCount-- <= 0) {
+            |        ++frameCount;
+            |        return false;
+            |    }
+            |    return true;
+            |}
+            |
+            |void leaveFrame(void) {
+            |    ++frameCount;
             |}
             |
             |int main() {
@@ -268,7 +299,7 @@ private fun TranslateContext.translateFunctionDefinition(definition: Definition.
                     this,
                     1,
                     localsCount = definition.parameters.size,
-                ).translateBody(definition.body)
+                ).translateFunctionBody(definition.body)
                 appendLine("}")
             }
         }
@@ -282,7 +313,7 @@ private fun TranslateContext.translateFunctionDefinition(definition: Definition.
                     this,
                     1,
                     localsCount = definition.parameters.size,
-                ).translateBody(definition.body)
+                ).translateFunctionBody(definition.body)
                 appendLine("}")
             }
         }
@@ -395,8 +426,20 @@ private fun BodyTranslateContext.translateBody(body: Body) {
     }
 }
 
-private fun BodyTranslateContext.translateBody(body: BodyWithReturn) {
+private fun BodyTranslateContext.translateFunctionBody(body: BodyWithReturn) {
+    appendIndent()
+    contents.appendLine("if (!tryEnterFrame()) {")
+    appendIndent()
+    appendIndent()
+    contents.append("return ")
+    translateLoadExpression(LoadExpression.Default)
+    appendStatementEnd()
+    appendIndent()
+    contents.appendLine("}")
     translateBody(body.body)
+    appendIndent()
+    contents.append("leaveFrame()")
+    appendStatementEnd()
     translateReturnStatement(body.returnExpression)
 }
 

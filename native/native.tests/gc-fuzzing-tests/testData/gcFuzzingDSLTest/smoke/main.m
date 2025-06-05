@@ -1,11 +1,27 @@
 #include "cinterop.h"
 
+#include <stdbool.h>
+
 #import <Foundation/Foundation.h>
 
 #include "KotlinObjCFramework.h"
 
 void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
+}
+
+_Thread_local int64_t frameCount = 100;
+
+bool tryEnterFrame(void) {
+    if (frameCount-- <= 0) {
+        ++frameCount;
+        return false;
+    }
+    return true;
+}
+
+void leaveFrame(void) {
+    ++frameCount;
 }
 
 int main() {
@@ -38,16 +54,24 @@ int main() {
 @end
 id g3 = nil;
 id fun5(id l0, id l1) {
+    if (!tryEnterFrame()) {
+        return nil;
+    }
     g3 = l0;
     [l1 storeObjCField:0 value:[g3 loadObjCField:1]];
     spawnThread(^{
         fun7(l1);
     });
+    leaveFrame();
     return nil;
 }
 id fun7(id l0) {
+    if (!tryEnterFrame()) {
+        return nil;
+    }
     id l1 = [[KOCFClass0 alloc] initWithF0:nil f1:nil ];
     id l2 = [[Class1 alloc] initWithF0:nil f1:nil ];
     id l3 = [KOCFLibKt fun6L0:l0 ];
+    leaveFrame();
     return [[[l1 loadObjCField:1] loadObjCField:3] loadObjCField:4];
 }

@@ -23,6 +23,21 @@ private fun spawnThread(block: () -> Unit) {
    Worker.start().executeAfter(0L, block)
 }
 
+@ThreadLocal
+private var frameCount = 100;
+
+private fun tryEnterFrame(): Boolean {
+    if (frameCount-- <= 0) {
+        frameCount++
+        return false
+    }
+    return true
+}
+
+private fun leaveFrame() {
+    frameCount++
+}
+
 class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
     override fun loadKotlinField(index: Int): Any? {
         return when (index % 2) {
@@ -40,21 +55,30 @@ class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
 }
 private var g2: Any? = null
 fun fun4(l0: Any?, l1: Any?): Any? {
+    if (!tryEnterFrame()) {
+        return null
+    }
     g2 = l0
     l1?.storeField(0, g2?.loadField(1))
     spawnThread {
         fun6(l1)
     }
+    leaveFrame()
     return null
 }
 fun fun6(l0: Any?): Any? {
+    if (!tryEnterFrame()) {
+        return null
+    }
     var l1: Any? = Class0(null, null)
     var l2: Any? = Class1(null, null)
     var l3: Any? = fun7(l0)
+    leaveFrame()
     return l1?.loadField(1)?.loadField(3)?.loadField(4)
 }
 fun mainBody() {
     var l0: Any? = Class1(null, null)
     var l1: Any? = l0
     var l2: Any? = fun5(l0, l1?.loadField(67))
+    var l3: Any? = fun6(null)
 }
