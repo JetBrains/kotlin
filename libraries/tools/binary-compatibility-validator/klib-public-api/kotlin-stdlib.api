@@ -10024,6 +10024,28 @@ open annotation class kotlinx.cinterop.internal/CStruct : kotlin/Annotation { //
 }
 
 // Targets: [native]
+open annotation class kotlinx.cinterop.internal/CToKotlinBridge : kotlin/Annotation { // kotlinx.cinterop.internal/CToKotlinBridge|null[0]
+    constructor <init>(kotlin/String, kotlin/String) // kotlinx.cinterop.internal/CToKotlinBridge.<init>|<init>(kotlin.String;kotlin.String){}[0]
+
+    final val declaration // kotlinx.cinterop.internal/CToKotlinBridge.declaration|{}declaration[0]
+        final fun <get-declaration>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.declaration.<get-declaration>|<get-declaration>(){}[0]
+    final val language // kotlinx.cinterop.internal/CToKotlinBridge.language|{}language[0]
+        final fun <get-language>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.language.<get-language>|<get-language>(){}[0]
+}
+
+// Targets: [native]
+open annotation class kotlinx.cinterop.internal/KotlinToCBridge : kotlin/Annotation { // kotlinx.cinterop.internal/KotlinToCBridge|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/String) // kotlinx.cinterop.internal/KotlinToCBridge.<init>|<init>(kotlin.String;kotlin.String;kotlin.String){}[0]
+
+    final val impl // kotlinx.cinterop.internal/KotlinToCBridge.impl|{}impl[0]
+        final fun <get-impl>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.impl.<get-impl>|<get-impl>(){}[0]
+    final val language // kotlinx.cinterop.internal/KotlinToCBridge.language|{}language[0]
+        final fun <get-language>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.language.<get-language>|<get-language>(){}[0]
+    final val library // kotlinx.cinterop.internal/KotlinToCBridge.library|{}library[0]
+        final fun <get-library>(): kotlin/String // kotlinx.cinterop.internal/KotlinToCBridge.library.<get-library>|<get-library>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlinx.cinterop/BetaInteropApi : kotlin/Annotation { // kotlinx.cinterop/BetaInteropApi|null[0]
     constructor <init>() // kotlinx.cinterop/BetaInteropApi.<init>|<init>(){}[0]
 }
@@ -12562,6 +12584,9 @@ final fun <#A: kotlin/Any?> kotlin.test/assertSame(#A, #A, kotlin/String? = ...)
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final fun <#A: kotlin/Any?> kotlinx.cinterop.internal/interopCallMarker(#A): #A // kotlinx.cinterop.internal/interopCallMarker|interopCallMarker(0:0){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlinx.cinterop/interpretObjCPointerOrNull(kotlin.native.internal/NativePtr): #A? // kotlinx.cinterop/interpretObjCPointerOrNull|interpretObjCPointerOrNull(kotlin.native.internal.NativePtr){0§<kotlin.Any?>}[0]
