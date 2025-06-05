@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
+import org.jetbrains.kotlin.gradle.util.buildRepoArtifactPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import java.util.zip.ZipFile
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.test.assertContains
@@ -127,8 +129,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 "nativeMain".takeUnless { isNativeDisabled },
             )
             val repositoryPath = localRepository?.absolutePathString()
-            val depGroup = if (localRepository != null) "org.example" else null
-            val depVersion = if (localRepository != null) "1.0" else null
+            val depGroup = if (localRepository != null) PUBLISHED_DEP_GROUP else null
+            val depVersion = if (localRepository != null) PUBLISHED_DEP_VERSION else null
             buildScriptInjection {
                 with(project) {
                     applyMultiplatform {
@@ -262,6 +264,64 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("single-target project does not produce actual metadata artifact with the separate kmp compilation scheme")
+    @GradleTest
+    fun singleTargetMetadataSeparate(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, true)
+    }
+
+    @DisplayName("single-target project does not produce actual metadata artifact with the current kmp compilation scheme")
+    @GradleTest
+    fun singleTargetMetadataCurrent(gradleVersion: GradleVersion, @TempDir localRepoDir: Path) {
+        doTestSingleTargetMetadata(gradleVersion, localRepoDir, false)
+    }
+
+    private fun doTestSingleTargetMetadata(gradleVersion: GradleVersion, localRepoDir: Path, enableSeparateCompilation: Boolean) {
+        project("empty", gradleVersion, localRepoDir = localRepoDir) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            val localRepoPath = localRepoDir.absolutePathString()
+            buildScriptInjection {
+                with(project) {
+                    applyMultiplatform {
+                        jvm()
+                        with(sourceSets) {
+                            commonMain.get().compileStubSourceWithSourceSetName()
+                            jvmMain.get().compileStubSourceWithSourceSetName()
+                        }
+                    }
+
+                    project.setupMavenPublication(
+                        "Stub",
+                        PublisherConfiguration(PUBLISHED_DEP_GROUP, PUBLISHED_DEP_VERSION, localRepoPath)
+                    )
+                }
+            }
+
+            if (enableSeparateCompilation) {
+                enableSeparateCompilation()
+                buildAndFail(":publish") {
+                    // Currently, it's not clear what shared source sets of single-target projects or bamboo structures should be.
+                    // This test just fixates it's currently disallowed to have code in such shared source sets
+                    // until we decide what exactly should be allowed there
+                    assertTasksFailed(":compileKotlinJvm")
+                }
+            } else {
+                build(":publish") {
+                    val metadataJar = localRepoDir.buildRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
+                    assertFileExists(metadataJar)
+                    ZipFile(metadataJar.toFile()).use { zip ->
+                        assertFalse(
+                            zip.entries().asSequence().any { it.name.contains("commonMain") },
+                            "Metadata JAR $metadataJar is not expected to contain commonMain directory in single-target KMP project"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun GradleProject.enableSeparateCompilation() {
         gradleProperties.appendText(
             """
@@ -269,5 +329,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 |
                 """.trimMargin()
         )
+    }
+
+    companion object {
+        private const val PUBLISHED_DEP_GROUP = "org.example"
+        private const val PUBLISHED_DEP_VERSION = "1.0"
     }
 }
