@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
@@ -48,6 +49,11 @@ private val arrayConstructorPhase = makeIrModulePhase(
     name = "ArrayConstructor",
 )
 
+private val checkInlineCallCyclesPhase = makeIrModulePhase(
+    ::InlineCallCycleCheckerLowering,
+    name = "InlineCallCycleChecker",
+)
+
 /**
  * The first phase of inlining (inline only private functions).
  */
@@ -59,7 +65,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "InlineOnlyPrivateFunctions",
-    prerequisite = setOf(arrayConstructorPhase)
+    prerequisite = setOf(arrayConstructorPhase, checkInlineCallCyclesPhase),
 )
 
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
@@ -122,6 +128,7 @@ fun loweringsOfTheFirstPhase(
         this += sharedVariablesLoweringPhase
         this += localClassesInInlineLambdasPhase
         this += arrayConstructorPhase
+        this += checkInlineCallCyclesPhase
         this += inlineOnlyPrivateFunctionsPhase
         this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
         this += outerThisSpecialAccessorInInlineFunctionsPhase
