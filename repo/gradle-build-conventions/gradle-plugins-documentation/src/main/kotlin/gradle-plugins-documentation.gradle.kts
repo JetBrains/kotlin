@@ -8,22 +8,39 @@ plugins {
     base
 }
 
-val templateConfig = Pair(
+private val templateConfig = Pair(
     "org.jetbrains.dokka.base.DokkaBase",
     "{ \"templatesDir\": \"${project.rootDir.resolve("build/api-reference/templates").also { it.mkdirs() }}\" }"
 )
 
+// Documentation: https://github.com/Kotlin/dokka/tree/1.9.20/dokka-subprojects/plugin-versioning
+private val PluginsApiDocumentationExtension.versioningConfig
+    get() = Pair(
+        "org.jetbrains.dokka.versioning.VersioningPlugin",
+        documentationOldVersions.map { olderVersionsDir ->
+            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile.also { it.mkdirs() }}\" }"
+        }
+    )
+
+private val dokkaVersioningPlugin = versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get()
+
 val documentationExtension = extensions.create<PluginsApiDocumentationExtension>(
     "pluginsApiDocumentation",
-    { project: Project ->
-        project.tasks.withType<DokkaTaskPartial>().configureEach {
-            pluginsMapConfiguration.put(templateConfig.first, templateConfig.second)
+    { project: Project, extension: PluginsApiDocumentationExtension ->
+        project.plugins.withId("org.jetbrains.dokka") {
+            project.dependencies {
+                "dokkaPlugin"(dokkaVersioningPlugin)
+            }
+            project.tasks.withType<DokkaTaskPartial>().configureEach {
+                pluginsMapConfiguration.put(templateConfig.first, templateConfig.second)
+                extension.versioningConfig.let { pluginsMapConfiguration.put(it.first, it.second) }
+            }
         }
     }
 )
 
 dependencies {
-    dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-versioningPlugin").get())
+    dokkaPlugin(dokkaVersioningPlugin)
     dokkaPlugin(versionCatalogs.named("libs").findLibrary("dokka-multiModulePlugin").get())
 }
 
@@ -81,14 +98,9 @@ tasks.register<org.jetbrains.dokka.gradle.DokkaMultiModuleTask>("dokkaKotlinlang
 
     dependsOn(unzipTemplates)
     pluginsMapConfiguration.put(templateConfig.first, templateConfig.second)
-
-    // Documentation: https://github.com/Kotlin/dokka/tree/1.9.20/dokka-subprojects/plugin-versioning
-    pluginsMapConfiguration.put(
-        "org.jetbrains.dokka.versioning.VersioningPlugin",
-        documentationExtension.documentationOldVersions.map { olderVersionsDir ->
-            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile.also { it.mkdirs() }}\" }"
-        }
-    )
+    documentationExtension.versioningConfig.let {
+        pluginsMapConfiguration.put(it.first, it.second)
+    }
 
     fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
         parent.outputDirectory.dir(child.project.name)
