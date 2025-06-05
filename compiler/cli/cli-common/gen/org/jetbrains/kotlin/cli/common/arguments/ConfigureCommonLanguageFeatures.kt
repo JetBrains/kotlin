@@ -69,4 +69,8 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
     if (arguments.annotationTargetAll) {
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.allowReifiedTypeInCatch) {
+        put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
+    }
 }
