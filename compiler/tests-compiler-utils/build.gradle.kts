@@ -16,7 +16,7 @@ dependencies {
     testApi(project(":compiler:frontend"))
     testApi(project(":compiler:frontend.java"))
     testApi(project(":compiler:util"))
-    testApi(project(":compiler:psi"))
+    testApi(project(":compiler:psi:psi-api"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:cli"))
     testApi(project(":compiler:cli-js"))

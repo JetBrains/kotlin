@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(intellijCore())
     implementation(kotlinStdlib())
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))

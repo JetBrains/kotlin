@@ -14,7 +14,7 @@ dependencies {
 
     testImplementation(kotlinTest("junit"))
     testImplementation(project(":analysis:analysis-internal-utils"))
-    testImplementation(project(":compiler:psi"))
+    testImplementation(project(":compiler:psi:psi-api"))
     testImplementation(project(":analysis:kt-references"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:tests-common"))

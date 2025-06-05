@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>psi</artifactId>
+      <artifactId>psi-api</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
