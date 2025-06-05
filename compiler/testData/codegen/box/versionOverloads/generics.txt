@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public final class<null>  C {
+    // source: 'generics.kt'
+    public final @org.jetbrains.annotations.NotNull <<A:Ljava/lang/Object;>(ITA;Z)Ljava/lang/String;> method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.Nullable p1: java.lang.Object, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public final @org.jetbrains.annotations.NotNull <<A:Ljava/lang/Object;>(TA;TA;Z)Ljava/lang/String;> method bar(p0: java.lang.Object, @kotlin.IntroducedAt(version="1") p1: java.lang.Object, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+    public <null> method <init>(): void
+    public synthetic static <null> method bar$default(p0: C, p1: java.lang.Object, p2: java.lang.Object, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated static <null> method bar$default(p0: C, p1: java.lang.Object, p2: java.lang.Object, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) <null> method bar(p0: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) <null> method bar(p0: java.lang.Object, @kotlin.IntroducedAt(version="1") p1: java.lang.Object): java.lang.String
+    public synthetic deprecated static <null> method foo$default(p0: C, p1: int, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic static <null> method foo$default(p0: C, p1: int, p2: java.lang.Object, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated static <null> method foo$default(p0: C, p1: int, p2: java.lang.Object, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) <null> method foo(p0: int): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) <null> method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public final class<null>  GenericsKt {
+    // source: 'generics.kt'
+    public final static @org.jetbrains.annotations.NotNull <null> method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull <null> method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull <null> method test2(): java.lang.String
+}

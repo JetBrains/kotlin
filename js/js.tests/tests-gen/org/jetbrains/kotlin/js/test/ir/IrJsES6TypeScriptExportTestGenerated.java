@@ -1073,6 +1073,42 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/version-overloads")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class Version_overloads {
+    @Test
+    public void testAllFilesPresentInVersion_overloads() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/version-overloads"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("version-overloads.kt")
+    public void testVersion_overloads() {
+      runTest("js/js.translator/testData/typescript-export/js/version-overloads/version-overloads.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/version-overloads-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class Version_overloads_in_exported_file {
+    @Test
+    public void testAllFilesPresentInVersion_overloads_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/version-overloads-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("version-overloads.kt")
+    public void testVersion_overloads() {
+      runTest("js/js.translator/testData/typescript-export/js/version-overloads-in-exported-file/version-overloads.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/visibility")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")
