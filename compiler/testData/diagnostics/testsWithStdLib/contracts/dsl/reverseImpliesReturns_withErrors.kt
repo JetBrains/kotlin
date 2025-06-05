@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ConditionImpliesReturnsContracts
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
 
@@ -13,18 +13,19 @@ fun decode(encoded: String?): String? {
     return encoded + "a"
 }
 
-fun testVar() {
-    val x: String = ""
-    decode(x).length
+fun testParam(x: String?) {
+    val xx: String? = null
+    if (x == null)
+        decode(x)<!UNSAFE_CALL!>.<!>length
 }
 
-fun testParam(x: String?) {
-    if (x != null)
-        decode(x).length
+fun testVar() {
+    val x: String? = null
+    decode(x)<!UNSAFE_CALL!>.<!>length
 }
 
 fun testLiteral() {
-    decode("").length
+    decode(null)<!UNSAFE_CALL!>.<!>length
 }
 
 fun decodeFake(encoded: String?): String? {
@@ -35,11 +36,10 @@ fun decodeFake(encoded: String?): String? {
 }
 
 fun testFake() {
-    val x = null
-    decodeFake(x).length
+    decodeFake("bye")<!UNSAFE_CALL!>.<!>length
 }
 
-fun decodeIfString(encoded: Any): String? {
+fun decodeString(encoded: Any): String? {
     contract {
         (encoded is String) implies (returnsNotNull())
     }
@@ -50,7 +50,7 @@ fun decodeIfString(encoded: Any): String? {
 }
 
 fun tesStringOrChar() {
-    decodeIfString("abc").length
+    decodeString(42.0)<!UNSAFE_CALL!>.<!>length
 }
 
 fun decodeNotNumber(encoded: Any): String? {
@@ -64,8 +64,7 @@ fun decodeNotNumber(encoded: Any): String? {
 }
 
 fun testNotNumber(x: Any) {
-    if (x !is Number)
-        decodeNotNumber(x).length
-    decodeNotNumber("abc").length
+    if (x is Number)
+        decodeNotNumber(x)<!UNSAFE_CALL!>.<!>length
+    decodeNotNumber(42)<!UNSAFE_CALL!>.<!>length
 }
-

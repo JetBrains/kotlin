@@ -47002,6 +47002,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("reverseImpliesReturns_forbidden.kt")
+        public void testReverseImpliesReturns_forbidden() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_forbidden.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_withErrors.kt")
+        public void testReverseImpliesReturns_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_withErrors.kt");
+        }
+
+        @Test
         @TestMetadata("rewriteAtSliceFunctor.kt")
         public void testRewriteAtSliceFunctor() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/rewriteAtSliceFunctor.kt");

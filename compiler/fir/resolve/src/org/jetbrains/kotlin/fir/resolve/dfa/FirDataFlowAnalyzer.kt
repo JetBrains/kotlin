@@ -1177,15 +1177,20 @@ abstract class FirDataFlowAnalyzer(
             for (conditionalReturn in conditionalReturns) {
                 val effect = conditionalReturn.returnsEffect as? ConeReturnsEffectDeclaration ?: continue
                 if (effect.value != ConeContractConstantValues.NOT_NULL) continue
-                val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
                 val statements =
-                    logicSystem.approveOperationStatement(
-                        flow, OperationStatement(allArgumentVariables[1]!!, Operation.NotEqNull), removeApprovedOrImpossible = false
-                    )
-                for (variable in statements.keys) {
-                    val cond = OperationStatement(functionCallVariable, Operation.NotEqNull)
-                    flow.addAllConditionally(OperationStatement(variable, Operation.NotEqNull), cond)
-                    flow.addAllStatements(logicSystem.approveOperationStatement(flow, cond, removeApprovedOrImpossible = false))
+                    logicSystem.approveContractStatement(
+                        conditionalReturn.argumentsCondition, allArgumentVariables, substitutor, typesOnlyFromRealVars = false
+                    ) {
+                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
+                    }
+                statements?.forEach { (variable, statement) ->
+                    val approved = logicSystem.approveTypeStatement(flow, statement)
+                    if (approved) {
+                        val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
+                        val functionReturnCondition = OperationStatement(functionCallVariable, Operation.NotEqNull)
+                        val functionReturnStatements = logicSystem.approveOperationStatement(flow, functionReturnCondition, removeApprovedOrImpossible = true)
+                        flow.addAllStatements(functionReturnStatements)
+                    }
                 }
             }
         }
@@ -1700,10 +1705,6 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: TypeStatements) {
         statements.values.forEach { addImplication(condition implies it) }
-    }
-
-    private fun MutableFlow.addAllConditionally(condition: OperationStatement, statement: Statement) {
-        addImplication(condition implies statement)
     }
 
     private fun MutableFlow.addAllConditionally(condition: OperationStatement, from: Flow) {

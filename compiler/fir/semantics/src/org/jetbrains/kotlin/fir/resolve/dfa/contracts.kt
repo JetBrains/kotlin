@@ -27,6 +27,7 @@ fun LogicSystem.approveContractStatement(
     statement: ConeBooleanExpression,
     arguments: Array<out DataFlowVariable?>, // 0 = receiver (null if doesn't exist)
     substitutor: ConeSubstitutor?,
+    typesOnlyFromRealVars: Boolean = true,
     approveOperationStatement: (OperationStatement) -> TypeStatements
 ): TypeStatements? {
     fun DataFlowVariable.processEqNull(isEq: Boolean): TypeStatements =
@@ -50,9 +51,9 @@ fun LogicSystem.approveContractStatement(
                         else
                             mapOf()
                         val fromType = when {
-                            it !is RealVariable -> fromNullability
-                            isType -> mapOf(it as DataFlowVariable to (it typeEq substitutedType))
-                            else -> mapOf(it as DataFlowVariable to (it typeNotEq substitutedType))
+                            typesOnlyFromRealVars && it !is RealVariable -> fromNullability
+                            isType -> mapOf(it to (it typeEq substitutedType))
+                            else -> mapOf(it to (it typeNotEq substitutedType))
                         }
                         andForTypeStatements(fromNullability, fromType)
                     }

@@ -49068,6 +49068,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("lambdaInvariantContractsK2.kt")
+        public void testLambdaInvariantContractsK2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/lambdaInvariantContractsK2.kt");
+        }
+
+        @Test
         @TestMetadata("operatorsAllowedInK2.kt")
         public void testOperatorsAllowedInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/operatorsAllowedInK2.kt");
@@ -49089,6 +49095,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         @TestMetadata("reverseImpliesReturns.kt")
         public void testReverseImpliesReturns() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_forbidden.kt")
+        public void testReverseImpliesReturns_forbidden() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_forbidden.kt");
+        }
+
+        @Test
+        @TestMetadata("reverseImpliesReturns_withErrors.kt")
+        public void testReverseImpliesReturns_withErrors() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_withErrors.kt");
         }
 
         @Test
