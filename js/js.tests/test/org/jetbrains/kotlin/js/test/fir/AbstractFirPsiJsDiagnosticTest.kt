@@ -40,7 +40,6 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
         }
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
-            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.KLIB
         }
 
         commonConfigurationForJsTest(
@@ -66,6 +65,15 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
     }
 }
 
+abstract class AbstractFirJsDiagnosticTestWithoutBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+        defaultDirectives {
+            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.KLIB
+        }
+    }
+}
+
 abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
@@ -76,6 +84,9 @@ abstract class AbstractFirJsDiagnosticWithBackendTestBase(parser: FirParser) : A
         }
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
+        }
+        defaultDirectives {
+            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
     }
 }
@@ -89,7 +100,7 @@ abstract class AbstractFirJsDiagnosticWithBackendWithInlinedFunInKlibTestBase : 
     }
 }
 
-abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestBase(parser) {
+abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) : AbstractFirJsDiagnosticTestWithoutBackendTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -104,8 +115,8 @@ abstract class AbstractFirJsDiagnosticWithIrInlinerTestBase(parser: FirParser) :
     }
 }
 
-abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestBase(FirParser.LightTree)
+abstract class AbstractFirPsiJsDiagnosticTest : AbstractFirJsDiagnosticTestWithoutBackendTestBase(FirParser.Psi)
+abstract class AbstractFirLightTreeJsDiagnosticTest : AbstractFirJsDiagnosticTestWithoutBackendTestBase(FirParser.LightTree)
 
 abstract class AbstractFirJsDiagnosticWithIrInlinerTest : AbstractFirJsDiagnosticWithIrInlinerTestBase(FirParser.LightTree)
 

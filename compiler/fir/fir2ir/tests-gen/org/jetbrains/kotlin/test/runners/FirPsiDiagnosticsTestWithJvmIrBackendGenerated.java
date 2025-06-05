@@ -25,18 +25,6 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   }
 
   @Test
-  @TestMetadata("indirectInlineCycle.kt")
-  public void testIndirectInlineCycle() {
-    runTest("compiler/testData/diagnostics/testsWithJvmBackend/indirectInlineCycle.kt");
-  }
-
-  @Test
-  @TestMetadata("inlineCycle.kt")
-  public void testInlineCycle() {
-    runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
-  }
-
-  @Test
   @TestMetadata("kt57104.kt")
   public void testKt57104() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104.kt");
@@ -67,21 +55,9 @@ public class FirPsiDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirP
   }
 
   @Test
-  @TestMetadata("propertyInlineCycle.kt")
-  public void testPropertyInlineCycle() {
-    runTest("compiler/testData/diagnostics/testsWithJvmBackend/propertyInlineCycle.kt");
-  }
-
-  @Test
   @TestMetadata("signatureConflictHiddenByTypeParameter.kt")
   public void testSignatureConflictHiddenByTypeParameter() {
     runTest("compiler/testData/diagnostics/testsWithJvmBackend/signatureConflictHiddenByTypeParameter.kt");
-  }
-
-  @Test
-  @TestMetadata("suspendInlineCycle.kt")
-  public void testSuspendInlineCycle() {
-    runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
   }
 
   @Test

@@ -498,6 +498,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = emptyList()) {
                 val relativeRootPaths = listOf(
                     "testData/diagnostics/tests",
+                    "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
                     "testData/diagnostics/jvmIntegration",
                     "fir/analysis-tests/testData/resolve",

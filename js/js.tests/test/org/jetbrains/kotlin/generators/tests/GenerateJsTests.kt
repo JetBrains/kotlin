@@ -353,6 +353,12 @@ fun main(args: Array<String>) {
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
                 )
+                model(
+                    relativeRootPath = "testsWithAnyBackend",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
             }
 
             testClass<AbstractDiagnosticsTestWithJsStdLib>(

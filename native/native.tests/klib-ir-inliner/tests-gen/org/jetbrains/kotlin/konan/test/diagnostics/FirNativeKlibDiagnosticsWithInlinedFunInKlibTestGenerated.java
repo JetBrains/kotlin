@@ -690,4 +690,69 @@ public class FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated extends A
       }
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithAnyBackend")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("klib")
+  public class TestsWithAnyBackend {
+    @Test
+    public void testAllFilesPresentInTestsWithAnyBackend() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithAnyBackend"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("crossFileInlineCycle.kt")
+    public void testCrossFileInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/crossFileInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultValuesCycle.kt")
+    public void testDefaultValuesCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/defaultValuesCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("indirectInlineCycle.kt")
+    public void testIndirectInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/indirectInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("localInlineFunctionCycle.kt")
+    public void testLocalInlineFunctionCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/localInlineFunctionCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInlineCycle.kt")
+    public void testPropertyInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/propertyInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("recursionCycleLambda.kt")
+    public void testRecursionCycleLambda() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/recursionCycleLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("recursionCycleWithStdlibCall.kt")
+    public void testRecursionCycleWithStdlibCall() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/recursionCycleWithStdlibCall.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendInlineCycle.kt")
+    public void testSuspendInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/suspendInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("transitiveInlineCycle.kt")
+    public void testTransitiveInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/transitiveInlineCycle.kt");
+    }
+  }
 }
