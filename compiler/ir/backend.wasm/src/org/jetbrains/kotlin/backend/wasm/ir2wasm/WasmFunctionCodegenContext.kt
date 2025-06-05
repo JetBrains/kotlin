@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.fileEntry
 import org.jetbrains.kotlin.wasm.ir.*
 import java.util.LinkedList
 
@@ -27,6 +26,7 @@ class WasmFunctionCodegenContext(
     private val backendContext: WasmBackendContext,
     private val wasmFileCodegenContext: WasmFileCodegenContext,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val functionFileEntry: IrFileEntry,
     skipCommentInstructions: Boolean
 ) {
     val bodyGen: WasmExpressionBuilder =
@@ -111,7 +111,7 @@ class WasmFunctionCodegenContext(
         get() = inlineContextStack.firstOrNull()?.inlineFunctionSymbol ?: irFunction?.symbol
 
     val currentFileEntry: IrFileEntry?
-        get() = inlineContextStack.firstOrNull()?.irFileEntry ?: irFunction?.fileEntry
+        get() = inlineContextStack.firstOrNull()?.irFileEntry ?: functionFileEntry
 
     fun stepIntoInlinedFunction(inlineFunctionSymbol: IrFunctionSymbol?, irFileEntry: IrFileEntry) {
         inlineContextStack.push(InlineContext(inlineFunctionSymbol, irFileEntry))
