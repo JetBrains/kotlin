@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -35,3 +36,12 @@ public interface KaCompilerPluginGeneratedDeclarations : KaLifetimeOwner {
      */
     public val topLevelDeclarationsScope: KaScope
 }
+
+/**
+ * @see KaCompilerPluginGeneratedDeclarationsProvider.compilerPluginGeneratedDeclarations
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaCompilerPluginGeneratedDeclarationsProvider)
+public val KaModule.compilerPluginGeneratedDeclarations: KaCompilerPluginGeneratedDeclarations
+    get() = with(context) { compilerPluginGeneratedDeclarations }
