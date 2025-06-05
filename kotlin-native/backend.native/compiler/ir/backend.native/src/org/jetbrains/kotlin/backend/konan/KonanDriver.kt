@@ -129,7 +129,9 @@ class KonanDriver(
         performanceManager?.apply {
             targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
             addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            notifyPhaseFinished(PhaseType.Initialization)
+            if (isPhaseMeasuring) { // there's a chance `cacheBuilder.build()` already finishes this phase in the beginning of spawned `runKonanDriver()`
+                notifyPhaseFinished(PhaseType.Initialization)
+            }
         }
 
         NativeCompilerDriver(performanceManager).run(konanConfig, environment)
