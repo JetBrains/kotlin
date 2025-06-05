@@ -128,40 +128,6 @@ public class FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated extend
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Inline {
-    @Test
-    public void testAllFilesPresentInInline() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-    }
-
-    @Test
-    @TestMetadata("recursionCycle.kt")
-    public void testRecursionCycle() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycle.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleLambda.kt")
-    public void testRecursionCycleLambda() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithPublicFun.kt")
-    public void testRecursionCycleWithPublicFun() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithPublicFun.kt");
-    }
-
-    @Test
-    @TestMetadata("recursionCycleWithStdlibCall.kt")
-    public void testRecursionCycleWithStdlibCall() {
-      runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/inline/recursionCycleWithStdlibCall.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode")
   @TestDataPath("$PROJECT_ROOT")
   public class JsCode {
