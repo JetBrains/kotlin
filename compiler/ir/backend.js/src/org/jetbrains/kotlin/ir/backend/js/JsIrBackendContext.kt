@@ -279,25 +279,24 @@ class JsIrBackendContext(
 
     private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
     fun getJsCodeForFunction(symbol: IrFunctionSymbol): JsFunction? {
-        val originalSymbol = symbol.owner.originalFunction.symbol
-        val jsFunction = outlinedJsCodeFunctions[originalSymbol]
+        val jsFunction = outlinedJsCodeFunctions[symbol]
         if (jsFunction != null) return jsFunction
 
-        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
+        parseJsFromAnnotation(symbol.owner, JsStandardClassIds.Annotations.JsOutlinedFunction)
             ?.let { (annotation, parsedJsFunction) ->
                 val sourceMap = (annotation.arguments[1] as? IrConst)?.value as? String
-                val parsedSourceMap = sourceMap?.let { parseSourceMap(it, originalSymbol.owner.fileOrNull, annotation) }
+                val parsedSourceMap = sourceMap?.let { parseSourceMap(it, symbol.owner.fileOrNull, annotation) }
                 if (parsedSourceMap != null) {
                     val remapper = SourceMapLocationRemapper(parsedSourceMap)
                     remapper.remap(parsedJsFunction)
                 }
-                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                outlinedJsCodeFunctions[symbol] = parsedJsFunction
                 return parsedJsFunction
             }
 
-        parseJsFromAnnotation(originalSymbol.owner, JsStandardClassIds.Annotations.JsFun)
+        parseJsFromAnnotation(symbol.owner, JsStandardClassIds.Annotations.JsFun)
             ?.let { (_, parsedJsFunction) ->
-                outlinedJsCodeFunctions[originalSymbol] = parsedJsFunction
+                outlinedJsCodeFunctions[symbol] = parsedJsFunction
                 return parsedJsFunction
             }
         return null
