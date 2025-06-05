@@ -195,6 +195,7 @@ object StandardClassIds {
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
         val RequireKotlin = "RequireKotlin".internalId()
         val DslMarker = "DslMarker".baseId()
+        val IntroducedAt = "IntroducedAt".baseId()
 
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()

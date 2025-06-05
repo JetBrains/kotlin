@@ -1,0 +1,11 @@
+@file:OptIn(kotlin.ExperimentalVersionOverloading::class)
+
+fun foo(x: Int, @IntroducedAt("1") y: Int = 1): Int = x + y
+
+class A {
+    fun bar(x: Int, @IntroducedAt("1") y: Int = 1) = x + y
+}
+
+class B(val x: Int, @IntroducedAt("1") y: Int = 1) {
+    val baz = x + y
+}
