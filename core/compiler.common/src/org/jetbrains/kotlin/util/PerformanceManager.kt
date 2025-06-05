@@ -14,6 +14,7 @@ import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
 import java.util.*
+import kotlin.collections.set
 
 /**
  * The class is not thread-safe; all functions should be called sequentially phase-by-phase within a specific module
@@ -22,9 +23,12 @@ import java.util.*
 abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presentableName: String) {
     private lateinit var thread: Thread
     private lateinit var threadMXBean: ThreadMXBean
+    private val stringBuilder = StringBuilder()
 
     init {
         initializeCurrentThread()
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("PerformanceManager.<init>(name=$presentableName) ${hashCode()} callstack=\n$callstack\n")
     }
 
     private fun currentTime(): Time = Time(System.nanoTime(), threadMXBean.currentThreadUserTime, threadMXBean.currentThreadCpuTime)
@@ -126,6 +130,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun addOtherUnitStats(otherUnitStats: UnitStats?) {
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("addOtherUnitStats(name=$presentableName) ${hashCode()}: phaseStartTime=$phaseStartTime" + "callstack=\n$callstack\n")
         ensureNotFinalizedAndSameThread()
 
         if (otherUnitStats == null) return
@@ -138,6 +144,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         otherUnitStats.forEachPhaseMeasurement { phaseType, time ->
             if (time != null) {
+                stringBuilder.append("addOtherUnitStats add phaseMeasurements: $phaseType <- $time\n")
                 phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
             }
         }
@@ -198,6 +205,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("notifyPhaseStarted(name=$presentableName) ${hashCode()} ${newPhaseType.name}: phaseStartTime=$phaseStartTime, phaseMeasurements=$phaseMeasurements, callstack=\n$callstack\n")
         assert(phaseStartTime == null) { "The measurement for phase $currentPhaseType must have been finished before starting $newPhaseType" }
 
         // Ideally, all phases always should be executed sequentially.
@@ -216,13 +225,18 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun notifyPhaseFinished(phaseType: PhaseType) {
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("notifyPhaseFinished(name=$presentableName) ${hashCode()} ${phaseType.name}: phaseStartTime=$phaseStartTime, phaseMeasurements=$phaseMeasurements, callstack=$callstack\n")
         ensureNotFinalizedAndSameThread()
 
-        assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished" }
+        assert(phaseStartTime != null) { "The measurement for phase $phaseType hasn't been started or already finished. currentPhaseType=$currentPhaseType. phaseMeasurements[currentPhaseType]=${phaseMeasurements[currentPhaseType]}. phaseMeasurements=$phaseMeasurements\n" +
+                "stringBuilder=$stringBuilder" }
         finishPhase(phaseType)
     }
 
     open fun notifyCompilationFinished() {
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("notifyCompilationFinished(name=$presentableName) ${hashCode()}: phaseStartTime=$phaseStartTime, phaseMeasurements=$phaseMeasurements, callstack=$callstack\n")
         ensureNotFinalizedAndSameThread()
         isFinalized = true
 
@@ -264,6 +278,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     private fun finishPhase(phaseType: PhaseType) {
+        val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+        stringBuilder.append("finishPhase(name=$presentableName) ${hashCode()} ${phaseType.name}: phaseStartTime=$phaseStartTime, phaseMeasurements=$phaseMeasurements, callstack=$callstack\n")
         if (phaseType != currentPhaseType) { // It's allowed to measure the same phase multiple times (although it's better to avoid that)
             assert(!phaseMeasurements.containsKey(phaseType)) { "The measurement for phase $phaseType is already performed" }
         }
@@ -284,6 +300,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 // Subtract side measurement time to get a more refined result
                 // The time could be negative at the moment but should be normalized after the `notifyPhaseFinished` call.
                 phaseMeasurements[currentPhaseType] = (phaseMeasurements[currentPhaseType] ?: Time.ZERO) - elapsedTime
+                val callstack = Throwable().stackTrace.take(10).map { "$it \n" }
+                stringBuilder.append("measureSideTime(name=$presentableName) ${hashCode()} was measuring: phaseStartTime=$phaseStartTime, currentPhaseType=$currentPhaseType, callstack=\n$callstack\n")
             }
             phaseSideMeasurements[phaseSideType] =
                 (phaseSideMeasurements[phaseSideType] ?: SideStats.EMPTY) + SideStats(1, elapsedTime)
