@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
@@ -993,27 +994,39 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
 
-            val gradleModuleFileContent = tempDir.resolve("test/lib/1.0/lib-1.0.module").readText()
-            fun assertNoSourcesPublished(expectedJarLocation: String, variantName: String) {
-                val jarFile = tempDir.resolve(expectedJarLocation).toFile()
+            val gradleModuleFileContent = tempDir.resolveRepoArtifactPath("test", "lib", "1.0", extension = "module").readText()
+            fun assertNoSourcesPublished(expectedJarLocation: Path, variantName: String) {
+                val jarFile = expectedJarLocation.toFile()
                 if (jarFile.exists()) fail("Sources jar '$expectedJarLocation' shouldn't be published")
                 if (gradleModuleFileContent.contains(variantName)) fail("Variant '$variantName' shouldn't be published")
             }
 
-            assertNoSourcesPublished("test/lib/1.0/lib-1.0-sources.jar", "metadataSourcesElements")
-            assertNoSourcesPublished("test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar", "linuxX64SourcesElements-published")
-            assertNoSourcesPublished("test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar", "linuxArm64SourcesElements-published")
+            assertNoSourcesPublished(tempDir.resolveRepoArtifactPath("test", "lib", "1.0", classifier = "sources"), "metadataSourcesElements")
+            assertNoSourcesPublished(
+                tempDir.resolveRepoArtifactPath("test", "lib-linuxx64", "1.0", classifier = "sources"),
+                "linuxX64SourcesElements-published",
+            )
+            assertNoSourcesPublished(
+                tempDir.resolveRepoArtifactPath("test", "lib-linuxarm64", "1.0", classifier = "sources"),
+                "linuxArm64SourcesElements-published",
+            )
             if (OS.MAC.isCurrentOs) {
-                assertNoSourcesPublished("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar", "iosX64SourcesElements-published")
-                assertNoSourcesPublished("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar", "iosArm64SourcesElements-published")
                 assertNoSourcesPublished(
-                    "test/lib-iossimulatorarm64/1.0/lib-iossimulatorarm64-1.0-sources.jar",
-                    "iosSimulatorArm64SourcesElements-published"
+                    tempDir.resolveRepoArtifactPath("test", "lib-iosx64", "1.0", classifier = "sources"),
+                    "iosX64SourcesElements-published",
+                )
+                assertNoSourcesPublished(
+                    tempDir.resolveRepoArtifactPath("test", "lib-iosarm64", "1.0", classifier = "sources"),
+                    "iosArm64SourcesElements-published",
+                )
+                assertNoSourcesPublished(
+                    tempDir.resolveRepoArtifactPath("test", "lib-iossimulatorarm64", "1.0", classifier = "sources"),
+                    "iosSimulatorArm64SourcesElements-published",
                 )
             }
 
             // Check that JVM sources were published
-            val jvmSourcesJar = tempDir.resolve("test/lib-jvm/1.0/lib-jvm-1.0-sources.jar")
+            val jvmSourcesJar = tempDir.resolveRepoArtifactPath("test", "lib-jvm", "1.0", classifier = "sources")
             if (!jvmSourcesJar.exists()) {
                 fail("JVM Sources should be published")
             }
@@ -1215,7 +1228,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             }
 
             build(":libWithDefaultLayout:publish") {
-                val pom = tempDir.resolve("test/libWithDefaultLayout-jvm/1.0/libWithDefaultLayout-jvm-1.0.pom").readText()
+                val pom = tempDir.resolveRepoArtifactPath("test", "libWithDefaultLayout-jvm", "1.0", extension = "pom").readText()
                 val expectedDependency = """
                     |    <dependency>
                     |      <groupId>test</groupId>

@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
@@ -65,8 +66,12 @@ class KotlinToolingMetadataMppIT : KGPBaseTest() {
                 )
 
                 /* Check metadata file in published repository */
-                val publishedMetadataJson = localRepository.resolve(
-                    "com/example/bar/my-lib-bar/1.0/my-lib-bar-1.0-kotlin-tooling-metadata.json"
+                val publishedMetadataJson = localRepository.resolveRepoArtifactPath(
+                    "com.example.bar",
+                    "my-lib-bar",
+                    "1.0",
+                    classifier = "kotlin-tooling-metadata",
+                    extension = "json",
                 ).readText()
 
                 assertEquals(
