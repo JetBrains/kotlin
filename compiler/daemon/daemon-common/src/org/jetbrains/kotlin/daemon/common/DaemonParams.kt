@@ -107,6 +107,23 @@ class RestPropMapper<C, out P : KMutableProperty1<C, MutableCollection<String>>>
 }
 
 
+private class KeepPropMapper<C, V, P : KMutableProperty1<C, V>>(private val delegate: PropMapper<C, V, P>, private val predicate: (V) -> Boolean)
+: PropMapper<C, V, P>(dest = delegate.dest, prop = delegate.prop, names = delegate.names,
+                      fromString = delegate.fromString, toString = delegate.toString,
+                      skipIf = delegate.skipIf, mergeDelimiter = delegate.mergeDelimiter) {
+    override fun apply(s: String) {
+        if (!predicate(delegate.prop.get(delegate.dest))) {
+            super.apply(s)
+        }
+    }
+}
+
+
+internal fun <C, V, P : KMutableProperty1<C, V>> PropMapper<C, V, P>.keepIf(predicate: (V) -> Boolean): PropMapper<C, V, P> {
+    return KeepPropMapper(this, predicate)
+}
+
+
 // helper function combining find with map, useful for the cases then there is a calculation performed in find, which is nice to return along with
 // found value; mappingPredicate should return the pair of boolean compare predicate result and transformation value, we want to get along with found value
 inline fun <T, R : Any> Iterable<T>.findWithTransform(mappingPredicate: (T) -> Pair<Boolean, R?>): R? {
@@ -185,13 +202,16 @@ data class DaemonJVMOptions(
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
-                       StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
-                       StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
+        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = "").keepIf { hasMaxHeapSize },
+                       StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "=").keepIf { it.isNotBlank() },
+                       StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "=").keepIf { it.isNotBlank() },
                        restMapper)
 
     val restMapper: RestPropMapper<*, *>
         get() = RestPropMapper(this, DaemonJVMOptions::jvmParams)
+
+    internal val hasMaxHeapSize: Boolean
+        get() = maxMemory.isNotBlank()
 }
 
 
@@ -289,7 +309,7 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
         val otherArgs = jvmArguments.filterExtractProps(targetOptions.mappers, prefix = "-")
 
         if (inheritMemoryLimits) {
-            if (opts.maxMemory.isBlank()) {
+            if (!opts.hasMaxHeapSize) {
                 val maxMemBytes = Runtime.getRuntime().maxMemory()
                 // rounding up
                 val maxMemMegabytes = maxMemBytes / (1024 * 1024) + if (maxMemBytes % (1024 * 1024) == 0L) 0 else 1
