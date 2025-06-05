@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -168,4 +169,31 @@ public class KaDataFlowExitPointSnapshot(
         /** `true` if the variable is both read and set (as in `x += y` or `x++`). */
         public val isAugmented: Boolean
     )
+}
+
+/**
+ * @see KaDataFlowProvider.smartCastInfo
+ */
+@KaContextParameterApi
+context(context: KaDataFlowProvider)
+public val KtExpression.smartCastInfo: KaSmartCastInfo?
+    get() = with(context) { smartCastInfo }
+
+/**
+ * @see KaDataFlowProvider.implicitReceiverSmartCasts
+ */
+@KaContextParameterApi
+@KaNonPublicApi
+context(context: KaDataFlowProvider)
+public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
+    get() = with(context) { implicitReceiverSmartCasts }
+
+/**
+ * @see KaDataFlowProvider.computeExitPointSnapshot
+ */
+@KaContextParameterApi
+@KaNonPublicApi
+context(context: KaDataFlowProvider)
+public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {
+    return with(context) { computeExitPointSnapshot(statements) }
 }

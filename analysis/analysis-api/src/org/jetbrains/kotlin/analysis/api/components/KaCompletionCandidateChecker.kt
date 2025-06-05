@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
@@ -89,4 +90,18 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
     public class NonApplicable(
         override val token: KaLifetimeToken
     ) : KaExtensionApplicabilityResult()
+}
+
+/**
+ * @see KaCompletionCandidateChecker.createExtensionCandidateChecker
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaCompletionCandidateChecker)
+public fun createExtensionCandidateChecker(
+    originalFile: KtFile,
+    nameExpression: KtSimpleNameExpression,
+    explicitReceiver: KtExpression?
+): KaCompletionExtensionCandidateChecker {
+    return with(context) { createExtensionCandidateChecker(originalFile, nameExpression, explicitReceiver) }
 }
