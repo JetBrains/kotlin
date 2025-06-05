@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -32,18 +34,72 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirReturnExpression) {
         val source = expression.source
-        if (source?.kind is KtFakeSourceElementKind.ImplicitReturn) return
+        if (source?.kind is KtFakeSourceElementKind.ImplicitReturn || source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor) return
 
         val labeledElement = expression.target.labeledElement
         val targetSymbol = labeledElement.symbol
-        if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.NotAFunctionLabel) {
-            reporter.reportOn(source, FirErrors.NOT_A_FUNCTION_LABEL)
-        } else if (labeledElement is FirErrorFunction && (labeledElement.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.UnresolvedLabel) {
-            reporter.reportOn(source, FirErrors.UNRESOLVED_LABEL)
-        } else if (!isReturnAllowed(targetSymbol)) {
-            reporter.reportOn(source, FirErrors.RETURN_NOT_ALLOWED)
+
+        when (((labeledElement as? FirErrorFunction)?.diagnostic as? ConeSimpleDiagnostic)?.kind) {
+            DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
+            DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
+            else -> returnNotAllowedFactoryOrNull(targetSymbol)
+        }?.let {
+            reporter.reportOn(source, it)
         }
 
+        checkBuiltInSuspend(targetSymbol, source)
+    }
+
+    private fun FirDeclaration.hasExpressionBody(): Boolean {
+        return this is FirFunction && this.body is FirSingleExpressionBlock
+    }
+
+    context(context: CheckerContext)
+    private fun returnNotAllowedFactoryOrNull(targetSymbol: FirFunctionSymbol<*>): KtDiagnosticFactory0? {
+        var existingFalseNegative = false
+
+        for (containingDeclaration in context.containingDeclarations.asReversed()) {
+            @OptIn(SymbolInternals::class)
+            when (containingDeclaration) {
+                // return from member of local class or anonymous object
+                is FirClassSymbol -> {
+                    return FirErrors.RETURN_NOT_ALLOWED
+                }
+                is FirFunctionSymbol if (containingDeclaration == targetSymbol) -> {
+                    val targetFunction = targetSymbol.fir
+                    return FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.takeIf { !existingFalseNegative && targetFunction.hasExpressionBody() }
+                }
+                is FirAnonymousFunctionSymbol -> {
+                    if (!containingDeclaration.inlineStatus.returnAllowed) {
+                        return FirErrors.RETURN_NOT_ALLOWED
+                    } else {
+                        existingFalseNegative = true
+                    }
+                }
+                is FirFunctionSymbol -> {
+                    return FirErrors.RETURN_NOT_ALLOWED
+                }
+                is FirPropertySymbol -> {
+                    if (!containingDeclaration.isLocal) {
+                        return FirErrors.RETURN_NOT_ALLOWED
+                    } else {
+                        existingFalseNegative = true
+                    }
+                }
+                is FirValueParameterSymbol -> {
+                    return FirErrors.RETURN_NOT_ALLOWED
+                }
+                else -> {}
+            }
+        }
+        return null
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkBuiltInSuspend(
+        targetSymbol: FirFunctionSymbol<FirFunction>,
+        source: KtSourceElement?,
+    ) {
         if (targetSymbol is FirAnonymousFunctionSymbol) {
             val label = targetSymbol.label
             if (label?.source?.kind !is KtRealSourceElementKind) {
@@ -61,37 +117,5 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                 }
             }
         }
-
-        @OptIn(SymbolInternals::class)
-        val containingDeclaration = context.containingDeclarations.last().fir
-        if (containingDeclaration is FirFunction &&
-            containingDeclaration.body is FirSingleExpressionBlock &&
-            containingDeclaration.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor
-        ) {
-            reporter.reportOn(source, FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY)
-        }
-    }
-
-    context(context: CheckerContext)
-    private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>): Boolean {
-        for (containingDeclaration in context.containingDeclarations.asReversed()) {
-            when (containingDeclaration) {
-                // return from member of local class or anonymous object
-                is FirClassSymbol -> return false
-                is FirFunctionSymbol -> {
-                    when {
-                        containingDeclaration == targetSymbol -> return true
-                        containingDeclaration is FirAnonymousFunctionSymbol -> {
-                            if (!containingDeclaration.inlineStatus.returnAllowed) return false
-                        }
-                        else -> return false
-                    }
-                }
-                is FirPropertySymbol -> if (!containingDeclaration.isLocal) return false
-                is FirValueParameterSymbol -> return false
-                else -> {}
-            }
-        }
-        return true
     }
 }
