@@ -19,3 +19,34 @@ class File(
 )
 
 typealias Output = List<File>
+
+val Output.kotlinFilename: String
+    get() = find { it.kind == FileKind.KOTLIN }!!.filename
+
+val Output.kotlinFrameworkName: String
+    get() = "KotlinObjCFramework"
+
+val Output.kotlinFrameworkArgs: List<String>
+    get() = listOf("-Xstatic-framework", "-Xbinary=bundleId=${kotlinFrameworkName}")
+
+val Output.defFilename: String
+    get() = find { it.kind == FileKind.DEF }!!.filename
+
+val Output.cinteropArgs: List<String>
+    get() = emptyList()
+
+val Output.headerFilename: String
+    get() = find { it.kind == FileKind.HEADER }!!.filename
+
+val Output.objcSourceFilename: String
+    get() = find { it.kind == FileKind.OBJC_SOURCE }!!.filename
+
+val Output.objcSourceArgs: List<String>
+    get() = listOf("-fobjc-arc")
+
+fun Output.save(root: java.io.File) {
+    root.mkdirs()
+    forEach {
+        root.resolve(it.filename).writeText(it.contents)
+    }
+}

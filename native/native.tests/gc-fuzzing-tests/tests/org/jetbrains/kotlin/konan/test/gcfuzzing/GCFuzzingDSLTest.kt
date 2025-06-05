@@ -6,21 +6,10 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing
 
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
-import org.jetbrains.kotlin.konan.test.blackbox.buildDir
-import org.jetbrains.kotlin.konan.test.blackbox.cinteropToLibrary
-import org.jetbrains.kotlin.konan.test.blackbox.generateObjCFrameworkTestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.codesign
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
+import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.dslGeneratedDir
+import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.runDSL
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
@@ -48,47 +37,13 @@ private fun assertDirectoriesEqual(expected: java.io.File, actual: java.io.File)
 
 class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     private val testDataDir = java.io.File(System.getProperty("kotlin.internal.native.test.testDataDir")).resolve("gcFuzzingDSLTest")
-    private val testCompilationFactory = TestCompilationFactory()
 
     private fun runTest(name: String, program: Program) {
         val output = program.translate()
-        val generatedDir = buildDir.resolve("generated").also { root ->
-            root.mkdirs()
-            output.forEach {
-                root.resolve(it.filename).writeText(it.contents)
-            }
-        }
+        output.save(dslGeneratedDir)
         val goldenDataDir = testDataDir.resolve(name)
-        assertDirectoriesEqual(goldenDataDir, generatedDir)
-        val cinterop = cinteropToLibrary(
-            testRunSettings.get<KotlinNativeTargets>(),
-            generatedDir.resolve(output.find { it.kind == FileKind.DEF }!!.filename),
-            buildDir.resolve("cinterop").also { it.mkdirs() },
-            freeCompilerArgs = TestCompilerArgs.EMPTY,
-        ).assertSuccess()
-        val objcFrameworkTestCase = generateObjCFrameworkTestCase(
-            TestKind.STANDALONE_NO_TR,
-            TestCase.NoTestRunnerExtras(),
-            "KotlinObjCFramework",
-            listOf(generatedDir.resolve(output.find { it.kind == FileKind.KOTLIN }!!.filename)),
-            TestCompilerArgs("-Xstatic-framework", "-Xbinary=bundleId=KotlinObjCFramework"),
-            setOf(TestModule.Given(cinterop.resultingArtifact.klibFile)),
-        )
-        val objCFramework = testCompilationFactory.testCaseToObjCFrameworkCompilation(objcFrameworkTestCase, testRunSettings).result.assertSuccess()
-        codesign(objCFramework.resultingArtifact.frameworkDir.absolutePath)
-        val finalExecutable = compileWithClang(
-            sourceFiles = listOf(generatedDir.resolve(output.find { it.kind == FileKind.OBJC_SOURCE }!!.filename)),
-            outputFile = buildDir.resolve("main.exe"),
-            additionalClangFlags = listOf("-fobjc-arc", "-framework", "KotlinObjCFramework"),
-            frameworkDirectories = listOf(buildDir),
-            includeDirectories = listOf(buildDir.resolve("KotlinObjCFramework.framework").resolve("Headers"))
-        ).assertSuccess()
-        val testExecutable = TestExecutable(
-            finalExecutable.resultingArtifact,
-            finalExecutable.loggedData,
-            listOf(TestName(name))
-        )
-        runExecutableAndVerify(objcFrameworkTestCase, testExecutable)
+        assertDirectoriesEqual(goldenDataDir, dslGeneratedDir)
+        runDSL(name, output, testRunSettings.get<Timeouts>().executionTimeout)
     }
 
     private inline fun runTest(testInfo: TestInfo, block: () -> Program) = runTest(testInfo.testMethod.get().name, block())
