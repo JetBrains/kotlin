@@ -97,6 +97,11 @@ private val lateinitPhase = makeIrModulePhase(
     name = "LateinitLowering",
 )
 
+private val versionOverloadsPhase = makeIrModulePhase(
+    ::VersionOverloadsLowering,
+    name = "VersionOverloadsLowering",
+)
+
 private val rangeContainsLoweringPhase = makeIrModulePhase(
     ::RangeContainsLowering,
     name = "RangeContainsLowering",
@@ -609,6 +614,7 @@ fun getWasmLowerings(
         validateIrBeforeLowering,
         upgradeCallableReferences,
         lateinitPhase,
+        versionOverloadsPhase,
         sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase,
         arrayConstructorPhase,

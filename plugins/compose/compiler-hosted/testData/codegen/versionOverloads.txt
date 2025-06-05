@@ -1,0 +1,18 @@
+public final class example/C {
+    // source: 'versionOverloads.kt'
+    public final static field $stable: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic deprecated final method foo(p0: int, p1: androidx.compose.runtime.Composer, p2: int): java.lang.String
+    public synthetic deprecated final method foo(p0: int, p1: java.lang.String, p2: androidx.compose.runtime.Composer, p3: int, p4: int): java.lang.String
+    public final method foo(p0: int, p1: java.lang.String, p2: boolean, p3: androidx.compose.runtime.Composer, p4: int, p5: int): java.lang.String
+}
+
+public final class example/VersionOverloadsKt {
+    // source: 'versionOverloads.kt'
+    public synthetic deprecated final static method bar(p0: int, p1: androidx.compose.runtime.Composer, p2: int): java.lang.String
+    public synthetic deprecated final static method bar(p0: int, p1: java.lang.String, p2: androidx.compose.runtime.Composer, p3: int, p4: int): java.lang.String
+    public final static method bar(p0: int, p1: java.lang.String, p2: boolean, p3: androidx.compose.runtime.Composer, p4: int, p5: int): java.lang.String
+    private final static method test$lambda$0(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method test(p0: androidx.compose.runtime.Composer, p1: int): void
+}

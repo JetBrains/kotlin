@@ -31,6 +31,7 @@ private val jvmFilePhases = createFilePhases(
     ::TypeAliasAnnotationMethodsLowering,
     ::ProvisionalFunctionExpressionLowering,
 
+    ::JvmVersionOverloadsLowering,
     ::JvmOverloadsAnnotationLowering,
     ::MainMethodGenerationLowering,
 
