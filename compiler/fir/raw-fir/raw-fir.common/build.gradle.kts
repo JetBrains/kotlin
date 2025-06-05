@@ -14,7 +14,8 @@ dependencies {
 
     implementation(kotlinxCollectionsImmutable())
     implementation(project(":compiler:frontend.common-psi"))
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":compiler:psi:parser"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)

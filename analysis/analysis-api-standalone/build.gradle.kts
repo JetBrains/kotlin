@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(intellijCore())
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))
     api(project(":analysis:analysis-api-fir"))

@@ -10,7 +10,7 @@ plugins {
 
 
 dependencies {
-    implementation(project(":compiler:psi"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:cli"))
     implementation(intellijCore())
     implementation(kotlinStdlib())
