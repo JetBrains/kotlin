@@ -1,0 +1,55 @@
+@kotlin.Metadata
+public final class BiggerC {
+    // source: 'withJvmOverloads.kt'
+    public method <init>(): void
+    public synthetic static method foo$default(p0: BiggerC, p1: int, p2: java.lang.String, p3: java.lang.String, p4: float, p5: int, p6: int, p7: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: BiggerC, p1: int, p2: java.lang.String, p3: java.lang.String, p4: float, p5: int, p6: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: BiggerC, p1: int, p2: java.lang.String, p3: java.lang.String, p4: int, p5: java.lang.Object): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.IntroducedAt(version="2") p3: float, @kotlin.IntroducedAt(version="3") p4: int): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String, @kotlin.IntroducedAt(version="1") p2: java.lang.String): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="1") p1: java.lang.String, @kotlin.IntroducedAt(version="1") p2: java.lang.String, @kotlin.IntroducedAt(version="2") p3: float): java.lang.String
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'withJvmOverloads.kt'
+    public method <init>(): void
+    public synthetic deprecated static method foo$default(p0: C, p1: int, p2: boolean, p3: int, p4: java.lang.Object): java.lang.String
+    public synthetic deprecated static method foo$default(p0: C, p1: int, p2: int, p3: java.lang.Object): java.lang.String
+    public synthetic static method foo$default(p0: C, p1: int, p2: java.lang.String, p3: boolean, p4: int, p5: java.lang.Object): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method foo(p0: int): java.lang.String
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=HIDDEN) method foo(p0: int, @kotlin.IntroducedAt(version="2") p1: boolean): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public final @kotlin.jvm.JvmOverloads @org.jetbrains.annotations.NotNull method foo(p0: int, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.IntroducedAt(version="2") p2: boolean): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ConflictingOverloads {
+    // source: 'withJvmOverloads.kt'
+    public method <init>(): void
+    public synthetic static method f$default(p0: ConflictingOverloads, p1: java.lang.String, p2: int, p3: long, p4: int, p5: java.lang.Object): void
+    public final method f(@org.jetbrains.annotations.NotNull p0: java.lang.Object, p1: boolean): void
+    public final @kotlin.jvm.JvmOverloads method f(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int): void
+    public final @kotlin.jvm.JvmOverloads method f(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="1") p1: int, @kotlin.IntroducedAt(version="1") p2: long): void
+    public synthetic deprecated final @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method f(p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class WithJvmOverloadsKt {
+    // source: 'withJvmOverloads.kt'
+    public synthetic deprecated static method bar$default(p0: int, p1: int, p2: int, p3: int, p4: java.lang.Object): void
+    public synthetic deprecated static method bar$default(p0: int, p1: int, p2: int, p3: java.lang.Object): void
+    public synthetic static method bar$default(p0: int, p1: int, p2: int, p3: java.lang.String, p4: int, p5: java.lang.Object): void
+    public synthetic deprecated static method bar$default(p0: int, p1: int, p2: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method bar(): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method bar(p0: int): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level=HIDDEN) method bar(p0: int, @kotlin.IntroducedAt(version="2") p1: int): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 3.", level=HIDDEN) method bar(p0: int, @kotlin.IntroducedAt(version="3") p1: int, @kotlin.IntroducedAt(version="2") p2: int): void
+    public final static @kotlin.jvm.JvmOverloads method bar(p0: int, @kotlin.IntroducedAt(version="3") p1: int, @kotlin.IntroducedAt(version="2") p2: int, @kotlin.IntroducedAt(version="4") @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
+}

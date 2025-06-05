@@ -80,6 +80,10 @@ public abstract interface class kotlin/Function {
 public abstract interface annotation class kotlin/IgnorableReturnValue : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/IntroducedAt : java/lang/annotation/Annotation {
+	public abstract fun version ()Ljava/lang/String;
+}
+
 public final class kotlin/KotlinNothingValueException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V

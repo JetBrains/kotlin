@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DELEGATION_BY_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.DEPRECATED_JAVA_ANNOTATION
@@ -514,6 +515,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
             "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
             RENDER_TYPE,
+        )
+
+
+        map.put(
+            CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION,
+            "'@JvmOverloads' annotation may generate conflicting overloads with the '@IntroducedAt' annotation."
         )
     }
 }
