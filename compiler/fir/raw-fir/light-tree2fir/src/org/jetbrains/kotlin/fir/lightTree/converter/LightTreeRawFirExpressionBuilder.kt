@@ -130,8 +130,7 @@ class LightTreeRawFirExpressionBuilder(
         return when (expression.tokenType) {
             LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
-            BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression)
-            IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
+            BINARY_WITH_TYPE, IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression)
             LABELED_EXPRESSION -> convertLabeledExpression(expression)
             PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
             ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
