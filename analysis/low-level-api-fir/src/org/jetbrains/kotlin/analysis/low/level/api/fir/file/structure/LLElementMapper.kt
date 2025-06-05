@@ -70,6 +70,14 @@ internal class LLPartialBodyElementMapper(
     private val psiStatements: List<KtExpression>,
     private val session: LLFirResolvableModuleSession
 ) : LLElementMapper {
+    init {
+        val phase = declaration.resolvePhase
+        checkWithAttachment(
+            phase >= FirResolvePhase.ANNOTATION_ARGUMENTS,
+            { "The declaration must be at least resolved up to ${FirResolvePhase.ANNOTATION_ARGUMENTS.name}, but it is resolved to $phase" },
+        )
+    }
+
     companion object {
         private val LOG = logger<LLPartialBodyElementMapper>()
 
@@ -194,10 +202,6 @@ internal class LLPartialBodyElementMapper(
         get() = declaration.body ?: error("Partial body element provider supports only declarations with bodies")
 
     private val lock = Any()
-
-    init {
-        check(declaration.resolvePhase == FirResolvePhase.ANNOTATION_ARGUMENTS)
-    }
 
     override fun invoke(psiElement: KtElement): FirElement? {
         val container = try {
