@@ -11,12 +11,13 @@ import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.v2.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.v2.JvmCompilerArgumentsImpl
 import java.nio.file.Path
 
 class JvmCompilationOperationImpl(
     private val kotlinSources: List<Path>,
     private val destinationDirectory: Path,
-    override val compilerArguments: JvmCompilerArguments = JvmCompilerArguments()
+    override val compilerArguments: JvmCompilerArguments = JvmCompilerArgumentsImpl()
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
     private val optionsDelegate = OptionsDelegate<JvmCompilationOperation.Option<*>>()
 

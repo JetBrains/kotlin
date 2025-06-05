@@ -1,34 +1,15 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
-import kotlin.Any
 import kotlin.Boolean
 import kotlin.String
 import kotlin.Suppress
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
 import kotlin.jvm.JvmField
 
-public open class CommonToolArguments {
-  private val optionsMap: MutableMap<CommonToolArgument<*>, Any?> = mutableMapOf()
-
+public interface CommonToolArguments {
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key] as V
+  public operator fun <V> `get`(key: CommonToolArgument<V>): V
 
-  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key] = `value`
-  }
-
-  public fun toCompilerArguments(): org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments {
-    val arguments = org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments()
-    if (HELP in optionsMap) { arguments.help = get(HELP) }
-    if (X in optionsMap) { arguments.extraHelp = get(X) }
-    if (VERSION in optionsMap) { arguments.version = get(VERSION) }
-    if (VERBOSE in optionsMap) { arguments.verbose = get(VERBOSE) }
-    if (NOWARN in optionsMap) { arguments.suppressWarnings = get(NOWARN) }
-    if (WERROR in optionsMap) { arguments.allWarningsAsErrors = get(WERROR) }
-    if (WEXTRA in optionsMap) { arguments.extraWarnings = get(WEXTRA) }
-    return arguments
-  }
+  public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V)
 
   public class CommonToolArgument<V>(
     public val id: String,

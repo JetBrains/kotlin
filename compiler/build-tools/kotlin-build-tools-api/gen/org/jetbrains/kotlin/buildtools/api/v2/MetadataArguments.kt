@@ -1,36 +1,17 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
-import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.String
 import kotlin.Suppress
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
 import kotlin.jvm.JvmField
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 
-public class MetadataArguments : CommonCompilerArguments() {
-  private val optionsMap: MutableMap<MetadataArgument<*>, Any?> = mutableMapOf()
-
+public interface MetadataArguments : CommonCompilerArguments {
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: MetadataArgument<V>): V = optionsMap[key] as V
+  public operator fun <V> `get`(key: MetadataArgument<V>): V
 
-  public operator fun <V> `set`(key: MetadataArgument<V>, `value`: V) {
-    optionsMap[key] = `value`
-  }
-
-  public fun toCompilerArguments(): K2MetadataCompilerArguments {
-    val arguments = K2MetadataCompilerArguments()
-    if (D in optionsMap) { arguments.destination = get(D) }
-    if (CLASSPATH in optionsMap) { arguments.classpath = get(CLASSPATH) }
-    if (MODULE_NAME in optionsMap) { arguments.moduleName = get(MODULE_NAME) }
-    if (XFRIEND_PATHS in optionsMap) { arguments.friendPaths = get(XFRIEND_PATHS) }
-    if (XREFINES_PATHS in optionsMap) { arguments.refinesPaths = get(XREFINES_PATHS) }
-    if (XLEGACY_METADATA_JAR_K2 in optionsMap) { arguments.legacyMetadataJar = get(XLEGACY_METADATA_JAR_K2) }
-    return arguments
-  }
+  public operator fun <V> `set`(key: MetadataArgument<V>, `value`: V)
 
   public class MetadataArgument<V>(
     public val id: String,

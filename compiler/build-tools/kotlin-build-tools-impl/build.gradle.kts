@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("generated-sources")
 }
 
 dependencies {
@@ -34,3 +35,17 @@ kotlin {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
     }
 }
+
+
+generatedSourcesTask(
+    taskName = "generateBtaArguments",
+    generatorProject = ":compiler:cli:cli-arguments-generator",
+    generatorRoot = "compiler/cli/cli-argument-generator/src",
+    generatorMainClass = "org.jetbrains.kotlin.cli.arguments.generator.bta.MainBtaKt",
+    argsProvider = { generationRoot ->
+        listOf(
+            generationRoot.toString(),
+            "impl"
+        )
+    }
+)

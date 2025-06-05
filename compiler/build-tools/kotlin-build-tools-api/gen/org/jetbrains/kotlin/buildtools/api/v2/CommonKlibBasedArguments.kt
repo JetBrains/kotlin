@@ -1,38 +1,17 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
-import kotlin.Any
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.String
 import kotlin.Suppress
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
 import kotlin.jvm.JvmField
-import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 
-public open class CommonKlibBasedArguments : CommonCompilerArguments() {
-  private val optionsMap: MutableMap<CommonKlibBasedArgument<*>, Any?> = mutableMapOf()
-
+public interface CommonKlibBasedArguments : CommonCompilerArguments {
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key] as V
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V
 
-  public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
-    optionsMap[key] = `value`
-  }
-
-  public fun toCompilerArguments(): CommonKlibBasedCompilerArguments {
-    val arguments = CommonKlibBasedCompilerArguments()
-    if (XKLIB_RELATIVE_PATH_BASE in optionsMap) { arguments.relativePathBases = get(XKLIB_RELATIVE_PATH_BASE) }
-    if (XKLIB_NORMALIZE_ABSOLUTE_PATH in optionsMap) { arguments.normalizeAbsolutePath = get(XKLIB_NORMALIZE_ABSOLUTE_PATH) }
-    if (XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS in optionsMap) { arguments.enableSignatureClashChecks = get(XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS) }
-    if (XPARTIAL_LINKAGE in optionsMap) { arguments.partialLinkageMode = get(XPARTIAL_LINKAGE) }
-    if (XPARTIAL_LINKAGE_LOGLEVEL in optionsMap) { arguments.partialLinkageLogLevel = get(XPARTIAL_LINKAGE_LOGLEVEL) }
-    if (XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in optionsMap) { arguments.duplicatedUniqueNameStrategy = get(XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY) }
-    if (XKLIB_IR_INLINER in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(XKLIB_IR_INLINER) }
-    if (XKLIB_ABI_VERSION in optionsMap) { arguments.customKlibAbiVersion = get(XKLIB_ABI_VERSION) }
-    return arguments
-  }
+  public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V)
 
   public class CommonKlibBasedArgument<V>(
     public val id: String,
