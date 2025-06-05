@@ -400,10 +400,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
 
             testClass<AbstractFirPsiDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/inlineCallCycle")
             }
 
             testClass<AbstractFirLightTreeDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/testsWithJvmBackend", excludedPattern = excludedCustomTestdataPattern)
+                model("diagnostics/inlineCallCycle")
             }
 
             testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {

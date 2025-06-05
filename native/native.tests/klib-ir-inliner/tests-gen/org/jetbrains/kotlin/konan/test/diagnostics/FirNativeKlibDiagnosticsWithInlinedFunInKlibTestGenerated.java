@@ -690,4 +690,51 @@ public class FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated extends A
       }
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/testData/diagnostics/inlineCallCycle")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("klib")
+  public class InlineCallCycle {
+    @Test
+    public void testAllFilesPresentInInlineCallCycle() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/inlineCallCycle"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("indirectInlineCycle.kt")
+    public void testIndirectInlineCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/indirectInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("inlineCycle.kt")
+    public void testInlineCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/inlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyInlineCycle.kt")
+    public void testPropertyInlineCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/propertyInlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("recursionCycleLambda.kt")
+    public void testRecursionCycleLambda() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/recursionCycleLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("recursionCycleWithStdlibCall.kt")
+    public void testRecursionCycleWithStdlibCall() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/recursionCycleWithStdlibCall.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendInlineCycle.kt")
+    public void testSuspendInlineCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/suspendInlineCycle.kt");
+    }
+  }
 }

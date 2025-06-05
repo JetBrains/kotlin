@@ -344,6 +344,12 @@ fun main(args: Array<String>) {
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR
                 )
+                model(
+                    relativeRootPath = "inlineCallCycle",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
             }
 
             testClass<AbstractDiagnosticsTestWithJsStdLib>(
