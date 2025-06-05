@@ -76,6 +76,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
+
+        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by error<KtDeclaration>()
+        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<KtDeclaration>()
+        val INVALID_VERSION_NUMBER_FORMAT by error<KtDeclaration>()
+        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<KtDeclaration>()
+        val NONFINAL_VERSIONED_FUNCTION by error<KtDeclaration>()
+        val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by error<KtDeclaration>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

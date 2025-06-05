@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  * Note that [IrValueParameter.defaultValue] property does not track default values in super-parameters.
  * See [KT-28637](youtrack.jetbrains.com/issue/KT-28637).
  */
-@PhaseDescription(name = "JvmOverloadsAnnotation")
+@PhaseDescription(
+    name = "JvmOverloadsAnnotation",
+    prerequisite = [VersionOverloadsAnnotationLowering::class],
+)
 internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {

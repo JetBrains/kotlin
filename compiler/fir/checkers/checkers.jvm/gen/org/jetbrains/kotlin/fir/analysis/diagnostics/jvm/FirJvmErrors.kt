@@ -76,6 +76,12 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE: KtDiagnosticFactoryForDeprecation2<FirNamedFunctionSymbol, FirNamedFunctionSymbol> = KtDiagnosticFactoryForDeprecation2("IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE", ForbidImplementationByDelegationWithDifferentGenericSignature, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class, getRendererFactory())
     val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION", ERROR, SourceElementPositioningStrategies.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT, KtDeclaration::class, getRendererFactory())
     val PROPERTY_HIDES_JAVA_FIELD: KtDiagnosticFactory1<FirFieldSymbol> = KtDiagnosticFactory1("PROPERTY_HIDES_JAVA_FIELD", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
+    val INVALID_NON_OPTIONAL_PARAMETER_POSITION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_NON_OPTIONAL_PARAMETER_POSITION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
+    val INVALID_VERSIONING_ON_NON_OPTIONAL: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_NON_OPTIONAL", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
+    val INVALID_VERSION_NUMBER_FORMAT: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSION_NUMBER_FORMAT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
+    val INVALID_DEFAULT_VALUE_DEPENDENCY: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_DEFAULT_VALUE_DEPENDENCY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
+    val NONFINAL_VERSIONED_FUNCTION: KtDiagnosticFactory0 = KtDiagnosticFactory0("NONFINAL_VERSIONED_FUNCTION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
+    val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDeclaration::class, getRendererFactory())
 
     // Types
     val JAVA_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("JAVA_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
