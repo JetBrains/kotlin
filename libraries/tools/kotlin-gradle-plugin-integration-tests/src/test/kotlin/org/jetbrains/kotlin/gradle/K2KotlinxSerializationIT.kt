@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.buildRepoPath
+import org.jetbrains.kotlin.gradle.util.resolveRepoPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -58,7 +58,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         ) {
             build(":publish") {
                 assertTasksExecuted(":publish")
-                val publishedLib = tempDir.buildRepoPath("com.example.serialization_lib", "serialization_lib", "1.0")
+                val publishedLib = tempDir.resolveRepoPath("com.example.serialization_lib", "serialization_lib", "1.0")
                 assertDirectoryExists(publishedLib)
                 assertTrue(publishedLib.listDirectoryEntries().isNotEmpty())
             }

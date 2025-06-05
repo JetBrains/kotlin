@@ -37,10 +37,10 @@ fun Path.replaceWithVersion(versionSuffix: String): Path {
     return this
 }
 
-fun Path.buildRepoPath(group: String, name: String, version: String): Path =
+fun Path.resolveRepoPath(group: String, name: String, version: String): Path =
     resolve("${group.replace(".", "/")}/$name/$version")
 
-fun Path.buildRepoArtifactPath(
+fun Path.resolveRepoArtifactPath(
     group: String,
     name: String,
     version: String,
@@ -49,5 +49,5 @@ fun Path.buildRepoArtifactPath(
     extension: String = "jar",
 ): Path {
     val suffix = if (classifier != null) "-$classifier" else ""
-    return buildRepoPath(group, name, version).resolve("$filename$suffix.$extension")
+    return resolveRepoPath(group, name, version).resolve("$filename$suffix.$extension")
 }

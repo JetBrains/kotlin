@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
-import org.jetbrains.kotlin.gradle.util.buildRepoArtifactPath
+import org.jetbrains.kotlin.gradle.util.resolveRepoArtifactPath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
@@ -309,13 +309,20 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             } else {
                 build(":publish") {
-                    val metadataJar = localRepoDir.buildRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
+                    val metadataJar = localRepoDir.resolveRepoArtifactPath(PUBLISHED_DEP_GROUP, projectName, PUBLISHED_DEP_VERSION)
                     assertFileExists(metadataJar)
                     ZipFile(metadataJar.toFile()).use { zip ->
-                        assertFalse(
-                            zip.entries().asSequence().any { it.name.contains("commonMain") },
-                            "Metadata JAR $metadataJar is not expected to contain commonMain directory in single-target KMP project"
-                        )
+                        val topLevelEntries = zip.entries().asSequence()
+                            .filter { entry ->
+                                val path = entry.name
+                                // top-level directories contain a slash at the end of the name
+                                '/' !in path || path.substring(path.indexOf('/') + 1).isEmpty()
+                            }
+                            .toList()
+
+                        assert(topLevelEntries.size == 1 && topLevelEntries.none { it.name != "META-INF/" }) {
+                            "Metadata JAR $metadataJar is expected to be an empty jar with META-INF only single-target KMP project. Top-level entries of the metadata jar: $topLevelEntries"
+                        }
                     }
                 }
             }
