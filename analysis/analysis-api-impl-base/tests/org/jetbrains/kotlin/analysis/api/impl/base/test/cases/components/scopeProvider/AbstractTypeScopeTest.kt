@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.prettyPrintSignature
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
@@ -73,7 +74,8 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KaSession.renderForTests(typeScope: KaTypeScope): String {
+    context(_: KaSession)
+    private fun renderForTests(typeScope: KaTypeScope): String {
         val callables = typeScope.getCallableSignatures().toList()
         return prettyPrint {
             callables.forEach {
@@ -82,7 +84,8 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KaSession.prettyPrintForTests(typeScope: KaTypeScope): String {
+    context(_: KaSession)
+    private fun prettyPrintForTests(typeScope: KaTypeScope): String {
         val callables = typeScope.getCallableSignatures().toList()
         return prettyPrint {
             callables.forEach {
@@ -92,7 +95,8 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
     }
 
     @Suppress("unused")
-    private fun KaSession.renderForTests(scope: KaScope): String {
+    context(_: KaSession)
+    private fun renderForTests(scope: KaScope): String {
         val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {
@@ -101,7 +105,8 @@ abstract class AbstractTypeScopeTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    private fun KaSession.prettyPrintForTests(scope: KaScope): String {
+    context(_: KaSession)
+    private fun prettyPrintForTests(scope: KaScope): String {
         val callables = scope.callables.toList()
         return prettyPrint {
             callables.forEach {

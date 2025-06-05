@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.resolveToSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -45,7 +46,8 @@ abstract class AbstractOriginalConstructorIfTypeAliasedTest : AbstractAnalysisAp
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
-    private fun KaSession.getReferencedConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaConstructorSymbol? {
+    context(_: KaSession)
+    private fun getReferencedConstructorSymbol(mainFile: KtFile, testServices: TestServices): KaConstructorSymbol? {
         val reference = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtSimpleNameExpression>(mainFile)
 
         return reference?.mainReference?.resolveToSymbol() as? KaConstructorSymbol

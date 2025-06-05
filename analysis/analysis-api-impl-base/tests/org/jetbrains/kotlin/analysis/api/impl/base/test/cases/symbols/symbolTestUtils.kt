@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingFile
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -13,7 +14,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-internal fun KaSession.checkContainingFileSymbol(
+context(_: KaSession)
+internal fun checkContainingFileSymbol(
     ktFileSymbol: KaFileSymbol,
     symbol: KaSymbol,
     testServices: TestServices
@@ -25,7 +27,8 @@ internal fun KaSession.checkContainingFileSymbol(
     }
 }
 
-internal fun KaSession.checkContainingJvmClassName(
+context(_: KaSession)
+internal fun checkContainingJvmClassName(
     ktFile: KtFile,
     ktClass: KtClassOrObject?,
     symbol: KaCallableSymbol,
