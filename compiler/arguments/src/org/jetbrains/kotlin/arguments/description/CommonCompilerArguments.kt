@@ -957,4 +957,16 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
+
+    compilerArgument {
+        name = "Xallow-reified-type-in-catch"
+        description = "Allow 'catch' parameters to have reified types.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AllowReifiedTypeInCatchClause))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20
+        )
+    }
 }
