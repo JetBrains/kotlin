@@ -21,7 +21,7 @@ class ConfigureDaemonJvmOptionsTest {
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertNotEquals("", opts.maxMemory)
+        assertNotEquals("", opts.maxHeapSize)
         assertEquals("", opts.maxRam)
         assertEquals("", opts.maxRamFraction)
         assertEquals("", opts.maxRamPercentage)
@@ -30,12 +30,12 @@ class ConfigureDaemonJvmOptionsTest {
     @Test
     fun `inheritMemoryLimits should keep maxMemory`() {
         val opts = configureDaemonJVMOptions(
-            DaemonJVMOptions(maxMemory = "maxMemoryValue"),
+            DaemonJVMOptions(maxHeapSize = "maxMemoryValue"),
             inheritMemoryLimits = true,
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertEquals("maxMemoryValue", opts.maxMemory)
+        assertEquals("maxMemoryValue", opts.maxHeapSize)
         assertEquals("", opts.maxRam)
         assertEquals("", opts.maxRamFraction)
         assertEquals("", opts.maxRamPercentage)
@@ -49,7 +49,7 @@ class ConfigureDaemonJvmOptionsTest {
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertEquals("", opts.maxMemory)
+        assertEquals("", opts.maxHeapSize)
         assertEquals("maxRamValue", opts.maxRam)
         assertEquals("", opts.maxRamFraction)
         assertEquals("", opts.maxRamPercentage)
@@ -63,7 +63,7 @@ class ConfigureDaemonJvmOptionsTest {
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertEquals("", opts.maxMemory)
+        assertEquals("", opts.maxHeapSize)
         assertEquals("", opts.maxRam)
         assertEquals("maxRamFractionValue", opts.maxRamFraction)
         assertEquals("", opts.maxRamPercentage)
@@ -77,7 +77,7 @@ class ConfigureDaemonJvmOptionsTest {
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertEquals("", opts.maxMemory)
+        assertEquals("", opts.maxHeapSize)
         assertEquals("", opts.maxRam)
         assertEquals("", opts.maxRamFraction)
         assertEquals("maxRamPercentageValue", opts.maxRamPercentage)
@@ -87,7 +87,7 @@ class ConfigureDaemonJvmOptionsTest {
     fun `inheritMemoryLimits should keep all limits`() {
         val opts = configureDaemonJVMOptions(
             DaemonJVMOptions(
-                maxMemory = "maxMemoryValue",
+                maxHeapSize = "maxMemoryValue",
                 maxRam = "maxRamValue",
                 maxRamFraction = "maxRamFractionValue",
                 maxRamPercentage = "maxRamPercentageValue"
@@ -96,7 +96,7 @@ class ConfigureDaemonJvmOptionsTest {
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
-        assertEquals("maxMemoryValue", opts.maxMemory)
+        assertEquals("maxMemoryValue", opts.maxHeapSize)
         assertEquals("maxRamValue", opts.maxRam)
         assertEquals("maxRamFractionValue", opts.maxRamFraction)
         assertEquals("maxRamPercentageValue", opts.maxRamPercentage)

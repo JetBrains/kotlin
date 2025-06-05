@@ -196,7 +196,7 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 
 
 data class DaemonJVMOptions(
-        var maxMemory: String = "",
+        var maxHeapSize: String = "",
         var maxRam: String = "",
         var maxRamFraction: String = "",
         var maxRamPercentage: String = "",
@@ -205,7 +205,7 @@ data class DaemonJVMOptions(
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
-        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = "").keepIf { hasMaxHeapSize },
+        get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxHeapSize, listOf("Xmx"), mergeDelimiter = "").keepIf { hasMaxHeapSize },
                        StringPropMapper(this, DaemonJVMOptions::maxRam, listOf("XX:MaxRAM"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
                        StringPropMapper(this, DaemonJVMOptions::maxRamFraction, listOf("XX:MaxRAMFraction"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
                        StringPropMapper(this, DaemonJVMOptions::maxRamPercentage, listOf("XX:MaxRAMPercentage"), mergeDelimiter = "=").keepIf { hasMaxHeapSize },
@@ -217,7 +217,7 @@ data class DaemonJVMOptions(
         get() = RestPropMapper(this, DaemonJVMOptions::jvmParams)
 
     internal val hasMaxHeapSize: Boolean
-        get() = maxMemory.isNotBlank() || maxRam.isNotBlank() || maxRamFraction.isNotBlank() || maxRamPercentage.isNotBlank()
+        get() = maxHeapSize.isNotBlank() || maxRam.isNotBlank() || maxRamFraction.isNotBlank() || maxRamPercentage.isNotBlank()
 }
 
 
@@ -319,7 +319,7 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                 val maxMemBytes = Runtime.getRuntime().maxMemory()
                 // rounding up
                 val maxMemMegabytes = maxMemBytes / (1024 * 1024) + if (maxMemBytes % (1024 * 1024) == 0L) 0 else 1
-                opts.maxMemory = "${maxMemMegabytes}m"
+                opts.maxHeapSize = "${maxMemMegabytes}m"
             }
         }
 
@@ -409,7 +409,7 @@ private fun String.memToBytes(): Long? =
 
 
 private val daemonJVMOptionsMemoryProps =
-    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize,
+    listOf(DaemonJVMOptions::maxHeapSize, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize,
            DaemonJVMOptions::maxRam, DaemonJVMOptions::maxRamFraction, DaemonJVMOptions::maxRamPercentage)
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
