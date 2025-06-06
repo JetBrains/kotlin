@@ -18383,6 +18383,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("kt78073.kt")
+      public void testKt78073() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/local/kt78073.kt");
+      }
+
+      @Test
       @TestMetadata("localDelegatedPropertyCall.kt")
       public void testLocalDelegatedPropertyCall() {
         runTest("compiler/testData/codegen/box/delegatedProperty/local/localDelegatedPropertyCall.kt");
