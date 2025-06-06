@@ -16,7 +16,7 @@ fun test2(b: Boolean, f: () -> String?) = run { // implicit return type
     val foo = try {
         f
     } catch (e: Exception) {
-        return { "1" }
+        <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE!>return<!> { "1" }
     }
     { "2" }
 }

@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.AllowReturnInExpressionBodyWithExplicitType
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -50,26 +51,17 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
     }
 
     context(context: CheckerContext)
-    private fun FirFunction.supportsReturnExpression(): Boolean {
-        return body !is FirSingleExpressionBlock ||
-                symbol.hasExplicitReturnType &&
-                context.languageVersionSettings.supportsFeature(LanguageFeature.AllowReturnInExpressionBodyWithExplicitType)
-    }
-
-    context(context: CheckerContext)
     private fun returnNotAllowedFactoryOrNull(targetSymbol: FirFunctionSymbol<*>): KtDiagnosticFactory0? {
         var existingFalseNegative = false
 
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
-            @OptIn(SymbolInternals::class)
             when (containingDeclaration) {
                 // return from member of local class or anonymous object
                 is FirClassSymbol -> {
                     return FirErrors.RETURN_NOT_ALLOWED
                 }
                 is FirFunctionSymbol if (containingDeclaration == targetSymbol) -> {
-                    val targetFunction = targetSymbol.fir
-                    return FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.takeUnless { existingFalseNegative || targetFunction.supportsReturnExpression() }
+                    return returnNotAllowedInExpressionBodyFactoryOrNull(targetSymbol, existingFalseNegative)
                 }
                 is FirAnonymousFunctionSymbol -> {
                     if (!containingDeclaration.inlineStatus.returnAllowed) {
@@ -95,6 +87,35 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
             }
         }
         return null
+    }
+
+    context(context: CheckerContext)
+    private fun returnNotAllowedInExpressionBodyFactoryOrNull(
+        targetSymbol: FirFunctionSymbol<*>,
+        edgeCase: Boolean,
+    ): KtDiagnosticFactory0? {
+        // No expression body, all good
+        @OptIn(SymbolInternals::class)
+        if (targetSymbol.fir.body !is FirSingleExpressionBlock) return null
+
+        val allowWithExplicitType =
+            context.languageVersionSettings.supportsFeature(AllowReturnInExpressionBodyWithExplicitType)
+
+        if ((allowWithExplicitType || edgeCase) && targetSymbol.hasExplicitReturnType) return null
+
+        val forbidEdgeCases =
+            context.languageVersionSettings.supportsFeature(ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases)
+
+        return when {
+            // Phase 3: Forbid edge cases and report new error
+            forbidEdgeCases -> FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE
+            // Phase 2: Report warning on edge cases, new error in other cases
+            allowWithExplicitType && edgeCase -> FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING
+            allowWithExplicitType && !edgeCase -> FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE
+            // Phase 1: Ignore edge cases, report old error in other cases
+            edgeCase -> null
+            else -> FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
