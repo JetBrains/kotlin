@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// ^ KT-78073
+// ISSUE: KT-78073
 
 import kotlin.reflect.KProperty
 
