@@ -45,7 +45,7 @@ fun CompilationOutcome.assertOutputs(module: Module, vararg expectedOutputs: Str
     assertOutputs(module, expectedOutputs.toSet())
 }
 
-fun CompilationOutcome.assertOutputs(module: Module, expectedOutputs: Set<String>) {
+fun assertOutputs(module: Module, expectedOutputs: Set<String>) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {

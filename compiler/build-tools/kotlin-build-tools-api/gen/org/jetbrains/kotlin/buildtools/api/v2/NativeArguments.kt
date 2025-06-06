@@ -177,21 +177,21 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Bundle ID to be set in the Info.plist file of the produced framework. This option is deprecated. Please use '-Xbinary=bundleId=<id>'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XBUNDLE_ID: NativeArgument<String?> = NativeArgument("XBUNDLE_ID")
 
     /**
      * Path to the directory containing caches.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCACHE_DIRECTORY: NativeArgument<Array<String>?> = NativeArgument("XCACHE_DIRECTORY")
 
     /**
      * Paths to a library and its cache, separated by a comma.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCACHED_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("XCACHED_LIBRARY")
 
     /**
@@ -199,32 +199,32 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * By default caches will be placed into the kotlin-native system cache directory.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XAUTO_CACHE_FROM: NativeArgument<Array<String>?> = NativeArgument("XAUTO_CACHE_FROM")
 
     /**
      * Path to the directory where caches for auto-cacheable dependencies should be put.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XAUTO_CACHE_DIR: NativeArgument<String?> = NativeArgument("XAUTO_CACHE_DIR")
 
     /**
      * Path to the directory where incremental build caches should be put.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIC_CACHE_DIR: NativeArgument<String?> = NativeArgument("XIC_CACHE_DIR")
 
     /**
      * Check dependencies and download the missing ones.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCHECK_DEPENDENCIES: NativeArgument<Boolean> = NativeArgument("XCHECK_DEPENDENCIES")
 
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEMIT_LAZY_OBJC_HEADER: NativeArgument<String?> =
         NativeArgument("XEMIT_LAZY_OBJC_HEADER")
 
@@ -233,7 +233,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * This library must be one of the ones passed with '-library'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEXPORT_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("XEXPORT_LIBRARY")
 
     /**
@@ -242,7 +242,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * but they do not affect compilation at all.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEXTERNAL_DEPENDENCIES: NativeArgument<String?> =
         NativeArgument("XEXTERNAL_DEPENDENCIES")
 
@@ -250,7 +250,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Enable the IR fake override validator.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFAKE_OVERRIDE_VALIDATOR: NativeArgument<Boolean> =
         NativeArgument("XFAKE_OVERRIDE_VALIDATOR")
 
@@ -258,7 +258,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Add an additional header import to the framework header.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRAMEWORK_IMPORT_HEADER: NativeArgument<Array<String>?> =
         NativeArgument("XFRAMEWORK_IMPORT_HEADER")
 
@@ -268,21 +268,21 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Currently this option is disabled by default on other platforms.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XADD_LIGHT_DEBUG: NativeArgument<String?> = NativeArgument("XADD_LIGHT_DEBUG")
 
     /**
      * Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XG0: NativeArgument<Boolean> = NativeArgument("XG0")
 
     /**
      * Generate trampolines to make debugger breakpoint resolution more accurate (inlines, 'when', etc.).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XG_GENERATE_DEBUG_TRAMPOLINE: NativeArgument<String?> =
         NativeArgument("XG_GENERATE_DEBUG_TRAMPOLINE")
 
@@ -290,21 +290,21 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Path to a library to be added to the cache.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XADD_CACHE: NativeArgument<String?> = NativeArgument("XADD_CACHE")
 
     /**
      * Path to the file to cache.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFILE_TO_CACHE: NativeArgument<Array<String>?> = NativeArgument("XFILE_TO_CACHE")
 
     /**
      * Force the compiler to produce per-file caches.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMAKE_PER_FILE_CACHE: NativeArgument<Boolean> =
         NativeArgument("XMAKE_PER_FILE_CACHE")
 
@@ -314,28 +314,28 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * The default value is 1.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XBACKEND_THREADS: NativeArgument<Int> = NativeArgument("XBACKEND_THREADS")
 
     /**
      * Export KDoc entries in the framework header.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEXPORT_KDOC: NativeArgument<Boolean> = NativeArgument("XEXPORT_KDOC")
 
     /**
      * Print LLVM bitcode.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPRINT_BITCODE: NativeArgument<Boolean> = NativeArgument("XPRINT_BITCODE")
 
     /**
      * Ensure that all calls of possibly long external functions are done in the native thread state.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCHECK_STATE_AT_EXTERNAL_CALLS: NativeArgument<Boolean> =
         NativeArgument("XCHECK_STATE_AT_EXTERNAL_CALLS")
 
@@ -343,28 +343,28 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Print IR.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPRINT_IR: NativeArgument<Boolean> = NativeArgument("XPRINT_IR")
 
     /**
      * Print files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPRINT_FILES: NativeArgument<Boolean> = NativeArgument("XPRINT_FILES")
 
     /**
      * Don't link unused libraries even if explicitly specified.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPURGE_USER_LIBS: NativeArgument<Boolean> = NativeArgument("XPURGE_USER_LIBS")
 
     /**
      * Write file containing the paths of dependencies used during klib compilation to the provided path
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XWRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO: NativeArgument<String?> =
         NativeArgument("XWRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO")
 
@@ -372,35 +372,35 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Override the standard 'runtime.bc' location.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XRUNTIME: NativeArgument<String?> = NativeArgument("XRUNTIME")
 
     /**
      * A path to an intermediate library that should be processed in the same manner as source files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XINCLUDE: NativeArgument<Array<String>?> = NativeArgument("XINCLUDE")
 
     /**
      * A short name used to denote this library in the IDE and in a generated Objective-C header.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSHORT_MODULE_NAME: NativeArgument<String?> = NativeArgument("XSHORT_MODULE_NAME")
 
     /**
      * Create a framework with a static library instead of a dynamic one.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSTATIC_FRAMEWORK: NativeArgument<Boolean> = NativeArgument("XSTATIC_FRAMEWORK")
 
     /**
      * Save temporary files to the given directory.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XTEMPORARY_FILES_DIR: NativeArgument<String?> =
         NativeArgument("XTEMPORARY_FILES_DIR")
 
@@ -408,7 +408,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Save the result of the Kotlin IR to LLVM IR translation to '-Xsave-llvm-ir-directory'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSAVE_LLVM_IR_AFTER: NativeArgument<Array<String>?> =
         NativeArgument("XSAVE_LLVM_IR_AFTER")
 
@@ -416,14 +416,14 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Verify LLVM bitcode after each method.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XVERIFY_BITCODE: NativeArgument<Boolean> = NativeArgument("XVERIFY_BITCODE")
 
     /**
      * Verify the compiler.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XVERIFY_COMPILER: NativeArgument<String?> = NativeArgument("XVERIFY_COMPILER")
 
     /**
@@ -436,28 +436,28 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREFINES_PATHS: NativeArgument<Array<String>?> = NativeArgument("XREFINES_PATHS")
 
     /**
      * Generate debug info of the given version (1, 2).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDEBUG_INFO_VERSION: NativeArgument<Int> = NativeArgument("XDEBUG_INFO_VERSION")
 
     /**
      * Disable generics support for framework header.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNO_OBJC_GENERICS: NativeArgument<Boolean> = NativeArgument("XNO_OBJC_GENERICS")
 
     /**
      * Explicit list of Clang options.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XOVERRIDE_CLANG_OPTIONS: NativeArgument<Array<String>?> =
         NativeArgument("XOVERRIDE_CLANG_OPTIONS")
 
@@ -465,21 +465,21 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Allocator used at runtime.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XALLOCATOR: NativeArgument<String?> = NativeArgument("XALLOCATOR")
 
     /**
      * Save a klib that only contains the public ABI to the given path.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XHEADER_KLIB_PATH: NativeArgument<String?> = NativeArgument("XHEADER_KLIB_PATH")
 
     /**
      * Remap file source directory paths in debug info.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDEBUG_PREFIX_MAP: NativeArgument<Array<String>?> =
         NativeArgument("XDEBUG_PREFIX_MAP")
 
@@ -487,14 +487,14 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Perform caches pre-linking.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPRE_LINK_CACHES: NativeArgument<String?> = NativeArgument("XPRE_LINK_CACHES")
 
     /**
      * Override values from 'konan.properties' with the given ones.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XOVERRIDE_KONAN_PROPERTIES: NativeArgument<Array<String>?> =
         NativeArgument("XOVERRIDE_KONAN_PROPERTIES")
 
@@ -502,7 +502,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * When to destroy the runtime – 'legacy' and 'on-shutdown' are currently supported. Note that 'legacy' mode is deprecated and will be removed.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDESTROY_RUNTIME_MODE: NativeArgument<String?> =
         NativeArgument("XDESTROY_RUNTIME_MODE")
 
@@ -510,14 +510,14 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * GC to use – 'noop', 'stms', and 'cms' are currently supported. This works only with '-memory-model experimental'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XGC: NativeArgument<String?> = NativeArgument("XGC")
 
     /**
      * Initialize top level properties lazily per file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PROPERTY_LAZY_INITIALIZATION: NativeArgument<String?> =
         NativeArgument("XIR_PROPERTY_LAZY_INITIALIZATION")
 
@@ -525,7 +525,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Unhandled exception processing in 'Worker.executeAfter'. Possible values: 'legacy' and 'use-hook'. The default value is 'legacy' and for '-memory-model experimental', the default value is 'use-hook'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XWORKER_EXCEPTION_HANDLING: NativeArgument<String?> =
         NativeArgument("XWORKER_EXCEPTION_HANDLING")
 
@@ -533,42 +533,42 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Choose the LLVM distribution that will be used during compilation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLLVM_VARIANT: NativeArgument<String?> = NativeArgument("XLLVM_VARIANT")
 
     /**
      * Specify a binary option.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XBINARY: NativeArgument<Array<String>?> = NativeArgument("XBINARY")
 
     /**
      * Enable logging of Native runtime internals.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XRUNTIME_LOGS: NativeArgument<String?> = NativeArgument("XRUNTIME_LOGS")
 
     /**
      * Path to a file for dumping the list of all available tests.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDUMP_TESTS_TO: NativeArgument<String?> = NativeArgument("XDUMP_TESTS_TO")
 
     /**
      * Use lazy IR for cached libraries.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLAZY_IR_FOR_CACHES: NativeArgument<String?> = NativeArgument("XLAZY_IR_FOR_CACHES")
 
     /**
      * Omit binary when compiling the framework.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XOMIT_FRAMEWORK_BINARY: NativeArgument<Boolean> =
         NativeArgument("XOMIT_FRAMEWORK_BINARY")
 
@@ -576,7 +576,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Continue compilation from the given bitcode file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCOMPILE_FROM_BITCODE: NativeArgument<String?> =
         NativeArgument("XCOMPILE_FROM_BITCODE")
 
@@ -584,7 +584,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Serialized dependencies to use for linking.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREAD_DEPENDENCIES_FROM: NativeArgument<String?> =
         NativeArgument("XREAD_DEPENDENCIES_FROM")
 
@@ -592,7 +592,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Path for writing backend dependencies.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XWRITE_DEPENDENCIES_TO: NativeArgument<String?> =
         NativeArgument("XWRITE_DEPENDENCIES_TO")
 
@@ -600,7 +600,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Directory that should contain the results of '-Xsave-llvm-ir-after=<phase>'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSAVE_LLVM_IR_DIRECTORY: NativeArgument<String?> =
         NativeArgument("XSAVE_LLVM_IR_DIRECTORY")
 
@@ -608,28 +608,28 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Custom path to the location of konan distributions.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XKONAN_DATA_DIR: NativeArgument<String?> = NativeArgument("XKONAN_DATA_DIR")
 
     /**
      * Custom set of LLVM passes to run as the ModuleOptimizationPipeline.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLLVM_MODULE_PASSES: NativeArgument<String?> = NativeArgument("XLLVM_MODULE_PASSES")
 
     /**
      * Custom set of LLVM passes to run as the LTOOptimizationPipeline.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLLVM_LTO_PASSES: NativeArgument<String?> = NativeArgument("XLLVM_LTO_PASSES")
 
     /**
      * Comma-separated list that will be written as the value of 'native_targets' property in the .klib manifest. Unknown values are discarded.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMANIFEST_NATIVE_TARGETS: NativeArgument<Array<String>?> =
         NativeArgument("XMANIFEST_NATIVE_TARGETS")
 
@@ -637,7 +637,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Path to a directory to dump synthetic accessors and their use sites.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDUMP_SYNTHETIC_ACCESSORS_TO: NativeArgument<String?> =
         NativeArgument("XDUMP_SYNTHETIC_ACCESSORS_TO")
   }

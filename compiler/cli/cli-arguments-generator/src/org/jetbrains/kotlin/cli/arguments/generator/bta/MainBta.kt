@@ -227,7 +227,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                 if (experimental) {
                     // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
                     annotation<Deprecated>() {
-                        addMember("message = %S", "This option is experimental and it may be changed in the future")
+                        addMember("message = %S", "This option is experimental and it may` be changed in the future")
                     }
                 }
                 initializer("%T(%S)", argumentTypeName, name)
