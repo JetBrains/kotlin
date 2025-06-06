@@ -1,5 +1,3 @@
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
-
 class TestData(var status: String) {
     fun updateStatus(newStatus: String) {
         status = newStatus

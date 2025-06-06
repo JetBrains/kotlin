@@ -5974,12 +5974,6 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
-    @TestMetadata("callableReferenceOfLocalFunWithInlinedFunInKlib.kt")
-    public void testCallableReferenceOfLocalFunWithInlinedFunInKlib() {
-      runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalFunWithInlinedFunInKlib.kt");
-    }
-
-    @Test
     @TestMetadata("callableReferenceOfLocalInline.kt")
     public void testCallableReferenceOfLocalInline() {
       runTest("js/js.translator/testData/box/inline/callableReferenceOfLocalInline.kt");

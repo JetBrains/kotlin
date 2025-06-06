@@ -126,7 +126,7 @@ open class LocalDeclarationsLowering(
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
-    val remapTypesInExtractedLocalDeclarations: Boolean = true,
+    val remapCapturedTypesInExtractedLocalDeclarations: Boolean = true,
     val allConstructorsWithCapturedConstructorCreated: MutableSet<IrConstructor>? = null,
     val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
     val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
@@ -223,6 +223,11 @@ open class LocalDeclarationsLowering(
 
         // By the time typeRemapper is used, the map will be already filled
         val typeRemapper = IrTypeParameterRemapper(capturedTypeParameterToTypeParameter)
+
+        val ownTypeParameterMap: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
+
+        // By the time ownTypeParameterRemapper is used, the map will be already filled
+        val ownTypeParameterRemapper = IrTypeParameterRemapper(ownTypeParameterMap)
 
         abstract val sourceFileWhenInlined: IrFileEntry?
 
@@ -356,9 +361,14 @@ open class LocalDeclarationsLowering(
         return typeRemapper.remapType(type)
     }
 
-    private fun LocalContext.remapTypes(body: IrBody) {
+    private fun LocalContext.remapAllTypes(body: IrBody) {
         if (capturedTypeParameterToTypeParameter.isEmpty()) return
         body.remapTypes(typeRemapper)
+    }
+
+    private fun LocalContext.remapOnlyOwnTypeParameters(body: IrBody) {
+        if (ownTypeParameterMap.isEmpty()) return
+        body.remapTypes(ownTypeParameterRemapper)
     }
 
     private inner class LocalDeclarationsTransformer(
@@ -406,14 +416,18 @@ open class LocalDeclarationsLowering(
 
                     this.body = original.body
 
-                    if (remapTypesInExtractedLocalDeclarations) {
-                        this.body?.let { localContext.remapTypes(it) }
+                    if (remapCapturedTypesInExtractedLocalDeclarations) {
+                        this.body?.let { localContext.remapAllTypes(it) }
+                    } else {
+                        this.body?.let { localContext.remapOnlyOwnTypeParameters(it) }
                     }
 
                     for (argument in original.parameters) {
                         val body = argument.defaultValue ?: continue
-                        if (remapTypesInExtractedLocalDeclarations) {
-                            localContext.remapTypes(body)
+                        if (remapCapturedTypesInExtractedLocalDeclarations) {
+                            localContext.remapAllTypes(body)
+                        } else {
+                            localContext.remapOnlyOwnTypeParameters(body)
                         }
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
@@ -540,7 +554,7 @@ open class LocalDeclarationsLowering(
                     for (typeArgument in expression.typeArguments) {
                         it.typeArguments[tpIndex++] = typeArgument
                     }
-                    if (remapTypesInExtractedLocalDeclarations) {
+                    if (remapCapturedTypesInExtractedLocalDeclarations) {
                         val contextTypeParameters = localClasses[oldCallee.constructedClass]?.closure?.capturedTypeParameters ?: emptyList()
                         for (contextTP in contextTypeParameters) {
                             it.typeArguments[tpIndex++] = contextTP.defaultType
@@ -777,7 +791,7 @@ open class LocalDeclarationsLowering(
                 rewriteClassMembers(it.declaration, it)
             }
 
-            if (remapTypesInExtractedLocalDeclarations && localClasses.values.any { it.closure.capturedTypeParameters.isNotEmpty() }) {
+            if (remapCapturedTypesInExtractedLocalDeclarations && localClasses.values.any { it.closure.capturedTypeParameters.isNotEmpty() }) {
                 // Inside local classes, remap captured type parameters to their newly introduced explicit type parameters
                 irElement.accept(
                     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -847,7 +861,7 @@ open class LocalDeclarationsLowering(
                     capturedValue.owner to PotentiallyUnusedField()
                 }
                 it.declaration.sourceFileWhenInlined = it.sourceFileWhenInlined
-                if (remapTypesInExtractedLocalDeclarations) {
+                if (remapCapturedTypesInExtractedLocalDeclarations) {
                     val capturedTypeParameters = it.closure.capturedTypeParameters
                     val newTypeParameters = it.declaration.copyTypeParameters(capturedTypeParameters)
                     it.capturedTypeParameterToTypeParameter.putAll(capturedTypeParameters.zip(newTypeParameters))
@@ -938,9 +952,9 @@ open class LocalDeclarationsLowering(
                 capturedTypeParameters.zip(newTypeParameters)
             )
             newDeclaration.copyTypeParametersFrom(oldDeclaration, parameterMap = localFunctionContext.capturedTypeParameterToTypeParameter)
-            localFunctionContext.capturedTypeParameterToTypeParameter.putAll(
-                oldDeclaration.typeParameters.zip(newDeclaration.typeParameters.drop(newTypeParameters.size))
-            )
+            val ownTypeParameterMap = oldDeclaration.typeParameters.zip(newDeclaration.typeParameters.drop(newTypeParameters.size)).toMap()
+            localFunctionContext.ownTypeParameterMap.putAll(ownTypeParameterMap)
+            localFunctionContext.capturedTypeParameterToTypeParameter.putAll(ownTypeParameterMap)
             // Type parameters of oldDeclaration may depend on captured type parameters, so deal with that after copying.
             newDeclaration.typeParameters.drop(newTypeParameters.size).forEach { tp ->
                 tp.superTypes = tp.superTypes.memoryOptimizedMap { localFunctionContext.remapType(it) }

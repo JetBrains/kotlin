@@ -39,7 +39,7 @@ internal class JvmLocalDeclarationsLowering(override val context: JvmBackendCont
     JvmVisibilityPolicy,
     compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
     forceFieldsForInlineCaptures = true,
-    remapTypesInExtractedLocalDeclarations = false,
+    remapCapturedTypesInExtractedLocalDeclarations = false,
     allConstructorsWithCapturedConstructorCreated = context.allConstructorsWithCapturedConstructorCreated,
     closureBuilders = context.evaluatorData?.localDeclarationsData?.closureBuilders ?: mutableMapOf(),
     transformedDeclarations = context.evaluatorData?.localDeclarationsData?.transformedDeclarations ?: mutableMapOf(),

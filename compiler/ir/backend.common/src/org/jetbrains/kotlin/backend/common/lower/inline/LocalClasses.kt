@@ -154,9 +154,8 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // Lambdas cannot introduce new type parameters to the scope, which means that all the captured type parameters
                     // are also present in the inline lambda's parent declaration,
                     // which we will extract the local class to.
-                    remapTypesInExtractedLocalDeclarations = false,
-                )
-                    .lower(irBlock, container, data, localClasses, adaptedFunctions)
+                    remapCapturedTypesInExtractedLocalDeclarations = false,
+                ).lower(irBlock, container, data, localClasses, adaptedFunctions)
                 irBlock.statements.addAll(0, localClasses)
 
                 for (lambda in inlineLambdas) {
