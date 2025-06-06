@@ -194,18 +194,24 @@ abstract class LlvmOptimizationPipeline(
     }
 
     private val arena = Arena()
+
+    private val targetMachineOptionsDelegate = lazy {
+        val options = LLVMCreateTargetMachineOptions()!!
+        LLVMTargetMachineOptionsSetCPU(options, config.cpuModel)
+        LLVMTargetMachineOptionsSetFeatures(options, config.cpuFeatures)
+        LLVMTargetMachineOptionsSetCodeModel(options, config.codeModel)
+        LLVMTargetMachineOptionsSetRelocMode(options, config.relocMode)
+        LLVMTargetMachineOptionsSetCodeGenOptLevel(options, config.codegenOptimizationLevel)
+        options
+    }
+
+    private val targetMachineOptions: LLVMTargetMachineOptionsRef by targetMachineOptionsDelegate
+
     private val targetMachineDelegate = lazy {
         val target = arena.alloc<LLVMTargetRefVar>()
         val foundLlvmTarget = LLVMGetTargetFromTriple(config.targetTriple, target.ptr, null) == 0
         check(foundLlvmTarget) { "Cannot get target from triple ${config.targetTriple}." }
-        LLVMCreateTargetMachine(
-                target.value,
-                config.targetTriple,
-                config.cpuModel,
-                config.cpuFeatures,
-                config.codegenOptimizationLevel,
-                config.relocMode,
-                config.codeModel)!!
+        LLVMCreateTargetMachineWithOptions(target.value, config.targetTriple, targetMachineOptions)!!
     }
 
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
@@ -254,6 +260,9 @@ abstract class LlvmOptimizationPipeline(
     override fun close() {
         if (targetMachineDelegate.isInitialized()) {
             LLVMDisposeTargetMachine(targetMachine)
+        }
+        if (targetMachineOptionsDelegate.isInitialized()) {
+            LLVMDisposeTargetMachineOptions(targetMachineOptions)
         }
         arena.clear()
     }
