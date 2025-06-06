@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.syntheticAccessors
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.test.support.KlibSyntheticAccessorTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
+import org.jetbrains.kotlin.konan.test.support.KlibSyntheticAccessorTestSupport
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend

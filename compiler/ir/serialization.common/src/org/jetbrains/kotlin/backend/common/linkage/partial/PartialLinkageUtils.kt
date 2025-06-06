@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.C
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant.Companion.TYPE_PARAMETER_MARKER_NAME_SETTER
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER

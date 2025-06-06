@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.IrValidationError
-import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.File
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cli.pipeline.web
 
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.cli.common.allowKotlinPackage
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
