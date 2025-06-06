@@ -84,20 +84,6 @@ class BodyResolveContext(
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
-    @set:PrivateForInline
-    var isInsideAssignmentRhs: Boolean = false
-
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withAssignmentRhs(block: () -> R): R {
-        val oldMode = this.isInsideAssignmentRhs
-        this.isInsideAssignmentRhs = true
-        return try {
-            block()
-        } finally {
-            this.isInsideAssignmentRhs = oldMode
-        }
-    }
-
     @OptIn(PrivateForInline::class)
     inline fun withClassHeader(clazz: FirRegularClass, action: () -> Unit) {
         withSwitchedTowerDataModeForStaticNestedClass(clazz) {
