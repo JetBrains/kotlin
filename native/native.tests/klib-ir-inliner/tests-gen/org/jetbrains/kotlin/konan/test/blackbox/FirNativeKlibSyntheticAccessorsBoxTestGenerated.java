@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage;
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage.Mode;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +26,11 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("klibIrInliner")
+@EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+@EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
 @UseExtTestCaseGroupProvider()
+@UsePartialLinkage(mode = Mode.DISABLED)
+@Tag("no-partial-linkage-may-be-skipped")
 public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNativeCodegenBoxTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
@@ -33,7 +41,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
   @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
+  @UsePartialLinkage(mode = Mode.DISABLED)
+  @Tag("no-partial-linkage-may-be-skipped")
   public class OuterThis {
     @Test
     public void testAllFilesPresentInOuterThis() {
@@ -44,7 +56,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossFileLeak {
       @Test
       public void testAllFilesPresentInCrossFileLeak() {
@@ -122,7 +138,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossModuleLeak {
       @Test
       public void testAllFilesPresentInCrossModuleLeak() {
@@ -200,7 +220,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/singleFile")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
@@ -279,7 +303,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
   @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
+  @UsePartialLinkage(mode = Mode.DISABLED)
+  @Tag("no-partial-linkage-may-be-skipped")
   public class PrivateMember {
     @Test
     public void testAllFilesPresentInPrivateMember() {
@@ -290,7 +318,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
@@ -638,7 +670,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
@@ -992,7 +1028,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/singleFile")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
@@ -1209,7 +1249,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
   @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("klibIrInliner")
+  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
   @UseExtTestCaseGroupProvider()
+  @UsePartialLinkage(mode = Mode.DISABLED)
+  @Tag("no-partial-linkage-may-be-skipped")
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
@@ -1220,7 +1264,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
@@ -1412,7 +1460,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
@@ -1616,7 +1668,11 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
+    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
     @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {

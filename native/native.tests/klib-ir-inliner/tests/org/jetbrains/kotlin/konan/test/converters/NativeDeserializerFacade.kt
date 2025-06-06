@@ -24,8 +24,12 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.partialLinkageLogLevel
+import org.jetbrains.kotlin.config.partialLinkageMode
+import org.jetbrains.kotlin.config.setupPartialLinkageConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -64,6 +68,7 @@ open class NativeDeserializerFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): NativeDeserializedFromKlibBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(configuration.partialLinkageMode, configuration.partialLinkageLogLevel))
 
         val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
