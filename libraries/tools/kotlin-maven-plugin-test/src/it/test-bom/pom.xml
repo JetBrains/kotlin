@@ -60,14 +60,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Depend on some artifact which itself depends on the old kotlin-reflect -->
-        <!-- And expect newer version of kotlin-reflect to be selected -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.19.0</version>
-        </dependency>
-
     </dependencies>
 
     <build>
