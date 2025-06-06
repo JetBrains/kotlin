@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.capturedConstructor
 import org.jetbrains.kotlin.backend.common.capturedFields
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
@@ -774,11 +773,7 @@ open class LocalDeclarationsLowering(
                         }
 
                         override fun visitClass(declaration: IrClass, currentLocalClass: LocalClassContext?) {
-                            val newLocalClassContext = localClasses[declaration]
-                            if (newLocalClassContext == null && declaration.isLocalNotInner()) {
-                                compilationException("Encountered a local class not previously collected", declaration)
-                            }
-                            super.visitClass(declaration, newLocalClassContext ?: currentLocalClass)
+                            super.visitClass(declaration, localClasses[declaration] ?: currentLocalClass)
                         }
 
                         override fun <Type : IrType?> transformTypeRecursively(
