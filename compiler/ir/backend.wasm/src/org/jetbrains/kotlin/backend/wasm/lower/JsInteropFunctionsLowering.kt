@@ -943,3 +943,12 @@ internal fun StringBuilder.appendParameterList(size: Int, name: String = "p", is
         if (!isEnd || it + 1 < size)
             append(", ")
     }
+
+fun foo() = run { if (true) return ""; "" }
+
+fun bar() = when {
+    else -> {
+        val a = if (true) return "" else ""
+        a
+    }
+}
