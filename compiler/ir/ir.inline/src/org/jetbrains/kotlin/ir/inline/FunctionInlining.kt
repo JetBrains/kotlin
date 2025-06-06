@@ -138,7 +138,7 @@ private class CallInlining(
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
     fun inline(callSite: IrFunctionAccessExpression) =
-        inlineFunction(callSite, callee, callee.originalFunction).patchDeclarationParents(parent)
+        inlineFunction(callSite, callee, callee).patchDeclarationParents(parent)
 
     private fun inlineFunction(
         callSite: IrFunctionAccessExpression,
