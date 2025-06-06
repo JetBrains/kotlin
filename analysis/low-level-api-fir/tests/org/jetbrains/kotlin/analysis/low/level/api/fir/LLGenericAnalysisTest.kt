@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
@@ -24,7 +26,9 @@ import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class LLGenericAnalysisTest : LLExecutionTest("analysis/low-level-api-fir/testData/genericAnalysis") {
+class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("analysis/low-level-api-fir/testData/genericAnalysis") {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+
     @Test
     fun simple(ktFile: KtFile) {
         withResolutionFacade(ktFile) { resolutionFacade ->
