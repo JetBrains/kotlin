@@ -101,16 +101,12 @@ private class ObjCTranslationContext(
         )
 
         // Function definitions must be present after everything else.
-        val functionDefinitions = mutableListOf<Definition.Function>()
-        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC }.forEach {
+        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC }.sortedBy { it.order }.forEach {
             when (it) {
-                is Definition.Function -> functionDefinitions.add(it)
+                is Definition.Function -> translateFunctionDefinition(it)
                 is Definition.Global -> translateGlobalDefinition(it)
                 is Definition.Class -> translateClassDefinition(it)
             }
-        }
-        functionDefinitions.forEach {
-            translateFunctionDefinition(it)
         }
     }
 
@@ -124,6 +120,7 @@ private class ObjCTranslationContext(
     private fun translateClassDefinition(definition: Definition.Class) {
         contents.lineEnd("@implementation ${scopeResolver.computeName(definition)}")
         if (definition.fields.isNotEmpty()) {
+            contents.lineEnd()
             contents.line {
                 scopeResolver.initObjCDeclaration(this, definition)
             }
@@ -138,6 +135,7 @@ private class ObjCTranslationContext(
                 contents.lineEnd("return self;")
             }
         }
+        contents.lineEnd()
         contents.line("- (id)loadObjCField:(int32_t)index")
         contents.braces {
             if (definition.fields.isEmpty()) {
@@ -152,6 +150,7 @@ private class ObjCTranslationContext(
                 }
             }
         }
+        contents.lineEnd()
         contents.line("- (void)storeObjCField:(int32_t)index value:(id)value")
         contents.braces {
             if (definition.fields.isNotEmpty()) {
@@ -163,10 +162,13 @@ private class ObjCTranslationContext(
                 }
             }
         }
+        contents.lineEnd()
         contents.lineEnd("@end")
+        contents.lineEnd()
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
+        contents.lineEnd()
         contents.line {
             if (!scopeResolver.isExported(definition)) append("static ")
             scopeResolver.functionObjCDeclaration(this, definition)

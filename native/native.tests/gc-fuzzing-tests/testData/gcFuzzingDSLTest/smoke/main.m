@@ -58,6 +58,7 @@ int main() {
 }
 
 @implementation Class1
+
 - (instancetype)initWithF0:(id)f0 f1:(id)f1 {
     self = [super init];
     if (self) {
@@ -66,6 +67,7 @@ int main() {
     }
     return self;
 }
+
 - (id)loadObjCField:(int32_t)index {
     switch(index % 2) {
         case 0: return self.f0;
@@ -73,14 +75,18 @@ int main() {
         default: return nil;
     }
 }
+
 - (void)storeObjCField:(int32_t)index value:(id)value {
     switch(index % 2) {
         case 0: self.f0 = value;
         case 1: self.f1 = value;
     }
 }
+
 @end
+
 static id g3 = nil;
+
 id fun5(id l0, id l1) {
     if (!tryEnterFrame()) {
         return nil;
@@ -93,6 +99,7 @@ id fun5(id l0, id l1) {
     leaveFrame();
     return nil;
 }
+
 id fun7(id l0) {
     if (!tryEnterFrame()) {
         return nil;

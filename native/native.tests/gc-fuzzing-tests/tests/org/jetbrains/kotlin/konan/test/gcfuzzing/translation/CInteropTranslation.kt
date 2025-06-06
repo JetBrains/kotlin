@@ -64,13 +64,14 @@ private class CInteropTranslationContext(
             """.trimMargin()
         )
 
-        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC && scopeResolver.isExported(it) }.forEach {
-            when (it) {
-                is Definition.Function -> translateFunctionDefinition(it)
-                is Definition.Class -> translateClassDefinition(it)
-                is Definition.Global -> error("Exported globals are not supported")
+        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC && scopeResolver.isExported(it) }.sortedBy { it.order }
+            .forEach {
+                when (it) {
+                    is Definition.Function -> translateFunctionDefinition(it)
+                    is Definition.Class -> translateClassDefinition(it)
+                    is Definition.Global -> error("Exported globals are not supported")
+                }
             }
-        }
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
@@ -92,5 +93,6 @@ private class CInteropTranslationContext(
             }
         }
         headerContents.lineEnd("@end")
+        headerContents.lineEnd()
     }
 }

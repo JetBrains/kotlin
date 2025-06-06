@@ -85,7 +85,7 @@ private class KotlinTranslationContext(
             )
         }
 
-        program.definitions.filter { it.targetLanguage is TargetLanguage.Kotlin }.forEach {
+        program.definitions.filter { it.targetLanguage is TargetLanguage.Kotlin }.sortedBy { it.order }.forEach {
             when (it) {
                 is Definition.Function -> translateFunctionDefinition(it)
                 is Definition.Global -> translateGlobalDefinition(it)
@@ -128,6 +128,7 @@ private class KotlinTranslationContext(
                     }
                 }
             }
+            contents.lineEnd()
             contents.line("override fun storeKotlinField(index: Int, value: Any?)")
             contents.braces {
                 if (definition.fields.isNotEmpty()) {
@@ -140,9 +141,11 @@ private class KotlinTranslationContext(
                 }
             }
         }
+        contents.lineEnd()
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
+        contents.lineEnd()
         contents.line {
             if (!scopeResolver.isExported(definition)) append("private ")
             append("fun ")
@@ -162,6 +165,7 @@ private class KotlinTranslationContext(
     }
 
     private fun translateMainFunction(body: Body) {
+        contents.lineEnd()
         contents.line("fun mainBody()")
         contents.braces {
             bodyContext(emptyList()) {

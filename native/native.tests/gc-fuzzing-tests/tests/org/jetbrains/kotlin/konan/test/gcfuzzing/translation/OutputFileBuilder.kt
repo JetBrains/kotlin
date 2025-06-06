@@ -30,7 +30,13 @@ class OutputFileBuilder {
         return contents.toString()
     }
 
-    private fun startLine() {
+    fun indent(block: () -> Unit) {
+        indentLevel++
+        block()
+        indentLevel--
+    }
+
+    fun line() {
         if (startedLine)
             return
         startedLine = true
@@ -39,19 +45,8 @@ class OutputFileBuilder {
         }
     }
 
-    private fun endLine() {
-        startedLine = false
-        contents.appendLine()
-    }
-
-    fun indent(block: () -> Unit) {
-        indentLevel++
-        block()
-        indentLevel--
-    }
-
     fun line(block: LineBuilder.() -> Unit) {
-        startLine()
+        line()
         LineBuilder(contents).block()
     }
 
@@ -59,12 +54,17 @@ class OutputFileBuilder {
         append(text)
     }
 
-    fun lineEnd(block: LineBuilder.() -> Unit) {
-        line(block)
-        endLine()
+    fun lineEnd() {
+        startedLine = false
+        contents.appendLine()
     }
 
-    fun lineEnd(text: String = "") = lineEnd {
+    fun lineEnd(block: LineBuilder.() -> Unit) {
+        line(block)
+        lineEnd()
+    }
+
+    fun lineEnd(text: String) = lineEnd {
         append(text)
     }
 

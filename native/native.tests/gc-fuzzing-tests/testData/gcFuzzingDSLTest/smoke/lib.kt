@@ -46,6 +46,7 @@ class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
             else -> null
         }
     }
+
     override fun storeKotlinField(index: Int, value: Any?) {
         when (index % 2) {
             0 -> f0 = value
@@ -53,7 +54,9 @@ class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
         }
     }
 }
+
 private var g2: Any? = null
+
 fun fun4(l0: Any?, l1: Any?): Any? {
     if (!tryEnterFrame()) {
         return null
@@ -66,6 +69,7 @@ fun fun4(l0: Any?, l1: Any?): Any? {
     leaveFrame()
     return null
 }
+
 fun fun6(l0: Any?): Any? {
     if (!tryEnterFrame()) {
         return null
@@ -76,6 +80,7 @@ fun fun6(l0: Any?): Any? {
     leaveFrame()
     return l1?.loadField(1)?.loadField(3)?.loadField(4)
 }
+
 fun mainBody() {
     var l0: Any? = Class1(null, null)
     var l1: Any? = l0
