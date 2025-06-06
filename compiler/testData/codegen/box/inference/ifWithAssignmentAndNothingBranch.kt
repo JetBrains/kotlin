@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-78127
 
 fun <T : Any> materialize(): T {
@@ -6,8 +5,6 @@ fun <T : Any> materialize(): T {
 }
 
 var b = true
-
-var s: Nothing? = null
 
 fun box(): String {
     var x: String? = null
