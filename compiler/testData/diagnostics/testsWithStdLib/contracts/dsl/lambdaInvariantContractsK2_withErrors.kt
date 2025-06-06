@@ -61,3 +61,44 @@ fun testHoldsInsAreIndependent2(foo: String?) {
     }
 }
 
+inline fun <R> runIfElse(condition: Boolean, ifTrue: () -> R, ifFalse: () -> R, unrelated: () -> Unit): R? {
+    contract {
+        condition holdsIn ifTrue
+        !condition holdsIn ifFalse
+        callsInPlace(ifTrue)
+        callsInPlace(ifFalse)
+        callsInPlace(unrelated)
+    }
+    unrelated()
+    return if (condition) ifTrue() else ifFalse()
+}
+
+fun testRunIfElse1(foo: String?) {
+    runIfElse(
+        foo == null,
+        ifTrue = {
+            foo<!UNSAFE_CALL!>.<!>length
+        },
+        ifFalse = {
+            foo.length
+        },
+        unrelated = {
+            foo<!UNSAFE_CALL!>.<!>length
+        }
+    )
+}
+
+fun testRunIfElse2(foo: String?) {
+    runIfElse(
+        foo != null,
+        ifTrue = {
+            foo.length
+        },
+        ifFalse = {
+            foo<!UNSAFE_CALL!>.<!>length
+        },
+        unrelated = {
+            foo<!UNSAFE_CALL!>.<!>length
+        }
+    )
+}

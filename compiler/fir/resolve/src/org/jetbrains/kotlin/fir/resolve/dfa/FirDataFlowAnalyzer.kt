@@ -319,7 +319,7 @@ abstract class FirDataFlowAnalyzer(
                     enterRepeatableStatement(flow, assignedInside)
                 }
                 function.lambdaArgumentParent?.let {
-                    processConditionalContract(flow, it, null, processForLambdaArgument = true)
+                    processConditionalContract(flow, it, null, processForLambdaArgument = function)
                 }
             }
         }
@@ -1107,7 +1107,7 @@ abstract class FirDataFlowAnalyzer(
         flow: MutableFlow,
         qualifiedAccess: FirStatement,
         callArgsExit: PersistentFlow?,
-        processForLambdaArgument: Boolean = false, // true if called on entering lambda argument where we should process holdsIn contracts only
+        processForLambdaArgument: FirAnonymousFunction? = null, // entering lambda argument where we should process holdsIn contracts only
         // TODO: split or rewrite to simplify the cases, see KT-78107
     ) {
         // contracts has no effect on non-body resolve stages
@@ -1130,22 +1130,32 @@ abstract class FirDataFlowAnalyzer(
         val originalFunction = callee.originalIfFakeOverride()
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
 
+        val arguments = qualifiedAccess.orderedArguments(callee) ?: return
+
         var hasAnyContractsToProcess = false
         val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = mutableListOf()
         val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = mutableListOf()
         val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = mutableListOf()
+
+        val indexOfLambdaArgument =
+            if (processForLambdaArgument == null) -1
+            // this is quite fragile, but -1 is because `orderedArguments` adds the receiver to the list
+            else arguments.indexOfFirst { (it as? FirAnonymousFunctionExpression)?.anonymousFunction == processForLambdaArgument } - 1
+
         contractDescription.effects.forEach {
             val effect = it.effect
             when {
-                !processForLambdaArgument && effect is ConeConditionalEffectDeclaration -> {
+                processForLambdaArgument == null && effect is ConeConditionalEffectDeclaration -> {
                     conditionalEffects.add(effect)
                     hasAnyContractsToProcess = true
                 }
-                !processForLambdaArgument && effect is ConeConditionalReturnsDeclaration -> {
+                processForLambdaArgument == null && effect is ConeConditionalReturnsDeclaration -> {
                     conditionalReturns.add(effect)
                     hasAnyContractsToProcess = true
                 }
-                processForLambdaArgument && effect is ConeHoldsInEffectDeclaration -> {
+                processForLambdaArgument != null && effect is ConeHoldsInEffectDeclaration
+                    && effect.valueParameterReference.parameterIndex == indexOfLambdaArgument ->
+                {
                     conditionalHoldsIn.add(effect)
                     hasAnyContractsToProcess = true
                 }
@@ -1153,7 +1163,6 @@ abstract class FirDataFlowAnalyzer(
         }
         if (!hasAnyContractsToProcess) return
 
-        val arguments = qualifiedAccess.orderedArguments(callee) ?: return
         val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
             arguments[i]?.let { argument ->
                 flow.getVariableIfUsedOrReal(argument)
@@ -1183,7 +1192,7 @@ abstract class FirDataFlowAnalyzer(
         }
 
         if (argumentVariablesForConditionalEffects.any { it != null }) {
-            if (!processForLambdaArgument) {
+            if (processForLambdaArgument == null) {
                 for (conditionalEffect in conditionalEffects) {
                     val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
                     val operation = effect.value.toOperation()
@@ -1196,7 +1205,7 @@ abstract class FirDataFlowAnalyzer(
             }
         }
 
-        if (!processForLambdaArgument) {
+        if (processForLambdaArgument == null) {
             if (qualifiedAccess is FirExpression) {
                 for (conditionalReturn in conditionalReturns) {
                     val effect = conditionalReturn.returnsEffect as? ConeReturnsEffectDeclaration ?: continue
