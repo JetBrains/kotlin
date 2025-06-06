@@ -59,10 +59,7 @@ class NonLinkingIrInlineFunctionDeserializer(
         val functionSignature: IdSignature = signatureComputer.computeSignature(function)
         // Inside the module deserializer "functionSignature" will be mapped to erased copy of inline function and this copy will be returned.
         val deserializedFunction: IrFunction = moduleDeserializer.getTopLevelDeclarationOrNull(functionSignature) ?: return null
-
-        // We must specify `attributeOwnerId` to get the correct symbol of inline declaration.
-        // It must be the original non-erased symbol, otherwise PL will fail while trying to locate the function.
-        deserializedFunction.attributeOwnerId = function
+        deserializedFunction.originalOfErasedTopLevelCopy = function
 
         // Set up the parent to be a file to extract it later during the inlining process
         function.parentDeclarationsWithSelf.last().let {

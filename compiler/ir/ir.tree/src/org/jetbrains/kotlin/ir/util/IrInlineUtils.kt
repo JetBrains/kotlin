@@ -30,6 +30,7 @@ var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefau
 var IrDeclaration.sourceFileWhenInlined: IrFileEntry? by irAttribute(copyByDefault = true)
 
 var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
+var IrFunction.originalOfErasedTopLevelCopy: IrFunction? by irAttribute(copyByDefault = true)
 
 fun IrInlinedFunctionBlock.isFunctionInlining(): Boolean {
     return this.inlinedFunctionSymbol != null
