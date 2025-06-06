@@ -18,6 +18,7 @@ class KotlinConfig(
     val cinteropModuleName: String,
     val moduleName: String,
     val maximumStackDepth: Int,
+    val maximumThreadCount: Int,
 )
 
 fun Program.produceKotlin(config: KotlinConfig): KotlinOutput {
@@ -40,11 +41,12 @@ private class KotlinTranslationContext(
         contents.apply {
             raw(
                 """
-            |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
             |package ${config.moduleName}
             |
             |import ${config.cinteropModuleName}.*
-            |import kotlin.native.concurrent.*
+            |import kotlin.concurrent.atomics.*
+            |import kotlin.native.concurrent.Worker
             |
             |interface KotlinIndexAccess {
             |   fun loadKotlinField(index: Int): Any?
@@ -63,8 +65,18 @@ private class KotlinTranslationContext(
             |    else -> error("Invalid storeField call")
             |}
             |
+            |private val maxThreadsCount = AtomicInt(0)
+            |
             |private fun spawnThread(block: () -> Unit) {
-            |   Worker.start().executeAfter(0L, block)
+            |   val allowedThreads = maxThreadsCount.fetchAndDecrement()
+            |   if (allowedThreads <= 0) {
+            |       maxThreadsCount.fetchAndIncrement()
+            |       return
+            |   }
+            |   Worker.start().executeAfter(0L) {
+            |       block()
+            |       maxThreadsCount.fetchAndIncrement()
+            |   }
             |}
             |
             |private fun tryEnterFrame(localsCount: Int): Boolean {

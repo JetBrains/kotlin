@@ -19,6 +19,7 @@ class ObjCConfig(
     val kotlinIdentifierPrefix: String,
     val kotlinGlobalClass: String,
     val maximumStackDepth: Int,
+    val maximumThreadCount: Int,
     val mainLoopRepeatCount: Int,
     val basename: String,
 )
@@ -41,6 +42,7 @@ private class ObjCTranslationContext(
             """
             |#include "${config.cinteropHeaderFilename}"
             |
+            |#include <stdatomic.h>
             |#include <stdbool.h>
             |
             |#import <Foundation/Foundation.h>
@@ -75,8 +77,18 @@ private class ObjCTranslationContext(
             |
             |@end
             |
+            |static atomic_int maxThreadsCount = ${config.maximumThreadCount};
+            |
             |static void spawnThread(void (^block)()) {
-            |    [NSThread detachNewThreadWithBlock:block];
+            |    int allowedThreads = atomic_fetch_sub(&maxThreadsCount, 1);
+            |    if (allowedThreads <= 0) {
+            |        atomic_fetch_add(&maxThreadsCount, 1);
+            |        return;
+            |    }
+            |    [NSThread detachNewThreadWithBlock:^{
+            |        block();
+            |        atomic_fetch_add(&maxThreadsCount, 1);
+            |    }];
             |}
             |
             |static bool tryEnterFrame(int32_t localsCount) {

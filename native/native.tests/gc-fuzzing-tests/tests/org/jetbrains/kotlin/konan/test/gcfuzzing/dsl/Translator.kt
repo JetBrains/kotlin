@@ -20,11 +20,13 @@ import java.io.File
 class Config(
     val maximumStackDepth: Int,
     val mainLoopRepeatCount: Int,
+    val perLanguageMaxThreadCount: Int,
 ) {
     companion object {
         val DEFAULT = Config(
             maximumStackDepth = 500,
             mainLoopRepeatCount = 100000,
+            perLanguageMaxThreadCount = 100,
         )
     }
 }
@@ -48,6 +50,7 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
     val kotlinConfig = KotlinConfig(
         cinteropModuleName = cinteropConfig.moduleName,
         maximumStackDepth = config.maximumStackDepth,
+        maximumThreadCount = config.perLanguageMaxThreadCount,
         moduleName = "ktlib"
     )
     val kotlinModuleCapitalized = kotlinConfig.moduleName.replaceFirstChar { it.uppercase() }
@@ -57,6 +60,7 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
         kotlinIdentifierPrefix = kotlinModuleCapitalized,
         kotlinGlobalClass = "${kotlinModuleCapitalized}Kt",
         maximumStackDepth = config.maximumStackDepth,
+        maximumThreadCount = config.perLanguageMaxThreadCount,
         mainLoopRepeatCount = config.mainLoopRepeatCount,
         basename = "main"
     )

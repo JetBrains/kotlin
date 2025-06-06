@@ -1,5 +1,6 @@
 #include "cinterop.h"
 
+#include <stdatomic.h>
 #include <stdbool.h>
 
 #import <Foundation/Foundation.h>
@@ -34,8 +35,18 @@
 
 @end
 
+static atomic_int maxThreadsCount = 100;
+
 static void spawnThread(void (^block)()) {
-    [NSThread detachNewThreadWithBlock:block];
+    int allowedThreads = atomic_fetch_sub(&maxThreadsCount, 1);
+    if (allowedThreads <= 0) {
+        atomic_fetch_add(&maxThreadsCount, 1);
+        return;
+    }
+    [NSThread detachNewThreadWithBlock:^{
+        block();
+        atomic_fetch_add(&maxThreadsCount, 1);
+    }];
 }
 
 static bool tryEnterFrame(int32_t localsCount) {
