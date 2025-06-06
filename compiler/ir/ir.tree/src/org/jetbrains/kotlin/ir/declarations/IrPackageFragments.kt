@@ -33,7 +33,7 @@ val IrExternalPackageFragment.containerSource: DeserializedContainerSource?
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.moduleDescriptor: ModuleDescriptor
-    get() = if (this is IrFileImpl && isInsideModule) {
+    get() = if (this is IrFileImpl) {
         module.descriptor
     } else {
         packageFragmentDescriptor.containingDeclaration
