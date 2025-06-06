@@ -47,4 +47,7 @@ class LocalScopeResolver(
         block(computeName(local))
         locals.add(local)
     }
+
+    val localsCount: Int
+        get() = locals.size
 }

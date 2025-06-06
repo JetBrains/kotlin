@@ -25,19 +25,8 @@ private fun spawnThread(block: () -> Unit) {
    Worker.start().executeAfter(0L, block)
 }
 
-@ThreadLocal
-private var frameCount = 100;
-
-private fun tryEnterFrame(): Boolean {
-    if (frameCount-- <= 0) {
-        frameCount++
-        return false
-    }
-    return true
-}
-
-private fun leaveFrame() {
-    frameCount++
+private fun tryEnterFrame(localsCount: Int): Boolean {
+    return localsCount < 500
 }
 
 class Class0(var f0: Any?) : KotlinIndexAccess {
@@ -57,50 +46,53 @@ class Class0(var f0: Any?) : KotlinIndexAccess {
 
 private var g1: Any? = null
 
-fun fun3(l0: Any?): Any? {
-    if (!tryEnterFrame()) {
+fun fun3(localsCount: Int, l0: Any?): Any? {
+    val nextLocalsCount = localsCount + 4
+    if (!tryEnterFrame(nextLocalsCount)) {
         return null
     }
     var l1: Any? = Class0(l0)
     var l2: Any? = Class0(l1)
     var l3: Any? = Class0(l0)
-    leaveFrame()
     return null
 }
 
-fun fun5(l0: Any?): Any? {
-    if (!tryEnterFrame()) {
+fun fun5(localsCount: Int, l0: Any?): Any? {
+    val nextLocalsCount = localsCount + 4
+    if (!tryEnterFrame(nextLocalsCount)) {
         return null
     }
-    var l1: Any? = fun3(l0)
-    var l2: Any? = fun3(l1)
-    var l3: Any? = fun3(l0)
-    leaveFrame()
+    var l1: Any? = fun3(nextLocalsCount, l0)
+    var l2: Any? = fun3(nextLocalsCount, l1)
+    var l3: Any? = fun3(nextLocalsCount, l0)
     return null
 }
 
-fun fun7(l0: Any?): Any? {
-    if (!tryEnterFrame()) {
+fun fun7(localsCount: Int, l0: Any?): Any? {
+    val nextLocalsCount = localsCount + 4
+    if (!tryEnterFrame(nextLocalsCount)) {
         return null
     }
     var l1: Any? = l0
     var l2: Any? = l1
     var l3: Any? = l0
-    leaveFrame()
     return null
 }
 
-fun fun9(l0: Any?): Any? {
-    if (!tryEnterFrame()) {
+fun fun9(localsCount: Int, l0: Any?): Any? {
+    val nextLocalsCount = localsCount + 2
+    if (!tryEnterFrame(nextLocalsCount)) {
         return null
     }
     var l1: Any? = null
     l1 = null
     l1 = null
     l1 = null
-    leaveFrame()
     return null
 }
 
 fun mainBody() {
+    val nextLocalsCount = 0
+    var l0: Any? = fun3(nextLocalsCount, null)
+    var l1: Any? = fun4(nextLocalsCount, null)
 }

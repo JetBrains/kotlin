@@ -25,24 +25,15 @@ private fun spawnThread(block: () -> Unit) {
    Worker.start().executeAfter(0L, block)
 }
 
-@ThreadLocal
-private var frameCount = 100;
-
-private fun tryEnterFrame(): Boolean {
-    if (frameCount-- <= 0) {
-        frameCount++
-        return false
-    }
-    return true
-}
-
-private fun leaveFrame() {
-    frameCount++
+private fun tryEnterFrame(localsCount: Int): Boolean {
+    return localsCount < 500
 }
 
 
 fun mainBody() {
+    val nextLocalsCount = 0
     spawnThread {
+        val nextLocalsCount = 0
         null
     }
 }

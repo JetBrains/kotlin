@@ -79,18 +79,8 @@ private class ObjCTranslationContext(
             |    [NSThread detachNewThreadWithBlock:block];
             |}
             |
-            |static _Thread_local int64_t frameCount = ${config.maximumStackDepth};
-            |
-            |static bool tryEnterFrame(void) {
-            |    if (frameCount-- <= 0) {
-            |        ++frameCount;
-            |        return false;
-            |    }
-            |    return true;
-            |}
-            |
-            |static void leaveFrame(void) {
-            |    ++frameCount;
+            |static bool tryEnterFrame(int32_t localsCount) {
+            |    return localsCount < ${config.maximumStackDepth};
             |}
             |
             |int main() {
@@ -218,12 +208,12 @@ private class ObjCBodyTranslationContext(
     }
 
     fun translateFunctionBody(body: BodyWithReturn) {
-        contents.line("if (!tryEnterFrame())")
+        contents.lineEnd("int32_t nextLocalsCount = localsCount + ${body.body.estimateLocalsCount() + scopeResolver.localsCount};")
+        contents.line("if (!tryEnterFrame(nextLocalsCount))")
         contents.braces {
             contents.lineEnd("return nil;")
         }
         translateBody(body.body)
-        contents.lineEnd("leaveFrame();")
         translateReturnStatement(body.returnExpression)
     }
 
@@ -300,6 +290,7 @@ private class ObjCBodyTranslationContext(
     private fun translateSpawnThreadStatement(statement: BodyStatement.SpawnThread) {
         contents.lineEnd("spawnThread(^{")
         contents.indent {
+            contents.lineEnd("int32_t nextLocalsCount = 0;")
             contents.lineEnd {
                 expressionContext {
                     translateFunctionCallExpression(statement.functionId, statement.args)
@@ -399,6 +390,7 @@ private class ObjCExpressionTranslationContext(
             is TargetLanguage.Kotlin -> contents.selectorCall {
                 receiver("${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}")
                 selector(functionName)
+                arg("localsCount", "nextLocalsCount")
                 fixedArgs.forEachIndexed { index, arg ->
                     arg("l$index") {
                         translateLoadExpression(arg)
@@ -407,6 +399,7 @@ private class ObjCExpressionTranslationContext(
             }
             is TargetLanguage.ObjC -> contents.functionCall {
                 name(functionName)
+                arg("nextLocalsCount")
                 fixedArgs.forEach {
                     arg {
                         translateLoadExpression(it)

@@ -23,7 +23,7 @@ class Config(
 ) {
     companion object {
         val DEFAULT = Config(
-            maximumStackDepth = 100,
+            maximumStackDepth = 500,
             mainLoopRepeatCount = 100000,
         )
     }

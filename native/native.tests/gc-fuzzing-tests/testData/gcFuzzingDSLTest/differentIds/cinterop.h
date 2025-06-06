@@ -12,4 +12,4 @@
 - (instancetype)initWithF0:(id)f0 f1:(id)f1;
 @end
 
-id fun5(id l0, id l1);
+id fun5(int32_t localsCount, id l0, id l1);

@@ -38,18 +38,8 @@ static void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
 }
 
-static _Thread_local int64_t frameCount = 100;
-
-static bool tryEnterFrame(void) {
-    if (frameCount-- <= 0) {
-        ++frameCount;
-        return false;
-    }
-    return true;
-}
-
-static void leaveFrame(void) {
-    ++frameCount;
+static bool tryEnterFrame(int32_t localsCount) {
+    return localsCount < 500;
 }
 
 int main() {
@@ -58,3 +48,4 @@ int main() {
    }
    return 0;
 }
+

@@ -67,19 +67,8 @@ private class KotlinTranslationContext(
             |   Worker.start().executeAfter(0L, block)
             |}
             |
-            |@ThreadLocal
-            |private var frameCount = ${config.maximumStackDepth};
-            |
-            |private fun tryEnterFrame(): Boolean {
-            |    if (frameCount-- <= 0) {
-            |        frameCount++
-            |        return false
-            |    }
-            |    return true
-            |}
-            |
-            |private fun leaveFrame() {
-            |    frameCount++
+            |private fun tryEnterFrame(localsCount: Int): Boolean {
+            |    return localsCount < ${config.maximumStackDepth}
             |}
             |
             |
@@ -153,6 +142,7 @@ private class KotlinTranslationContext(
             append("fun ")
             append(scopeResolver.computeName(definition))
             parens {
+                arg("localsCount: Int")
                 definition.parameters.forEachIndexed { index, _ ->
                     arg("l${index}: Any?")
                 }
@@ -171,6 +161,7 @@ private class KotlinTranslationContext(
         contents.line("fun mainBody()")
         contents.braces {
             bodyContext(emptyList()) {
+                contents.lineEnd("val nextLocalsCount = 0")
                 translateBody(body)
             }
         }
@@ -207,12 +198,12 @@ private class KotlinBodyTranslationContext(
     }
 
     fun translateFunctionBody(body: BodyWithReturn) {
-        contents.line("if (!tryEnterFrame())")
+        contents.lineEnd("val nextLocalsCount = localsCount + ${body.body.estimateLocalsCount() + scopeResolver.localsCount}")
+        contents.line("if (!tryEnterFrame(nextLocalsCount))")
         contents.braces {
             contents.lineEnd(text = "return null")
         }
         translateBody(body.body)
-        contents.lineEnd(text = "leaveFrame()")
         translateReturnStatement(body.returnExpression)
     }
 
@@ -287,6 +278,7 @@ private class KotlinBodyTranslationContext(
     private fun translateSpawnThreadStatement(statement: BodyStatement.SpawnThread) {
         contents.line("spawnThread")
         contents.braces {
+            contents.lineEnd("val nextLocalsCount = 0")
             contents.lineEnd {
                 expressionContext {
                     translateFunctionCallExpression(statement.functionId, statement.args)
@@ -361,6 +353,7 @@ private class KotlinExpressionTranslationContext(
         }
         contents.functionCall {
             name(scopeResolver.computeName(function))
+            arg("nextLocalsCount")
             function.parameters.forEachIndexed { index, _ ->
                 arg {
                     translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)

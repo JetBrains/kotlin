@@ -38,18 +38,8 @@ static void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
 }
 
-static _Thread_local int64_t frameCount = 100;
-
-static bool tryEnterFrame(void) {
-    if (frameCount-- <= 0) {
-        ++frameCount;
-        return false;
-    }
-    return true;
-}
-
-static void leaveFrame(void) {
-    ++frameCount;
+static bool tryEnterFrame(int32_t localsCount) {
+    return localsCount < 500;
 }
 
 int main() {
@@ -61,47 +51,47 @@ int main() {
 
 static id g2 = nil;
 
-id fun4(id l0) {
-    if (!tryEnterFrame()) {
+id fun4(int32_t localsCount, id l0) {
+    int32_t nextLocalsCount = localsCount + 4;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
     id l1 = [[KtlibClass0 alloc] initWithF0:l0];
     id l2 = [[KtlibClass0 alloc] initWithF0:l1];
     id l3 = [[KtlibClass0 alloc] initWithF0:l0];
-    leaveFrame();
     return nil;
 }
 
-id fun6(id l0) {
-    if (!tryEnterFrame()) {
+id fun6(int32_t localsCount, id l0) {
+    int32_t nextLocalsCount = localsCount + 4;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
-    id l1 = [KtlibKtlibKt fun3L0:l0];
-    id l2 = [KtlibKtlibKt fun3L0:l1];
-    id l3 = [KtlibKtlibKt fun3L0:l0];
-    leaveFrame();
+    id l1 = [KtlibKtlibKt fun3LocalsCount:nextLocalsCount l0:l0];
+    id l2 = [KtlibKtlibKt fun3LocalsCount:nextLocalsCount l0:l1];
+    id l3 = [KtlibKtlibKt fun3LocalsCount:nextLocalsCount l0:l0];
     return nil;
 }
 
-id fun8(id l0) {
-    if (!tryEnterFrame()) {
+id fun8(int32_t localsCount, id l0) {
+    int32_t nextLocalsCount = localsCount + 4;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
     id l1 = l0;
     id l2 = l1;
     id l3 = l0;
-    leaveFrame();
     return nil;
 }
 
-id fun10(id l0) {
-    if (!tryEnterFrame()) {
+id fun10(int32_t localsCount, id l0) {
+    int32_t nextLocalsCount = localsCount + 2;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
     id l1 = nil;
     l1 = nil;
     l1 = nil;
     l1 = nil;
-    leaveFrame();
     return nil;
 }

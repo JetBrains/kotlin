@@ -156,7 +156,11 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     TargetLanguage.ObjC, parameters = listOf(Parameter, Parameter), body = body
                 ),
             ),
-            mainBody = Body(emptyList()),
+            mainBody = Body(listOf(
+                    BodyStatement.Call(0, emptyList()),
+                    BodyStatement.Call(1, emptyList()),
+                )
+            ),
         )
     }
 
@@ -209,7 +213,11 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     )
                 }.toTypedArray()
             ),
-            mainBody = Body(emptyList()),
+            mainBody = Body(listOf(
+                    BodyStatement.Call(0, emptyList()),
+                    BodyStatement.Call(1, emptyList()),
+                )
+            ),
         )
     }
 

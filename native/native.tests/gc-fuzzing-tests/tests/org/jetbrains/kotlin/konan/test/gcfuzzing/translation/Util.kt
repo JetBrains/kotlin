@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
+import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Body
+import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.BodyStatement
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Definition
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.EntityId
 import kotlin.math.absoluteValue
@@ -20,6 +22,7 @@ fun GlobalScopeResolver.functionObjCDeclaration(contents: LineBuilder, definitio
     contents.append("id ")
     contents.append(computeName(definition))
     contents.parens {
+        arg("int32_t localsCount")
         definition.parameters.forEachIndexed { index, _ ->
             arg("id l${index}")
         }
@@ -185,4 +188,16 @@ val EntityId.asString: String
 fun <T> List<T>.findEntity(id: EntityId): T? {
     if (isEmpty()) return null
     return this[id.normalized % size]
+}
+
+fun Body.estimateLocalsCount(): Int {
+    return statements.sumOf {
+        when (it) {
+            is BodyStatement.Call -> 1
+            is BodyStatement.Store -> 0
+            is BodyStatement.SpawnThread -> 0
+            is BodyStatement.Alloc -> 1
+            is BodyStatement.Load -> 1
+        }
+    }
 }

@@ -38,18 +38,8 @@ static void spawnThread(void (^block)()) {
     [NSThread detachNewThreadWithBlock:block];
 }
 
-static _Thread_local int64_t frameCount = 100;
-
-static bool tryEnterFrame(void) {
-    if (frameCount-- <= 0) {
-        ++frameCount;
-        return false;
-    }
-    return true;
-}
-
-static void leaveFrame(void) {
-    ++frameCount;
+static bool tryEnterFrame(int32_t localsCount) {
+    return localsCount < 500;
 }
 
 int main() {
@@ -89,26 +79,27 @@ int main() {
 
 static id g3 = nil;
 
-id fun5(id l0, id l1) {
-    if (!tryEnterFrame()) {
+id fun5(int32_t localsCount, id l0, id l1) {
+    int32_t nextLocalsCount = localsCount + 2;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
     g3 = l0;
     [l1 storeField:0 value:[g3 loadField:1]];
     spawnThread(^{
-        fun7(l1);
+        int32_t nextLocalsCount = 0;
+        fun7(nextLocalsCount, l1);
     });
-    leaveFrame();
     return nil;
 }
 
-id fun7(id l0) {
-    if (!tryEnterFrame()) {
+id fun7(int32_t localsCount, id l0) {
+    int32_t nextLocalsCount = localsCount + 4;
+    if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
     id l1 = [[KtlibClass0 alloc] initWithF0:nil f1:nil];
     id l2 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l3 = [KtlibKtlibKt fun6L0:l0];
-    leaveFrame();
+    id l3 = [KtlibKtlibKt fun6LocalsCount:nextLocalsCount l0:l0];
     return [[[l1 loadField:1] loadField:3] loadField:4];
 }
