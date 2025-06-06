@@ -12,7 +12,7 @@ How to Publish
 2. Prepare publication credentials for https://jetbrains.team/p/kt/packages/maven/kotlin-dependencies/org.jetbrains.kotlin/kotlin-build-gradle-plugin
 3. Execute `./gradlew -p dependencies/kotlin-build-gradle-plugin publish -PkotlinSpaceUsername=usr -PkotlinSpacePassword=token`
  */
-version = "0.0.40"
+version = "0.0.41"
 
 repositories {
     mavenCentral()
