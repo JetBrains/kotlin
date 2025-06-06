@@ -19659,6 +19659,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("capturedTypeAsLambdaInputType.kt")
+      public void testCapturedTypeAsLambdaInputType() {
+        runTest("compiler/testData/codegen/box/inference/capturedTypeAsLambdaInputType.kt");
+      }
+
+      @Test
       @TestMetadata("capturedTypeWhenSubject.kt")
       public void testCapturedTypeWhenSubject() {
         runTest("compiler/testData/codegen/box/inference/capturedTypeWhenSubject.kt");
