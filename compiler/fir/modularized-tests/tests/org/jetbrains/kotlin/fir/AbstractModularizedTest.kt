@@ -54,6 +54,7 @@ internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("
 private val ROOT_PATH_PREFIX: String = System.getProperty("fir.bench.prefix", "/")
 private val OUTPUT_DIR_REGEX_FILTER: String = System.getProperty("fir.bench.filter", ".*")
 private val MODULE_NAME_FILTER: String? = System.getProperty("fir.bench.filter.name")
+private val MODULE_NAME_REGEX_OUT: String? = System.getProperty("fir.bench.filter.out.name")
 internal val ENABLE_SLOW_ASSERTIONS: Boolean = System.getProperty("fir.bench.enable.slow.assertions") == "true"
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
@@ -171,8 +172,11 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
         val moduleName = MODULE_NAME_FILTER
+        val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
         val files = root.listFiles() ?: emptyArray()
-        val modules = files.filter { it.extension == "xml" }
+        val modules = files.filter {
+            it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
+        }
             .sortedBy { it.lastModified() }
             .flatMap { loadModuleDumpFile(it) }
             .sortedBy { it.timestamp }
