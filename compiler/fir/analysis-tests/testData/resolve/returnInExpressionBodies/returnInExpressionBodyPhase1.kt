@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +AllowReturnInExpressionBodyWithExplicitType, -ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases
 
-fun foo1(): Int = <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> 42
+fun foo1(): Int = return 42
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo2<!>() = <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY!>return<!> <!RETURN_TYPE_MISMATCH!>42<!>
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>foo3<!>() = run { return <!RETURN_TYPE_MISMATCH!>42<!> }
 fun foo4(): Int = run { return 42 }
