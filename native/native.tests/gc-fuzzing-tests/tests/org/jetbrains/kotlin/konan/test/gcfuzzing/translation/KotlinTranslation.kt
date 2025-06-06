@@ -238,7 +238,8 @@ private class KotlinBodyTranslationContext(
                 translateStoreStatementWithPath(scopeResolver.computeName(definition), statement.to.path, statement.from)
             }
             is StoreExpression.Local -> {
-                val definition = scopeResolver.resolveLocal(statement.to.localId, onlyMutable = statement.to.path.accessors.isEmpty()) ?: return
+                val definition =
+                    scopeResolver.resolveLocal(statement.to.localId, onlyMutable = statement.to.path.accessors.isEmpty()) ?: return
                 translateStoreStatementWithPath(scopeResolver.computeName(definition), statement.to.path, statement.from)
             }
         }
