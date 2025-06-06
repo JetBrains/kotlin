@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
-import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.OutputFileBuilder.LineBuilder
 
 class KotlinOutput(
     val filename: String,
@@ -81,6 +80,7 @@ private class KotlinTranslationContext(
             |    frameCount++
             |}
             |
+            |
             """.trimMargin()
             )
         }
@@ -96,38 +96,45 @@ private class KotlinTranslationContext(
     }
 
     private fun translateGlobalDefinition(definition: Definition.Global) {
-        contents.line {
+        contents.lineEnd {
             if (!scopeResolver.isExported(definition)) append("private ")
             append("var ${scopeResolver.computeName(definition)}: Any? = null")
         }
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {
-        contents.braces({
-                            if (!scopeResolver.isExported(definition)) append("private ")
-                            append("class ")
-                            append(scopeResolver.computeName(definition))
-                            parens(*definition.fields.mapIndexed { index, _ -> fun LineBuilder.() = append("var f${index}: Any?") }
-                                .toTypedArray())
-                            append(" : KotlinIndexAccess ")
-                        }) {
-            contents.braces("override fun loadKotlinField(index: Int): Any? ") {
+        contents.line {
+            if (!scopeResolver.isExported(definition)) append("private ")
+            append("class ${scopeResolver.computeName(definition)}")
+            parens {
+                definition.fields.forEachIndexed { index, _ ->
+                    arg("var f${index}: Any?")
+                }
+            }
+            append(" : KotlinIndexAccess")
+        }
+        contents.braces {
+            contents.line("override fun loadKotlinField(index: Int): Any?")
+            contents.braces {
                 if (definition.fields.isEmpty()) {
-                    contents.line(text = "return null")
+                    contents.lineEnd(text = "return null")
                 } else {
-                    contents.braces("return when (index % ${definition.fields.size}) ") {
+                    contents.line("return when (index % ${definition.fields.size})")
+                    contents.braces {
                         definition.fields.forEachIndexed { index, _ ->
-                            contents.line(text = "$index -> f${index}")
+                            contents.lineEnd(text = "$index -> f${index}")
                         }
-                        contents.line(text = "else -> null")
+                        contents.lineEnd(text = "else -> null")
                     }
                 }
             }
-            contents.braces("override fun storeKotlinField(index: Int, value: Any?) ") {
+            contents.line("override fun storeKotlinField(index: Int, value: Any?)")
+            contents.braces {
                 if (definition.fields.isNotEmpty()) {
-                    contents.braces("when (index % ${definition.fields.size}) ") {
+                    contents.line("when (index % ${definition.fields.size})")
+                    contents.braces {
                         definition.fields.forEachIndexed { index, _ ->
-                            contents.line(text = "$index -> f${index} = value")
+                            contents.lineEnd(text = "$index -> f${index} = value")
                         }
                     }
                 }
@@ -136,14 +143,18 @@ private class KotlinTranslationContext(
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
-        contents.braces({
-                            if (!scopeResolver.isExported(definition)) append("private ")
-                            append("fun ")
-                            append(scopeResolver.computeName(definition))
-                            parens(*definition.parameters.mapIndexed { index, _ -> fun LineBuilder.() = append("l${index}: Any?") }
-                                .toTypedArray())
-                            append(": Any? ")
-                        }) {
+        contents.line {
+            if (!scopeResolver.isExported(definition)) append("private ")
+            append("fun ")
+            append(scopeResolver.computeName(definition))
+            parens {
+                definition.parameters.forEachIndexed { index, _ ->
+                    arg("l${index}: Any?")
+                }
+            }
+            append(": Any?")
+        }
+        contents.braces {
             bodyContext(definition.parameters) {
                 translateFunctionBody(definition.body)
             }
@@ -151,14 +162,15 @@ private class KotlinTranslationContext(
     }
 
     private fun translateMainFunction(body: Body) {
-        contents.braces("fun mainBody() ") {
+        contents.line("fun mainBody()")
+        contents.braces {
             bodyContext(emptyList()) {
                 translateBody(body)
             }
         }
     }
 
-    private inline fun <R> bodyContext(initialScope: List<Parameter>, block: KotlinBodyTranslationContext.() -> R): R =
+    private inline fun bodyContext(initialScope: List<Parameter>, block: KotlinBodyTranslationContext.() -> Unit) =
         KotlinBodyTranslationContext(
             LocalScopeResolver(scopeResolver, TargetLanguage.Kotlin, initialScope),
             contents,
@@ -169,7 +181,7 @@ private class KotlinBodyTranslationContext(
     private val scopeResolver: LocalScopeResolver,
     private val contents: OutputFileBuilder,
 ) {
-    private fun <R> OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> R): R = line {
+    private fun OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> Unit) = lineEnd {
         val local = scopeResolver.allocateLocal()
         append("var ${scopeResolver.computeName(local)}: Any? = ")
         block()
@@ -188,11 +200,12 @@ private class KotlinBodyTranslationContext(
     }
 
     fun translateFunctionBody(body: BodyWithReturn) {
-        contents.braces("if (!tryEnterFrame()) ") {
-            contents.line(text = "return null")
+        contents.line("if (!tryEnterFrame())")
+        contents.braces {
+            contents.lineEnd(text = "return null")
         }
         translateBody(body.body)
-        contents.line(text = "leaveFrame()")
+        contents.lineEnd(text = "leaveFrame()")
         translateReturnStatement(body.returnExpression)
     }
 
@@ -229,16 +242,23 @@ private class KotlinBodyTranslationContext(
         val loadAccessors = path.accessors.dropLast(1)
         val storeAccessor = path.accessors.lastOrNull()
         if (storeAccessor != null) {
-            contents.line {
+            contents.lineEnd {
                 expressionContext {
-                    chainLoad(name, loadAccessors)
-                    append("?.storeField")
-                    parens({ append(storeAccessor.toString()) }, { translateLoadExpression(from) })
+                    functionCall {
+                        name {
+                            chainLoad(name, loadAccessors)
+                            append("?.storeField")
+                        }
+                        arg(storeAccessor.toString())
+                        arg {
+                            translateLoadExpression(from)
+                        }
+                    }
                 }
             }
         } else {
             check(loadAccessors.isEmpty())
-            contents.line {
+            contents.lineEnd {
                 append(name)
                 append(" = ")
                 expressionContext {
@@ -257,8 +277,9 @@ private class KotlinBodyTranslationContext(
     }
 
     private fun translateSpawnThreadStatement(statement: BodyStatement.SpawnThread) {
-        contents.braces("spawnThread ") {
-            contents.line {
+        contents.line("spawnThread")
+        contents.braces {
+            contents.lineEnd {
                 expressionContext {
                     translateFunctionCallExpression(statement.functionId, statement.args)
                 }
@@ -267,7 +288,7 @@ private class KotlinBodyTranslationContext(
     }
 
     private fun translateReturnStatement(arg: LoadExpression) {
-        contents.line {
+        contents.lineEnd {
             append("return ")
             expressionContext {
                 translateLoadExpression(arg)
@@ -314,11 +335,14 @@ private class KotlinExpressionTranslationContext(
             translateLoadExpression(LoadExpression.Default)
             return
         }
-        contents.functionCall(
-            { append(scopeResolver.computeName(clazz)) }, *clazz.fields.mapIndexed { index, _ ->
-            fun LineBuilder.() = translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
-        }.toTypedArray()
-        )
+        contents.functionCall {
+            name(scopeResolver.computeName(clazz))
+            clazz.fields.forEachIndexed { index, _ ->
+                arg {
+                    translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+                }
+            }
+        }
     }
 
     fun translateFunctionCallExpression(functionId: EntityId, args: List<LoadExpression>) {
@@ -327,11 +351,14 @@ private class KotlinExpressionTranslationContext(
             translateLoadExpression(LoadExpression.Default)
             return
         }
-        contents.functionCall(
-            { append(scopeResolver.computeName(function)) }, *function.parameters.mapIndexed { index, _ ->
-            fun LineBuilder.() = translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
-        }.toTypedArray()
-        )
+        contents.functionCall {
+            name(scopeResolver.computeName(function))
+            function.parameters.forEachIndexed { index, _ ->
+                arg {
+                    translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+                }
+            }
+        }
     }
 }
 

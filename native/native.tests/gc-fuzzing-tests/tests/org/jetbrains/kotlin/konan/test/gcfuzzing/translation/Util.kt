@@ -6,56 +6,160 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Definition
-import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.OutputFileBuilder.LineBuilder
 
 fun GlobalScopeResolver.functionObjCDeclaration(contents: LineBuilder, definition: Definition.Function) {
     contents.append("id ")
     contents.append(computeName(definition))
-    contents.parens(*definition.parameters.mapIndexed { index, _ -> fun LineBuilder.() = append("id l${index}") }.toTypedArray())
+    contents.parens {
+        definition.parameters.forEachIndexed { index, _ ->
+            arg("id l${index}")
+        }
+    }
 }
 
 fun GlobalScopeResolver.initObjCDeclaration(contents: LineBuilder, definition: Definition.Class) {
     contents.append("- (instancetype)")
-    contents.selector(
-        { append("initWith") }, *definition.fields.mapIndexed { index, _ ->
-        "f$index" to fun LineBuilder.() = append("(id)f${index}")
-    }.toTypedArray()
-    )
-}
-
-private fun LineBuilder.selector(
-    selector: LineBuilder.() -> Unit,
-    vararg args: Pair<String, LineBuilder.() -> Unit>,
-) {
-    selector()
-    args.forEachIndexed { index, (name, arg) ->
-        if (index == 0) {
-            append(name.uppercase())
-        } else {
-            append(name)
+    contents.selector {
+        selector("initWith")
+        definition.fields.forEachIndexed { index, _ ->
+            arg("f$index", "(id)f${index}")
         }
-        append(":")
-        arg()
-        if (index < args.size - 1) append(" ")
     }
 }
 
-fun LineBuilder.selectorCall(
-    receiver: LineBuilder.() -> Unit,
-    selector: LineBuilder.() -> Unit,
-    vararg args: Pair<String, LineBuilder.() -> Unit>,
-) {
-    append("[")
-    receiver()
-    append(" ")
-    selector(selector, *args)
-    append("]")
+class SelectorBuilder(private val lineBuilder: LineBuilder) {
+    private var selector: (LineBuilder.() -> Unit)? = null
+    private val args = mutableListOf<Pair<String, LineBuilder.() -> Unit>>()
+
+    fun selector(block: LineBuilder.() -> Unit) {
+        selector = block
+    }
+
+    fun selector(text: String) = selector {
+        append(text)
+    }
+
+    fun arg(name: String, block: LineBuilder.() -> Unit) {
+        args.add(name to block)
+    }
+
+    fun arg(name: String, text: String) = arg(name) {
+        append(text)
+    }
+
+    fun build() = with(lineBuilder) {
+        requireNotNull(selector)
+        selector!!()
+        selector = null
+        args.forEachIndexed { index, (name, arg) ->
+            if (index == 0) {
+                append(name.replaceFirstChar { it.uppercase() })
+            } else {
+                append(name)
+            }
+            append(":")
+            arg()
+            if (index < args.size - 1) append(" ")
+        }
+        args.clear()
+    }
 }
 
-fun LineBuilder.functionCall(
-    name: LineBuilder.() -> Unit,
-    vararg args: LineBuilder.() -> Unit,
-) {
-    name()
-    parens(*args)
+private fun LineBuilder.selector(block: SelectorBuilder.() -> Unit) = SelectorBuilder(this).run {
+    block()
+    build()
+}
+
+class SelectorCallBuilder(private val lineBuilder: LineBuilder) {
+    private var receiver: (LineBuilder.() -> Unit)? = null
+    private val selectorBuilder = SelectorBuilder(lineBuilder)
+
+    fun receiver(block: LineBuilder.() -> Unit) {
+        receiver = block
+    }
+
+    fun receiver(text: String) = receiver {
+        append(text)
+    }
+
+    fun selector(block: LineBuilder.() -> Unit) = selectorBuilder.selector(block)
+    fun selector(text: String) = selectorBuilder.selector(text)
+    fun arg(name: String, block: LineBuilder.() -> Unit) = selectorBuilder.arg(name, block)
+    fun arg(name: String, text: String) = selectorBuilder.arg(name, text)
+
+    fun build() = with(lineBuilder) {
+        append("[")
+        requireNotNull(receiver)
+        receiver!!()
+        receiver = null
+        append(" ")
+        selectorBuilder.build()
+        append("]")
+    }
+}
+
+fun LineBuilder.selectorCall(block: SelectorCallBuilder.() -> Unit) = SelectorCallBuilder(this).run {
+    block()
+    build()
+}
+
+class FunctionCallBuilder(private val lineBuilder: LineBuilder) {
+    private var name: (LineBuilder.() -> Unit)? = null
+    private val parensBuilder = ParensBuilder(lineBuilder)
+
+    fun name(block: LineBuilder.() -> Unit) {
+        name = block
+    }
+
+    fun name(text: String) = name {
+        append(text)
+    }
+
+    fun arg(block: LineBuilder.() -> Unit) = parensBuilder.arg(block)
+    fun arg(text: String) = parensBuilder.arg(text)
+
+    fun build() = with(lineBuilder) {
+        requireNotNull(name)
+        name!!()
+        name = null
+        parensBuilder.build()
+    }
+}
+
+fun LineBuilder.functionCall(block: FunctionCallBuilder.() -> Unit) = FunctionCallBuilder(this).run {
+    block()
+    build()
+}
+
+class ParensBuilder(private val lineBuilder: LineBuilder) {
+    private val args = mutableListOf<LineBuilder.() -> Unit>()
+
+    fun arg(block: LineBuilder.() -> Unit) {
+        args.add(block)
+    }
+
+    fun arg(text: String) = arg {
+        append(text)
+    }
+
+    fun build() = with(lineBuilder) {
+        append("(")
+        args.forEachIndexed { index, arg ->
+            arg()
+            if (index < args.size - 1) append(", ")
+        }
+        append(")")
+        args.clear()
+    }
+}
+
+fun LineBuilder.parens(block: ParensBuilder.() -> Unit) = ParensBuilder(this).run {
+    block()
+    build()
+}
+
+fun OutputFileBuilder.braces(block: () -> Unit) {
+    lineEnd(" {")
+    indent(block)
+    lineEnd("}")
 }

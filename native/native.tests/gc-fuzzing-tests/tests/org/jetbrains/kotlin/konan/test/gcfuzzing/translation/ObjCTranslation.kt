@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
-import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.OutputFileBuilder.LineBuilder
 
 class ObjCOutput(
     val filename: String,
@@ -33,7 +32,7 @@ fun Program.produceObjC(config: ObjCConfig): ObjCOutput {
 private class ObjCTranslationContext(
     private val config: ObjCConfig,
     private val scopeResolver: GlobalScopeResolver,
-    val contents: OutputFileBuilder = OutputFileBuilder(defaultLineSuffix = ";"),
+    val contents: OutputFileBuilder = OutputFileBuilder(),
 ) {
     fun translate(program: Program) {
         contents.raw(
@@ -97,6 +96,7 @@ private class ObjCTranslationContext(
             |   return 0;
             |}
             |
+            |
             """.trimMargin()
         )
 
@@ -115,61 +115,70 @@ private class ObjCTranslationContext(
     }
 
     private fun translateGlobalDefinition(definition: Definition.Global) {
-        contents.line(text = "id ${scopeResolver.computeName(definition)} = nil")
+        contents.lineEnd {
+            if (!scopeResolver.isExported(definition)) append("static ")
+            append("id ${scopeResolver.computeName(definition)} = nil;")
+        }
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {
-        contents.line(suffix = "", text = "@implementation ${scopeResolver.computeName(definition)}")
+        contents.lineEnd("@implementation ${scopeResolver.computeName(definition)}")
         if (definition.fields.isNotEmpty()) {
-            contents.braces({
-                                scopeResolver.initObjCDeclaration(this, definition)
-                                append(" ")
-                            }) {
-                contents.line(text = "self = [super init]")
-                contents.braces("if (self) ") {
+            contents.line {
+                scopeResolver.initObjCDeclaration(this, definition)
+            }
+            contents.braces {
+                contents.lineEnd("self = [super init];")
+                contents.line("if (self)")
+                contents.braces {
                     definition.fields.forEachIndexed { index, _ ->
-                        contents.line(text = "self.f$index = f$index")
+                        contents.lineEnd("self.f$index = f$index;")
                     }
                 }
-                contents.line(text = "return self")
+                contents.lineEnd("return self;")
             }
         }
-        contents.braces("- (id)loadObjCField:(int32_t)index ") {
+        contents.line("- (id)loadObjCField:(int32_t)index")
+        contents.braces {
             if (definition.fields.isEmpty()) {
-                contents.line(text = "return nil")
+                contents.lineEnd("return nil;")
             } else {
-                contents.braces("switch(index % ${definition.fields.size}) ") {
+                contents.line("switch(index % ${definition.fields.size})")
+                contents.braces {
                     definition.fields.forEachIndexed { index, _ ->
-                        contents.line(text = "case $index: return self.f$index")
+                        contents.lineEnd("case $index: return self.f$index;")
                     }
-                    contents.line(text = "default: return nil")
+                    contents.lineEnd("default: return nil;")
                 }
             }
         }
-        contents.braces("- (void)storeObjCField:(int32_t)index value:(id)value ") {
+        contents.line("- (void)storeObjCField:(int32_t)index value:(id)value")
+        contents.braces {
             if (definition.fields.isNotEmpty()) {
-                contents.braces("switch(index % ${definition.fields.size}) ") {
+                contents.line("switch(index % ${definition.fields.size})")
+                contents.braces {
                     definition.fields.forEachIndexed { index, _ ->
-                        contents.line(text = "case $index: self.f$index = value")
+                        contents.lineEnd("case $index: self.f$index = value;")
                     }
                 }
             }
         }
-        contents.line(suffix = "", text = "@end")
+        contents.lineEnd("@end")
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
-        contents.braces({
-                            scopeResolver.functionObjCDeclaration(this, definition)
-                            append(" ")
-                        }) {
+        contents.line {
+            if (!scopeResolver.isExported(definition)) append("static ")
+            scopeResolver.functionObjCDeclaration(this, definition)
+        }
+        contents.braces {
             bodyContext(definition.parameters) {
                 translateFunctionBody(definition.body)
             }
         }
     }
 
-    private inline fun <R> bodyContext(initialScope: List<Parameter>, block: ObjCBodyTranslationContext.() -> R): R =
+    private inline fun bodyContext(initialScope: List<Parameter>, block: ObjCBodyTranslationContext.() -> Unit) =
         ObjCBodyTranslationContext(
             config,
             LocalScopeResolver(scopeResolver, TargetLanguage.ObjC, initialScope),
@@ -182,10 +191,11 @@ private class ObjCBodyTranslationContext(
     private val scopeResolver: LocalScopeResolver,
     private val contents: OutputFileBuilder,
 ) {
-    private fun <R> OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> R): R = line {
+    private fun OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> Unit) = lineEnd {
         val local = scopeResolver.allocateLocal()
         append("id ${scopeResolver.computeName(local)} = ")
         block()
+        append(";")
     }
 
     private fun translateBody(body: Body) {
@@ -201,11 +211,12 @@ private class ObjCBodyTranslationContext(
     }
 
     fun translateFunctionBody(body: BodyWithReturn) {
-        contents.braces("if (!tryEnterFrame()) ") {
-            contents.line(text = "return nil")
+        contents.line("if (!tryEnterFrame())")
+        contents.braces {
+            contents.lineEnd("return nil;")
         }
         translateBody(body.body)
-        contents.line(text = "leaveFrame()")
+        contents.lineEnd("leaveFrame();")
         translateReturnStatement(body.returnExpression)
     }
 
@@ -242,23 +253,30 @@ private class ObjCBodyTranslationContext(
         val loadAccessors = path.accessors.dropLast(1)
         val storeAccessor = path.accessors.lastOrNull()
         if (storeAccessor != null) {
-            contents.line {
+            contents.lineEnd {
                 expressionContext {
-                    selectorCall(
-                        { chainLoad(name, loadAccessors) },
-                                 { append("storeField") },
-                                 "" to { append(storeAccessor.toString()) },
-                                 "value" to { translateLoadExpression(from) })
+                    selectorCall {
+                        receiver {
+                            chainLoad(name, loadAccessors)
+                        }
+                        selector("store")
+                        arg("field", storeAccessor.toString())
+                        arg("value") {
+                            translateLoadExpression(from)
+                        }
+                    }
                 }
+                append(";")
             }
         } else {
             check(loadAccessors.isEmpty())
-            contents.line {
+            contents.lineEnd {
                 append(name)
                 append(" = ")
                 expressionContext {
                     translateLoadExpression(from)
                 }
+                append(";")
             }
         }
     }
@@ -272,25 +290,29 @@ private class ObjCBodyTranslationContext(
     }
 
     private fun translateSpawnThreadStatement(statement: BodyStatement.SpawnThread) {
-        contents.braces(prefix = "spawnThread", open = "(^{", close = "});") {
-            contents.line {
+        contents.lineEnd("spawnThread(^{")
+        contents.indent {
+            contents.lineEnd {
                 expressionContext {
                     translateFunctionCallExpression(statement.functionId, statement.args)
                 }
+                append(";")
             }
         }
+        contents.lineEnd("});")
     }
 
     private fun translateReturnStatement(arg: LoadExpression) {
-        contents.line {
+        contents.lineEnd {
             append("return ")
             expressionContext {
                 translateLoadExpression(arg)
             }
+            append(";")
         }
     }
 
-    private inline fun <R> LineBuilder.expressionContext(block: ObjCExpressionTranslationContext.() -> R): R =
+    private inline fun LineBuilder.expressionContext(block: ObjCExpressionTranslationContext.() -> Unit) =
         ObjCExpressionTranslationContext(
             config,
             scopeResolver,
@@ -331,25 +353,29 @@ private class ObjCExpressionTranslationContext(
             translateLoadExpression(LoadExpression.Default)
             return
         }
-        contents.selectorCall(
-            {
-                                  selectorCall(
-                                      {
-                                          when (clazz.targetLanguage) {
-                                              is TargetLanguage.ObjC -> {}
-                                              is TargetLanguage.Kotlin -> append(config.kotlinIdentifierPrefix)
-                                          }
-                                          append(scopeResolver.computeName(clazz))
-                                      },
-                                      { append("alloc") },
-                                  )
-                              }, {
-                                  append("init")
-                                  if (clazz.fields.isNotEmpty()) append("With")
-                              }, *clazz.fields.mapIndexed { index, _ ->
-            "f$index" to fun LineBuilder.() = translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
-        }.toTypedArray()
-        )
+        contents.selectorCall {
+            receiver {
+                selectorCall {
+                    receiver {
+                        when (clazz.targetLanguage) {
+                            is TargetLanguage.ObjC -> {}
+                            is TargetLanguage.Kotlin -> append(config.kotlinIdentifierPrefix)
+                        }
+                        append(scopeResolver.computeName(clazz))
+                    }
+                    selector("alloc")
+                }
+            }
+            selector {
+                append("init")
+                if (clazz.fields.isNotEmpty()) append("With")
+            }
+            clazz.fields.forEachIndexed { index, _ ->
+                arg("f$index") {
+                    translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+                }
+            }
+        }
     }
 
     fun translateFunctionCallExpression(functionId: EntityId, args: List<LoadExpression>) {
@@ -363,18 +389,23 @@ private class ObjCExpressionTranslationContext(
         }
         val functionName = scopeResolver.computeName(function)
         when (function.targetLanguage) {
-            is TargetLanguage.Kotlin -> {
-                contents.selectorCall(
-                    { append(config.kotlinGlobalClass) }, { append(functionName) }, *fixedArgs.mapIndexed { index, arg ->
-                    "l$index" to fun LineBuilder.() = translateLoadExpression(arg)
-                }.toTypedArray()
-                )
+            is TargetLanguage.Kotlin -> contents.selectorCall {
+                receiver(config.kotlinGlobalClass)
+                selector(functionName)
+                fixedArgs.forEachIndexed { index, arg ->
+                    arg("l$index") {
+                        translateLoadExpression(arg)
+                    }
+                }
             }
-            is TargetLanguage.ObjC -> contents.functionCall(
-                { append(functionName) }, *fixedArgs.map {
-                fun LineBuilder.() = translateLoadExpression(it)
-            }.toTypedArray()
-            )
+            is TargetLanguage.ObjC -> contents.functionCall {
+                name(functionName)
+                fixedArgs.forEach {
+                    arg {
+                        translateLoadExpression(it)
+                    }
+                }
+            }
         }
     }
 }
@@ -384,5 +415,11 @@ private fun LineBuilder.chainLoad(name: String, accessors: List<EntityId>) {
         append(name)
         return
     }
-    selectorCall({ chainLoad(name, accessors.dropLast(1)) }, { append("loadField") }, "" to { append(accessors.last().toString()) })
+    selectorCall {
+        receiver {
+            chainLoad(name, accessors.dropLast(1))
+        }
+        selector("load")
+        arg("field", accessors.last().toString())
+    }
 }

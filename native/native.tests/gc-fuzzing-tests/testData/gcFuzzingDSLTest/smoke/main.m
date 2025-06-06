@@ -80,7 +80,7 @@ int main() {
     }
 }
 @end
-id g3 = nil;
+static id g3 = nil;
 id fun5(id l0, id l1) {
     if (!tryEnterFrame()) {
         return nil;

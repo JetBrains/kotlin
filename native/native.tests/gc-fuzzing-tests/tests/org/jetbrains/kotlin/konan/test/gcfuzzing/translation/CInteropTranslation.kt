@@ -40,7 +40,7 @@ private class CInteropTranslationContext(
     private val config: CInteropConfig,
     private val scopeResolver: GlobalScopeResolver,
     val defContents: OutputFileBuilder = OutputFileBuilder(),
-    val headerContents: OutputFileBuilder = OutputFileBuilder(defaultLineSuffix = ";"),
+    val headerContents: OutputFileBuilder = OutputFileBuilder(),
 ) {
     fun translate(program: Program) {
         defContents.raw(
@@ -60,6 +60,7 @@ private class CInteropTranslationContext(
             |- (void)storeObjCField:(int32_t)index value:(id)value;
             |@end
             |
+            |
             """.trimMargin()
         )
 
@@ -73,21 +74,23 @@ private class CInteropTranslationContext(
     }
 
     private fun translateFunctionDefinition(definition: Definition.Function) {
-        headerContents.line {
+        headerContents.lineEnd {
             scopeResolver.functionObjCDeclaration(this, definition)
+            append(";")
         }
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {
-        headerContents.line(suffix = "", text = "@interface ${scopeResolver.computeName(definition)} : NSObject<ObjCIndexAccess>")
+        headerContents.lineEnd("@interface ${scopeResolver.computeName(definition)} : NSObject<ObjCIndexAccess>")
         definition.fields.forEachIndexed { index, _ ->
-            headerContents.line(text = "@property id f${index}")
+            headerContents.lineEnd("@property id f${index};")
         }
         if (definition.fields.isNotEmpty()) {
-            headerContents.line {
+            headerContents.lineEnd {
                 scopeResolver.initObjCDeclaration(this, definition)
+                append(";")
             }
         }
-        headerContents.line(suffix = "", text = "@end")
+        headerContents.lineEnd("@end")
     }
 }
