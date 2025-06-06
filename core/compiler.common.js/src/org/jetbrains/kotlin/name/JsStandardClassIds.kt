@@ -85,6 +85,9 @@ object JsStandardClassIds {
 
         @JvmField
         val nativeAnnotations = setOf(JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter)
+
+        @JvmField
+        val JsNoLifting = "JsNoLifting".jsId()
     }
 
     object Callables {
