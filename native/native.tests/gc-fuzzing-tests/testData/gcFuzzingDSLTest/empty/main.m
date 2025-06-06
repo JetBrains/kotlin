@@ -53,10 +53,17 @@ static bool tryEnterFrame(int32_t localsCount) {
     return localsCount < 500;
 }
 
+@interface Globals : NSObject
+@end
+
+@implementation Globals
+@end
+static Globals* globals = nil;
+
 int main() {
+   globals = [Globals new];
    for (int i = 0; i < 100000; ++i) {
        [KtlibKtlibKt mainBody];
    }
    return 0;
 }
-

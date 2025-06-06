@@ -11,13 +11,6 @@ import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Definition
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.EntityId
 import kotlin.math.absoluteValue
 
-val Definition.order: Int
-    get() = when (this) {
-        is Definition.Class -> 0
-        is Definition.Global -> 1
-        is Definition.Function -> 2
-    }
-
 fun GlobalScopeResolver.functionObjCDeclaration(contents: LineBuilder, definition: Definition.Function) {
     contents.append("id ")
     contents.append(computeName(definition))

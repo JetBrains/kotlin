@@ -88,7 +88,7 @@ private class KotlinTranslationContext(
             )
         }
 
-        program.definitions.filter { it.targetLanguage is TargetLanguage.Kotlin }.sortedBy { it.order }.forEach {
+        program.definitions.filter { it.targetLanguage is TargetLanguage.Kotlin }.forEach {
             when (it) {
                 is Definition.Function -> translateFunctionDefinition(it)
                 is Definition.Global -> translateGlobalDefinition(it)

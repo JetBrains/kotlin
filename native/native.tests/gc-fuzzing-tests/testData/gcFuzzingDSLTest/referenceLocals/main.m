@@ -53,14 +53,13 @@ static bool tryEnterFrame(int32_t localsCount) {
     return localsCount < 500;
 }
 
-int main() {
-   for (int i = 0; i < 100000; ++i) {
-       [KtlibKtlibKt mainBody];
-   }
-   return 0;
-}
+@interface Globals : NSObject
+@property id g2;
+@end
 
-static id g2 = nil;
+@implementation Globals
+@end
+static Globals* globals = nil;
 
 id fun4(int32_t localsCount, id l0) {
     int32_t nextLocalsCount = localsCount + 4;
@@ -105,4 +104,12 @@ id fun10(int32_t localsCount, id l0) {
     l1 = nil;
     l1 = nil;
     return nil;
+}
+
+int main() {
+   globals = [Globals new];
+   for (int i = 0; i < 100000; ++i) {
+       [KtlibKtlibKt mainBody];
+   }
+   return 0;
 }

@@ -95,32 +95,52 @@ private class ObjCTranslationContext(
             |    return localsCount < ${config.maximumStackDepth};
             |}
             |
+            |
+            """.trimMargin()
+        )
+
+        val classDefinitions = mutableListOf<Definition.Class>()
+        val functionDefinitions = mutableListOf<Definition.Function>()
+        val globalsDefinitions = mutableListOf<Definition.Global>()
+        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC }.forEach {
+            when (it) {
+                is Definition.Class -> classDefinitions.add(it)
+                is Definition.Function -> functionDefinitions.add(it)
+                is Definition.Global -> globalsDefinitions.add(it)
+            }
+        }
+
+        // First classes
+        classDefinitions.forEach { translateClassDefinition(it) }
+
+        // Then globals inside its own scope.
+        contents.lineEnd("@interface Globals : NSObject")
+        globalsDefinitions.forEach { translateGlobalDefinition(it) }
+        contents.lineEnd("@end")
+        contents.lineEnd()
+        contents.lineEnd("@implementation Globals")
+        contents.lineEnd("@end")
+        contents.lineEnd("static Globals* globals = nil;")
+
+        // Finally functions
+        functionDefinitions.forEach { translateFunctionDefinition(it) }
+
+        // Entry point
+        contents.raw("""
+            |
             |int main() {
+            |   globals = [Globals new];
             |   for (int i = 0; i < ${config.mainLoopRepeatCount}; ++i) {
             |       [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
             |   }
             |   return 0;
             |}
-            |
-            |
-            """.trimMargin()
-        )
-
-        // Function definitions must be present after everything else.
-        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC }.sortedBy { it.order }.forEach {
-            when (it) {
-                is Definition.Function -> translateFunctionDefinition(it)
-                is Definition.Global -> translateGlobalDefinition(it)
-                is Definition.Class -> translateClassDefinition(it)
-            }
-        }
+        """.trimMargin())
     }
 
     private fun translateGlobalDefinition(definition: Definition.Global) {
-        contents.lineEnd {
-            if (!scopeResolver.isExported(definition)) append("static ")
-            append("id ${scopeResolver.computeName(definition)} = nil;")
-        }
+        check(!scopeResolver.isExported(definition)) { "Exported globals are unsupported" }
+        contents.lineEnd("@property id ${scopeResolver.computeName(definition)};")
     }
 
     private fun translateClassDefinition(definition: Definition.Class) {
@@ -249,7 +269,7 @@ private class ObjCBodyTranslationContext(
         when (statement.to) {
             is StoreExpression.Global -> {
                 val definition = scopeResolver.resolveGlobal(statement.to.globalId) ?: return
-                translateStoreStatementWithPath(scopeResolver.computeName(definition), statement.to.path, statement.from)
+                translateStoreStatementWithPath("globals.${scopeResolver.computeName(definition)}", statement.to.path, statement.from)
             }
             is StoreExpression.Local -> {
                 val definition =
@@ -343,7 +363,7 @@ private class ObjCExpressionTranslationContext(
                 if (definition == null) {
                     contents.append("nil")
                 } else {
-                    contents.chainLoad(scopeResolver.computeName(definition), expression.path.accessors)
+                    contents.chainLoad("globals.${scopeResolver.computeName(definition)}", expression.path.accessors)
                 }
             }
             is LoadExpression.Local -> {

@@ -64,7 +64,7 @@ private class CInteropTranslationContext(
             """.trimMargin()
         )
 
-        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC && scopeResolver.isExported(it) }.sortedBy { it.order }
+        program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC && scopeResolver.isExported(it) }
             .forEach {
                 when (it) {
                     is Definition.Function -> translateFunctionDefinition(it)

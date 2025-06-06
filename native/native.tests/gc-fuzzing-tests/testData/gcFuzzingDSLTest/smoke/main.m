@@ -53,13 +53,6 @@ static bool tryEnterFrame(int32_t localsCount) {
     return localsCount < 500;
 }
 
-int main() {
-   for (int i = 0; i < 100000; ++i) {
-       [KtlibKtlibKt mainBody];
-   }
-   return 0;
-}
-
 @implementation Class1
 
 - (instancetype)initWithF0:(id)f0 f1:(id)f1 {
@@ -88,15 +81,21 @@ int main() {
 
 @end
 
-static id g3 = nil;
+@interface Globals : NSObject
+@property id g3;
+@end
+
+@implementation Globals
+@end
+static Globals* globals = nil;
 
 id fun5(int32_t localsCount, id l0, id l1) {
     int32_t nextLocalsCount = localsCount + 2;
     if (!tryEnterFrame(nextLocalsCount)) {
         return nil;
     }
-    g3 = l0;
-    [l1 storeField:0 value:[g3 loadField:1]];
+    globals.g3 = l0;
+    [l1 storeField:0 value:[globals.g3 loadField:1]];
     spawnThread(^{
         int32_t nextLocalsCount = 0;
         fun7(nextLocalsCount, l1);
@@ -113,4 +112,12 @@ id fun7(int32_t localsCount, id l0) {
     id l2 = [[Class1 alloc] initWithF0:nil f1:nil];
     id l3 = [KtlibKtlibKt fun6LocalsCount:nextLocalsCount l0:l0];
     return [[[l1 loadField:1] loadField:3] loadField:4];
+}
+
+int main() {
+   globals = [Globals new];
+   for (int i = 0; i < 100000; ++i) {
+       [KtlibKtlibKt mainBody];
+   }
+   return 0;
 }
