@@ -259,10 +259,10 @@ class SwiftExportIT : KGPBaseTest() {
                 }
             }
             build(
-                ":embedSwiftExportForXcode",
+                ":iosArm64DebugSwiftExport",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksExecuted(":copyDebugSPMIntermediates")
+                assertTasksExecuted(":iosArm64DebugSwiftExport")
                 assertDirectoryInProjectExists("build/SwiftExport/iosArm64/Debug")
             }
 
@@ -439,13 +439,12 @@ class SwiftExportIT : KGPBaseTest() {
             include(subprojectTwo, "dep-two")
 
             build(
-                ":embedSwiftExportForXcode",
+                ":iosArm64DebugSwiftExport",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
                 assertTasksExecuted(":dep-one:compileKotlinIosArm64")
                 assertTasksExecuted(":dep-two:compileKotlinIosArm64")
                 assertTasksExecuted(":compileKotlinIosArm64")
-                assertTasksExecuted(":copyDebugSPMIntermediates")
 
                 val sharedPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared")
                 val depOnePath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/DepOne")
@@ -464,7 +463,7 @@ class SwiftExportIT : KGPBaseTest() {
                 val actualModules = modules.map { it["name"] as String }.toSet()
 
                 assertEquals(
-                    setOf("Shared", "DepOne"),
+                    setOf("Shared", "DepOne", "ExportedKotlinPackages", "KotlinRuntimeSupport"),
                     actualModules
                 )
             }
