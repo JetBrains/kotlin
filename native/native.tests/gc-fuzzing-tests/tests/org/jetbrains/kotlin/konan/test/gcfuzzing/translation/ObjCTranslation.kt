@@ -198,10 +198,11 @@ private class ObjCBodyTranslationContext(
     private val contents: OutputFileBuilder,
 ) {
     private fun OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> Unit) = lineEnd {
-        val local = scopeResolver.allocateLocal()
-        append("id ${scopeResolver.computeName(local)} = ")
-        block()
-        append(";")
+        scopeResolver.allocateLocal { name ->
+            append("id $name = ")
+            block()
+            append(";")
+        }
     }
 
     private fun translateBody(body: Body) {

@@ -130,9 +130,7 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                             add(BodyStatement.Store(to, from))
                         }
                     }
-                }
-            ), returnExpression = LoadExpression.Default
-        )
+                }), returnExpression = LoadExpression.Default)
         Program(
             definitions = listOf(
                 Definition.Class(
@@ -157,6 +155,59 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                 Definition.Function(
                     TargetLanguage.ObjC, parameters = listOf(Parameter, Parameter), body = body
                 ),
+            ),
+            mainBody = Body(emptyList()),
+        )
+    }
+
+    @Test
+    fun referenceLocals(testInfo: TestInfo) = runTest(testInfo) {
+        fun local(id: EntityId) = LoadExpression.Local(id, Path(emptyList()))
+        fun localL(id: EntityId) = StoreExpression.Local(id, Path(emptyList()))
+
+        val bodies = listOf(buildList {
+            add(BodyStatement.Alloc(0, listOf(local(0))))
+            add(BodyStatement.Alloc(0, listOf(local(1))))
+            add(BodyStatement.Alloc(0, listOf(local(3))))
+        }, buildList {
+            add(BodyStatement.Call(0, listOf(local(0))))
+            add(BodyStatement.Call(0, listOf(local(1))))
+            add(BodyStatement.Call(0, listOf(local(3))))
+        }, buildList {
+            add(BodyStatement.Load(local(0)))
+            add(BodyStatement.Load(local(1)))
+            add(BodyStatement.Load(local(3)))
+        }, buildList {
+            add(BodyStatement.Load(LoadExpression.Default))
+            add(BodyStatement.Store(localL(0), LoadExpression.Default))
+            add(BodyStatement.Store(localL(1), LoadExpression.Default))
+            add(BodyStatement.Store(localL(2), LoadExpression.Default))
+        })
+        Program(
+            definitions = listOf(
+                Definition.Class(
+                    TargetLanguage.Kotlin,
+                    listOf(Field),
+                ), Definition.Global(
+                    TargetLanguage.Kotlin,
+                    Field,
+                ), Definition.Global(
+                    TargetLanguage.ObjC,
+                    Field,
+                ), *bodies.flatMap { statements ->
+                    listOf(
+                        Definition.Function(
+                            TargetLanguage.Kotlin, parameters = listOf(Parameter), body = BodyWithReturn(
+                                body = Body(statements), returnExpression = LoadExpression.Default
+                            )
+                        ),
+                        Definition.Function(
+                            TargetLanguage.ObjC, parameters = listOf(Parameter), body = BodyWithReturn(
+                                body = Body(statements), returnExpression = LoadExpression.Default
+                            )
+                        ),
+                    )
+                }.toTypedArray()
             ),
             mainBody = Body(emptyList()),
         )

@@ -188,9 +188,10 @@ private class KotlinBodyTranslationContext(
     private val contents: OutputFileBuilder,
 ) {
     private fun OutputFileBuilder.lineWithNewLocal(block: LineBuilder.() -> Unit) = lineEnd {
-        val local = scopeResolver.allocateLocal()
-        append("var ${scopeResolver.computeName(local)}: Any? = ")
-        block()
+        scopeResolver.allocateLocal { name ->
+            append("var $name: Any? = ")
+            block()
+        }
     }
 
     fun translateBody(body: Body) {

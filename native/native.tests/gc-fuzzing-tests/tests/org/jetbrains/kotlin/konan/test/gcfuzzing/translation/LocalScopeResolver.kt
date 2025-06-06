@@ -37,7 +37,14 @@ class LocalScopeResolver(
     fun resolveLocal(id: EntityId, onlyMutable: Boolean = false): DefinitionLocal? =
         locals.filter { if (onlyMutable) it.mutable else true }.findEntity(id)
 
-    fun allocateLocal(): DefinitionLocal = DefinitionLocal(locals.size, mutable = true).also {
-        locals.add(it)
+    /**
+     * Allocate a new local and run [block] with its name.
+     *
+     * The local will be added to the scope only after [block] has executed.
+     */
+    fun allocateLocal(block: (String) -> Unit) {
+        val local = DefinitionLocal(locals.size, mutable = true)
+        block(computeName(local))
+        locals.add(local)
     }
 }
