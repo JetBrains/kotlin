@@ -193,7 +193,7 @@ abstract class MetadataDependencyTransformationTask
 
     internal fun allTransformedLibraries(): Provider<List<File>> =
         parentLibrariesIndexFiles.zip(ownTransformedLibraries()) { parent, own ->
-            transformedLibraries(parent.flatMap { it.records() }) + own
+            own + transformedLibraries(parent.flatMap { it.records() })
         }
 
     companion object {
