@@ -102,6 +102,12 @@ public interface ContractBuilder {
      * Specifies the effect that will be observed if the condition passed as a receiver argument holds.
      *
      * Only [ReturnsNotNull] effect is supported for now.
+     *
+     * Note: the receiver can accept only a subset of boolean expressions,
+     * where a function parameter or receiver (`this`) undergoes
+     * - null-checks (`== null`, `!= null`);
+     * - instance-checks (`is`, `!is`);
+     * - a combination of the above with the help of logic operators (`&&`, `||`, `!`).
      */
     @ExperimentalExtendedContracts
     @ContractsDsl

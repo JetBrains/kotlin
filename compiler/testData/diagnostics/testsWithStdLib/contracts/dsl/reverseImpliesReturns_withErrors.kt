@@ -68,3 +68,10 @@ fun testNotNumber(x: Any) {
         decodeNotNumber(x)<!UNSAFE_CALL!>.<!>length
     decodeNotNumber(42)<!UNSAFE_CALL!>.<!>length
 }
+
+fun decodeB1(input: Boolean): String? {
+    contract {
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>(input == true) implies returnsNotNull()<!> // Boolean(true)is not a null.
+    }
+    TODO()
+}

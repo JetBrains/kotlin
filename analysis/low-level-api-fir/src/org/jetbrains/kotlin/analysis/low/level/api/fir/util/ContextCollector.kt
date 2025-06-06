@@ -331,7 +331,12 @@ private class ContextCollectorVisitor(
                 }
 
                 val typeStatementVariable = typeStatement.variable
-                requireWithAttachment(typeStatementVariable is RealVariable, { "Expecting a RealVariable, got $typeStatementVariable" })
+                requireWithAttachment(
+                    typeStatementVariable is RealVariable,
+                    { "Expecting a ${RealVariable::class.simpleName}, got ${typeStatementVariable::class.simpleName}" },
+                ) {
+                    withEntry("variable", typeStatementVariable) { it.toString() }
+                }
                 smartCasts[typeStatementVariable] = typeStatement.upperTypes
 
                 // The compiler pushes smart-cast types for implicit receivers to ease later lookups.
