@@ -16,7 +16,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.tasks.CheckSigningTask
+import org.jetbrains.kotlin.gradle.tasks.publishing.CheckSigningTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.junit.jupiter.api.DisplayName
