@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing
 
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
 import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.dslGeneratedDir
@@ -32,6 +34,8 @@ private fun assertDirectoriesEqual(expected: java.io.File, actual: java.io.File)
     }
 }
 
+// These tests are not stress tests, they merely check the adequacy of generated code. Limit their execution time, these tests tolerate timeouts.
+@EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "1m")
 class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     private val testDataDir = java.io.File(System.getProperty("kotlin.internal.native.test.testDataDir")).resolve("gcFuzzingDSLTest")
 
