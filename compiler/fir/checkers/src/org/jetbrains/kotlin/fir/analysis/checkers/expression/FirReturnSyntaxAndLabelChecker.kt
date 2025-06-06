@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.hasExplicitReturnType
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -24,11 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 
 object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -50,8 +49,11 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         checkBuiltInSuspend(targetSymbol, source)
     }
 
-    private fun FirDeclaration.hasExpressionBody(): Boolean {
-        return this is FirFunction && this.body is FirSingleExpressionBlock
+    context(context: CheckerContext)
+    private fun FirFunction.supportsReturnExpression(): Boolean {
+        return body !is FirSingleExpressionBlock ||
+                symbol.hasExplicitReturnType &&
+                context.languageVersionSettings.supportsFeature(LanguageFeature.AllowReturnInExpressionBodyWithExplicitType)
     }
 
     context(context: CheckerContext)
@@ -67,7 +69,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
                 }
                 is FirFunctionSymbol if (containingDeclaration == targetSymbol) -> {
                     val targetFunction = targetSymbol.fir
-                    return FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.takeIf { !existingFalseNegative && targetFunction.hasExpressionBody() }
+                    return FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY.takeUnless { existingFalseNegative || targetFunction.supportsReturnExpression() }
                 }
                 is FirAnonymousFunctionSymbol -> {
                     if (!containingDeclaration.inlineStatus.returnAllowed) {
