@@ -107,7 +107,6 @@ public interface ContractBuilder {
      * where a function parameter or receiver (`this`) undergoes
      * - null-checks (`== null`, `!= null`);
      * - instance-checks (`is`, `!is`);
-     * - a combination of the above with the help of logic operators (`&&`, `||`, `!`).
      */
     @ExperimentalExtendedContracts
     @ContractsDsl
