@@ -400,6 +400,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     }
 
     protected fun runTest(@TestDataFile path: String) {
+        runTest(path) { doTest(it) }
+    }
+
+    protected fun runTest(@TestDataFile path: String, block: (TestServices) -> Unit) {
         testDataPath = configurator.computeTestDataPath(Paths.get(path))
         val testConfiguration = createTestConfiguration()
         testServices = testConfiguration.testServices
@@ -422,7 +426,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             return
         }
 
-        doTest(testServices)
+        block(testServices)
     }
 
     @AfterEach
