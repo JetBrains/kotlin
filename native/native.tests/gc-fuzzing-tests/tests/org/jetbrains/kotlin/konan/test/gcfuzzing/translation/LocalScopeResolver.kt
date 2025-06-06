@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.EntityId
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Parameter
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.TargetLanguage
 
-class DefinitionLocal(val id: EntityId)
+class DefinitionLocal(val id: EntityId, val mutable: Boolean)
 
 class LocalScopeResolver(
     private val globalScopeResolver: GlobalScopeResolver,
     private val scopeLanguage: TargetLanguage,
     initialScope: List<Parameter>,
 ) {
-    private var currentScopeSize: Int = initialScope.size
+    private val locals = mutableListOf<DefinitionLocal>().apply {
+        initialScope.mapIndexedTo(this) { index, _ ->
+            DefinitionLocal(index, false)
+        }
+    }
 
     fun computeName(definition: Definition.Function): String = globalScopeResolver.computeName(definition)
     fun computeName(definition: Definition.Class): String = globalScopeResolver.computeName(definition)
@@ -30,11 +34,13 @@ class LocalScopeResolver(
     fun resolveFunction(id: EntityId): Definition.Function? = globalScopeResolver.resolveFunction(id, scopeLanguage)
     fun resolveClass(id: EntityId): Definition.Class? = globalScopeResolver.resolveClass(id, scopeLanguage)
     fun resolveGlobal(id: EntityId): Definition.Global? = globalScopeResolver.resolveGlobal(id, scopeLanguage)
-    fun resolveLocal(id: EntityId): DefinitionLocal? = if (currentScopeSize == 0) null else {
-        DefinitionLocal(id % currentScopeSize)
+    fun resolveLocal(id: EntityId, onlyMutable: Boolean = false): DefinitionLocal? {
+        val matchingDefinitions = locals.filter { if (onlyMutable) it.mutable else true }
+        if (matchingDefinitions.isEmpty()) return null
+        return matchingDefinitions[id % matchingDefinitions.size]
     }
 
-    fun allocateLocal(): DefinitionLocal = DefinitionLocal(currentScopeSize).also {
-        currentScopeSize++
+    fun allocateLocal(): DefinitionLocal = DefinitionLocal(locals.size, mutable = true).also {
+        locals.add(it)
     }
 }
