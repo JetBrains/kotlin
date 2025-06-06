@@ -48,6 +48,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Test
+    @TestMetadata("checkReturnValue.kt")
+    public void testCheckReturnValue() {
+      runTest("compiler/testData/codegen/box/annotations/checkReturnValue.kt");
+    }
+
+    @Test
     @TestMetadata("deserializedLocalClassArgument.kt")
     public void testDeserializedLocalClassArgument() {
       runTest("compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
