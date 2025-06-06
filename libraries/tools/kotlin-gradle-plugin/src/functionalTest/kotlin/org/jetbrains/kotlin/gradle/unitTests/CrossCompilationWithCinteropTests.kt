@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -54,10 +55,12 @@ class CrossCompilationWithCinteropTests {
         }
 
         if (HostManager.hostIsMac) {
+            project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be enabled on macOS"
             }
         } else {
+            project.assertContainsDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(!cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be disabled on non-macOS"
             }
