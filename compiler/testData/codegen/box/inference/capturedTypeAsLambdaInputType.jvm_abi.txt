@@ -1,0 +1,12 @@
+MODULE main
+	CLASS CapturedTypeAsLambdaInputTypeKt$clear$1.class
+		K1
+			invoke(Ljava/lang/Object;)Ljava/lang/Void; [public, final]
+		K2
+			---
+		METHOD invoke(Ljava/lang/Object;)Ljava/lang/Object;
+			Property: method.access
+				K1
+					1000001000001 [public, bridge, synthetic]
+				K2
+					10001 [public, final]
