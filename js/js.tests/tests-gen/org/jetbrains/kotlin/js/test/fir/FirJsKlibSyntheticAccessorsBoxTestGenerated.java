@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCodegenBoxWithInlinedFunInKlibTest {
+public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsKlibSyntheticAccessorsBoxTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);

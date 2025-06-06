@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractFirJsES6Test(
@@ -16,6 +18,7 @@ abstract class AbstractFirJsES6Test(
         with(builder) {
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.ES6_MODE
+                PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name
             }
         }
     }

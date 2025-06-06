@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractJsIrES6Test(
@@ -19,6 +21,7 @@ abstract class AbstractJsIrES6Test(
         with(builder) {
             defaultDirectives {
                 +JsEnvironmentConfigurationDirectives.ES6_MODE
+                PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name
             }
         }
     }

@@ -53,4 +53,12 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
     val KLIB_RELATIVE_PATH_BASES by stringDirective(
         description = "Sets ${KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES}"
     )
+
+    val PARTIAL_LINKAGE_MODE by stringDirective(
+        description = "Sets ${KlibConfigurationKeys.PARTIAL_LINKAGE_MODE}"
+    )
+
+    val PARTIAL_LINKAGE_LOG_LEVEL by stringDirective(
+        description = "Sets ${KlibConfigurationKeys.PARTIAL_LINKAGE_LOG_LEVEL}"
+    )
 }

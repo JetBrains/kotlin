@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.KLIB_RELATIVE_PATH_BASES
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_LOG_LEVEL
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
@@ -211,6 +213,14 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.klibRelativePathBases = registeredDirectives[KLIB_RELATIVE_PATH_BASES].applyIf(testServices.cliBasedFacadesEnabled) {
             val modulePath = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module).canonicalPath
             map { "$modulePath/$it" }
+        }
+
+        registeredDirectives[PARTIAL_LINKAGE_MODE].lastOrNull()?.let {
+            configuration.partialLinkageMode = PartialLinkageMode.resolveMode(it) ?: error("Unsupported partial linkage mode: $it")
+        }
+
+        registeredDirectives[PARTIAL_LINKAGE_LOG_LEVEL].lastOrNull()?.let {
+            configuration.partialLinkageLogLevel = PartialLinkageLogLevel.resolveLogLevel(it) ?: error("Unsupported partial linkage log level: $it")
         }
 
         if (testServices.cliBasedFacadesEnabled) {

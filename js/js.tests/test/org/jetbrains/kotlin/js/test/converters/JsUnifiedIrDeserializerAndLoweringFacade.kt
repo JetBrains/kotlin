@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.converters
 
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
-import org.jetbrains.kotlin.config.setupPartialLinkageConfig
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -45,11 +42,6 @@ class JsUnifiedIrDeserializerAndLoweringFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {
-        val configuration = deserializerFacade.testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-
         return deserializerFacade.transform(module, inputArtifact)?.let {
             loweringFacade.transform(module, it)
         }

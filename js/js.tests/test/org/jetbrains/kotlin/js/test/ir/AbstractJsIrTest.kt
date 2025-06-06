@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.ir
 
+import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.js.test.JsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.ClassicJsKlibSerializerFacade
 import org.jetbrains.kotlin.js.test.handlers.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -75,17 +77,27 @@ abstract class AbstractJsIrTest(
     }
 }
 
-open class AbstractIrBoxJsTest : AbstractJsIrTest(
+abstract class AbstractJsIrPLTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+) : AbstractJsIrTest (pathToTestDir=pathToTestDir, testGroupOutputDirPrefix=testGroupOutputDirPrefix)  {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives { PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name }
+    }
+}
+
+open class AbstractIrBoxJsTest : AbstractJsIrPLTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix = "irBox/"
 )
 
-open class AbstractIrJsCodegenBoxTest : AbstractJsIrTest(
+open class AbstractIrJsCodegenBoxTest : AbstractJsIrPLTest(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/irBox/"
 )
 
-open class AbstractIrJsCodegenInlineTest : AbstractJsIrTest(
+open class AbstractIrJsCodegenInlineTest : AbstractJsIrPLTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/irBoxInline/"
 )
@@ -107,6 +119,7 @@ open class AbstractIrJsES6TypeScriptExportTest : AbstractJsIrES6Test(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureJsTypeScriptExportTest()
+        builder.defaultDirectives { PARTIAL_LINKAGE_MODE with PartialLinkageMode.DISABLE.name }
     }
 }
 
@@ -207,7 +220,7 @@ open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
     }
 }
 
-open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrTest(
+open class AbstractIrCodegenWasmJsInteropJsTest : AbstractJsIrPLTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/irWasmJsInteropJs/"
 )

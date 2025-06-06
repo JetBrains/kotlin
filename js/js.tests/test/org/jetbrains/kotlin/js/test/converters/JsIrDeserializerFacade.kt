@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -47,6 +46,13 @@ class JsIrDeserializerFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        configuration.setupPartialLinkageConfig(
+            PartialLinkageConfig(
+                // mode in test pipelines must be `DISABLE` by default, while in production the default is `DEFAULT`
+                configuration.get(KlibConfigurationKeys.PARTIAL_LINKAGE_MODE, PartialLinkageMode.DISABLE),
+                configuration.partialLinkageLogLevel
+            )
+        )
 
         val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val klibDependencies = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)

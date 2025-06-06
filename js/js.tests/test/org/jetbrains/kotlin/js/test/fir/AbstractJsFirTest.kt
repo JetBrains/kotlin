@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.IGNORE_KLIB_SYNTHETIC_ACCESSORS_CHECKS
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
@@ -114,6 +116,9 @@ open class AbstractFirJsCodegenBoxTestBase(testGroupOutputDirPrefix: String) : A
         builder.useAfterAnalysisCheckers(
             ::FirMetaInfoDiffSuppressor
         )
+        builder.defaultDirectives {
+            PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name
+        }
     }
 }
 
@@ -138,10 +143,34 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
     }
 }
 
+open class AbstractFirJsKlibSyntheticAccessorsBoxTest : AbstractFirJsCodegenBoxTestBase(
+    testGroupOutputDirPrefix = "codegen/firSyntheticAccessorsBox"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                +CHECK_SAME_ABI_AFTER_INLINING
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+                PARTIAL_LINKAGE_MODE with PartialLinkageMode.DISABLE.name
+            }
+        }
+    }
+}
+
 open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/firBoxInline/"
-)
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name
+            }
+        }
+    }
+}
 
 open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
@@ -160,6 +189,9 @@ open class AbstractFirJsES6TypeScriptExportTest : AbstractFirJsES6Test(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureJsTypeScriptExportTest()
+        builder.defaultDirectives {
+            PARTIAL_LINKAGE_MODE with PartialLinkageMode.DISABLE.name
+        }
     }
 }
 
@@ -220,7 +252,16 @@ open class AbstractFirJsSteppingTest : AbstractFirJsTest(
 open class AbstractFirJsCodegenWasmJsInteropTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/wasmJsInterop/",
     testGroupOutputDirPrefix = "codegen/firWasmJsInteropJs/"
-)
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                PARTIAL_LINKAGE_MODE with PartialLinkageMode.ENABLE.name
+            }
+        }
+    }
+}
 
 // TODO(KT-64570): Don't inherit from AbstractFirJsTest after we move the common prefix of lowerings before serialization.
 open class AbstractFirJsKlibSyntheticAccessorTest : AbstractFirJsTest(
