@@ -441,6 +441,7 @@ enum class LanguageFeature(
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-77156"),
     AllowReifiedTypeInCatchClause(KOTLIN_2_4, issue = "KT-54363"),
     ForbidGetSetValueWithTooManyParameters(KOTLIN_2_4, issue = "KT-77131"),
+    ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-288"),
 
     // End of 2.* language features --------------------------------------------------
 
