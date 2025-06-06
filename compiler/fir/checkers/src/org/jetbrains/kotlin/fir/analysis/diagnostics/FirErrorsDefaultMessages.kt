@@ -677,6 +677,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESTRICTED_RETENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_FOR_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_BY_DELEGATION
@@ -777,6 +778,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
@@ -3055,7 +3057,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function.")
         map.put(
             RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
-            "Returns are prohibited for functions with an expression body. Use block body '{...}'."
+            "Returns are prohibited in functions with expression body. Use block body '{...}'."
+        )
+        map.put(
+            RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING,
+            "Return in function with expression body and without explicit return type. Use block body '{...}' or add an explicit return type."
+                .toDeprecationWarningMessage(LanguageFeature.ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases)
+        )
+        map.put(
+            RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE,
+            "Returns are prohibited in functions with expression body and without explicit return type. Use block body '{...}' or add an explicit return type."
         )
         map.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers in interfaces are prohibited.")
 

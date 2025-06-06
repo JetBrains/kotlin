@@ -4718,6 +4718,16 @@ internal class ReturnInFunctionWithExpressionBodyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtReturnExpression>(firDiagnostic, token), KaFirDiagnostic.ReturnInFunctionWithExpressionBody
 
+internal class ReturnInFunctionWithExpressionBodyWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtReturnExpression>(firDiagnostic, token), KaFirDiagnostic.ReturnInFunctionWithExpressionBodyWarning
+
+internal class ReturnInFunctionWithExpressionBodyAndImplicitTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtReturnExpression>(firDiagnostic, token), KaFirDiagnostic.ReturnInFunctionWithExpressionBodyAndImplicitType
+
 internal class NoReturnInFunctionWithBlockBodyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
