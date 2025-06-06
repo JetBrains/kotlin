@@ -51,7 +51,7 @@ publishing {
         maven {
             name = "kotlinSpace"
             url = uri("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-            credentials(org.gradle.api.artifacts.repositories.PasswordCredentials::class)
+            credentials(PasswordCredentials::class)
         }
     }
 }
