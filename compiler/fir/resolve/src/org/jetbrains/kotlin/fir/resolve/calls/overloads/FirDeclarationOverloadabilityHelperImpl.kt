@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
+import org.jetbrains.kotlin.fir.declarations.typeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -87,7 +90,9 @@ class FirDeclarationOverloadabilityHelperImpl(val session: FirSession) : FirDecl
     override fun isEquallyOrMoreSpecific(
         sigA: FlatSignature<FirCallableSymbol<*>>,
         sigB: FlatSignature<FirCallableSymbol<*>>,
-    ): Boolean = createEmptyConstraintSystem().isSignatureEquallyOrMoreSpecific(
+    ): Boolean = createEmptyConstraintSystem().also {
+        session.inferenceLogger?.logStage("Some isEquallyOrMoreSpecific() call", it.constraintSystemMarker)
+    }.isSignatureEquallyOrMoreSpecific(
         sigA,
         sigB,
         OverloadabilitySpecificityCallbacks,
