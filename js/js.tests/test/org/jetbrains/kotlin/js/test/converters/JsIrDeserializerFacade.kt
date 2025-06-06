@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.config.partialLinkageLogLevel
+import org.jetbrains.kotlin.config.partialLinkageMode
+import org.jetbrains.kotlin.config.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -47,6 +51,7 @@ open class JsIrDeserializerFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(configuration.partialLinkageMode, configuration.partialLinkageLogLevel))
 
         val runtimeKlibs = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val klibDependencies = getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
