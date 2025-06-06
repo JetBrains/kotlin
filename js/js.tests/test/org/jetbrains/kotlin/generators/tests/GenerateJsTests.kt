@@ -62,7 +62,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsKlibSyntheticAccessorTest> {
                 model()
             }
-            testClass<AbstractFirJsKlibSyntheticAccessorsBoxTest>(
+            testClass<AbstractFirJsCodegenBoxWithInlinedFunInKlibTest>(
                 suiteTestClassName = "FirJsKlibSyntheticAccessorsBoxTestGenerated"
             ) {
                 model()

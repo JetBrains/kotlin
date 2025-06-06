@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// ^^^ Should be fixed by KT-76093
-
 // MODULE: lib
 // FILE: A.kt
 class A {

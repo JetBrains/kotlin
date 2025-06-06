@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
-import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringWithPLFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
 import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase.JsBackendFacades
@@ -68,11 +67,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
 
             val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
                 get() = ::RecompileModuleJsIrBackendFacade
-        }
-
-        object WithRecompilationWithPL : WithRecompilation() {
-            override val deserializerAndLoweringFacade: Constructor<AbstractTestFacade<BinaryArtifacts.KLib, BinaryArtifacts.Js>>
-                get() = ::JsUnifiedIrDeserializerAndLoweringWithPLFacade
         }
 
         /**

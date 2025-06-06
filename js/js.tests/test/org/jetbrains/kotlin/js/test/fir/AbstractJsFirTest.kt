@@ -136,12 +136,6 @@ open class AbstractFirJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirJsCodege
     }
 }
 
-open class AbstractFirJsKlibSyntheticAccessorsBoxTest : AbstractFirJsCodegenBoxWithInlinedFunInKlibTest() {
-    override val backendFacades: JsBackendFacades
-        get() = JsBackendFacades.WithRecompilationWithPL
-}
-
-
 open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
     pathToTestDir = "compiler/testData/codegen/boxInline/",
     testGroupOutputDirPrefix = "codegen/firBoxInline/"
