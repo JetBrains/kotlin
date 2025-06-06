@@ -319,7 +319,7 @@ abstract class FirDataFlowAnalyzer(
                     enterRepeatableStatement(flow, assignedInside)
                 }
                 function.lambdaArgumentParent?.let {
-                    processConditionalContract(flow, it, null)
+                    processConditionalContract(flow, it, null, processForLambdaArgument = true)
                 }
             }
         }
@@ -1107,6 +1107,8 @@ abstract class FirDataFlowAnalyzer(
         flow: MutableFlow,
         qualifiedAccess: FirStatement,
         callArgsExit: PersistentFlow?,
+        processForLambdaArgument: Boolean = false, // true if called on entering lambda argument where we should process holdsIn contracts only
+        // TODO: split or rewrite to simplify the cases, see KT-78107
     ) {
         // contracts has no effect on non-body resolve stages
         if (!components.transformer.baseTransformerPhase.isBodyResolve) return
@@ -1127,10 +1129,29 @@ abstract class FirDataFlowAnalyzer(
 
         val originalFunction = callee.originalIfFakeOverride()
         val contractDescription = (originalFunction?.symbol ?: callee.symbol).resolvedContractDescription ?: return
-        val conditionalEffects = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalEffectDeclaration }
-        val conditionalReturns = contractDescription.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
-        val conditionalHoldsIn = contractDescription.effects.mapNotNull { it.effect as? ConeHoldsInEffectDeclaration }
-        if (conditionalEffects.isEmpty() && conditionalReturns.isEmpty() && conditionalHoldsIn.isEmpty()) return
+
+        var hasAnyContractsToProcess = false
+        val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = mutableListOf()
+        val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = mutableListOf()
+        val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = mutableListOf()
+        contractDescription.effects.forEach {
+            val effect = it.effect
+            when {
+                !processForLambdaArgument && effect is ConeConditionalEffectDeclaration -> {
+                    conditionalEffects.add(effect)
+                    hasAnyContractsToProcess = true
+                }
+                !processForLambdaArgument && effect is ConeConditionalReturnsDeclaration -> {
+                    conditionalReturns.add(effect)
+                    hasAnyContractsToProcess = true
+                }
+                processForLambdaArgument && effect is ConeHoldsInEffectDeclaration -> {
+                    conditionalHoldsIn.add(effect)
+                    hasAnyContractsToProcess = true
+                }
+            }
+        }
+        if (!hasAnyContractsToProcess) return
 
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
         val argumentVariablesForConditionalEffects = Array(arguments.size) { i ->
@@ -1162,33 +1183,39 @@ abstract class FirDataFlowAnalyzer(
         }
 
         if (argumentVariablesForConditionalEffects.any { it != null }) {
-            for (conditionalEffect in conditionalEffects) {
-                val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
-                val operation = effect.value.toOperation()
-                processEffect(conditionalEffect.condition, operation)
-            }
-            for (conditionHoldsIn in conditionalHoldsIn) {
-                processEffect(conditionHoldsIn.argumentsCondition, null)
+            if (!processForLambdaArgument) {
+                for (conditionalEffect in conditionalEffects) {
+                    val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
+                    val operation = effect.value.toOperation()
+                    processEffect(conditionalEffect.condition, operation)
+                }
+            } else {
+                for (conditionHoldsIn in conditionalHoldsIn) {
+                    processEffect(conditionHoldsIn.argumentsCondition, null)
+                }
             }
         }
 
-        if (qualifiedAccess is FirExpression) {
-            for (conditionalReturn in conditionalReturns) {
-                val effect = conditionalReturn.returnsEffect as? ConeReturnsEffectDeclaration ?: continue
-                if (effect.value != ConeContractConstantValues.NOT_NULL) continue
-                val statements =
-                    logicSystem.approveContractStatement(
-                        conditionalReturn.argumentsCondition, allArgumentVariables, substitutor, typesOnlyFromRealVars = false
-                    ) {
-                        logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
-                    }
-                statements?.forEach { (variable, statement) ->
-                    val approved = logicSystem.approveTypeStatement(flow, statement)
-                    if (approved) {
-                        val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
-                        val functionReturnCondition = OperationStatement(functionCallVariable, Operation.NotEqNull)
-                        val functionReturnStatements = logicSystem.approveOperationStatement(flow, functionReturnCondition, removeApprovedOrImpossible = true)
-                        flow.addAllStatements(functionReturnStatements)
+        if (!processForLambdaArgument) {
+            if (qualifiedAccess is FirExpression) {
+                for (conditionalReturn in conditionalReturns) {
+                    val effect = conditionalReturn.returnsEffect as? ConeReturnsEffectDeclaration ?: continue
+                    if (effect.value != ConeContractConstantValues.NOT_NULL) continue
+                    val statements =
+                        logicSystem.approveContractStatement(
+                            conditionalReturn.argumentsCondition, allArgumentVariables, substitutor, typesOnlyFromRealVars = false
+                        ) {
+                            logicSystem.approveOperationStatement(flow, it, removeApprovedOrImpossible = true)
+                        }
+                    statements?.forEach { (variable, statement) ->
+                        val approved = logicSystem.approveTypeStatement(flow, statement)
+                        if (approved) {
+                            val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
+                            val functionReturnCondition = OperationStatement(functionCallVariable, Operation.NotEqNull)
+                            val functionReturnStatements =
+                                logicSystem.approveOperationStatement(flow, functionReturnCondition, removeApprovedOrImpossible = true)
+                            flow.addAllStatements(functionReturnStatements)
+                        }
                     }
                 }
             }

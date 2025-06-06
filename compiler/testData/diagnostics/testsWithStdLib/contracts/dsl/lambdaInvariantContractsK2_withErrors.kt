@@ -43,16 +43,21 @@ fun testRunIfNotErr(s: String?) {
     }
 }
 
-fun main() {
-    var foo: String? = ""
+fun testHoldsInsAreIndependent1(foo: String?) {
     runIfNot(foo == null) {
-        foo.length // expected: green. actual: red
+        foo.length
+    }
+    runIf(foo == null) {
+        foo<!UNSAFE_CALL!>.<!>length // expected: red. actual: green
     }
 }
 
-@OptIn(ExperimentalContracts::class, ExperimentalExtendedContracts::class)
-inline fun <R> foo(condition: Boolean, block: () -> R): R? {
-    contract { false holdsIn block } // doesn't make sense (unless `block` is unused). The same for `true`
-    return if (condition) { block() } else null
+fun testHoldsInsAreIndependent2(foo: String?) {
+    runIf(foo == null) {
+        foo<!UNSAFE_CALL!>.<!>length // expected: red. actual: green
+    }
+    runIfNot(foo == null) {
+        foo.length
+    }
 }
 
