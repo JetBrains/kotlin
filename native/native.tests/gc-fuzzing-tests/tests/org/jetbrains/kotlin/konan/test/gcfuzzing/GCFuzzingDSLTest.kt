@@ -154,3 +154,21 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
         )
     }
 }
+
+class GCFuzzingTest : AbstractNativeSimpleTest() {
+    private val testDataDir = java.io.File(System.getProperty("kotlin.internal.native.test.testDataDir")).resolve("gcFuzzingTest")
+
+    private fun runTest(name: String, program: Program) {
+        val output = program.translate()
+        output.save(dslGeneratedDir)
+        runDSL(name, output, testRunSettings.get<Timeouts>().executionTimeout)
+    }
+
+    private inline fun runTest(testInfo: TestInfo, block: () -> Program) = runTest(testInfo.testMethod.get().name, block())
+
+    @Test
+    fun test(testInfo: TestInfo) = runTest(testInfo) {
+        val fuzzer = Fuzzer(0)
+        fuzzer.genProgram()
+    }
+}

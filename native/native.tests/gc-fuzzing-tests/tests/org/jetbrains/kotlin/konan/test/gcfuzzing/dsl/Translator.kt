@@ -324,14 +324,16 @@ private fun BodyTranslateContext.appendStatementEnd() {
     }
 }
 
-private fun BodyTranslateContext.appendNewLocal() {
+private fun BodyTranslateContext.appendNewLocal(init : BodyTranslateContext.() -> Unit) {
     appendIndent()
-    val name = "l${localsCount++}"
+    val name = "l$localsCount"
     when (targetLanguage) {
         is TargetLanguage.Kotlin -> contents.append("var $name: Any?")
         is TargetLanguage.ObjC -> contents.append("id $name")
     }
     contents.append(" = ")
+    init()
+    localsCount++
 }
 
 private class Global(val name: String, val definition: Definition.Global)
@@ -401,15 +403,17 @@ private fun BodyTranslateContext.translateBody(body: BodyWithReturn) {
 }
 
 private fun BodyTranslateContext.translateAllocStatement(statement: BodyStatement.Alloc) {
-    appendNewLocal()
-    translateConstructorCallExpression(statement.classId, statement.args)
-    appendStatementEnd()
+    appendNewLocal {
+        translateConstructorCallExpression(statement.classId, statement.args)
+        appendStatementEnd()
+    }
 }
 
 private fun BodyTranslateContext.translateLoadStatement(statement: BodyStatement.Load) {
-    appendNewLocal()
-    translateLoadExpression(statement.from)
-    appendStatementEnd()
+    appendNewLocal {
+        translateLoadExpression(statement.from)
+        appendStatementEnd()
+    }
 }
 
 private fun BodyTranslateContext.translateStoreStatement(statement: BodyStatement.Store) {
@@ -429,9 +433,10 @@ private fun BodyTranslateContext.translateStoreStatement(statement: BodyStatemen
 }
 
 private fun BodyTranslateContext.translateCallStatement(statement: BodyStatement.Call) {
-    appendNewLocal()
-    translateFunctionCallExpression(statement.functionId, statement.args)
-    appendStatementEnd()
+    appendNewLocal {
+        translateFunctionCallExpression(statement.functionId, statement.args)
+        appendStatementEnd()
+    }
 }
 
 private fun BodyTranslateContext.translateSpawnThreadStatement(statement: BodyStatement.SpawnThread) {
