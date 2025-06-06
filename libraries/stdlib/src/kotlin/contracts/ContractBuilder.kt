@@ -115,6 +115,8 @@ public interface ContractBuilder {
 
     /**
      * Specifies the condition, passed as a receiver argument, that is guaranteed to be true in the body of a function parameter [lambda]
+     *
+     * Note: the receiver can accept only a subset a reference to a boolean parameter representing the condition, or its negation
      */
     @ExperimentalExtendedContracts
     @ContractsDsl
