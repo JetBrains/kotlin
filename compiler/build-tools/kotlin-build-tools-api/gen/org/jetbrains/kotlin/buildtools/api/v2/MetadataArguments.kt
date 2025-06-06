@@ -40,21 +40,21 @@ public interface MetadataArguments : CommonCompilerArguments {
      * Paths to output directories for friend modules (modules whose internals should be visible).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRIEND_PATHS: MetadataArgument<Array<String>?> = MetadataArgument("XFRIEND_PATHS")
 
     /**
      * Paths to output directories for refined modules (modules whose expects this module can actualize).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREFINES_PATHS: MetadataArgument<Array<String>?> = MetadataArgument("XREFINES_PATHS")
 
     /**
      * Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLEGACY_METADATA_JAR_K2: MetadataArgument<Boolean> =
         MetadataArgument("XLEGACY_METADATA_JAR_K2")
   }

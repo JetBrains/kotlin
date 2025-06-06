@@ -55,7 +55,7 @@ class Project(
     }
 }
 
-fun BaseCompilationTest.project(strategyConfig: CompilerExecutionStrategyConfiguration, action: Project.() -> Unit) {
+inline fun BaseCompilationTest.project(strategyConfig: CompilerExecutionStrategyConfiguration, action: Project.() -> Unit) {
     Project(strategyConfig, workingDirectory).apply {
         action()
         endCompilationRound()

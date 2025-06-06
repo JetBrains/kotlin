@@ -99,7 +99,7 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     if (D in optionsMap) { arguments.destination = get(D)?.toString() }
-    if (CLASSPATH in optionsMap) { arguments.classpath = get(CLASSPATH)?.toString() }
+    if (CLASSPATH in optionsMap) { arguments.classpath = get(CLASSPATH) }
     if (INCLUDE_RUNTIME in optionsMap) { arguments.includeRuntime = get(INCLUDE_RUNTIME) }
     if (JDK_HOME in optionsMap) { arguments.jdkHome = get(JDK_HOME)?.toString() }
     if (NO_JDK in optionsMap) { arguments.noJdk = get(NO_JDK) }

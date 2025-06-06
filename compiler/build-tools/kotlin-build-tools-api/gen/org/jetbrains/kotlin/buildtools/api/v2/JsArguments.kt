@@ -79,7 +79,7 @@ public interface JsArguments : WasmArguments {
      * Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_KEEP: JsArgument<String?> = JsArgument("XIR_KEEP")
 
     /**
@@ -98,35 +98,35 @@ public interface JsArguments : WasmArguments {
      * Generate an unpacked klib into the parent directory of the output JS file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PRODUCE_KLIB_DIR: JsArgument<Boolean> = JsArgument("XIR_PRODUCE_KLIB_DIR")
 
     /**
      * Generate a packed klib into the directory specified by '-ir-output-dir'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PRODUCE_KLIB_FILE: JsArgument<Boolean> = JsArgument("XIR_PRODUCE_KLIB_FILE")
 
     /**
      * Generate a JS file using the IR backend.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PRODUCE_JS: JsArgument<Boolean> = JsArgument("XIR_PRODUCE_JS")
 
     /**
      * Perform experimental dead code elimination.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_DCE: JsArgument<Boolean> = JsArgument("XIR_DCE")
 
     /**
      * Enable runtime diagnostics instead of removing declarations when performing DCE.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_DCE_RUNTIME_DIAGNOSTIC: JsArgument<String?> =
         JsArgument("XIR_DCE_RUNTIME_DIAGNOSTIC")
 
@@ -134,7 +134,7 @@ public interface JsArguments : WasmArguments {
      * Print reachability information about declarations to 'stdout' while performing DCE.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_DCE_PRINT_REACHABILITY_INFO: JsArgument<Boolean> =
         JsArgument("XIR_DCE_PRINT_REACHABILITY_INFO")
 
@@ -142,7 +142,7 @@ public interface JsArguments : WasmArguments {
      * Perform lazy initialization for properties.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PROPERTY_LAZY_INITIALIZATION: JsArgument<Boolean> =
         JsArgument("XIR_PROPERTY_LAZY_INITIALIZATION")
 
@@ -150,7 +150,7 @@ public interface JsArguments : WasmArguments {
      * Minimize the names of members.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
         JsArgument("XIR_MINIMIZED_MEMBER_NAMES")
 
@@ -158,14 +158,14 @@ public interface JsArguments : WasmArguments {
      * Specify the name of the compilation module for the IR backend.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_MODULE_NAME: JsArgument<String?> = JsArgument("XIR_MODULE_NAME")
 
     /**
      * Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
         JsArgument("XIR_SAFE_EXTERNAL_BOOLEAN")
 
@@ -173,7 +173,7 @@ public interface JsArguments : WasmArguments {
      * Enable runtime diagnostics when accessing external 'Boolean' properties.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<String?> =
         JsArgument("XIR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
 
@@ -181,14 +181,14 @@ public interface JsArguments : WasmArguments {
      * Generate one .js file per module.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PER_MODULE: JsArgument<Boolean> = JsArgument("XIR_PER_MODULE")
 
     /**
      * Add a custom output name to the split .js files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PER_MODULE_OUTPUT_NAME: JsArgument<String?> =
         JsArgument("XIR_PER_MODULE_OUTPUT_NAME")
 
@@ -196,14 +196,14 @@ public interface JsArguments : WasmArguments {
      * Generate one .js file per source file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_PER_FILE: JsArgument<Boolean> = JsArgument("XIR_PER_FILE")
 
     /**
      * Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsArgument<Boolean> =
         JsArgument("XIR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
 
@@ -211,42 +211,42 @@ public interface JsArguments : WasmArguments {
      * Path to an intermediate library that should be processed in the same manner as source files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XINCLUDE: JsArgument<String?> = JsArgument("XINCLUDE")
 
     /**
      * Path to the cache directory.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCACHE_DIRECTORY: JsArgument<String?> = JsArgument("XCACHE_DIRECTORY")
 
     /**
      * Use the compiler to build the cache.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIR_BUILD_CACHE: JsArgument<Boolean> = JsArgument("XIR_BUILD_CACHE")
 
     /**
      * Generate a TypeScript declaration .d.ts file alongside the JS file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XGENERATE_DTS: JsArgument<Boolean> = JsArgument("XGENERATE_DTS")
 
     /**
      * Generate polyfills for features from the ES6+ standards.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XGENERATE_POLYFILLS: JsArgument<Boolean> = JsArgument("XGENERATE_POLYFILLS")
 
     /**
      * Generate strict types for implicitly exported entities inside d.ts files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSTRICT_IMPLICIT_EXPORT_TYPES: JsArgument<Boolean> =
         JsArgument("XSTRICT_IMPLICIT_EXPORT_TYPES")
 
@@ -254,14 +254,14 @@ public interface JsArguments : WasmArguments {
      * Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XES_CLASSES: JsArgument<Boolean?> = JsArgument("XES_CLASSES")
 
     /**
      * JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
         JsArgument("XPLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
 
@@ -269,14 +269,14 @@ public interface JsArguments : WasmArguments {
      * Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XES_GENERATORS: JsArgument<Boolean?> = JsArgument("XES_GENERATORS")
 
     /**
      * Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XES_ARROW_FUNCTIONS: JsArgument<Boolean?> = JsArgument("XES_ARROW_FUNCTIONS")
 
     /**
@@ -284,14 +284,14 @@ public interface JsArguments : WasmArguments {
      * It is deprecated and will be removed in a future release.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XTYPED_ARRAYS: JsArgument<Boolean> = JsArgument("XTYPED_ARRAYS")
 
     /**
      * Disable internal declaration export.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRIEND_MODULES_DISABLED: JsArgument<Boolean> =
         JsArgument("XFRIEND_MODULES_DISABLED")
 
@@ -299,14 +299,14 @@ public interface JsArguments : WasmArguments {
      * Paths to friend modules.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRIEND_MODULES: JsArgument<String?> = JsArgument("XFRIEND_MODULES")
 
     /**
      * Enable extension function members in external interfaces.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsArgument<Boolean> =
         JsArgument("XENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
 
@@ -314,7 +314,7 @@ public interface JsArguments : WasmArguments {
      * Enable the IR fake override validator.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFAKE_OVERRIDE_VALIDATOR: JsArgument<Boolean> =
         JsArgument("XFAKE_OVERRIDE_VALIDATOR")
 
@@ -322,7 +322,7 @@ public interface JsArguments : WasmArguments {
      * Perform additional optimizations on the generated JS code.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XOPTIMIZE_GENERATED_JS: JsArgument<Boolean> = JsArgument("XOPTIMIZE_GENERATED_JS")
   }
 }

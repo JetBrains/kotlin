@@ -61,7 +61,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Run Kotlin REPL (deprecated)
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREPL: CommonCompilerArgument<Boolean> = CommonCompilerArgument("XREPL")
 
     /**
@@ -74,14 +74,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Disable method inlining.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNO_INLINE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("XNO_INLINE")
 
     /**
      * Allow loading classes with bad metadata versions and pre-release classes.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSKIP_METADATA_VERSION_CHECK: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSKIP_METADATA_VERSION_CHECK")
 
@@ -89,7 +89,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Allow loading pre-release classes.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSKIP_PRERELEASE_CHECK: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSKIP_PRERELEASE_CHECK")
 
@@ -97,7 +97,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XALLOW_KOTLIN_PACKAGE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XALLOW_KOTLIN_PACKAGE")
 
@@ -105,7 +105,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enables special features which are relevant only for stdlib compilation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSTDLIB_COMPILATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSTDLIB_COMPILATION")
 
@@ -113,7 +113,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Report the source-to-output file mapping.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREPORT_OUTPUT_FILES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XREPORT_OUTPUT_FILES")
 
@@ -121,7 +121,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Load plugins from the given classpath.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPLUGIN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("XPLUGIN")
 
     /**
@@ -134,7 +134,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Register a compiler plugin.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCOMPILER_PLUGIN: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XCOMPILER_PLUGIN")
 
@@ -142,7 +142,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable language support for multiplatform projects.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMULTI_PLATFORM: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XMULTI_PLATFORM")
 
@@ -150,7 +150,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Do not check for the presence of the 'actual' modifier in multiplatform projects.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNO_CHECK_ACTUAL: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XNO_CHECK_ACTUAL")
 
@@ -158,7 +158,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XINTELLIJ_PLUGIN_ROOT: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XINTELLIJ_PLUGIN_ROOT")
 
@@ -166,7 +166,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable the new experimental generic type inference algorithm.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNEW_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XNEW_INFERENCE")
 
@@ -174,7 +174,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental inline classes.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XINLINE_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XINLINE_CLASSES")
 
@@ -182,7 +182,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Report detailed performance statistics.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XREPORT_PERF")
 
@@ -190,14 +190,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump detailed performance statistics to the specified file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDUMP_PERF: CommonCompilerArgument<String?> = CommonCompilerArgument("XDUMP_PERF")
 
     /**
      * Change the metadata version of the generated binary files.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMETADATA_VERSION: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XMETADATA_VERSION")
 
@@ -206,7 +206,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * They should be a subset of sources passed as free arguments.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCOMMON_SOURCES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XCOMMON_SOURCES")
 
@@ -214,7 +214,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * List backend phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XLIST_PHASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XLIST_PHASES")
 
@@ -222,7 +222,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Disable backend phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XDISABLE_PHASES")
 
@@ -230,7 +230,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Be verbose while performing the given backend phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XVERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XVERBOSE_PHASES")
 
@@ -238,7 +238,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump the backend's state before these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_DUMP_BEFORE: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_DUMP_BEFORE")
 
@@ -246,7 +246,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump the backend's state after these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_DUMP_AFTER: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_DUMP_AFTER")
 
@@ -254,7 +254,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump the backend's state both before and after these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_DUMP: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_DUMP")
 
@@ -262,7 +262,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump the backend state into this directory.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDUMP_DIRECTORY: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XDUMP_DIRECTORY")
 
@@ -270,7 +270,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Dump the declaration with the given FqName.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDUMP_FQNAME: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XDUMP_FQNAME")
 
@@ -278,7 +278,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Validate the backend's state before these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_VALIDATE_BEFORE")
 
@@ -286,7 +286,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Validate the backend's state after these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_VALIDATE_AFTER: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_VALIDATE_AFTER")
 
@@ -294,7 +294,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Validate the backend's state both before and after these phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPHASES_TO_VALIDATE: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XPHASES_TO_VALIDATE")
 
@@ -302,14 +302,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * IR verification mode (no verification by default).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XVERIFY_IR: CommonCompilerArgument<String?> = CommonCompilerArgument("XVERIFY_IR")
 
     /**
      * Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XVERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XVERIFY_IR_VISIBILITY")
 
@@ -317,7 +317,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Profile backend phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XPROFILE_PHASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XPROFILE_PHASES")
 
@@ -325,7 +325,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Check pre- and postconditions of IR lowering phases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XCHECK_PHASE_CONDITIONS")
 
@@ -333,14 +333,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XUSE_K2: CommonCompilerArgument<Boolean> = CommonCompilerArgument("XUSE_K2")
 
     /**
      * Enable experimental frontend IR checkers that are not yet ready for production.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XUSE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XUSE_FIR_EXPERIMENTAL_CHECKERS")
 
@@ -349,21 +349,21 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Warning: This feature is not yet production-ready.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XUSE_FIR_IC: CommonCompilerArgument<Boolean> = CommonCompilerArgument("XUSE_FIR_IC")
 
     /**
      * Compile using the LightTree parser with the frontend IR.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XUSE_FIR_LT: CommonCompilerArgument<Boolean> = CommonCompilerArgument("XUSE_FIR_LT")
 
     /**
      * Produce a klib that only contains the metadata of declarations.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMETADATA_KLIB: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XMETADATA_KLIB")
 
@@ -371,7 +371,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Don't enable the scripting plugin by default.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XDISABLE_DEFAULT_SCRIPTING_PLUGIN")
 
@@ -380,7 +380,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Use the 'warning' level to issue warnings instead of errors.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEXPLICIT_API: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("XEXPLICIT_API")
 
@@ -390,7 +390,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XXEXPLICIT_RETURN_TYPES: CommonCompilerArgument<ExplicitApiMode> =
         CommonCompilerArgument("XXEXPLICIT_RETURN_TYPES")
 
@@ -398,7 +398,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XRETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
         CommonCompilerArgument("XRETURN_VALUE_CHECKER")
 
@@ -406,7 +406,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Suppress warnings about outdated, inconsistent, or experimental language or API versions.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSUPPRESS_VERSION_WARNINGS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSUPPRESS_VERSION_WARNINGS")
 
@@ -415,7 +415,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
         CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
@@ -425,7 +425,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XEXPECT_ACTUAL_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XEXPECT_ACTUAL_CLASSES")
 
@@ -433,7 +433,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. See https://youtrack.jetbrains.com/issue/KT-11914
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCONSISTENT_DATA_CLASS_COPY_VISIBILITY: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XCONSISTENT_DATA_CLASS_COPY_VISIBILITY")
 
@@ -441,7 +441,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XUNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XUNRESTRICTED_BUILDER_INFERENCE")
 
@@ -449,7 +449,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental context receivers.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XCONTEXT_RECEIVERS")
 
@@ -457,7 +457,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental context parameters.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCONTEXT_PARAMETERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XCONTEXT_PARAMETERS")
 
@@ -465,7 +465,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental context-sensitive resolution.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XCONTEXT_SENSITIVE_RESOLUTION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XCONTEXT_SENSITIVE_RESOLUTION")
 
@@ -473,7 +473,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental non-local break and continue.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XNON_LOCAL_BREAK_CONTINUE")
 
@@ -481,7 +481,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental direct Java actualization support.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDIRECT_JAVA_ACTUALIZATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XDIRECT_JAVA_ACTUALIZATION")
 
@@ -489,7 +489,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental multi-dollar interpolation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XMULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XMULTI_DOLLAR_INTERPOLATION")
 
@@ -497,7 +497,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable incremental compilation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XENABLE_INCREMENTAL_COMPILATION: CommonCompilerArgument<Boolean?> =
         CommonCompilerArgument("XENABLE_INCREMENTAL_COMPILATION")
 
@@ -505,7 +505,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Render the internal names of warnings and errors.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XRENDER_INTERNAL_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XRENDER_INTERNAL_DIAGNOSTIC_NAMES")
 
@@ -513,7 +513,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Allow compiling scripts along with regular Kotlin sources.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
 
@@ -521,7 +521,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Report all warnings even if errors are found.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XREPORT_ALL_WARNINGS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XREPORT_ALL_WARNINGS")
 
@@ -529,7 +529,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Declare all known fragments of a multiplatform compilation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRAGMENTS: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XFRAGMENTS")
 
@@ -537,7 +537,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Add sources to a specific fragment of a multiplatform compilation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRAGMENT_SOURCES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XFRAGMENT_SOURCES")
 
@@ -545,7 +545,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRAGMENT_REFINES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XFRAGMENT_REFINES")
 
@@ -555,7 +555,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XFRAGMENT_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XFRAGMENT_DEPENDENCY")
 
@@ -563,7 +563,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XSEPARATE_KMP_COMPILATION")
 
@@ -571,7 +571,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Ignore all compilation exceptions while optimizing some constant expressions.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XIGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XIGNORE_CONST_OPTIMIZATION_ERRORS")
 
@@ -579,7 +579,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Don't report warnings when errors are suppressed. This only affects K2.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XDONT_WARN_ON_ERROR_SUPPRESSION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XDONT_WARN_ON_ERROR_SUPPRESSION")
 
@@ -587,7 +587,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental language support for when guards.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XWHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XWHEN_GUARDS")
 
@@ -595,7 +595,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental language support for nested type aliases.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XNESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XNESTED_TYPE_ALIASES")
 
@@ -603,7 +603,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Suppress specified warning module-wide. This option is deprecated in favor of "-Xwarning-level" flag
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XSUPPRESS_WARNING: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XSUPPRESS_WARNING")
 
@@ -614,7 +614,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XWARNING_LEVEL: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("XWARNING_LEVEL")
 
@@ -626,7 +626,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<String?> =
         CommonCompilerArgument("XANNOTATION_DEFAULT_TARGET")
 
@@ -634,7 +634,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XXDEBUG_LEVEL_COMPILER_CHECKS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XXDEBUG_LEVEL_COMPILER_CHECKS")
 
@@ -642,7 +642,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental language support for @all: annotation use-site target.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XANNOTATION_TARGET_ALL")
 
@@ -650,7 +650,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Lenient compiler mode. When actuals are missing, placeholder declarations are generated.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may be changed in the future")
+    @Deprecated(message = "This option is experimental and it may` be changed in the future")
     public val XXLENIENT_MODE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("XXLENIENT_MODE")
   }

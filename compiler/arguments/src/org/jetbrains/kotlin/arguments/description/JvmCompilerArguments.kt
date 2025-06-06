@@ -38,7 +38,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         name = "classpath"
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user class files.".asReleaseDependent()
-        valueType = StringPathType.defaultNull
+        valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
