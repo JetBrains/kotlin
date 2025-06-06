@@ -16,7 +16,7 @@ class KotlinOutput(
 
 class KotlinConfig(
     val cinteropModuleName: String,
-    val kotlinFrameworkName: String,
+    val moduleName: String,
     val maximumStackDepth: Int,
 )
 
@@ -24,10 +24,10 @@ fun Program.produceKotlin(config: KotlinConfig): KotlinOutput {
     val context = KotlinTranslationContext(config, GlobalScopeResolver(this))
     context.translate(this)
     return KotlinOutput(
-        filename = "lib.kt",
+        filename = "${config.moduleName}.kt",
         contents = context.contents.toString(),
-        args = listOf("-Xstatic-framework", "-Xbinary=bundleId=${config.kotlinFrameworkName}"),
-        frameworkName = config.kotlinFrameworkName,
+        args = listOf("-Xstatic-framework", "-Xbinary=bundleId=${config.moduleName}"),
+        frameworkName = config.moduleName,
     )
 }
 
@@ -41,6 +41,8 @@ private class KotlinTranslationContext(
             raw(
                 """
             |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            |package ${config.moduleName}
+            |
             |import ${config.cinteropModuleName}.*
             |import kotlin.native.concurrent.*
             |

@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-#include "KotlinObjCFramework.h"
+#include "ktlib.h"
 
 @implementation NSObject (LoadStoreFieldsAdditions)
 
@@ -53,7 +53,7 @@ static void leaveFrame(void) {
 }
 
 int main() {
-   [KOCFLibKt mainBody];
+   [KtlibKtlibKt mainBody];
    return 0;
 }
 
@@ -104,9 +104,9 @@ id fun7(id l0) {
     if (!tryEnterFrame()) {
         return nil;
     }
-    id l1 = [[KOCFClass0 alloc] initWithF0:nil f1:nil];
+    id l1 = [[KtlibClass0 alloc] initWithF0:nil f1:nil];
     id l2 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l3 = [KOCFLibKt fun6L0:l0];
+    id l3 = [KtlibKtlibKt fun6L0:l0];
     leaveFrame();
     return [[[l1 loadField:1] loadField:3] loadField:4];
 }

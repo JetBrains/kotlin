@@ -19,13 +19,14 @@ class ObjCConfig(
     val kotlinIdentifierPrefix: String,
     val kotlinGlobalClass: String,
     val maximumStackDepth: Int,
+    val basename: String,
 )
 
 fun Program.produceObjC(config: ObjCConfig): ObjCOutput {
     val context = ObjCTranslationContext(config, GlobalScopeResolver(this))
     context.translate(this)
     return ObjCOutput(
-        filename = "main.m", contents = context.contents.toString(), args = listOf("-fobjc-arc")
+        filename = "${config.basename}.m", contents = context.contents.toString(), args = listOf("-fobjc-arc")
     )
 }
 
@@ -92,7 +93,7 @@ private class ObjCTranslationContext(
             |}
             |
             |int main() {
-            |   [${config.kotlinGlobalClass} mainBody];
+            |   [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
             |   return 0;
             |}
             |
@@ -392,7 +393,7 @@ private class ObjCExpressionTranslationContext(
         val functionName = scopeResolver.computeName(function)
         when (function.targetLanguage) {
             is TargetLanguage.Kotlin -> contents.selectorCall {
-                receiver(config.kotlinGlobalClass)
+                receiver("${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}")
                 selector(functionName)
                 fixedArgs.forEachIndexed { index, arg ->
                     arg("l$index") {

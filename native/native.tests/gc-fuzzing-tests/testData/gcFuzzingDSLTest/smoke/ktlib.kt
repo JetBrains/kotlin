@@ -1,4 +1,6 @@
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+package ktlib
+
 import cinterop.*
 import kotlin.native.concurrent.*
 

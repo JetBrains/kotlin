@@ -6,26 +6,56 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.dsl
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.CInteropConfig
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.CInteropOutput
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.KotlinConfig
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.KotlinOutput
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.ObjCConfig
+import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.ObjCOutput
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.headerFilename
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceCInterop
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceKotlin
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceObjC
+import java.io.File
 
-fun Program.translate(): Output {
+class Config(
+    val maximumStackDepth: Int,
+) {
+    companion object {
+        val DEFAULT = Config(
+            100,
+        )
+    }
+}
+
+class Output(
+    val kotlin: KotlinOutput,
+    val cinterop: CInteropOutput,
+    val objc: ObjCOutput,
+) {
+    fun save(root: File) {
+        root.mkdirs()
+        root.resolve(kotlin.filename).writeText(kotlin.contents)
+        root.resolve(cinterop.defFilename).writeText(cinterop.defContents)
+        root.resolve(cinterop.headerFilename).writeText(cinterop.headerContents)
+        root.resolve(objc.filename).writeText(objc.contents)
+    }
+}
+
+fun Program.translate(config: Config = Config.DEFAULT): Output {
     val cinteropConfig = CInteropConfig(moduleName = "cinterop")
     val kotlinConfig = KotlinConfig(
         cinteropModuleName = cinteropConfig.moduleName,
-        maximumStackDepth = 100,
-        kotlinFrameworkName = "KotlinObjCFramework"
+        maximumStackDepth = config.maximumStackDepth,
+        moduleName = "ktlib"
     )
+    val kotlinModuleCapitalized = kotlinConfig.moduleName.replaceFirstChar { it.uppercase() }
     val objcConfig = ObjCConfig(
         cinteropHeaderFilename = cinteropConfig.headerFilename,
-        kotlinHeaderFilename = "${kotlinConfig.kotlinFrameworkName}.h",
-        kotlinIdentifierPrefix = "KOCF",
-        kotlinGlobalClass = "KOCFLibKt",
-        maximumStackDepth = kotlinConfig.maximumStackDepth,
+        kotlinHeaderFilename = "${kotlinConfig.moduleName}.h",
+        kotlinIdentifierPrefix = kotlinModuleCapitalized,
+        kotlinGlobalClass = "${kotlinModuleCapitalized}Kt",
+        maximumStackDepth = config.maximumStackDepth,
+        basename = "main"
     )
     val cinterop = produceCInterop(cinteropConfig)
     val kotlin = produceKotlin(kotlinConfig)
