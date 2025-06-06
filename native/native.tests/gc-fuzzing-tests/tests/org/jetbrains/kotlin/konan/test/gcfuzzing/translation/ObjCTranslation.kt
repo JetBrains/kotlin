@@ -267,7 +267,7 @@ private class ObjCBodyTranslationContext(
                             chainLoad(name, loadAccessors)
                         }
                         selector("store")
-                        arg("field", storeAccessor.toString())
+                        arg("field", storeAccessor.asString)
                         arg("value") {
                             translateLoadExpression(from)
                         }
@@ -426,6 +426,6 @@ private fun LineBuilder.chainLoad(name: String, accessors: List<EntityId>) {
             chainLoad(name, accessors.dropLast(1))
         }
         selector("load")
-        arg("field", accessors.last().toString())
+        arg("field", accessors.last().asString)
     }
 }

@@ -34,11 +34,8 @@ class LocalScopeResolver(
     fun resolveFunction(id: EntityId): Definition.Function? = globalScopeResolver.resolveFunction(id, scopeLanguage)
     fun resolveClass(id: EntityId): Definition.Class? = globalScopeResolver.resolveClass(id, scopeLanguage)
     fun resolveGlobal(id: EntityId): Definition.Global? = globalScopeResolver.resolveGlobal(id, scopeLanguage)
-    fun resolveLocal(id: EntityId, onlyMutable: Boolean = false): DefinitionLocal? {
-        val matchingDefinitions = locals.filter { if (onlyMutable) it.mutable else true }
-        if (matchingDefinitions.isEmpty()) return null
-        return matchingDefinitions[id % matchingDefinitions.size]
-    }
+    fun resolveLocal(id: EntityId, onlyMutable: Boolean = false): DefinitionLocal? =
+        locals.filter { if (onlyMutable) it.mutable else true }.findEntity(id)
 
     fun allocateLocal(): DefinitionLocal = DefinitionLocal(locals.size, mutable = true).also {
         locals.add(it)

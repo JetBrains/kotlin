@@ -256,7 +256,7 @@ private class KotlinBodyTranslationContext(
                             chainLoad(name, loadAccessors)
                             append("?.storeField")
                         }
-                        arg(storeAccessor.toString())
+                        arg(storeAccessor.asString)
                         arg {
                             translateLoadExpression(from)
                         }
@@ -372,6 +372,6 @@ private class KotlinExpressionTranslationContext(
 private fun LineBuilder.chainLoad(name: String, accessors: List<EntityId>) {
     append(name)
     accessors.forEach {
-        append("?.loadField($it)")
+        append("?.loadField(${it.asString})")
     }
 }

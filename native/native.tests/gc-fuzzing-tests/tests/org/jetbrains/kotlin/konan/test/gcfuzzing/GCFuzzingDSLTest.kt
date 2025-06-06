@@ -16,10 +16,7 @@ import org.junit.jupiter.api.TestInfo
 
 private fun assertFilesEqual(expected: java.io.File, actual: java.io.File) {
     JUnit5Assertions.assertEqualsToFile(
-        expected,
-        if (actual.isFile) actual.readText() else "",
-        sanitizer = { it }
-    )
+        expected, if (actual.isFile) actual.readText() else "", sanitizer = { it })
 }
 
 private fun assertDirectoriesEqual(expected: java.io.File, actual: java.io.File) {
@@ -49,6 +46,123 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     private inline fun runTest(testInfo: TestInfo, block: () -> Program) = runTest(testInfo.testMethod.get().name, block())
 
     @Test
+    fun empty(testInfo: TestInfo) = runTest(testInfo) {
+        Program(definitions = emptyList(), mainBody = Body(statements = emptyList()))
+    }
+
+    @Test
+    fun noDefinitions(testInfo: TestInfo) = runTest(testInfo) {
+        val storeExpressions = listOf(
+            StoreExpression.Global(0, Path(emptyList())),
+            StoreExpression.Global(0, Path(listOf(0, 0, 0))),
+            StoreExpression.Local(0, Path(emptyList())),
+            StoreExpression.Local(0, Path(listOf(0, 0, 0))),
+        )
+        val loadExpressions = listOf(
+            LoadExpression.Global(0, Path(emptyList())),
+            LoadExpression.Global(0, Path(listOf(0, 0, 0))),
+            LoadExpression.Local(0, Path(emptyList())),
+            LoadExpression.Local(0, Path(listOf(0, 0, 0))),
+        )
+        Program(
+            definitions = emptyList(), mainBody = Body(
+                statements = buildList {
+                    storeExpressions.forEach { store ->
+                        loadExpressions.forEach { load ->
+                            add(BodyStatement.Store(store, load))
+                        }
+                    }
+                    add(BodyStatement.SpawnThread(0, emptyList()))
+                })
+        )
+    }
+
+    @Test
+    fun differentIds(testInfo: TestInfo) = runTest(testInfo) {
+        val ids = listOf(0, -1, 1, 511, Int.MIN_VALUE, Int.MAX_VALUE)
+        val paths = listOf(Path(emptyList()), Path(ids))
+        val loadExpressions = buildList {
+            ids.forEach { id ->
+                paths.forEach { path ->
+                    add(LoadExpression.Global(id, path))
+                    add(LoadExpression.Local(id, path))
+                }
+            }
+        }
+        val storeExpressions = buildList {
+            ids.forEach { id ->
+                paths.forEach { path ->
+                    add(StoreExpression.Global(id, path))
+                    add(StoreExpression.Local(id, path))
+                }
+            }
+        }
+        val argss = buildList {
+            add(emptyList())
+            loadExpressions.forEach {
+                add(listOf(it))
+            }
+            add(loadExpressions)
+        }
+        val body = BodyWithReturn(
+            body = Body(
+                statements = buildList {
+                    ids.forEach { id ->
+                        argss.forEach { args ->
+                            add(BodyStatement.Call(id, args))
+                        }
+                    }
+                    ids.forEach { id ->
+                        argss.forEach { args ->
+                            add(BodyStatement.SpawnThread(id, args))
+                        }
+                    }
+                    ids.forEach { id ->
+                        argss.forEach { args ->
+                            add(BodyStatement.Alloc(id, args))
+                        }
+                    }
+                    loadExpressions.forEach { from ->
+                        add(BodyStatement.Load(from))
+                    }
+                    storeExpressions.forEach { to ->
+                        loadExpressions.forEach { from ->
+                            add(BodyStatement.Store(to, from))
+                        }
+                    }
+                }
+            ), returnExpression = LoadExpression.Default
+        )
+        Program(
+            definitions = listOf(
+                Definition.Class(
+                    TargetLanguage.Kotlin,
+                    listOf(Field, Field),
+                ),
+                Definition.Class(
+                    TargetLanguage.ObjC,
+                    listOf(Field, Field),
+                ),
+                Definition.Global(
+                    TargetLanguage.Kotlin,
+                    Field,
+                ),
+                Definition.Global(
+                    TargetLanguage.ObjC,
+                    Field,
+                ),
+                Definition.Function(
+                    TargetLanguage.Kotlin, parameters = listOf(Parameter, Parameter), body = body
+                ),
+                Definition.Function(
+                    TargetLanguage.ObjC, parameters = listOf(Parameter, Parameter), body = body
+                ),
+            ),
+            mainBody = Body(emptyList()),
+        )
+    }
+
+    @Test
     fun smoke(testInfo: TestInfo) = runTest(testInfo) {
         Program(
             definitions = listOf(
@@ -69,9 +183,7 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     Field,
                 ),
                 Definition.Function(
-                    TargetLanguage.Kotlin,
-                    listOf(Parameter, Parameter),
-                    BodyWithReturn(
+                    TargetLanguage.Kotlin, listOf(Parameter, Parameter), BodyWithReturn(
                         body = Body(
                             listOf(
                                 BodyStatement.Store(
@@ -84,14 +196,11 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                                 ),
                                 BodyStatement.SpawnThread(2, listOf(LoadExpression.Local(1, Path(listOf())))),
                             )
-                        ),
-                        returnExpression = LoadExpression.Default
+                        ), returnExpression = LoadExpression.Default
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC,
-                    listOf(Parameter, Parameter),
-                    BodyWithReturn(
+                    TargetLanguage.ObjC, listOf(Parameter, Parameter), BodyWithReturn(
                         body = Body(
                             listOf(
                                 BodyStatement.Store(
@@ -104,52 +213,41 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                                 ),
                                 BodyStatement.SpawnThread(3, listOf(LoadExpression.Local(1, Path(listOf())))),
                             )
-                        ),
-                        returnExpression = LoadExpression.Default
+                        ), returnExpression = LoadExpression.Default
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.Kotlin,
-                    listOf(Parameter),
-                    BodyWithReturn(
+                    TargetLanguage.Kotlin, listOf(Parameter), BodyWithReturn(
                         body = Body(
                             listOf(
                                 BodyStatement.Alloc(0, listOf()),
                                 BodyStatement.Alloc(1, listOf()),
                                 BodyStatement.Call(3, listOf(LoadExpression.Local(0, Path(listOf()))))
                             )
-                        ),
-                        returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
+                        ), returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC,
-                    listOf(Parameter),
-                    BodyWithReturn(
+                    TargetLanguage.ObjC, listOf(Parameter), BodyWithReturn(
                         body = Body(
                             listOf(
                                 BodyStatement.Alloc(0, listOf()),
                                 BodyStatement.Alloc(1, listOf()),
                                 BodyStatement.Call(2, listOf(LoadExpression.Local(0, Path(listOf()))))
                             )
-                        ),
-                        returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
+                        ), returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
                     )
                 ),
-            ),
-            mainBody = Body(
+            ), mainBody = Body(
                 listOf(
-                    BodyStatement.Alloc(123, listOf()),
-                    BodyStatement.Load(
+                    BodyStatement.Alloc(123, listOf()), BodyStatement.Load(
                         LoadExpression.Local(0, Path(listOf())),
-                    ),
-                    BodyStatement.Call(
+                    ), BodyStatement.Call(
                         65, listOf(
                             LoadExpression.Local(0, Path(listOf())),
                             LoadExpression.Local(1, Path(listOf(67))),
                         )
-                    ),
-                    BodyStatement.Call(
+                    ), BodyStatement.Call(
                         6, listOf()
                     )
                 )

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.Definition
+import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.EntityId
+import kotlin.math.absoluteValue
 
 val Definition.order: Int
     get() = when (this) {
@@ -169,4 +171,18 @@ fun OutputFileBuilder.braces(block: () -> Unit) {
     lineEnd(" {")
     indent(block)
     lineEnd("}")
+}
+
+private val EntityId.normalized: EntityId
+    get() = when (this) {
+        Int.MIN_VALUE -> Int.MAX_VALUE
+        else -> absoluteValue
+    }
+
+val EntityId.asString: String
+    get() = normalized.toString()
+
+fun <T> List<T>.findEntity(id: EntityId): T? {
+    if (isEmpty()) return null
+    return this[id.normalized % size]
 }

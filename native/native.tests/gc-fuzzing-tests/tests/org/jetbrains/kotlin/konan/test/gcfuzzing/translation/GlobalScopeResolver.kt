@@ -36,13 +36,10 @@ class GlobalScopeResolver private constructor(
     fun isAvailable(definition: Definition, contextLanguage: TargetLanguage): Boolean =
         isExported(definition) || definition.targetLanguage == contextLanguage
 
-    private inline fun <reified T : Definition> resolveDefinition(id: EntityId, contextLanguage: TargetLanguage): T? {
-        val matchingDefinitions = definitions.filterIsInstance<T>().filter {
+    private inline fun <reified T : Definition> resolveDefinition(id: EntityId, contextLanguage: TargetLanguage): T? =
+        definitions.filterIsInstance<T>().filter {
             isAvailable(it, contextLanguage)
-        }
-        if (matchingDefinitions.isEmpty()) return null
-        return matchingDefinitions[id % matchingDefinitions.size]
-    }
+        }.findEntity(id)
 
     fun resolveFunction(id: EntityId, contextLanguage: TargetLanguage): Definition.Function? =
         resolveDefinition<Definition.Function>(id, contextLanguage)
