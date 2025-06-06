@@ -1300,14 +1300,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        val result = context.withAssignmentRhs {
-            variableAssignment.transformRValue(
-                transformer,
-                withExpectedType(
-                    variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
-                ),
-            )
-        }
+        val result = variableAssignment.transformRValue(
+            transformer,
+            withExpectedType(
+                variableAssignment.lValue.resolvedType.toFirResolvedTypeRef(),
+            ),
+        )
 
         // for cases like
         // buildSomething { tVar = "" // Should infer TV from String assignment }

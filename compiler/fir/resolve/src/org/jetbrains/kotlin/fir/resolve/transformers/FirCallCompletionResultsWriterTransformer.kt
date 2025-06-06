@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -1137,7 +1138,27 @@ class FirCallCompletionResultsWriterTransformer(
         data: ExpectedArgumentType?,
     ): FirStatement {
         return transformSyntheticCall(whenExpression, data).apply {
+            if (isProperlyExhaustive) {
+                extracted(this, branches.map { it.result.resultType })
+            }
             replaceReturnTypeIfNotExhaustive(session)
+        }
+    }
+
+    private fun extracted(expression: FirExpression, branchesTypes: List<ConeKotlinType>) {
+        val refinedTypeForDataFlow = with(NewCommonSuperTypeCalculator) {
+            with(session.typeContext) {
+                commonSuperType(branchesTypes)
+            }
+        } as ConeKotlinType
+
+        val currentType = expression.resultType
+        if (!refinedTypeForDataFlow.isUnitOrFlexibleUnit && !currentType.isUnitOrFlexibleUnit &&
+            !currentType.isSubtypeOf(refinedTypeForDataFlow, session)
+        ) {
+            expression.resultType = currentType.withAttributes(
+                currentType.attributes.add(RefinedTypeForDataFlowTypeAttribute(refinedTypeForDataFlow))
+            )
         }
     }
 
@@ -1145,14 +1166,24 @@ class FirCallCompletionResultsWriterTransformer(
         tryExpression: FirTryExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(tryExpression, data)
+        return transformSyntheticCall(tryExpression, data).also { transformed ->
+            extracted(
+                transformed,
+                buildList {
+                    add(transformed.tryBlock.resultType)
+                    transformed.catches.mapTo(this) { it.block.resultType }
+                }
+            )
+        }
     }
 
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ExpectedArgumentType?,
     ): FirStatement {
-        return transformSyntheticCall(checkNotNullCall, data)
+        return transformSyntheticCall(checkNotNullCall, data).also {
+            extracted(it, listOf(it.argumentList.arguments[0].resultType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)))
+        }
     }
 
     override fun transformElvisExpression(

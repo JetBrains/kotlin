@@ -246,10 +246,6 @@ class FirCallCompleter(
      * @See org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.createKnownTypeParameterSubstitutorForSpecialCall
      */
     private fun Candidate.isSyntheticFunctionCallThatShouldUseEqualityConstraint(expectedType: ConeKotlinType): Boolean {
-        // If we're inside an assignment's RHS, we mustn't add an equality constraint because it might prevent smartcasts.
-        // Example: val x: String? = null; x = if (foo) "" else throw Exception()
-        if (components.context.isInsideAssignmentRhs) return false
-
         val symbol = symbol as? FirCallableSymbol ?: return false
         if (symbol.origin != FirDeclarationOrigin.Synthetic.FakeFunction ||
             expectedType.isUnitOrAnyWithArbitraryNullability() ||
