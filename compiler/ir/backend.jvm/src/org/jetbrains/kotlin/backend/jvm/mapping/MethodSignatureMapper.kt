@@ -135,7 +135,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
             !isPublishedApi()
         ) {
-            return (originalFunction.takeIf { it != this } as? IrSimpleFunction)
+            return (attributeOwnerId.takeIf { it != this } as? IrSimpleFunction)
                 ?.getInternalFunctionForManglingIfNeeded()
                 ?: this
         }

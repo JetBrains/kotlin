@@ -603,12 +603,6 @@ val IrValueDeclaration.isImmutable: Boolean
 val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
-val IrFunction.originalFunction: IrFunction
-    get() = (this.attributeOwnerId as? IrFunction) ?: this
-
-val IrProperty.originalProperty: IrProperty
-    get() = attributeOwnerId as? IrProperty ?: this
-
 fun IrExpression.isTrivial() =
     this is IrConst ||
             this is IrGetValue ||
