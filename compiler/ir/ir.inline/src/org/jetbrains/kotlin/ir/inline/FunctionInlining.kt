@@ -180,8 +180,7 @@ private class CallInlining(
                     inlinedFunctionStartOffset = callee.startOffset,
                     inlinedFunctionEndOffset = callee.endOffset,
                     resultType = returnType,
-                    // TODO Investigate if it is possible to get rid of `originalFunction` call here KT-76512
-                    inlinedFunctionSymbol = callee.originalFunction.symbol.takeIf { originalInlinedElement is IrFunction },
+                    inlinedFunctionSymbol = (callee.originalOfErasedTopLevelCopy ?: callee).symbol.takeIf { originalInlinedElement is IrFunction },
                     inlinedFunctionFileEntry = callee.fileEntry,
                     origin = null,
                 ) {
