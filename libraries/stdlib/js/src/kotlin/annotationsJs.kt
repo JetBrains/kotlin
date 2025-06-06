@@ -311,3 +311,10 @@ public annotation class JsExternalArgument
 @MustBeDocumented
 @SinceKotlin("2.0")
 public actual annotation class JsStatic()
+
+/**
+ * Prevents the annotated contextless lambda from being transformed into a global function.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(FUNCTION)
+internal annotation class JsNoLifting

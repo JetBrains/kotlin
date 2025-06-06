@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -316,7 +317,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             val lambdaInfo = LambdaInfo(lambdaClass)
 
             return if (lambdaClass.origin == CallableReferenceLowering.LAMBDA_IMPL && !lambdaInfo.isSuspendLambda) {
-                if (lambdaClass.fields.none()) {
+                if (lambdaClass.fields.none() && !lambdaInfo.invokeFun.hasAnnotation(JsStandardClassIds.Annotations.JsNoLifting)) {
                     // Optimization:
                     // If the lambda has no context, we lift it, i.e. instead of generating an anonymous function,
                     // we generate a named free function. The usage of the lambda is then replaced with a reference to the free function.
