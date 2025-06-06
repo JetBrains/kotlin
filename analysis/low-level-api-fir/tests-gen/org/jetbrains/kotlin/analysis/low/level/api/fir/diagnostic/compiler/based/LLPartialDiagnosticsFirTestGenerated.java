@@ -2677,6 +2677,12 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
+      @Test
+      @TestMetadata("siblings.kt")
+      public void testSiblings() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/siblings.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
       @TestDataPath("$PROJECT_ROOT")

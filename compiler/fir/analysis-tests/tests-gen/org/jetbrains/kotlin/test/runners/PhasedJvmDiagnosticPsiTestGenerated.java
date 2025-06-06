@@ -53432,6 +53432,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType")
     @TestDataPath("$PROJECT_ROOT")
     public class ContextSensitiveResolutionUsingExpectedType {
+      @Test
+      @TestMetadata("siblings.kt")
+      public void testSiblings() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/siblings.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
       @TestDataPath("$PROJECT_ROOT")
