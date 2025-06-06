@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
@@ -27,5 +29,15 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
     val KLIB_ABI_COMPATIBILITY_LEVEL by key<KlibAbiCompatibilityLevel>(
         "KLIB ABI compatibility level",
         defaultValue = "KlibAbiCompatibilityLevel.LATEST_STABLE"
+    )
+
+    val PARTIAL_LINKAGE_MODE by key<PartialLinkageMode>(
+        description = "Sets partial linkage mode",
+        defaultValue = "PartialLinkageMode.DEFAULT",
+    )
+
+    val PARTIAL_LINKAGE_LOG_LEVEL by key<PartialLinkageLogLevel>(
+        description = "Sets partial linkage log level",
+        defaultValue = "PartialLinkageLogLevel.DEFAULT",
     )
 }

@@ -36,6 +36,12 @@ object KlibConfigurationKeys {
     @JvmField
     val KLIB_ABI_COMPATIBILITY_LEVEL = CompilerConfigurationKey.create<KlibAbiCompatibilityLevel>("KLIB ABI compatibility level")
 
+    @JvmField
+    val PARTIAL_LINKAGE_MODE = CompilerConfigurationKey.create<PartialLinkageMode>("Sets partial linkage mode")
+
+    @JvmField
+    val PARTIAL_LINKAGE_LOG_LEVEL = CompilerConfigurationKey.create<PartialLinkageLogLevel>("Sets partial linkage log level")
+
 }
 
 var CompilerConfiguration.klibRelativePathBases: List<String>
@@ -65,4 +71,12 @@ var CompilerConfiguration.customKlibAbiVersion: KotlinAbiVersion?
 var CompilerConfiguration.klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel
     get() = get(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, KlibAbiCompatibilityLevel.LATEST_STABLE)
     set(value) { put(KlibConfigurationKeys.KLIB_ABI_COMPATIBILITY_LEVEL, value) }
+
+var CompilerConfiguration.partialLinkageMode: PartialLinkageMode
+    get() = get(KlibConfigurationKeys.PARTIAL_LINKAGE_MODE, PartialLinkageMode.DEFAULT)
+    set(value) { put(KlibConfigurationKeys.PARTIAL_LINKAGE_MODE, value) }
+
+var CompilerConfiguration.partialLinkageLogLevel: PartialLinkageLogLevel
+    get() = get(KlibConfigurationKeys.PARTIAL_LINKAGE_LOG_LEVEL, PartialLinkageLogLevel.DEFAULT)
+    set(value) { put(KlibConfigurationKeys.PARTIAL_LINKAGE_LOG_LEVEL, value) }
 
