@@ -6,136 +6,170 @@
 
 import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
-import org.gradle.api.internal.DynamicObjectAware
-import java.io.File
-import java.util.*
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 
-interface PropertiesProvider {
-    val rootProjectDir: File
-    fun getProperty(key: String): Any?
-    fun getSystemProperty(key: String): String?
-}
-
-class KotlinBuildProperties(
-    private val propertiesProvider: PropertiesProvider
+class KotlinBuildProperties internal constructor(
+    private val propertiesBuildService: Provider<BuildPropertiesBuildService>,
+    private val providerFactory: ProviderFactory,
 ) {
-    private val localProperties: Properties = Properties()
-    private val rootProperties: Properties = Properties()
 
-    init {
-        loadPropertyFile("local.properties", localProperties)
-        loadPropertyFile("gradle.properties", rootProperties)
+    fun stringProperty(name: String): Provider<String> = propertiesBuildService.flatMap {
+        it.property(name)
     }
 
-    private fun loadPropertyFile(fileName: String, propertiesDestination: Properties) {
-        val propertiesFile = propertiesProvider.rootProjectDir.resolve(fileName)
-        if (propertiesFile.isFile) {
-            propertiesFile.reader().use(propertiesDestination::load)
-        }
+    fun booleanProperty(
+        name: String,
+        defaultValue: Boolean = false,
+    ): Provider<Boolean> = booleanProperty(name, providerFactory.provider { defaultValue })
+
+    fun booleanProperty(
+        name: String,
+        defaultValue: Provider<Boolean>,
+    ): Provider<Boolean> = propertiesBuildService.flatMap {
+        it.property(name)
+            .toBoolean()
+            .orElse(defaultValue)
     }
 
-    fun getOrNull(key: String): Any? =
-        localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
-
-    fun getBoolean(key: String, default: Boolean = false): Boolean {
-        val value = this.getOrNull(key)?.toString() ?: return default
-        if (value.isEmpty()) return true // has property without value means 'true'
-        return value.trim().toBoolean()
+    fun intProperty(name: String): Provider<Int> = propertiesBuildService.flatMap {
+        it.property(name).map { it.trim().toIntOrNull() }
     }
 
-    val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
+    val isInIdeaSync: Provider<Boolean> = propertiesBuildService.flatMap {
+        it.systemProperty("idea.sync.active").toBoolean()
+    }
 
-    val isInIdeaSync: Boolean = propertiesProvider.getSystemProperty("idea.sync.active")?.toBoolean() == true
+    val isTeamcityBuild: Provider<Boolean> = booleanProperty(
+        "teamcity",
+        propertiesBuildService.flatMap { it.envProperty("TEAMCITY_VERSION").map { true }.orElse(false) }
+    )
 
-    val isInJpsBuildIdeaSync: Boolean
-        get() = isJpsBuildEnabled && isInIdeaSync
+    /**
+     * Nullable
+     */
+    val buildCacheUrl: Provider<String> = stringProperty("kotlin.build.cache.url")
 
-    val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+    val pushToBuildCache: Provider<Boolean> = booleanProperty("kotlin.build.cache.push", false)
 
-    val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
+    val localBuildCacheEnabled: Provider<Boolean> = booleanProperty("kotlin.build.cache.local.enabled", isTeamcityBuild.map { !it })
 
-    val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", false) && System.getent("DEVELOCITY_ACCESS_KEY") != null
+    /**
+     * Nullable
+     */
+    val localBuildCacheDirectory: Provider<String> = stringProperty("kotlin.build.cache.local.directory")
 
-    val localBuildCacheEnabled: Boolean = getBoolean("kotlin.build.cache.local.enabled", !isTeamcityBuild)
+    /**
+     * Nullable
+     */
+    val buildScanServer: Provider<String> = stringProperty("kotlin.build.scan.url")
 
-    val localBuildCacheDirectory: String? = getOrNull("kotlin.build.cache.local.directory") as String?
+    /**
+     * Nullable
+     */
+    val buildCacheUser: Provider<String> = stringProperty("kotlin.build.cache.user")
 
-    val buildScanServer: String? = getOrNull("kotlin.build.scan.url") as String?
+    /**
+     * Nullable
+     */
+    val buildCachePassword: Provider<String> = stringProperty("kotlin.build.cache.password")
 
-    val buildCacheUser: String? = getOrNull("kotlin.build.cache.user") as String?
+    /**
+     * Nullable
+     */
+    val buildGradlePluginVersion: Provider<String> = stringProperty("kotlin.build.gradlePlugin.version")
 
-    val buildCachePassword: String? = getOrNull("kotlin.build.cache.password") as String?
+    /**
+     * Nullable
+     */
+    val kotlinBootstrapVersion: Provider<String> = stringProperty("bootstrap.kotlin.default.version")
 
-    val buildGradlePluginVersion: String? = getOrNull("kotlin.build.gradlePlugin.version") as String?
+    /**
+     * Nullable
+     */
+    val defaultSnapshotVersion: Provider<String> = stringProperty("defaultSnapshotVersion")
 
-    val kotlinBootstrapVersion: String? = getOrNull("bootstrap.kotlin.default.version") as String?
+    /**
+     * Nullable
+     */
+    val customBootstrapVersion: Provider<String> = stringProperty("bootstrap.kotlin.version")
 
-    val defaultSnapshotVersion: String? = getOrNull("defaultSnapshotVersion") as String?
+    /**
+     * Nullable
+     */
+    val customBootstrapRepo: Provider<String> = stringProperty("bootstrap.kotlin.repo")
 
-    val customBootstrapVersion: String? = getOrNull("bootstrap.kotlin.version") as String?
+    val localBootstrap: Provider<Boolean> = booleanProperty("bootstrap.local")
 
-    val customBootstrapRepo: String? = getOrNull("bootstrap.kotlin.repo") as String?
+    /**
+     * Nullable
+     */
+    val localBootstrapVersion: Provider<String> = stringProperty("bootstrap.local.version")
 
-    val localBootstrap: Boolean = getBoolean("bootstrap.local")
+    /**
+     * Nullable
+     */
+    val localBootstrapPath: Provider<String> = stringProperty("bootstrap.local.path")
 
-    val localBootstrapVersion: String? = getOrNull("bootstrap.local.version") as String?
+    val useFir: Provider<Boolean> = booleanProperty("kotlin.build.useFir")
 
-    val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
+    val useFirIdeaPlugin: Provider<Boolean> = booleanProperty("idea.fir.plugin")
 
-    val useFir: Boolean = getBoolean("kotlin.build.useFir")
+    /**
+     * Nullable
+     */
+    val teamCityBootstrapVersion: Provider<String> = stringProperty("bootstrap.teamcity.kotlin.version")
 
-    val useFirIdeaPlugin: Boolean = getBoolean("idea.fir.plugin")
+    /**
+     * Nullable
+     */
+    val teamCityBootstrapBuildNumber: Provider<String> = stringProperty("bootstrap.teamcity.build.number")
 
-    val teamCityBootstrapVersion: String? = getOrNull("bootstrap.teamcity.kotlin.version") as String?
+    /**
+     * Nullable
+     */
+    val teamCityBootstrapProject: Provider<String> = stringProperty("bootstrap.teamcity.project")
 
-    val teamCityBootstrapBuildNumber: String? = getOrNull("bootstrap.teamcity.build.number") as String?
+    /**
+     * Nullable
+     */
+    val teamCityBootstrapUrl: Provider<String> = stringProperty("bootstrap.teamcity.url")
 
-    val teamCityBootstrapProject: String? = getOrNull("bootstrap.teamcity.project") as String?
+    val isKotlinNativeEnabled: Provider<Boolean> = booleanProperty("kotlin.native.enabled")
 
-    val teamCityBootstrapUrl: String? = getOrNull("bootstrap.teamcity.url") as String?
+    val renderDiagnosticNames: Provider<Boolean> = booleanProperty("kotlin.build.render.diagnostic.names")
 
-    val rootProjectDir: File = propertiesProvider.rootProjectDir
+    val isCacheRedirectorEnabled: Provider<Boolean> = booleanProperty("cacheRedirectorEnabled")
 
-    val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
+    private fun Provider<String>.toBoolean(defaultValue: Boolean = false): Provider<Boolean> = map {
+        if (it.isEmpty()) return@map true // has property without value means 'true'
+        return@map it.trim().toBoolean()
+    }.orElse(defaultValue)
 
-    val renderDiagnosticNames: Boolean = getBoolean("kotlin.build.render.diagnostic.names")
-
-    val isCacheRedirectorEnabled: Boolean = getBoolean("cacheRedirectorEnabled")
-}
-
-private const val extensionName = "kotlinBuildProperties"
-
-class ProjectProperties(val project: Project) : PropertiesProvider {
-    override val rootProjectDir: File
-        get() = project.rootProject.projectDir.let { if (it.name == "buildSrc") it.parentFile else it }
-
-    override fun getProperty(key: String): Any? = project.findProperty(key)
-
-    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).orNull
+    private fun Provider<String>.toBoolean(defaultValue: Provider<Boolean>): Provider<Boolean> = map {
+        if (it.isEmpty()) return@map true // has property without value means 'true'
+        return@map it.trim().toBoolean()
+    }.orElse(defaultValue)
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
-    get() = rootProject.extensions.findByName(extensionName) as KotlinBuildProperties?
-        ?: KotlinBuildProperties(ProjectProperties(rootProject)).also {
-            rootProject.extensions.add(extensionName, it)
-        }
-
-class SettingsProperties(val settings: Settings) : PropertiesProvider {
-    override val rootProjectDir: File
-        get() = settings.rootDir.let { if (it.name == "buildSrc") it.parentFile else it }
-
-    override fun getProperty(key: String): Any? {
-        val obj = (settings as DynamicObjectAware).asDynamicObject
-        return if (obj.hasProperty(key)) obj.getProperty(key) else null
-    }
-
-    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).orNull
-}
+    get() = KotlinBuildProperties(
+        BuildPropertiesBuildService.registerIfAbsent(
+            gradle,
+            providers,
+            rootDir,
+        ),
+        providers,
+    )
 
 fun getKotlinBuildPropertiesForSettings(settings: Any) = (settings as Settings).kotlinBuildProperties
 
 val Settings.kotlinBuildProperties: KotlinBuildProperties
-    get() = extensions.findByName(extensionName) as KotlinBuildProperties?
-        ?: KotlinBuildProperties(SettingsProperties(this)).also {
-            extensions.add(extensionName, it)
-        }
+    get() = KotlinBuildProperties(
+        BuildPropertiesBuildService.registerIfAbsent(
+            gradle,
+            providers,
+            rootDir,
+        ),
+        providers,
+    )
