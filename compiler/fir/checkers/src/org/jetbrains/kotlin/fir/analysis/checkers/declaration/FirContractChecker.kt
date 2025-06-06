@@ -43,7 +43,8 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private const val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
     private const val CALLS_IN_PLACE_ON_CONTEXT_PARAMETER =
         "callsInPlace contract cannot be applied to context parameter because context arguments can never be lambdas."
-    private const val BINARY_LOGICAL_OPS_NOT_SUPPORTED = "Binary logical operators are not supported in this contract"
+    private const val CONDITIONAL_RETURNS_EXPRESSION_NOT_SUPPORTED =
+        "Arbitrary expressions are not supported in this contract, only 'null'` and 'is' checks are supported"
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -237,15 +238,20 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     ) {
         val conditionalReturns = description.effects.mapNotNull { it.effect as? ConeConditionalReturnsDeclaration }
 
-        fun ConeBooleanExpression.containsBinaryLogicOps(): Boolean = when (this) {
-            is ConeLogicalNot -> arg.containsBinaryLogicOps()
-            is ConeBinaryLogicExpression -> true
-            else -> false
+        fun ConeBooleanExpression.containsUnsupportedElements(): Boolean = when (this) {
+            is ConeLogicalNot
+                -> arg.containsUnsupportedElements()
+            is ConeBinaryLogicExpression,
+            is ConeBooleanValueParameterReference,
+            is ConeBooleanConstantReference,
+                -> true
+            else
+                -> false
         }
 
         for (conditionalReturn in conditionalReturns) {
-            if (conditionalReturn.argumentsCondition.containsBinaryLogicOps()) {
-                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, BINARY_LOGICAL_OPS_NOT_SUPPORTED)
+            if (conditionalReturn.argumentsCondition.containsUnsupportedElements()) {
+                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, CONDITIONAL_RETURNS_EXPRESSION_NOT_SUPPORTED)
             }
         }
     }

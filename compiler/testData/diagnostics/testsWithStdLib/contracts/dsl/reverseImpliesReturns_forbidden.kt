@@ -42,3 +42,17 @@ fun decodeE(encoded: E): String? {
         else -> null
     }
 }
+
+fun decodeBoolFlag(flag: Boolean): String? {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract {
+        flag implies returnsNotNull()
+    }<!>
+    return if (flag) "hello" else null
+}
+
+fun decodeConst(): String? {
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract {
+        true implies returnsNotNull()
+    }<!>
+    return "hello"
+}
