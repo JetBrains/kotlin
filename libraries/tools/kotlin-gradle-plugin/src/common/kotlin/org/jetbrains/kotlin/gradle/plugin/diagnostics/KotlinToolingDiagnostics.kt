@@ -1650,16 +1650,10 @@ internal object KotlinToolingDiagnostics {
     internal object PomMisconfigured : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(description: String, solution: String, link: String? = null) = build {
             title("There was a problem with the Maven POM file configuration.")
-                .description {
-                    description
-                }
-                .solution {
-                    solution
-                }
+                .description(description)
+                .solution(solution)
                 .apply {
-                    link?.let {
-                        documentationLink(URI(it))
-                    }
+                    link?.let { documentationLink(URI(it)) }
                 }
         }
     }
@@ -1667,16 +1661,10 @@ internal object KotlinToolingDiagnostics {
     internal object SigningMisconfigured : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(description: String, solution: String, link: String? = null) = build {
             title("There was a problem with the artifact signing configuration.")
-                .description {
-                    description
-                }
-                .solution {
-                    solution
-                }
+                .description(description)
+                .solution(solution)
                 .apply {
-                    link?.let {
-                        documentationLink(URI(it))
-                    }
+                    link?.let { documentationLink(URI(it)) }
                 }
         }
     }
@@ -1684,12 +1672,8 @@ internal object KotlinToolingDiagnostics {
     object SomePublicationsNotSigned : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(publications: List<String>) = build {
             title("Signing is not enabled for some publications.")
-                .description {
-                    "Publishing unsigned publications to Maven Central will fail validation."
-                }
-                .solution {
-                    "Configure signing for the following publications if you plan to publish them to Maven Central: ${publications.joinToString()}"
-                }
+                .description("Publishing unsigned publications to Maven Central will fail validation.")
+                .solution("Configure signing for the following publications if you plan to publish them to Maven Central: ${publications.joinToString()}")
                 .documentationLink(URI("https://kotl.in/9l92c3"))
         }
     }
