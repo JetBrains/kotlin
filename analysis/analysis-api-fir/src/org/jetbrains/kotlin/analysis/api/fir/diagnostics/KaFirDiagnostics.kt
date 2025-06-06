@@ -3914,6 +3914,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReturnInFunctionWithExpressionBody::class
     }
 
+    interface ReturnInFunctionWithExpressionBodyWarning : KaFirDiagnostic<KtReturnExpression> {
+        override val diagnosticClass get() = ReturnInFunctionWithExpressionBodyWarning::class
+    }
+
+    interface ReturnInFunctionWithExpressionBodyAndImplicitType : KaFirDiagnostic<KtReturnExpression> {
+        override val diagnosticClass get() = ReturnInFunctionWithExpressionBodyAndImplicitType::class
+    }
+
     interface NoReturnInFunctionWithBlockBody : KaFirDiagnostic<KtDeclarationWithBody> {
         override val diagnosticClass get() = NoReturnInFunctionWithBlockBody::class
     }

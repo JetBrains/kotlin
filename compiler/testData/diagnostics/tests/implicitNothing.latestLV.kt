@@ -16,10 +16,10 @@ fun check() {
     // Error: KT-10449
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
     // Unreachable / unused, but not implicit Nothing
-    <!UNREACHABLE_CODE!>val x =<!> null!!
+    val x = null!!
 }
 
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE, RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
@@ -35,7 +35,7 @@ class Klass {
     fun foo() {
         fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
 
-        <!UNREACHABLE_CODE!>val x =<!> y
+        val x = y
     }
 }
 
