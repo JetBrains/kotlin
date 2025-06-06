@@ -141,14 +141,19 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
         parameters@ for ((bridge, parameter: KtObjCParameterData?) in parameters) {
             val label = when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> when {
-                    parameter?.isReceiver == true -> parameter.receiverSwiftName ?: parameter.receiverObjCName ?: "_"
+                    parameter?.isReceiver == true -> {
+                        val objCNameAnnotation = symbol.receiverParameter?.resolveObjCNameAnnotation()
+                        objCNameAnnotation?.swiftName ?: objCNameAnnotation?.objCName ?: "_"
+                    }
                     method is KaPropertySetterSymbol -> when (parameters.size) {
                         1 -> "_"
                         else -> "value"
                     }
                     else -> {
                         if (parameter == null) continue@parameters
-                        else if (parameter.isReceiver) "_" else parameter.receiverSwiftName ?: parameter.receiverObjCName ?: parameter.name
+                        else if (parameter.isReceiver) "_" else {
+                            parameter.objNameAnnotation?.swiftName ?: parameter.objNameAnnotation?.objCName ?: parameter.name
+                        }
                     }
                 }
                 MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
@@ -164,7 +169,6 @@ internal fun ObjCExportContext.getSwiftName(symbol: KaFunctionSymbol, methodBrid
 
     return sb.toString() //mangle
 }
-
 
 internal object Predefined {
     val anyMethodSelectors = mapOf(
@@ -238,7 +242,10 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         val name = when (bridge) {
 
             is MethodBridgeValueParameter.Mapped -> when {
-                parameter?.isReceiver == true -> parameter.receiverObjCName ?: ""
+                parameter?.isReceiver == true -> {
+                    val objCNameAnnotation = symbol.receiverParameter?.resolveObjCNameAnnotation()
+                    objCNameAnnotation?.objCName ?: ""
+                }
                 method is KaPropertySetterSymbol -> when (parameters.size) {
                     1 -> ""
                     else -> "value"

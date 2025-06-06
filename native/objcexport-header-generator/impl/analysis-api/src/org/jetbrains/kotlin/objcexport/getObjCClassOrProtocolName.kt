@@ -45,7 +45,7 @@ fun ObjCExportContext.getObjCClassOrProtocolName(
 
 private fun ObjCExportContext.getObjCName(
     symbol: KaClassLikeSymbol,
-    resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = symbol.resolveObjCNameAnnotation(),
+    resolvedObjCNameAnnotation: ObjCExportObjCNameAnnotation? = symbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
     val objCName =
@@ -74,13 +74,13 @@ private fun ObjCExportContext.getObjCName(
  */
 private fun ObjCExportContext.getSwiftName(
     classSymbol: KaClassLikeSymbol,
-    resolvedObjCNameAnnotation: KtResolvedObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
+    objCNameAnnotation: ObjCExportObjCNameAnnotation? = classSymbol.resolveObjCNameAnnotation(),
     bareName: Boolean = false,
 ): String {
 
-    val swiftName = resolvedObjCNameAnnotation?.swiftName
-        ?: exportSession.overrideObjCNameOrSymbolName(classSymbol, resolvedObjCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
-    if (bareName || resolvedObjCNameAnnotation != null && resolvedObjCNameAnnotation.isExact) {
+    val swiftName = objCNameAnnotation?.swiftName
+        ?: exportSession.overrideObjCNameOrSymbolName(classSymbol, objCNameAnnotation?.objCName).toValidObjCSwiftIdentifier()
+    if (bareName || objCNameAnnotation != null && objCNameAnnotation.isExact) {
         return swiftName
     }
 
@@ -100,7 +100,7 @@ private fun ObjCExportContext.getSwiftName(
                         append(swiftName.capitalizeAsciiOnly())
                     }
                 } else {
-                    append(containingClassSwiftName?.replaceFirst(".", ""))
+                    append(containingClassSwiftName.replaceFirst(".", ""))
                     append(swiftName.capitalizeAsciiOnly())
                 }
             }
