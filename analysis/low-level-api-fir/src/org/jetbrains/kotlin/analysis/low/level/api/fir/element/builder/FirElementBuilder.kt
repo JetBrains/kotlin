@@ -184,6 +184,11 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
             )
         }
 
+        // There is no need for a custom traverse as the resolved element has a cached map
+        if (firElementContainer.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
+            return null
+        }
+
         val anchorFir = resolveAndFindFirForAnchor(firElementContainer, anchorElement) ?: return null
         // We use identity comparison here intentionally to check that it is exactly the object we want to find
         if (element === anchorElement) return anchorFir
