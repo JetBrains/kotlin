@@ -19,6 +19,7 @@ class ObjCConfig(
     val kotlinIdentifierPrefix: String,
     val kotlinGlobalClass: String,
     val maximumStackDepth: Int,
+    val mainLoopRepeatCount: Int,
     val basename: String,
 )
 
@@ -93,7 +94,9 @@ private class ObjCTranslationContext(
             |}
             |
             |int main() {
-            |   [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
+            |   for (int i = 0; i < ${config.mainLoopRepeatCount}; ++i) {
+            |       [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
+            |   }
             |   return 0;
             |}
             |

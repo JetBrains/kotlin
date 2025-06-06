@@ -53,7 +53,9 @@ static void leaveFrame(void) {
 }
 
 int main() {
-   [KtlibKtlibKt mainBody];
+   for (int i = 0; i < 100000; ++i) {
+       [KtlibKtlibKt mainBody];
+   }
    return 0;
 }
 

@@ -19,10 +19,12 @@ import java.io.File
 
 class Config(
     val maximumStackDepth: Int,
+    val mainLoopRepeatCount: Int,
 ) {
     companion object {
         val DEFAULT = Config(
-            100,
+            maximumStackDepth = 100,
+            mainLoopRepeatCount = 100000,
         )
     }
 }
@@ -55,6 +57,7 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
         kotlinIdentifierPrefix = kotlinModuleCapitalized,
         kotlinGlobalClass = "${kotlinModuleCapitalized}Kt",
         maximumStackDepth = config.maximumStackDepth,
+        mainLoopRepeatCount = config.mainLoopRepeatCount,
         basename = "main"
     )
     val cinterop = produceCInterop(cinteropConfig)
