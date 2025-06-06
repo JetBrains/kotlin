@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation(gradleApi())
+    compileOnly(kotlin("stdlib"))
 }
 
 tasks {
