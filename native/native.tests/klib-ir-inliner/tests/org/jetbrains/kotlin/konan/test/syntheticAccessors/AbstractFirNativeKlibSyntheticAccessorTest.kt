@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.syntheticAccessors
 
-import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.config.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.config.PartialLinkageMode
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
@@ -21,7 +17,6 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.SyntheticAccessorsDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput.NativeDeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -40,24 +35,10 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
-
-// TODO KT-77493: Drop this facade and use NativeDeserializerFacade instead,
-//  after all tests for invisible references would be migrated to diagnostic tests
-class NativeDeserializerWithPLFacade(testServices: TestServices): NativeDeserializerFacade(testServices) {
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): NativeDeserializedFromKlibBackendInput? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-        return super.transform(module, inputArtifact)
-    }
-}
 
 // Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
 open class AbstractFirNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
@@ -72,7 +53,7 @@ open class AbstractFirNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWi
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirNativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
-        get() = ::NativeDeserializerWithPLFacade
+        get() = ::NativeDeserializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(

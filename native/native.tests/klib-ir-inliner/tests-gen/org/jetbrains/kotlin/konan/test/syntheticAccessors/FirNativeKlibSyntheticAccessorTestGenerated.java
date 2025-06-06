@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.konan.test.syntheticAccessors;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
-import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -23,10 +19,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
-@EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-@EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-@UseExtTestCaseGroupProvider()
-@Tag("klibIrInliner")
 public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNativeKlibSyntheticAccessorTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
@@ -36,10 +28,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
   @Nested
   @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis")
   @TestDataPath("$PROJECT_ROOT")
-  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-  @UseExtTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class OuterThis {
     @Test
     public void testAllFilesPresentInOuterThis() {
@@ -49,10 +37,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossFileLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossFileLeak {
       @Test
       public void testAllFilesPresentInCrossFileLeak() {
@@ -129,10 +113,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/crossModuleLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossModuleLeak {
       @Test
       public void testAllFilesPresentInCrossModuleLeak() {
@@ -209,10 +189,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/outerThis/singleFile")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
@@ -290,10 +266,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
   @Nested
   @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember")
   @TestDataPath("$PROJECT_ROOT")
-  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-  @UseExtTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class PrivateMember {
     @Test
     public void testAllFilesPresentInPrivateMember() {
@@ -303,10 +275,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
@@ -653,10 +621,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
@@ -1009,10 +973,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/privateMember/singleFile")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
@@ -1228,10 +1188,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
   @Nested
   @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate")
   @TestDataPath("$PROJECT_ROOT")
-  @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-  @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-  @UseExtTestCaseGroupProvider()
-  @Tag("klibIrInliner")
   public class TopLevelPrivate {
     @Test
     public void testAllFilesPresentInTopLevelPrivate() {
@@ -1241,10 +1197,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossFilePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossFilePrivateLeak() {
@@ -1435,10 +1387,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class CrossModulePrivateLeak {
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
@@ -1641,10 +1589,6 @@ public class FirNativeKlibSyntheticAccessorTestGenerated extends AbstractFirNati
     @Nested
     @TestMetadata("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile")
     @TestDataPath("$PROJECT_ROOT")
-    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE")
-    @EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
-    @UseExtTestCaseGroupProvider()
-    @Tag("klibIrInliner")
     public class SingleFile {
       @Test
       public void testAllFilesPresentInSingleFile() {
