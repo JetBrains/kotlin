@@ -306,7 +306,7 @@ private class CallInlining(
                     inlineFunctionExpression(asCallOf(functionArgument.function, emptyList()), functionArgument.function, functionArgument)
 
                 functionArgument is IrRichCallableReference<*> ->
-                    inlineFunctionExpression(asCallOf(functionArgument.invokeFunction, functionArgument.boundValues), functionArgument.invokeFunction, functionArgument.attributeOwnerId)
+                    inlineFunctionExpression(asCallOf(functionArgument.invokeFunction, functionArgument.boundValues), functionArgument.invokeFunction, functionArgument)
 
                 else ->
                     super.visitCall(expression)
