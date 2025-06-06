@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -21,6 +22,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         valueType = StringType.defaultNull
         valueDescription = "<directory|jar>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -31,6 +33,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -40,6 +43,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -49,6 +53,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -58,6 +63,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -67,6 +73,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         description = "Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 }

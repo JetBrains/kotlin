@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -32,6 +33,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -51,6 +53,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -60,6 +63,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -83,6 +87,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -91,6 +96,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Evaluate the given Kotlin script (*.kts) file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -100,6 +106,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Run Kotlin REPL (deprecated)".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -118,6 +125,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -126,6 +134,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Disable method inlining.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -134,6 +143,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Allow loading classes with bad metadata versions and pre-release classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -142,6 +152,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Allow loading pre-release classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -151,6 +162,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -159,6 +171,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Enables special features which are relevant only for stdlib compilation.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -167,6 +180,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Report the source-to-output file mapping.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -177,6 +191,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -187,6 +202,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueType = StringArrayType.defaultNull
         valueDescription = "plugin:<pluginId>:<optionName>=<value>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -198,6 +214,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -208,6 +225,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
 
         additionalAnnotations(Enables(LanguageFeature.MultiPlatformProjects))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -216,6 +234,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -226,6 +245,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -240,6 +260,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType),
             Enables(LanguageFeature.DisableCompatibilityModeForNewInference),
         )
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -252,6 +273,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             Enables(LanguageFeature.InlineClasses)
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -260,6 +282,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Report detailed performance statistics.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -269,6 +292,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -278,6 +302,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Change the metadata version of the generated binary files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -291,6 +316,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -300,6 +326,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "List backend phases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -309,6 +336,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Disable backend phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -318,6 +346,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Be verbose while performing the given backend phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -327,6 +356,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Dump the backend's state before these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -336,6 +366,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Dump the backend's state after these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -345,6 +376,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Dump the backend's state both before and after these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -354,6 +386,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Dump the backend state into this directory.".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -364,6 +397,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Dump the declaration with the given FqName.".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -373,6 +407,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Validate the backend's state before these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -382,6 +417,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Validate the backend's state after these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -391,6 +427,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Validate the backend's state both before and after these phases.".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -401,6 +438,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueDescription = "{none|warning|error}".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -411,6 +449,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -420,6 +459,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Profile backend phases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -429,6 +469,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Check pre- and postconditions of IR lowering phases.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -452,6 +493,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -461,6 +503,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -472,6 +515,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -482,6 +526,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Compile using the LightTree parser with the frontend IR.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -492,6 +537,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Produce a klib that only contains the metadata of declarations.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -501,6 +547,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Don't enable the scripting plugin by default.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -556,6 +603,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -566,6 +614,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
             "Suppress error about API version greater than language version.\nWarning: This is temporary solution (see KT-63712) intended to be used only for stdlib build.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -577,6 +626,7 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -589,6 +639,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.DataClassCopyRespectsConstructorVisibility))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -601,6 +652,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.UnrestrictedBuilderInference))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -612,6 +664,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.ContextReceivers))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -623,6 +676,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.ContextParameters))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -634,6 +688,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.ContextSensitiveResolutionUsingExpectedType))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -645,6 +700,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.BreakContinueInInlineLambdas))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -656,6 +712,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -667,6 +724,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         additionalAnnotations(Enables(LanguageFeature.MultiDollarInterpolation))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -677,6 +735,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Enable incremental compilation.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -686,6 +745,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Render the internal names of warnings and errors.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -699,6 +759,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
             Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -708,6 +769,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Report all warnings even if errors are found.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -718,6 +780,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         valueDescription = "<fragment name>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -728,6 +791,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -738,6 +802,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         valueDescription = "<fromModuleName>:<onModuleName>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -752,6 +817,7 @@ The argument should be used only if the new compilation scheme is enabled with -
 """.asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -762,6 +828,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         description = "Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -771,6 +838,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         description = "Ignore all compilation exceptions while optimizing some constant expressions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -780,6 +848,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         description = "Don't report warnings when errors are suppressed. This only affects K2.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -793,6 +862,7 @@ The argument should be used only if the new compilation scheme is enabled with -
             Enables(LanguageFeature.WhenGuards)
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -806,6 +876,7 @@ The argument should be used only if the new compilation scheme is enabled with -
             Enables(LanguageFeature.NestedTypeAliases)
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -818,6 +889,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<WARNING_NAME>".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -832,6 +904,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<WARNING_NAME>:(error|warning|disabled)".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -846,6 +919,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         valueDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -856,6 +930,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             "Enable debug level compiler checks. ATTENTION: these checks can slow compiler down or even crash it.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -867,6 +942,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
 
         additionalAnnotations(Enables(LanguageFeature.AnnotationAllUseSiteTarget))
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -875,6 +951,7 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
         description = "Lenient compiler mode. When actuals are missing, placeholder declarations are generated.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 }

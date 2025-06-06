@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -39,6 +40,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -49,6 +51,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<directory>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -66,6 +69,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -75,6 +79,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -91,6 +96,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -107,6 +113,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -117,6 +124,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -138,6 +146,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -155,6 +164,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -172,6 +182,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -180,6 +191,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Comma-separated list of fully qualified names not to be eliminated by DCE (if it can be reached), and for which to keep non-minified names.".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -197,6 +209,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -214,6 +227,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -223,6 +237,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate an unpacked klib into the parent directory of the output JS file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -231,6 +246,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a packed klib into the directory specified by '-ir-output-dir'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -239,6 +255,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a JS file using the IR backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -247,6 +264,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Perform experimental dead code elimination.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -256,6 +274,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{log|exception}".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -264,6 +283,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Print reachability information about declarations to 'stdout' while performing DCE.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -275,6 +295,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             defaultValue = true.asReleaseDependent()
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -283,6 +304,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Minimize the names of members.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -292,6 +314,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -300,6 +323,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -309,6 +333,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{log|exception}".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -317,6 +342,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate one .js file per module.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -325,6 +351,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Add a custom output name to the split .js files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -333,6 +360,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate one .js file per source file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -341,6 +369,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -351,6 +380,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -360,6 +390,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -368,6 +399,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Use the compiler to build the cache.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -376,6 +408,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a TypeScript declaration .d.ts file alongside the JS file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -387,6 +420,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             defaultValue = true.asReleaseDependent()
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -396,6 +430,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate strict types for implicitly exported entities inside d.ts files.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -413,6 +448,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -422,6 +458,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -431,6 +468,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -440,6 +478,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Use ES2015 arrow functions in the JavaScript code generated for Kotlin lambdas. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -463,6 +502,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             ),
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -479,6 +519,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -488,6 +529,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -497,6 +539,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         description = "Enable extension function members in external interfaces.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -505,6 +548,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         description = "Enable the IR fake override validator.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -516,6 +560,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
             defaultValue = true.asReleaseDependent()
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 }

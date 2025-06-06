@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
@@ -20,6 +21,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Print a synopsis of standard options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -29,6 +31,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Print a synopsis of advanced options.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -37,6 +40,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Display the compiler version.".asReleaseDependent()
 
         valueType = BooleanType.defaultFalse
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -53,6 +57,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
                 shouldGenerateDeprecatedKotlinOptions = true,
             )
         )
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -71,6 +76,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
             )
 
         )
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -89,6 +95,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -106,6 +113,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
             )
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 }

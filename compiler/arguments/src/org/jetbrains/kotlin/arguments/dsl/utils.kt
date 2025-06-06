@@ -42,10 +42,15 @@ val IntType.Companion.defaultOne: IntType
         defaultValue = 1.asReleaseDependent(),
     )
 
+@RequiresOptIn(
+    message = "This is temporary stub lifecycle which will go away soon. Define an actual argument lifecycle instead.",
+)
+internal annotation class TemporaryCompilerArgumentLifecycle
 /**
  * This is a stub method for lifecycle.
- * All usages should be eventually removed and replaced with proper lifecycle.
+ * All usages should be eventually removed and replaced with a proper lifecycle.
  */
+@TemporaryCompilerArgumentLifecycle
 internal fun KotlinCompilerArgumentBuilder.stubLifecycle() {
     lifecycle(
         introducedVersion = KotlinReleaseVersion.v1_4_0,

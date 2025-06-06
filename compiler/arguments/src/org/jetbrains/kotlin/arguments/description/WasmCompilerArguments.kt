@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -19,6 +20,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Use the WebAssembly compiler backend.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -27,6 +29,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Set up the Wasm target (wasm-js or wasm-wasi).".asReleaseDependent()
         valueType = StringType.defaultNull
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -39,6 +42,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
             defaultValue = true.asReleaseDependent()
         )
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -48,6 +52,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Avoid optimizations that can break debugging.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -56,6 +61,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Generate a .wat file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -65,6 +71,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Enable support for 'KClass.qualifiedName'.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -73,6 +80,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Turn on range checks for array access functions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -81,6 +89,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Turn on asserts.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -89,6 +98,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Use traps instead of throwing exceptions.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -97,6 +107,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Use an updated version of the exception proposal with try_table.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -106,6 +117,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Attach a thrown by JS-value to the JsException class".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -115,6 +127,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -124,6 +137,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Insert source mappings from libraries even if their sources are unavailable on the end-user machine.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -133,6 +147,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Preserve wasm file structure between IC runs.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -142,6 +157,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Do not commit IC cache updates.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -151,6 +167,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         description = "Generate DWARF debug information.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -163,6 +180,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
@@ -176,6 +194,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 }
