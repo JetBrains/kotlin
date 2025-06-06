@@ -196,6 +196,10 @@ private object MatchingParameterFunctionTypeKey : FirDeclarationDataKey()
  * }
  * ```
  * The original function type `@Foo T.() -> Unit` can be accessed with this property on the FirAnonymousFunction at caret.
+ *
+ * The function type can contain unsubstituted type variable types. Therefore, it must be used carefully.
+ *
+ * Currently, it's only used for retrieving type annotations for DSL scope violation checks.
  */
 var <D : FirAnonymousFunction>
         D.matchingParameterFunctionType: ConeKotlinType? by FirDeclarationDataRegistry.data(MatchingParameterFunctionTypeKey)
