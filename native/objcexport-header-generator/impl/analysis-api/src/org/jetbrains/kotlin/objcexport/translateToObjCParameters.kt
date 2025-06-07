@@ -74,10 +74,12 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
                 }
                 ObjCBlockPointerType(
                     returnType = ObjCVoidType,
-                    parameterTypes = listOfNotNull(
+                    parameters = listOfNotNull(
                         resultType,
                         ObjCNullableReferenceType(ObjCClassType("NSError"))
-                    )
+                    ).map {
+                        ObjCParameter("", null, it, todo = null)
+                    }
                 )
             }
         }
