@@ -5082,6 +5082,22 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/bytecodeText/objects")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Objects {
+    @Test
+    public void testAllFilesPresentInObjects() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("kt77438.kt")
+    public void testKt77438() {
+      runTest("compiler/testData/codegen/bytecodeText/objects/kt77438.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties")
   @TestDataPath("$PROJECT_ROOT")
   public class OptimizedDelegatedProperties {
