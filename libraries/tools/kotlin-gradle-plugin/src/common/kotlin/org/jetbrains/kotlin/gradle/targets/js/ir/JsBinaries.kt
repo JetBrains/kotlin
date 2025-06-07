@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.fileExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -68,22 +68,27 @@ sealed class JsIrBinary(
     val linkTask: TaskProvider<KotlinJsIrLink> =
         project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
 
+    @Suppress("LeakingThis")
     private val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
-        if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
-            null
-        } else {
-            project.registerTask<DefaultIncrementalSyncTask>(
-                linkSyncTaskName
-            ) { task ->
-                syncInputConfigure(task)
+        prepareSyncInputConfigure().run {
+            if (target.wasmTargetType == KotlinWasmTargetType.WASI) {
+                null
+            } else {
+                project.registerTask<DefaultIncrementalSyncTask>(
+                    linkSyncTaskName
+                ) { task ->
+                    syncInputConfigure(task)
 
-                task.duplicatesStrategy = DuplicatesStrategy.WARN
+                    task.duplicatesStrategy = DuplicatesStrategy.WARN
 
-                task.from.from(project.tasks.named(compilation.processResourcesTaskName))
+                    task.from.from(project.tasks.named(compilation.processResourcesTaskName))
 
-                task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
+                    task.destinationDirectory.set(compilation.npmProject.dist.mapToFile())
+                }
             }
         }
+
+    protected open fun prepareSyncInputConfigure() {}
 
     protected open fun syncInputConfigure(syncTask: DefaultIncrementalSyncTask) {
         syncTask.from.from(
@@ -266,19 +271,25 @@ class ExecutableWasm(
         }
     }
 
-    override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.register(compilation, optimizeTaskName()) {
-        val compileWasmDestDir = linkTask.map {
-            it.destinationDirectory
-        }
-        doLast {
-            fs.copy {
-                it.from(compileWasmDestDir)
-                it.into(outputDirectory)
-                it.exclude(outputFileName.get())
+    override lateinit var optimizeTask: TaskProvider<BinaryenExec>
+        private set
+
+    override fun prepareSyncInputConfigure() {
+        optimizeTask =
+            BinaryenExec.register(compilation, optimizeTaskName()) {
+                val compileWasmDestDir = linkTask.map {
+                    it.destinationDirectory
+                }
+                doLast {
+                    fs.copy {
+                        it.from(compileWasmDestDir)
+                        it.into(outputDirectory)
+                        it.exclude(outputFileName.get())
+                    }
+                }
+            }.also { binaryenExec ->
+                binaryenExec.configureOptimizeTask(this)
             }
-        }
-    }.also { binaryenExec ->
-        binaryenExec.configureOptimizeTask(this)
     }
 
     val mainOptimizedFile: Provider<RegularFile> = optimizeTask.flatMap {
@@ -318,25 +329,31 @@ class LibraryWasm(
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    override val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.register(compilation, optimizeTaskName()) {
-        val compileWasmDestDir = linkTask.map {
-            it.destinationDirectory
-        }
+    override lateinit var optimizeTask: TaskProvider<BinaryenExec>
+        private set
 
-        doLast {
-            fs.copy {
-                it.from(compileWasmDestDir)
-                it.into(outputDirectory)
-                it.eachFile {
-                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
-                        it.exclude()
+    @OptIn(ExperimentalWasmDsl::class)
+    override fun prepareSyncInputConfigure() {
+        optimizeTask =
+            BinaryenExec.register(compilation, optimizeTaskName()) {
+                val compileWasmDestDir = linkTask.map {
+                    it.destinationDirectory
+                }
+
+                doLast {
+                    fs.copy {
+                        it.from(compileWasmDestDir)
+                        it.into(outputDirectory)
+                        it.eachFile {
+                            if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
+                                it.exclude()
+                            }
+                        }
                     }
                 }
+            }.also { binaryenExec ->
+                binaryenExec.configureOptimizeTask(this)
             }
-        }
-    }.also { binaryenExec ->
-        binaryenExec.configureOptimizeTask(this)
     }
 
     private fun optimizeTaskName(): String =
