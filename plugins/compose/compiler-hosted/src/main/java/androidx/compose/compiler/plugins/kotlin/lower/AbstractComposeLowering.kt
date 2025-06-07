@@ -23,6 +23,7 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames.InternalPackage
 import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin

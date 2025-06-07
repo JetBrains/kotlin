@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames

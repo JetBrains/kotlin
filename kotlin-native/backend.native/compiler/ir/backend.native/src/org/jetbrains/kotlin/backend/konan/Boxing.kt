@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
 import org.jetbrains.kotlin.backend.konan.llvm.constValue

@@ -9,6 +9,17 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 
+private var IrElement._attributeOwnerId: IrElement? by irAttribute(copyByDefault = true)
+/**
+ * Original element before copying. Always satisfies the following
+ * invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
+ */
+var IrElement.attributeOwnerId: IrElement
+    get() = _attributeOwnerId ?: this
+    set(value) {
+        _attributeOwnerId = if (value === this) null else value
+    }
+
 /**
  * Original element before inlining. Useful only with IR
  * inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the

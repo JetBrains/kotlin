@@ -38,12 +38,6 @@ interface IrElement {
     var endOffset: Int
 
     /**
-     * Original element before copying. Always satisfies the following
-     * invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-     */
-    var attributeOwnerId: IrElement
-
-    /**
      * Runs the provided [visitor] on the IR subtree with the root at this node.
      *
      * @param visitor The visitor to accept.

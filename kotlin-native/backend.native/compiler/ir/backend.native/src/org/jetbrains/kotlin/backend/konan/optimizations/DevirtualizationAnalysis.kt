@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.utils.copy
 import org.jetbrains.kotlin.utils.forEachBit
 import org.jetbrains.kotlin.backend.common.pop

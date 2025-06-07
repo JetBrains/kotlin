@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.ir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.*

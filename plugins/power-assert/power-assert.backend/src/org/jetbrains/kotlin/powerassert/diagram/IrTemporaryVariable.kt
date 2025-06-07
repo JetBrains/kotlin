@@ -19,6 +19,7 @@
 
 package org.jetbrains.kotlin.powerassert.diagram
 
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.irGet

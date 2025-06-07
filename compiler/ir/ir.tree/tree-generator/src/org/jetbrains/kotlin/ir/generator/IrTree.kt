@@ -115,15 +115,6 @@ object IrTree : AbstractTreeBuilder() {
         +offsetField("end")
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
-
-        generationCallback = {
-            println()
-            printPropertyDeclaration("attributeOwnerId", rootElement, VariableKind.VAR, kDoc = """
-                Original element before copying. Always satisfies the following
-                invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-            """.trimIndent())
-            println()
-        }
     }
     val statement: Element by element(Other)
 

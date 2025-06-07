@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities

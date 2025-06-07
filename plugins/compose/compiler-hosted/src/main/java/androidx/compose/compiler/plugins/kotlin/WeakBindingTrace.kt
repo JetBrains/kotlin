@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import com.intellij.util.keyFMap.KeyFMap
+import org.jetbrains.kotlin.backend.common.attributeOwnerId
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice

@@ -32,7 +32,6 @@ import java.io.File
  */
 fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
     (this as IrElementBase).copyAttributesFrom(other as IrElementBase, includeAll)
-    attributeOwnerId = other.attributeOwnerId
 }
 
 val IrClass.isSingleFieldValueClass: Boolean
