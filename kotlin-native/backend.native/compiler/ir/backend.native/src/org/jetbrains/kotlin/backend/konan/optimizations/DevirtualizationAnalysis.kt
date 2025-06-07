@@ -387,8 +387,6 @@ internal object DevirtualizationAnalysis {
 
                 override fun visitCall(expression: IrCall) {
                     expression.acceptChildrenVoid(this)
-
-                    expression.attributeOwnerId = expression
                 }
             })
         }

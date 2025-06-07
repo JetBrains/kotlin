@@ -274,9 +274,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             isOperator = superFunction.isOperator
             isSuspend = superFunction.isSuspend
         }.apply {
-            attributeOwnerId = functionReference.attributeOwnerId
             annotations = invokeFunction.annotations
-
             parameters += createDispatchReceiverParameterWithClassParent()
             require(superFunction.typeParameters.isEmpty()) { "Fun interface abstract function can't have type parameters" }
 
