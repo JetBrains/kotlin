@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -145,7 +146,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private val IrSimpleFunction.originalForDefaultAdapter: IrSimpleFunction?
         get() = if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            (attributeOwnerId as IrFunction).symbol.owner as IrSimpleFunction
+            defaultArgumentsOriginalFunction as IrSimpleFunction
         } else null
 
     private fun getModuleName(function: IrSimpleFunction): String =

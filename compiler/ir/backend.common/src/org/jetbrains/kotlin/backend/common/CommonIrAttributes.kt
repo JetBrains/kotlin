@@ -34,6 +34,6 @@ var IrSimpleFunction.functionWithContinuations: IrSimpleFunction? by irAttribute
  */
 var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
 
-var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = false)
+var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = true)
 
 var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
