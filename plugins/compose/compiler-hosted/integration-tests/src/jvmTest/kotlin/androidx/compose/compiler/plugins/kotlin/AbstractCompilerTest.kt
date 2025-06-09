@@ -25,6 +25,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
@@ -69,7 +69,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         val defaultClassPath by lazy {
             listOf(
                 Classpath.kotlinStdlibJar(),
-                Classpath.composeRuntimeJar()
+                Classpath.composeRuntimeJar(),
+                Classpath.composeRuntimeAnnotationsJar()
             )
         }
 
@@ -220,6 +221,7 @@ object Classpath {
     fun kotlinStdlibJar() = jarFor<Unit>()
     fun kotlinxCoroutinesJar() = jarFor<kotlinx.coroutines.CoroutineScope>()
     fun composeRuntimeJar() = jarFor<androidx.compose.runtime.Composable>()
+    fun composeRuntimeAnnotationsJar() = jarFor<androidx.compose.runtime.Stable>()
     fun composeTestUtilsJar() = jarFor<androidx.compose.runtime.mock.View>()
     fun composeAnimationJar() = jarFor<androidx.compose.animation.EnterTransition>()
     fun composeUiJar() = jarFor<androidx.compose.ui.Modifier>()
