@@ -35,8 +35,7 @@ abstract class AbstractDiagnosticsTestSpec : org.jetbrains.kotlin.checkers.Abstr
             "linked/when-expression"
         )
 
-        private const val MODULE_PATH = "compiler/tests-spec"
-        private const val DIAGNOSTICS_TESTDATA_PATH = "$MODULE_PATH/testData/diagnostics"
+        private const val DIAGNOSTICS_TESTDATA_PATH = "testData/diagnostics"
         private const val HELPERS_PATH = "$DIAGNOSTICS_TESTDATA_PATH/helpers"
 
         fun additionalKtFiles(specTest: AbstractSpecTest, project: Project): List<KtFile> {

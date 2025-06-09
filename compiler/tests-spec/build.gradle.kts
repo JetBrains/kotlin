@@ -1,6 +1,8 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -32,7 +34,6 @@ sourceSets {
 testsJar()
 
 projectTest(parallel = true) {
-    workingDir = rootDir
     useJUnitPlatform()
 }
 
@@ -43,12 +44,20 @@ val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.sp
 val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt")
 
 val specConsistencyTests by task<Test> {
-    workingDir = rootDir
     filter {
         includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
     useJUnitPlatform()
-    inputs.dir(layout.projectDirectory.dir("testData")).withPathSensitivity(PathSensitivity.RELATIVE)
+}
+
+compilerTests {
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData")
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withMockJdkRuntime()
+    withStdlibCommon()
 }
 
 tasks.named<Test>("test") {
