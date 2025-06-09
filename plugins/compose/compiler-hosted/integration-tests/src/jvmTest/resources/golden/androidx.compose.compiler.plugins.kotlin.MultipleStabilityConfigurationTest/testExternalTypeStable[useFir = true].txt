@@ -16,6 +16,7 @@ fun SkippableComposable(list: List<String>, instant: Instant) {
 // ------------------------------------------
 
 @Composable
+@FunctionKeyMeta(key = -892114577, startOffset = 81, endOffset = 177)
 fun SkippableComposable(list: List<String>, instant: Instant, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
