@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
@@ -72,6 +74,9 @@ class IrInlineCodegen(
             state.factory.removeClasses(result.calcClassesToRemove())
         } catch (e: CompilationException) {
             throw e
+        } catch (e: InlineMethodBodyMissingException) {
+            codegen.context.ktDiagnosticReporter.at(expression, codegen.irFunction.fileParent)
+                .report(JvmBackendErrors.INLINE_MISSING_BODY, e.jvmMethod)
         } catch (e: InlineException) {
             throw CompilationException(
                 "Couldn't inline method call: ${sourceCompiler.callElementText}",
@@ -253,7 +258,12 @@ class IrInlineCodegen(
         if (function.parameters.isEmpty()) return false
         if (function.parameters.any { it.isInlineParameter() }) return false
 
-        return canInlineArgumentsInPlace(sourceCompiler.compileInlineFunction(jvmSignature).node)
+        val compiledNode = try {
+            sourceCompiler.compileInlineFunction(jvmSignature).node
+        } catch (_: InlineException) {
+            return false
+        }
+        return canInlineArgumentsInPlace(compiledNode)
     }
 
     private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, isInlineOnly: Boolean): InlineResult {

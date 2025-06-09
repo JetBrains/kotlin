@@ -126,7 +126,7 @@ private fun getMethodNode(
             getMethodNode(bytes, owner) { methodToFind == Method(removeModuleSuffixOrNull(it.name), it.descriptor) }?.let { return it }
         }
     }
-    throw IllegalStateException("couldn't find inline method $owner.$method")
+    throw InlineMethodBodyMissingException("$owner.$method")
 }
 
 private fun removeModuleSuffixOrNull(name: String): String? {
@@ -138,3 +138,6 @@ private fun removeModuleSuffixOrNull(name: String): String? {
 private fun getMethodNode(owner: Type, bytes: ByteArray, method: Method, isSuspend: Boolean) =
     (if (isSuspend) getMethodNode(bytes, owner, Method(method.name + FOR_INLINE_SUFFIX, method.descriptor)) else null)
         ?: getMethodNode(bytes, owner, method)
+
+class InlineMethodBodyMissingException(val jvmMethod: String) :
+    InlineException("couldn't find inline method $jvmMethod")

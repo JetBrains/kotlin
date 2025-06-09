@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.backend.common.originalBeforeInline
+import org.jetbrains.kotlin.codegen.inline.InlineException
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -283,14 +284,19 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             val nonDispatchIndex = parameter.indexInParameters - hasDispatchReceiverAsInt
             val localIndex = signature.parameters.take(nonDispatchIndex).sumOf { it.size } + hasDispatchReceiverAsInt
             // Null checks are removed during inlining, so we can ignore them.
-            return loadCompiledInlineFunction(
-                containerId,
-                signature.asmMethod,
-                isSuspend,
-                hasMangledReturnType,
-                context.evaluatorData != null && visibility == DescriptorVisibilities.INTERNAL,
-                context.state
-            ).node.usesLocalExceptParameterNullCheck(localIndex)
+            val compiledInlineNode = try {
+                loadCompiledInlineFunction(
+                    containerId,
+                    signature.asmMethod,
+                    isSuspend,
+                    hasMangledReturnType,
+                    context.evaluatorData != null && visibility == DescriptorVisibilities.INTERNAL,
+                    context.state
+                ).node
+            } catch (_: InlineException) {
+                return false
+            }
+            return compiledInlineNode.usesLocalExceptParameterNullCheck(localIndex)
         }
         return hasChild { it is IrGetValue && it.symbol == parameters[parameter.indexInParameters].symbol }
     }
