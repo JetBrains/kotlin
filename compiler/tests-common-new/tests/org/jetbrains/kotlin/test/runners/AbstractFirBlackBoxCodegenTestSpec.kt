@@ -29,7 +29,7 @@ abstract class AbstractFirBlackBoxCodegenTestSpecBase(parser: FirParser) : Abstr
 
 open class AbstractFirBlackBoxCodegenTestSpec : AbstractFirBlackBoxCodegenTestSpecBase(FirParser.LightTree)
 
-private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration(baseDir: String = ".") {
+private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration() {
     defaultDirectives {
         +SPEC_HELPERS
         +WITH_STDLIB
@@ -37,7 +37,7 @@ private fun TestConfigurationBuilder.baseFirSpecBlackBoxCodegenTestConfiguration
         +FULL_JDK
     }
     useSourcePreprocessor(::PackageNamePreprocessor)
-    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box", baseDir))
+    useAdditionalSourceProviders(::SpecHelpersSourceFilesProvider.bind("codegen/box"))
 
     useAfterAnalysisCheckers(
         ::FirFailingTestSuppressor,

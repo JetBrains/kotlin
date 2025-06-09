@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.parsing;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -32,9 +33,11 @@ import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Paths;
 
 public abstract class AbstractParsingTest extends KtParsingTestCase {
 
@@ -104,7 +107,12 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
     }
 
     private void doBaseTestImpl(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) throws Exception {
-        String fileContent = loadFile(filePath);
+        String fileContent;
+        if (Paths.get(filePath).isAbsolute()) {
+            fileContent = FileUtil.loadFile(new File(filePath), CharsetToolkit.UTF8, true).trim();
+        } else {
+            fileContent = loadFile(filePath);
+        }
 
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));
 
@@ -126,7 +134,12 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
             throw new TestsCompilerError(throwable);
         }
 
-        doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), toParseTreeText(myFile, false, false).trim());
+        String actual = toParseTreeText(myFile, false, false).trim();
+        if (Paths.get(filePath).isAbsolute()) {
+            assertSameLinesWithFile(filePath.replaceAll("\\.kts?", ".txt"), actual);
+        } else {
+            doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), actual);
+        }
     }
 
     private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType, @NotNull String fileContent) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.SPEC_HELPERS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -16,8 +17,8 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: String, baseDir: String) : AdditionalSourceProvider(testServices) {
-    private val helpersDirPath = "$baseDir/compiler/tests-spec/testData/$testType/helpers"
+class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: String) : AdditionalSourceProvider(testServices) {
+    private val helpersDirPath = ForTestCompileRuntime.transformTestDataPath("compiler/tests-spec/testData/$testType/helpers").absolutePath
 
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
