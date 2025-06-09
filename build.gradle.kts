@@ -536,22 +536,22 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
 }
 
 val gradlePluginProjects = listOf(
-    ":kotlin-gradle-plugin",
-    //":kotlin-gradle-plugin-api",
-    //":kotlin-gradle-plugin-annotations",
-    //":kotlin-gradle-plugin-idea",
-    //":kotlin-gradle-plugin-idea-proto",
-    //":kotlin-gradle-plugin-model",
-    //":kotlin-gradle-plugin-tcs-android",
-    ":compose-compiler-gradle-plugin",
-    //":kotlin-allopen",
-    //":kotlin-noarg",
-    //":kotlin-power-assert",
-    //":kotlin-sam-with-receiver",
-    //":kotlin-parcelize-compiler",
-    //":kotlin-lombok",
-    //":kotlin-assignment",
-    //":kotlin-dataframe"
+    //":kotlin-gradle-plugin",
+    ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-annotations",
+    ":kotlin-gradle-plugin-idea",
+    ":kotlin-gradle-plugin-idea-proto",
+    ":kotlin-gradle-plugin-model",
+    ":kotlin-gradle-plugin-tcs-android",
+    //":compose-compiler-gradle-plugin",
+    ":kotlin-allopen",
+    ":kotlin-noarg",
+    ":kotlin-power-assert",
+    ":kotlin-sam-with-receiver",
+    ":kotlin-parcelize-compiler",
+    ":kotlin-lombok",
+    ":kotlin-assignment",
+    ":kotlin-dataframe"
 )
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
@@ -934,19 +934,19 @@ tasks {
     }
 
     register("miscTest") {
-        //dependsOn("coreLibsTest")
+        dependsOn("coreLibsTest")
         dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
-        //dependsOn("examplesTest")
-        //dependsOn(":kotlin-build-common:test")
-        //dependsOn(":kotlin-build-common:testJUnit5")
-        //dependsOn(":core:descriptors.runtime:test")
-        //dependsOn(":kotlin-util-io:test")
-        //dependsOn(":kotlin-util-klib:test")
-        //dependsOn(":kotlin-util-klib-abi:test")
-        //dependsOn(":kotlinx-metadata-klib:test")
-        //dependsOn(":generators:test")
-        //dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
+        dependsOn("examplesTest")
+        dependsOn(":kotlin-build-common:test")
+        dependsOn(":kotlin-build-common:testJUnit5")
+        dependsOn(":core:descriptors.runtime:test")
+        dependsOn(":kotlin-util-io:test")
+        dependsOn(":kotlin-util-klib:test")
+        dependsOn(":kotlin-util-klib-abi:test")
+        dependsOn(":kotlinx-metadata-klib:test")
+        dependsOn(":generators:test")
+        dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
     register("incrementalCompilationTest") {
@@ -972,14 +972,14 @@ tasks {
     }
 
     register("toolsTest") {
-        //dependsOn(":tools:kotlinp-jvm:test")
-        //dependsOn(":native:kotlin-klib-commonizer:test")
-        dependsOn(":native:kotlin-klib-commonizer-api:test")
-        //dependsOn(":kotlin-tooling-core:check")
-        //dependsOn(":kotlin-tooling-metadata:check")
-        //dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
-        //dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
-        //dependsOn(":tools:ide-plugin-dependencies-validator:test")
+        dependsOn(":tools:kotlinp-jvm:test")
+        dependsOn(":native:kotlin-klib-commonizer:test")
+        //dependsOn(":native:kotlin-klib-commonizer-api:test")
+        dependsOn(":kotlin-tooling-core:check")
+        dependsOn(":kotlin-tooling-metadata:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
+        dependsOn(":tools:ide-plugin-dependencies-validator:test")
     }
 
     register("examplesTest") {
