@@ -26,7 +26,13 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
             build {
-                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
+                // with isolated projects enabled, the order of diagnostics blocks is non-deterministic
+                // and depends on the subproject evaluation order, so the easiest way to assert that all diagnostics blocks are present
+                // is to compare blocks ignoring the order
+                assertBlocksEqual(
+                    expectedOutputFile().extractBlocksFromExpectedOutput(),
+                    extractProjectsAndTheirDiagnosticsInBlocks(),
+                )
             }
         }
     }
