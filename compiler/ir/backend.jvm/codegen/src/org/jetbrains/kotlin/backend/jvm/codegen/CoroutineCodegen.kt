@@ -75,18 +75,6 @@ internal fun MethodNode.acceptWithStateMachine(
 private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
     this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
 
-internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
-    if (origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
-        origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
-    ) return null
-    return parentAsClass.declarations.find {
-        // The function may not be named `it.name.asString() + FOR_INLINE_SUFFIX` due to name mangling,
-        // e.g., for internal declarations. We check for a function with the same `attributeOwnerId` instead.
-        // This is copied in `AddContinuationLowering`.
-        it is IrSimpleFunction && it.attributeOwnerId == (this as IrSimpleFunction).attributeOwnerId
-    } as IrSimpleFunction?
-}
-
 internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
     this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&

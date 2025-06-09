@@ -329,6 +329,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                         context.remapMultiFieldValueClassStructure(view, this, parametersMappingOrNull = null)
                         copyAttributes(view)
                         generateErrorForInlineBody()
+                        originalOfSuspendForInline = view
                     }
                 }
 
