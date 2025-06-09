@@ -30,21 +30,21 @@ ComposableSingletons$TestKt {
 
 ComposableSingletons$TestKt$lambda$-420233864$1 {
     <init> ()V null
-    invoke (Landroidx/compose/runtime/Composer;I)V [key=-420233864, startOffset=143, endOffset=170]
+    invoke (Landroidx/compose/runtime/Composer;I)V null
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
     <clinit> ()V null
 }
 
 ComposableSingletons$TestKt$lambda$511230191$1 {
     <init> ()V null
-    invoke (Landroidx/compose/runtime/Composer;I)V [key=511230191, startOffset=180, endOffset=206]
+    invoke (Landroidx/compose/runtime/Composer;I)V null
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
     <clinit> ()V null
 }
 
 TestKt {
-    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V [key=-239871899, startOffset=45, endOffset=108]
-    Bar (Landroidx/compose/runtime/Composer;I)V [key=-1333506531, startOffset=110, endOffset=208]
+    Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V null
+    Bar (Landroidx/compose/runtime/Composer;I)V null
     Foo$lambda$0 (Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
     Bar$lambda$1 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
 }

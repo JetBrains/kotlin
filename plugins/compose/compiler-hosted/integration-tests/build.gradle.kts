@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 plugins {
@@ -26,11 +24,6 @@ kotlin {
     jvmToolchain(11)
 
     jvm()
-
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_1_9)
-    }
 
     sourceSets {
         commonTest.dependencies {
@@ -74,6 +67,7 @@ kotlin {
 
                 // runtime tests
                 implementationArtifactOnly(composeRuntime())
+                implementationArtifactOnly(composeRuntimeAnnotations())
                 implementationArtifactOnly(composeRuntimeTestUtils())
                 implementation(libs.androidx.collections)
 
