@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
+import org.jetbrains.kotlin.generators.kotlinpoet.arrayTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -110,6 +111,12 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                 )
                 argument.valueType is StringPathType || argument.valueType is IntType -> converterFun.addStatement(
                     "if (%M in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
+                    member,
+                    calculateName(argument),
+                    member
+                )
+                argument.valueType is StringPathArrayType -> converterFun.addStatement(
+                    "if (%M in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.map{ it.toString() }?.toTypedArray() }",
                     member,
                     calculateName(argument),
                     member
@@ -213,7 +220,10 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                             ClassName("$API_PACKAGE.enums", (it.classifier as KClass<*>).simpleName!!)
                         }
                         String::class if argument.valueType is StringPathType -> {
-                            Path::class.asTypeName()
+                            typeNameOf<Path>()
+                        }
+                        Array<String>::class if argument.valueType is StringPathArrayType -> {
+                            arrayTypeNameOf<Path>()
                         }
                         else -> {
                             it.asTypeName()
@@ -227,7 +237,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                 if (experimental) {
                     // TODO only as placeholder, should be experimental opt in or something like that, or not generated at all
                     annotation<Deprecated>() {
-                        addMember("message = %S", "This option is experimental and it may` be changed in the future")
+                        addMember("message = %S", "This option is experimental and it may be changed in the future")
                     }
                 }
                 initializer("%T(%S)", argumentTypeName, name)
@@ -316,18 +326,18 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
     }
 }
 
-
-
-interface BtaConverter<S, T> {
-    fun convert(value: S): T
-}
-
-class NoopConverter : BtaConverter<String, String> {
-    override fun convert(value: String): String = value
-}
-
-class PathStringConverter : BtaConverter<Path, String> {
-    override fun convert(value: Path): String {
-        return value.toString()
-    }
-}
+//
+//
+//interface BtaConverter<S, T> {
+//    fun convert(value: S): T
+//}
+//
+//class NoopConverter : BtaConverter<String, String> {
+//    override fun convert(value: String): String = value
+//}
+//
+//class PathStringConverter : BtaConverter<Path, String> {
+//    override fun convert(value: Path): String {
+//        return value.toString()
+//    }
+//}

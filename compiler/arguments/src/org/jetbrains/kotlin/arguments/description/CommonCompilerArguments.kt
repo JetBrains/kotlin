@@ -174,7 +174,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         name = "Xplugin"
         compilerName = "pluginClasspaths"
         description = "Load plugins from the given classpath.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
@@ -289,7 +289,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
                 They should be a subset of sources passed as free arguments.
                 """.trimIndent().asReleaseDependent()
         valueDescription = "<path>".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
 
         stubLifecycle()
     }

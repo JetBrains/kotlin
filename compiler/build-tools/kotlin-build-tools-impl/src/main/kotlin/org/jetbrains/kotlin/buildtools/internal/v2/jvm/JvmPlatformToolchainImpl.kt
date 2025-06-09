@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal.v2.jvm
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations.JvmClasspathSnapshottingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations.JvmCompilationOperationImpl
 import java.nio.file.Path
 
@@ -18,6 +19,6 @@ class JvmPlatformToolchainImpl : JvmPlatformToolchain {
     ): JvmCompilationOperation = JvmCompilationOperationImpl(kotlinSources, destinationDirectory)
 
     override fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation {
-        TODO("Not yet implemented")
+        return JvmClasspathSnapshottingOperationImpl(classpathEntry)
     }
 }

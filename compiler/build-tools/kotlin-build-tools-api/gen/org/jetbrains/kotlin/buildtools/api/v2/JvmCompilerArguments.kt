@@ -283,7 +283,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XJAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<String>?> =
+    public val XJAVA_SOURCE_ROOTS: JvmCompilerArgument<Array<Path>?> =
         JvmCompilerArgument("XJAVA_SOURCE_ROOTS")
 
     /**
@@ -387,7 +387,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XFRIEND_PATHS: JvmCompilerArgument<Array<String>?> =
+    public val XFRIEND_PATHS: JvmCompilerArgument<Array<Path>?> =
         JvmCompilerArgument("XFRIEND_PATHS")
 
     /**

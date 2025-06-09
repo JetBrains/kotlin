@@ -29,7 +29,7 @@ public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
-    if (XKLIB_RELATIVE_PATH_BASE in optionsMap) { arguments.relativePathBases = get(XKLIB_RELATIVE_PATH_BASE) }
+    if (XKLIB_RELATIVE_PATH_BASE in optionsMap) { arguments.relativePathBases = get(XKLIB_RELATIVE_PATH_BASE)?.map{ it.toString() }?.toTypedArray() }
     if (XKLIB_NORMALIZE_ABSOLUTE_PATH in optionsMap) { arguments.normalizeAbsolutePath = get(XKLIB_NORMALIZE_ABSOLUTE_PATH) }
     if (XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS in optionsMap) { arguments.enableSignatureClashChecks = get(XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS) }
     if (XPARTIAL_LINKAGE in optionsMap) { arguments.partialLinkageMode = get(XPARTIAL_LINKAGE) }

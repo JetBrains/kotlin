@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.toPath
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-private val ExitCode.asCompilationResult
+internal val ExitCode.asCompilationResult
     get() = when (this) {
         ExitCode.OK -> CompilationResult.COMPILATION_SUCCESS
         ExitCode.COMPILATION_ERROR -> CompilationResult.COMPILATION_ERROR
@@ -226,7 +226,7 @@ internal object CompilationServiceImpl : CompilationService {
         }
     }
 
-    private fun checkJvmFirRequirements(
+    internal fun checkJvmFirRequirements(
         arguments: List<String>,
     ): Boolean {
         val languageVersion: LanguageVersion = arguments.find { it.startsWith("-language-version") }

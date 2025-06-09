@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -122,7 +123,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XPLUGIN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("XPLUGIN")
+    public val XPLUGIN: CommonCompilerArgument<Array<Path>?> = CommonCompilerArgument("XPLUGIN")
 
     /**
      * Pass an option to a plugin.
@@ -207,7 +208,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XCOMMON_SOURCES: CommonCompilerArgument<Array<String>?> =
+    public val XCOMMON_SOURCES: CommonCompilerArgument<Array<Path>?> =
         CommonCompilerArgument("XCOMMON_SOURCES")
 
     /**

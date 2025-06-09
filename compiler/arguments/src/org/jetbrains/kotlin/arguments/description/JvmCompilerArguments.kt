@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
@@ -392,7 +393,7 @@ This can be used in the event of problems with the new implementation.""".asRele
     compilerArgument {
         name = "Xjava-source-roots"
         description = "Paths to directories with Java source files.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         stubLifecycle()
     }
@@ -506,7 +507,7 @@ problems with parentheses in identifiers on certain platforms.""".asReleaseDepen
     compilerArgument {
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()

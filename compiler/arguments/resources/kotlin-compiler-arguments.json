@@ -1223,7 +1223,7 @@
                         },
                         "delimiter": null,
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                             "defaultValue": {
                                 "current": null,
                                 "valueInVersions": []
@@ -1564,7 +1564,7 @@
                         },
                         "delimiter": null,
                         "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                             "defaultValue": {
                                 "current": null,
                                 "valueInVersions": []
@@ -4328,7 +4328,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
@@ -4669,7 +4669,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
@@ -5698,7 +5698,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
@@ -8041,7 +8041,7 @@
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -8072,7 +8072,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -8258,7 +8258,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -8692,7 +8692,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -8754,7 +8754,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -8909,7 +8909,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -9157,7 +9157,7 @@
                                         },
                                         "delimiter": "None",
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -9498,7 +9498,7 @@
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -9746,7 +9746,7 @@
                                         },
                                         "delimiter": null,
                                         "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                             "defaultValue": {
                                                 "current": null,
                                                 "valueInVersions": []
@@ -10715,7 +10715,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []
@@ -10746,7 +10746,7 @@
                                 },
                                 "delimiter": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType",
                                     "defaultValue": {
                                         "current": null,
                                         "valueInVersions": []

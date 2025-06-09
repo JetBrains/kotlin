@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
+import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.metadataArguments) {
@@ -46,7 +47,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
@@ -55,7 +56,7 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
     compilerArgument {
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose expects this module can actualize).".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()

@@ -12,5 +12,8 @@ public class OptionsDelegate<T> {
     }
 
     @Suppress("UNCHECKED_CAST")
-    public operator fun <V> get(key: T): V? = optionsMap[key] as V?
+    public operator fun <V> get(key: T): V = optionsMap[key] as V
+
+    @Suppress("UNCHECKED_CAST")
+    public fun <V> getOrElse(key: T, default: V): V = optionsMap.getOrElse(key) { default } as V
 }

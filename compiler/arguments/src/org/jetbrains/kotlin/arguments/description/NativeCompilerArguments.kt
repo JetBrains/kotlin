@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
@@ -72,7 +73,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         deprecatedName = "includeBinary"
         shortName = "ib"
         description = "Pack the given external binary into the klib.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
@@ -83,7 +84,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "libraries"
         shortName = "l"
         description = "Link with the given library.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -152,7 +153,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         shortName = "nl"
         delimiter = KotlinCompilerArgument.Delimiter.None
         description = "Include the given native bitcode library.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
@@ -289,7 +290,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         name = "Xcache-directory"
         compilerName = "cacheDirectories"
         description = "Path to the directory containing caches.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -312,7 +313,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "autoCacheableFrom"
         description = """Path to the root directory from which dependencies are to be cached automatically.
 By default caches will be placed into the kotlin-native system cache directory.""".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -363,7 +364,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         compilerName = "exportedLibraries"
         description = """A library to be included in the produced framework API.
 This library must be one of the ones passed with '-library'.""".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -446,7 +447,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         name = "Xfile-to-cache"
         compilerName = "filesToCache"
         description = "Path to the file to cache.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -550,7 +551,7 @@ The default value is 1.""".asReleaseDependent()
         name = "Xinclude"
         compilerName = "includes"
         description = "A path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()
@@ -621,7 +622,7 @@ The default value is 1.""".asReleaseDependent()
     compilerArgument {
         name = "Xrefines-paths"
         description = "Paths to output directories for refined modules (modules whose 'expect' declarations this module can actualize).".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
+        valueType = StringPathArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
 
         stubLifecycle()

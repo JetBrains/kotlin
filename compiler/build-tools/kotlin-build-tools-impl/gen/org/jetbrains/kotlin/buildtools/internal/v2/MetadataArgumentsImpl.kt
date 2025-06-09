@@ -28,8 +28,8 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
     if (D in optionsMap) { arguments.destination = get(D) }
     if (CLASSPATH in optionsMap) { arguments.classpath = get(CLASSPATH) }
     if (MODULE_NAME in optionsMap) { arguments.moduleName = get(MODULE_NAME) }
-    if (XFRIEND_PATHS in optionsMap) { arguments.friendPaths = get(XFRIEND_PATHS) }
-    if (XREFINES_PATHS in optionsMap) { arguments.refinesPaths = get(XREFINES_PATHS) }
+    if (XFRIEND_PATHS in optionsMap) { arguments.friendPaths = get(XFRIEND_PATHS)?.map{ it.toString() }?.toTypedArray() }
+    if (XREFINES_PATHS in optionsMap) { arguments.refinesPaths = get(XREFINES_PATHS)?.map{ it.toString() }?.toTypedArray() }
     if (XLEGACY_METADATA_JAR_K2 in optionsMap) { arguments.legacyMetadataJar = get(XLEGACY_METADATA_JAR_K2) }
     return arguments
   }

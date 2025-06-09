@@ -113,7 +113,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (XALLOW_KOTLIN_PACKAGE in optionsMap) { arguments.allowKotlinPackage = get(XALLOW_KOTLIN_PACKAGE) }
     if (XSTDLIB_COMPILATION in optionsMap) { arguments.stdlibCompilation = get(XSTDLIB_COMPILATION) }
     if (XREPORT_OUTPUT_FILES in optionsMap) { arguments.reportOutputFiles = get(XREPORT_OUTPUT_FILES) }
-    if (XPLUGIN in optionsMap) { arguments.pluginClasspaths = get(XPLUGIN) }
+    if (XPLUGIN in optionsMap) { arguments.pluginClasspaths = get(XPLUGIN)?.map{ it.toString() }?.toTypedArray() }
     if (P in optionsMap) { arguments.pluginOptions = get(P) }
     if (XCOMPILER_PLUGIN in optionsMap) { arguments.pluginConfigurations = get(XCOMPILER_PLUGIN) }
     if (XMULTI_PLATFORM in optionsMap) { arguments.multiPlatform = get(XMULTI_PLATFORM) }
@@ -124,7 +124,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if (XREPORT_PERF in optionsMap) { arguments.reportPerf = get(XREPORT_PERF) }
     if (XDUMP_PERF in optionsMap) { arguments.dumpPerf = get(XDUMP_PERF) }
     if (XMETADATA_VERSION in optionsMap) { arguments.metadataVersion = get(XMETADATA_VERSION) }
-    if (XCOMMON_SOURCES in optionsMap) { arguments.commonSources = get(XCOMMON_SOURCES) }
+    if (XCOMMON_SOURCES in optionsMap) { arguments.commonSources = get(XCOMMON_SOURCES)?.map{ it.toString() }?.toTypedArray() }
     if (XLIST_PHASES in optionsMap) { arguments.listPhases = get(XLIST_PHASES) }
     if (XDISABLE_PHASES in optionsMap) { arguments.disablePhases = get(XDISABLE_PHASES) }
     if (XVERBOSE_PHASES in optionsMap) { arguments.verbosePhases = get(XVERBOSE_PHASES) }

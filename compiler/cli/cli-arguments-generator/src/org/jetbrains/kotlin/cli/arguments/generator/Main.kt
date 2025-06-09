@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
@@ -340,6 +341,7 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
             false -> "Boolean"
         }
         is StringArrayType -> "Array<String>?"
+        is StringPathArrayType -> "Array<String>?"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"

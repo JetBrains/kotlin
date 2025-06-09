@@ -142,6 +142,18 @@ class StringArrayType(
     }
 }
 
+@Serializable
+class StringPathArrayType(
+    override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Array<String>> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
+
+    override fun stringRepresentation(value: Array<String>?): String {
+        if (value == null) return "null"
+        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
+    }
+}
+
 /**
  * A value which accepts [ExplicitApiMode] type.
  */

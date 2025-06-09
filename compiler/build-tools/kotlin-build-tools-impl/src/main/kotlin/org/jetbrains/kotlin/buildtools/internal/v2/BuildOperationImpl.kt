@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2
 
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 
 abstract class BuildOperationImpl<R> : BuildOperation<R> {
@@ -16,5 +18,5 @@ abstract class BuildOperationImpl<R> : BuildOperation<R> {
         optionsDelegate[key] = value
     }
 
-    abstract fun execute(): R
+    abstract fun execute(executionPolicy: ExecutionPolicy? = null, logger: KotlinLogger? = null): R
 }

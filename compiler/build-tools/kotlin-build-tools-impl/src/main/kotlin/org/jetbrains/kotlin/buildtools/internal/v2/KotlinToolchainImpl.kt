@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2
 
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
@@ -13,11 +14,9 @@ import org.jetbrains.kotlin.buildtools.api.v2.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.native.NativePlatformToolchain
-import org.jetbrains.kotlin.buildtools.api.v2.trackers.KotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.v2.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.js.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.jvm.JvmPlatformToolchainImpl
-import org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.native.NativePlatformToolchainImpl
 
 class KotlinToolchainImpl(
@@ -26,9 +25,7 @@ class KotlinToolchainImpl(
     override val native: NativePlatformToolchain = NativePlatformToolchainImpl(),
     override val wasm: WasmPlatformToolchain = WasmPlatformToolchainImpl(),
 ) : KotlinToolchain {
-    override fun createExecutionPolicy(): ExecutionPolicy {
-        TODO("Not yet implemented")
-    }
+    override fun createExecutionPolicy(): ExecutionPolicy = ExecutionPolicyImpl()
 
     override suspend fun <R> executeOperation(operation: BuildOperation<R>): R {
         check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
@@ -41,7 +38,9 @@ class KotlinToolchainImpl(
         executionMode: ExecutionPolicy,
         logger: KotlinLogger?,
     ): R {
-        TODO("Not yet implemented")
+        check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+        @Suppress("UNCHECKED_CAST")
+        return operation.execute(executionMode, logger)
     }
 
     override fun finishBuild(projectId: ProjectId) {

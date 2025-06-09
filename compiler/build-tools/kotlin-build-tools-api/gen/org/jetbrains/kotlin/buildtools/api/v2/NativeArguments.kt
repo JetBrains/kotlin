@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -56,13 +57,13 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Pack the given external binary into the klib.
      */
     @JvmField
-    public val INCLUDE_BINARY: NativeArgument<Array<String>?> = NativeArgument("INCLUDE_BINARY")
+    public val INCLUDE_BINARY: NativeArgument<Array<Path>?> = NativeArgument("INCLUDE_BINARY")
 
     /**
      * Link with the given library.
      */
     @JvmField
-    public val LIBRARY: NativeArgument<Array<String>?> = NativeArgument("LIBRARY")
+    public val LIBRARY: NativeArgument<Array<Path>?> = NativeArgument("LIBRARY")
 
     /**
      * The library version.
@@ -99,7 +100,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Include the given native bitcode library.
      */
     @JvmField
-    public val NATIVE_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("NATIVE_LIBRARY")
+    public val NATIVE_LIBRARY: NativeArgument<Array<Path>?> = NativeArgument("NATIVE_LIBRARY")
 
     /**
      * Don't link the libraries from dist/klib automatically.
@@ -185,7 +186,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XCACHE_DIRECTORY: NativeArgument<Array<String>?> = NativeArgument("XCACHE_DIRECTORY")
+    public val XCACHE_DIRECTORY: NativeArgument<Array<Path>?> = NativeArgument("XCACHE_DIRECTORY")
 
     /**
      * Paths to a library and its cache, separated by a comma.
@@ -200,7 +201,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XAUTO_CACHE_FROM: NativeArgument<Array<String>?> = NativeArgument("XAUTO_CACHE_FROM")
+    public val XAUTO_CACHE_FROM: NativeArgument<Array<Path>?> = NativeArgument("XAUTO_CACHE_FROM")
 
     /**
      * Path to the directory where caches for auto-cacheable dependencies should be put.
@@ -234,7 +235,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XEXPORT_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("XEXPORT_LIBRARY")
+    public val XEXPORT_LIBRARY: NativeArgument<Array<Path>?> = NativeArgument("XEXPORT_LIBRARY")
 
     /**
      * Path to the file containing external dependencies.
@@ -298,7 +299,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XFILE_TO_CACHE: NativeArgument<Array<String>?> = NativeArgument("XFILE_TO_CACHE")
+    public val XFILE_TO_CACHE: NativeArgument<Array<Path>?> = NativeArgument("XFILE_TO_CACHE")
 
     /**
      * Force the compiler to produce per-file caches.
@@ -380,7 +381,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XINCLUDE: NativeArgument<Array<String>?> = NativeArgument("XINCLUDE")
+    public val XINCLUDE: NativeArgument<Array<Path>?> = NativeArgument("XINCLUDE")
 
     /**
      * A short name used to denote this library in the IDE and in a generated Objective-C header.
@@ -437,7 +438,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XREFINES_PATHS: NativeArgument<Array<String>?> = NativeArgument("XREFINES_PATHS")
+    public val XREFINES_PATHS: NativeArgument<Array<Path>?> = NativeArgument("XREFINES_PATHS")
 
     /**
      * Generate debug info of the given version (1, 2).

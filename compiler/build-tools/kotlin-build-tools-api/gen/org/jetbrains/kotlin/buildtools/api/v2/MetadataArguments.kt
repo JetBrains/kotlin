@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.buildtools.api.v2
 
+import java.nio.`file`.Path
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
@@ -41,14 +42,14 @@ public interface MetadataArguments : CommonCompilerArguments {
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XFRIEND_PATHS: MetadataArgument<Array<String>?> = MetadataArgument("XFRIEND_PATHS")
+    public val XFRIEND_PATHS: MetadataArgument<Array<Path>?> = MetadataArgument("XFRIEND_PATHS")
 
     /**
      * Paths to output directories for refined modules (modules whose expects this module can actualize).
      */
     @JvmField
     @Deprecated(message = "This option is experimental and it may` be changed in the future")
-    public val XREFINES_PATHS: MetadataArgument<Array<String>?> = MetadataArgument("XREFINES_PATHS")
+    public val XREFINES_PATHS: MetadataArgument<Array<Path>?> = MetadataArgument("XREFINES_PATHS")
 
     /**
      * Produce a legacy metadata jar instead of metadata klib. Suitable only for K2 compilation

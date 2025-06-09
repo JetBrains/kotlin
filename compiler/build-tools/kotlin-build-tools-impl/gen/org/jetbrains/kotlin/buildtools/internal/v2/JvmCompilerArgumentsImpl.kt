@@ -132,7 +132,7 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
     if (XUSE_JAVAC in optionsMap) { arguments.useJavac = get(XUSE_JAVAC) }
     if (XCOMPILE_JAVA in optionsMap) { arguments.compileJava = get(XCOMPILE_JAVA) }
     if (XJAVAC_ARGUMENTS in optionsMap) { arguments.javacArguments = get(XJAVAC_ARGUMENTS) }
-    if (XJAVA_SOURCE_ROOTS in optionsMap) { arguments.javaSourceRoots = get(XJAVA_SOURCE_ROOTS) }
+    if (XJAVA_SOURCE_ROOTS in optionsMap) { arguments.javaSourceRoots = get(XJAVA_SOURCE_ROOTS)?.map{ it.toString() }?.toTypedArray() }
     if (XJAVA_PACKAGE_PREFIX in optionsMap) { arguments.javaPackagePrefix = get(XJAVA_PACKAGE_PREFIX) }
     if (XJSR305 in optionsMap) { arguments.jsr305 = get(XJSR305) }
     if (XNULLABILITY_ANNOTATIONS in optionsMap) { arguments.nullabilityAnnotations = get(XNULLABILITY_ANNOTATIONS) }
@@ -143,7 +143,7 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
     if (XDISABLE_STANDARD_SCRIPT in optionsMap) { arguments.disableStandardScript = get(XDISABLE_STANDARD_SCRIPT) }
     if (XGENERATE_STRICT_METADATA_VERSION in optionsMap) { arguments.strictMetadataVersionSemantics = get(XGENERATE_STRICT_METADATA_VERSION) }
     if (XSANITIZE_PARENTHESES in optionsMap) { arguments.sanitizeParentheses = get(XSANITIZE_PARENTHESES) }
-    if (XFRIEND_PATHS in optionsMap) { arguments.friendPaths = get(XFRIEND_PATHS) }
+    if (XFRIEND_PATHS in optionsMap) { arguments.friendPaths = get(XFRIEND_PATHS)?.map{ it.toString() }?.toTypedArray() }
     if (XALLOW_NO_SOURCE_FILES in optionsMap) { arguments.allowNoSourceFiles = get(XALLOW_NO_SOURCE_FILES) }
     if (XEMIT_JVM_TYPE_ANNOTATIONS in optionsMap) { arguments.emitJvmTypeAnnotations = get(XEMIT_JVM_TYPE_ANNOTATIONS) }
     if (XJVM_EXPOSE_BOXED in optionsMap) { arguments.jvmExposeBoxed = get(XJVM_EXPOSE_BOXED) }
