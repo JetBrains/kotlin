@@ -36,6 +36,7 @@ fun Test() {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
+@FunctionKeyMeta(key = -572296109, startOffset = 47, endOffset = 118)
 fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Box)<child(...>:Test.kt")
@@ -61,6 +62,7 @@ fun Box(child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: I
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
+@FunctionKeyMeta(key = -345321224, startOffset = 139, endOffset = 317)
 fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Foo)<{>,<{>,<Box>:Test.kt")
   val a = rememberComposableLambda(<>, false, { %composer: Composer?, %changed: Int ->
@@ -96,6 +98,7 @@ fun Foo(crossinline child: Function2<Composer, Int, Unit>, %composer: Composer?,
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
+@FunctionKeyMeta(key = -1794342280, startOffset = 331, endOffset = 394)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Foo>:Test.kt")

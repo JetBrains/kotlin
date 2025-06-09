@@ -22,6 +22,7 @@ fun ArrayConstructorTest(n: Int) {
 // ------------------------------------------
 
 @Composable
+@FunctionKeyMeta(key = 1146237048, startOffset = 84, endOffset = 636)
 fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ArrayConstructorTest)*<rememb...>:Test.kt")
