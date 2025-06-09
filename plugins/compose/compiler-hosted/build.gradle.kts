@@ -47,6 +47,7 @@ dependencies {
     // runtime tests
     testImplementation(composeRuntime()) { isTransitive = false }
     testImplementation(composeRuntimeTestUtils()) { isTransitive = false }
+    testImplementation(composeRuntimeAnnotations()) { isTransitive = false }
     testImplementation(libs.androidx.collections)
 
     // other compose

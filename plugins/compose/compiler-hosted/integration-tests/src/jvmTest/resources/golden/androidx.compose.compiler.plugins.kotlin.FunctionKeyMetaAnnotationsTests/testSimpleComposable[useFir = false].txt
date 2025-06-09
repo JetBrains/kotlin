@@ -11,7 +11,7 @@ fun Example() {}
 // ------------------------------------------
 
 TestKt {
-    Example (Landroidx/compose/runtime/Composer;I)V [key=1292064820, startOffset=58, endOffset=74]
+    Example (Landroidx/compose/runtime/Composer;I)V null
 }
 
 TestKt$Example$1 {

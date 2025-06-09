@@ -5,6 +5,8 @@
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
          <trust group="androidx.compose.runtime" name="runtime"/>
+         <trust group="androidx.compose.runtime" name="runtime-annotation"/>
+         <trust group="androidx.compose.runtime" name="runtime-annotation-jvm"/>
          <trust group="androidx.compose.runtime" name="runtime-jvmstubs"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils"/>
          <trust group="androidx.compose.runtime" name="runtime-test-utils-jvmstubs"/>
