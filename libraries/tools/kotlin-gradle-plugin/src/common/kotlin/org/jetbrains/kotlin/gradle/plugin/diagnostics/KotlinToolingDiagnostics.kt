@@ -1646,6 +1646,14 @@ internal object KotlinToolingDiagnostics {
                 .solution("Please create a new Kotlin issue for this problem: https://kotl.in/issue")
         }
     }
+
+    internal object WarnKaptK1IsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() = build {
+            title("Kapt K1 mode is deprecated")
+                .description("Kotlin Kapt compatibility with Kotlin Compiler K1 is deprecated and scheduled to be removed in the next release.")
+                .solution("Please remove 'kapt.use.k2' Gradle property from 'gradle.properties' file.")
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
