@@ -1,4 +1,2 @@
-native/native.tests/cli-tests/testData/cli/experimentalCheckers.kt:2:12: warning: redundant explicit type.
-    val i: String = "i"
-           ^^^^^^
+warning: '-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release
 OK

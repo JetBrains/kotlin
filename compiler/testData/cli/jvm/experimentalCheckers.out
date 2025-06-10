@@ -1,4 +1,2 @@
-compiler/testData/cli/jvm/experimentalCheckers.kt:2:12: warning: redundant explicit type.
-    val i: Int = 1
-           ^^^
+warning: '-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release
 OK

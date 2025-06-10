@@ -31,7 +31,6 @@ fun CompilerConfiguration.setupCommonArguments(
 
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTRA_CHECKERS, arguments.extraWarnings)
-    put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, arguments.useFirExperimentalCheckers)
     put(CommonConfigurationKeys.METADATA_KLIB, arguments.metadataKlib)
     putIfNotNull(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT, arguments.intellijPluginRoot)
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
@@ -56,6 +55,14 @@ fun CompilerConfiguration.setupCommonArguments(
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
             )
         }
+    }
+
+    if (arguments.useFirExperimentalCheckers) {
+        put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, true)
+        messageCollector.report(
+            CompilerMessageSeverity.WARNING,
+            "'-Xuse-fir-experimental-checkers' is deprecated and will be removed in a future release"
+        )
     }
 
     setupMetadataVersion(arguments, createMetadataVersion)
