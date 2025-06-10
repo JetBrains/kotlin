@@ -1,18 +1,15 @@
 KT element: KtCallExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: null
+FIR source kind: null
 
 FIR element rendered:
-<Unresolved name: suspend>#(<L> = [ResolvedTo(BODY_RESOLVE)] suspend@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-    ^@suspend Unit
-}
-)
+null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] suspendLambda.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        <Unresolved name: suspend>#(<L> = [ResolvedTo(BODY_RESOLVE)] suspend@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            ^@suspend Unit
+        suspend [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
         }
-        )
+
     }

@@ -37,6 +37,11 @@ interface ConstraintSystemUtilContext {
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpressionWithReceiver(): Boolean
     fun PostponedAtomWithRevisableExpectedType.contextParameterCountOfFunctionExpression(): Int
     fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean
+
+    /**
+     * Only implemented in K2.
+     */
+    fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean
     fun createTypeVariableForLambdaReturnType(): TypeVariableMarker
     fun createTypeVariableForLambdaParameterType(argument: PostponedAtomWithRevisableExpectedType, index: Int): TypeVariableMarker
     fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker

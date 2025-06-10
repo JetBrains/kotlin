@@ -1,7 +1,7 @@
 @Ann()
 owner -> FirNamedFunctionSymbol /testPositive
-context -> FirLocalPropertySymbol <local>/x from FirNamedFunctionSymbol /testPositive
+context -> FirAnonymousFunctionSymbol special/anonymous from FirLocalPropertySymbol <local>/x from FirNamedFunctionSymbol /testPositive
 
 @Ann()
 owner -> FirNamedFunctionSymbol /testPositive
-context -> FirNamedFunctionSymbol /testPositive
+context -> FirAnonymousFunctionSymbol special/anonymous from FirNamedFunctionSymbol /testPositive

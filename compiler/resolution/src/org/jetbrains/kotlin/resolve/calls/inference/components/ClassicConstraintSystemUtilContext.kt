@@ -95,6 +95,10 @@ class ClassicConstraintSystemUtilContext(
         return atom is LambdaKotlinCallArgument && atom !is FunctionExpression
     }
 
+    override fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean {
+        return false
+    }
+
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
         return TypeVariableForLambdaReturnType(
             builtIns,

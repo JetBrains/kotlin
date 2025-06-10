@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -140,6 +141,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun PostponedAtomWithRevisableExpectedType.isLambda(): Boolean {
         require(this is ConePostponedResolvedAtom)
         return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.anonymousFunction.isLambda
+    }
+
+    override fun PostponedAtomWithRevisableExpectedType.isSuspend(): Boolean {
+        require(this is ConePostponedResolvedAtom)
+        return this is ConeLambdaWithTypeVariableAsExpectedTypeAtom && this.anonymousFunction.isSuspend
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {

@@ -39,7 +39,7 @@ annotation class Ann
 
 fun main(suspend: WLambdaInvoke) {
 
-    <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {}
+    suspend {}
 }
 
 class WLambdaInvoke {

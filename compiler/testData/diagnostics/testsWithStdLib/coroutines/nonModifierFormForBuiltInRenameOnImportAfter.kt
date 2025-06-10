@@ -6,7 +6,7 @@
 import kotlin.suspend as suspendLambda
 
 fun bar() {
-    <!UNRESOLVED_REFERENCE!>suspend<!> {
+    suspend {
         println()
     }
 
