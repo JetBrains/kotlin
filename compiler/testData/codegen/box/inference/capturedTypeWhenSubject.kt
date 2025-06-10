@@ -1,4 +1,6 @@
 // IGNORE_NATIVE: compatibilityTestMode=OldArtifactNewCompiler
+// IGNORE_NATIVE: compatibilityTestMode=NewArtifactOldCompiler
+// ^^^ This new test fails in 2.1.0 compiler backend and passes on 2.2.0 and later
 // DUMP_IR
 sealed interface OperandType<J> {
     fun operand1(instruction: OneOperand<*, *>): J = instruction.operand1 as J

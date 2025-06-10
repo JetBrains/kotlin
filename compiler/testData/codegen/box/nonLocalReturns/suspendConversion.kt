@@ -1,6 +1,8 @@
 // ISSUE: KT-72464
 // IGNORE_BACKEND: WASM
 // IGNORE_INLINER: IR
+// IGNORE_NATIVE: compatibilityTestMode=NewArtifactOldCompiler
+// ^^^ KT-72464: Bug in 2.1 native backend
 
 // WITH_STDLIB
 // WITH_COROUTINES
