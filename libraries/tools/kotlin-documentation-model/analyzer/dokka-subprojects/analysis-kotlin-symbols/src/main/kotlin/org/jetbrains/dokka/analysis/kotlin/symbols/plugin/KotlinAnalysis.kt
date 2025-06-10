@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import java.io.File
 
 internal fun Platform.toTargetPlatform() = when (this) {
-    Platform.js, Platform.wasm -> JsPlatforms.defaultJsPlatform
+    Platform.wasm -> WasmPlatforms.unspecifiedWasmPlatform
+    Platform.js -> JsPlatforms.defaultJsPlatform
     Platform.common -> CommonPlatforms.defaultCommonPlatform
     Platform.native -> NativePlatforms.unspecifiedNativePlatform
     Platform.jvm -> JvmPlatforms.defaultJvmPlatform
