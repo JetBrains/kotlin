@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
@@ -753,6 +754,20 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         val source = callSuffix.toFirSourceElement()
+
+        // TODO(KT-22765) drop workaround when suspend modifier for lambdas is implemented
+        if (imitateLambdaSuspendModifier &&
+            name == StandardClassIds.Callables.suspend.callableName.identifier &&
+            !callSuffix.getParent().let { it.selectorExpression == callSuffix && it.receiverExpression != null } &&
+            valueArguments.singleOrNull()?.tokenType == LAMBDA_ARGUMENT &&
+            firTypeArguments.isEmpty()
+        ) {
+            valueArguments.single().getFirstChild()?.let {
+                return getAsFirExpression<FirAnonymousFunctionExpression>(it).apply {
+                    anonymousFunction.replaceStatus(anonymousFunction.status.copy(isSuspend = true))
+                }
+            }
+        }
 
         val (calleeReference, receiverForInvoke) = when {
             name != null -> CalleeAndReceiver(

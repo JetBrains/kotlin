@@ -66,6 +66,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
+    protected val imitateLambdaSuspendModifier: Boolean =
+        baseSession.languageVersionSettings.supportsFeature(LanguageFeature.ParseLambdaWithSuspendModifier)
+
     abstract val T.elementType: IElementType
     abstract val T.asText: String
     abstract fun T.getReferencedNameAsName(): Name

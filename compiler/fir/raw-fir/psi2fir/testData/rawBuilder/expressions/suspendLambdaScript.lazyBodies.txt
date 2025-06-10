@@ -2,5 +2,5 @@ FILE: suspendLambdaScript.kts
     SCRIPT: <script-suspendLambdaScript.kts>
 
         init {
-            suspend#(LAZY_EXPRESSION)
+            LAZY_EXPRESSION
         }

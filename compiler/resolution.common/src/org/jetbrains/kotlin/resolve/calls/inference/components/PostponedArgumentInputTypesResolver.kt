@@ -91,16 +91,21 @@ class PostponedArgumentInputTypesResolver(
         val contextParameterCountFromConstraints = functionalTypesFromConstraints.maxOfOrNull { it.type.contextParameterCount() } ?: 0
 
         // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
-        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas, contextParameterCountFromFunctionExpression, maxParameterCount) =
-            computeParameterInfoFromRelatedLambdas(
-                argument,
-                postponedArguments,
-                variableDependencyProvider,
-                extensionFunctionTypePresentInConstraints,
-                contextParameterCountFromConstraints,
-                parameterTypesFromConstraints,
-                parameterTypesFromDeclaration,
-            )
+        val (
+            parameterTypesFromDeclarationOfRelatedLambdas,
+            isThereExtensionFunctionAmongRelatedLambdas,
+            contextParameterCountFromFunctionExpression,
+            maxParameterCount,
+            isAnyArgumentSuspend,
+        ) = computeParameterInfoFromRelatedLambdas(
+            argument,
+            postponedArguments,
+            variableDependencyProvider,
+            extensionFunctionTypePresentInConstraints,
+            contextParameterCountFromConstraints,
+            parameterTypesFromConstraints,
+            parameterTypesFromDeclaration,
+        )
 
         var functionTypeKind: FunctionTypeKind? = null
         var isNullable = false
@@ -113,6 +118,10 @@ class PostponedArgumentInputTypesResolver(
                 if (isNullable && !funType.type.isMarkedNullable()) isNullable = false
                 if ((functionTypeKind != null) && !isNullable) break
             }
+        }
+
+        if (functionTypeKind == null && isAnyArgumentSuspend) {
+            functionTypeKind = FunctionTypeKind.SuspendFunction
         }
 
         val isLambda = with(resolutionTypeSystemContext) {
@@ -147,6 +156,7 @@ class PostponedArgumentInputTypesResolver(
         val isThereExtensionFunctionAmongRelatedLambdas: Boolean,
         val contextParameterCountFromFunctionExpression: Int,
         val maxParameterCount: Int,
+        val isAnyArgumentSuspend: Boolean,
     )
 
     context(c: Context)
@@ -161,34 +171,39 @@ class PostponedArgumentInputTypesResolver(
     ): ParameterInfoFromRelatedLambdas = with(resolutionTypeSystemContext) {
         var isAnyFunctionExpressionWithReceiver = false
         var contextParameterCountFromFunctionExpression = 0
+        var isAnyArgumentSuspend = false
 
         // For each lambda/function expression:
         // - First component: list of parameter types (for lambdas, it doesn't include receiver)
         // - Second component: is lambda
-        val parameterTypesFromDeclarationOfRelatedLambdas: List<Pair<List<KotlinTypeMarker?>, Boolean>> = postponedArguments
-            .mapNotNull { anotherArgument ->
-                when {
-                    anotherArgument !is LambdaWithTypeVariableAsExpectedTypeMarker -> null
-                    anotherArgument.parameterTypesFromDeclaration == null || anotherArgument == argument -> null
-                    else -> {
-                        val argumentExpectedTypeConstructor = argument.expectedType?.typeConstructor() ?: return@mapNotNull null
-                        val anotherArgumentExpectedTypeConstructor =
-                            anotherArgument.expectedType?.typeConstructor() ?: return@mapNotNull null
-                        val areTypeVariablesRelated = dependencyProvider.areVariablesDependentShallowly(
-                            argumentExpectedTypeConstructor, anotherArgumentExpectedTypeConstructor
-                        )
-                        isAnyFunctionExpressionWithReceiver =
-                            isAnyFunctionExpressionWithReceiver || anotherArgument.isFunctionExpressionWithReceiver()
-                        anotherArgument.contextParameterCountOfFunctionExpression().takeIf { it > 0 }
-                            ?.let { contextParameterCountFromFunctionExpression = it }
+        val argumentExpectedTypeConstructor = argument.expectedType?.typeConstructor()
 
-                        val parameterTypesFromDeclarationOfRelatedLambda = anotherArgument.parameterTypesFromDeclaration
-
-                        if (areTypeVariablesRelated && parameterTypesFromDeclarationOfRelatedLambda != null) {
-                            Pair(parameterTypesFromDeclarationOfRelatedLambda, anotherArgument.isLambda())
-                        } else null
+        val parameterTypesFromDeclarationOfRelatedLambdas: List<Pair<List<KotlinTypeMarker?>, Boolean>> =
+            if (argumentExpectedTypeConstructor != null) {
+                postponedArguments.mapNotNull { anotherArgument ->
+                    if (anotherArgument == argument || anotherArgument !is LambdaWithTypeVariableAsExpectedTypeMarker) {
+                        return@mapNotNull null
                     }
+
+                    val anotherArgumentExpectedTypeConstructor = anotherArgument.expectedType?.typeConstructor() ?: return@mapNotNull null
+                    if (!dependencyProvider
+                            .areVariablesDependentShallowly(argumentExpectedTypeConstructor, anotherArgumentExpectedTypeConstructor)
+                    ) {
+                        return@mapNotNull null
+                    }
+
+                    isAnyFunctionExpressionWithReceiver =
+                        isAnyFunctionExpressionWithReceiver || anotherArgument.isFunctionExpressionWithReceiver()
+                    anotherArgument.contextParameterCountOfFunctionExpression().takeIf { it > 0 }
+                        ?.let { contextParameterCountFromFunctionExpression = it }
+                    isAnyArgumentSuspend = isAnyArgumentSuspend || anotherArgument.isSuspend()
+
+                    val parameterTypesFromDeclarationOfRelatedLambda = anotherArgument.parameterTypesFromDeclaration
+
+                    parameterTypesFromDeclarationOfRelatedLambda?.let { Pair(it, anotherArgument.isLambda()) }
                 }
+            } else {
+                emptyList()
             }
 
         val declaredParameterTypes = mutableSetOf<List<KotlinTypeMarker?>>()
@@ -217,7 +232,8 @@ class PostponedArgumentInputTypesResolver(
             parameterTypesFromDeclarationOfRelatedLambdas = declaredParameterTypes,
             isThereExtensionFunctionAmongRelatedLambdas = isAnyFunctionExpressionWithReceiver,
             contextParameterCountFromFunctionExpression = contextParameterCountFromFunctionExpression,
-            maxParameterCount = maxParameterCount
+            maxParameterCount = maxParameterCount,
+            isAnyArgumentSuspend = isAnyArgumentSuspend
         )
     }
 
@@ -243,8 +259,9 @@ class PostponedArgumentInputTypesResolver(
 
     private fun Context.createTypeVariablesForParameters(
         argument: PostponedAtomWithRevisableExpectedType,
-        parameterTypes: List<List<TypeWithKind?>>
+        parameterTypes: List<List<TypeWithKind?>>,
     ): List<TypeArgumentMarker> {
+        if (parameterTypes.isEmpty()) return emptyList()
         val csBuilder = getBuilder()
         val allGroupedParameterTypes = parameterTypes.first().indices.map { i -> parameterTypes.map { it.getOrNull(i) } }
 
@@ -392,15 +409,21 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression() && contextParameterCount == 0)
+        if (areAllParameterTypesSpecified &&
+            !isExtensionFunction &&
+            !argument.isFunctionExpression() &&
+            contextParameterCount == 0 &&
+            parameterTypesInfo.functionTypeKind == FunctionTypeKind.Function
+        ) {
             return null
+        }
 
         val allParameterTypes =
             (parametersFromConstraints.orEmpty() + parametersFromDeclarations.map { parameters ->
                 parameters?.map { it.wrapToTypeWithKind() }
             }).filterNotNull()
 
-        if (allParameterTypes.isEmpty())
+        if (allParameterTypes.isEmpty() && parameterTypesInfo.functionTypeKind == FunctionTypeKind.Function)
             return null
 
         val variablesForParameterTypes = createTypeVariablesForParameters(argument, allParameterTypes)

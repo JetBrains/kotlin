@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixatio
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 open class FirDeclarationsResolveTransformer(
@@ -1315,7 +1317,10 @@ open class FirDeclarationsResolveTransformer(
             session.lookupTracker?.recordTypeResolveAsLookup(lambda.returnTypeRef, lambda.source, context.file.source)
         }
 
-        lambda.replaceTypeRef(lambda.constructFunctionTypeRef(session, resolvedLambdaAtom?.expectedFunctionTypeKind))
+        val kind = runIf(lambda.status.isSuspend) { FunctionTypeKind.SuspendFunction }
+            ?: resolvedLambdaAtom?.expectedFunctionTypeKind
+
+        lambda.replaceTypeRef(lambda.constructFunctionTypeRef(session, kind))
         session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
         lambda.addReturnToLastStatementIfNeeded(session)
         return lambda

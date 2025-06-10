@@ -14,15 +14,15 @@ class A {
 annotation class Ann
 
 fun bar() {
-    <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+    suspend {
         println()
     }
 
-    @Ann <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+    @Ann suspend {
         println()
     }
 
-    <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> @Ann {
+    suspend @Ann {
         println()
     }
 
@@ -53,7 +53,7 @@ fun bar() {
     }
 
     with(A()) {
-        <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
+        suspend {
             println()
         }
 

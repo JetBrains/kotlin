@@ -23,11 +23,15 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
@@ -103,12 +107,23 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
         testServices.assertions.assertEqualsToTestOutputFile(actual)
     }
 
+    // PSI-to-FIR mapper creates some synthetic FIR expression outside the FIR tree.
     private fun shouldPerformContainmentCheck(firElement: FirElement): Boolean {
-        // PSI-to-FIR mapper creates an FIR expression outside the FIR tree.
-        // Check `KtToFirMapping.checkStringLiteralFolderExpression`.
-        return !(firElement is FirResolvedNamedReference
-                && firElement.name == OperatorNameConventions.PLUS
-                && firElement.psi is KtOperationReferenceExpression)
+        return !firElement.isSyntheticStringPlus() && !firElement.isSyntheticBuiltInSuspendCall()
+    }
+
+    // Check `KtToFirMapping.checkStringLiteralFolderExpression`.
+    private fun FirElement.isSyntheticStringPlus(): Boolean {
+        return this is FirResolvedNamedReference
+                && this.name == OperatorNameConventions.PLUS
+                && this.psi is KtOperationReferenceExpression
+    }
+
+    // Check `KtToFirMapping.fakeCallToBuiltInSuspendOrNull`.
+    private fun FirElement.isSyntheticBuiltInSuspendCall(): Boolean {
+        return this is FirFunctionCall
+                && calleeReference.name == StandardClassIds.Callables.suspend.callableName
+                && arguments.singleOrNull() is FirAnonymousFunctionExpression
     }
 
     /**
