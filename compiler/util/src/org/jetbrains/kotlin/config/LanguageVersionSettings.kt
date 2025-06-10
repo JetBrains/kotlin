@@ -432,6 +432,7 @@ enum class LanguageFeature(
     AllowContractsOnPropertyAccessors(KOTLIN_2_3, "KT-27090"),
 
     ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
+    DiscriminateSuspendInOverloadResolution(KOTLIN_2_3, "KT-23610"),
 
     // 2.4
 
