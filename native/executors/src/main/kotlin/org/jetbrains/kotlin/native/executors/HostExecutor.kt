@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Logger
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
@@ -175,7 +176,14 @@ class HostExecutor : Executor {
             }
             suspend fun cancel() {
                 streams.cancel()
-                process.destroyForcibly()
+                // Give the process a chance to gracefully terminate, so that it can finish any child processes.
+                // This is important for `XcodeSimulatorExecutor`: the main executable is `xcrun`, which runs the process we are interested
+                // in; forcibly terminating `xcrun` will not terminate the child process, while graceful termination does that.
+                process.destroy()
+                if (!process.waitFor(1.minutes)) {
+                    logger.warning("Process failed to exit gracefully, forcing termination")
+                    process.destroyForcibly()
+                }
                 streams.drain()
             }
             if (isTimeout) {
@@ -194,7 +202,9 @@ class HostExecutor : Executor {
                     }
                 } catch (e: TimeoutCancellationException) {
                     logger.warning("Failed to join the streams in $waitStreamsDuration.")
-                    cancel()
+                    streams.cancel()
+                    process.destroyForcibly()
+                    streams.drain()
                 }
                 ExecuteResponse(exitCode, duration)
             }
