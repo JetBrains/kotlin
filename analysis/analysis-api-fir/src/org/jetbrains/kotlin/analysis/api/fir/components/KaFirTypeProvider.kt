@@ -9,10 +9,8 @@ import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirErrorType
-import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -101,7 +99,6 @@ internal class KaFirTypeProvider(
 
     override val KaType.enhancedType: KaType?
         get() = withValidityAssertion {
-            require(this is KaFirType)
             val coneType = coneType
             val substitutor = EnhancedForWarningConeSubstitutor(typeContext)
             val enhancedConeType = substitutor.substituteType(coneType)
@@ -112,8 +109,7 @@ internal class KaFirTypeProvider(
     override val KaClassifierSymbol.defaultType: KaType
         get() = withValidityAssertion {
             with(analysisSession) {
-                val firSymbol = firSymbol
-                val defaultConeType = when (firSymbol) {
+                val defaultConeType = when (val firSymbol = firSymbol) {
                     is FirTypeParameterSymbol -> firSymbol.defaultType
                     is FirClassLikeSymbol<*> -> firSymbol.defaultType()
                     else -> errorWithAttachment("Unexpected ${firSymbol::class.simpleName}") {
@@ -172,16 +168,14 @@ internal class KaFirTypeProvider(
     }
 
     /**
-     * Try to get fir element for type reference through symbols.
-     * When the type is declared in compiled code this is faster than building FIR from decompiled text.
+     * Tries to get a fir element for type reference through symbols.
+     * When the type is declared in compiled code, this is faster than building FIR from decompiled text.
      */
     private fun KtTypeReference.getFirBySymbols(): FirElement? {
-        val parent = parent
-        return when {
-            parent is KtParameter && parent.ownerDeclaration != null && parent.typeReference === this ->
+        return when (val parent = parent) {
+            is KtParameter if parent.ownerDeclaration != null && parent.typeReference === this ->
                 parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(resolutionFacade, FirResolvePhase.TYPES)?.fir?.returnTypeRef
-
-            parent is KtCallableDeclaration && (parent is KtNamedFunction || parent is KtProperty)
+            is KtCallableDeclaration if (parent is KtNamedFunction || parent is KtProperty)
                     && (parent.receiverTypeReference === this || parent.typeReference === this) -> {
                 val firCallable = parent.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
                     resolutionFacade, FirResolvePhase.TYPES
@@ -190,20 +184,19 @@ internal class KaFirTypeProvider(
                     firCallable?.receiverParameter?.typeRef
                 } else firCallable?.returnTypeRef
             }
-
-            parent is KtConstructorCalleeExpression && parent.parent is KtAnnotationEntry -> {
+            is KtConstructorCalleeExpression if parent.parent is KtAnnotationEntry -> {
                 fun getFirDeclaration(annotationEntry: KtAnnotationEntry, ktTypeReference: KtTypeReference): FirMemberDeclaration? {
                     if (annotationEntry.typeReference !== ktTypeReference) return null
                     val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
-                    return when {
-                        declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
+                    return when (declaration) {
+                        is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
                             resolutionFacade, FirResolvePhase.TYPES
                         )?.fir
-                        declaration is KtParameter && declaration.ownerFunction != null ->
+                        is KtParameter if declaration.ownerFunction != null ->
                             declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
                                 resolutionFacade, FirResolvePhase.TYPES
                             )?.fir
-                        declaration is KtCallableDeclaration && (declaration is KtNamedFunction || declaration is KtProperty) -> {
+                        is KtCallableDeclaration if (declaration is KtNamedFunction || declaration is KtProperty) -> {
                             declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
                                 resolutionFacade, FirResolvePhase.TYPES
                             )?.fir
@@ -270,7 +263,6 @@ internal class KaFirTypeProvider(
     }
 
     override fun KaType.withNullability(isMarkedNullable: Boolean): KaType = withValidityAssertion {
-        require(this is KaFirType)
         return coneType.withNullability(isMarkedNullable, rootModuleSession.typeContext).asKtType()
     }
 
@@ -294,8 +286,6 @@ internal class KaFirTypeProvider(
     }
 
     override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
-        require(this is KaFirType)
-
         val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
         return sequence {
             for (supertype in coneType.getDirectSupertypes(analysisSession.firSession, substitution)) {
@@ -305,8 +295,6 @@ internal class KaFirTypeProvider(
     }
 
     override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
-        require(this is KaFirType)
-
         val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
         return sequence {
             for (supertype in coneType.getAllStrictSupertypes(analysisSession.firSession, substitution)) {
@@ -321,11 +309,7 @@ internal class KaFirTypeProvider(
             when (this) {
                 is KaReceiverParameterSymbol -> null
                 else -> {
-                    require(this is KaFirSymbol<*>)
                     val firSymbol = firSymbol
-                    check(firSymbol is FirCallableSymbol<*>) {
-                        "Fir declaration should be FirCallableDeclaration; instead it was ${firSymbol::class}"
-                    }
                     return firSymbol.dispatchReceiverType(analysisSession.firSymbolBuilder)
                 }
             }
@@ -333,7 +317,6 @@ internal class KaFirTypeProvider(
 
     override val KaType.arrayElementType: KaType?
         get() = withValidityAssertion {
-            require(this is KaFirType)
             return coneType.arrayElementType()?.asKtType()
         }
 

@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 internal class KaFe10TypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseSessionComponent<KaFe10Session>(), KaTypeProvider, KaFe10SessionComponent {
-    @Suppress("SpellCheckingInspection")
     private val typeApproximator by lazy {
         TypeApproximator(
             analysisContext.builtIns,
@@ -401,7 +400,7 @@ internal class KaFe10TypeProvider(
                 }
             }
 
-            mapping.put(typeParameter, boundTypeArgument)
+            mapping[typeParameter] = boundTypeArgument
         }
 
         return TypeArgumentMapping(typeParameterOwner, mapping)
