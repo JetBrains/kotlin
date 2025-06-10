@@ -44,7 +44,6 @@ fun FirSessionConfigurator.registerExtraCommonCheckers() {
 
 fun FirSessionConfigurator.registerExperimentalCheckers() {
     useCheckers(ExperimentalExpressionCheckers)
-    useCheckers(ExperimentalDeclarationCheckers)
     useCheckers(ExperimentalTypeCheckers)
     useCheckers(ExperimentalLanguageVersionSettingsCheckers)
     registerDiagnosticContainers(FirErrors)
