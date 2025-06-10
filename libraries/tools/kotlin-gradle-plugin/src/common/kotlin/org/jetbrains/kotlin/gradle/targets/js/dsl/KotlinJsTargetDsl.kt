@@ -343,7 +343,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<KotlinWebpack>)
 
     /**
-     * Configure the default [KotlinWebpack] task that **bundles** the Kotlin JS or Wasm target.
+     * Configures the default [KotlinWebpack] task that **bundles** the Kotlin JS or Wasm target.
      *
      * This task will bundle the compiled Kotlin JS or Wasm target.
      *
