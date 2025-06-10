@@ -1792,12 +1792,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     }
 
     @Test
-    @TestMetadata("redundantExplicitTypeWithIntegerLiterals.kt")
-    public void testRedundantExplicitTypeWithIntegerLiterals() {
-      runTest("compiler/testData/diagnostics/tests/redundantExplicitTypeWithIntegerLiterals.kt");
-    }
-
-    @Test
     @TestMetadata("referenceToParameterizedFun.kt")
     public void testReferenceToParameterizedFun() {
       runTest("compiler/testData/diagnostics/tests/referenceToParameterizedFun.kt");

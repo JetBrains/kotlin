@@ -263,12 +263,6 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
       }
 
       @Test
-      @TestMetadata("RedundantExplicitTypeChecker.kt")
-      public void testRedundantExplicitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
-      }
-
-      @Test
       @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
       public void testRedundantSingleExpressionStringTemplateChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantSingleExpressionStringTemplateChecker.kt");

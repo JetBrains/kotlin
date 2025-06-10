@@ -4462,12 +4462,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
-      @TestMetadata("RedundantExplicitTypeChecker.kt")
-      public void testRedundantExplicitTypeChecker() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantExplicitTypeChecker.kt");
-      }
-
-      @Test
       @TestMetadata("RedundantModalityModifierChecker.kt")
       public void testRedundantModalityModifierChecker() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantModalityModifierChecker.kt");
@@ -4513,130 +4507,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       @TestMetadata("RedundantVisibilityModifierCheckerWithExplicitApiMode.kt")
       public void testRedundantVisibilityModifierCheckerWithExplicitApiMode() {
         runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
-      }
-
-      @Nested
-      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment")
-      @TestDataPath("$PROJECT_ROOT")
-      public class CanBeReplacedWithOperatorAssignment {
-        @Test
-        public void testAllFilesPresentInCanBeReplacedWithOperatorAssignment() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("BasicTest.kt")
-        public void testBasicTest() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/BasicTest.kt");
-        }
-
-        @Test
-        @TestMetadata("ComplexExpression.kt")
-        public void testComplexExpression() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/ComplexExpression.kt");
-        }
-
-        @Test
-        @TestMetadata("flexibleTypeBug.kt")
-        public void testFlexibleTypeBug() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/flexibleTypeBug.kt");
-        }
-
-        @Test
-        @TestMetadata("illegalMultipleOperators.kt")
-        public void testIllegalMultipleOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperators.kt");
-        }
-
-        @Test
-        @TestMetadata("illegalMultipleOperatorsMiddle.kt")
-        public void testIllegalMultipleOperatorsMiddle() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
-        }
-
-        @Test
-        @TestMetadata("invalidSubtraction.kt")
-        public void testInvalidSubtraction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/invalidSubtraction.kt");
-        }
-
-        @Test
-        @TestMetadata("list.kt")
-        public void testList() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/list.kt");
-        }
-
-        @Test
-        @TestMetadata("logicOperators.kt")
-        public void testLogicOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/logicOperators.kt");
-        }
-
-        @Test
-        @TestMetadata("multipleOperators.kt")
-        public void testMultipleOperators() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/multipleOperators.kt");
-        }
-
-        @Test
-        @TestMetadata("multipleOperatorsRightSideRepeat.kt")
-        public void testMultipleOperatorsRightSideRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
-        }
-
-        @Test
-        @TestMetadata("mutableList.kt")
-        public void testMutableList() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/mutableList.kt");
-        }
-
-        @Test
-        @TestMetadata("nonCommutativeRepeat.kt")
-        public void testNonCommutativeRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/nonCommutativeRepeat.kt");
-        }
-
-        @Test
-        @TestMetadata("nonRepeatingAssignment.kt")
-        public void testNonRepeatingAssignment() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/nonRepeatingAssignment.kt");
-        }
-
-        @Test
-        @TestMetadata("OperatorAssignment.kt")
-        public void testOperatorAssignment() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/OperatorAssignment.kt");
-        }
-
-        @Test
-        @TestMetadata("plusAssignConflict.kt")
-        public void testPlusAssignConflict() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/plusAssignConflict.kt");
-        }
-
-        @Test
-        @TestMetadata("rightSideRepeat.kt")
-        public void testRightSideRepeat() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/rightSideRepeat.kt");
-        }
-
-        @Test
-        @TestMetadata("simpleAssign.kt")
-        public void testSimpleAssign() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/simpleAssign.kt");
-        }
-
-        @Test
-        @TestMetadata("validAddition.kt")
-        public void testValidAddition() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/validAddition.kt");
-        }
-
-        @Test
-        @TestMetadata("validSubtraction.kt")
-        public void testValidSubtraction() {
-          runTest("compiler/fir/analysis-tests/testData/resolve/extraCheckers/canBeReplacedWithOperatorAssignment/validSubtraction.kt");
-        }
       }
 
       @Nested
@@ -8178,12 +8048,6 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
             @Test
             public void testAllFilesPresentInReturnsImplies() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("notNull.kt")
-            public void testNotNull() {
-              runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/notNull.kt");
             }
 
             @Test
