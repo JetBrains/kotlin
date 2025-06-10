@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
-import org.jetbrains.kotlin.descriptors.isRecursiveSingleFieldValueClassType
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -222,7 +221,10 @@ object AbstractTypeMapper {
         type: KotlinTypeMarker
     ): Boolean = context.typeContext.isPrimitiveBacked(type)
 
-    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(type: KotlinTypeMarker): Boolean {
+    private fun TypeSystemCommonBackendContext.isPrimitiveBacked(
+        type: KotlinTypeMarker,
+        visited: HashSet<TypeConstructorMarker> = hashSetOf()
+    ): Boolean {
         if (type.isNullableType()) {
             return false
         }
@@ -233,7 +235,9 @@ object AbstractTypeMapper {
 
         val typeConstructor = type.typeConstructor()
 
-        return !isRecursiveSingleFieldValueClassType(typeConstructor) &&
-                typeConstructor.getValueClassProperties()?.singleOrNull()?.let { isPrimitiveBacked(it.second) } == true
+        return visited.add(typeConstructor) &&
+                (typeConstructor.getValueClassProperties()?.singleOrNull()
+                    ?.let { isPrimitiveBacked(it.second, visited) } == true)
+                    .also { visited.remove(typeConstructor) }
     }
 }
