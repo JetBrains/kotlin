@@ -160,7 +160,7 @@ internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() 
  *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
- * @sample samples.collections.Builders.Sets.buildSetSample
+ * @sample samples.collections.Builders.Sets.buildSetSampleWithCapacity
  */
 @SinceKotlin("1.6")
 @kotlin.internal.InlineOnly
