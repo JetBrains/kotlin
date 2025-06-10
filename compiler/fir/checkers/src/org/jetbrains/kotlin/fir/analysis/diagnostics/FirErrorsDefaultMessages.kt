@@ -1782,7 +1782,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Variance annotations are only allowed for type parameters of classes and interfaces."
         )
         map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter cannot have a default value.")
-        map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is prohibited for catch parameter.")
+        map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Non-reified type parameters cannot be used by catch parameters.")
 
         map.put(
             KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE,
