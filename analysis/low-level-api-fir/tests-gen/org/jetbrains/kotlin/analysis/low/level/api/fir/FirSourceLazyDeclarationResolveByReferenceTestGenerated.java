@@ -108,6 +108,12 @@ public class FirSourceLazyDeclarationResolveByReferenceTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("analysis/low-level-api-fir/testData/lazyResolveByReference/suspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelClass.kt")
   public void testTopLevelClass() {
     runTest("analysis/low-level-api-fir/testData/lazyResolveByReference/topLevelClass.kt");

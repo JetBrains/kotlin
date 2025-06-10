@@ -1,12 +1,12 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// LANGUAGE: -ParseLambdaWithSuspendModifier
+// LANGUAGE: +ParseLambdaWithSuspendModifier
 
-fun <R> suspend(block: R) = block
+fun <R> suspend(block: suspend () -> R): suspend () -> R = block
 
 class A {
-    infix fun <R> suspend(block: R) = block
+    infix fun <R> suspend(block: suspend () -> R): suspend () -> R = block
 }
 
 @Target(AnnotationTarget.EXPRESSION)
@@ -32,13 +32,11 @@ fun bar() {
 
     suspend({ println() })
 
-    suspend<suspend () -> Unit> {
+    suspend<Unit> {
         println()
     }
 
-    suspend<Nothing?>(null)
-
-    val w: (Any?) -> Any? = ::suspend
+    val w: (suspend () -> Int) -> Any? = ::suspend
 
     A().<!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
         println()
@@ -50,11 +48,9 @@ fun bar() {
 
     A().suspend({ println() })
 
-    A().suspend<suspend () -> Unit> {
+    A().suspend<Unit> {
         println()
     }
-
-    A().suspend<Nothing?>(null)
 
     with(A()) {
         <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
@@ -67,11 +63,9 @@ fun bar() {
 
         suspend({ println() })
 
-        suspend<suspend () -> Unit> {
+        suspend<Unit> {
             println()
         }
-
-        suspend<Nothing?>(null)
     }
 
     A() <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND!>suspend<!> {
@@ -81,6 +75,4 @@ fun bar() {
     A() suspend ({
         println()
     })
-
-    A() suspend ""
 }

@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
-// LANGUAGE: -ParseLambdaWithSuspendModifier
+// LANGUAGE: +ParseLambdaWithSuspendModifier
 
 import kotlin.suspend as suspendLambda
 

@@ -1,0 +1,11 @@
+BODY_RESOLVE:
+TARGET: @R|kotlin/internal/InlineOnly|() @R|kotlin/SinceKotlin|(version = String(1.2)) public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] R> suspend([ResolvedTo(BODY_RESOLVE)] noinline block: R|suspend () -> R|): R|suspend () -> R|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] suspendLambda.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|kotlin/suspend|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/coroutines/SuspendFunction0<R>] suspend@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@suspend Unit
+        }
+        )
+    }

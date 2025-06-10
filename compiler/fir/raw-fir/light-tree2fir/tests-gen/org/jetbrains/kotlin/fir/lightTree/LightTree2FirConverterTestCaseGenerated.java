@@ -854,6 +854,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/super.kt");
     }
 
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambda.kt");
+    }
+
     @TestMetadata("these.kt")
     public void testThese() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/these.kt");
