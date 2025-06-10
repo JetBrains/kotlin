@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -SuspendConversion
+// LANGUAGE: -SuspendConversion, -DiscriminateSuspendInOverloadResolution
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendFn(sfn: suspend () -> Unit) = sfn
