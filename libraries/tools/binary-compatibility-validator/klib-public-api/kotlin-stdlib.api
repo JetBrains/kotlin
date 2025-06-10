@@ -10738,15 +10738,6 @@ final class <#A: kotlin/Any?> kotlin.native.internal/KMutableProperty0Impl : kot
 }
 
 // Targets: [native]
-final class <#A: kotlin/Any?> kotlin.native.internal/Ref { // kotlin.native.internal/Ref|null[0]
-    constructor <init>() // kotlin.native.internal/Ref.<init>|<init>(){}[0]
-
-    final var element // kotlin.native.internal/Ref.element|{}element[0]
-        final fun <get-element>(): #A // kotlin.native.internal/Ref.element.<get-element>|<get-element>(){}[0]
-        final fun <set-element>(#A) // kotlin.native.internal/Ref.element.<set-element>|<set-element>(1:0){}[0]
-}
-
-// Targets: [native]
 final class <#A: kotlin/Any?> kotlinx.cinterop/ObjCNotImplementedVar : kotlinx.cinterop/CVariable { // kotlinx.cinterop/ObjCNotImplementedVar|null[0]
     constructor <init>(kotlin.native.internal/NativePtr) // kotlinx.cinterop/ObjCNotImplementedVar.<init>|<init>(kotlin.native.internal.NativePtr){}[0]
 
