@@ -46,9 +46,6 @@ public interface BaseCompilerArguments : BaseToolArguments {
         public val API_VERSION: BaseCompilerArgument<KotlinVersion> = BaseCompilerArgument("API_VERSION")
 
         @JvmField
-        public val LANGUAGE_VERSION: BaseCompilerArgument<KotlinVersion> = BaseCompilerArgument("LANGUAGE_VERSION")
-
-        @JvmField
         public val PROGRESSIVE: BaseCompilerArgument<Boolean> = BaseCompilerArgument("PROGRESSIVE")
 
         @JvmField

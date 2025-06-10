@@ -23,7 +23,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Provide a base path to compute the source's relative paths in klib (default is empty).
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<Array<Path>?> =
         CommonKlibBasedArgument("XKLIB_RELATIVE_PATH_BASE")
 
@@ -31,7 +31,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Normalize absolute paths in klibs.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("XKLIB_NORMALIZE_ABSOLUTE_PATH")
 
@@ -39,7 +39,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Enable signature uniqueness checks.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
 
@@ -47,7 +47,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Use partial linkage mode.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XPARTIAL_LINKAGE: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("XPARTIAL_LINKAGE")
 
@@ -55,7 +55,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Define the compile-time log level for partial linkage.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XPARTIAL_LINKAGE_LOGLEVEL: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("XPARTIAL_LINKAGE_LOGLEVEL")
 
@@ -63,7 +63,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
 
@@ -71,7 +71,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * Enable experimental support to invoke IR Inliner before Klib serialization.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_IR_INLINER: CommonKlibBasedArgument<Boolean> =
         CommonKlibBasedArgument("XKLIB_IR_INLINER")
 
@@ -81,7 +81,7 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
      * The only observable effect is that a custom ABI version is written to KLIB manifest file.
      */
     @JvmField
-    @Deprecated(message = "This option is experimental and it may` be changed in the future")
+    @Deprecated(message = "This option is experimental and it may be changed in the future")
     public val XKLIB_ABI_VERSION: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("XKLIB_ABI_VERSION")
   }

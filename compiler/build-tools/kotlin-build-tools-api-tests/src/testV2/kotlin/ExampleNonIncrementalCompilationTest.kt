@@ -51,7 +51,6 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
                 set(JvmCompilerArguments.MODULE_NAME, module1.moduleName)
             }
             println(kt.executeOperation(compilationOperation))
-            module1.outputDirectory.listDirectoryEntries().forEach { println(it) }
             assertOutputs(module1, setOf("FooKt.class", "Bar.class", "BazKt.class"))
         }
     }

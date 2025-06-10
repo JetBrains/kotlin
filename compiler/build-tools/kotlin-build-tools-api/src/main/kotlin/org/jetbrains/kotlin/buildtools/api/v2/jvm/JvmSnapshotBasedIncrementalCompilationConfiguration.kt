@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.buildtools.api.v2.jvm
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import java.nio.file.Path
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 public interface JvmIncrementalCompilationConfiguration
 
@@ -20,6 +22,7 @@ public class JvmSnapshotBasedIncrementalCompilationConfiguration(
     public val workingDirectory: Path,
     public val sourcesChanges: SourcesChanges,
     public val dependenciesSnapshotFiles: List<Path>,
+    public val shrunkClasspathSnapshot: Path,
     public val options: JvmSnapshotBasedIncrementalCompilationOptions,
 ) : JvmIncrementalCompilationConfiguration
 
@@ -52,5 +55,14 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
 
         @JvmField
         public val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
+
+        @JvmField
+        public val OUTPUT_DIRS: Option<Set<Path>> = Option("OUTPUT_DIRS")
+
+        @JvmField
+        public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> = Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
+
+        @JvmField
+        public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
     }
 }

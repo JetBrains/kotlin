@@ -51,5 +51,8 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
 
         @JvmField
         public val SOURCE_TO_OUTPUTS_TRACKER: Option<SourceToOutputsTracker> = Option("SOURCE_TO_OUTPUTS_TRACKER")
+
+        @JvmField
+        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>> = Option("KOTLINSCRIPT_EXTENSIONS")
     }
 }
