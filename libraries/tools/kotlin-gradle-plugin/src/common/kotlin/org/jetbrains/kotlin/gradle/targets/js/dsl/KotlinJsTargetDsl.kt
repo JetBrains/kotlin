@@ -316,7 +316,7 @@ interface KotlinJsSubTargetDsl {
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
     /**
-     * Configure the default Webpack configuration for the browser execution environment.
+     * Configures the default Webpack configuration for the browser execution environment.
      *
      * By default, Webpack is used by tasks used to [run][runTask],
      * [bundle][webpackTask], and [test][testTask] the Kotlin JS and Wasm targets.
