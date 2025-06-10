@@ -2241,6 +2241,8 @@ psi/stubs/impl/KotlinUserTypeStubImpl.kt:data KotlinTypeParameterTypeBean
 psi/stubs/impl/KotlinUserTypeStubImpl.kt:sealed KotlinTypeBean
 psi/stubs/impl/KotlinValueArgumentStubImpl.kt:KotlinValueArgumentStubImpl
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils
+psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@IntellijInternalApi computeMaskForSpecialFlags((KotlinModifierListStub.SpecialFlag) -> Boolean)
+psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic @IntellijInternalApi maskHasSpecialFlag(Long, KotlinModifierListStub.SpecialFlag)
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic computeMask((KtModifierKeywordToken) -> Boolean)
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic computeMaskFromModifierList(KtModifierList)
 psi/stubs/impl/ModifierMaskUtils.kt:ModifierMaskUtils:@JvmStatic maskHasModifier(Long, KtModifierKeywordToken)

@@ -139,8 +139,16 @@ abstract class CallableClsStubBuilder(
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
+        mustUseReturnValueFlag: Flags.BooleanFlagField?,
     ): KotlinModifierListStubImpl {
-        val modifierListStub = createModifierListStubForDeclaration(callableStub, flags, flagsToTranslate)
+        val modifierListStub = createModifierListStubForDeclaration(
+            callableStub,
+            flags,
+            flagsToTranslate,
+            additionalModifiers = emptyList(),
+            mustUseReturnValueFlag = mustUseReturnValueFlag,
+        )
+
         typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
         return modifierListStub
     }
@@ -182,8 +190,9 @@ private class FunctionClsStubBuilder(
 
     override fun createModifierListStub() {
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
+        val flags = functionProto.flags
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
-            flags = functionProto.flags,
+            flags = flags,
             flagsToTranslate = listOf(
                 VISIBILITY,
                 OPERATOR,
@@ -193,11 +202,12 @@ private class FunctionClsStubBuilder(
                 TAILREC,
                 SUSPEND,
                 EXPECT_FUNCTION,
-            ) + modalityModifier
+            ) + modalityModifier,
+            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_FUNCTION,
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return
+        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
 
         val annotations = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
@@ -259,13 +269,15 @@ private class PropertyClsStubBuilder(
         val constModifier = if (isVar) listOf() else listOf(CONST)
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
 
+        val flags = propertyProto.flags
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
-            flags = propertyProto.flags,
-            flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier
+            flags = flags,
+            flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,
+            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_PROPERTY,
         )
 
         // If field is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return
+        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
 
         val propertyAnnotations =
             c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
@@ -435,6 +447,8 @@ private class PropertyClsStubBuilder(
             accessorStub,
             accessorFlags,
             ACCESSOR_FLAGS,
+            additionalModifiers = emptyList(),
+            mustUseReturnValueFlag = null,
         )
 
         if (annotations.isNotEmpty()) {
@@ -540,13 +554,15 @@ private class ConstructorClsStubBuilder(
     }
 
     override fun createModifierListStub() {
+        val flags = constructorProto.flags
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
-            flags = constructorProto.flags,
-            flagsToTranslate = listOf(VISIBILITY)
+            flags = flags,
+            flagsToTranslate = listOf(VISIBILITY),
+            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_CTOR,
         )
 
         // If constructor is marked as having no annotations, we don't create stubs for it
-        if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return
+        if (!Flags.HAS_ANNOTATIONS.get(flags)) return
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION

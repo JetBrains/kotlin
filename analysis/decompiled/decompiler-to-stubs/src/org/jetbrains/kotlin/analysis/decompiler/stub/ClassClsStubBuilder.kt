@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -115,7 +115,14 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
             else -> listOf<KtModifierKeywordToken>()
         }
-        return createModifierListStubForDeclaration(parent, classProto.flags, relevantFlags, additionalModifiers)
+
+        return createModifierListStubForDeclaration(
+            parent,
+            classProto.flags,
+            relevantFlags,
+            additionalModifiers,
+            mustUseReturnValueFlag = null,
+        )
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {

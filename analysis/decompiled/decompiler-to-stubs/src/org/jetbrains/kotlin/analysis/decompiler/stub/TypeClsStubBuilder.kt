@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
@@ -20,7 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -234,7 +236,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
-                createModifierListStub(typeProjection, listOfNotNull(modifierKeywordToken))
+                createModifierListStub(
+                    typeProjection,
+                    listOfNotNull(modifierKeywordToken),
+                    mustUseReturnValue = false,
+                )
+
                 createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
             }
         }
@@ -363,7 +370,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 modifiers.add(KtTokens.NOINLINE_KEYWORD)
             }
 
-            val modifierList = createModifierListStub(parameterStub, modifiers)
+            val modifierList = createModifierListStub(
+                parameterStub,
+                modifiers,
+                mustUseReturnValue = false,
+            )
 
             if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
                 val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
@@ -442,7 +453,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
 
-        val modifierList = createModifierListStub(typeParameterStub, modifiers)
+        val modifierList = createModifierListStub(
+            typeParameterStub,
+            modifiers,
+            mustUseReturnValue = false,
+        )
 
         val annotations = c.components.annotationLoader.loadTypeParameterAnnotations(typeParameterProto, c.nameResolver)
         if (annotations.isNotEmpty()) {

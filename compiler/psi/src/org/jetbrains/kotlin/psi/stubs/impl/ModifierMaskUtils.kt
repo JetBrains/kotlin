@@ -1,29 +1,22 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import org.jetbrains.kotlin.psi.KtModifierList
-
-import org.jetbrains.kotlin.lexer.KtTokens.MODIFIER_KEYWORDS_ARRAY
+import com.intellij.openapi.util.IntellijInternalApi
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens.MODIFIER_KEYWORDS_ARRAY
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 
 object ModifierMaskUtils {
     init {
-        assert(MODIFIER_KEYWORDS_ARRAY.size <= 64) { "Current implementation depends on the ability to represent modifier list as bit mask" }
+        @OptIn(IntellijInternalApi::class)
+        assert(MODIFIER_KEYWORDS_ARRAY.size + KotlinModifierListStub.SpecialFlag.entries.size <= 64) {
+            "Current implementation depends on the ability to represent modifier list as bit mask"
+        }
     }
 
     @JvmStatic
@@ -37,6 +30,20 @@ object ModifierMaskUtils {
                 mask = mask or (1L shl index)
             }
         }
+
+        return mask
+    }
+
+    @IntellijInternalApi
+    fun computeMaskForSpecialFlags(hasModifier: (KotlinModifierListStub.SpecialFlag) -> Boolean): Long {
+        val specialFlagOffset = MODIFIER_KEYWORDS_ARRAY.size
+        var mask = 0L
+        for ((index, specialFlag) in KotlinModifierListStub.SpecialFlag.entries.withIndex()) {
+            if (hasModifier(specialFlag)) {
+                mask = mask or (1L shl (specialFlagOffset + index))
+            }
+        }
+
         return mask
     }
 
@@ -44,25 +51,47 @@ object ModifierMaskUtils {
     fun maskHasModifier(mask: Long, modifierToken: KtModifierKeywordToken): Boolean {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(modifierToken)
         assert(index >= 0) { "All KtModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY" }
-        return (mask and (1L shl index)) != 0L
+        return maskHas(mask, index)
     }
+
+    @JvmStatic
+    @IntellijInternalApi
+    fun maskHasSpecialFlag(mask: Long, flag: KotlinModifierListStub.SpecialFlag): Boolean {
+        val specialFlagOffset = MODIFIER_KEYWORDS_ARRAY.size
+        return maskHas(mask, specialFlagOffset + flag.ordinal)
+    }
+
+    private fun maskHas(mask: Long, flagIndex: Int): Boolean = (mask and (1L shl flagIndex)) != 0L
 
     @JvmStatic
     fun maskToString(mask: Long): String {
         val sb = StringBuilder()
         sb.append("[")
         var first = true
+        fun renderFlag(value: String) {
+            if (first) {
+                first = false
+            } else {
+                sb.append(" ")
+            }
+
+            sb.append(value)
+        }
+
         for (modifierKeyword in MODIFIER_KEYWORDS_ARRAY) {
             if (maskHasModifier(mask, modifierKeyword)) {
-                if (!first) {
-                    sb.append(" ")
-                }
-                sb.append(modifierKeyword.value)
-                first = false
+                renderFlag(modifierKeyword.value)
             }
         }
+
+        @OptIn(IntellijInternalApi::class)
+        for (specialFlag in KotlinModifierListStub.SpecialFlag.entries) {
+            if (maskHasSpecialFlag(mask, specialFlag)) {
+                renderFlag(specialFlag.name)
+            }
+        }
+
         sb.append("]")
         return sb.toString()
     }
-
 }

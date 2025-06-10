@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
+import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
@@ -101,6 +102,24 @@ interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
 
 interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     fun hasModifier(modifierToken: KtModifierKeywordToken): Boolean
+
+    /**
+     * Whether the modifier list has a [SpecialFlag].
+     */
+    @IntellijInternalApi
+    fun hasSpecialFlag(flag: SpecialFlag): Boolean
+
+    /** Represents special flags that are common for many declarations */
+    @IntellijInternalApi
+    enum class SpecialFlag {
+        /**
+         * Whether the return type of the modifier list owner must be checked.
+         * This check is supposed to work only for binary stubs.
+         *
+         * See [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719) for details.
+         */
+        MustUseReturnValue,
+    }
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
