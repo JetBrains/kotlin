@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: +SynchronizedSuspendError
+// LANGUAGE: +ParseLambdaWithSuspendModifier
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 

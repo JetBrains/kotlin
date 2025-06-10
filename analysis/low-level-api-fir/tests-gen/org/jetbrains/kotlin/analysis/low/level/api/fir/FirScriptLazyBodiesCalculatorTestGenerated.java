@@ -117,6 +117,12 @@ public class FirScriptLazyBodiesCalculatorTestGenerated extends AbstractFirScrip
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
     }
 
+    @Test
+    @TestMetadata("suspendLambdaScript.kts")
+    public void testSuspendLambdaScript() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambdaScript.kts");
+    }
+
     @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode")
     @TestDataPath("$PROJECT_ROOT")

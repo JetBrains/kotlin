@@ -1379,6 +1379,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
   }
 
   @Test
+  @TestMetadata("suspendLambda.kt")
+  public void testSuspendLambda() {
+    runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/suspendLambda.kt");
+  }
+
+  @Test
   @TestMetadata("thisWithLabelToFunction_caretAtLabel.kt")
   public void testThisWithLabelToFunction_caretAtLabel() {
     runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/thisWithLabelToFunction_caretAtLabel.kt");

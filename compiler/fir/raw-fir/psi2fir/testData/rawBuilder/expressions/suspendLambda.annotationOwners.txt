@@ -1,0 +1,7 @@
+@Ann()
+owner -> FirNamedFunctionSymbol /testPositive
+context -> FirLocalPropertySymbol <local>/x from FirNamedFunctionSymbol /testPositive
+
+@Ann()
+owner -> FirNamedFunctionSymbol /testPositive
+context -> FirNamedFunctionSymbol /testPositive
