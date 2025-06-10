@@ -224,7 +224,7 @@ interface KotlinJsTargetDsl :
  */
 interface KotlinTargetWithNodeJsDsl {
     /**
-     * Enable 'Node.js' as the execution environment for this target,
+     * Enables 'Node.js' as the execution environment for this target,
      * so the project can be used running JavaScript code outside a browser.
      *
      * When enabled, Kotlin Gradle plugin will download and install
