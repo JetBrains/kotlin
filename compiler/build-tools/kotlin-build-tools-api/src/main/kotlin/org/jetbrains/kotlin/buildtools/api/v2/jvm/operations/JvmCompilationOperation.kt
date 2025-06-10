@@ -43,7 +43,7 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
 
     public companion object {
         @JvmField
-        public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration> =
+        public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> =
             Option("INCREMENTAL_COMPILATION")
 
         @JvmField
