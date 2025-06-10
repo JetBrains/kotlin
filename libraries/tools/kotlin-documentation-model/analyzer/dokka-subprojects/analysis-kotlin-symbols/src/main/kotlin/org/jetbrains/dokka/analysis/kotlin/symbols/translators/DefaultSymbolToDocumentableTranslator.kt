@@ -508,7 +508,7 @@ internal class DokkaSymbolVisitor(
                 generics = generics,
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
-                    propertySymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
+                    additionalExtrasOfProperty(propertySymbol)?.toSourceSetDependent()?.toAdditionalModifiers(),
                     getDokkaAnnotationsFrom(propertySymbol)?.toSourceSetDependent()?.toAnnotations(),
                     propertySymbol.getDefaultValue()?.let { DefaultValue(it.toSourceSetDependent()) },
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
@@ -715,7 +715,7 @@ internal class DokkaSymbolVisitor(
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
-                    functionSymbol.additionalExtras()?.toSourceSetDependent()?.toAdditionalModifiers(),
+                    additionalExtrasOfFunction(functionSymbol)?.toSourceSetDependent()?.toAdditionalModifiers(),
                     getDokkaAnnotationsFrom(functionSymbol)
                         ?.toSourceSetDependent()?.toAnnotations(),
                     ObviousMember.takeIf { isObvious(functionSymbol, inheritedFrom) },
@@ -894,6 +894,37 @@ internal class DokkaSymbolVisitor(
 
 
     // ----------- Translators of modifiers ----------------------------------------------------------------------------
+    /**
+     * Dokka has its own conditions for the keyword `override`
+     */
+    private fun KaSession.isDokkaOverride(symbol: KaCallableSymbol): Boolean {
+        fun KaCallableSymbol.isCompilerOverride() =
+            if (this is KaPropertySymbol) isOverride else if (this is KaNamedFunctionSymbol) isOverride else error("Should be property or function but was '${this::class}'")
+        fun KaSymbol.isFake() = origin == KaSymbolOrigin.SUBSTITUTION_OVERRIDE || origin == KaSymbolOrigin.INTERSECTION_OVERRIDE
+
+
+        /**
+         * In the following example, class A has two fake functions: one with the keyword `override`, and the other without.
+         * In the compiler, both are treated as overrides (`isOverride=true`).
+         *
+         * ```kt
+         * class A<T>  : C<T>()
+         *
+         *  open class C<T> : D<T> {
+         *     override fun f(a: T) = 1
+         *     fun f2(a: T) = 1
+         * }
+         *
+         * //...
+         * ```
+         */
+        return if(symbol.isFake()) {
+            symbol.allOverriddenSymbols.firstOrNull { !it.isFake() }?.isCompilerOverride() ?: false
+        } else {
+            symbol.isCompilerOverride()
+        }
+    }
+
     private fun KaDeclarationSymbol.getDokkaModality(): KotlinModifier {
         val isInterface = this is KaClassSymbol && classKind == KaClassKind.INTERFACE
         return if (isInterface) {
@@ -926,33 +957,38 @@ internal class DokkaSymbolVisitor(
         ExtraModifiers.KotlinOnlyModifiers.Override.takeIf { isOverride }
     ).toSet().takeUnless { it.isEmpty() }
 
-    private fun KaPropertySymbol.additionalExtras() = listOfNotNull(
-        ExtraModifiers.KotlinOnlyModifiers.Const.takeIf { (this as? KaKotlinPropertySymbol)?.isConst == true },
-        ExtraModifiers.KotlinOnlyModifiers.LateInit.takeIf { (this as? KaKotlinPropertySymbol)?.isLateInit == true },
-        //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
-        ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
-        //ExtraModifiers.KotlinOnlyModifiers.Static.takeIf { isStatic },
-        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
-            origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE && origin != KaSymbolOrigin.INTERSECTION_OVERRIDE && isOverride
-        }
-    ).toSet().takeUnless { it.isEmpty() }
+
+    private fun KaSession.additionalExtrasOfProperty(symbol: KaPropertySymbol) = with(symbol) {
+        listOfNotNull(
+            ExtraModifiers.KotlinOnlyModifiers.Const.takeIf { (this as? KaKotlinPropertySymbol)?.isConst == true },
+            ExtraModifiers.KotlinOnlyModifiers.LateInit.takeIf { (this as? KaKotlinPropertySymbol)?.isLateInit == true },
+            //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
+            ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
+            //ExtraModifiers.KotlinOnlyModifiers.Static.takeIf { isStatic },
+            ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
+                isDokkaOverride(this)
+            }
+        ).toSet().takeUnless { it.isEmpty() }
+    }
 
     private fun KaJavaFieldSymbol.additionalExtras() = listOfNotNull(
         ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isStatic }
     ).toSet().takeUnless { it.isEmpty() }
 
-    private fun KaNamedFunctionSymbol.additionalExtras() = listOfNotNull(
-        ExtraModifiers.KotlinOnlyModifiers.Infix.takeIf { isInfix },
-        ExtraModifiers.KotlinOnlyModifiers.Inline.takeIf { isInline },
-        ExtraModifiers.KotlinOnlyModifiers.Suspend.takeIf { isSuspend },
-        ExtraModifiers.KotlinOnlyModifiers.Operator.takeIf { isOperator },
+    private fun KaSession.additionalExtrasOfFunction(symbol: KaNamedFunctionSymbol) = with(symbol) {
+        listOfNotNull(
+            ExtraModifiers.KotlinOnlyModifiers.Infix.takeIf { isInfix },
+            ExtraModifiers.KotlinOnlyModifiers.Inline.takeIf { isInline },
+            ExtraModifiers.KotlinOnlyModifiers.Suspend.takeIf { isSuspend },
+            ExtraModifiers.KotlinOnlyModifiers.Operator.takeIf { isOperator },
 //ExtraModifiers.JavaOnlyModifiers.Static.takeIf { isJvmStaticInObjectOrClassOrInterface() },
-        ExtraModifiers.KotlinOnlyModifiers.TailRec.takeIf { isTailRec },
-        ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
-        ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
-            origin != KaSymbolOrigin.SUBSTITUTION_OVERRIDE && origin != KaSymbolOrigin.INTERSECTION_OVERRIDE && isOverride
-        }
-    ).toSet().takeUnless { it.isEmpty() }
+            ExtraModifiers.KotlinOnlyModifiers.TailRec.takeIf { isTailRec },
+            ExtraModifiers.KotlinOnlyModifiers.External.takeIf { isExternal },
+            ExtraModifiers.KotlinOnlyModifiers.Override.takeIf {
+                isDokkaOverride(this)
+            }
+        ).toSet().takeUnless { it.isEmpty() }
+    }
 
     private fun KaNamedClassSymbol.additionalExtras() = listOfNotNull(
         ExtraModifiers.KotlinOnlyModifiers.Inline.takeIf { (this.psi as? KtClass)?.isInline() == true },
