@@ -1,0 +1,25 @@
+Diagnostics from file:
+  for PSI element of type KtCallExpression at (39,5-15)
+    RETURN_VALUE_NOT_USED      text ranges: [(97,107)]
+      PSI: KtCallExpression at (39,5-15)
+  for PSI element of type KtCallExpression at (43,5-13)
+    RETURN_VALUE_NOT_USED      text ranges: [(183,191)]
+      PSI: KtCallExpression at (43,5-13)
+  for PSI element of type KtDotQualifiedExpression at (40,5-26)
+    RETURN_VALUE_NOT_USED      text ranges: [(112,133)]
+      PSI: KtDotQualifiedExpression at (40,5-26)
+  for PSI element of type KtDotQualifiedExpression at (41,5-20)
+    RETURN_VALUE_NOT_USED      text ranges: [(138,153)]
+      PSI: KtDotQualifiedExpression at (41,5-20)
+  for PSI element of type KtDotQualifiedExpression at (44,5-30)
+    RETURN_VALUE_NOT_USED      text ranges: [(196,221)]
+      PSI: KtDotQualifiedExpression at (44,5-30)
+  for PSI element of type KtDotQualifiedExpression at (45,5-18)
+    RETURN_VALUE_NOT_USED      text ranges: [(226,239)]
+      PSI: KtDotQualifiedExpression at (45,5-18)
+  for PSI element of type KtDotQualifiedExpression at (46,5-14)
+    RETURN_VALUE_NOT_USED      text ranges: [(244,253)]
+      PSI: KtDotQualifiedExpression at (46,5-14)
+  for PSI element of type KtDotQualifiedExpression at (47,5-8)
+    RETURN_VALUE_NOT_USED      text ranges: [(258,261)]
+      PSI: KtDotQualifiedExpression at (47,5-8)

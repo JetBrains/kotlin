@@ -711,6 +711,82 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue")
+  @TestDataPath("$PROJECT_ROOT")
+  public class MustUseReturnValue {
+    @Test
+    public void testAllFilesPresentInMustUseReturnValue() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("markedFullEnabled.kt")
+    public void testMarkedFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("markedFunctionFullEnabled.kt")
+    public void testMarkedFunctionFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedFunctionFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("markedFunctionHalfEnabled.kt")
+    public void testMarkedFunctionHalfEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedFunctionHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("markedPropertyFullEnabled.kt")
+    public void testMarkedPropertyFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedPropertyFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("markedPropertyHalfEnabled.kt")
+    public void testMarkedPropertyHalfEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedPropertyHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("mustUseReturnValueHalfEnabled.kt")
+    public void testMustUseReturnValueHalfEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/mustUseReturnValueHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("unmarkedFullEnabled.kt")
+    public void testUnmarkedFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/unmarkedFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("unmarkedFunctionFullEnabled.kt")
+    public void testUnmarkedFunctionFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/unmarkedFunctionFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("unmarkedFunctionHalfEnabled.kt")
+    public void testUnmarkedFunctionHalfEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/unmarkedFunctionHalfEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("unmarkedPropertyFullEnabled.kt")
+    public void testUnmarkedPropertyFullEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/unmarkedPropertyFullEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("unmarkedPropertyHalfEnabled.kt")
+    public void testUnmarkedPropertyHalfEnabled() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/unmarkedPropertyHalfEnabled.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/publishedApi")
   @TestDataPath("$PROJECT_ROOT")
   public class PublishedApi {

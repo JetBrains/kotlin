@@ -787,6 +787,18 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Test
+  @TestMetadata("mustUseReturnValueFullEnabled.kt")
+  public void testMustUseReturnValueFullEnabled() {
+    runTest("compiler/testData/psi/mustUseReturnValueFullEnabled.kt");
+  }
+
+  @Test
+  @TestMetadata("mustUseReturnValueHalfEnabled.kt")
+  public void testMustUseReturnValueHalfEnabled() {
+    runTest("compiler/testData/psi/mustUseReturnValueHalfEnabled.kt");
+  }
+
+  @Test
   @TestMetadata("NamedClassObject.kt")
   public void testNamedClassObject() {
     runTest("compiler/testData/psi/NamedClassObject.kt");

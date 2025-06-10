@@ -666,6 +666,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/multifileClass2.kt");
     }
 
+    @TestMetadata("mustUseReturnValueFullEnabled.kt")
+    public void testMustUseReturnValueFullEnabled() {
+      runTest("compiler/testData/psi/mustUseReturnValueFullEnabled.kt");
+    }
+
+    @TestMetadata("mustUseReturnValueHalfEnabled.kt")
+    public void testMustUseReturnValueHalfEnabled() {
+      runTest("compiler/testData/psi/mustUseReturnValueHalfEnabled.kt");
+    }
+
     @TestMetadata("NamedClassObject.kt")
     public void testNamedClassObject() {
       runTest("compiler/testData/psi/NamedClassObject.kt");
