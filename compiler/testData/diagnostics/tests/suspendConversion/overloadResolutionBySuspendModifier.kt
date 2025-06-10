@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -DiscriminateSuspendInOverloadResolution
 
 fun foo(x: () -> Int) {}
 fun foo(x: suspend () -> Int) {}
