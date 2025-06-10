@@ -420,17 +420,20 @@ private fun Appendable.noDeclarationForSymbol(symbol: IrSymbol): Appendable =
         val signature = symbol.signature
         val fromCInteropLibrary = signature?.run { with(this) { Flags.IS_NATIVE_INTEROP_LIBRARY.test() } }
         if (fromCInteropLibrary == true) {
-            val packageFqName = signature.packageFqName()
-            if (packageFqName.asString().startsWith("org.jetbrains.kotlin.native.platform")) {
-                it.append(". Looks like a K/N platform library issue. It might be that one of the dependencies was")
-                it.append(" compiled with a different version of K/N compiler than the version used to compile this binary.")
+            val packageFqName = signature.packageFqName().asString()
+            val platformLibraryName = packageFqName.removePrefix("org.jetbrains.kotlin.native.platform.")
+            if (platformLibraryName != packageFqName) {
+                it.append(". This looks like a Kotlin/Native $platformLibraryName platform library issue.")
+                it.append(" It could happen if one of the dependencies was compiled with a different version")
+                it.append(" of the Kotlin/Native compiler than the version used to compile this binary.")
                 it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
                 it.append(" See https://youtrack.jetbrains.com/issue/KT-78063 for more details.")
             } else {
-                it.append(". Looks like a cinterop-generated library issue. It might be that one of the dependencies was")
-                it.append(" compiled with a different version of K/N compiler/cinterop tool than the version used to compile this binary.")
+                it.append(". This looks like a cinterop-generated library issue. It could happen if there is a cinterop dependency")
+                it.append(" generated with a different version of the Kotlin/Native compiler than the version used to compile this binary.")
                 it.append(" Please check that the project configuration is correct and has consistent versions of all required dependencies.")
-                it.append(" It's worth trying to recompile cinterop dependencies with the same K/N version used for compiling this binary.")
+                it.append(" It's worth trying to regenerate cinterop dependencies with the same version of")
+                it.append(" the Kotlin/Native compiler that was used for compiling this binary.")
                 it.append(" See https://youtrack.jetbrains.com/issue/KT-78062 for more details.")
             }
         }
