@@ -573,6 +573,51 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
     }
 
     @Test
+    fun `substitution override fun and prop (fake override) for override declaration should have the override keyword`() {
+        inlineModelTest(
+            """
+               class A<T>  : C<T>()
+
+                open class C<T> : D<T> {
+                    override fun f(a: T) = 1
+                    override val p: T? = null
+                }
+                
+                interface D<T> {
+                    fun f(a: T) = 0
+                    val p: T? = null
+                }
+            """.trimMargin()
+        ) {
+            with((this / "inheritors" / "A"/ "f").cast<DFunction>()) {
+                name equals "f"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "inheritors" / "C"/ "f").cast<DFunction>()) {
+                name equals "f"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+
+            with((this / "inheritors" / "A"/ "p").cast<DProperty>()) {
+                name equals "p"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "inheritors" / "C"/ "p").cast<DProperty>()) {
+                name equals "p"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Override
+            }
+            with((this / "inheritors" / "D"/ "f").cast<DFunction>()) {
+                name equals "f"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()?.firstOrNull() equals null
+            }
+        }
+    }
+
+    @Test
     fun `substitution override (fake override) fun and prop should not have the override modifier`() {
         inlineModelTest(
             """
