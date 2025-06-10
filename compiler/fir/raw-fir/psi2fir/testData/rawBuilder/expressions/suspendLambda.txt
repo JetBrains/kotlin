@@ -1,0 +1,53 @@
+FILE: suspendLambda.kt
+    public? final? fun testPositive(): R|kotlin/Unit| {
+        suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        suspend#(<L> = suspend@fun <implicit>.<anonymous>(x: <implicit>): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        foo#(suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        ))
+        suspend#(<L> = l@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@l Unit
+        }
+        )
+        lval x: <implicit> = @Ann() suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        foo#(@Ann() suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        ))
+    }
+    public? final? fun testNegative(): R|kotlin/Unit| {
+        suspend#(suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        suspend#(String(), <L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        suspend#<String>(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        x#.suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+        suspend#(<L> = suspend@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^@suspend Unit
+        }
+        )
+    }

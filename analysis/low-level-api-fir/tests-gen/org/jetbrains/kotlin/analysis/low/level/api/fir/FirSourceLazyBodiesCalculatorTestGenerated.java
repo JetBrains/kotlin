@@ -952,6 +952,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("suspendLambda.kt")
+    public void testSuspendLambda() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambda.kt");
+    }
+
+    @Test
     @TestMetadata("these.kt")
     public void testThese() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/these.kt");

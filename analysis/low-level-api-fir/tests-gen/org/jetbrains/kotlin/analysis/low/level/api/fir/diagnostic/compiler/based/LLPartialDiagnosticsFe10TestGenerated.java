@@ -49851,9 +49851,21 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("modifierFormForNonBuiltInSuspendAfter.kt")
+      public void testModifierFormForNonBuiltInSuspendAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/modifierFormForNonBuiltInSuspendAfter.kt");
+      }
+
+      @Test
       @TestMetadata("modifierFormForNonBuiltInSuspendWithAnyParameter.kt")
       public void testModifierFormForNonBuiltInSuspendWithAnyParameter() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/modifierFormForNonBuiltInSuspendWithAnyParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("modifierFormForNonBuiltInSuspendWithAnyParameterAfter.kt")
+      public void testModifierFormForNonBuiltInSuspendWithAnyParameterAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/modifierFormForNonBuiltInSuspendWithAnyParameterAfter.kt");
       }
 
       @Test
@@ -49875,15 +49887,33 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("nonModifierFormForBuiltInAfter.kt")
+      public void testNonModifierFormForBuiltInAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInAfter.kt");
+      }
+
+      @Test
       @TestMetadata("nonModifierFormForBuiltInRenameOnImport.kt")
       public void testNonModifierFormForBuiltInRenameOnImport() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInRenameOnImport.kt");
       }
 
       @Test
+      @TestMetadata("nonModifierFormForBuiltInRenameOnImportAfter.kt")
+      public void testNonModifierFormForBuiltInRenameOnImportAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInRenameOnImportAfter.kt");
+      }
+
+      @Test
       @TestMetadata("nonModifierFormForBuiltInWithFun.kt")
       public void testNonModifierFormForBuiltInWithFun() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInWithFun.kt");
+      }
+
+      @Test
+      @TestMetadata("nonModifierFormForBuiltInWithFunAfter.kt")
+      public void testNonModifierFormForBuiltInWithFunAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/nonModifierFormForBuiltInWithFunAfter.kt");
       }
 
       @Test
@@ -49896,6 +49926,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("returnLabelForBuiltInSuspend.kt")
       public void testReturnLabelForBuiltInSuspend() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/returnLabelForBuiltInSuspend.kt");
+      }
+
+      @Test
+      @TestMetadata("returnLabelForBuiltInSuspendAfter.kt")
+      public void testReturnLabelForBuiltInSuspendAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/returnLabelForBuiltInSuspendAfter.kt");
       }
 
       @Test
@@ -49959,6 +49995,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("suspendLambdaTypeMismatchAfter.kt")
+      public void testSuspendLambdaTypeMismatchAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambdaTypeMismatchAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendLambdaTypeMismatchBefore.kt")
+      public void testSuspendLambdaTypeMismatchBefore() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendLambdaTypeMismatchBefore.kt");
+      }
+
+      @Test
       @TestMetadata("suspendNotImplemented.kt")
       public void testSuspendNotImplemented() {
         runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendNotImplemented.kt");
@@ -50001,9 +50049,9 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
-      @TestMetadata("synchronizedOnSuspendError.kt")
-      public void testSynchronizedOnSuspendError() {
-        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/synchronizedOnSuspendError.kt");
+      @TestMetadata("synchronizedOnSuspendAfter.kt")
+      public void testSynchronizedOnSuspendAfter() {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/synchronizedOnSuspendAfter.kt");
       }
 
       @Test
@@ -51672,6 +51720,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
           @TestMetadata("suspendFunctions.kt")
           public void testSuspendFunctions() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/suspendFunctions.kt");
+          }
+
+          @Test
+          @TestMetadata("suspendFunctionsAfter.kt")
+          public void testSuspendFunctionsAfter() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/suspendFunctionsAfter.kt");
           }
 
           @Nested

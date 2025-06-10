@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // SKIP_TXT
+// LANGUAGE: -ParseLambdaWithSuspendModifier
 
 fun <R> suspend(block: suspend () -> R): suspend () -> R = block
 
