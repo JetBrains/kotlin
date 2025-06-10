@@ -46,20 +46,36 @@ abstract class AbstractNativeBlackBoxTest {
             runTestCase(testCaseId)
         } catch (e: CompilationToolException) {
             var reason = e.reason
-            val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()
-            if (compatibilityTestMode == CompatibilityTestMode.OldArtifactNewCompiler) {
-                ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
-                    if (it.isFirstPhase) {
-                        reason = "Old compiler fails to compile a test into klib. Consider ignoring this test with:\n" +
-                                "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
+            ((e.failure.loggedData as? LoggedData.CompilationToolCall)?.input as? LoggedData.CompilerInput)?.let {
+                reason = when (val compatibilityTestMode = testRunSettings.get<CompatibilityTestMode>()) {
+                    CompatibilityTestMode.OldArtifactNewCompiler -> {
+                        if (it.isFirstPhase) {
+                            "Old compiler fails to compile a test into klib. Consider ignoring this test with:\n" +
+                                    "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
+                                    "When unclear, which of grouped tests has caused the crash, use `-Pkotlin.internal.native.test.forceStandalone=true` Gradle parameter.\n" +
+                                    "Error was: $reason"
+                        } else {
+                            possibleABICompatibilityIssueMessage(
+                                "current compiler fails to compile klib made by an older compiler.",
+                                "wrongly constructed IR in klib",
+                                compatibilityTestMode,
+                                reason
+                            )
+                        }
+                    }
+                    CompatibilityTestMode.NewArtifactOldCompiler -> if (it.isFirstPhase) {
+                        "Current compiler fails to compile a test into klib. Please investigate.\n" +
                                 "When unclear, which of grouped tests has caused the crash, use `-Pkotlin.internal.native.test.forceStandalone=true` Gradle parameter.\n" +
                                 "Error was: $reason"
                     } else {
-                        reason = possibleABICompatibilityIssueMessage(
-                            "current compiler fails to compile klib made by an older compiler.",
+                        possibleABICompatibilityIssueMessage(
+                            "old compiler fails to compile klib made by current compiler.",
+                            "Native backend issue",
                             compatibilityTestMode,
-                            reason)
+                            reason
+                        )
                     }
+                    else -> reason
                 }
             }
             // TODO find out the way not to re-read test source file, but to re-use already extracted test directives.
@@ -140,6 +156,7 @@ abstract class AbstractNativeBlackBoxTest {
                 throw AssertionFailedError(
                     possibleABICompatibilityIssueMessage(
                         "current compiler fails to execute a compiled klib made by an older compiler",
+                        "wrongly constructed IR in klib",
                         compatibilityTestMode,
                         e.message.toString()
                     )
@@ -151,10 +168,11 @@ abstract class AbstractNativeBlackBoxTest {
 
     private fun possibleABICompatibilityIssueMessage(
         failedAction: String,
+        regressionTesReason: String,
         compatibilityTestMode: CompatibilityTestMode,
         reason: String,
     ): String = "Klib ABI Compatibility Error: $failedAction.\n" +
-            "Should this test be a regression test for wrongly constructed IR in klib, feel free to ignore it with \n" +
+            "Should this test be a regression test for $regressionTesReason, feel free to ignore it with \n" +
             "// IGNORE_NATIVE: compatibilityTestMode=${compatibilityTestMode.name}\n" +
             "Otherwise, please consult with Common Backend team regarding possible ABI compatibility issue:\n" +
             reason

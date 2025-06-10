@@ -156,6 +156,16 @@ fun main() {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
                 model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxForwardCompatibilityTestGenerated",
+                annotations = listOf(
+                    *compatibilityTestMode(CompatibilityTestMode.NewArtifactOldCompiler),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
+            }
         }
 
         // CInterop tests.

@@ -85,9 +85,9 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         )
 
         val goldenData = when (pipelineType) {
-            PipelineType.K2 -> rootDir.resolve("output.fir.txt").takeIf { it.exists() } ?: rootDir.resolve("output.txt")
             PipelineType.K1 -> rootDir.resolve("output.txt")
             PipelineType.DEFAULT -> rootDir.resolve("output.fir.txt").takeIf { it.exists() && LanguageVersion.LATEST_STABLE.usesK2 } ?: rootDir.resolve("output.txt")
+            else -> rootDir.resolve("output.fir.txt").takeIf { it.exists() } ?: rootDir.resolve("output.txt")
         }
 
         KotlinTestUtils.assertEqualsToFile(goldenData, sanitizeCompilerOutput(compilationResult.toOutput()))

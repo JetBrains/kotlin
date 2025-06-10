@@ -50,7 +50,7 @@ val Settings.releasedCompilerVersion: LanguageVersion
 internal fun Settings.isDisabledByFutureFeature(languageSettings: Set<String>): Boolean {
     return when (get<CompatibilityTestMode>()) {
         CompatibilityTestMode.None -> false
-        CompatibilityTestMode.OldArtifactNewCompiler -> {
+        else -> {
             languageSettings.any {
                 val feature = LanguageFeature.valueOf(it.substring(1))
                 when (val sinceVersion = feature.sinceVersion) {
