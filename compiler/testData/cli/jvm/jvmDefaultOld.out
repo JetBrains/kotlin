@@ -1,1 +1,2 @@
+warning: -Xjvm-default is deprecated. Use -jvm-default instead.
 OK
