@@ -329,7 +329,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun commonWebpackConfig(body: Action<KotlinWebpackConfig>)
 
     /**
-     * Configure the default [KotlinWebpack] task that **runs** the Kotlin JS or Wasm target.
+     * Configures the default [KotlinWebpack] task that **runs** the Kotlin JS or Wasm target.
      *
      * This task will serve the compiled Kotlin JS or Wasm target webpack's local development server.
      * For more information about the run task, see
