@@ -5,12 +5,12 @@
 
 fun bar() {
     suspend {
-        <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
+        return<!UNRESOLVED_LABEL!>@suspend<!>
     }
 
     suspend {
         run {
-            <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
+            return<!UNRESOLVED_LABEL!>@suspend<!>
         }
     }
 
@@ -25,7 +25,7 @@ fun bar() {
     val x = suspend@{
         suspend {
             // Might be resolved to outer lambda, but doesn't make sense because suspend-lambdas here is noinline
-            <!RETURN_FOR_BUILT_IN_SUSPEND!>return<!LABEL_NAME_CLASH!>@suspend<!><!>
+            <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@suspend<!>
         }
     }
 }

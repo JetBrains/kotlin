@@ -1,15 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // LANGUAGE: +ParseLambdaWithSuspendModifier
+// LATEST_LV_DIFFERENCE
 
 fun bar() {
     suspend {
-        <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
+        return<!UNRESOLVED_LABEL!>@suspend<!>
     }
 
     suspend {
         run {
-            <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
+            return<!UNRESOLVED_LABEL!>@suspend<!>
         }
     }
 
@@ -24,7 +25,7 @@ fun bar() {
     val x = suspend@{
         suspend {
             // Might be resolved to outer lambda, but doesn't make sense because suspend-lambdas here is noinline
-            <!RETURN_FOR_BUILT_IN_SUSPEND!>return@suspend<!>
+            <!RETURN_NOT_ALLOWED!>return@suspend<!>
         }
     }
 }

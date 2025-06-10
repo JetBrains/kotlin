@@ -5,6 +5,6 @@
 fun foo(f: () -> Unit) {}
 
 fun test() {
-    foo(<!ARGUMENT_TYPE_MISMATCH!>suspend {}<!>)
+    foo(suspend <!ARGUMENT_TYPE_MISMATCH!>{}<!>)
     val x: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>suspend {}<!>
 }

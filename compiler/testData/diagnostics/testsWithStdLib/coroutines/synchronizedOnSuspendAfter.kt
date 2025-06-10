@@ -14,7 +14,7 @@ val a: suspend () -> Unit
 val b: suspend () -> Unit = <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {}
 val c = builder (<!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {})
 val d = suspend <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {}
-val e = <!WRONG_ANNOTATION_TARGET!>@Synchronized<!> suspend {}
+val e = <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> suspend {}
 
 fun test() {
     <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!>
@@ -23,5 +23,5 @@ fun test() {
     val b: suspend () -> Unit = <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {}
     val c = builder (<!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {})
     val d = suspend <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> {}
-    val e = <!WRONG_ANNOTATION_TARGET!>@Synchronized<!> suspend {}
+    val e = <!SYNCHRONIZED_ON_SUSPEND_ERROR!>@Synchronized<!> suspend {}
 }

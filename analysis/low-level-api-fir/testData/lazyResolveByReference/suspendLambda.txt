@@ -4,8 +4,8 @@ TARGET: @R|kotlin/internal/InlineOnly|() @R|kotlin/SinceKotlin|(version = String
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] suspendLambda.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        R|kotlin/suspend|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/coroutines/SuspendFunction0<R>] suspend@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
-            ^@suspend Unit
+        suspend [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
         }
-        )
+
     }
