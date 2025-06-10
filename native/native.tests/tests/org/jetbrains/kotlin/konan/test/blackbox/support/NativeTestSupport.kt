@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -496,7 +497,7 @@ object NativeTestSupport {
     }
 
     private fun computeTestRoots(enclosingTestClass: Class<*>): TestRoots {
-        fun TestMetadata.testRoot() = getAbsoluteFile(localPath = value)
+        fun TestMetadata.testRoot() = ForTestCompileRuntime.transformTestDataPath(value).absoluteFile
 
         val testRoots: Set<File> = when (val outermostTestMetadata = enclosingTestClass.getAnnotation(TestMetadata::class.java)) {
             null -> {

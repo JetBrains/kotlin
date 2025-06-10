@@ -2,14 +2,21 @@ import TestProperty.*
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.ClasspathNormalizer
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
+import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import javax.inject.Inject
 
 private enum class TestProperty(shortName: String) {
     // Use a separate Gradle property to pass Kotlin/Native home to tests: "kotlin.internal.native.test.nativeHome".
@@ -46,6 +53,35 @@ private enum class TestProperty(shortName: String) {
     val shortName = "kn.$shortName"
 }
 
+private open class NativeArgsProvider @Inject constructor(
+    project: Project,
+    objects: ObjectFactory,
+    @Internal val requirePlatformLibs: Boolean = false,
+) : CommandLineArgumentProvider {
+    @Internal
+    val nativeHomeBuiltBy: List<String> = project.readFromGradle(TEST_TARGET)?.let {
+        listOfNotNull(
+            ":kotlin-native:${it}CrossDist",
+            if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
+        )
+    } ?: listOfNotNull(
+        ":kotlin-native:dist",
+        if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
+    )
+
+    @Classpath
+    val nativeHome: ConfigurableFileCollection = project.readFromGradle(KOTLIN_NATIVE_HOME)?.let {
+        objects.fileCollection().convention(it)
+    } ?: objects.fileCollection()
+        .convention(project.project(":kotlin-native").isolated.projectDirectory.dir("dist"))
+        .builtBy(nativeHomeBuiltBy)
+
+    override fun asArguments(): Iterable<String> =
+        listOfNotNull(
+            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.singleFile.absolutePath}",
+        )
+}
+
 private sealed class ComputedTestProperty {
     abstract val name: String
     abstract val value: String?
@@ -62,6 +98,10 @@ private class ComputedTestProperties(private val task: Test) {
     fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }) {
         val gradleValue = readFromGradle(property)
         computedProperties += ComputedTestProperty.Normal(property.fullName, gradleValue ?: defaultValue())
+
+        gradleValue ?: defaultValue()?.let {
+            task.inputs.files(it).withPropertyName(property.fullName).withNormalizer(ClasspathNormalizer::class.java)
+        }
     }
 
     fun Project.computeLazy(property: TestProperty, defaultLazyValue: () -> Lazy<String?>) {
@@ -81,18 +121,18 @@ private class ComputedTestProperties(private val task: Test) {
         buildList(builder).takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
     }
 
-    fun Project.readFromGradle(property: TestProperty): String? {
-        val value = findProperty(property.fullName)
-            ?: findProperty(property.shortName)
-            ?: return null
-        return value.toString()
-    }
-
     fun resolveAndApplyToTask() {
         computedProperties.forEach { computedProperty ->
             task.systemProperty(computedProperty.name, computedProperty.value ?: return@forEach)
         }
     }
+}
+
+private fun Project.readFromGradle(property: TestProperty): String? {
+    val value = findProperty(property.fullName)
+        ?: findProperty(property.shortName)
+        ?: return null
+    return value.toString()
 }
 
 private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit): ComputedTestProperties =
@@ -147,6 +187,8 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
+        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs))
+
         val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
         if (!kotlinBuildProperties.isTeamcityBuild
             && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
@@ -158,18 +200,6 @@ fun Project.nativeTest(
         // Compute test properties in advance. Make sure that the necessary dependencies are settled.
         // But do not resolve any configurations until the execution phase.
         val computedTestProperties = ComputedTestProperties {
-            compute(KOTLIN_NATIVE_HOME) {
-                val testTarget = readFromGradle(TEST_TARGET)
-                if (testTarget != null) {
-                    dependsOn(":kotlin-native:${testTarget}CrossDist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
-                } else {
-                    dependsOn(":kotlin-native:dist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
-                }
-                project(":kotlin-native").projectDir.resolve("dist").absolutePath
-            }
-
             computeLazy(COMPILER_CLASSPATH) {
                 val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
 
