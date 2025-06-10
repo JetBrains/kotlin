@@ -229,15 +229,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
         currentlyProcessed: MutableSet<ConeKotlinType> = hashSetOf(),
     ): Boolean {
         val typeFromProjection = when (kind) {
-            ProjectionKind.INVARIANT -> type
-            ProjectionKind.IN -> when (declarationSite.variance) {
-                Variance.IN_VARIANCE -> type
-                else -> null
-            }
-            ProjectionKind.OUT -> when (declarationSite.variance) {
-                Variance.OUT_VARIANCE -> type
-                else -> null
-            }
+            ProjectionKind.INVARIANT, ProjectionKind.OUT, ProjectionKind.IN -> type
             ProjectionKind.STAR -> when (declarationSite.variance) {
                 Variance.INVARIANT -> null
                 else -> declarationSite.getProjectionForRawType(session, makeNullable = false)
