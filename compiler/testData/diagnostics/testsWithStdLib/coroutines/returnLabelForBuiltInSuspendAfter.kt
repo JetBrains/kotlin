@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
-// LANGUAGE: -ParseLambdaWithSuspendModifier
+// LANGUAGE: +ParseLambdaWithSuspendModifier
 
 fun bar() {
     suspend {
