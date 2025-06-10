@@ -21,9 +21,15 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector, languageVersion.toKotlinVersion())
             .parse(jsr305, supportCompatqualCheckerFrameworkAnnotations, jspecifyAnnotations, nullabilityAnnotations)
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
+
         configureJvmDefaultMode(collector)?.let {
             result[JvmAnalysisFlags.jvmDefaultMode] = it
+            @Suppress("DEPRECATION")
+            if (jvmDefault != null) {
+                collector.report(CompilerMessageSeverity.STRONG_WARNING, "-Xjvm-default is deprecated. Use -jvm-default instead.")
+            }
         }
+
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
