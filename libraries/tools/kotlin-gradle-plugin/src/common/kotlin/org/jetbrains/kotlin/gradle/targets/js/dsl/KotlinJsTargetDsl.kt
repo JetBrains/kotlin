@@ -287,7 +287,7 @@ interface KotlinJsSubTargetDsl {
     fun distribution(body: Action<Distribution>)
 
     /**
-     * Configure the default [KotlinJsTest] test task for the execution environment.
+     * Configures the default [KotlinJsTest] test task for the execution environment.
      *
      * This can be used to modify the configuration of the Kotlin JS test task.
      *
