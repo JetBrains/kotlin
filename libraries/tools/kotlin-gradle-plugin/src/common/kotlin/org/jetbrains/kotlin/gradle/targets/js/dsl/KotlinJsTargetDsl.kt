@@ -279,7 +279,7 @@ interface KotlinJsSubTargetDsl {
      * Control the output of the bundle produced for Kotlin JS and Wasm targets.
      *
      * By default, the results of a Kotlin/JS project build reside in the
-     * `/build/dist/<targetName>/<binaryName>` directory within the project root.
+     * `build/dist/<targetName>/<binaryName>` directory within the project root.
      *
      * KGP will save the output bundle in the specified location.
      */
