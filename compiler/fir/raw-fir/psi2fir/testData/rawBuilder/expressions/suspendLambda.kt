@@ -13,4 +13,5 @@ fun testNegative() {
     suspend("") {}
     suspend<String> {}
     x.suspend {}
+    `suspend` {}
 }

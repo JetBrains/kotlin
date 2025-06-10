@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -101,6 +104,31 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
             return null
         }
 
+        /**
+         * If [element] is a reference with the name "suspend", returns a fake [FirResolvedNamedReference] to `kotlin.suspend`.
+         */
+        private fun fakeReferenceToBuiltInSuspendOrNull(
+            element: KtElement,
+            session: FirSession,
+        ): FirResolvedNamedReference? {
+            if (element !is KtNameReferenceExpression) return null
+            if (element.getReferencedName() != StandardClassIds.Callables.suspend.callableName.identifier) return null
+
+            return session.symbolProvider
+                .getTopLevelCallableSymbols(
+                    packageFqName = StandardClassIds.Callables.suspend.packageName,
+                    name = StandardClassIds.Callables.suspend.callableName
+                )
+                .singleOrNull()
+                ?.let {
+                    buildResolvedNamedReference {
+                        source = element.toKtPsiSourceElement()
+                        name = StandardClassIds.Callables.suspend.callableName
+                        resolvedSymbol = it
+                    }
+                }
+        }
+
         fun getFir(element: KtElement, session: FirSession, mapping: Map<KtElement, FirElement>): FirElement? {
             var current: PsiElement? = element
             while (
@@ -153,7 +181,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                     ) {
                         mapping[parent]
                     } else {
-                        mapping[current]
+                        mapping[current] ?: fakeReferenceToBuiltInSuspendOrNull(element, session)
                     }
                 }
                 is KtParenthesizedExpression -> checkStringLiteralFolderExpression(element, session, mapping)
