@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.konan.error
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -93,6 +94,13 @@ internal abstract class AbstractValueUsageTransformer(
         with(expression) {
             dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
             for (parameter in symbol.owner.nonDispatchParameters) {
+                if (parameter.indexInParameters >= arguments.size) {
+                    error(
+                            parameter.fileOrNull,
+                            parameter,
+                            "Index ${parameter.indexInParameters} out of bounds for length ${arguments.size}"
+                    )
+                }
                 val argument = arguments[parameter] ?: continue
                 arguments[parameter] = argument.useAsNonDispatchArgument(expression, parameter)
             }
