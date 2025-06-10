@@ -371,7 +371,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
 
     /**
-     * Configure the default [NodeJsExec] task that **runs** the Kotlin JS or Wasm target
+     * Configures the default [NodeJsExec] task that **runs** the Kotlin JS or Wasm target
      * using Node.js.
      *
      * For more information about the run task, see
