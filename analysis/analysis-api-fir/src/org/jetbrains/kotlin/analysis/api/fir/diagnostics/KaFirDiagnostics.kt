@@ -3424,10 +3424,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val lambda: KaSymbol
     }
 
-    interface WrongImpliesCondition : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = WrongImpliesCondition::class
-    }
-
     interface VariableWithNoTypeNoInitializer : KaFirDiagnostic<KtVariableDeclaration> {
         override val diagnosticClass get() = VariableWithNoTypeNoInitializer::class
     }
@@ -3841,10 +3837,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantReturnUnitType::class
     }
 
-    interface RedundantExplicitType : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = RedundantExplicitType::class
-    }
-
     interface RedundantSingleExpressionStringTemplate : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RedundantSingleExpressionStringTemplate::class
     }
@@ -3859,10 +3851,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface CanBeValDelayedInitialization : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = CanBeValDelayedInitialization::class
-    }
-
-    interface CanBeReplacedWithOperatorAssignment : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = CanBeReplacedWithOperatorAssignment::class
     }
 
     interface RedundantCallOfConversionMethod : KaFirDiagnostic<PsiElement> {

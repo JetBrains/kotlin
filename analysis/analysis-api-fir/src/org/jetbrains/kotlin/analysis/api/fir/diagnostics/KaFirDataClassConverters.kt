@@ -4879,12 +4879,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.WRONG_IMPLIES_CONDITION) { firDiagnostic ->
-        WrongImpliesConditionImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.VARIABLE_WITH_NO_TYPE_NO_INITIALIZER) { firDiagnostic ->
         VariableWithNoTypeNoInitializerImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5484,12 +5478,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.REDUNDANT_EXPLICIT_TYPE) { firDiagnostic ->
-        RedundantExplicitTypeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE) { firDiagnostic ->
         RedundantSingleExpressionStringTemplateImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5510,12 +5498,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION) { firDiagnostic ->
         CanBeValDelayedInitializationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT) { firDiagnostic ->
-        CanBeReplacedWithOperatorAssignmentImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

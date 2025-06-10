@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.experimental.RedundantExplicitTypeChecker
 
 object ExperimentalDeclarationCheckers : DeclarationCheckers() {
-    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
-        FirReturnsImpliesAnalyzer,
-    )
+    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf()
 
-    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
-        RedundantExplicitTypeChecker,
-    )
+    override val propertyCheckers: Set<FirPropertyChecker> = setOf()
 }

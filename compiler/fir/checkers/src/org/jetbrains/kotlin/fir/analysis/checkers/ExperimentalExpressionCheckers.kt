@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.experimental.CanBeReplacedWithOperatorAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.experimental.EmptyRangeChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.experimental.RedundantInterpolationPrefixCheckerConcatenation
 import org.jetbrains.kotlin.fir.analysis.checkers.experimental.RedundantInterpolationPrefixCheckerLiteral
@@ -24,7 +23,5 @@ object ExperimentalExpressionCheckers : ExpressionCheckers() {
         RedundantInterpolationPrefixCheckerLiteral,
     )
 
-    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf(
-        CanBeReplacedWithOperatorAssignmentChecker,
-    )
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf()
 }
