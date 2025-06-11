@@ -46,6 +46,8 @@ func testMiscOperators() throws {
     #expect(a() === a)
     #expect(a.rangeTo(other: b) === a)
     #expect(a.rangeUntil(other: b) === a)
+
+    #expect(a[42] == 42)
 }
 
 @Test

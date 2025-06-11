@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.sir
 public fun SirDeclarationContainer.allCallables(): Sequence<SirCallable> =
     declarations.asSequence().filterIsInstance<SirCallable>()
 
+public fun SirDeclarationContainer.allSubscripts(): Sequence<SirSubscript> =
+    declarations.asSequence().filterIsInstance<SirSubscript>()
+
 public fun SirDeclarationContainer.allVariables(): Sequence<SirVariable> =
     declarations.asSequence().filterIsInstance<SirVariable>()
 

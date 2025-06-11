@@ -11,13 +11,18 @@ import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
+import org.jetbrains.kotlin.sir.SirGetter
 import org.jetbrains.kotlin.sir.SirModality
 import org.jetbrains.kotlin.sir.SirNamedDeclaration
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
+import org.jetbrains.kotlin.sir.SirSetter
+import org.jetbrains.kotlin.sir.SirSubscript
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
+import org.jetbrains.kotlin.sir.builder.buildGetter
+import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.allParameters
@@ -98,6 +103,51 @@ internal class SirComparisonOperatorTrampolineFunction(
             )
         )
         set(_) = Unit
+}
+
+internal class SirSubscriptTrampoline(
+    val getterFunction: SirFunction,
+    val setterFunction: SirFunction?,
+) : SirSubscript() {
+    override var parent: SirDeclarationParent
+        get() = getterFunction.parent
+        set(newValue) {}
+    override val origin: SirOrigin get() = SirOrigin.Trampoline(getterFunction)
+
+    override val visibility: SirVisibility get() = SirVisibility.PUBLIC
+    override val documentation: String? = getterFunction.documentation
+    override val attributes: List<SirAttribute> = getterFunction.attributes
+    override val isOverride: Boolean = false
+    override val isInstance: Boolean = true
+    override val modality: SirModality = SirModality.FINAL
+    override val parameters: List<SirParameter> = getterFunction.parameters
+    override val returnType: SirType = getterFunction.returnType
+
+    override val getter: SirGetter by lazy {
+        buildGetter {
+            parent = this@SirSubscriptTrampoline
+            origin = SirOrigin.Trampoline(getterFunction)
+            body = SirFunctionBody(
+                listOf(
+                    "_get(${parameters.joinToString { it.forward ?: error("unreachable") }})"
+                )
+            )
+        }
+    }
+    override val setter: SirSetter? by lazy {
+        setterFunction?.let { setterFunction ->
+            buildSetter {
+                parent = this@SirSubscriptTrampoline
+                origin = SirOrigin.Trampoline(setterFunction)
+                parameterName = setterFunction.parameters.last().name ?: "newValue"
+                body = SirFunctionBody(
+                    listOf(
+                        "_set(${parameters.joinToString { it.forward ?: error("unreachable") }}, ${setterFunction.parameters.last().forward})"
+                    )
+                )
+            }
+        }
+    }
 }
 
 private val SirParameter.forward: String? get() = this.name?.let { name -> this.argumentName?.let { "$it: $name" } ?: name }
