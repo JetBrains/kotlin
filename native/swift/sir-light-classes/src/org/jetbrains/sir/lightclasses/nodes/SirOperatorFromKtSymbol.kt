@@ -38,7 +38,6 @@ internal abstract class SirClassOperatorTrampolineFunction(
         get() = source.parent
         set(newValue) {}
 
-    override val name = source.name.removePrefix("_")
     override val origin: SirOrigin get() = SirOrigin.Trampoline(source)
     override val visibility: SirVisibility get() = source.visibility
     override val documentation: String? get() = source.documentation
