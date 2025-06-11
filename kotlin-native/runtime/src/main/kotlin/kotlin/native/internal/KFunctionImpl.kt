@@ -5,6 +5,7 @@
 
 package kotlin.native.internal
 
+import kotlin.internal.throwIrLinkageError
 import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 
@@ -55,6 +56,6 @@ internal abstract class KFunctionImpl<out R>(val description: KFunctionDescripti
 
     private fun KFunctionDescription.checkCorrect(): KFunctionDescription.Correct = when (this) {
         is KFunctionDescription.Correct -> this
-        is KFunctionDescription.LinkageError -> ThrowIrLinkageError(reflectionTargetLinkageError)
+        is KFunctionDescription.LinkageError -> throwIrLinkageError(reflectionTargetLinkageError)
     }
 }

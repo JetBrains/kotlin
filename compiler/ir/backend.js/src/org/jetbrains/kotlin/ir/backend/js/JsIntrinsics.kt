@@ -383,7 +383,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val captureStack = getInternalFunction("captureStack")
 
-    val linkageErrorSymbol = getInternalFunction("throwLinkageError")
+    val linkageErrorSymbol = symbolFinder
+        .findFunctions(Name.identifier("throwIrLinkageError"), StandardClassIds.BASE_INTERNAL_PACKAGE)
+        .single()
 
     val jsPrototypeOfSymbol = getInternalFunction("protoOf")
     val jsDefinePropertySymbol = getInternalFunction("defineProp")
