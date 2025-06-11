@@ -569,6 +569,350 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmExposeBoxed {
+    @Test
+    public void testAllFilesPresentInJvmExposeBoxed() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionObject.kt")
+    public void testCompanionObject() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorBoxed.kt")
+    public void testConstructorBoxed() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/constructorBoxed.kt");
+    }
+
+    @Test
+    @TestMetadata("contexts.kt")
+    public void testContexts() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/contexts.kt");
+    }
+
+    @Test
+    @TestMetadata("extension.kt")
+    public void testExtension() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/extension.kt");
+    }
+
+    @Test
+    @TestMetadata("getter.kt")
+    public void testGetter() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/getter.kt");
+    }
+
+    @Test
+    @TestMetadata("globalReturn.kt")
+    public void testGlobalReturn() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/globalReturn.kt");
+    }
+
+    @Test
+    @TestMetadata("initBlock.kt")
+    public void testInitBlock() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/initBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("int.kt")
+    public void testInt() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/int.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmStatic.kt")
+    public void testJvmStatic() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/jvmStatic.kt");
+    }
+
+    @Test
+    @TestMetadata("lambda.kt")
+    public void testLambda() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/lambda.kt");
+    }
+
+    @Test
+    @TestMetadata("method.kt")
+    public void testMethod() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/method.kt");
+    }
+
+    @Test
+    @TestMetadata("methodReturn.kt")
+    public void testMethodReturn() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/methodReturn.kt");
+    }
+
+    @Test
+    @TestMetadata("methodReturnWithJvmName.kt")
+    public void testMethodReturnWithJvmName() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/methodReturnWithJvmName.kt");
+    }
+
+    @Test
+    @TestMetadata("methodWithAnnotation.kt")
+    public void testMethodWithAnnotation() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/methodWithAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("noArg.kt")
+    public void testNoArg() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg.kt");
+    }
+
+    @Test
+    @TestMetadata("noArg2.kt")
+    public void testNoArg2() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg2.kt");
+    }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");
+    }
+
+    @Test
+    @TestMetadata("suspend.kt")
+    public void testSuspend() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/suspend.kt");
+    }
+
+    @Test
+    @TestMetadata("uint.kt")
+    public void testUint() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/uint.kt");
+    }
+
+    @Test
+    @TestMetadata("uintInt.kt")
+    public void testUintInt() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/uintInt.kt");
+    }
+
+    @Test
+    @TestMetadata("uintReceiver.kt")
+    public void testUintReceiver() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/uintReceiver.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Directive {
+      @Test
+      public void testAllFilesPresentInDirective() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("companionObject.kt")
+      public void testCompanionObject() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/companionObject.kt");
+      }
+
+      @Test
+      @TestMetadata("constructor.kt")
+      public void testConstructor() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/constructor.kt");
+      }
+
+      @Test
+      @TestMetadata("constructorBoxed.kt")
+      public void testConstructorBoxed() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/constructorBoxed.kt");
+      }
+
+      @Test
+      @TestMetadata("getter.kt")
+      public void testGetter() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/getter.kt");
+      }
+
+      @Test
+      @TestMetadata("globalReturn.kt")
+      public void testGlobalReturn() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/globalReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("initBlock.kt")
+      public void testInitBlock() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/initBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("int.kt")
+      public void testInt() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/int.kt");
+      }
+
+      @Test
+      @TestMetadata("lambda.kt")
+      public void testLambda() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/lambda.kt");
+      }
+
+      @Test
+      @TestMetadata("method.kt")
+      public void testMethod() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/method.kt");
+      }
+
+      @Test
+      @TestMetadata("methodReturn.kt")
+      public void testMethodReturn() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturn.kt");
+      }
+
+      @Test
+      @TestMetadata("methodReturnWithJvmName.kt")
+      public void testMethodReturnWithJvmName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturnWithJvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg.kt")
+      public void testNoArg() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg2.kt")
+      public void testNoArg2() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg2.kt");
+      }
+
+      @Test
+      @TestMetadata("simple.kt")
+      public void testSimple() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("synthetic.kt")
+      public void testSynthetic() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/synthetic.kt");
+      }
+
+      @Test
+      @TestMetadata("uint.kt")
+      public void testUint() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uint.kt");
+      }
+
+      @Test
+      @TestMetadata("uintInt.kt")
+      public void testUintInt() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uintInt.kt");
+      }
+
+      @Test
+      @TestMetadata("uintReceiver.kt")
+      public void testUintReceiver() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uintReceiver.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FeatureInteraction {
+      @Test
+      public void testAllFilesPresentInFeatureInteraction() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("jvmName.kt")
+      public void testJvmName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnType.kt")
+      public void testJvmOverloadsReturnType() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnType.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsValueParameter.kt")
+      public void testJvmOverloadsValueParameter() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsValueParameter.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsValueParameter2.kt")
+      public void testJvmOverloadsValueParameter2() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsValueParameter2.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmStatic.kt")
+      public void testJvmStatic() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmStatic.kt");
+      }
+
+      @Test
+      @TestMetadata("throws.kt")
+      public void testThrows() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/throws.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Inherit {
+      @Test
+      public void testAllFilesPresentInInherit() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Child {
+        @Test
+        @TestMetadata("abstractFun.kt")
+        public void testAbstractFun() {
+          runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child/abstractFun.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInChild() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("interface.kt")
+        public void testInterface() {
+          runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child/interface.kt");
+        }
+
+        @Test
+        @TestMetadata("openFun.kt")
+        public void testOpenFun() {
+          runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child/openFun.kt");
+        }
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts")
   @TestDataPath("$PROJECT_ROOT")
   public class Scripts {
