@@ -1,3 +1,18 @@
+## 2.2.0-RC3
+
+### Compiler
+
+- [`KT-77301`](https://youtrack.jetbrains.com/issue/KT-77301) False positive Context Parameter resolution when using DslMarker
+
+### JavaScript
+
+- [`KT-78073`](https://youtrack.jetbrains.com/issue/KT-78073) K/JS: KProperty from local delegate changes after another delegate is invoked
+
+### Klibs
+
+- [`KT-78168`](https://youtrack.jetbrains.com/issue/KT-78168) K/N: "IndexOutOfBoundsException: Index 3 out of bounds for length 3" for iOS build with Kotlin 2.2.0-RC2
+
+
 ## 2.2.0-RC2
 
 ### Backend. Wasm
