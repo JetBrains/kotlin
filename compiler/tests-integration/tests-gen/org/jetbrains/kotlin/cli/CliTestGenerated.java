@@ -122,6 +122,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/hmpp"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("commaInFragmentDependency.args")
+    public void testCommaInFragmentDependency() {
+      runTest("compiler/testData/cli/jvm/hmpp/commaInFragmentDependency.args");
+    }
+
     @TestMetadata("cycleInDependencies.args")
     public void testCycleInDependencies() {
       runTest("compiler/testData/cli/jvm/hmpp/cycleInDependencies.args");
