@@ -7,7 +7,7 @@ pluginManagement {
 
     repositories {
         maven { url "https://redirector.kotlinlang.org/maven/kotlin-dependencies" }
-        mavenCentral()
+        mavenCentral { url "https://cache-redirector.jetbrains.com/maven-central" }
         gradlePluginPortal()
     }
 }
