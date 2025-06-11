@@ -13,6 +13,7 @@ import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -287,8 +288,45 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport(destination.extension == "json").toByteArray())
+    fun dumpPerformanceReport(destFileNameOrPlaceholder: String) {
+        val refinedFileName: String = if (File(destFileNameOrPlaceholder).isDirectory) {
+            // We can't use `Paths.get` because of its absence in earlier Android SDKs
+            val separator = if (destFileNameOrPlaceholder.lastOrNull().let { it == null || it == File.separatorChar }) {
+                ""
+            } else {
+                File.separatorChar
+            }
+            destFileNameOrPlaceholder + separator + generateFileName() + ".json"
+        } else {
+            val lastSlashIndex = destFileNameOrPlaceholder.indexOfLast { it == File.separatorChar }
+            val extensionDotIndex =
+                destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
+            // It's ok if `lastSlashIndex` == -1
+            val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(lastSlashIndex + 1, extensionDotIndex)
+            if (fileNameOrPlaceholder == "*") {
+                val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
+                val fileName = generateFileName()
+                val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
+                pathString + fileName + extension
+            } else {
+                destFileNameOrPlaceholder
+            }
+        }
+
+        val destinationFile = File(refinedFileName)
+        destinationFile.writeBytes(createPerformanceReport(isJson = destinationFile.extension == "json").toByteArray())
+    }
+
+    /**
+     * Generate a unique name to avoid files overwriting.
+     * Use the current date-time stamp with millis precision as a part of the unique name.
+     */
+    private fun generateFileName(): String {
+        return "${unitStats.name}_${dateFormatterForFileName.format(System.currentTimeMillis())}"
+    }
+
+    private val dateFormatterForFileName by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
     }
 
     fun createPerformanceReport(isJson: Boolean): String = if (isJson) {

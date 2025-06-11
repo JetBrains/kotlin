@@ -131,7 +131,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
                 }
 
                 if (arguments.dumpPerf != null) {
-                    performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
+                    performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
                 }
 
                 return if (collector.hasErrors()) COMPILATION_ERROR else code
