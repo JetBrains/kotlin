@@ -20,7 +20,8 @@ object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecke
     override fun check(typeRef: FirResolvedTypeRef) {
         if (!typeRef.coneType.isSomeFunctionType(context.session)) return
 
-        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1).groupBy { it.type?.parameterName }
+        val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1)
+            .groupBy { it.type?.parameterName(context.session) }
 
         for ((name, projections) in nameToArgumentProjection) {
             if (name != null && projections.size >= 2) {

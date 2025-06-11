@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.types.*
@@ -111,14 +110,7 @@ internal class KaFirFunctionType(
                     // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
                     // as parameter names can be explicitly provided via @ParameterName annotations.
                     parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
-
-                    // TODO: Replace with just `parameterConeType.parameterName` after KT-77401
-                    val parameterNameAnnotation = parameterConeType?.parameterNameAnnotation
-                    val nameArgument = parameterNameAnnotation?.argumentMapping?.mapping[StandardNames.NAME]
-                    val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument, builder.rootSession)?.value as? String)?.let {
-                        Name.identifier(it)
-                    }
-
+                    val name = parameterConeType?.parameterName(builder.rootSession)
                     KaBaseFunctionValueParameter(name, parameterType)
                 }
             }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.parameterNameAnnotation
+import org.jetbrains.kotlin.fir.types.parameterName
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -352,9 +352,7 @@ private class FirCallArgumentsProcessor(
                 }
             } else {
                 nameToParameter = parameters.associateByTo(LinkedHashMap()) { parameter ->
-                    val annotation = parameter.returnTypeRef.coneTypeOrNull?.parameterNameAnnotation
-                    val argument = annotation?.getStringArgument(StandardNames.NAME, useSiteSession)
-                    (argument?.let { Name.identifier(it) } ?: parameter.name)
+                    parameter.returnTypeRef.coneTypeOrNull?.parameterName(useSiteSession) ?: parameter.name
                 }
             }
         }

@@ -108,6 +108,9 @@ val FirBasedSymbol<FirDeclaration>.klibSourceFile: SourceFile?
 
 var FirProperty.evaluatedInitializer: FirEvaluatorResult? by FirDeclarationDataRegistry.data(EvaluatedValue)
 
+val FirPropertySymbol.evaluatedInitializer: FirEvaluatorResult?
+    get() = fir.evaluatedInitializer
+
 /**
  * Constraint without corresponding type argument
  */

@@ -67,8 +67,7 @@ val ConeKotlinType.typeAnnotations: List<FirAnnotation>
         if (parameterNameAttribute == null) return customAnnotations
 
         return buildList {
-            add(parameterNameAttribute.annotation)
-            addAll(parameterNameAttribute.others)
+            addAll(parameterNameAttribute.annotations)
             addAll(customAnnotations)
         }
     }
