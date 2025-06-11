@@ -213,6 +213,11 @@ private fun Settings.applyBootstrapConfiguration(
                     substitute(module("org.jetbrains.kotlin:kotlin-reflect"))
                         .using(project(":dependencies:bootstrap:kotlin-reflect-bootstrap"))
                 }
+            } else if (path == ":kotlin-compiler-embeddable") {
+                resolutionStrategy.dependencySubstitution {
+                    substitute(module("org.jetbrains.kotlin:kotlin-compiler-embeddable"))
+                        .using(project(":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap"))
+                }
             }
         }
 

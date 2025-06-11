@@ -210,7 +210,8 @@ include ":benchmarks",
         ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
         ":dependencies:bootstrap:kotlin-script-runtime-bootstrap",
         ":dependencies:bootstrap:kotlin-daemon-client-bootstrap",
-        ":dependencies:bootstrap:kotlin-reflect-bootstrap"
+        ":dependencies:bootstrap:kotlin-reflect-bootstrap",
+        ":dependencies:bootstrap:kotlin-compiler-embeddable-bootstrap"
 
 include ":kotlin-allopen-compiler-plugin",
         ":kotlin-allopen-compiler-plugin.embeddable",
