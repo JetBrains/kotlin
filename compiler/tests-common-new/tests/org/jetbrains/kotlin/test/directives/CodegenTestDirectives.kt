@@ -301,9 +301,9 @@ fun extractIgnoredDirectiveForTargetBackend(
 
 fun TestServices.tryRetrieveIgnoredInliner(directive: ValueDirective<TargetInliner>): TargetInliner? {
     val directiveName = directive.name
-    val ignoreDirectives = moduleStructure.allDirectives[directive]
+    val ignoreDirectives = moduleStructure.allDirectives[directive].distinct()
     if (ignoreDirectives.size > 1) {
-        throw IllegalArgumentException("Directive $directiveName should contains only one value")
+        throw IllegalArgumentException("Directive $directiveName should contain only one value")
     }
     return ignoreDirectives.singleOrNull()
 }
