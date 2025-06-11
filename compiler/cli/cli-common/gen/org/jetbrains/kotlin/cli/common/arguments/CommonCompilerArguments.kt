@@ -778,6 +778,7 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 """,
+        delimiter = Argument.Delimiters.none,
     )
     var fragmentDependencies: Array<String>? = null
         set(value) {

@@ -9,6 +9,4 @@ compiler or generated code. Use it at your own risk!
 
 error: incorrect syntax for -Xfragment-sources argument. `<module name>:<source file>` expected but got ` src/a.kt`
 error: there is a cycle in dependencies of module `b`
-error: incorrect syntax for -Xfragment-dependency argument. Expected <moduleName>:<path> but got ` linux_x64`
-error: incorrect syntax for -Xfragment-dependency argument. Expected <moduleName>:<path> but got ` macos_arm64)/some_dir`
 COMPILATION_ERROR

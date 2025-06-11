@@ -2895,7 +2895,7 @@
                             "current": "Declare common klib dependencies for the specific fragment.\nThis argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n",
                             "valueInVersions": []
                         },
-                        "delimiter": null,
+                        "delimiter": "None",
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {

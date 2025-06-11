@@ -818,6 +818,7 @@ This argument is required for any HMPP module except the platform leaf module: i
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
 """.asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.None
 
         @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
