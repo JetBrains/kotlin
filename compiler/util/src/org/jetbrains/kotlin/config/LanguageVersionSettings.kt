@@ -431,6 +431,8 @@ enum class LanguageFeature(
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),
     AllowContractsOnPropertyAccessors(KOTLIN_2_3, "KT-27090"),
 
+    ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
+
     // 2.4
 
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
