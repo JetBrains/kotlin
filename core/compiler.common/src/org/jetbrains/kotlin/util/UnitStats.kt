@@ -46,6 +46,8 @@ data class UnitStats(
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
+    val loweringStats: List<Pair<String, Time>>? = null,
+
     // Null in case of java files not used
     val findJavaClassStats: SideStats? = null,
     // Typically always not null because binary files are used for stdlib deserializing.
@@ -173,6 +175,19 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
                         ""
                     }
         )
+
+        if (phaseType == PhaseType.IrPreLowering) {
+            loweringStats?.forEach { (loweringName, loweringTime) ->
+                action(
+                    "%20s%8s ms".format("LOWERING", loweringTime.millis) +
+                            if (linesCount != 0) {
+                                "%12.3f loc/s ($loweringName)".format(Locale.ENGLISH, getLinesPerSecond(loweringTime))
+                            } else {
+                                " ($loweringName)"
+                            }
+                )
+            }
+        }
     }
 
     forEachPhaseSideMeasurement { phaseSideType, sideStats ->

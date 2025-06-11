@@ -41,6 +41,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var jitTimeMillis: Long? = null
     private val extendedStats: MutableList<String> = mutableListOf()
 
+    private var currentLoweringTime: Time? = null
+    private var currentLowering: String? = null
+    private val loweringMeasurements = LinkedHashMap<String, Time>()
+
     var isExtendedStatsEnabled: Boolean = false
         private set
     var compilerType: CompilerType = CompilerType.K2
@@ -117,6 +121,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             klibWritingTime,
             irLoweringTime,
             backendTime,
+            loweringMeasurements.toList(),
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -195,6 +200,19 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         this.files += files
         this.lines += lines
+    }
+
+    fun notifyLoweringStarted(loweringName: String) {
+        currentLoweringTime = currentTime()
+        currentLowering = loweringName
+    }
+
+    fun notifyLoweringFinished(loweringName: String) {
+        assert(currentLoweringTime != null)
+        assert(currentLowering == loweringName)
+
+        loweringMeasurements[loweringName] = (loweringMeasurements[loweringName] ?: Time.ZERO) + (currentTime() - currentLoweringTime!!)
+        currentLoweringTime = null
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
@@ -337,6 +355,17 @@ inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, blo
         return block()
     } finally {
         notifyPhaseFinished(phaseType)
+    }
+}
+
+inline fun <T> PerformanceManager?.tryMeasureLoweringTime(loweringName: String, block: () -> T): T {
+    if (this == null) return block()
+
+    try {
+        notifyLoweringStarted(loweringName)
+        return block()
+    } finally {
+        notifyLoweringFinished(loweringName)
     }
 }
 

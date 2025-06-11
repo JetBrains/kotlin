@@ -10,16 +10,19 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.util.tryMeasureLoweringTime
 
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     lowerings: List<NamedCompilerPhase<T, IrModuleFragment, IrModuleFragment>>,
     irModuleFragment: IrModuleFragment,
 ): IrModuleFragment {
     return lowerings.fold(irModuleFragment) { module, lowering ->
-        runPhase(
-            lowering,
-            module,
-        )
+        context.configuration.perfManager.tryMeasureLoweringTime(lowering.name) {
+            runPhase(
+                lowering,
+                module,
+            )
+        }
     }
 }
 
