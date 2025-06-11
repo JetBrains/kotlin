@@ -12,9 +12,12 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.checkers.collectLanguageFeatureMap
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -41,6 +44,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -124,12 +128,21 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
-        val session = FirSessionFactoryHelper.createEmptySession()
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(this.text))
+        return toFirFile(session, bodyBuildingMode)
+    }
+
+    protected fun KtFile.toFirFile(session: FirSession, bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
         return PsiRawFirBuilder(
             session,
             StubFirScopeProvider,
             bodyBuildingMode = bodyBuildingMode
         ).buildFirFile(this)
+    }
+
+    protected fun parseLanguageFeatures(text: String): Map<LanguageFeature, LanguageFeature.State> {
+        val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// LANGUAGE: ").ifEmpty { return emptyMap() }
+        return collectLanguageFeatureMap(directives.joinToString(", "))
     }
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {
