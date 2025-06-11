@@ -123,7 +123,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     }
 
     private fun doTestInaccessibleSymbols(gradleVersion: GradleVersion, localRepository: Path? = null) {
-        project("empty", gradleVersion, localRepoDir = localRepository) {
+        project(
+            "empty",
+            gradleVersion,
+            localRepoDir = localRepository,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             plugins {
                 kotlin("multiplatform")
             }
