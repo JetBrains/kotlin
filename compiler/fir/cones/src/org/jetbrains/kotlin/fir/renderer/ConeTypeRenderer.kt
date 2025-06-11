@@ -110,6 +110,10 @@ open class ConeTypeRenderer(
                 render(type)
             }
 
+            is ConeErrorUnionType -> {
+                render(type)
+            }
+
             is ConeSimpleKotlinType -> {
                 val hasTypeArguments = type is ConeClassLikeType && type.typeArguments.isNotEmpty()
                 renderConstructor(type.getConstructor(), nullabilityMarker = nullabilityMarker.takeIf { !hasTypeArguments } ?: "")
@@ -257,5 +261,11 @@ open class ConeTypeRenderer(
             this.render(intersected)
         }
         builder.append(")")
+    }
+
+    protected open fun render(type: ConeErrorUnionType) {
+        this.render(type.valueType)
+        builder.append(" | ")
+        builder.append("`${type.errorType}`")
     }
 }

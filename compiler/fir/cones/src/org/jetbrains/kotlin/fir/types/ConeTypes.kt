@@ -52,10 +52,43 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
  */
 sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
 
+sealed class ConeValueType : ConeRigidType()
+
+data class ConeErrorUnionType(
+    val valueType: ConeValueType,
+    val errorType: CEType
+) : ConeRigidType() {
+    override val typeArguments: Array<out ConeTypeProjection>
+        get() = EMPTY_ARRAY
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
+}
+
+// Error types starts with CE prefix to prevent clashes and verbosity
+// Not a namespace because one if them is in another module [CETypeParameterType]
+
+sealed class CEType
+
+abstract class CELookupTagBasedType : CEType() {
+    abstract val lookupTag: ConeClassifierLookupTag
+}
+
+data class CETypeVariable(
+    val typeConstructor: ConeTypeVariableTypeConstructor,
+) : CEType()
+
+data class CEClassifierType(
+    override val lookupTag: ConeClassLikeLookupTag,
+) : CELookupTagBasedType()
+
+data class CEUnionType(
+    val types: List<CEType>,
+) : CEType()
+
 /**
  * Normally should represent a type with one related constructor that does not require unwrapping.
  */
-sealed class ConeSimpleKotlinType : ConeRigidType(), SimpleTypeMarker
+sealed class ConeSimpleKotlinType : ConeValueType(), SimpleTypeMarker
 
 class ConeClassLikeErrorLookupTag(
     override val classId: ClassId,
@@ -165,16 +198,16 @@ class ConeDynamicType @DynamicTypeConstructor constructor(
     companion object
 }
 
-private fun ConeRigidType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
+private fun ConeValueType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     return when (this) {
         is ConeDefinitelyNotNullType -> original
         is ConeSimpleKotlinType -> this
     }
 }
 
-fun ConeKotlinType.unwrapToSimpleTypeUsingLowerBound(): ConeSimpleKotlinType {
-    return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
-}
+//fun ConeKotlinType.unwrapToSimpleTypeUsingLowerBound(): ConeSimpleKotlinType {
+//    return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+//}
 
 sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
 
@@ -239,7 +272,7 @@ data class ConeCapturedType(
  */
 data class ConeDefinitelyNotNullType(
     val original: ConeSimpleKotlinType
-) : ConeRigidType(), DefinitelyNotNullTypeMarker {
+) : ConeValueType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
 

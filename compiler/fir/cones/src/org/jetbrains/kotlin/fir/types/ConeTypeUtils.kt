@@ -51,6 +51,7 @@ val ConeKotlinType.isMarkedNullable: Boolean
         is ConeDefinitelyNotNullType -> false
         is ConeIntersectionType -> false
         is ConeStubType -> isMarkedNullable
+        is ConeErrorUnionType -> valueType.isMarkedNullable
     }
 
 val ConeKotlinType.hasFlexibleMarkedNullability: Boolean
@@ -117,6 +118,7 @@ fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
         is ConeDefinitelyNotNullType -> original.unwrapLowerBound()
         is ConeFlexibleType -> lowerBound.unwrapLowerBound()
         is ConeSimpleKotlinType -> this
+        is ConeErrorUnionType -> valueType.unwrapLowerBound()
     }
 }
 
@@ -125,6 +127,7 @@ fun ConeKotlinType.upperBoundIfFlexible(): ConeRigidType {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> upperBound
         is ConeDefinitelyNotNullType -> this
+        is ConeErrorUnionType -> this
     }
 }
 
@@ -133,6 +136,7 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
         is ConeSimpleKotlinType -> this
         is ConeFlexibleType -> lowerBound
         is ConeDefinitelyNotNullType -> this
+        is ConeErrorUnionType -> this
     }
 }
 
@@ -203,5 +207,7 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
         is ConeStubType -> this.constructor
         is ConeDefinitelyNotNullType -> original.getConstructor()
         is ConeIntegerLiteralType -> this
+        // TODO: RE: suspicious place
+        is ConeErrorUnionType -> valueType.getConstructor()
     }
 }
