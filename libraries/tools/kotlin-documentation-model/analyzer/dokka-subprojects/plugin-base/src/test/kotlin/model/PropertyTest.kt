@@ -12,6 +12,10 @@ import utils.name
 import utils.text
 import kotlin.test.Test
 import org.jetbrains.dokka.ExperimentalDokkaApi
+import org.jetbrains.dokka.links.Nullable
+import org.jetbrains.dokka.links.TypeConstructor
+import org.jetbrains.dokka.links.TypeParam
+import org.jetbrains.dokka.links.TypeReference
 
 @OptIn(ExperimentalDokkaApi::class)
 class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "property") {
@@ -269,9 +273,36 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
                 }
                 with(getter.assertNotNull("Getter")) {
                     type.name equals "T"
+                    val receiver = TypeConstructor(
+                        "kotlin.collections.List",
+                        listOf(
+                            TypeParam(
+                                listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))
+                            )
+                        )
+                    )
+
+                    // In K1 a name of an accessor is `<get-sampleProperty>`, in K2 - `getSampleProperty`
+                    this.dri.packageName equals "property"
+                    this.dri.classNames equals "XD"
+                    this.dri.callable?.receiver equals receiver
+                    this.dri.callable?.params equals emptyList<TypeReference>()
                 }
                 with(setter.assertNotNull("Setter")){
                     type.name equals "Unit"
+
+                    val receiver = TypeConstructor(
+                        "kotlin.collections.List",
+                        listOf(
+                            TypeParam(
+                                listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))
+                            )
+                        )
+                    )
+                    this.dri.packageName equals "property"
+                    this.dri.classNames equals "XD"
+                    this.dri.callable?.receiver equals receiver
+                    this.dri.callable?.params equals listOf(TypeParam(listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))))
                 }
                 generics counts 0
                 visibility.values allEquals KotlinVisibility.Public
@@ -316,7 +347,7 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
             |package sample
             |
             |/** Some doc */
-            |context(s: String, _:Int) val Int.prop : Int
+            |context(s: String, _:Int) var Int.prop : Int
             """.trimIndent()
         ) {
             with((this / "sample" / "prop").cast<DProperty>()) {
@@ -342,6 +373,9 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
 
                 getter?.contextParameters counts 0
                 setter?.contextParameters counts 0
+
+                getter?.dri?.callable?.contextParameters counts 2
+                setter?.dri?.callable?.contextParameters counts 2
             }
         }
     }
