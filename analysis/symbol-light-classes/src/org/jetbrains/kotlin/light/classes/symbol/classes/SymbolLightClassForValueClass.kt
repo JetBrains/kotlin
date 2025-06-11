@@ -34,12 +34,10 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
     }
 
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,

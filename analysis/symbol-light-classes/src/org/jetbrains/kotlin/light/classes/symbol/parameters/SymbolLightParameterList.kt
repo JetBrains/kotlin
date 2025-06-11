@@ -39,7 +39,7 @@ internal class SymbolLightParameterList(
 
         correspondingCallablePointer?.withSymbol(parent.ktModule) { callable ->
             for (parameterSymbol in callable.contextParameters) {
-                builder.addParameter(SymbolLightContextParameter(this, parameterSymbol, parent))
+                builder.addParameter(SymbolLightContextParameter(parameterSymbol, parent))
             }
         }
 

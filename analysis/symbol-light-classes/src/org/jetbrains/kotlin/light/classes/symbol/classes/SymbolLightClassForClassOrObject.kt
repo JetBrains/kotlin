@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiers
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.JvmStandardClassIds
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
@@ -40,12 +43,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
@@ -233,12 +234,11 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         }
     }
 
-    private fun KaSession.addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
+    private fun addInstanceFieldIfNeeded(result: MutableList<PsiField>, classSymbol: KaNamedClassSymbol) {
         if (classKind() != KaClassKind.OBJECT || isLocal) return
 
         result.add(
             SymbolLightFieldForObject(
-                ktAnalysisSession = this,
                 objectSymbol = classSymbol,
                 containingClass = this@SymbolLightClassForClassOrObject,
                 name = JvmAbi.INSTANCE_FIELD,

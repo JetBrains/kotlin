@@ -80,20 +80,18 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
     }
 }
 
-internal fun KaSession.createLightClassNoCache(
+internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
     ktModule: KaModule,
     manager: PsiManager,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
-        ktAnalysisSession = this,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        ktAnalysisSession = this,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
@@ -101,14 +99,12 @@ internal fun KaSession.createLightClassNoCache(
 
     else -> if (classSymbol.isInline) {
         SymbolLightClassForValueClass(
-            ktAnalysisSession = this,
             ktModule = ktModule,
             classSymbol = classSymbol,
             manager = manager,
         )
     } else {
         SymbolLightClassForClassOrObject(
-            ktAnalysisSession = this,
             ktModule = ktModule,
             classSymbol = classSymbol,
             manager = manager,
@@ -207,7 +203,7 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     }
 }
 
-internal fun KaSession.createAndAddField(
+internal fun createAndAddField(
     lightClass: SymbolLightClassBase,
     declaration: KaPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -218,7 +214,7 @@ internal fun KaSession.createAndAddField(
     result += field
 }
 
-internal fun KaSession.createField(
+internal fun createField(
     lightClass: SymbolLightClassBase,
     declaration: KaPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
@@ -232,7 +228,6 @@ internal fun KaSession.createField(
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
 
     return SymbolLightFieldForProperty(
-        ktAnalysisSession = this@createField,
         propertySymbol = declaration,
         fieldName = fieldName,
         containingClass = lightClass,
@@ -241,7 +236,7 @@ internal fun KaSession.createField(
     )
 }
 
-private fun KaSession.hasBackingField(property: KaPropertySymbol): Boolean {
+private fun hasBackingField(property: KaPropertySymbol): Boolean {
     if (property is KaSyntheticJavaPropertySymbol) return true
     requireIsInstance<KaKotlinPropertySymbol>(property)
 

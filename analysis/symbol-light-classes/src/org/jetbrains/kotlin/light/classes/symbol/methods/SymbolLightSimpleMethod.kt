@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 internal class SymbolLightSimpleMethod private constructor(
-    ktAnalysisSession: KaSession,
     functionSymbol: KaNamedFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
@@ -40,7 +39,6 @@ internal class SymbolLightSimpleMethod private constructor(
     argumentsSkipMask: BitSet?,
     private val suppressStatic: Boolean,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
-    ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
@@ -261,7 +259,6 @@ internal class SymbolLightSimpleMethod private constructor(
                 methodIndexBase = methodIndex,
             ) { methodIndex, argumentSkipMask ->
                 SymbolLightSimpleMethod(
-                    ktAnalysisSession = this,
                     functionSymbol = functionSymbol,
                     lightMemberOrigin = lightMemberOrigin,
                     containingClass = containingClass,

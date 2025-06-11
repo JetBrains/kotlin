@@ -45,14 +45,13 @@ internal class SymbolLightTypeParameter private constructor(
     KtLightDeclaration<KtTypeParameter, PsiTypeParameter> {
 
     constructor(
-        ktAnalysisSession: KaSession,
         parent: SymbolLightTypeParameterList,
         index: Int,
         typeParameterSymbol: KaTypeParameterSymbol,
     ) : this(
         parent = parent,
         index = index,
-        typeParameterSymbolPointer = with(ktAnalysisSession) { typeParameterSymbol.createPointer() },
+        typeParameterSymbolPointer = typeParameterSymbol.createPointer(),
         kotlinOrigin = typeParameterSymbol.sourcePsiSafe(),
     )
 

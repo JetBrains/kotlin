@@ -39,13 +39,12 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 ) : SymbolLightClassBase(ktModule, manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
         classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
-        classSymbolPointer = with(ktAnalysisSession) {
+        classSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>
         },

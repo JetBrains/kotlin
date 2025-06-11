@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
@@ -23,12 +22,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KaNamedClassSymbol> {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager
+        manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
@@ -117,7 +114,6 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
         companionObjectSymbols?.forEach {
             result.add(
                 SymbolLightFieldForObject(
-                    ktAnalysisSession = this,
                     objectSymbol = it,
                     containingClass = this@SymbolLightClassForNamedClassLike,
                     name = it.name.asString(),

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
@@ -28,11 +27,10 @@ internal abstract class SymbolLightParameterCommon(
     override val kotlinOrigin: KtParameter?,
 ) : SymbolLightParameterBase(containingMethod) {
     internal constructor(
-        ktAnalysisSession: KaSession,
         parameterSymbol: KaParameterSymbol,
         containingMethod: SymbolLightMethodBase,
     ) : this(
-        parameterSymbolPointer = with(ktAnalysisSession) { parameterSymbol.createPointer() },
+        parameterSymbolPointer = parameterSymbol.createPointer(),
         containingMethod = containingMethod,
         kotlinOrigin = parameterSymbol.sourcePsiSafe(),
     )

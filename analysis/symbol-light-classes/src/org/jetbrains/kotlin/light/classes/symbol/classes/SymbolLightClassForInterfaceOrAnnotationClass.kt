@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -26,12 +25,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLightClassForNamedClassLike {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager
+        manager: PsiManager,
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
