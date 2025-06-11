@@ -289,7 +289,8 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
     @Argument(
         value = "-Xdump-perf",
         valueDescription = "<path>",
-        description = "Dump detailed performance statistics to the specified file.",
+        description = """Dump detailed performance statistics to the specified file in text or json format (it's deletected by the file's extension).
+Also, it supports the placeholder `$` for generating file names based on the module being compiled and the current date-time stamp.""",
     )
     var dumpPerf: String? = null
         set(value) {

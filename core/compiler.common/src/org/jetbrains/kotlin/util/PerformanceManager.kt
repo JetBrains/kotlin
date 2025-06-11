@@ -13,6 +13,8 @@ import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -287,8 +289,29 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    fun dumpPerformanceReport(destination: File) {
-        destination.writeBytes(createPerformanceReport(destination.extension == "json").toByteArray())
+    private val dateTimeForFileNameFormatter by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
+    }
+
+    fun dumpPerformanceReport(destFileNameOrPlaceholder: String) {
+        val lastSlashIndex = destFileNameOrPlaceholder.indexOfLast { it == '/' || it == '\\' }
+        val extensionDotIndex = destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
+        val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(
+            lastSlashIndex + 1, // It's ok if `lastSlashIndex` == -1
+            extensionDotIndex
+        )
+        val fullFileName = if (fileNameOrPlaceholder == "$") {
+            val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
+            // Generate a unique name to avoid files overwriting.
+            // Use the current date-time stamp with seconds precision (should be enough) as a part of the unique name.
+            val fileName = "${unitStats.name}_${LocalDateTime.now().format(dateTimeForFileNameFormatter)}"
+            val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
+            pathString + fileName + extension
+        } else {
+            destFileNameOrPlaceholder
+        }
+        val destinationFile = File(fullFileName)
+        destinationFile.writeBytes(createPerformanceReport(isJson = destinationFile.extension == "json").toByteArray())
     }
 
     fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
