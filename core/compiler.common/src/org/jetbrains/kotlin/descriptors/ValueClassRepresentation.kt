@@ -29,40 +29,20 @@ enum class ValueClassKind { Inline, MultiField }
 
 fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKind(
     fields: List<Pair<Name, Type>>,
+    cachedVisited: HashSet<TypeConstructorMarker> = hashSetOf()
 ): ValueClassKind = when {
     fields.size > 1 -> MultiField
     fields.isEmpty() -> error("Value classes cannot have 0 fields")
     else -> {
         val type = fields.single().second
         with(this) {
-            val typeConstructor = type.typeConstructor()
             when {
                 type.isNullableType() -> Inline
-                isRecursiveSingleFieldValueClassType(typeConstructor) -> Inline
-                !typeConstructor.isMultiFieldValueClass() -> Inline
+                !type.typeConstructor().isMultiFieldValueClass(cachedVisited) -> Inline
                 else -> MultiField
             }
         }
     }
-}
-
-fun TypeSystemCommonBackendContext.isRecursiveSingleFieldValueClassType(typeConstructorMarker: TypeConstructorMarker): Boolean =
-    isRecursiveSingleFieldValueClassType(typeConstructorMarker, hashSetOf())
-
-private fun TypeSystemCommonBackendContext.isRecursiveSingleFieldValueClassType(
-    typeConstructor: TypeConstructorMarker,
-    visited: HashSet<TypeConstructorMarker>
-): Boolean {
-    val valueClassProperties = typeConstructor.getValueClassProperties() ?: return false
-
-    if (valueClassProperties.size > 1) {
-        return false
-    }
-
-    return !visited.add(typeConstructor) || valueClassProperties.any { classProperty ->
-        val propertyTypeConstructor = classProperty.second.typeConstructor()
-        isRecursiveSingleFieldValueClassType(propertyTypeConstructor, visited)
-    }.also { visited.remove(typeConstructor) }
 }
 
 fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =

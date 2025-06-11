@@ -767,7 +767,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation is InlineClassRepresentation
     }
 
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
+    override fun TypeConstructorMarker.isMultiFieldValueClass(cachedVisited: HashSet<TypeConstructorMarker>): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return (declarationDescriptor as? ClassDescriptor)?.valueClassRepresentation is MultiFieldValueClassRepresentation
     }

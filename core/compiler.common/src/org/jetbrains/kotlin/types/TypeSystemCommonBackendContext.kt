@@ -31,7 +31,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any?
 
     fun TypeConstructorMarker.isInlineClass(): Boolean
-    fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean
+    fun TypeConstructorMarker.isMultiFieldValueClass(cachedVisited: HashSet<TypeConstructorMarker> = hashSetOf()): Boolean
     fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>?
     fun TypeConstructorMarker.isInnerClass(): Boolean
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker

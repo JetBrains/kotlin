@@ -525,9 +525,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
     }
 
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean {
+    override fun TypeConstructorMarker.isMultiFieldValueClass(cachedVisited: HashSet<TypeConstructorMarker>): Boolean {
         val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.MultiField
+
+        return (cachedVisited.add(this) && this@ConeTypeContext.valueClassLoweringKind(fields, cachedVisited) == ValueClassKind.MultiField)
+            .also { cachedVisited.remove(this) }
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, RigidTypeMarker>>? {
