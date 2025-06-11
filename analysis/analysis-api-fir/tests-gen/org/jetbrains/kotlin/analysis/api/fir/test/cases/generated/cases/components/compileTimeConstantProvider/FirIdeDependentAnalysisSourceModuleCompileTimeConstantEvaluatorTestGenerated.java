@@ -382,6 +382,12 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
     runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/uselessCast.kt");
   }
 
+  @Test
+  @TestMetadata("validQualifier.kt")
+  public void testValidQualifier() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/validQualifier.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors")
   @TestDataPath("$PROJECT_ROOT")
@@ -401,6 +407,12 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
     @TestMetadata("constValPropertyWithUnresolvedType.kt")
     public void testConstValPropertyWithUnresolvedType() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/constValPropertyWithUnresolvedType.kt");
+    }
+
+    @Test
+    @TestMetadata("errorQualifier.kt")
+    public void testErrorQualifier() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/errorQualifier.kt");
     }
 
     @Test
