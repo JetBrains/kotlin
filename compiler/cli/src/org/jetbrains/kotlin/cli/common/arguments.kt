@@ -326,7 +326,15 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleDependencies = buildMap<HmppCliModule, MutableList<String>> {
         for (argument in arguments.fragmentDependencies.orEmpty()) {
-            val (moduleName, dependency) = argument.split(":", limit = 2)
+            val splitArg = argument.split(":", limit = 2)
+            if (splitArg.size != 2) {
+                reportError(
+                    "Incorrect syntax for ${CommonCompilerArguments::fragmentDependencies.cliArgument} argument. " +
+                            "Expected <moduleName>:<path> but got `$argument`"
+                )
+                continue
+            }
+            val (moduleName, dependency) = splitArg
             val module = moduleByName[moduleName] ?: run {
                 reportError("Module `$moduleName` not found in ${CommonCompilerArguments::fragments.cliArgument} arguments")
                 continue
