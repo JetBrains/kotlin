@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.functionWithContinuations
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -250,7 +251,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             // Built function overrides originalSuperMethod, while, if parent class is already lowered, it would
             // transformedSuperMethod in its declaration list. We need not fake override in that case.
             // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
-            ignoredParentSymbols = listOf(functionReference.overriddenFunctionSymbol),
+            ignoredParentSymbols = listOfNotNull(functionReference.overriddenFunctionSymbol.owner.functionWithContinuations?.symbol),
         )
         postprocessClass(functionReferenceClass, functionReference)
         return functionReferenceClass
