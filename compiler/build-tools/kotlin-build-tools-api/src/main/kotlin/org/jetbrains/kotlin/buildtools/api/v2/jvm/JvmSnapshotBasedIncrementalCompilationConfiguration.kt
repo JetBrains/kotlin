@@ -27,7 +27,11 @@ public class JvmSnapshotBasedIncrementalCompilationConfiguration(
 ) : JvmIncrementalCompilationConfiguration
 
 public interface JvmSnapshotBasedIncrementalCompilationOptions {
-    public class Option<V> internal constructor(public val id: String)
+    public class Option<V> internal constructor(public val id: String) {
+        override fun toString(): String {
+            return id
+        }
+    }
 
     public operator fun <V> get(key: Option<V>): V
 
