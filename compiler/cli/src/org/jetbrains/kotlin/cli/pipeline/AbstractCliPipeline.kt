@@ -75,7 +75,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             }
 
             if (arguments.dumpPerf != null) {
-                performanceManager.dumpPerformanceReport(File(arguments.dumpPerf!!))
+                performanceManager.dumpPerformanceReport(arguments.dumpPerf!!)
             }
 
             if (messageCollector.hasErrors()) ExitCode.COMPILATION_ERROR else code
