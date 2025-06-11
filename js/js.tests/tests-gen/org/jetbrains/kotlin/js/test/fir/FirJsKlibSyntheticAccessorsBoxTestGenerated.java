@@ -724,6 +724,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateExtensionValThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt")
       public void testLeakingPrivateExtensionValThroughReferenceInPublicInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateExtensionValThroughReferenceInPublicInlineFun.kt");
@@ -886,6 +892,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateValThroughReferenceInPublicInlineFun.kt")
       public void testLeakingPrivateValThroughReferenceInPublicInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInPublicInlineFun.kt");
@@ -943,6 +955,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       @TestMetadata("reflectionViaReferenceToLeakingPrivateMethod.kt")
       public void testReflectionViaReferenceToLeakingPrivateMethod() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateMethod.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateVar.kt")
+      public void testReflectionViaReferenceToLeakingPrivateVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateVar.kt");
       }
 
       @Test
@@ -1412,6 +1430,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       }
 
       @Test
+      @TestMetadata("leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt")
+      public void testLeakingPrivateExtensionVarThroughReferenceInInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateExtensionVarThroughReferenceInInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
       public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
@@ -1547,6 +1571,12 @@ public class FirJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirJsCo
       @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelFun.kt")
       public void testReflectionViaReferenceToLeakingPrivateTopLevelFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelFun.kt");
+      }
+
+      @Test
+      @TestMetadata("reflectionViaReferenceToLeakingPrivateTopLevelVar.kt")
+      public void testReflectionViaReferenceToLeakingPrivateTopLevelVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/reflectionViaReferenceToLeakingPrivateTopLevelVar.kt");
       }
 
       @Test
