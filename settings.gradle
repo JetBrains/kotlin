@@ -10,8 +10,8 @@ pluginManagement {
             }
         }
         maven { url "https://redirector.kotlinlang.org/maven/kotlin-dependencies" }
-        google()
-        mavenCentral()
+        google { url "https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2" }
+        mavenCentral { url "https://cache-redirector.jetbrains.com/maven-central" }
         gradlePluginPortal()
     }
 

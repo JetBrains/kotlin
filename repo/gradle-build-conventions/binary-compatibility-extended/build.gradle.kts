@@ -6,7 +6,7 @@ plugins {
 description = "Binary Compatibility Validator compat - track ABI changes"
 
 repositories {
-    mavenCentral()
+    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     gradlePluginPortal()
 }
 
