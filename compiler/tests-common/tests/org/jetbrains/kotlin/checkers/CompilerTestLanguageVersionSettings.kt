@@ -120,7 +120,7 @@ fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, envir
 private fun <T : Any> analysisFlag(flag: AnalysisFlag<T?>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T?>, T>? =
     value?.let(flag::to)
 
-private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
+fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
     val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(

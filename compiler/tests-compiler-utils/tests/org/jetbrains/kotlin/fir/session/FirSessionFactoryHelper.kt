@@ -80,7 +80,7 @@ object FirSessionFactoryHelper {
     }
 
     @OptIn(SessionConfiguration::class, PrivateSessionConstructor::class)
-    fun createEmptySession(): FirSession {
+    fun createEmptySession(features: Map<LanguageFeature, LanguageFeature.State> = emptyMap()): FirSession {
         return object : FirSession(Kind.Source) {}.apply {
             val moduleData = FirSourceModuleData(
                 Name.identifier("<stub module>"),
@@ -101,7 +101,7 @@ object FirSessionFactoryHelper {
                     )
 
                     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
-                        return LanguageFeature.State.DISABLED
+                        return features.getOrDefault(feature, LanguageFeature.State.DISABLED)
                     }
 
                     override fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature> = stub()

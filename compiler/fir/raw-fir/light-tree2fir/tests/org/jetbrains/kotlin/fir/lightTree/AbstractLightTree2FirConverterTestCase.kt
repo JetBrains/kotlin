@@ -15,17 +15,19 @@ import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.nio.file.Paths
+import kotlin.io.path.readText
 
 
 abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTestCase() {
     @OptIn(ObsoleteTestInfrastructure::class)
     fun doTest(filePath: String) {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
+        val path = Paths.get(filePath)
         val firFile = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(path.readText())),
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
-        ).buildFirFile(Paths.get(filePath))
+        ).buildFirFile(path)
         val firDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
 
         val expectedFile = File(expectedPath(filePath, ".txt"))

@@ -58,8 +58,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     private fun compareAll() {
         @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -72,7 +74,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
                 //psi
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -91,8 +93,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testCompareDiagnostics() {
         @OptIn(ObsoleteTestInfrastructure::class)
+        val session = FirSessionFactoryHelper.createEmptySession()
+
         val lightTreeConverter = LightTree2Fir(
-            session = FirSessionFactoryHelper.createEmptySession(),
+            session = session,
             scopeProvider = StubFirScopeProvider,
             diagnosticsReporter = null
         )
@@ -119,7 +123,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 //psi
                 val fileName = PathUtil.getFileName(filePath)
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(fileName), fileText) as KtFile
-                val firFileFromPsi = ktFile.toFirFile()
+                val firFileFromPsi = ktFile.toFirFile(session)
                 val treeFromPsi = FirRenderer().renderElementAsString(firFileFromPsi)
                     .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
