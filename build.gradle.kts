@@ -1044,6 +1044,12 @@ tasks {
         dependsOn("test")
     }
 
+    register("dependenciesAll") {
+        subprojects.forEach {
+            dependsOn(it.tasks.named("dependencies"))
+        }
+    }
+
     named("checkBuild") {
         if (kotlinBuildProperties.isTeamcityBuild) {
             val bootstrapKotlinVersion = bootstrapKotlinVersion
