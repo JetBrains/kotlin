@@ -280,18 +280,24 @@ internal class KaFirTypeProvider(
 
     override fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
-        return coneType.getDirectSupertypes(
-            analysisSession.firSession,
-            ConeSupertypeCalculationMode.substitution(shouldApproximate),
-        ).map { it.asKtType() }
+
+        val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
+        return sequence {
+            for (supertype in coneType.getDirectSupertypes(analysisSession.firSession, substitution)) {
+                yield(supertype.asKtType())
+            }
+        }
     }
 
     override fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> = withValidityAssertion {
         require(this is KaFirType)
-        return coneType.getAllStrictSupertypes(
-            analysisSession.firSession,
-            ConeSupertypeCalculationMode.substitution(shouldApproximate),
-        ).map { it.asKtType() }
+
+        val substitution = ConeSupertypeCalculationMode.substitution(shouldApproximate)
+        return sequence {
+            for (supertype in coneType.getAllStrictSupertypes(analysisSession.firSession, substitution)) {
+                yield(supertype.asKtType())
+            }
+        }
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
