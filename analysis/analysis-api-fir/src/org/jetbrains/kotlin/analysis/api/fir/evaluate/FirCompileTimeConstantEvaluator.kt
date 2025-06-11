@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.impl.base.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.declarations.evaluateAs
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
@@ -53,25 +55,21 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    @OptIn(PrivateConstantEvaluatorAPI::class)
     fun evaluate(
         fir: FirElement?,
         firSession: FirSession
-    ): FirLiteralExpression? {
-        val evaluatedResult = when (fir) {
-            is FirPropertyAccessExpression -> {
-                when (val referredVariable = fir.calleeReference.toResolvedVariableSymbol()) {
-                    is FirPropertySymbol -> referredVariable.evaluateRecursionAware(fir, firSession)
-                    is FirFieldSymbol -> referredVariable.evaluateRecursionAware(fir, firSession)
-                    else -> null
-                }
+    ): FirLiteralExpression? = when (fir) {
+        is FirPropertyAccessExpression -> {
+            when (val referredVariable = fir.calleeReference.toResolvedVariableSymbol()) {
+                is FirPropertySymbol -> referredVariable.evaluateRecursionAware(fir, firSession)
+                is FirFieldSymbol -> referredVariable.evaluateRecursionAware(fir, firSession)
+                else -> null
             }
-            is FirExpression -> FirExpressionEvaluator.evaluateExpression(fir, firSession)
-            else -> null
-        } as? FirEvaluatorResult.Evaluated ?: return null
-
-        return evaluatedResult.result as? FirLiteralExpression
+        }
+        is FirExpression -> fir.evaluateAs<FirLiteralExpression>(firSession)
+        else -> null
     }
+
 
     fun evaluateAsKtConstantValue(
         fir: FirElement,
@@ -118,13 +116,12 @@ internal object FirCompileTimeConstantEvaluator {
         }
     }
 
-    @OptIn(PrivateConstantEvaluatorAPI::class)
     private fun FirVariableSymbol<*>.evaluateRecursionAware(
         expressionToEvaluate: FirExpression,
         firSession: FirSession
-    ): FirEvaluatorResult? =
+    ): FirLiteralExpression? =
         withTrackingVariableEvaluation(this) {
-            FirExpressionEvaluator.evaluateExpression(expressionToEvaluate, firSession)
+            expressionToEvaluate.evaluateAs<FirLiteralExpression>(firSession)
         }
 
     private fun ConstantValueKind.adjustType(value: Any?): Any? {
