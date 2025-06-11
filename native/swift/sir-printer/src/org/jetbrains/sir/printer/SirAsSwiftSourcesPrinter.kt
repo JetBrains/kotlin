@@ -90,6 +90,7 @@ public class SirAsSwiftSourcesPrinter private constructor(
             is SirCallable -> printDeclaration()
             is SirVariable -> printDeclaration()
             is SirTypealias -> printDeclaration()
+            is SirSubscript -> printDeclaration()
         }
     }
 
@@ -178,6 +179,9 @@ public class SirAsSwiftSourcesPrinter private constructor(
         allCallables()
             .sortedWithIfNeeded(Comparators.stableCallableComparator)
             .forEach { it.print() }
+        allSubscripts()
+            .sortedWithIfNeeded(Comparators.stableSubscriptComparator)
+            .forEach { it.print() }
         if (this is SirModule) {
             allExtensions()
                 .sortedWithIfNeeded(Comparators.stableExtensionComparator)
@@ -210,6 +214,24 @@ public class SirAsSwiftSourcesPrinter private constructor(
         println("}")
     }
 
+    private fun SirSubscript.printDeclaration() {
+        if (currentContext.declaration !is SirProtocol) {
+            printModifiers()
+            printOverride()
+        }
+        print("subscript(")
+        parameters.print()
+        print(")")
+        print(" -> ${returnType.swiftRender}")
+
+        println(" {")
+        withIndent {
+            getter.print()
+            setter?.print()
+        }
+        println("}")
+    }
+
     private fun SirCallable.printDeclaration() {
         if (currentContext.declaration !is SirProtocol) {
             printModifiers()
@@ -218,11 +240,14 @@ public class SirAsSwiftSourcesPrinter private constructor(
         printPreNameKeywords()
         printName()
         printPostNameKeywords()
-        if (this !is SirAccessor) {
+        if (this is SirAccessor) {
+            if (this is SirSetter && this.parameterName != "newValue") {
+                // newValue is the default implicit setter parameter name in swift
+                print("(", this.parameterName, ")")
+            }
+        } else {
             print("(")
-        }
-        collectParameters().print()
-        if (this !is SirAccessor) {
+            collectParameters().print()
             print(")")
         }
         printEffects()
@@ -328,34 +353,51 @@ public class SirAsSwiftSourcesPrinter private constructor(
     )
 
     private fun SirClassMemberDeclaration.printModifiers() {
-        when (effectiveModality) {
-            SirModality.OPEN -> {
-                if (visibility == SirVisibility.PUBLIC) {
-                    print("open ")
-                } else {
-                    // Swift properties and methods are internally inheritable
-                    // by default – no need to print "open"
-                    printVisibility()
-                }
-                if (callableKind == SirCallableKind.CLASS_METHOD) {
-                    print(if (this.parent is SirClass) "class " else "static ")
-                }
+        when (this.parent) {
+            is SirModule -> {
+                printVisibility()
             }
-            SirModality.FINAL -> {
+
+            is SirExtension, is SirProtocol, is SirStruct, is SirEnum -> {
                 printVisibility()
                 if (callableKind == SirCallableKind.CLASS_METHOD) {
                     print("static ")
-                } else if (callableKind != SirCallableKind.FUNCTION) {
-                    // to reduce noise we don't print 'final' when it's implied
-                    if ((parent as? SirClass)?.modality != SirModality.FINAL) {
-                        print("final ")
-                    }
                 }
             }
-            SirModality.UNSPECIFIED -> {
-                printVisibility()
-                if (callableKind == SirCallableKind.CLASS_METHOD) {
-                    print(if (this.parent is SirClass) "class " else "static ")
+
+            is SirSubscript, is SirVariable -> {
+                // nothing
+            }
+
+            is SirClass -> when (effectiveModality) {
+                SirModality.OPEN -> {
+                    if (visibility == SirVisibility.PUBLIC) {
+                        print("open ")
+                    } else {
+                        // Swift properties and methods are internally inheritable
+                        // by default – no need to print "open"
+                        printVisibility()
+                    }
+                    if (callableKind == SirCallableKind.CLASS_METHOD) {
+                        print(if (this.parent is SirClass) "class " else "static ")
+                    }
+                }
+                SirModality.FINAL -> {
+                    printVisibility()
+                    if (callableKind == SirCallableKind.CLASS_METHOD) {
+                        print("static ")
+                    } else if (callableKind != SirCallableKind.FUNCTION) {
+                        // to reduce noise we don't print 'final' when it's implied
+                        if ((parent as? SirClass)?.modality != SirModality.FINAL) {
+                            print("final ")
+                        }
+                    }
+                }
+                SirModality.UNSPECIFIED -> {
+                    printVisibility()
+                    if (callableKind == SirCallableKind.CLASS_METHOD) {
+                        print(if (this.parent is SirClass) "class " else "static ")
+                    }
                 }
             }
         }
@@ -509,6 +551,7 @@ private val SirClassMemberDeclaration.callableKind: SirCallableKind
     get() = when (this) {
         is SirVariable -> kind
         is SirCallable -> (this as SirCallable).kind
+        is SirSubscript -> kind
     }
 
 private val SirParameter.swiftRender: String

@@ -13,13 +13,18 @@ public extension ExportedKotlinPackages.kotlin {
         var length: Swift.Int32 {
             get
         }
-        func get(
+        func _get(
             index: Swift.Int32
         ) -> Swift.Unicode.UTF16.CodeUnit
         func subSequence(
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
+        subscript(
+            index: Swift.Int32
+        ) -> Swift.Unicode.UTF16.CodeUnit {
+            get
+        }
     }
     @objc(_CharSequence)
     protocol _CharSequence {
@@ -30,12 +35,12 @@ public extension ExportedKotlinPackages.kotlin {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())
             }
         }
-        public func get(
+        public func _get(
             index: Swift.Int32
         ) -> Swift.Int8 {
             return kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
         }
-        public func set(
+        public func _set(
             index: Swift.Int32,
             value: Swift.Int8
         ) -> Swift.Void {
@@ -61,6 +66,16 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
+        public subscript(
+            index: Swift.Int32
+        ) -> Swift.Int8 {
+            get {
+                _get(index: index)
+            }
+            set(value) {
+                _set(index: index, value: value)
+            }
+        }
     }
     public final class IntArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -68,12 +83,12 @@ public extension ExportedKotlinPackages.kotlin {
                 return kotlin_IntArray_size_get(self.__externalRCRef())
             }
         }
-        public func get(
+        public func _get(
             index: Swift.Int32
         ) -> Swift.Int32 {
             return kotlin_IntArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
         }
-        public func set(
+        public func _set(
             index: Swift.Int32,
             value: Swift.Int32
         ) -> Swift.Void {
@@ -98,6 +113,16 @@ public extension ExportedKotlinPackages.kotlin {
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public subscript(
+            index: Swift.Int32
+        ) -> Swift.Int32 {
+            get {
+                _get(index: index)
+            }
+            set(value) {
+                _set(index: index, value: value)
+            }
         }
     }
     public final class Boolean: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -359,7 +384,7 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
             return kotlin_CharSequence_length_get(self.__externalRCRef())
         }
     }
-    public func get(
+    public func _get(
         index: Swift.Int32
     ) -> Swift.Unicode.UTF16.CodeUnit {
         return kotlin_CharSequence_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
@@ -369,6 +394,13 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
         endIndex: Swift.Int32
     ) -> any ExportedKotlinPackages.kotlin.CharSequence {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.CharSequence
+    }
+    public subscript(
+        index: Swift.Int32
+    ) -> Swift.Unicode.UTF16.CodeUnit {
+        get {
+            _get(index: index)
+        }
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
