@@ -31,19 +31,29 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             fatalError()
         }
-        public func get(
+        public func _get(
             index: Swift.Int32
         ) -> Swift.Int8 {
             return kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
         }
-        public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
-            fatalError()
-        }
-        public func set(
+        public func _set(
             index: Swift.Int32,
             value: Swift.Int8
         ) -> Swift.Void {
             return kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value)
+        }
+        public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
+            fatalError()
+        }
+        public subscript(
+            index: Swift.Int32
+        ) -> Swift.Int8 {
+            get {
+                _get(index: index)
+            }
+            set(value) {
+                _set(index: index, value: value)
+            }
         }
     }
 }

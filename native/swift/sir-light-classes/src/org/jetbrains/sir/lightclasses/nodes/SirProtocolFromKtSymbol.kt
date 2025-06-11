@@ -180,6 +180,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
                 when (it) {
                     is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
                     is SirVariable -> SirRelocatedVariable(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
+                    is SirSubscript -> SirRelocatedSubscript(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
                     else -> null
                 }
             }
@@ -241,6 +242,30 @@ private class SirRelocatedVariable(
     override val isInstance: Boolean get() = true
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
+    override val getter: SirGetter get() = source.getter
+    override val setter: SirSetter? get() = source.setter
+}
+
+/**
+ * Relocatied subscript
+ * Mirrors the `source` declaration, but allows for changing parent.
+ *
+ * @property source The original declaration
+ */
+private class SirRelocatedSubscript(
+    val source: SirSubscript,
+) : SirSubscript() {
+    override lateinit var parent: SirDeclarationParent
+
+    override val origin: SirOrigin get() = source.origin
+    override val visibility: SirVisibility get() = source.visibility
+    override val documentation: String? get() = source.documentation
+    override val attributes: List<SirAttribute> get() = source.attributes
+    override val isOverride: Boolean get() = source.isOverride
+    override val isInstance: Boolean get() = source.isInstance
+    override val modality: SirModality get() = source.modality
+    override val parameters: List<SirParameter> get() = source.parameters
+    override val returnType: SirType get() = source.returnType
     override val getter: SirGetter get() = source.getter
     override val setter: SirSetter? get() = source.setter
 }

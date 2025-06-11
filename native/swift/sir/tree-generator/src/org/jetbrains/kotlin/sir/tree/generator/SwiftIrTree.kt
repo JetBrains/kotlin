@@ -197,4 +197,17 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         +field("getter", getter)
         +field("setter", setter, nullable = true)
     }
+
+    val subscript by element {
+        customParentInVisitor = declaration
+        parent(declaration)
+        parent(declarationParent)
+        parent(classMemberDeclaration)
+
+        +listField("parameters", parameterType)
+        +field("returnType", typeType)
+
+        +field("getter", getter)
+        +field("setter", setter, nullable = true)
+    }
 }

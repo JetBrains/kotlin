@@ -5,6 +5,7 @@
 
 package org.jetbrains.sir.lightclasses.utils
 
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.sir.SirDeclaration
@@ -12,10 +13,13 @@ import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.withSessions
+import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.sir.lightclasses.nodes.SirBinaryMathOperatorTrampolineFunction
 import org.jetbrains.sir.lightclasses.nodes.SirComparisonOperatorTrampolineFunction
 import org.jetbrains.sir.lightclasses.nodes.SirFunctionFromKtSymbol
 import org.jetbrains.sir.lightclasses.nodes.SirRenamedFunction
+import org.jetbrains.sir.lightclasses.nodes.SirSubscriptTrampoline
 import org.jetbrains.sir.lightclasses.nodes.SirUnaryMathOperatorTrampolineFunction
 
 public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedFunctionSymbol) {
@@ -46,16 +50,16 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
                     "remAssign" -> AsCompoundAssignmentBinaryMathOperator(kaSymbol, "%=")
 
                     // Unsupported; possibly, property wrappers?
-                    "getValue", "setValue", "provideDelegate" -> null
+                    "getValue", "setValue", "provideDelegate" -> Skip(kaSymbol)
 
                     // Unsupported; ranges
-                    "rangeTo", "rangeUntil" -> null
+                    "rangeTo", "rangeUntil" -> AsIsWithAdditions(kaSymbol)
 
                     // Unsupported; subscripts
-                    "get", "set" -> null
+                    "get", "set" -> AsSubscriptAccessor(kaSymbol)
 
                     // Unsupported; iterators
-                    "iterator" -> null
+                    "iterator" -> AsIsWithAdditions(kaSymbol)
 
                     // Misc
                     "contains" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "~=")) }
@@ -142,9 +146,37 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
         }
     }
 
-    public class AsSubscriptAccessor(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+    public class AsSubscriptAccessor(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol) {
+        override fun translate(sirSession: SirSession): SirTranslationResult {
+            if (!kaSymbol.isOperator)
+                return SirTranslationResult.Untranslatable(KotlinSource(kaSymbol))
 
-    public class AsRangeOperator(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+            when (kaSymbol.name.asString()) {
+                "get" -> {
+                    val getterFunction = SirRenamedFunction(kaSymbol, sirSession = sirSession)
+                    val setterFunction = sirSession.withSessions {
+                        (kaSymbol.containingSymbol as? KaClassSymbol)?.declaredMemberScope?.callables
+                            ?.filterIsInstance<KaNamedFunctionSymbol>()
+                            ?.filter { it.isOperator && it.name.asString() == "set" }
+                            ?.mapNotNull { it.toSir().primaryDeclaration as? SirFunction }
+                            ?.firstOrNull {
+                                it.allParameters.dropLast(1) == getterFunction.allParameters && it.allParameters.lastOrNull()?.type == getterFunction.returnType
+                            }
+                    }
 
-    public class AsIteratorProvider(symbol: KaNamedFunctionSymbol) : SirOperatorTranslationStrategy(symbol)
+                    return SirTranslationResult.OperatorSubscript(
+                        SirSubscriptTrampoline(getterFunction, setterFunction),
+                        listOf(getterFunction)
+                    )
+                }
+                "set" -> {
+                    return SirTranslationResult.OperatorFunction(
+                        SirRenamedFunction(kaSymbol, sirSession),
+                        emptyList()
+                    )
+                }
+                else -> error("Unknown operator name: ${kaSymbol.name.asString()} in SirOperatorTranslationStrategy.")
+            }
+        }
+    }
 }

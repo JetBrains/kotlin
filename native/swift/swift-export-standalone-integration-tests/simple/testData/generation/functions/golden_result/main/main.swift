@@ -314,6 +314,11 @@ public extension ExportedKotlinPackages.operators {
         ) -> Swift.Void {
             return operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
         }
+        public func _get(
+            index: Swift.Int32
+        ) -> Swift.Int32 {
+            return operators_Foo_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
+        }
         public func _minus(
             other: ExportedKotlinPackages.operators.Foo
         ) -> ExportedKotlinPackages.operators.Foo {
@@ -346,6 +351,12 @@ public extension ExportedKotlinPackages.operators {
             other: ExportedKotlinPackages.operators.Foo
         ) -> Swift.Void {
             return operators_Foo_remAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public func _set(
+            index: Swift.Int32,
+            value: Swift.Int32
+        ) -> Swift.Void {
+            return operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
         }
         public func _times(
             other: ExportedKotlinPackages.operators.Foo
@@ -384,17 +395,6 @@ public extension ExportedKotlinPackages.operators {
         ) -> Swift.Bool {
             return operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
-        public func get(
-            index: Swift.Int32
-        ) -> Swift.Int32 {
-            return operators_Foo_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
-        }
-        public func getValue(
-            thisRef: KotlinRuntime.KotlinBase?,
-            property: Swift.Never
-        ) -> Swift.Int32 {
-            fatalError()
-        }
         public func hashCode() -> Swift.Int32 {
             return operators_Foo_hashCode(self.__externalRCRef())
         }
@@ -402,12 +402,6 @@ public extension ExportedKotlinPackages.operators {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
         public func iterator() -> Swift.Never {
-            fatalError()
-        }
-        public func provideDelegate(
-            thisRef: KotlinRuntime.KotlinBase?,
-            prop: Swift.Never
-        ) -> ExportedKotlinPackages.operators.Foo {
             fatalError()
         }
         public func rangeTo(
@@ -420,19 +414,6 @@ public extension ExportedKotlinPackages.operators {
         ) -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
         }
-        public func set(
-            index: Swift.Int32,
-            value: Swift.Int32
-        ) -> Swift.Void {
-            return operators_Foo_set__TypesOfArguments__Swift_Int32_Swift_Int32__(self.__externalRCRef(), index, value)
-        }
-        public func setValue(
-            thisRef: KotlinRuntime.KotlinBase?,
-            property: Swift.Never,
-            value: Swift.Int32
-        ) -> Swift.Void {
-            fatalError()
-        }
         public func toString() -> Swift.String {
             return operators_Foo_toString(self.__externalRCRef())
         }
@@ -441,6 +422,16 @@ public extension ExportedKotlinPackages.operators {
             other: ExportedKotlinPackages.operators.Foo
         ) -> Swift.Bool {
             this.contains(other: other)
+        }
+        public subscript(
+            index: Swift.Int32
+        ) -> Swift.Int32 {
+            get {
+                _get(index: index)
+            }
+            set(value) {
+                _set(index: index, value: value)
+            }
         }
     }
     public static func invoke(
