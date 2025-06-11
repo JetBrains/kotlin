@@ -575,7 +575,9 @@ internal class DokkaSymbolVisitor(
             getDRIFromFunction(propertyAccessorSymbol)
         else
             propertyDRI.copy(
-                callable = Callable(name, null, propertyAccessorSymbol.valueParameters.map { getTypeReferenceFrom(it.returnType) })
+                callable = propertyDRI.callable?.copy(
+                    name = name,
+                    params = propertyAccessorSymbol.valueParameters.map { getTypeReferenceFrom(it.returnType) })
             )
         // for SyntheticJavaProperty
         val inheritedFrom = if(propertyAccessorSymbol.origin == KaSymbolOrigin.JAVA_SYNTHETIC_PROPERTY) dri.copy(callable = null) else null
