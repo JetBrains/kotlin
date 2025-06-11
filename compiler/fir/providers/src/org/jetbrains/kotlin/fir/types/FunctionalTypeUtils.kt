@@ -46,9 +46,13 @@ fun ConeRigidType.functionTypeKind(session: FirSession, expandTypeAliases: Boole
     return targetType.lookupTag.functionTypeKind(session)
 }
 
-private fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
+fun ConeClassLikeLookupTag.functionTypeKind(session: FirSession): FunctionTypeKind? {
     val classId = classId
-    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString())
+    return classId.functionTypeKind(session)
+}
+
+fun ClassId.functionTypeKind(session: FirSession): FunctionTypeKind? {
+    return session.functionTypeService.getKindByClassNamePrefix(packageFqName, shortClassName.asString())
 }
 
 private inline fun ConeKotlinType.isFunctionTypeWithPredicate(

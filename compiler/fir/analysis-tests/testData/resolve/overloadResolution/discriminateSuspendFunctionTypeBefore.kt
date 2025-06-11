@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DiscriminateSuspendInOverloadResolution
+// LANGUAGE: +ParseLambdaWithSuspendModifier, -DiscriminateSuspendInOverloadResolution
 
 fun foo0(f: () -> Unit): String = ""
 fun foo0(f: suspend () -> Unit): Int = 0
