@@ -174,6 +174,11 @@ private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: Commo
     }
 }
 
+private val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
+private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
+private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
+private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
+
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
     val rawFragmentSources = arguments.fragmentSources
@@ -191,13 +196,13 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (rawFragments == null) {
         if (rawFragmentRefines != null) {
-            reportError("-Xfragment-refines flag can not be used without -Xfragments")
+            reportError("$FRAGMENT_REFINES_ARG_NAME flag can not be used without $FRAGMENTS_ARG_NAME")
         }
         return null
     }
 
     if (!languageVersionSettings.languageVersion.usesK2) {
-        reportWarning("-Xfragments flag is not supported for language version < 2.0")
+        reportWarning("$FRAGMENTS_ARG_NAME flag is not supported for language version < 2.0")
         return null
     }
 
@@ -207,7 +212,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
                 reportError(
-                    "Incorrect syntax for -Xfragment-sources argument. " +
+                    "Incorrect syntax for $FRAGMENT_SOURCES_ARG_NAME argument. " +
                             "`<module name>:<source file>` expected but got `$rawFragmentSourceArg`"
                 )
                 return@forEach
@@ -218,7 +223,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             getOrElse(fragmentName) {
                 reportError(
                     "Passed $rawFragmentSourceArg, " +
-                            "but fragment `$fragmentName` of source file $fragmentSource is not specified in -Xfragments"
+                            "but fragment `$fragmentName` of source file $fragmentSource is not specified in $FRAGMENTS_ARG_NAME"
                 )
                 return@forEach
             }.add(fragmentSource)
@@ -244,7 +249,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                     }
                     append(
                         " can be a part of only one module, but is listed as a source for both `${m1.name}` and `${m2.name}`, " +
-                                "please check you -Xfragment-sources options."
+                                "please check you $FRAGMENT_SOURCES_ARG_NAME options."
                     )
                 }
                 reportError(message)
@@ -267,7 +272,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (modules.size == 1) {
         if (rawFragmentRefines?.isNotEmpty() == true) {
-            reportError("-Xfragment-refines flag is specified but there is only one module declared")
+            reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
         return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap())
     }
@@ -285,7 +290,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         val split = rawFragmentRefinesEdge.split(":")
         if (split.size != 2) {
             reportError(
-                "Incorrect syntax for -Xfragment-refines argument. " +
+                "Incorrect syntax for $FRAGMENT_REFINES_ARG_NAME argument. " +
                         "Expected <fromModuleName>:<onModuleName> but got `$rawFragmentRefines`"
             )
             return@mapNotNull null
@@ -296,7 +301,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         fun findModule(name: String): HmppCliModule? {
             return moduleByName[name].also { module ->
                 if (module == null) {
-                    reportError("`-Xfragment-refines=$rawFragmentRefinesEdge` Fragment `$name` not found in -Xfragments arguments")
+                    reportError("`$FRAGMENT_REFINES_ARG_NAME=$rawFragmentRefinesEdge` Fragment `$name` not found in $FRAGMENTS_ARG_NAME arguments")
                 }
             }
         }
@@ -321,7 +326,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
     if (arguments.fragmentDependencies != null && !arguments.separateKmpCompilationScheme) {
-        reportError("${CommonCompilerArguments::fragmentDependencies.cliArgument} flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
+        reportError("$FRAGMENT_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
 
     val moduleDependencies = buildMap<HmppCliModule, MutableList<String>> {
@@ -329,14 +334,14 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
             val splitArg = argument.split(":", limit = 2)
             if (splitArg.size != 2) {
                 reportError(
-                    "Incorrect syntax for ${CommonCompilerArguments::fragmentDependencies.cliArgument} argument. " +
+                    "Incorrect syntax for $FRAGMENT_DEPENDENCIES_ARG_NAME argument. " +
                             "Expected <moduleName>:<path> but got `$argument`"
                 )
                 continue
             }
             val (moduleName, dependency) = splitArg
             val module = moduleByName[moduleName] ?: run {
-                reportError("Module `$moduleName` not found in ${CommonCompilerArguments::fragments.cliArgument} arguments")
+                reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
                 continue
             }
             val dependencies = getOrPut(module) { mutableListOf() }
