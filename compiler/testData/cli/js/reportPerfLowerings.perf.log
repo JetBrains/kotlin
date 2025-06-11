@@ -1,0 +1,24 @@
+Kotlin to JS compiler performance report
+                INIT        $UINT>>$ ms
+             ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
+   TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
+     IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (JsCodeOutliningLoweringOnFirstStage)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (LateinitLowering)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (SharedVariablesLowering)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (LocalClassesInInlineLambdasPhase)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (ArrayConstructor)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineOnlyPrivateFunctions)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (OuterThisInInlineFunctionsSpecialAccessorLowering)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (SyntheticAccessorGeneration)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningOnlyPrivateFunctionsPhase)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineAllFunctions)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineFunctionSerializationPreProcessing)
+    IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
+        KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
+GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
+GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
+JIT time is $UINT$ ms
