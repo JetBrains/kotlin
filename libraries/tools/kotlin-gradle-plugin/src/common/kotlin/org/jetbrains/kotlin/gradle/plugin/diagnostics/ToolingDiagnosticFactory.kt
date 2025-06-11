@@ -17,6 +17,10 @@ internal abstract class ToolingDiagnosticFactory(
      * Builds a diagnostic object with the specified severity, diagnostic group, throwable,
      * and a builder function for constructing additional diagnostic details.
      *
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
+     *        When provided, the final ID becomes "${id}_${idSuffix}". This is useful when
+     *        the same diagnostic factory needs to generate multiple distinct diagnostics
+     *        based on parameters (e.g., different feature names, component types, etc.).
      * @param severity The severity level of the diagnostic (e.g., WARNING, ERROR, or FATAL).
      *        Defaults to `predefinedSeverity` if not specified.
      * @param group The diagnostic group to which the diagnostic belongs. Defaults to `predefinedGroup` if not specified.
@@ -24,12 +28,13 @@ internal abstract class ToolingDiagnosticFactory(
      * @param builder A lambda function for building additional details of the diagnostic message, starting from the title step.
      */
     protected fun build(
+        idSuffix: String = "",
         severity: ToolingDiagnostic.Severity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
         builder: ToolingDiagnostics.TitleStep.() -> ToolingDiagnostics.OptionalStep,
     ) = ToolingDiagnostics.diagnostic(
-        id = id,
+        id = if (idSuffix.isNotBlank()) "${id}_$idSuffix" else id,
         group = group ?: predefinedGroup,
         severity = severity ?: predefinedSeverity,
         throwable = throwable,
@@ -39,6 +44,7 @@ internal abstract class ToolingDiagnosticFactory(
     /**
      * Builds a diagnostic object with the provided details and optional metadata.
      *
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
      * @param title The title of the diagnostic message, providing a concise summary of the issue.
      * @param description A detailed description of the diagnostic issue, explaining its nature and context.
      * @param solutions A list of potential solutions or actions to address the diagnostic issue.
@@ -50,6 +56,7 @@ internal abstract class ToolingDiagnosticFactory(
      * @param throwable An optional throwable providing further context or information about the diagnostic issue.
      */
     private fun buildDiagnostic(
+        idSuffix: String = "",
         title: String,
         description: String,
         solutions: List<String>,
@@ -58,7 +65,7 @@ internal abstract class ToolingDiagnosticFactory(
         severity: ToolingDiagnostic.Severity? = null,
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
-    ) = build(severity, group, throwable) {
+    ) = build(idSuffix, severity, group, throwable) {
         title(title)
             .description(description)
             .solutions { solutions }
@@ -70,6 +77,7 @@ internal abstract class ToolingDiagnosticFactory(
     /**
      * Builds a diagnostic object with the provided title, description, a single solution, and optional metadata.
      *
+     * @param idSuffix An optional suffix to append to the diagnostic ID for uniqueness.
      * @param title The title of the diagnostic message, providing a concise summary of the issue.
      * @param description A detailed description of the diagnostic issue, explaining its nature and context.
      * @param solution A single potential solution or action to address the diagnostic issue.
@@ -81,6 +89,7 @@ internal abstract class ToolingDiagnosticFactory(
      * @param throwable An optional throwable providing further context or information about the diagnostic issue.
      */
     protected fun buildDiagnostic(
+        idSuffix: String = "",
         title: String,
         description: String,
         solution: String,  // Single solution overload
@@ -90,6 +99,7 @@ internal abstract class ToolingDiagnosticFactory(
         group: DiagnosticGroup? = null,
         throwable: Throwable? = null,
     ) = buildDiagnostic(
+        idSuffix,
         title,
         description,
         listOf(solution),
