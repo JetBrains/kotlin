@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering.Companion.LAMBDA_IMPL
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering.Companion.LAMBDA_IMPL
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression

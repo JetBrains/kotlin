@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -302,7 +302,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         private fun IrDeclaration.asCallableReference(): IrClass? {
-            if (origin == CallableReferenceLowering.FUNCTION_REFERENCE_IMPL || origin == CallableReferenceLowering.LAMBDA_IMPL)
+            if (origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL || origin == WebCallableReferenceLowering.LAMBDA_IMPL)
                 return this as? IrClass
             return null
         }
@@ -316,7 +316,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         private fun replaceWithFactory(lambdaClass: IrClass): List<IrDeclaration> {
             val lambdaInfo = LambdaInfo(lambdaClass)
 
-            return if (lambdaClass.origin == CallableReferenceLowering.LAMBDA_IMPL && !lambdaInfo.isSuspendLambda) {
+            return if (lambdaClass.origin == WebCallableReferenceLowering.LAMBDA_IMPL && !lambdaInfo.isSuspendLambda) {
                 if (lambdaClass.fields.none() && !lambdaInfo.invokeFun.hasAnnotation(JsStandardClassIds.Annotations.JsNoLifting)) {
                     // Optimization:
                     // If the lambda has no context, we lift it, i.e. instead of generating an anonymous function,

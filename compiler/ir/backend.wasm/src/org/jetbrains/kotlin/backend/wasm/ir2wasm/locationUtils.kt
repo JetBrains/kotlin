@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -60,7 +60,7 @@ private val IrDeclaration.isStdlibDeclaration: Boolean
     get() = getPackageFragment().packageFqName.startsWith(StandardClassIds.BASE_KOTLIN_PACKAGE)
 
 private val IrDeclaration.isArtificialDeclarationOfLambdaImpl: Boolean
-    get() = parentClassOrNull?.origin == CallableReferenceLowering.LAMBDA_IMPL &&
+    get() = parentClassOrNull?.origin == WebCallableReferenceLowering.LAMBDA_IMPL &&
             origin != IrDeclarationOrigin.DEFINED &&
             origin != AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE
 

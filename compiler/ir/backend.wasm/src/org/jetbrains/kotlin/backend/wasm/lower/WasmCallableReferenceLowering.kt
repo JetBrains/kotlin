@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -40,8 +41,10 @@ import org.jetbrains.kotlin.name.Name
 import kotlin.collections.plus
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
-class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : CallableReferenceLowering(backendContext) {
+class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : WebCallableReferenceLowering(backendContext) {
     override fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin = FUNCTION_REFERENCE_IMPL
+
+    override fun getConstructorCallOrigin(reference: IrRichFunctionReference) = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
 
     override fun IrBuilderWithScope.generateSuperClassConstructorCall(
         constructor: IrConstructor,
