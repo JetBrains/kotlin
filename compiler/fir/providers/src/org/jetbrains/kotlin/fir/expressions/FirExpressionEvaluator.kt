@@ -155,6 +155,10 @@ object FirExpressionEvaluator {
             return resolvedQualifier.wrap()
         }
 
+        override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: Nothing?): FirEvaluatorResult {
+            return errorResolvedQualifier.wrap()
+        }
+
         override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?): FirEvaluatorResult {
             return getClassCall.wrap()
         }

@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 fun test() {
   <expr>A.Companion.f</expr>
 }
