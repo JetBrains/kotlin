@@ -5,6 +5,8 @@
 
 package kotlin.wasm.internal
 
+// TODO(KT-78243): Delete this file after bootstrap advance
+
 internal class IrLinkageError(message: String?) : Error(message)
 
 internal fun throwLinkageError(message: String?): Nothing {

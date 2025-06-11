@@ -158,7 +158,7 @@ private object CallableIds {
     val throwIndexOutOfBoundsException = "ThrowIndexOutOfBoundsException".internalCallableId
     val throwNullPointerException = "ThrowNullPointerException".internalCallableId
     val throwNoWhenBranchMatchedException = "ThrowNoWhenBranchMatchedException".internalCallableId
-    val throwIrLinkageError = "ThrowIrLinkageError".internalCallableId
+    val throwIrLinkageError = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("throwIrLinkageError"))
     val throwTypeCastException = "ThrowTypeCastException".internalCallableId
     val throwKotlinNothingValueException = "ThrowKotlinNothingValueException".internalCallableId
     val throwClassCastException = "ThrowClassCastException".internalCallableId

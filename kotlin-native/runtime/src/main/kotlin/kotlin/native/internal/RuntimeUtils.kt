@@ -135,13 +135,6 @@ internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
     }
 }
 
-internal class IrLinkageError(message: String?) : Error(message)
-
-@PublishedApi
-internal fun ThrowIrLinkageError(message: String?): Nothing {
-    throw IrLinkageError(message)
-}
-
 @ExportForCppRuntime
 internal fun PrintThrowable(throwable: Throwable) {
     println(throwable)

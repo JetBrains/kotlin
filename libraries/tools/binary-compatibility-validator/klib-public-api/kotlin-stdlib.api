@@ -12756,9 +12756,6 @@ final fun kotlin.native.internal/ThrowClassCastException(kotlin/Any, kotlin.nati
 final fun kotlin.native.internal/ThrowInvalidReceiverTypeException(kotlin.reflect/KClass<*>): kotlin/Nothing // kotlin.native.internal/ThrowInvalidReceiverTypeException|ThrowInvalidReceiverTypeException(kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowIrLinkageError(kotlin/String?): kotlin/Nothing // kotlin.native.internal/ThrowIrLinkageError|ThrowIrLinkageError(kotlin.String?){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ThrowKotlinNothingValueException(): kotlin/Nothing // kotlin.native.internal/ThrowKotlinNothingValueException|ThrowKotlinNothingValueException(){}[0]
 
 // Targets: [native]
