@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,20 +40,19 @@ internal class SymbolLightFieldForProperty private constructor(
     private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
 ) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
-        ktAnalysisSession: KaSession,
         propertySymbol: KaPropertySymbol,
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
         isStatic: Boolean,
     ) : this(
-        propertySymbolPointer = with(ktAnalysisSession) { propertySymbol.createPointer() },
+        propertySymbolPointer = propertySymbol.createPointer(),
         fieldName = fieldName,
         containingClass = containingClass,
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = with(ktAnalysisSession) { propertySymbol.backingFieldSymbol?.createPointer() },
+        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: KaSession.(KaPropertySymbol) -> T): T {

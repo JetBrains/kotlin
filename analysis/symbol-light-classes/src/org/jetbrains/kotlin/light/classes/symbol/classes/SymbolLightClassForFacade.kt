@@ -111,7 +111,7 @@ internal class SymbolLightClassForFacade(
 
     override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
-    private fun KaSession.loadFieldsFromFile(
+    private fun loadFieldsFromFile(
         fileScope: KaScope,
         nameGenerator: SymbolLightField.FieldNameGenerator,
         result: MutableList<PsiField>,

@@ -49,14 +49,13 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     methodIndex,
 ) {
     internal constructor(
-        ktAnalysisSession: KaSession,
         functionSymbol: FType,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
         methodIndex: Int,
         argumentsSkipMask: BitSet? = null,
     ) : this(
-        functionSymbolPointer = with(ktAnalysisSession) {
+        functionSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             functionSymbol.createPointer() as KaSymbolPointer<FType>
         },
@@ -86,7 +85,6 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
                     if (!needToSkip) {
                         builder.addParameter(
                             SymbolLightValueParameter(
-                                ktAnalysisSession = this,
                                 parameterSymbol = parameter,
                                 containingMethod = this@SymbolLightMethod,
                             )
