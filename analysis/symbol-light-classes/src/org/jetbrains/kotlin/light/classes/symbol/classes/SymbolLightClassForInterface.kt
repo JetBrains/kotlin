@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -19,12 +18,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
-        ktAnalysisSession: KaSession,
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
-        ktAnalysisSession = ktAnalysisSession,
         ktModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
@@ -52,7 +49,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         withClassSymbol { classSymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(this, it) }
+            val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 
             createMethods(this@SymbolLightClassForInterface, visibleDeclarations, result)
             addMethodsFromCompanionIfNeeded(result, classSymbol)
@@ -61,8 +58,8 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
         }
     }
 
-    protected open fun acceptCallableSymbol(session: KaSession, symbol: KaCallableSymbol): Boolean = with(session) {
-        symbol !is KaNamedFunctionSymbol || symbol.visibility != KaSymbolVisibility.PRIVATE
+    protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
+        return symbol !is KaNamedFunctionSymbol || symbol.visibility != KaSymbolVisibility.PRIVATE
     }
 
     override fun copy(): SymbolLightClassForInterface =

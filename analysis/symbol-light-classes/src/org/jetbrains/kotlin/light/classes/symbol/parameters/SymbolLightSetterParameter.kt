@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -17,11 +16,10 @@ import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
 internal class SymbolLightSetterParameter(
-    ktAnalysisSession: KaSession,
     private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
-) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
+) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
     override fun getName(): String {
         if (isDefaultSetterParameter) return SpecialNames.IMPLICIT_SET_PARAMETER.asString()
         return super.getName()

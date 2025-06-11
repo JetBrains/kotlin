@@ -35,13 +35,11 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
 
 internal class SymbolLightConstructor private constructor(
-    ktAnalysisSession: KaSession,
     constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     argumentsSkipMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
-    ktAnalysisSession = ktAnalysisSession,
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
     containingClass = containingClass,
@@ -125,7 +123,6 @@ internal class SymbolLightConstructor private constructor(
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, argumentSkipMask ->
                     SymbolLightConstructor(
-                        ktAnalysisSession = this@createConstructors,
                         constructorSymbol = constructor,
                         containingClass = lightClass,
                         methodIndex = methodIndex,
@@ -146,7 +143,7 @@ internal class SymbolLightConstructor private constructor(
             }
         }
 
-        private fun KaSession.shouldGenerateNoArgOverload(
+        private fun shouldGenerateNoArgOverload(
             lightClass: SymbolLightClassBase,
             primaryConstructor: KaConstructorSymbol,
             constructors: Iterable<KaConstructorSymbol>,

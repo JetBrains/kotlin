@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 
 internal class SymbolLightValueParameter(
-    ktAnalysisSession: KaSession,
     parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase,
-) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
+) : SymbolLightParameterCommon(parameterSymbol, containingMethod) {
     override fun isDeclaredAsVararg(): Boolean = parameterSymbolPointer.withSymbol(ktModule) {
         (it as KaValueParameterSymbol).isVararg
     }

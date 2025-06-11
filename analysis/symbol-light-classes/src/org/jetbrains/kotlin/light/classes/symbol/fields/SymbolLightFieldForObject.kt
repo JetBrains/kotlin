@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,7 +39,6 @@ internal class SymbolLightFieldForObject private constructor(
     private val isCompanion: Boolean,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
-        ktAnalysisSession: KaSession,
         objectSymbol: KaNamedClassSymbol,
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
@@ -50,7 +49,7 @@ internal class SymbolLightFieldForObject private constructor(
         name = name,
         lightMemberOrigin = lightMemberOrigin,
         kotlinOrigin = objectSymbol.sourcePsiSafe(),
-        objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
+        objectSymbolPointer = objectSymbol.createPointer(),
         isCompanion = isCompanion,
     )
 

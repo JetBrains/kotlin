@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
-import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 
 internal class SymbolLightTypeParameterList(
@@ -54,7 +50,6 @@ internal class SymbolLightTypeParameterList(
 
             fromInterface + it.typeParameters.mapIndexed { index, parameter ->
                 SymbolLightTypeParameter(
-                    ktAnalysisSession = this,
                     parent = this@SymbolLightTypeParameterList,
                     index = fromInterface.size + index,
                     typeParameterSymbol = parameter,

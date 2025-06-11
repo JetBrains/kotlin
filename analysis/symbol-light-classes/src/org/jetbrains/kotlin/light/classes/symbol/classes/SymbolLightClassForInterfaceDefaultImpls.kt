@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
@@ -66,8 +65,8 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 
-    override fun acceptCallableSymbol(session: KaSession, symbol: KaCallableSymbol): Boolean {
-        return super.acceptCallableSymbol(session, symbol) && symbol.modality != KaSymbolModality.ABSTRACT
+    override fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
+        return super.acceptCallableSymbol(symbol) && symbol.modality != KaSymbolModality.ABSTRACT
     }
 
     override fun getOwnFields(): List<PsiField> = emptyList()
