@@ -127,12 +127,51 @@ class BuildReportsIT : KGPBaseTest() {
         )
     }
 
+    @DisplayName("Build metrics produces valid report for lowerings in JS project")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    @TestMetadata("kotlin-js-plugin-project")
+    @JvmGradlePluginTests
+    fun testLoweringsBuildMetricsForJsProject(gradleVersion: GradleVersion) {
+        testBuildReportInFile(
+            "kotlin-js-plugin-project",
+            "compileKotlinJs",
+            gradleVersion,
+            languageVersion = KotlinVersion.DEFAULT.version,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            disableIsolatedProjects = true,
+            freeCompilerArgs = listOf("-XXLanguage:+IrInlinerBeforeKlibSerialization"),
+            expectedReportLines = listOf(
+                "Compiler IR pre-lowering",
+                "ArrayConstructor",
+                "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
+                "InlineFunctionSerializationPreProcessing",
+                "LocalClassesInInlineLambdasPhase",
+                "SharedVariablesLowering",
+                "InlineAllFunctions",
+                "SyntheticAccessorGeneration",
+                "InlineOnlyPrivateFunctions",
+                "UpgradeCallableReferences",
+                "InlineCallCycleChecker",
+                "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
+                "OuterThisInInlineFunctionsSpecialAccessorLowering",
+                "AvoidLocalFOsInInlineFunctionsLowering",
+                "JsCodeOutliningLoweringOnFirstStage",
+                "LateinitLowering",
+            ),
+        )
+    }
+
     private fun testBuildReportInFile(
         project: String,
         task: String,
         gradleVersion: GradleVersion,
         languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
         disableIsolatedProjects: Boolean = false,
+        freeCompilerArgs: List<String> = listOf(),
+        expectedReportLines: List<String> = listOf(),
     ) {
         val buildOptions = if (disableIsolatedProjects) defaultBuildOptions.copy(
             isolatedProjects = IsolatedProjectsMode.DISABLED
@@ -140,24 +179,40 @@ class BuildReportsIT : KGPBaseTest() {
 
         project(project, gradleVersion, buildOptions = buildOptions) {
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
+            addCompilerArgs(freeCompilerArgs)
             build(task) {
                 assertBuildReportPathIsPrinted()
             }
             //Should contain build metrics for all compile kotlin tasks
-            validateBuildReportFile(KotlinVersion.DEFAULT.version)
+            validateBuildReportFile(KotlinVersion.DEFAULT.version, expectedReportLines)
         }
 
         project(project, gradleVersion, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
+            addCompilerArgs(freeCompilerArgs)
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
             }
             //Should contain build metrics for all compile kotlin tasks
-            validateBuildReportFile(languageVersion)
+            validateBuildReportFile(languageVersion, expectedReportLines)
         }
     }
 
-    private fun TestProject.validateBuildReportFile(kotlinLanguageVersion: String) {
+    private fun TestProject.addCompilerArgs(args: List<String>) {
+        if (args.isNotEmpty()) {
+            buildGradleKts.appendText(
+                """
+                tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+                    compilerOptions {
+                        freeCompilerArgs.add(${args.joinToString { "\"$it\"" }})
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+    }
+
+    private fun TestProject.validateBuildReportFile(kotlinLanguageVersion: String, additionalReportLines: List<String>) {
         val fileContents = assertFileContains(
             reportFile,
             "Time metrics:",
@@ -176,6 +231,7 @@ class BuildReportsIT : KGPBaseTest() {
             //task info
             "Task info:",
             "Kotlin language version: $kotlinLanguageVersion",
+            *additionalReportLines.toTypedArray()
         )
 
         fun validateTotalCachesSizeMetric() {
@@ -785,10 +841,10 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReportFile = projectPath.getSingleFileInDir("report")
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
-                assertContains(jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
+                assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
 
                 val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
-                val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys.filter { it in compilerMetrics }
+                val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
                 val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }

@@ -45,6 +45,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var jitTimeMillis: Long? = null
     private val extendedStats: MutableList<String> = mutableListOf()
 
+    private var currentDynamicPhaseTime: Time? = null
+    private var currentDynamicPhase: String? = null
+    private val dynamicPhaseMeasurements = LinkedHashMap<Pair<PhaseType, String>, Time>()
+
     var isExtendedStatsEnabled: Boolean = false
         private set
     var compilerType: CompilerType = CompilerType.K2
@@ -124,6 +128,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             klibWritingTime,
             irLoweringTime,
             backendTime,
+            dynamicPhaseMeasurements.map { (key, time) ->
+                val (phaseType, name) = key
+                DynamicStats(phaseType, name, time)
+            },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -147,6 +155,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             if (time != null) {
                 phaseMeasurements[phaseType] = (phaseMeasurements[phaseType] ?: Time.ZERO) + time
             }
+        }
+
+        otherUnitStats.dynamicStats?.forEach { (phaseType, name, time) ->
+            dynamicPhaseMeasurements[phaseType to name] = (dynamicPhaseMeasurements[phaseType to name] ?: Time.ZERO) + time
         }
 
         otherUnitStats.forEachPhaseSideMeasurement { phaseSideType, sideStats ->
@@ -202,6 +214,20 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         this.files += files
         this.lines += lines
+    }
+
+    fun notifyDynamicPhaseStarted(name: String) {
+        currentDynamicPhaseTime = currentTime()
+        currentDynamicPhase = name
+    }
+
+    fun notifyDynamicPhaseFinished(name: String, parentPhaseType: PhaseType) {
+        assert(currentDynamicPhaseTime != null)
+        assert(currentDynamicPhase == name)
+
+        dynamicPhaseMeasurements[parentPhaseType to name] =
+            (dynamicPhaseMeasurements[parentPhaseType to name] ?: Time.ZERO) + (currentTime() - currentDynamicPhaseTime!!)
+        currentDynamicPhaseTime = null
     }
 
     fun notifyPhaseStarted(newPhaseType: PhaseType) {
@@ -388,6 +414,17 @@ inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, blo
         return block()
     } finally {
         notifyPhaseFinished(phaseType)
+    }
+}
+
+inline fun <T> PerformanceManager?.tryMeasureDynamicPhaseTime(name: String, parentPhaseType: PhaseType, block: () -> T): T {
+    if (this == null) return block()
+
+    try {
+        notifyDynamicPhaseStarted(name)
+        return block()
+    } finally {
+        notifyDynamicPhaseFinished(name, parentPhaseType)
     }
 }
 

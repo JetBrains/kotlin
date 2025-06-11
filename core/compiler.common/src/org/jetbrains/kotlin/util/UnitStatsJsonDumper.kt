@@ -34,6 +34,14 @@ object UnitStatsJsonDumper {
                     irLoweringStats?.let { appendTime(::irLoweringStats, it, indent = 1, trailingComma = true) }
                     backendStats?.let { appendTime(::backendStats, it, indent = 1, trailingComma = true) }
 
+                    dynamicStats?.let {
+                        appendArray(::dynamicStats, dynamicStats, indent = 1, trailingComma = true) {
+                            appendKeyValue(it::parentPhaseType, it.parentPhaseType, indent = 3)
+                            appendKeyValue(it::name, it.name, indent = 3)
+                            appendTime(it::time, it.time, indent = 3, trailingComma = false)
+                        }
+                    }
+
                     findJavaClassStats?.let { appendSideStats(::findJavaClassStats, it, indent = 1, trailingComma = true) }
                     findKotlinClassStats?.let { appendSideStats(::findKotlinClassStats, it, indent = 1, trailingComma = true) }
 

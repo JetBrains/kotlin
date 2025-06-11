@@ -4,16 +4,8 @@
  */
 package org.jetbrains.kotlin.build.report.statistics.file
 
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.ValueType
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
-import org.jetbrains.kotlin.build.report.statistics.asString
-import org.jetbrains.kotlin.build.report.statistics.formatTime
-import org.jetbrains.kotlin.build.report.statistics.formatter
-import java.util.ArrayList
-import java.util.HashSet
 
 internal fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printBuildReport(
     data: ReadableFileReportData<B, P>,
@@ -28,6 +20,9 @@ internal fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printBuildRepor
     if (printMetrics && data.statisticsData.isNotEmpty()) {
         printMetrics(
             data.statisticsData.map { it.getBuildTimesMetrics() }.reduce { agg, value ->
+                (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
+            },
+            data.statisticsData.map { it.getDynamicBuildTimeMetrics() }.reduce { agg, value ->
                 (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
             },
             data.statisticsData.map { it.getPerformanceMetrics() }.reduce { agg, value ->
@@ -62,13 +57,14 @@ private fun Printer.printBuildInfo(startParameters: BuildStartParameters, failur
 
 private fun Printer.printMetrics(
     buildTimesMetrics: Map<out BuildTime, Long>,
+    dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
     performanceMetrics: Map<out BuildPerformanceMetric, Long>,
     nonIncrementalAttributes: Collection<BuildAttribute>,
     gcTimeMetrics: Map<String, Long>? = emptyMap(),
     gcCountMetrics: Map<String, Long>? = emptyMap(),
     aggregatedMetric: Boolean = false,
 ) {
-    printBuildTimes(buildTimesMetrics)
+    printBuildTimes(buildTimesMetrics, dynamicBuildTimesMetrics)
     if (aggregatedMetric) println()
 
     printBuildPerformanceMetrics(performanceMetrics)
@@ -102,12 +98,19 @@ private fun Printer.printGcMetrics(
     }
 }
 
-private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>) {
+private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>, dynamicBuildTimes: Map<DynamicBuildTimeKey, Long>) {
     if (buildTimes.isEmpty()) return
 
     println("Time metrics:")
     withIndent {
         val visitedBuildTimes = HashSet<BuildTime>()
+        val dynamicBuildTimesMap = dynamicBuildTimes.map { (key, time) ->
+            key.parent to (key.name to time)
+        }.groupBy(
+            keySelector = { it.first },
+            valueTransform = { it.second }
+        )
+
         fun printBuildTime(buildTime: BuildTime) {
             if (!visitedBuildTimes.add(buildTime)) return
 
@@ -115,6 +118,9 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>) {
             if (timeMs != null) {
                 println("${buildTime.getReadableString()}: ${formatTime(timeMs)}")
                 withIndent {
+                    dynamicBuildTimesMap[buildTime]?.forEach { (name, timeMs) ->
+                        println("$name: ${formatTime(timeMs)}")
+                    }
                     buildTime.children()?.forEach { printBuildTime(it) }
                 }
             } else {
@@ -219,8 +225,12 @@ private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTasksLog(
         printTaskLog(taskData)
         if (printMetrics) {
             printMetrics(
-                taskData.getBuildTimesMetrics(), taskData.getPerformanceMetrics(), taskData.getNonIncrementalAttributes(),
-                taskData.getGcTimeMetrics(), taskData.getGcCountMetrics()
+                buildTimesMetrics = taskData.getBuildTimesMetrics(),
+                dynamicBuildTimesMetrics = taskData.getDynamicBuildTimeMetrics(),
+                performanceMetrics = taskData.getPerformanceMetrics(),
+                nonIncrementalAttributes = taskData.getNonIncrementalAttributes(),
+                gcTimeMetrics = taskData.getGcTimeMetrics(),
+                gcCountMetrics = taskData.getGcCountMetrics()
             )
             printCustomTaskMetrics(taskData)
         }

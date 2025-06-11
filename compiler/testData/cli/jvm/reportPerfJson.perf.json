@@ -31,6 +31,8 @@
     "userNanos": $UINT$,
     "cpuNanos": $UINT$
   },
+  "dynamicStats": [
+  ],
   "findJavaClassStats": {
     "count": 1,
     "time": {
