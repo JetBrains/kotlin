@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
+import java.security.MessageDigest
 
 internal object KotlinToolingDiagnostics {
     /**
@@ -1252,7 +1253,7 @@ internal object KotlinToolingDiagnostics {
     }
 
     object ExperimentalFeatureWarning : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Experimental) {
-        operator fun invoke(featureName: String, youtrackUrl: String, extraSolution: String? = null) = build {
+        operator fun invoke(featureName: String, youtrackUrl: String, extraSolution: String? = null) = build(featureName.toIdSuffix()) {
             title("Experimental Feature Notice")
                 .description {
                     "$featureName is an experimental feature and subject to change in any future releases."
@@ -1696,4 +1697,19 @@ private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true):
             if (skipFirstLine && index == 0) return@joinToString line
             if (line.isNotBlank()) "$spaces$line" else line
         }
+}
+
+private fun String.toIdSuffix(): String {
+    return when {
+        // Use original name if it's short and alphanumeric
+        length <= 20 && matches(Regex("[a-zA-Z0-9_-]+")) -> this
+        // Otherwise use truncated hash
+        else -> md5().take(8)
+    }
+}
+
+private fun String.md5(): String {
+    val digest = MessageDigest.getInstance("MD5")
+    val hashBytes = digest.digest(this.toByteArray())
+    return hashBytes.joinToString("") { "%02x".format(it) }
 }
