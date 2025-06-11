@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
@@ -442,8 +445,18 @@ class ConeOverloadConflictResolver(
             }
 
             // double >= float
+            if (specificClassId == Double && generalClassId == Float) {
+                return true
+            }
 
-            return specificClassId == Double && generalClassId == Float
+            if (discriminateSuspend &&
+                specificClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.Function &&
+                generalClassId.functionTypeKind(inferenceComponents.session) == FunctionTypeKind.SuspendFunction
+            ) {
+                return true
+            }
+
+            return false
         }
 
         private val ClassId.isUnsigned: Boolean get() = this in StandardClassIds.unsignedTypes
@@ -457,6 +470,9 @@ class ConeOverloadConflictResolver(
             } else {
                 !isUnsigned
             }
+
+        private val discriminateSuspend: Boolean =
+            inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.DiscriminateSuspendInOverloadResolution)
     }
 
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
