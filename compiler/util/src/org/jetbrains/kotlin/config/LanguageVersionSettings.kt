@@ -433,6 +433,7 @@ enum class LanguageFeature(
 
     InferenceEnhancementsIn23(KOTLIN_2_3, "KT-76826"),
     AllowReturnInExpressionBodyWithExplicitType(KOTLIN_2_3, "KT-76926"),
+    ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
 
     // 2.4
 
