@@ -426,9 +426,9 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         newExpression.copyTypeArgumentsFrom(oldExpression)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
-            oldExpression.receiverAndArgs() + createAccessorMarkerArgument()
+            oldExpression.arguments + createAccessorMarkerArgument()
         } else {
-            oldExpression.receiverAndArgs()
+            oldExpression.arguments
         }
         newExpression.arguments.assignFrom(newExpressionArguments)
         return newExpression

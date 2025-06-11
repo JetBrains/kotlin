@@ -42194,6 +42194,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
     }
 
     @Test
+    @TestMetadata("defaultValues.kt")
+    public void testDefaultValues() {
+      runTest("compiler/testData/codegen/box/syntheticAccessors/defaultValues.kt");
+    }
+
+    @Test
     @TestMetadata("inline.kt")
     public void testInline() {
       runTest("compiler/testData/codegen/box/syntheticAccessors/inline.kt");
