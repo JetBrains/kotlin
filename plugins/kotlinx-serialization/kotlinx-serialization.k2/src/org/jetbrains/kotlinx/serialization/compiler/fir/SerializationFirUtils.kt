@@ -285,6 +285,8 @@ fun ConeKotlinType.classSymbolOrUpperBound(session: FirSession): FirClassSymbol<
         is ConeSimpleKotlinType -> toClassSymbol(session)
         is ConeFlexibleType -> upperBound.toClassSymbol(session)
         is ConeDefinitelyNotNullType -> original.toClassSymbol(session)
+        // TODO: RE: LOW: handle errors
+        is ConeErrorUnionType -> error("boom")
     }
 }
 

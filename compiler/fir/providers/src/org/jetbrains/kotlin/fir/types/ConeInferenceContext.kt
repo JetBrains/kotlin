@@ -199,6 +199,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             is ConeSimpleKotlinType -> typeDepth()
             is ConeFlexibleType -> maxOf(lowerBound().typeDepth(), upperBound().typeDepth())
             is ConeDefinitelyNotNullType -> original.typeDepth()
+            is ConeErrorUnionType -> valueType.typeDepth()
         }
     }
 
@@ -580,7 +581,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.contextParameterCount(): Int {
         require(this is ConeKotlinType)
-        return unwrapToSimpleTypeUsingLowerBound().contextParameterTypes(session).size
+        return unwrapToSimpleTypeUsingLowerBound()?.contextParameterTypes(session)?.size ?: 0
     }
 
     override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {

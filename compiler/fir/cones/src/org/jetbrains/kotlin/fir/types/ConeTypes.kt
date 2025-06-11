@@ -62,6 +62,17 @@ data class ConeErrorUnionType(
         get() = EMPTY_ARRAY
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty
+
+    fun replaceValueType(newValueType: ConeValueType): ConeErrorUnionType {
+        if (newValueType == valueType) return this
+        return ConeErrorUnionType(newValueType, errorType)
+    }
+
+    fun replaceValueTypeUnsafe(newValueType: ConeKotlinType): ConeErrorUnionType {
+        if (newValueType == valueType) return this
+        if (newValueType !is ConeValueType) error("Boom, it happened. It's time to investigate")
+        return ConeErrorUnionType(newValueType, errorType)
+    }
 }
 
 // Error types starts with CE prefix to prevent clashes and verbosity
@@ -198,16 +209,16 @@ class ConeDynamicType @DynamicTypeConstructor constructor(
     companion object
 }
 
-private fun ConeValueType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
+fun ConeValueType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     return when (this) {
         is ConeDefinitelyNotNullType -> original
         is ConeSimpleKotlinType -> this
     }
 }
 
-//fun ConeKotlinType.unwrapToSimpleTypeUsingLowerBound(): ConeSimpleKotlinType {
-//    return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
-//}
+fun ConeKotlinType.unwrapToSimpleTypeUsingLowerBound(): ConeSimpleKotlinType? {
+    return (lowerBoundIfFlexible() as? ConeValueType)?.unwrapDefinitelyNotNull()
+}
 
 sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
 

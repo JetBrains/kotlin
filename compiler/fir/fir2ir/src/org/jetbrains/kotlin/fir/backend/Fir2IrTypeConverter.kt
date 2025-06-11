@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
 import org.jetbrains.kotlin.fir.backend.utils.toIrSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExtensionFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.NoInfer
@@ -110,6 +112,15 @@ class Fir2IrTypeConverter(
                     is ConeUnresolvedError -> createErrorType(diagnostic.qualifier, isMarkedNullable)
                     else -> createErrorType(diagnostic.reason, isMarkedNullable)
                 }
+            }
+            is ConeErrorUnionType -> {
+                // TODO: RE: revisit translation
+                IrSimpleTypeImpl(
+                    StandardClassIds.Any.toSymbol(c.session)?.toIrSymbol()!!,
+                    hasQuestionMark = true,
+                    arguments = emptyList(),
+                    annotations = emptyList()
+                )
             }
             is ConeLookupTagBasedType -> {
                 val typeAnnotations = mutableListOf<IrConstructorCall>()

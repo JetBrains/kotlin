@@ -346,6 +346,18 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                     this@makeConeFlexibleTypeWithNotNullableLowerBound,
                     isTrivial = false,
                 )
+                is ConeErrorUnionType -> {
+                    when (val flexibleType = valueType.makeConeTypeDefinitelyNotNullOrNotNull(typeContext)) {
+                        valueType -> this@makeConeFlexibleTypeWithNotNullableLowerBound
+                        is ConeFlexibleType ->
+                            ConeFlexibleType(
+                                replaceValueTypeUnsafe(flexibleType.lowerBound),
+                                replaceValueTypeUnsafe(flexibleType.upperBound),
+                                flexibleType.isTrivial
+                            )
+                        else -> error("unexpected")
+                    }
+                }
             }
         }
     }

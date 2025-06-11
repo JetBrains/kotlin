@@ -145,6 +145,10 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
                 // Looks like not possible here
                 return false
             }
+            is ConeErrorUnionType -> {
+                // TODO: RE: LOW: handle errors
+                return valueType.contradictsWith(requiredVariance, session)
+            }
             is ConeIntegerConstantOperatorType,
             is ConeIntegerLiteralConstantType,
             is ConeStubTypeForTypeVariableInSubtyping,

@@ -99,10 +99,27 @@ fun ConeDefinitelyNotNullType.Companion.create(
     // In such cases, we just assume it makes sense to create DNN there
     // NB: `makesSenseToBeDefinitelyNotNull` is mostly an optimization, it should not affect semantics
     avoidComprehensiveCheck: Boolean = false,
+): ConeRigidType? {
+    return when (original) {
+        is ConeValueType -> create(original, typeContext, avoidComprehensiveCheck)
+        is ConeFlexibleType -> create(original.lowerBound, typeContext, avoidComprehensiveCheck)
+        is ConeErrorUnionType ->
+            create(original.valueType, typeContext, avoidComprehensiveCheck)
+                ?.let { original.replaceValueType(it) }
+    }
+}
+
+fun ConeDefinitelyNotNullType.Companion.create(
+    original: ConeValueType,
+    typeContext: ConeTypeContext,
+    // Sometimes, it might be called before type parameter bounds are initialized
+    // or even before the symbols are bound to FIR
+    // In such cases, we just assume it makes sense to create DNN there
+    // NB: `makesSenseToBeDefinitelyNotNull` is mostly an optimization, it should not affect semantics
+    avoidComprehensiveCheck: Boolean = false,
 ): ConeDefinitelyNotNullType? {
     return when (original) {
         is ConeDefinitelyNotNullType -> original
-        is ConeFlexibleType -> create(original.lowerBound, typeContext, avoidComprehensiveCheck)
         is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original, avoidComprehensiveCheck)) {
             ConeDefinitelyNotNullType(original.withNullability(nullable = false, typeContext, preserveAttributes = true))
         }
@@ -166,6 +183,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeDynamicType -> error()
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments), isTrivial)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, typeArguments = arguments, attributes = attributes, lookupTag = lookupTag)
+        is ConeErrorUnionType -> replaceValueType(valueType.withArguments(arguments))
         is ConeIntersectionType,
         is ConeTypeVariableType,
         is ConeStubType,
@@ -208,6 +226,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeLookupTagBasedType -> errorWithAttachment("Not supported: ${this::class}") {
             withConeTypeEntry("type", this@withAttributes)
         }
+        is ConeErrorUnionType -> replaceValueType(valueType.withAttributes(attributes))
     } as T
 }
 
@@ -289,6 +308,7 @@ fun <T : ConeKotlinType> T.withNullability(
 
         is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypeImpl(value, possibleTypes, isUnsigned, nullable)
         is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypeImpl(isUnsigned, nullable)
+        is ConeErrorUnionType -> replaceValueType(valueType.withNullability(nullable, typeContext, attributes, preserveAttributes))
         // ConeLookupTagBasedType cannot be sealed so we need the extra branch to make the when exhaustive
         is ConeLookupTagBasedType -> error("sealed: ${this::class}")
     } as T
@@ -388,8 +408,8 @@ fun ConeRigidType.toTrivialFlexibleType(typeContext: ConeTypeContext): ConeFlexi
 }
 
 fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
-    val type = this.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session)
-    return type.attributes.extensionFunctionType != null
+    val type = this.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType(session)
+    return type?.attributes?.extensionFunctionType != null
 }
 
 fun FirTypeRef.isExtensionFunctionType(session: FirSession): Boolean {
@@ -635,6 +655,10 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                 is ConeStubType,
                 is ConeTypeVariableType,
                     -> null
+                null -> {
+                    // TODO: RE: suspicious place
+                    captureErrorUnionInternal(type.lowerBound as ConeErrorUnionType)
+                }
             }
         }
         is ConeIntersectionType -> {
@@ -647,7 +671,15 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
         is ConeSimpleKotlinType -> {
             captureFromArgumentsInternal(type, CaptureStatus.FROM_EXPRESSION)
         }
+        is ConeErrorUnionType -> {
+            captureErrorUnionInternal(type)
+        }
     }
+}
+
+internal fun ConeTypeContext.captureErrorUnionInternal(type: ConeErrorUnionType): ConeErrorUnionType? {
+    // TODO: RE: capture error component (probable, not needed as there are not type arguments)
+    return captureFromExpressionInternal(type.valueType)?.let { type.replaceValueTypeUnsafe(it) }
 }
 
 /**
@@ -999,6 +1031,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
         is ConeIntegerLiteralType, is ConeTypeVariableType -> isMarkedNullable
+        is ConeErrorUnionType -> valueType.canBeNull(session)
     }
 }
 

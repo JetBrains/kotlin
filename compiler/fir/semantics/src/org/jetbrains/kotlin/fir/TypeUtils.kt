@@ -41,6 +41,10 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
             is ConeStubType, is ConeIntegerLiteralConstantType -> {
                 error("$type should not reach here")
             }
+            is ConeErrorUnionType -> {
+                // TODO: RE: idk what is expected here, so:
+                error("boom")
+            }
         }
     }
 

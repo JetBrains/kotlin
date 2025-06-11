@@ -34,6 +34,10 @@ fun ConeKotlinType.getClassRepresentativeForContextSensitiveResolution(session: 
                 it == upperBound.getClassRepresentativeForContextSensitiveResolution(session)
             }
 
+        is ConeErrorUnionType -> {
+            valueType.getClassRepresentativeForContextSensitiveResolution(session)
+        }
+
         is ConeDefinitelyNotNullType -> original.getClassRepresentativeForContextSensitiveResolution(session)
 
         is ConeIntegerLiteralType -> possibleTypes.singleOrNull()?.getClassRepresentativeForContextSensitiveResolution(session)

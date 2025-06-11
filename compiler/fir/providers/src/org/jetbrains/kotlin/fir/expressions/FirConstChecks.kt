@@ -455,7 +455,7 @@ private class FirConstCheckVisitor(
         // See visitErrorExpression for details. Here we count the type as valid and take a decision later.
         if (this is FirErrorExpression) return true
 
-        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(session).classId
+        val expClassId = resolvedType.unwrapToSimpleTypeUsingLowerBound()?.fullyExpandedType(session)?.classId
         // TODO, KT-59823: add annotation for allowed constant types
         return expClassId in StandardClassIds.constantAllowedTypes
     }

@@ -75,6 +75,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
             is ConeIntegerLiteralType -> return null
+            is ConeErrorUnionType -> valueType.substituteRecursive()?.let { replaceValueTypeUnsafe(it) }
         }
     }
 
@@ -104,7 +105,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         ) ?: substituted
     }
 
-    private fun ConeSimpleKotlinType.substituteArguments(): ConeKotlinType? {
+    private fun ConeSimpleKotlinType.substituteArguments(): ConeSimpleKotlinType? {
         val newArguments by lazy(LazyThreadSafetyMode.NONE) { arrayOfNulls<ConeTypeProjection>(typeArguments.size) }
         var initialized = false
 

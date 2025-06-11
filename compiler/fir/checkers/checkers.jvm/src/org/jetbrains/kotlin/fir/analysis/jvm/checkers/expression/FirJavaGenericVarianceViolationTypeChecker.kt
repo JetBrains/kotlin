@@ -141,6 +141,8 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCh
         return when (this) {
             is ConeSimpleKotlinType -> removeOutProjection(typeContext, isCovariant)
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(typeContext, isCovariant))
+            // TODO: RE: are there projections in error component?
+            is ConeErrorUnionType -> replaceValueTypeUnsafe(valueType.removeOutProjection(typeContext, isCovariant))
         }
     }
 

@@ -253,6 +253,10 @@ object ConeTypeCompatibilityChecker {
             is ConeStubType, is ConeIntegerLiteralConstantType -> {
                 error("$this should not reach here")
             }
+            is ConeErrorUnionType -> {
+                // TODO: RE: idk what is expected here, so:
+                error("boom")
+            }
         }
     }
 

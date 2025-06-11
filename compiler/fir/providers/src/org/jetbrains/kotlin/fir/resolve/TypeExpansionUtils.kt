@@ -95,6 +95,10 @@ fun ConeRigidType.fullyExpandedType(
 ): ConeRigidType {
     return when (this) {
         is ConeSimpleKotlinType -> fullyExpandedType(useSiteSession, expandedConeType)
+        is ConeErrorUnionType -> {
+            val expandedValueType = valueType.fullyExpandedType(useSiteSession, expandedConeType)
+            replaceValueTypeUnsafe(expandedValueType)
+        }
         // Expanding DNN type makes no sense, as its original type cannot be class-like type
         is ConeDefinitelyNotNullType -> this
     }
@@ -158,6 +162,7 @@ fun createParametersSubstitutor(
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
+        // TODO: RE: consider the comment below again
         val symbol =
             (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.symbol
                 ?: return super.substituteArgument(projection, index)

@@ -96,7 +96,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     private fun checkExtensionOrContextFunctionTypeBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.symbol.resolvedBounds.forEach { bound ->
             if (bound.coneType.fullyExpandedType(context.session).unwrapToSimpleTypeUsingLowerBound()
-                    .let { it.isExtensionFunctionType || it.hasContextParameters }
+                    ?.let { it.isExtensionFunctionType || it.hasContextParameters } == true
             ) {
                 reporter.reportOn(bound.source, FirErrors.UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE, context)
             }

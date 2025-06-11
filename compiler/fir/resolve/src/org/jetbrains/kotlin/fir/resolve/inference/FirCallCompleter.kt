@@ -634,6 +634,7 @@ private fun Candidate.isFunctionForExpectTypeFromCastFeature(): Boolean {
 // Expect type is only being added to calls in a position of cast argument: foo() as R
 // And that call should be resolved to something materialize()-like: it returns its single generic parameter and doesn't have value parameters
 // fun <T> materialize(): T
+// TODO: RE: LOW: handle errors
 internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
     val typeParameter = typeParameters.singleOrNull() ?: return false
 
@@ -652,6 +653,7 @@ internal fun FirFunction.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
 private fun ConeKotlinType.unwrap(): ConeSimpleKotlinType = lowerBoundIfFlexible().let {
     when (it) {
+        is ConeErrorUnionType -> it.valueType.unwrap()
         is ConeDefinitelyNotNullType -> it.original.unwrap()
         is ConeSimpleKotlinType -> it
     }

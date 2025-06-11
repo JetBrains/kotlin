@@ -27,11 +27,13 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
         val usedTypes = mutableSetOf<ConeKotlinType>()
 
         fun collectAllTypes(type: ConeKotlinType) {
-            val unwrappedType = type.unwrapToSimpleTypeUsingLowerBound()
-            if (usedTypes.add(unwrappedType)) {
-                unwrappedType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
-                if (unwrappedType is ConeTypeParameterType) {
-                    boundsByName[unwrappedType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
+            // TODO: RE: LOW: handle errors
+            type.unwrapToSimpleTypeUsingLowerBound()?.let { unwrappedType ->
+                if (usedTypes.add(unwrappedType)) {
+                    unwrappedType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
+                    if (unwrappedType is ConeTypeParameterType) {
+                        boundsByName[unwrappedType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
+                    }
                 }
             }
         }

@@ -400,6 +400,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeIntegerLiteralType -> true
             is ConeStubType -> true
             is ConeDefinitelyNotNullType -> true
+            is ConeErrorUnionType -> false
         }
     }
 
