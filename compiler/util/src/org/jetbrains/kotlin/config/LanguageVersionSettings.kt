@@ -432,6 +432,7 @@ enum class LanguageFeature(
     HoldsInContracts(KOTLIN_2_3, "KT-32993"),
 
     InferenceEnhancementsIn23(KOTLIN_2_3, "KT-76826"),
+    ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
 
     // 2.4
 
