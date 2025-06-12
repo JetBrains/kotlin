@@ -1014,6 +1014,14 @@ class ExpressionCodegen(
         return unitValue
     }
 
+    inner class AfterLabel(val expression: IrElement) {
+        val label = Label()
+        fun place() {
+            mv.mark(label)
+            expression.markLineNumber(startOffset = false)
+        }
+    }
+
     override fun visitWhen(expression: IrWhen, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         SwitchGenerator(expression, data, this).generate()?.let { return it }
@@ -1029,14 +1037,14 @@ class ExpressionCodegen(
         if (expression.origin == IrStatementOrigin.WHEN) {
             mv.nop()
         }
-        val endLabel = Label()
+        val endLabel = AfterLabel(expression)
         val exhaustive = expression.branches.any { it.condition.isTrueConst() } && !expression.type.isUnit()
         assert(exhaustive || expression.type.isUnit()) {
             "non-exhaustive conditional should return Unit: ${expression.dump()}"
         }
         val lastBranch = expression.branches.lastOrNull()
         for (branch in expression.branches) {
-            val elseLabel = Label()
+            val elseLabel = AfterLabel(branch.condition)
             if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
                 // True or false conditions known at compile time need not be generated. A linenumber and nop
                 // are still required for a debugger to break on the line of the condition.
@@ -1049,7 +1057,7 @@ class ExpressionCodegen(
             } else {
                 val oldIsInsideCondition = isInsideCondition
                 isInsideCondition = true
-                branch.condition.accept(this, data).coerceToBoolean().jumpIfFalse(elseLabel)
+                branch.condition.accept(this, data).coerceToBoolean().jumpIfFalse(elseLabel.label)
                 isInsideCondition = oldIsInsideCondition
             }
             val result = branch.result.accept(this, data)
@@ -1059,17 +1067,18 @@ class ExpressionCodegen(
                 val materializedResult = result.materializedAt(typeMapper.mapType(expression.type), expression.type, true)
                 if (branch.condition.isTrueConst()) {
                     // The rest of the expression is dead code.
-                    mv.mark(endLabel)
+                    endLabel.place()
                     return materializedResult
                 }
             }
 
             if (branch != lastBranch) {
-                mv.goTo(endLabel)
+                mv.goTo(endLabel.label)
             }
-            mv.mark(elseLabel)
+            elseLabel.place()
         }
-        mv.mark(endLabel)
+        endLabel.place()
+
         return unitValue
     }
 
