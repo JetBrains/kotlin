@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualChecker
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -108,13 +109,15 @@ class IrActualizer(
         //   Also, it doesn't remove unactualized expect declarations marked with @OptionalExpectation
         val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
 
-        IrExpectActualCheckers(
-            expectActualMap,
-            classActualizationInfo,
-            typeSystemContext,
-            languageVersionSettings,
-            ktDiagnosticReporter
-        ).check()
+        IrExpectActualCheckers.check(
+            context = IrExpectActualChecker.Context(
+                expectActualMap,
+                classActualizationInfo,
+                typeSystemContext,
+                languageVersionSettings,
+                ktDiagnosticReporter
+            )
+        )
         return IrActualizedResult(removedExpectDeclarations, expectActualMap)
     }
 
