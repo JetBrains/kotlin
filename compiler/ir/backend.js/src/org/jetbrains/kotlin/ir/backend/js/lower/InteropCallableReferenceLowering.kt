@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
-import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
+import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -482,18 +482,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             .toMap()
     }
 
-    private fun extractReferenceReflectionName(getter: IrSimpleFunction): IrExpression {
-        val body = getter.body?.cast<IrBlockBody>()
-            ?: compilationException(
-                "Expected body",
-                getter
-            )
-        val statements = body.statements
-
-        val returnStmt = statements[0] as IrReturn
-        return returnStmt.value
-    }
-
     private class LambdaInfo(val lambdaClass: IrClass) {
         val invokeFun = lambdaClass.invokeFun!!
         val superInvokeFun = invokeFun.overriddenSymbols.first { it.owner.isSuspend == invokeFun.isSuspend }.owner
@@ -560,14 +548,20 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
-        val nameGetter = lambdaInfo.lambdaClass.reflectedNameAccessor
+        val functionReferenceReflectedName = lambdaInfo.lambdaClass.functionReferenceReflectedName
 
-        if (nameGetter != null || lambdaDeclaration.isSuspend) {
+        if (functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)
             statements.add(tmpVar)
 
-            if (nameGetter != null) {
-                statements.add(setDynamicProperty(tmpVar.symbol, Namer.KCALLABLE_NAME, extractReferenceReflectionName(nameGetter)))
+            if (functionReferenceReflectedName != null) {
+                statements.add(
+                    setDynamicProperty(
+                        tmpVar.symbol,
+                        Namer.KCALLABLE_NAME,
+                        functionReferenceReflectedName.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                    )
+                )
             }
 
             if (lambdaDeclaration.isSuspend) {

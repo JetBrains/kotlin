@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
+import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
+import org.jetbrains.kotlin.backend.common.lower.AbstractFunctionReferenceLowering
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -139,7 +140,7 @@ abstract class WebCallableReferenceLowering(context: CommonBackendContext) :
                 superProperty
             )
 
-        val nameProperty = clazz.addProperty() {
+        val nameProperty = clazz.addProperty {
             visibility = superProperty.visibility
             name = superProperty.name
             origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
@@ -147,24 +148,25 @@ abstract class WebCallableReferenceLowering(context: CommonBackendContext) :
 
         nameProperty.overriddenSymbols = listOf(superProperty.symbol)
 
-        val getter = nameProperty.addGetter() {
+        val getter = nameProperty.addGetter {
             returnType = stringType
         }
         getter.overriddenSymbols = listOf(supperGetter.symbol)
         getter.parameters += getter.createDispatchReceiverParameterWithClassParent()
 
         // TODO: What name should be in case of constructor? <init> or class name?
+        val functionReferenceReflectedName = reflectionTargetSymbol.owner.name.asString()
         getter.body = context.irFactory.createBlockBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                 IrReturnImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, reflectionTargetSymbol.owner.name.asString()
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, stringType, functionReferenceReflectedName
                     )
                 )
             )
         )
 
-        clazz.reflectedNameAccessor = getter
+        clazz.functionReferenceReflectedName = functionReferenceReflectedName
     }
 
     override fun generateExtraMethods(functionReferenceClass: IrClass, reference: IrRichFunctionReference) {
