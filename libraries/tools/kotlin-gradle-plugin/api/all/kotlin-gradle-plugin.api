@@ -6072,7 +6072,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
-	public static final field DEPRECATION_MESSAGE Ljava/lang/String;
 	public static final field NAME_SUFFIX Ljava/lang/String;
 	public field cleanableStoreProvider Lorg/gradle/api/provider/Provider;
 	public fun <init> ()V

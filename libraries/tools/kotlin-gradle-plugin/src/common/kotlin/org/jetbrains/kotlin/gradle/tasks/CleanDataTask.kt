@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.time.Duration
 import java.time.Instant
@@ -45,7 +46,8 @@ open class CleanDataTask : DefaultTask() {
     companion object {
         const val NAME_SUFFIX: String = "KotlinClean"
 
-        const val DEPRECATION_MESSAGE = "The task type is deprecated. Scheduled for removal in Kotlin 2.4."
+        @InternalKotlinGradlePluginApi
+        fun deprecationMessage(taskPath: String) = "The task '$taskPath' is deprecated. Scheduled for removal in Kotlin 2.4."
     }
 
 }
