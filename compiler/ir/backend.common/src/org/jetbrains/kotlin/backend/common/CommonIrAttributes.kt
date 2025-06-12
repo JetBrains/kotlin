@@ -22,7 +22,7 @@ var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copy
 
 var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
-var IrClass.reflectedNameAccessor: IrSimpleFunction? by irAttribute(copyByDefault = false)
+var IrClass.functionReferenceReflectedName: String? by irAttribute(copyByDefault = false)
 
 /**
  * If this is a `suspend` function, returns its corresponding function with continuations.
