@@ -1,3 +1,4 @@
 expression: COLLECTION_LITERAL_EXPRESSION
 text: ["unsued", "foo"]
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

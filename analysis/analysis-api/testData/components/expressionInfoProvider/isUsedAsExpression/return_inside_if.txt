@@ -1,3 +1,4 @@
 expression: RETURN
 text: return "one"
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1,3 +1,4 @@
 expression: VALUE_PARAMETER
 text: b: Boolean
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

@@ -1150,6 +1150,12 @@ public class FirIdeDependentAnalysisSourceModuleIsUsedAsExpressionTestGenerated 
   }
 
   @Test
+  @TestMetadata("lambdaReturningLambda.kt")
+  public void testLambdaReturningLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaReturningLambda.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaWithArgs.kt")
   public void testLambdaWithArgs() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaWithArgs.kt");

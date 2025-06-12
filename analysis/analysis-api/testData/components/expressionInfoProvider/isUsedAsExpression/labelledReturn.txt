@@ -1,3 +1,4 @@
 expression: RETURN
 text: return@let 5
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

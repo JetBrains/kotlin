@@ -1,3 +1,4 @@
 expression: REFERENCE_EXPRESSION
 text: g
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

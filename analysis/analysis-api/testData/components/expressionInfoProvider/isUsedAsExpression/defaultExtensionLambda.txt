@@ -1,3 +1,4 @@
 expression: LAMBDA_EXPRESSION
 text: { 45 * this.length }
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

@@ -3,3 +3,4 @@ text: { x, y ->
         x + y
     }
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

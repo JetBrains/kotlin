@@ -1,3 +1,4 @@
 expression: PARENTHESIZED
 text: (b is Boolean)
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

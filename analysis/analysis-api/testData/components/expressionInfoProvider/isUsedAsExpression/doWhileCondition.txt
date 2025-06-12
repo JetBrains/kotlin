@@ -1,3 +1,4 @@
 expression: BINARY_EXPRESSION
 text: i < 890
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false

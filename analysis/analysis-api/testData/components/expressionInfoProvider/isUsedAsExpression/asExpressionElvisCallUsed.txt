@@ -1,3 +1,4 @@
 expression: SAFE_ACCESS_EXPRESSION
 text: (v as String)?.length
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false
