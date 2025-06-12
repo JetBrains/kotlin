@@ -412,7 +412,7 @@ fun <A, B, C, D> DiagnosticReporter.reportOn(
     reportOn(source, factory.chooseFactory(context), a, b, c, d, positioningStrategy)
 }
 
-fun <F : AbstractKtDiagnosticFactory> KtDiagnosticFactoryForDeprecation<F>.chooseFactory(context: DiagnosticContext): F {
+fun <F : KtDiagnosticFactoryN> KtDiagnosticFactoryForDeprecation<F>.chooseFactory(context: DiagnosticContext): F {
     return if (context.languageVersionSettings.supportsFeature(deprecatingFeature)) {
         errorFactory
     } else {
