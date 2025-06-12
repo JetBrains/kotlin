@@ -71,7 +71,7 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      *   - `if (x) { ... } else { ... }`
      *   - `val a = x`
      *   - `x + 8`
-     *   - `when (x) { 1 -> ...; else -> ... }
+     *   - `when (x) { 1 -> ...; else -> ... }`
      *
      * In these expressions, `x` is not used as a value (`x.isUsedAsExpression == false`)
      *
