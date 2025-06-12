@@ -129,6 +129,9 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
             }
         )
 
+        // We can't publish on non-macOS hosts due to cinterop limitations
+        if (!HostManager.hostIsMac) return
+
         val mavenUrl = multiplatformLibrary.projectPath.resolve("build/repo")
         val libraryRoot = mavenUrl.resolve("com/jetbrains/library")
 
