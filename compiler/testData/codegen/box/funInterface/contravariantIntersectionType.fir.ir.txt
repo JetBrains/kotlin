@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/contravariantIntersectionType.kt
         ARG <this>: GET_VAR 'val instance: <root>.GenericHolder<out kotlin.Any> declared in <root>.example' type=<root>.GenericHolder<out kotlin.Any> origin=null
         ARG onSuccess: TYPE_OP type=<root>.Consumer<kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.Consumer<kotlin.Any?>
           TYPE_OP type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.Any?, kotlin.Unit>
-            FUN_EXPR type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any
                 BLOCK_BODY

@@ -67,7 +67,7 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?,
         isDelegate: Boolean,
     ): IrExpression {
-        val type = approximateFunctionReferenceType(callableReferenceAccess.resolvedType).toIrType()
+        val type = callableReferenceAccess.resolvedType.approximateFunctionTypeInputs().toIrType()
 
         val firSymbol = callableReferenceAccess.calleeReference.extractDeclarationSiteSymbol()
         if (firSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -219,23 +219,6 @@ class CallAndReferenceGenerator(
                 startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
             )
         }
-    }
-
-    private fun approximateFunctionReferenceType(kotlinType: ConeKotlinType): ConeKotlinType {
-        // Approximate a function type's input types to their supertypes.
-        // Approximating the outer type will lead to the input types being approximated to their subtypes
-        // because the input type parameters have in variance.
-        if (kotlinType !is ConeClassLikeType) return kotlinType
-
-        val typeArguments = kotlinType.typeArguments
-        return kotlinType.withArguments(Array(typeArguments.size) { i ->
-            val projection = typeArguments[i]
-            if (i < typeArguments.lastIndex) {
-                projection.type?.approximateForIrOrNull()?.toTypeProjection(projection.kind) ?: projection
-            } else {
-                projection
-            }
-        })
     }
 
     private fun FirQualifiedAccessExpression.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
