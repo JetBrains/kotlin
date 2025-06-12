@@ -1,3 +1,4 @@
+// DUMP_IR
 // CHECK_BYTECODE_TEXT
 // 0 java/lang/invoke/LambdaMetafactory
 
