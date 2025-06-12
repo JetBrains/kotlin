@@ -431,6 +431,8 @@ enum class LanguageFeature(
     ConditionImpliesReturnsContracts(KOTLIN_2_3, "KT-8889"),
     HoldsInContracts(KOTLIN_2_3, "KT-32993"),
 
+    InferenceEnhancementsIn23(KOTLIN_2_3, "KT-76826"),
+
     // 2.4
 
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
