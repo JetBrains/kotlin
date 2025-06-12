@@ -20,11 +20,6 @@ class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
     override fun TestProject.customizeProject() {
         forceK2Kapt()
     }
-
-    @Disabled("KT-70637 K2 kapt: testAndroidDaggerIC fails with the new implementation")
-    @GradleTest
-    override fun testAndroidDaggerIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
-    }
 }
 
 @DisplayName("android with kapt4 incremental build tests with precise compilation outputs backup")
@@ -33,10 +28,5 @@ class Kapt4AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalWit
 
     override fun TestProject.customizeProject() {
         forceK2Kapt()
-    }
-
-    @Disabled("KT-70637 K2 kapt: testAndroidDaggerIC fails with the new implementation")
-    @GradleTest
-    override fun testAndroidDaggerIC(gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk) {
     }
 }

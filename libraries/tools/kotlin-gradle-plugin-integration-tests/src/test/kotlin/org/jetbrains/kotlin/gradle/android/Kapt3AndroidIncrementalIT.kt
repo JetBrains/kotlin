@@ -104,7 +104,7 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
                 )
             }
 
-            build(":app:assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(
                     ":app:kaptGenerateStubsDebugKotlin",
                     ":app:kaptDebugKotlin",
