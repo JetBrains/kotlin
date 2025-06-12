@@ -229,6 +229,9 @@ class JsIrBackendContext(
         getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let {
             symbolTable.descriptorExtension.referenceSimpleFunction(it)
         }
+    val throwLinkageErrorInCallableNameSymbol = getFunctions(FqName("kotlin.js.throwLinkageErrorInCallableName")).single().let {
+        symbolTable.descriptorExtension.referenceSimpleFunction(it)
+    }
 
     private fun referenceOperators(): Map<Name, Map<IrClassSymbol, Collection<IrSimpleFunctionSymbol>>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }

@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.backend.common.functionReferenceLinkageError
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
+import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,6 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+// TODO: Consider merging this lowering with CallableReferenceLowering (KT-78283).
 /**
  * Interop layer for function references and lambdas.
  */
@@ -548,13 +552,22 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
+        val functionReferenceLinkageError = lambdaInfo.lambdaClass.functionReferenceLinkageError
         val functionReferenceReflectedName = lambdaInfo.lambdaClass.functionReferenceReflectedName
 
-        if (functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
+        if (functionReferenceLinkageError != null || functionReferenceReflectedName != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)
             statements.add(tmpVar)
 
-            if (functionReferenceReflectedName != null) {
+            if (functionReferenceLinkageError != null) {
+                statements.add(
+                    JsIrBuilder.buildCall(context.throwLinkageErrorInCallableNameSymbol).apply {
+                        arguments[0] = JsIrBuilder.buildGetValue(tmpVar.symbol)
+                        arguments[1] =
+                            functionReferenceLinkageError.toIrConst(context.irBuiltIns.stringType, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                    }
+                )
+            } else if (functionReferenceReflectedName != null) {
                 statements.add(
                     setDynamicProperty(
                         tmpVar.symbol,
