@@ -311,7 +311,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
         if (catchBlock == null) error("cannot identify catch block")
 
-        // null-check is not require for catch
+        // null-check is not required for catch
         catchBlock.type = asmType.internalName
 
         return true
