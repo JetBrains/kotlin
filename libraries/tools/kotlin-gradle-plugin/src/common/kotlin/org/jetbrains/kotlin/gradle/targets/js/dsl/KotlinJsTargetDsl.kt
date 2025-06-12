@@ -355,7 +355,6 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
      *
      * @see org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
      */
-    // https://kotlinlang.org/docs/js-project-setup.html#webpack-task
     fun webpackTask(body: Action<KotlinWebpack>)
 }
 
