@@ -446,9 +446,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
     }
 
-    override fun KotlinTypeMarker.isNullableType(): Boolean {
+    override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
         require(this is ConeKotlinType)
-        return canBeNull(session)
+        return canBeNull(session, considerTypeVariableBounds)
+    }
+
+    override fun KotlinTypeMarker.isNullableType(): Boolean {
+        return isNullableType(considerTypeVariableBounds = true)
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {

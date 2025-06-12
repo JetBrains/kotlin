@@ -270,7 +270,7 @@ context(c: TypeSystemContext)
 fun KotlinTypeMarker.typeConstructor(): TypeConstructorMarker = with(c) { typeConstructor() }
 
 context(c: TypeSystemContext)
-fun KotlinTypeMarker.isNullableType(): Boolean = with(c) { isNullableType() }
+fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean = true): Boolean = with(c) { isNullableType(considerTypeVariableBounds) }
 
 context(c: TypeSystemContext)
 fun KotlinTypeMarker.isNullableAny() = with(c) { isNullableAny() }

@@ -375,9 +375,9 @@ class ConstraintIncorporator(
         if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(this)) return false
 
         val otherConstraintCanAddNullabilityToNewOne =
-            !isNullableType() && otherConstraint.isNullableType() && kind == ConstraintKind.LOWER
+            !isNullableType(considerTypeVariableBounds = false) && otherConstraint.isNullableType(considerTypeVariableBounds = false) && kind == ConstraintKind.LOWER
         val newConstraintCanAddNullabilityToOtherOne =
-            isNullableType() && !otherConstraint.isNullableType() && kind == ConstraintKind.UPPER
+            isNullableType(considerTypeVariableBounds = false) && !otherConstraint.isNullableType(considerTypeVariableBounds = false) && kind == ConstraintKind.UPPER
 
         return otherConstraintCanAddNullabilityToNewOne || newConstraintCanAddNullabilityToOtherOne
     }

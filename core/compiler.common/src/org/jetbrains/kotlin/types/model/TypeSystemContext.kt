@@ -535,6 +535,10 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.typeConstructor(): TypeConstructorMarker =
         (asRigidType() ?: lowerBoundIfFlexible()).typeConstructor()
 
+    /**
+     * [considerTypeVariableBounds] is only relevant in K2.
+     */
+    fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean = isNullableType()
     fun KotlinTypeMarker.isNullableType(): Boolean
 
     fun KotlinTypeMarker.isNullableAny() = this.typeConstructor().isAnyConstructor() && this.isNullableType()

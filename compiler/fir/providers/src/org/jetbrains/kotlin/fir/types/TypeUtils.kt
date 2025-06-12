@@ -989,24 +989,22 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
  * Returns true if this type can be `null`.
  * This function expands typealiases, checks upper bounds of type parameters, the components of intersection types, etc.
  */
-fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
+fun ConeKotlinType.canBeNull(session: FirSession, considerTypeVariableBounds: Boolean = true): Boolean {
     return when (this) {
-        is ConeFlexibleType -> upperBound.canBeNull(session)
+        is ConeFlexibleType -> upperBound.canBeNull(session, considerTypeVariableBounds)
         is ConeDefinitelyNotNullType -> false
         is ConeTypeParameterType -> isMarkedNullable || this.lookupTag.typeParameterSymbol.resolvedBounds.all {
-            it.coneType.canBeNull(session)
+            it.coneType.canBeNull(session, considerTypeVariableBounds)
         }
-        is ConeStubType -> {
-            isMarkedNullable ||
-                    (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
-                        it == null || it.allBoundsAreNullableOrUnresolved(session)
-                    }
-        }
-        is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
-        is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session) } == true
+        is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session, considerTypeVariableBounds)
+        is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session, considerTypeVariableBounds) }
+        is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session, considerTypeVariableBounds) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
-        is ConeIntegerLiteralType, is ConeTypeVariableType -> isMarkedNullable
+        is ConeIntegerLiteralType -> isMarkedNullable
+        is ConeTypeVariableType -> isMarkedNullable || considerTypeVariableBounds && (typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
+            it == null || it.allBoundsAreNullableOrUnresolved(session)
+        }
     }
 }
 

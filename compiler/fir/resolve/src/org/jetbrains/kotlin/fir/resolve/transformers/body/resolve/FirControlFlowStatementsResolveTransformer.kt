@@ -274,7 +274,12 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.resolvedType.isNullableType()) {
+            // If the result type is a type variable type, we're part of a call argument.
+            // In that case, we could have an unresolved lambda argument on the RHS which will lead to an exception in
+            // result.rhs.resolvedType.
+            // Also, we don't want to turn type variables into DNNs because it can lead to contradictions in the constraint system.
+            // compiler/testData/diagnostics/tests/controlStructures/lambdasInExclExclAndElvis.kt breaks otherwise.
+            if (result.resolvedType.let { it !is ConeTypeVariableType && it.isNullableType() }) {
                 val rhsResolvedType = result.rhs.resolvedType
                 // This part of the code is a kind of workaround, and it probably will be resolved by KT-55692
                 if (!rhsResolvedType.isNullableType()) {
