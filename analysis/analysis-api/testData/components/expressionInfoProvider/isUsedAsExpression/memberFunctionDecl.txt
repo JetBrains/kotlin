@@ -3,3 +3,4 @@ text: fun test(): Int {
         return 45 * K
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

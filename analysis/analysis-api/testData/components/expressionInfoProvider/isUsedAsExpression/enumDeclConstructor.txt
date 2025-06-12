@@ -1,3 +1,4 @@
 expression: SECONDARY_CONSTRUCTOR
 text: constructor(x: String) : this(x.length)
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

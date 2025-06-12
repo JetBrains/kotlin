@@ -1,3 +1,4 @@
 expression: REFERENCE_EXPRESSION
 text: Serializeable
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

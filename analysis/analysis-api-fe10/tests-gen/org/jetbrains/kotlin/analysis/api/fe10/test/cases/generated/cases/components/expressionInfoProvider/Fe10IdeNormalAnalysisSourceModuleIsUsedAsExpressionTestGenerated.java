@@ -988,6 +988,12 @@ public class Fe10IdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ex
   }
 
   @Test
+  @TestMetadata("ifAsExpression.kt")
+  public void testIfAsExpression() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifAsExpression.kt");
+  }
+
+  @Test
   @TestMetadata("ifBranches_unused.kt")
   public void testIfBranches_unused() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/ifBranches_unused.kt");
@@ -1147,6 +1153,12 @@ public class Fe10IdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ex
   @TestMetadata("labelledThisLabel.kt")
   public void testLabelledThisLabel() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/labelledThisLabel.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaReturningLambda.kt")
+  public void testLambdaReturningLambda() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/lambdaReturningLambda.kt");
   }
 
   @Test

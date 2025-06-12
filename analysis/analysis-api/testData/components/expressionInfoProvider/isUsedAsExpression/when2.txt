@@ -6,3 +6,4 @@ text: when (val a = 42) {
         }
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

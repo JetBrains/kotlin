@@ -1,3 +1,4 @@
 expression: CALLABLE_REFERENCE_EXPRESSION
 text: "hjellp"::length
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

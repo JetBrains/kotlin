@@ -1,3 +1,4 @@
 expression: CONTINUE
 text: continue
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false
