@@ -16,17 +16,26 @@ import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceCInterop
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceKotlin
 import org.jetbrains.kotlin.konan.test.gcfuzzing.translation.produceObjC
 import java.io.File
+import kotlin.math.roundToLong
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
+private val Double.GiB: Long get() = (this * 1024 * 1024 * 1024).roundToLong()
 
 class Config(
     val maximumStackDepth: Int,
     val mainLoopRepeatCount: Int,
     val maxThreadCount: Int,
+    val memoryPressureHazardZoneBytes: LongRange,
+    val memoryPressureCheckInterval: Duration,
 ) {
     companion object {
         val DEFAULT = Config(
             maximumStackDepth = 500,
             mainLoopRepeatCount = 100000,
             maxThreadCount = 100,
+            memoryPressureHazardZoneBytes = 2.5.GiB..3.0.GiB,
+            memoryPressureCheckInterval = 1.seconds,
         )
     }
 }
@@ -61,6 +70,8 @@ fun Program.translate(config: Config = Config.DEFAULT): Output {
         maximumStackDepth = config.maximumStackDepth,
         maximumThreadCount = config.maxThreadCount,
         mainLoopRepeatCount = config.mainLoopRepeatCount,
+        memoryPressureHazardZoneBytes = config.memoryPressureHazardZoneBytes,
+        memoryPressureCheckInterval = config.memoryPressureCheckInterval,
         basename = "main"
     )
     val cinterop = produceCInterop(cinteropConfig)

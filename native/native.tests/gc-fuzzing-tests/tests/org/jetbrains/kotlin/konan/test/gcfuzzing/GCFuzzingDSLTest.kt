@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
 import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.dslGeneratedDir
 import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.runDSL
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
@@ -358,6 +359,44 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                         6, listOf()
                     )
                 )
+            )
+        )
+    }
+
+    @Test
+    fun oom(testInfo: TestInfo) = runTest(testInfo) {
+        val fieldsCount = 10
+        val listsLengthCount = 100
+        fun defineNode(targetLanguage: TargetLanguage) = Definition.Class(targetLanguage, Array(fieldsCount) { Field }.toList())
+        fun populateNode(classId: EntityId) = buildList {
+            (0 until fieldsCount).forEach {
+                add(BodyStatement.Alloc(classId, emptyList()))
+                add(BodyStatement.Store(StoreExpression.Local(0, Path(listOf(it))), LoadExpression.Local(it + 1, Path(emptyList()))))
+            }
+        }
+
+        fun definePopulateNodeAndReturnNext(targetLanguage: TargetLanguage, classId: EntityId) = Definition.Function(
+            targetLanguage, parameters = listOf(
+                Parameter
+            ), body = BodyWithReturn(Body(populateNode(classId)), returnExpression = LoadExpression.Local(0, Path(listOf(fieldsCount - 1))))
+        )
+
+        Program(
+            definitions = listOf(
+                defineNode(TargetLanguage.Kotlin),
+                defineNode(TargetLanguage.ObjC),
+                definePopulateNodeAndReturnNext(TargetLanguage.Kotlin, 0),
+                definePopulateNodeAndReturnNext(TargetLanguage.ObjC, 1),
+            ),
+            mainBody = Body(
+                buildList {
+                    add(BodyStatement.Alloc(0, emptyList()))
+                    add(BodyStatement.Alloc(1, emptyList()))
+                    (0 until listsLengthCount).forEach {
+                        add(BodyStatement.Call(0, listOf(LoadExpression.Local(2 * it, Path(emptyList())))))
+                        add(BodyStatement.Call(1, listOf(LoadExpression.Local(2 * it + 1, Path(emptyList())))))
+                    }
+                }
             )
         )
     }

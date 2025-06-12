@@ -10,6 +10,8 @@
 bool tryRegisterThread();
 void unregisterThread();
 
+bool updateAllocBlocker();
+
 @interface Class1 : NSObject<ObjCIndexAccess>
 @property id f0;
 @property id f1;

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.gcfuzzing.translation
 
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 class ObjCOutput(
     val filename: String,
@@ -21,6 +23,8 @@ class ObjCConfig(
     val maximumStackDepth: Int,
     val maximumThreadCount: Int,
     val mainLoopRepeatCount: Int,
+    val memoryPressureHazardZoneBytes: LongRange,
+    val memoryPressureCheckInterval: Duration,
     val basename: String,
 )
 
@@ -45,6 +49,7 @@ private class ObjCTranslationContext(
             |#include <stdatomic.h>
             |
             |#import <Foundation/Foundation.h>
+            |#include <mach/mach.h>
             |
             |#include "${config.kotlinHeaderFilename}"
             |
@@ -103,6 +108,95 @@ private class ObjCTranslationContext(
             |    return block(nextLocalsCount);
             |}
             |
+            |static NSLock* allocBlockerLock = nil;
+            |static atomic_bool allocBlocker = false;
+            |
+            |static size_t footprint() {
+            |    struct task_vm_info info;
+            |    mach_msg_type_number_t vmInfoCount = TASK_VM_INFO_COUNT;
+            |    kern_return_t err = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&info, &vmInfoCount);
+            |    if (err != KERN_SUCCESS) {
+            |        [NSException raise:NSGenericException format:@"Failed to get the footprint err=%d", err];
+            |    }
+            |    return info.phys_footprint;
+            |}
+            |
+            |enum MemoryPressureLevel {
+            |    LOW_PRESSURE,
+            |    MEDIUM_PRESSURE,
+            |    HIGH_PRESSURE,
+            |};
+            |
+            |static enum MemoryPressureLevel currentMemoryPressureLevel() {
+            |    size_t currentFootprint = footprint();
+            |    if (currentFootprint < ${config.memoryPressureHazardZoneBytes.first})
+            |        return LOW_PRESSURE;
+            |    if (currentFootprint <= ${config.memoryPressureHazardZoneBytes.last})
+            |        return MEDIUM_PRESSURE;
+            |    return HIGH_PRESSURE;
+            |}
+            |
+            |static bool allocBlockerInNormalMode() {
+            |    switch (currentMemoryPressureLevel()) {
+            |        case LOW_PRESSURE:
+            |        case MEDIUM_PRESSURE:
+            |            return false;
+            |        case HIGH_PRESSURE:
+            |            break;
+            |    }
+            |    [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} performGC];
+            |    switch (currentMemoryPressureLevel()) {
+            |        case LOW_PRESSURE:
+            |        case MEDIUM_PRESSURE:
+            |            return false;
+            |        case HIGH_PRESSURE:
+            |            return true;
+            |    }
+            |}
+            |
+            |static bool allocBlockerInHazardMode() {
+            |    switch (currentMemoryPressureLevel()) {
+            |        case LOW_PRESSURE:
+            |            return false;
+            |        case MEDIUM_PRESSURE:
+            |        case HIGH_PRESSURE:
+            |            break;
+            |    }
+            |    [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} performGC];
+            |    switch (currentMemoryPressureLevel()) {
+            |        case LOW_PRESSURE:
+            |            return false;
+            |        case MEDIUM_PRESSURE:
+            |        case HIGH_PRESSURE:
+            |            return true;
+            |    }
+            |}
+            |
+            |bool updateAllocBlocker() {
+            |    [allocBlockerLock lock];
+            |    bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
+            |    allocBlocker = result;
+            |    ${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass}.allocBlocker = result;
+            |    [allocBlockerLock unlock];
+            |    return result;
+            |}
+            |
+            |static void allocBlockerUpdater() {
+            |    allocBlockerLock = [NSLock new];
+            |    [NSThread detachNewThreadWithBlock:^{
+            |        while (true) {
+            |            updateAllocBlocker();
+            |            [NSThread sleepForTimeInterval:${config.memoryPressureCheckInterval.toDouble(DurationUnit.SECONDS)}];
+            |        }
+            |    }];
+            |}
+            |
+            |static inline id alloc(id (^block)()) {
+            |    if (!atomic_load_explicit(&allocBlocker, memory_order_relaxed) || !updateAllocBlocker())
+            |        return block();
+            |    return nil;
+            |}
+            |
             |
             """.trimMargin()
         )
@@ -138,6 +232,7 @@ private class ObjCTranslationContext(
             |
             |int main() {
             |   globals = [Globals new];
+            |   allocBlockerUpdater();
             |   for (int i = 0; i < ${config.mainLoopRepeatCount}; ++i) {
             |       [${config.kotlinIdentifierPrefix}${config.kotlinGlobalClass} mainBody];
             |   }
@@ -386,27 +481,34 @@ private class ObjCExpressionTranslationContext(
             translateLoadExpression(LoadExpression.Default)
             return
         }
-        contents.selectorCall {
-            receiver {
-                selectorCall {
+        contents.functionCall {
+            name("alloc")
+            arg {
+                append("^{ return ")
+                contents.selectorCall {
                     receiver {
-                        when (clazz.targetLanguage) {
-                            is TargetLanguage.ObjC -> {}
-                            is TargetLanguage.Kotlin -> append(config.kotlinIdentifierPrefix)
+                        selectorCall {
+                            receiver {
+                                when (clazz.targetLanguage) {
+                                    is TargetLanguage.ObjC -> {}
+                                    is TargetLanguage.Kotlin -> append(config.kotlinIdentifierPrefix)
+                                }
+                                append(scopeResolver.computeName(clazz))
+                            }
+                            selector("alloc")
                         }
-                        append(scopeResolver.computeName(clazz))
                     }
-                    selector("alloc")
+                    selector {
+                        append("init")
+                        if (clazz.fields.isNotEmpty()) append("With")
+                    }
+                    clazz.fields.forEachIndexed { index, _ ->
+                        arg("f$index") {
+                            translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+                        }
+                    }
                 }
-            }
-            selector {
-                append("init")
-                if (clazz.fields.isNotEmpty()) append("With")
-            }
-            clazz.fields.forEachIndexed { index, _ ->
-                arg("f$index") {
-                    translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
-                }
+                append("; }")
             }
         }
     }

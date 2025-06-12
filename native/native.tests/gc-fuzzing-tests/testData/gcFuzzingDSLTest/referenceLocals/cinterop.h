@@ -10,6 +10,8 @@
 bool tryRegisterThread();
 void unregisterThread();
 
+bool updateAllocBlocker();
+
 id fun4(int32_t localsCount, id l0);
 id fun6(int32_t localsCount, id l0);
 id fun8(int32_t localsCount, id l0);

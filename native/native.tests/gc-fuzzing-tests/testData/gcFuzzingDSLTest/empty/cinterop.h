@@ -10,3 +10,5 @@
 bool tryRegisterThread();
 void unregisterThread();
 
+bool updateAllocBlocker();
+

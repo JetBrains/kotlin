@@ -1,4 +1,4 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 package ktlib
 
 import cinterop.*
@@ -30,7 +30,6 @@ object WorkerTerminationProcessor {
     }
 }
 
-
 private fun spawnThread(block: () -> Unit) {
    if (!tryRegisterThread())
        return
@@ -47,6 +46,15 @@ private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) ->
         return null
     }
     return block(nextLocalsCount)
+}
+
+var allocBlocker: Boolean = false
+
+fun performGC() { kotlin.native.runtime.GC.collect() }
+
+private inline fun alloc(block: () -> Any?): Any? {
+    if (!allocBlocker || !updateAllocBlocker()) return block()
+    return null
 }
 
 

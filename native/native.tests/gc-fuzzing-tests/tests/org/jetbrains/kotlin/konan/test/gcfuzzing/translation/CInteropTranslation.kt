@@ -64,6 +64,8 @@ private class CInteropTranslationContext(
             |bool tryRegisterThread();
             |void unregisterThread();
             |
+            |bool updateAllocBlocker();
+            |
             |
             """.trimMargin()
         )

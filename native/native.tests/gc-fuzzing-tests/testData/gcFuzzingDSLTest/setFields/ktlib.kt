@@ -1,4 +1,4 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 package ktlib
 
 import cinterop.*
@@ -30,7 +30,6 @@ object WorkerTerminationProcessor {
     }
 }
 
-
 private fun spawnThread(block: () -> Unit) {
    if (!tryRegisterThread())
        return
@@ -47,6 +46,15 @@ private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) ->
         return null
     }
     return block(nextLocalsCount)
+}
+
+var allocBlocker: Boolean = false
+
+fun performGC() { kotlin.native.runtime.GC.collect() }
+
+private inline fun alloc(block: () -> Any?): Any? {
+    if (!allocBlocker || !updateAllocBlocker()) return block()
+    return null
 }
 
 class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
@@ -68,8 +76,8 @@ class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
 
 
 fun fun2(localsCount: Int): Any? {
-    var l0: Any? = Class0(null, null)
-    var l1: Any? = Class1(null, null)
+    var l0: Any? = alloc({ Class0(null, null) })
+    var l1: Any? = alloc({ Class1(null, null) })
     l0?.storeField(0, l1?.loadField(1))
     l0?.storeField(1, l1?.loadField(0))
     l1?.storeField(0, l0?.loadField(1))

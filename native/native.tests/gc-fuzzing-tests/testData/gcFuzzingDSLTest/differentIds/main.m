@@ -3,6 +3,7 @@
 #include <stdatomic.h>
 
 #import <Foundation/Foundation.h>
+#include <mach/mach.h>
 
 #include "ktlib.h"
 
@@ -59,6 +60,95 @@ static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)
         return nil;
     }
     return block(nextLocalsCount);
+}
+
+static NSLock* allocBlockerLock = nil;
+static atomic_bool allocBlocker = false;
+
+static size_t footprint() {
+    struct task_vm_info info;
+    mach_msg_type_number_t vmInfoCount = TASK_VM_INFO_COUNT;
+    kern_return_t err = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&info, &vmInfoCount);
+    if (err != KERN_SUCCESS) {
+        [NSException raise:NSGenericException format:@"Failed to get the footprint err=%d", err];
+    }
+    return info.phys_footprint;
+}
+
+enum MemoryPressureLevel {
+    LOW_PRESSURE,
+    MEDIUM_PRESSURE,
+    HIGH_PRESSURE,
+};
+
+static enum MemoryPressureLevel currentMemoryPressureLevel() {
+    size_t currentFootprint = footprint();
+    if (currentFootprint < 2684354560)
+        return LOW_PRESSURE;
+    if (currentFootprint <= 3221225472)
+        return MEDIUM_PRESSURE;
+    return HIGH_PRESSURE;
+}
+
+static bool allocBlockerInNormalMode() {
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+        case MEDIUM_PRESSURE:
+            return false;
+        case HIGH_PRESSURE:
+            break;
+    }
+    [KtlibKtlibKt performGC];
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+        case MEDIUM_PRESSURE:
+            return false;
+        case HIGH_PRESSURE:
+            return true;
+    }
+}
+
+static bool allocBlockerInHazardMode() {
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+            return false;
+        case MEDIUM_PRESSURE:
+        case HIGH_PRESSURE:
+            break;
+    }
+    [KtlibKtlibKt performGC];
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+            return false;
+        case MEDIUM_PRESSURE:
+        case HIGH_PRESSURE:
+            return true;
+    }
+}
+
+bool updateAllocBlocker() {
+    [allocBlockerLock lock];
+    bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
+    allocBlocker = result;
+    KtlibKtlibKt.allocBlocker = result;
+    [allocBlockerLock unlock];
+    return result;
+}
+
+static void allocBlockerUpdater() {
+    allocBlockerLock = [NSLock new];
+    [NSThread detachNewThreadWithBlock:^{
+        while (true) {
+            updateAllocBlocker();
+            [NSThread sleepForTimeInterval:1.0];
+        }
+    }];
+}
+
+static inline id alloc(id (^block)()) {
+    if (!atomic_load_explicit(&allocBlocker, memory_order_relaxed) || !updateAllocBlocker())
+        return block();
+    return nil;
 }
 
 @implementation Class1
@@ -878,162 +968,162 @@ id fun5(int32_t localsCount, id l0, id l1) {
         int32_t localsCount = 0;
         call(localsCount, 338, ^(int32_t localsCount) { return fun5(localsCount, globals.g3, l0); });
     });
-    id l158 = [[KtlibClass0 alloc] initWithF0:nil f1:nil];
-    id l159 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l160 = [[KtlibClass0 alloc] initWithF0:l0 f1:nil];
-    id l161 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l162 = [[KtlibClass0 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l163 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l164 = [[KtlibClass0 alloc] initWithF0:l1 f1:nil];
-    id l165 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l166 = [[KtlibClass0 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l167 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l168 = [[KtlibClass0 alloc] initWithF0:l1 f1:nil];
-    id l169 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l170 = [[KtlibClass0 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l171 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l172 = [[KtlibClass0 alloc] initWithF0:l167 f1:nil];
-    id l173 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l174 = [[KtlibClass0 alloc] initWithF0:[[[[[[l163 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l175 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l176 = [[KtlibClass0 alloc] initWithF0:l111 f1:nil];
-    id l177 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l178 = [[KtlibClass0 alloc] initWithF0:[[[[[[l155 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l179 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil];
-    id l180 = [[KtlibClass0 alloc] initWithF0:l127 f1:nil];
-    id l181 = [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l182 = [[KtlibClass0 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l183 = [[KtlibClass0 alloc] initWithF0:globals.g3 f1:l0];
-    id l184 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l185 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l186 = [[Class1 alloc] initWithF0:l0 f1:nil];
-    id l187 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l188 = [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l189 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l190 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l191 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l192 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l193 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l194 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l195 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l196 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l197 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l198 = [[Class1 alloc] initWithF0:l115 f1:nil];
-    id l199 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l200 = [[Class1 alloc] initWithF0:[[[[[[l111 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l201 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l202 = [[Class1 alloc] initWithF0:l33 f1:nil];
-    id l203 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l204 = [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l205 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l206 = [[Class1 alloc] initWithF0:l185 f1:nil];
-    id l207 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l208 = [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l209 = [[Class1 alloc] initWithF0:globals.g3 f1:l0];
-    id l210 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l211 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l212 = [[Class1 alloc] initWithF0:l0 f1:nil];
-    id l213 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l214 = [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l215 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l216 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l217 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l218 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l219 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l220 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l221 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l222 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l223 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l224 = [[Class1 alloc] initWithF0:l63 f1:nil];
-    id l225 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l226 = [[Class1 alloc] initWithF0:[[[[[[l59 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l227 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l228 = [[Class1 alloc] initWithF0:l211 f1:nil];
-    id l229 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l230 = [[Class1 alloc] initWithF0:[[[[[[l97 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l231 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l232 = [[Class1 alloc] initWithF0:l7 f1:nil];
-    id l233 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l234 = [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l235 = [[Class1 alloc] initWithF0:globals.g3 f1:l0];
-    id l236 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l237 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l238 = [[Class1 alloc] initWithF0:l0 f1:nil];
-    id l239 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l240 = [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l241 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l242 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l243 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l244 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l245 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l246 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l247 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l248 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l249 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l250 = [[Class1 alloc] initWithF0:l11 f1:nil];
-    id l251 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l252 = [[Class1 alloc] initWithF0:[[[[[[l7 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l253 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l254 = [[Class1 alloc] initWithF0:l7 f1:nil];
-    id l255 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l256 = [[Class1 alloc] initWithF0:[[[[[[l255 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l257 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l258 = [[Class1 alloc] initWithF0:l7 f1:nil];
-    id l259 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l260 = [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l261 = [[Class1 alloc] initWithF0:globals.g3 f1:l0];
-    id l262 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l263 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l264 = [[Class1 alloc] initWithF0:l0 f1:nil];
-    id l265 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l266 = [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l267 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l268 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l269 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l270 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l271 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l272 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l273 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l274 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l275 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l276 = [[Class1 alloc] initWithF0:l235 f1:nil];
-    id l277 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l278 = [[Class1 alloc] initWithF0:[[[[[[l233 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l279 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l280 = [[Class1 alloc] initWithF0:l127 f1:nil];
-    id l281 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l282 = [[Class1 alloc] initWithF0:[[[[[[l67 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l283 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l284 = [[Class1 alloc] initWithF0:l39 f1:nil];
-    id l285 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l286 = [[Class1 alloc] initWithF0:[[[[[[l23 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l287 = [[Class1 alloc] initWithF0:globals.g3 f1:l0];
-    id l288 = [[Class1 alloc] initWithF0:nil f1:nil];
-    id l289 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l290 = [[Class1 alloc] initWithF0:l0 f1:nil];
-    id l291 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l292 = [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l293 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l294 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l295 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l296 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l297 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l298 = [[Class1 alloc] initWithF0:l1 f1:nil];
-    id l299 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l300 = [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l301 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l302 = [[Class1 alloc] initWithF0:l209 f1:nil];
-    id l303 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l304 = [[Class1 alloc] initWithF0:[[[[[[l207 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l305 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l306 = [[Class1 alloc] initWithF0:l127 f1:nil];
-    id l307 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l308 = [[Class1 alloc] initWithF0:[[[[[[l155 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l309 = [[Class1 alloc] initWithF0:globals.g3 f1:nil];
-    id l310 = [[Class1 alloc] initWithF0:l187 f1:nil];
-    id l311 = [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l312 = [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil];
-    id l313 = [[Class1 alloc] initWithF0:globals.g3 f1:l0];
+    id l158 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:nil f1:nil]; });
+    id l159 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l160 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l0 f1:nil]; });
+    id l161 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l162 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l163 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l164 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l1 f1:nil]; });
+    id l165 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l166 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l167 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l168 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l1 f1:nil]; });
+    id l169 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l170 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l171 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l172 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l167 f1:nil]; });
+    id l173 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l174 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l163 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l175 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l176 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l111 f1:nil]; });
+    id l177 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l178 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l155 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l179 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l180 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l127 f1:nil]; });
+    id l181 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l182 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l183 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:globals.g3 f1:l0]; });
+    id l184 = alloc(^{ return [[Class1 alloc] initWithF0:nil f1:nil]; });
+    id l185 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l186 = alloc(^{ return [[Class1 alloc] initWithF0:l0 f1:nil]; });
+    id l187 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l188 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l189 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l190 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l191 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l192 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l193 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l194 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l195 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l196 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l197 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l198 = alloc(^{ return [[Class1 alloc] initWithF0:l115 f1:nil]; });
+    id l199 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l200 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l111 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l201 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l202 = alloc(^{ return [[Class1 alloc] initWithF0:l33 f1:nil]; });
+    id l203 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l204 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l205 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l206 = alloc(^{ return [[Class1 alloc] initWithF0:l185 f1:nil]; });
+    id l207 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l208 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l209 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:l0]; });
+    id l210 = alloc(^{ return [[Class1 alloc] initWithF0:nil f1:nil]; });
+    id l211 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l212 = alloc(^{ return [[Class1 alloc] initWithF0:l0 f1:nil]; });
+    id l213 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l214 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l215 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l216 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l217 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l218 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l219 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l220 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l221 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l222 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l223 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l224 = alloc(^{ return [[Class1 alloc] initWithF0:l63 f1:nil]; });
+    id l225 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l226 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l59 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l227 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l228 = alloc(^{ return [[Class1 alloc] initWithF0:l211 f1:nil]; });
+    id l229 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l230 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l97 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l231 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l232 = alloc(^{ return [[Class1 alloc] initWithF0:l7 f1:nil]; });
+    id l233 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l234 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l235 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:l0]; });
+    id l236 = alloc(^{ return [[Class1 alloc] initWithF0:nil f1:nil]; });
+    id l237 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l238 = alloc(^{ return [[Class1 alloc] initWithF0:l0 f1:nil]; });
+    id l239 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l240 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l241 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l242 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l243 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l244 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l245 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l246 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l247 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l248 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l249 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l250 = alloc(^{ return [[Class1 alloc] initWithF0:l11 f1:nil]; });
+    id l251 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l252 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l7 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l253 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l254 = alloc(^{ return [[Class1 alloc] initWithF0:l7 f1:nil]; });
+    id l255 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l256 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l255 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l257 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l258 = alloc(^{ return [[Class1 alloc] initWithF0:l7 f1:nil]; });
+    id l259 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l260 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l261 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:l0]; });
+    id l262 = alloc(^{ return [[Class1 alloc] initWithF0:nil f1:nil]; });
+    id l263 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l264 = alloc(^{ return [[Class1 alloc] initWithF0:l0 f1:nil]; });
+    id l265 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l266 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l267 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l268 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l269 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l270 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l271 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l272 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l273 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l274 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l275 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l276 = alloc(^{ return [[Class1 alloc] initWithF0:l235 f1:nil]; });
+    id l277 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l278 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l233 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l279 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l280 = alloc(^{ return [[Class1 alloc] initWithF0:l127 f1:nil]; });
+    id l281 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l282 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l67 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l283 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l284 = alloc(^{ return [[Class1 alloc] initWithF0:l39 f1:nil]; });
+    id l285 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l286 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l23 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l287 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:l0]; });
+    id l288 = alloc(^{ return [[Class1 alloc] initWithF0:nil f1:nil]; });
+    id l289 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l290 = alloc(^{ return [[Class1 alloc] initWithF0:l0 f1:nil]; });
+    id l291 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l292 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l0 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l293 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l294 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l295 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l296 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l297 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l298 = alloc(^{ return [[Class1 alloc] initWithF0:l1 f1:nil]; });
+    id l299 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l300 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l1 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l301 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l302 = alloc(^{ return [[Class1 alloc] initWithF0:l209 f1:nil]; });
+    id l303 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l304 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l207 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l305 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l306 = alloc(^{ return [[Class1 alloc] initWithF0:l127 f1:nil]; });
+    id l307 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l308 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l155 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l309 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:nil]; });
+    id l310 = alloc(^{ return [[Class1 alloc] initWithF0:l187 f1:nil]; });
+    id l311 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l312 = alloc(^{ return [[Class1 alloc] initWithF0:[[[[[[l127 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647] f1:nil]; });
+    id l313 = alloc(^{ return [[Class1 alloc] initWithF0:globals.g3 f1:l0]; });
     id l314 = globals.g3;
     id l315 = l0;
     id l316 = [[[[[[globals.g3 loadField:0] loadField:1] loadField:1] loadField:511] loadField:2147483647] loadField:2147483647];
@@ -1639,6 +1729,7 @@ id fun5(int32_t localsCount, id l0, id l1) {
 
 int main() {
    globals = [Globals new];
+   allocBlockerUpdater();
    for (int i = 0; i < 100000; ++i) {
        [KtlibKtlibKt mainBody];
    }

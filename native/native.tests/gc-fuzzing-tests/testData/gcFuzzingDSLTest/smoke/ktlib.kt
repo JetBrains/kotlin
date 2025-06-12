@@ -1,4 +1,4 @@
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
 package ktlib
 
 import cinterop.*
@@ -30,7 +30,6 @@ object WorkerTerminationProcessor {
     }
 }
 
-
 private fun spawnThread(block: () -> Unit) {
    if (!tryRegisterThread())
        return
@@ -47,6 +46,15 @@ private inline fun call(localsCount: Int, blockLocalsCount: Int, block: (Int) ->
         return null
     }
     return block(nextLocalsCount)
+}
+
+var allocBlocker: Boolean = false
+
+fun performGC() { kotlin.native.runtime.GC.collect() }
+
+private inline fun alloc(block: () -> Any?): Any? {
+    if (!allocBlocker || !updateAllocBlocker()) return block()
+    return null
 }
 
 class Class0(var f0: Any?, var f1: Any?) : KotlinIndexAccess {
@@ -79,14 +87,14 @@ fun fun4(localsCount: Int, l0: Any?, l1: Any?): Any? {
 }
 
 fun fun6(localsCount: Int, l0: Any?): Any? {
-    var l1: Any? = Class0(null, null)
-    var l2: Any? = Class1(null, null)
+    var l1: Any? = alloc({ Class0(null, null) })
+    var l2: Any? = alloc({ Class1(null, null) })
     var l3: Any? = call(localsCount, 4, { fun7(it, l0) })
     return l1?.loadField(1)?.loadField(3)?.loadField(4)
 }
 
 private fun mainBodyImpl(localsCount: Int) {
-    var l0: Any? = Class1(null, null)
+    var l0: Any? = alloc({ Class1(null, null) })
     var l1: Any? = l0
     var l2: Any? = call(localsCount, 2, { fun5(it, l0, l1?.loadField(67)) })
     var l3: Any? = call(localsCount, 4, { fun6(it, null) })

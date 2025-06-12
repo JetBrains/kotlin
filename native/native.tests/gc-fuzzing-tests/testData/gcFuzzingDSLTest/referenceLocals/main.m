@@ -3,6 +3,7 @@
 #include <stdatomic.h>
 
 #import <Foundation/Foundation.h>
+#include <mach/mach.h>
 
 #include "ktlib.h"
 
@@ -61,6 +62,95 @@ static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)
     return block(nextLocalsCount);
 }
 
+static NSLock* allocBlockerLock = nil;
+static atomic_bool allocBlocker = false;
+
+static size_t footprint() {
+    struct task_vm_info info;
+    mach_msg_type_number_t vmInfoCount = TASK_VM_INFO_COUNT;
+    kern_return_t err = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t)&info, &vmInfoCount);
+    if (err != KERN_SUCCESS) {
+        [NSException raise:NSGenericException format:@"Failed to get the footprint err=%d", err];
+    }
+    return info.phys_footprint;
+}
+
+enum MemoryPressureLevel {
+    LOW_PRESSURE,
+    MEDIUM_PRESSURE,
+    HIGH_PRESSURE,
+};
+
+static enum MemoryPressureLevel currentMemoryPressureLevel() {
+    size_t currentFootprint = footprint();
+    if (currentFootprint < 2684354560)
+        return LOW_PRESSURE;
+    if (currentFootprint <= 3221225472)
+        return MEDIUM_PRESSURE;
+    return HIGH_PRESSURE;
+}
+
+static bool allocBlockerInNormalMode() {
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+        case MEDIUM_PRESSURE:
+            return false;
+        case HIGH_PRESSURE:
+            break;
+    }
+    [KtlibKtlibKt performGC];
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+        case MEDIUM_PRESSURE:
+            return false;
+        case HIGH_PRESSURE:
+            return true;
+    }
+}
+
+static bool allocBlockerInHazardMode() {
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+            return false;
+        case MEDIUM_PRESSURE:
+        case HIGH_PRESSURE:
+            break;
+    }
+    [KtlibKtlibKt performGC];
+    switch (currentMemoryPressureLevel()) {
+        case LOW_PRESSURE:
+            return false;
+        case MEDIUM_PRESSURE:
+        case HIGH_PRESSURE:
+            return true;
+    }
+}
+
+bool updateAllocBlocker() {
+    [allocBlockerLock lock];
+    bool result = allocBlocker ? allocBlockerInNormalMode() : allocBlockerInHazardMode();
+    allocBlocker = result;
+    KtlibKtlibKt.allocBlocker = result;
+    [allocBlockerLock unlock];
+    return result;
+}
+
+static void allocBlockerUpdater() {
+    allocBlockerLock = [NSLock new];
+    [NSThread detachNewThreadWithBlock:^{
+        while (true) {
+            updateAllocBlocker();
+            [NSThread sleepForTimeInterval:1.0];
+        }
+    }];
+}
+
+static inline id alloc(id (^block)()) {
+    if (!atomic_load_explicit(&allocBlocker, memory_order_relaxed) || !updateAllocBlocker())
+        return block();
+    return nil;
+}
+
 @interface Globals : NSObject
 @property id g2;
 @end
@@ -70,9 +160,9 @@ static inline id call(int32_t localsCount, int32_t blockLocalsCount, id (^block)
 static Globals* globals = nil;
 
 id fun4(int32_t localsCount, id l0) {
-    id l1 = [[KtlibClass0 alloc] initWithF0:l0];
-    id l2 = [[KtlibClass0 alloc] initWithF0:l1];
-    id l3 = [[KtlibClass0 alloc] initWithF0:l0];
+    id l1 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l0]; });
+    id l2 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l1]; });
+    id l3 = alloc(^{ return [[KtlibClass0 alloc] initWithF0:l0]; });
     return nil;
 }
 
@@ -100,6 +190,7 @@ id fun10(int32_t localsCount, id l0) {
 
 int main() {
    globals = [Globals new];
+   allocBlockerUpdater();
    for (int i = 0; i < 100000; ++i) {
        [KtlibKtlibKt mainBody];
    }

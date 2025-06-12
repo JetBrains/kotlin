@@ -39,6 +39,7 @@ At a glance:
   - in the same way, the maximum amount of concurrently working threads is limited; when the limit is reached, spawn thread instructions are ignored
   - we can get data races by concurrently updating global objects, the GC should survive this
   - these races are not handled by ObjC, so every field and every global is atomically updated (automatically by using `@property`)
+  - OOM is avoided by refusing to do new allocations when memory pressure is high
 
 Future directions:
 - more entities and operations

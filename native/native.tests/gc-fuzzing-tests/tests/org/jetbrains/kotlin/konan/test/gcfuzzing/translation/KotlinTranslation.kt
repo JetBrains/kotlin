@@ -40,7 +40,7 @@ private class KotlinTranslationContext(
         contents.apply {
             raw(
                 """
-            |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            |@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.runtime.NativeRuntimeApi::class)
             |package ${config.moduleName}
             |
             |import ${config.cinteropModuleName}.*
@@ -72,7 +72,6 @@ private class KotlinTranslationContext(
             |    }
             |}
             |
-            |
             |private fun spawnThread(block: () -> Unit) {
             |   if (!tryRegisterThread())
             |       return
@@ -89,6 +88,15 @@ private class KotlinTranslationContext(
             |        return null
             |    }
             |    return block(nextLocalsCount)
+            |}
+            |
+            |var allocBlocker: Boolean = false
+            |
+            |fun performGC() { kotlin.native.runtime.GC.collect() }
+            |
+            |private inline fun alloc(block: () -> Any?): Any? {
+            |    if (!allocBlocker || !updateAllocBlocker()) return block()
+            |    return null
             |}
             |
             |
@@ -362,11 +370,18 @@ private class KotlinExpressionTranslationContext(
             return
         }
         contents.functionCall {
-            name(scopeResolver.computeName(clazz))
-            clazz.fields.forEachIndexed { index, _ ->
-                arg {
-                    translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+            name("alloc")
+            arg {
+                append("{ ")
+                contents.functionCall {
+                    name(scopeResolver.computeName(clazz))
+                    clazz.fields.forEachIndexed { index, _ ->
+                        arg {
+                            translateLoadExpression(args.getOrNull(index) ?: LoadExpression.Default)
+                        }
+                    }
                 }
+                append(" }")
             }
         }
     }
