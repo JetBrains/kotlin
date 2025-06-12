@@ -22,6 +22,7 @@ var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copy
 
 var IrClass.capturedFields: Collection<IrField>? by irAttribute(copyByDefault = false)
 
+var IrClass.functionReferenceLinkageError: String? by irAttribute(copyByDefault = false)
 var IrClass.functionReferenceReflectedName: String? by irAttribute(copyByDefault = false)
 
 /**
