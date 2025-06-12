@@ -406,6 +406,12 @@ class CallAndReferenceGenerator(
             }
         }
 
+    private val FirQualifiedAccessExpression.isOperatorCall: Boolean
+        get() = when (this) {
+            is FirFunctionCall -> this.origin == FirFunctionCallOrigin.Operator
+            else -> false
+        }
+
     private fun convertToIrCallForDynamic(
         qualifiedAccess: FirQualifiedAccessExpression,
         explicitReceiverExpression: IrExpression?,
@@ -423,8 +429,7 @@ class CallAndReferenceGenerator(
                     val name = calleeReference.resolved?.name
                         ?: error("Callee reference must have a name: ${qualifiedAccess.render()}")
                     val operator = dynamicOperator
-                        ?: name.dynamicOperator
-                        ?: qualifiedAccess.dynamicOperator
+                        ?: runIf(qualifiedAccess.isOperatorCall) { name.dynamicOperator ?: qualifiedAccess.dynamicOperator }
                         ?: IrDynamicOperator.INVOKE
                     val theType = if (name == OperatorNameConventions.COMPARE_TO) {
                         typeConverter.builtins.booleanType
