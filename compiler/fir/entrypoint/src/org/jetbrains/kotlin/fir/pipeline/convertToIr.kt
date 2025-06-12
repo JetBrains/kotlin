@@ -266,6 +266,7 @@ private class Fir2IrPipeline(
                     fir2IrConfiguration.languageVersionSettings
                 ),
                 irTypeSystemContext,
+                fir2IrConfiguration.languageVersionSettings,
                 fir2IrConfiguration.expectActualTracker,
                 mainIrFragment,
                 dependentIrFragments,

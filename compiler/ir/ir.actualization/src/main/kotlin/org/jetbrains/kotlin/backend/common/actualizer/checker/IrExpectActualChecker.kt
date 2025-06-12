@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMatchingContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 
 internal interface IrExpectActualChecker {
@@ -16,6 +17,7 @@ internal interface IrExpectActualChecker {
         val expectActualMap: IrExpectActualMap
         val classActualizationInfo: ClassActualizationInfo
         val typeSystemContext: IrTypeSystemContext
+        val languageVersionSettings: LanguageVersionSettings
         val diagnosticsReporter: IrDiagnosticReporter
         val matchingContext: IrExpectActualMatchingContext
     }

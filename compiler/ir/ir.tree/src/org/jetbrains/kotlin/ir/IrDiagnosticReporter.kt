@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 
 interface IrDiagnosticReporter {
-    val languageVersionSettings: LanguageVersionSettings
     fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl

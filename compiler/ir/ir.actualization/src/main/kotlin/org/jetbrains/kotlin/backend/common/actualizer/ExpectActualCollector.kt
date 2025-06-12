@@ -46,6 +46,7 @@ internal class ExpectActualCollector(
     private val mainFragment: IrModuleFragment,
     private val dependentFragments: List<IrModuleFragment>,
     private val typeSystemContext: IrTypeSystemContext,
+    private val languageVersionSettings: LanguageVersionSettings,
     private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
     private val extraActualDeclarationExtractors: List<IrExtraActualDeclarationExtractor>,
@@ -64,6 +65,7 @@ internal class ExpectActualCollector(
         val linkCollector = ExpectActualLinkCollector()
         val linkCollectorContext = ExpectActualLinkCollector.MatchingContext(
             typeSystemContext,
+            languageVersionSettings,
             diagnosticsReporter,
             expectActualTracker,
             classActualizationInfo,
@@ -405,6 +407,7 @@ internal class ExpectActualLinkCollector {
 
     class MatchingContext(
         typeSystemContext: IrTypeSystemContext,
+        val languageVersionSettings: LanguageVersionSettings,
         private val diagnosticsReporter: IrDiagnosticReporter,
         private val expectActualTracker: ExpectActualTracker?,
         val classActualizationInfo: ClassActualizationInfo,
@@ -415,12 +418,14 @@ internal class ExpectActualLinkCollector {
 
         constructor(
             typeSystemContext: IrTypeSystemContext,
+            languageVersionSettings: LanguageVersionSettings,
             diagnosticsReporter: IrDiagnosticReporter,
             expectActualTracker: ExpectActualTracker?,
             classActualizationInfo: ClassActualizationInfo,
             missingActualProvider: IrMissingActualDeclarationProvider?,
         ) : this(
             typeSystemContext = typeSystemContext,
+            languageVersionSettings = languageVersionSettings,
             diagnosticsReporter = diagnosticsReporter,
             expectActualTracker = expectActualTracker,
             classActualizationInfo = classActualizationInfo,
@@ -431,11 +436,10 @@ internal class ExpectActualLinkCollector {
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
 
-        val languageVersionSettings: LanguageVersionSettings get() = diagnosticsReporter.languageVersionSettings
-
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(
                 typeContext,
+                languageVersionSettings,
                 diagnosticsReporter,
                 expectActualTracker,
                 classActualizationInfo,

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatc
 internal object IrAnnotationMatchingKmpChecker : IrExpectActualChecker {
     @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
-        val languageVersionSettings = diagnosticsReporter.languageVersionSettings
+        val languageVersionSettings = context.languageVersionSettings
         if (!languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) {
             return
         }
