@@ -113,6 +113,13 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
                 setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
             },
+            builder = { project, taskName, assertions ->
+                if (HostManager.hostIsMac) {
+                    project.build(taskName, assertions = assertions)
+                } else {
+                    project.buildAndFail(taskName, assertions = assertions)
+                }
+            },
             assertions = {
                 if (HostManager.hostIsMac) {
                     assertNoDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
@@ -182,7 +189,10 @@ private fun KGPBaseTest.publishMultiplatformLibrary(
         mingwX64()
         linuxX64()
     },
-    assertions: BuildResult.() -> Unit = {},
+    builder: (TestProject, String, BuildResult.() -> Unit) -> Unit = { project, taskName, assertions ->
+        project.build(taskName, assertions = assertions)
+    },
+    assertions: BuildResult.() -> Unit = {}
 ) = project(
     "empty",
     gradleVersion,
@@ -211,10 +221,7 @@ private fun KGPBaseTest.publishMultiplatformLibrary(
         )
     }
 
-    build(
-        "publishAllPublicationsToCrossTestRepository",
-        assertions = assertions
-    )
+    builder(this, "publishAllPublicationsToCrossTestRepository", assertions)
 }
 
 private fun KotlinMultiplatformExtension.setupCInteropForTarget(
