@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 
 sealed class KtDiagnostic : DiagnosticMarker {
     abstract val element: AbstractKtSourceElement
-    abstract val factory: AbstractKtDiagnosticFactory
+    abstract val factory: KtDiagnosticFactoryN
     abstract val positioningStrategy: AbstractSourceElementPositioningStrategy
     abstract override val severity: Severity
 
@@ -67,7 +67,7 @@ sealed class KtDiagnosticWithParameters4<A, B, C, D> : KtDiagnostic(), Diagnosti
 // ------------------------------ psi diagnostics ------------------------------
 
 interface KtPsiDiagnostic : DiagnosticMarker {
-    val factory: AbstractKtDiagnosticFactory
+    val factory: KtDiagnosticFactoryN
     val element: KtPsiSourceElement
     override val textRanges: List<TextRange>
     override val severity: Severity
