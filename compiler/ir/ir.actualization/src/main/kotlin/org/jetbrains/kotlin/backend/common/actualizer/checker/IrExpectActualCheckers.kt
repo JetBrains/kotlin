@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMatchingContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -17,6 +18,7 @@ internal class IrExpectActualCheckers(
     override val expectActualMap: IrExpectActualMap,
     override val classActualizationInfo: ClassActualizationInfo,
     override val typeSystemContext: IrTypeSystemContext,
+    override val languageVersionSettings: LanguageVersionSettings,
     override val diagnosticsReporter: IrDiagnosticReporter,
 ) : IrExpectActualChecker.Context {
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.classIdOrFail
 
 data class IrActualizedResult(
     val actualizedExpectDeclarations: List<IrDeclaration>,
@@ -31,6 +31,7 @@ data class IrActualizedResult(
 class IrActualizer(
     val ktDiagnosticReporter: IrDiagnosticReporter,
     val typeSystemContext: IrTypeSystemContext,
+    val languageVersionSettings: LanguageVersionSettings,
     expectActualTracker: ExpectActualTracker?,
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>,
@@ -43,6 +44,7 @@ class IrActualizer(
         mainFragment,
         dependentFragments,
         typeSystemContext,
+        languageVersionSettings,
         ktDiagnosticReporter,
         expectActualTracker,
         extraActualClassExtractors,
@@ -106,7 +108,13 @@ class IrActualizer(
         //   Also, it doesn't remove unactualized expect declarations marked with @OptionalExpectation
         val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
 
-        IrExpectActualCheckers(expectActualMap, classActualizationInfo, typeSystemContext, ktDiagnosticReporter).check()
+        IrExpectActualCheckers(
+            expectActualMap,
+            classActualizationInfo,
+            typeSystemContext,
+            languageVersionSettings,
+            ktDiagnosticReporter
+        ).check()
         return IrActualizedResult(removedExpectDeclarations, expectActualMap)
     }
 
