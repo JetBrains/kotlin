@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // ISSUE: KT-62544
+// JVM_ABI_K1_K2_DIFF: KT-78111
 
 // FILE: Base.java
 public interface Base {

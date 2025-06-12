@@ -1,6 +1,8 @@
 // DUMP_IR
+// IGNORE_BACKEND_K1: JVM_IR
+// ^After KT-78111, K2 generates indy bytecode in this test. K1 doesn't which fails the CHECK_BYTECODE_TEXT.
 // CHECK_BYTECODE_TEXT
-// 0 java/lang/invoke/LambdaMetafactory
+// 1 java/lang/invoke/LambdaMetafactory
 
 abstract class BaseClass
 interface BaseInterface

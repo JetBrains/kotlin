@@ -397,3 +397,21 @@ internal fun ConeKotlinType.approximateForIrOrSelf(): ConeKotlinType {
 
 internal fun createErrorType(message: String = "<error>", isMarkedNullable: Boolean = false): IrErrorType =
     IrErrorTypeImpl(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, message), emptyList(), Variance.INVARIANT, isMarkedNullable)
+
+context(c: Fir2IrComponents)
+fun ConeKotlinType.approximateFunctionTypeInputs(): ConeKotlinType {
+    // Approximate a function type's input types to their supertypes.
+    // Approximating the outer type will lead to the input types being approximated to their subtypes
+    // because the input type parameters have in variance.
+    if (this !is ConeClassLikeType) return this
+
+    val typeArguments = typeArguments
+    return this.withArguments(Array(typeArguments.size) { i ->
+        val projection = typeArguments[i]
+        if (i < typeArguments.lastIndex) {
+            projection.type?.approximateForIrOrNull()?.toTypeProjection(projection.kind) ?: projection
+        } else {
+            projection
+        }
+    })
+}

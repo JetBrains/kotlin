@@ -1,5 +1,10 @@
 MODULE main
 	CLASS CapturedTypeAsLambdaInputTypeKt$clear$1.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<Ljava/lang/Object;Ljava/lang/Object;>;
 		K1
 			invoke(Ljava/lang/Object;)Ljava/lang/Void; [public, final]
 		K2

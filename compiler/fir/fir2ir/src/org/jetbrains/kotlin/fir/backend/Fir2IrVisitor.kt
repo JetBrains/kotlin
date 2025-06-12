@@ -502,7 +502,7 @@ class Fir2IrVisitor(
                 memberGenerator.convertFunctionContent(irFunction, anonymousFunction, containingClass = null)
             }
 
-            val type = anonymousFunction.typeRef.toIrType()
+            val type = anonymousFunction.typeRef.coneType.approximateFunctionTypeInputs().toIrType()
 
             IrFunctionExpressionImpl(
                 startOffset, endOffset, type, irFunction,

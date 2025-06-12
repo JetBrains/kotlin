@@ -1,5 +1,4 @@
 // JVM_ABI_K1_K2_DIFF: KT-78111
-// IGNORE_BACKEND_K2: WASM
 
 class FooImpl<T : Any>(var value: T?) : Foo<T> {
     override fun update(transformer: (T?) -> T?) {
