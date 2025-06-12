@@ -34,9 +34,10 @@ class ResultTypeResolver(
     context(c: Context)
     private fun TypeVariableMarker.getDefaultTypeForSelfType(constraints: List<Constraint>): KotlinTypeMarker? {
         val typeVariableConstructor = freshTypeConstructor()
+        val typeParameter = typeVariableConstructor.typeParameter ?: return null
+
         val typesForRecursiveTypeParameters = constraints.mapNotNull { constraint ->
             if (constraint.position.from !is DeclaredUpperBoundConstraintPosition<*>) return@mapNotNull null
-            val typeParameter = typeVariableConstructor.typeParameter ?: return@mapNotNull null
             constraint.type.extractTypeForGivenRecursiveTypeParameter(typeParameter)
         }.takeIf { it.isNotEmpty() } ?: return null
 
