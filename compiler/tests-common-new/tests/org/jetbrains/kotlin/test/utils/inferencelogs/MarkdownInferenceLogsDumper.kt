@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger.Companion.s
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 
+private val ANY_LINE_ENDING_REGEX = """(\r\n|\r|\n)""".toRegex()
+
 class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String =
         sessionsToLoggers.entries.joinToString("\n\n") { (session, logger) ->
@@ -25,7 +27,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
 
     override fun formatCode(code: Any): String = monospace(code.toString())
 
-    private fun makeSingleLine(text: String): String = text.replace("\n", "↩")
+    private fun makeSingleLine(text: String): String = text.replace(ANY_LINE_ENDING_REGEX, "↩")
 
     private val stack = mutableListOf<LoggingElement>()
 
