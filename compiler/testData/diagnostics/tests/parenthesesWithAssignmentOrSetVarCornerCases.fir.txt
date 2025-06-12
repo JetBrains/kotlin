@@ -129,7 +129,7 @@ FILE: parenthesesWithAssignmentOrSetVarCornerCases.fir.kt
             R|<local>/<receiver>|.R|/C.p| = R|<local>/<receiver>|.R|/C.p|.R|/plus|(Int(10))
         }
          }
-        R|<local>/c|?.{ $subj$.R|/C.p| } = R|<local>/c|?.{ $subj$.R|/C.p| }.R|/plus|(Int(10))
+        R|<local>/c|?.{ $subj$.R|/C.p| }.<Ambiguity: plusAssign, [/plusAssign, /plusAssign]>#(Int(10))
         R|<local>/c|?.{ $subj$.R|/C.pa|.R|/plusAssign|(Int(10)) }
         R|<local>/c|?.{ $subj$.R|/C.pa| }.R|/plusAssign|(Int(10))
         R|<local>/c|?.{ $subj$.R|/C.ppa|.R|/plusAssign|(Int(10)) }

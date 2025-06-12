@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // CHECK_TYPE
 
 fun noCoercionLastExpressionUsedAsReturnArgument() {
@@ -11,9 +10,9 @@ fun noCoercionLastExpressionUsedAsReturnArgument() {
 }
 
 fun noCoercionBlockHasExplicitType() {
-    val b: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        if (true) 42
-    }<!>
+    val b: () -> Int = {
+        <!RETURN_TYPE_MISMATCH!>if (true) 42<!>
+    }
 }
 
 fun noCoercionBlockHasExplicitReturn() {

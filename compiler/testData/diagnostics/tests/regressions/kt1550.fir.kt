@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // LATEST_LV_DIFFERENCE
 package foo
 
@@ -8,7 +8,7 @@ fun main()
 {
   val c = ArrayList<Int>()
   c.add(3)
-  System.out.println(++<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(c[0])<!>)
-  System.out.println(<!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(c[1])<!>--)
+  System.out.println(++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(c[0])<!>)
+  System.out.println(<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(c[1])<!>--)
   System.out.println(-(c[2]))
 }

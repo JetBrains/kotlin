@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
@@ -174,31 +173,31 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val endsWithVarDeclaration : () -> Boolean = <!INITIALIZER_TYPE_MISMATCH!>{
-        val x = 2
-    }<!>
+    val endsWithVarDeclaration : () -> Boolean = {
+        <!RETURN_TYPE_MISMATCH!>val x = 2<!>
+    }
 
-    val endsWithAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
+    val endsWithAssignment: () -> Int = {
+        var x = 1
+        <!RETURN_TYPE_MISMATCH!>x = 333<!>
+    }
+
+    val endsWithReAssignment: () -> Int = {
+        var x = 1
+        <!RETURN_TYPE_MISMATCH!>x += 333<!>
+    }
+
+    val endsWithFunDeclaration : () -> String = {
         var x = 1
         x = 333
-    }<!>
+        <!RETURN_TYPE_MISMATCH!>fun meow() : Unit {}<!>
+    }
 
-    val endsWithReAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        var x = 1
-        x += 333
-    }<!>
-
-    val endsWithFunDeclaration : () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
+    val endsWithObjectDeclaration : () -> Int = {
         var x = 1
         x = 333
-        fun meow() : Unit {}
-    }<!>
-
-    val endsWithObjectDeclaration : () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
-        var x = 1
-        x = 333
-        <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
-    }<!>
+        <!RETURN_TYPE_MISMATCH!><!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}<!>
+    }
 
     val expectedUnitReturnType1: () -> Unit = {
         val x = 1

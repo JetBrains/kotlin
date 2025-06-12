@@ -33,6 +33,6 @@ enum class KotlinVersion(val version: String) {
                 )
 
         @JvmStatic
-        val DEFAULT = KOTLIN_2_2
+        val DEFAULT = KOTLIN_2_3
     }
 }

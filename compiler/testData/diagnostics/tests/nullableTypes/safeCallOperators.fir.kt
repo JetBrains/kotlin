@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_TXT
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LATEST_LV_DIFFERENCE
 
 class A(
     val l: MutableList<Int>,
@@ -40,7 +39,7 @@ fun foo(a: A?) {
     (a?.ll)[0][0]++
     (a?.ll)[0][0] = 1
     (a?.q)()
-    <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a?.<!VARIABLE_EXPECTED!>w<!>)<!>++
+    <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a?.<!VARIABLE_EXPECTED!>w<!>)<!>++
 
     a?.l.plusAssign(1)
     a?.l.get(0)
@@ -77,7 +76,7 @@ fun foo(a: A?) {
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0]++
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0] = 1
         (a<!UNNECESSARY_SAFE_CALL!>?.<!>q)()
-        <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>(a<!UNNECESSARY_SAFE_CALL!>?.<!><!VARIABLE_EXPECTED!>w<!>)<!>++
+        <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(a<!UNNECESSARY_SAFE_CALL!>?.<!><!VARIABLE_EXPECTED!>w<!>)<!>++
 
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.plusAssign(1)
         a<!UNNECESSARY_SAFE_CALL!>?.<!>l.get(0)

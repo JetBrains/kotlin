@@ -29,7 +29,7 @@ FILE: kotlinSam.kt
     public final fun foo4(m: R|Derived|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        lval f: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
+        lval f: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
             ^ CMP(>, R|<local>/t|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
