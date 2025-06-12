@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.backend.common.extensions.ExperimentalAPIForScriptingPlugin
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
@@ -42,6 +41,10 @@ class Fir2IrPluginContext(
     override val irBuiltIns: IrBuiltIns,
     @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
     @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
+    @property:Deprecated(
+        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
+        level = DeprecationLevel.WARNING
+    )
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter,
 ) : IrPluginContext {
@@ -135,7 +138,6 @@ class Fir2IrPluginContext(
         error(ERROR_MESSAGE)
     }
 
-    @ExperimentalAPIForScriptingPlugin
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
