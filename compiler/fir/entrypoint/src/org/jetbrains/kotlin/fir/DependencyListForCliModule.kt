@@ -110,7 +110,15 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
             val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
             paths.mapTo(filterSet) {
                 val path = Paths.get(it)
-                if (path.isSymbolicLink()) path.toRealPath()
+                /*
+                 * We need to resolve all symbolic links along the path. This
+                 * can be done with .toRealPath(), but this fails for paths
+                 * that do not map to any file. Checking whether symbolic links
+                 * are in use is cumbersome, since .isSymbolicLink() only
+                 * checks the last element in the path. We instead check if the
+                 * file exists to determine if it is safe to call toRealPath().
+                 */
+                if (path.toFile().exists()) path.toRealPath()
                 else path.toAbsolutePath()
             }
         }
