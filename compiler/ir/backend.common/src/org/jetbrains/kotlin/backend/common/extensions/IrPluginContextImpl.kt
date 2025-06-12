@@ -47,6 +47,10 @@ open class IrPluginContextImpl constructor(
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
+    @property:Deprecated(
+        "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",
+        level = DeprecationLevel.WARNING
+    )
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
@@ -103,7 +107,6 @@ open class IrPluginContextImpl constructor(
         }
     }
 
-    @ExperimentalAPIForScriptingPlugin
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
