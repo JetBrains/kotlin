@@ -358,42 +358,55 @@ public class KtPsiUtil {
         return null;
     }
 
+    /**
+     * The list of all available priorities:<p>
+     *
+     * 0 – for declaration and statements<p>
+     * 1..12 -- for enum values of binaries<p>
+     * 13 -- postfix<p>
+     * 14 -- prefix<p>
+     * 15 -- super and other<p>
+     *
+     * The suppression is used because the field is used in IntelliJ monorepo.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static final int MAX_PRIORITY = KotlinExpressionParsing.BinaryOperationPrecedence.values().length + 3;
 
+    /**
+     * @return priority (that opposed to precedence) of the passed <tt>expression</tt>
+     */
     private static int getPriority(@NotNull KtExpression expression) {
-        int maxPriority = KotlinExpressionParsing.Precedence.values().length + 1;
+        if (expression instanceof KtSuperExpression) {
+            return MAX_PRIORITY;
+        }
 
-        // same as postfix operations
         if (expression instanceof KtPostfixExpression ||
             expression instanceof KtQualifiedExpression ||
             expression instanceof KtCallExpression ||
             expression instanceof KtArrayAccessExpression ||
-            expression instanceof KtDoubleColonExpression) {
-            return maxPriority - 1;
+            expression instanceof KtDoubleColonExpression
+        ) {
+            return MAX_PRIORITY - 1;
         }
 
-        if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression) return maxPriority - 2;
-
-        if (expression instanceof KtIfExpression) {
-            return KotlinExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+        if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression || expression instanceof KtIfExpression) {
+            return MAX_PRIORITY - 2;
         }
 
-        if (expression instanceof KtSuperExpression) {
-            return maxPriority;
+        IElementType operation = getOperation(expression);
+        if (operation instanceof KtToken) {
+            KotlinExpressionParsing.BinaryOperationPrecedence
+                    binaryPrecedence = KotlinExpressionParsing.TOKEN_TO_BINARY_PRECEDENCE_MAP.get((KtToken) operation);
+            if (binaryPrecedence != null) {
+                return (MAX_PRIORITY - 3) - binaryPrecedence.ordinal();
+            }
         }
 
         if (expression instanceof KtDeclaration || expression instanceof KtStatementExpression) {
             return 0;
         }
 
-        IElementType operation = getOperation(expression);
-        for (KotlinExpressionParsing.Precedence precedence : KotlinExpressionParsing.Precedence.values()) {
-            if (precedence != KotlinExpressionParsing.Precedence.PREFIX && precedence != KotlinExpressionParsing.Precedence.POSTFIX &&
-                precedence.getOperations().contains(operation)) {
-                return maxPriority - precedence.ordinal() - 1;
-            }
-        }
-
-        return maxPriority;
+        return MAX_PRIORITY;
     }
 
     @SuppressWarnings("unused") // used in intellij repo

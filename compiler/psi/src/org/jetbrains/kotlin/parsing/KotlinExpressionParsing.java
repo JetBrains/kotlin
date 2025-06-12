@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -141,91 +139,83 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             EOL_OR_SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    public enum Precedence {
-        POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
-                DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
+    // typeArguments? valueArguments : typeArguments : arrayAccess
+    private static final TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
+    private static final TokenSet PREFIX_OPERATIONS = TokenSet.create(KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS, KtTokens.EXCL);
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
+    public enum BinaryOperationPrecedence {
+        AS(null, TokenSet.create(AS_KEYWORD, AS_SAFE)),
+        MULTIPLICATIVE(AS, TokenSet.create(MUL, DIV, PERC)),
+        ADDITIVE(MULTIPLICATIVE, TokenSet.create(PLUS, MINUS)),
+        RANGE(ADDITIVE, TokenSet.create(KtTokens.RANGE, RANGE_UNTIL)),
+        INFIX(RANGE, TokenSet.create(IDENTIFIER)),
+        ELVIS(INFIX, TokenSet.create(KtTokens.ELVIS)),
+        IN_OR_IS(ELVIS, TokenSet.create(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS)),
+        COMPARISON(IN_OR_IS, TokenSet.create(LT, GT, LTEQ, GTEQ)),
+        EQUALITY(COMPARISON, TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)),
+        CONJUNCTION(EQUALITY, TokenSet.create(ANDAND)),
+        DISJUNCTION(CONJUNCTION, TokenSet.create(OROR)),
+        ASSIGNMENT(DISJUNCTION, TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ));
 
-            @Override
-            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
-                throw new IllegalStateException("Don't call this method");
-            }
-        },
+        public final BinaryOperationPrecedence higherPriority;
+        public final TokenSet operations;
 
-        AS(AS_KEYWORD, AS_SAFE) {
-            @Override
-            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                parser.myKotlinParsing.parseTypeRefWithoutIntersections();
-                return BINARY_WITH_TYPE;
-            }
+        BinaryOperationPrecedence(BinaryOperationPrecedence higherPriority, TokenSet operations) {
+            this.higherPriority = higherPriority;
+            this.operations = operations;
+        }
+    }
 
-            @Override
-            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
-                parser.parsePrefixExpression();
-            }
-        },
+    private static final BinaryOperationPrecedence MIN_BINARY_OPERATION_PRECEDENCE = BinaryOperationPrecedence.values()[0];
+    private static final BinaryOperationPrecedence MAX_BINARY_OPERATION_PRECEDENCE = BinaryOperationPrecedence.values()[BinaryOperationPrecedence.values().length - 1];
 
-        MULTIPLICATIVE(MUL, DIV, PERC),
-        ADDITIVE(PLUS, MINUS),
-        RANGE(KtTokens.RANGE, RANGE_UNTIL),
-        SIMPLE_NAME(IDENTIFIER),
-        ELVIS(KtTokens.ELVIS),
-        IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
-            @Override
-            public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-                if (operation == IS_KEYWORD || operation == NOT_IS) {
-                    parser.myKotlinParsing.parseTypeRefWithoutIntersections();
-                    return IS_EXPRESSION;
+    /**
+     * Defines a map, where each token is mapped on its binary precedence.<p>
+     *
+     * It's used for fast lookup over binary precedences by a provided token.
+     * It works with O(1) complexity in a given use-site instead of O(N) where N is a number of binary precedences (currently 12).
+     * If the map doesn't contain the given token, the further parsing is not performed on the current precedence level.
+     * Later that token either will be handled by an outer <tt>parseBinaryExpression</tt> call with a lower binary priority (higher precedence) or
+     * will not be handled at all in case of the expression is not binary.<p>
+     *
+     * The map also contains soft identifiers. If such a soft identifier is encountered, the parser remaps it to a regular IDENTIFIER.
+     */
+    private static final Map<KtToken, BinaryOperationPrecedence> TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS = getTokensToBinaryPrecedenceMap(true);
+
+    public static final Map<KtToken, BinaryOperationPrecedence> TOKEN_TO_BINARY_PRECEDENCE_MAP = getTokensToBinaryPrecedenceMap(false);
+
+    private static Map<KtToken, BinaryOperationPrecedence> getTokensToBinaryPrecedenceMap(boolean includeSoftIdentifiers) {
+        Map<KtToken, BinaryOperationPrecedence> result = new HashMap<>();
+
+        for (BinaryOperationPrecedence entry : BinaryOperationPrecedence.values()) {
+            for (IElementType type : entry.operations.getTypes()) {
+                KtToken operationType = (KtToken) type;
+                BinaryOperationPrecedence existingPrecedence = result.put(operationType, entry);
+
+                if (existingPrecedence != null) {
+                    throw new IllegalArgumentException(
+                            "All binary precedences have unique operations. The " + operationType +
+                            " already assigned to " + existingPrecedence + "."
+                    );
                 }
 
-                return super.parseRightHandSide(operation, parser);
-            }
-        },
-        COMPARISON(LT, GT, LTEQ, GTEQ),
-        EQUALITY(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ),
-        CONJUNCTION(ANDAND),
-        DISJUNCTION(OROR),
-        //        ARROW(KtTokens.ARROW),
-        ASSIGNMENT(EQ, PLUSEQ, MINUSEQ, MULTEQ, DIVEQ, PERCEQ),
-        ;
-
-        static {
-            Precedence[] values = values();
-            for (Precedence precedence : values) {
-                int ordinal = precedence.ordinal();
-                precedence.higher = ordinal > 0 ? values[ordinal - 1] : null;
+                if (type == IDENTIFIER && includeSoftIdentifiers) {
+                    // Soft keywords work as identifiers (it's actual for INFIX functions).
+                    // However, they are being remapped to IDENTIFIER during parsing.
+                    for (IElementType softKeyword : SOFT_KEYWORDS.getTypes()) {
+                        existingPrecedence = result.put((KtToken) softKeyword, entry);
+                        if (existingPrecedence != null) {
+                            throw new IllegalArgumentException(
+                                    "All binary precedences have unique operations. The " + softKeyword +
+                                    " already assigned to " + existingPrecedence + "."
+                            );
+                        }
+                    }
+                }
             }
         }
 
-        private Precedence higher;
-        private final TokenSet operations;
-
-        Precedence(IElementType... operations) {
-            this.operations = TokenSet.create(operations);
-        }
-
-        public void parseHigherPrecedence(KotlinExpressionParsing parser) {
-            assert higher != null;
-            parser.parseBinaryExpression(higher);
-        }
-
-        /**
-         *
-         * @param operation the operation sign (e.g. PLUS or IS)
-         * @param parser the parser object
-         * @return node type of the result
-         */
-        public IElementType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
-            parseHigherPrecedence(parser);
-            return BINARY_EXPRESSION;
-        }
-
-        @NotNull
-        public final TokenSet getOperations() {
-            return operations;
-        }
+        return Collections.unmodifiableMap(result);
     }
 
     private static final TokenSet ALLOW_NEWLINE_OPERATIONS = TokenSet.create(
@@ -240,12 +230,14 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     public static final TokenSet ALL_OPERATIONS;
 
     static {
-        Set<IElementType> operations = new HashSet<>();
-        Precedence[] values = Precedence.values();
-        for (Precedence precedence : values) {
-            operations.addAll(Arrays.asList(precedence.getOperations().getTypes()));
-        }
-        ALL_OPERATIONS = TokenSet.create(operations.toArray(new IElementType[0]));
+        Set<IElementType> allOperations = new HashSet<>();
+
+        allOperations.addAll(Arrays.asList(POSTFIX_OPERATIONS.getTypes()));
+        allOperations.addAll(Arrays.asList(PREFIX_OPERATIONS.getTypes()));
+
+        allOperations.addAll(TOKEN_TO_BINARY_PRECEDENCE_MAP.keySet());
+
+        ALL_OPERATIONS = TokenSet.create(allOperations.toArray(new IElementType[0]));
     }
 
     static {
@@ -304,30 +296,82 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return;
         }
 
-        parseBinaryExpression(Precedence.ASSIGNMENT);
+        parseBinaryExpression(MAX_BINARY_OPERATION_PRECEDENCE);
     }
 
-    /*
-     * element (operation element)*
+    /**
+     * <tt></T>element (operation element)*</tt>
      *
-     * see the precedence table
+     * @return minPrecedence that should be considered during further parsing.
+     * It's actual for <tt>IS</tt> operation because it's handled in a special way since it doesn't use recursive parsing on RHS
      */
-    private void parseBinaryExpression(Precedence precedence) {
+    private BinaryOperationPrecedence parseBinaryExpression(BinaryOperationPrecedence maxPrecedence) {
+        if (maxPrecedence == null) {
+            throw new IllegalArgumentException("Shouldn't be here");
+        }
+
         PsiBuilder.Marker expression = mark();
 
-        precedence.parseHigherPrecedence(this);
+        parsePrefixExpression();
 
-        while (!interruptedWithNewLine() && atSet(precedence.getOperations())) {
-            IElementType operation = tt();
+        BinaryOperationPrecedence minPrecedence = MIN_BINARY_OPERATION_PRECEDENCE;
+
+        while (!interruptedWithNewLine()) {
+            IElementType token = tt();
+
+            KtToken operation = token instanceof KtToken ? (KtToken) token : null;
+            if (operation == null) break;
+
+            // Match all allowed operations with the current or higher priority (lower precedence) at once.
+            // For instance, if the precedence is COMPARISON, we can match ADDITIVE, MULTIPLICATIVE but cannot match CONJUNCTION.
+            // The lowest priority is ASSIGNMENT.
+            // All Kotlin binary operations are syntactically left-associative,
+            // that's why we always use higher priority on recursive `parseBinaryExpression` call.
+            // If a right-associative operation is added, the same priority instead of the highest should be passed to the recursive call.
+            BinaryOperationPrecedence nextPrecedence = TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS.get(token);
+            if (nextPrecedence == null ||
+                nextPrecedence.ordinal() > maxPrecedence.ordinal() || nextPrecedence.ordinal() < minPrecedence.ordinal()) {
+                break;
+            }
+
+            if (nextPrecedence == BinaryOperationPrecedence.INFIX && SOFT_KEYWORDS.contains(operation)) {
+                // Remap soft keywords and modifiers that are treated as infix functions since there is no mutating `atSetWithRemap` call
+                myBuilder.remapCurrentToken(KtTokens.IDENTIFIER);
+            }
 
             parseOperationReference();
 
-            IElementType resultType = precedence.parseRightHandSide(operation, this);
+            IElementType resultType;
+            switch (operation.tokenId) {
+                case AS_KEYWORD_Id:
+                case AS_SAFE_Id:
+                    myKotlinParsing.parseTypeRefWithoutIntersections();
+                    minPrecedence = BinaryOperationPrecedence.AS;
+                    resultType = KtNodeTypes.BINARY_WITH_TYPE;
+                    break;
+                case IS_KEYWORD_Id:
+                case NOT_IS_Id:
+                    myKotlinParsing.parseTypeRefWithoutIntersections();
+                    // The handling of `is`, it doesn't parse RHS recursively and greedily.
+                    // To prevent parsing of more prioritized operations next to `is` (for instance, INFIX, RANGE, and others),
+                    // use the `minPrecedence` in addition to `maxPrecedence`.
+                    minPrecedence = BinaryOperationPrecedence.IN_OR_IS;
+                    resultType = KtNodeTypes.IS_EXPRESSION;
+                    break;
+                default:
+                    // Parse operations with higher priorities greedily.
+                    minPrecedence = parseBinaryExpression(nextPrecedence.higherPriority);
+                    resultType = KtNodeTypes.BINARY_EXPRESSION;
+                    break;
+            }
+
             expression.done(resultType);
             expression = expression.precede();
         }
 
         expression.drop();
+
+        return minPrecedence;
     }
 
     /*
@@ -358,7 +402,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 myBuilder.restoreJoiningComplexTokensState();
                 parseLabeledExpression();
             }
-            else if (atSet(Precedence.PREFIX.getOperations())) {
+            else if (atSet(PREFIX_OPERATIONS)) {
                 PsiBuilder.Marker expression = mark();
 
                 parseOperationReference();
@@ -471,7 +515,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 expression.done(expressionType);
             }
-            else if (atSet(Precedence.POSTFIX.getOperations())) {
+            else if (atSet(POSTFIX_OPERATIONS)) {
                 parseOperationReference();
                 expression.done(POSTFIX_EXPRESSION);
             }
