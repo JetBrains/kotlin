@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -78,4 +79,28 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      *   - `when (x) { else -> ... }`
      */
     public val KtExpression.isUsedAsExpression: Boolean
+
+    /**
+     * Whether the value of the given [KtExpression] is used as the resulting expression of some lambda block.
+     *
+     * Note that [isUsedAsResultOfLambda] performs a **conservative check** instead of exhaustive control-flow analysis and
+     * `isUsedAsResultOfLambda` being `true` doesn't imply that the containing lambda itself is used.
+     *
+     * It's also vital to not confuse lambda expressions with regular scope blocks (like `if` branches).
+     * #### Example
+     *
+     * In the following examples, `x` is used as a result of a lambda (`x.isUsedAsResultOfLambda == true`):
+     *
+     *   - `{ x -> println(0); x }`
+     *   - `{ { x }; 5 }`
+     *
+     * In these expressions, `x` is not used as a result of a lambda (`x.isUsedAsResultOfLambda == false`)
+     *
+     *   - `{ x -> println(0); x + 1 }`
+     *   - `{ x; println(50) }`
+     *   - `{ if (true) { x } else { x } }`
+     *   - `fun(x: Int) = x`
+     */
+    @KaExperimentalApi
+    public val KtExpression.isUsedAsResultOfLambda: Boolean
 }

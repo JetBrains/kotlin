@@ -1,3 +1,4 @@
 expression: BACKING_FIELD
 text: field: MutableList<String> = mutableListOf()
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

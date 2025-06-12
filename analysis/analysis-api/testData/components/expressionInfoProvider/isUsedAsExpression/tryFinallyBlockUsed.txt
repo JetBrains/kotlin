@@ -3,3 +3,4 @@ text: {
         9
     }
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

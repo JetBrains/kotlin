@@ -1,3 +1,4 @@
 expression: CONSTRUCTOR_CALLEE
 text: A
 isUsedAsExpression: false
+isUsedAsResultOfLambda: false

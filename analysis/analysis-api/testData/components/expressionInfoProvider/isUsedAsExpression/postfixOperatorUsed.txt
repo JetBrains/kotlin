@@ -1,3 +1,4 @@
 expression: POSTFIX_EXPRESSION
 text: result++
 isUsedAsExpression: true
+isUsedAsResultOfLambda: false
