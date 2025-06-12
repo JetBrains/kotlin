@@ -52,11 +52,13 @@ class Fir2IrPluginContext(
         private const val ERROR_MESSAGE = "This API is not supported for K2"
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @ObsoleteDescriptorBasedAPI
     @FirIncompatiblePluginAPI
     override val bindingContext: BindingContext
         get() = error(ERROR_MESSAGE)
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @ObsoleteDescriptorBasedAPI
     @FirIncompatiblePluginAPI
     override val typeTranslator: TypeTranslator
@@ -141,31 +143,38 @@ class Fir2IrPluginContext(
     override val diagnosticReporter: IrDiagnosticReporter =
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
     override fun referenceClass(fqName: FqName): IrClassSymbol? {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
     override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
     override fun referenceConstructors(classFqn: FqName): Collection<IrConstructorSymbol> {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
     override fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol> {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
     override fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol> {
         error(ERROR_MESSAGE)
     }
 
+    @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
+    @FirIncompatiblePluginAPI
     override fun referenceTopLevel(
         signature: IdSignature,
         kind: IrDeserializer.TopLevelSymbolKind,
