@@ -221,6 +221,17 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
     }
 }
 
+fun getLineNumberOrNull(insn: AbstractInsnNode?): Int? {
+    var cur: AbstractInsnNode? = insn
+    while (cur != null) {
+        if (cur is LineNumberNode) {
+            return cur.line
+        }
+        cur = cur.previous
+    }
+    return null
+}
+
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
 internal fun firstLabelInChain(node: LabelNode): LabelNode {
