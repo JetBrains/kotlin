@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -220,6 +221,37 @@ fun insertNodeBefore(from: MethodNode, to: MethodNode, beforeNode: AbstractInsnN
         to.instructions.insertBefore(beforeNode, next)
     }
 }
+
+fun getLineNumberOrNull(insn: AbstractInsnNode?): Int? {
+    var cur: AbstractInsnNode? = insn
+    while (cur != null) {
+        if (cur is LineNumberNode) {
+            return cur.line
+        }
+        cur = cur.previous
+    }
+    return null
+}
+
+private fun getFirstFinallyOperationInstructionOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): AbstractInsnNode? {
+    var cur: AbstractInsnNode? = startIns
+    while (cur != null && cur != endInsExclusive) {
+        cur = when {
+            !cur.isMeaningful -> cur.next
+            isFinallyMarker(cur.next) -> cur.next.next
+            else -> return cur
+        }
+    }
+    return null
+}
+
+/*
+ * Finds the line number specified for the first "operation" instruction (i.e., not label, linenumber, frame or "finally" marker)
+ * of the given instructions of "finally" block, no matter if the line number specified inside or before the block.
+ * Returns `null` if there are no operation instructions in the block, or there is no line number specified for the first one of them.
+ */
+fun getFirstFinallyOperationLineNumberOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): Int? =
+    getLineNumberOrNull(getFirstFinallyOperationInstructionOrNull(startIns, endInsExclusive))
 
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
