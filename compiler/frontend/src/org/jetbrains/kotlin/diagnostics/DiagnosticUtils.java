@@ -30,19 +30,9 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class DiagnosticUtils {
-    @NotNull
-    public static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
-        if (o1.getStartOffset() != o2.getStartOffset()) {
-            return o1.getStartOffset() - o2.getStartOffset();
-        }
-        return o1.getEndOffset() - o2.getEndOffset();
-    };
-
     private DiagnosticUtils() {
     }
 
@@ -120,8 +110,8 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    public static TextRange firstRange(@NotNull List<TextRange> ranges) {
-        return Collections.min(ranges, TEXT_RANGE_COMPARATOR);
+    private static TextRange firstRange(@NotNull List<TextRange> ranges) {
+        return DiagnosticRangeUtils.firstRange(ranges);
     }
 
     @NotNull
@@ -138,7 +128,7 @@ public class DiagnosticUtils {
             TextRange range2 = firstRange(d2.getTextRanges());
 
             if (!range1.equals(range2)) {
-                return TEXT_RANGE_COMPARATOR.compare(range1, range2);
+                return DiagnosticRangeUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2);
             }
 
             return d1.getFactory().getName().compareTo(d2.getFactory().getName());

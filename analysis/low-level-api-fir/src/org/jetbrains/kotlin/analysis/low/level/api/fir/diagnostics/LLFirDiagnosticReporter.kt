@@ -61,8 +61,10 @@ internal class LLFirDiagnosticReporter : DiagnosticReporter() {
 }
 
 @OptIn(SuspiciousFakeSourceCheck::class)
-private fun KtDiagnostic.isAboutImplicitImport() =
-    (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
+private fun KtDiagnostic.isAboutImplicitImport(): Boolean {
+    if (this !is KtPsiDiagnostic) return false
+    return (element is KtFakePsiSourceElement && (element as KtFakePsiSourceElement).kind == KtFakeSourceElementKind.ImplicitImport)
+}
 
 
 private fun KtLightDiagnostic.toPsiDiagnostic(): KtPsiDiagnostic {

@@ -61,7 +61,7 @@ object FirDiagnosticsCompilerResultsReporter {
                     val sortedOffsets = TreeSet<Int>().apply {
                         for (diagnostic in diagnosticList) {
                             if (diagnostic !is KtPsiDiagnostic) {
-                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                val range = DiagnosticRangeUtils.firstRange(diagnostic.textRanges)
                                 add(range.startOffset)
                                 add(range.endOffset)
                             }
@@ -85,7 +85,7 @@ object FirDiagnosticsCompilerResultsReporter {
                             // NOTE: SequentialPositionFinder relies on the ascending order of the input offsets, so the code relies
                             // on the the appropriate sorting above
                             offsetsToPositions?.let {
-                                val range = DiagnosticUtils.firstRange(diagnostic.textRanges)
+                                val range = DiagnosticRangeUtils.firstRange(diagnostic.textRanges)
                                 val start = offsetsToPositions[range.startOffset]!!
                                 val end = offsetsToPositions[range.endOffset]!!
                                 MessageUtil.createMessageLocation(
@@ -142,7 +142,7 @@ object FirDiagnosticsCompilerResultsReporter {
             val range2 = DiagnosticUtils.firstRange(o2.textRanges)
 
             return if (range1 != range2) {
-                DiagnosticUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
+                DiagnosticRangeUtils.TEXT_RANGE_COMPARATOR.compare(range1, range2)
             } else o1.factory.name.compareTo(o2.factory.name)
         }
     }
