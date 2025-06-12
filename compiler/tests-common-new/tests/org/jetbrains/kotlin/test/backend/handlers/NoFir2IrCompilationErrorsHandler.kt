@@ -41,7 +41,7 @@ class NoFir2IrCompilationErrorsHandler(testServices: TestServices) : BackendInpu
                 ) {
                     val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity).toString().toLowerCaseAsciiOnly()
                     val message = diagnostic.renderMessage()
-                    error("/$file:${diagnostic.textRanges.first()}: $severity: $message")
+                    error("/$file:${diagnostic.firstRange}: $severity: $message")
                 }
             }
         }

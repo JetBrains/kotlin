@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.diagnostics.DiagnosticRangeUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -86,7 +85,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
                     }
                     is FirDiagnosticCodeMetaInfo -> metaInfo.diagnostic.let {
                         val message = it.renderMessage()
-                        val position = finder.findNextPosition(DiagnosticRangeUtils.firstRange(it.textRanges).startOffset, false)
+                        val position = finder.findNextPosition(it.firstRange.startOffset, false)
                         renderDiagnosticMessage(testFile.relativePath, it.severity, message, position.line, position.column)
                     }
                     else -> continue

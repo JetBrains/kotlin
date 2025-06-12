@@ -9,15 +9,19 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 
 class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
-    private val renderersMap: MutableMap<KtDiagnosticFactoryN, KtDiagnosticRenderer> = mutableMapOf()
+    private val renderersMap: MutableMap<AbstractKtDiagnosticFactory, KtDiagnosticRenderer> = mutableMapOf()
 
-    operator fun get(factory: KtDiagnosticFactoryN): KtDiagnosticRenderer? = renderersMap[factory]
+    operator fun get(factory: AbstractKtDiagnosticFactory): KtDiagnosticRenderer? = renderersMap[factory]
 
-    val factories: Collection<KtDiagnosticFactoryN>
+    val factories: Collection<AbstractKtDiagnosticFactory>
         get() = renderersMap.keys
 
-    fun containsKey(factory: KtDiagnosticFactoryN): Boolean {
+    fun containsKey(factory: AbstractKtDiagnosticFactory): Boolean {
         return renderersMap.containsKey(factory)
+    }
+
+    fun put(factory: KtSourcelessDiagnosticFactory, message: String) {
+        put(factory, KtSourcelessDiagnosticRenderer(message))
     }
 
     fun put(factory: KtDiagnosticFactory0, message: String) {
@@ -109,7 +113,7 @@ class KtDiagnosticFactoryToRendererMap internal constructor(val name: String) {
         put(factory.warningFactory, KtDiagnosticWithParameters4Renderer(factory.warningMessage(message), rendererA, rendererB, rendererC, rendererD))
     }
 
-    private fun put(factory: KtDiagnosticFactoryN, renderer: KtDiagnosticRenderer) {
+    private fun put(factory: AbstractKtDiagnosticFactory, renderer: KtDiagnosticRenderer) {
         if (renderersMap.containsKey(factory)) {
             throw IllegalStateException("Diagnostic renderer is already initialized for $factory")
         }

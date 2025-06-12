@@ -910,7 +910,7 @@ internal class KaFirCompilerFacility(
         }
 
         if (diagnosticReporter.hasErrors) {
-            val errors = computeErrors(diagnosticReporter.diagnostics, allowedErrorFilter)
+            val errors = computeErrors(diagnosticReporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }
@@ -957,7 +957,7 @@ internal class KaFirCompilerFacility(
         )
 
         if (diagnosticReporter.hasErrors) {
-            val errors = computeErrors(diagnosticReporter.diagnostics, allowedErrorFilter)
+            val errors = computeErrors(diagnosticReporter.diagnostics.filterIsInstance<KtDiagnosticWithSource>(), allowedErrorFilter)
             if (errors.isNotEmpty()) {
                 return KaCompilationResult.Failure(errors)
             }

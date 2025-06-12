@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
@@ -63,7 +64,7 @@ class FirAnalysisResult(
     val reporter: BaseDiagnosticsCollector,
 ) : AnalysisResult {
     override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
-        get() = reporter.diagnostics.groupBy(
+        get() = reporter.diagnostics.filterIsInstance<KtPsiDiagnostic>().groupBy(
             keySelector = { it.psiElement.containingFile.name },
             valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
         )

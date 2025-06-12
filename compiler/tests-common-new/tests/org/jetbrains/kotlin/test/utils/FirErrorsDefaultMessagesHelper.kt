@@ -54,7 +54,8 @@ fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(factory: KtDiagnost
         is KtDiagnosticWithParameters3Renderer<*, *, *> -> 3
         is KtDiagnosticWithParameters2Renderer<*, *> -> 2
         is KtDiagnosticWithParameters1Renderer<*> -> 1
-        else -> 0
+        is KtSourcelessDiagnosticRenderer -> 1
+        is SimpleKtDiagnosticRenderer -> 0
     }
 
     val message = renderer.message
