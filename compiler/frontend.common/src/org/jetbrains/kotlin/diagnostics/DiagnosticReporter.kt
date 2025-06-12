@@ -43,11 +43,14 @@ open class KtDiagnosticReporterWithContext(
 
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
             return false
-//            TODO("Not yet implemented")
         }
 
         override val languageVersionSettings: LanguageVersionSettings
             get() = this@KtDiagnosticReporterWithContext.languageVersionSettings
+
+        fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
+            report(factory, message, this)
+        }
 
         fun report(factory: KtDiagnosticFactory0) {
             sourceElement?.let {

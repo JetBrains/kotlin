@@ -13,6 +13,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 context(container: KtDiagnosticsContainer)
+fun warningWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
+    return SourcelessDiagnosticFactoryDelegateProvider(Severity.WARNING, container)
+}
+
+context(container: KtDiagnosticsContainer)
 inline fun <reified P : PsiElement> warning0(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory0DelegateProvider {
@@ -45,6 +50,11 @@ inline fun <reified P : PsiElement, A, B, C, D> warning4(
     positioningStrategy: AbstractSourceElementPositioningStrategy = SourceElementPositioningStrategies.DEFAULT
 ): DiagnosticFactory4DelegateProvider<A, B, C, D> {
     return DiagnosticFactory4DelegateProvider(Severity.WARNING, positioningStrategy, P::class, container)
+}
+
+context(container: KtDiagnosticsContainer)
+fun errorWithoutSource(): SourcelessDiagnosticFactoryDelegateProvider {
+    return SourcelessDiagnosticFactoryDelegateProvider(Severity.ERROR, container)
 }
 
 context(container: KtDiagnosticsContainer)
@@ -123,6 +133,15 @@ inline fun <reified P : PsiElement, A, B, C, D> deprecationError4(
 }
 
 // ------------------------------ Providers ------------------------------
+
+class SourcelessDiagnosticFactoryDelegateProvider(
+    private val severity: Severity,
+    private val container: KtDiagnosticsContainer,
+) {
+    operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, KtSourcelessDiagnosticFactory> {
+        return DummyDelegate(KtSourcelessDiagnosticFactory(prop.name, severity, container.getRendererFactory()))
+    }
+}
 
 class DiagnosticFactory0DelegateProvider(
     private val severity: Severity,

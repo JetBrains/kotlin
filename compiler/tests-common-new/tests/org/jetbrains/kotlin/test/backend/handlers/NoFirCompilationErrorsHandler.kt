@@ -47,7 +47,7 @@ class NoFirCompilationErrorsHandler(
                     if (diagnostic.severity == Severity.ERROR) {
                         if (!ignoreErrors) {
                             val diagnosticText = diagnostic.renderMessage()
-                            val range = diagnostic.textRanges.first()
+                            val range = diagnostic.firstRange
                             val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
                                 PsiDiagnosticUtils.atLocation(psiFile, range)
                             } ?: "${firFile.name}:$range"

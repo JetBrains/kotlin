@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -111,7 +110,10 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
         val reportedDiagnostics = diagnostics
             .map {
                 DiagnosticData(
-                    textRanges = it.textRanges,
+                    textRanges = when (it) {
+                        is KtDiagnosticWithSource -> it.textRanges
+                        is KtDiagnosticWithoutSource -> listOf(it.firstRange)
+                    },
                     severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly(),
                     message = it.renderMessage()
                 )
@@ -557,33 +559,39 @@ fun KtDiagnostic.toMetaInfos(
     lightTreeComparingModeEnabled: Boolean,
     forceRenderArguments: Boolean = false,
     kmpCompilationMode: KmpCompilationMode? = null
-): List<FirDiagnosticCodeMetaInfo> = textRanges.map { range ->
-    val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
-    val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
-        .any { it.description != null }
-    if (shouldRenderArguments) {
-        metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
+): List<FirDiagnosticCodeMetaInfo> {
+    val ranges = when (this) {
+        is KtDiagnosticWithSource -> textRanges
+        is KtDiagnosticWithoutSource -> listOf(firstRange)
     }
-    if (lightTreeComparingModeEnabled) {
-        metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
-    }
-    if (file !in module.files) {
-        val targetPlatform = module.targetPlatform(globalMetadataInfoHandler.testServices)
-        metaInfo.attributes += when {
-            targetPlatform.isJvm() -> "JVM"
-            targetPlatform.isJs() -> "JS"
-            targetPlatform.isNative() -> "NATIVE"
-            targetPlatform.isCommon() -> "COMMON"
-            else -> error("Should not be here")
+    return ranges.map { range ->
+        val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)
+        val shouldRenderArguments = forceRenderArguments || globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
+            .any { it.description != null }
+        if (shouldRenderArguments) {
+            metaInfo.replaceRenderConfiguration(FirMetaInfoUtils.renderDiagnosticWithArgs)
         }
+        if (lightTreeComparingModeEnabled) {
+            metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
+        }
+        if (file !in module.files) {
+            val targetPlatform = module.targetPlatform(globalMetadataInfoHandler.testServices)
+            metaInfo.attributes += when {
+                targetPlatform.isJvm() -> "JVM"
+                targetPlatform.isJs() -> "JS"
+                targetPlatform.isNative() -> "NATIVE"
+                targetPlatform.isCommon() -> "COMMON"
+                else -> error("Should not be here")
+            }
+        }
+        if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {
+            metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.PLATFORM_TAG
+        }
+        if (kmpCompilationMode == KmpCompilationMode.METADATA) {
+            metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.METADATA_TAG
+        }
+        metaInfo
     }
-    if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {
-        metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.PLATFORM_TAG
-    }
-    if (kmpCompilationMode == KmpCompilationMode.METADATA) {
-        metaInfo.attributes += FirDiagnosticCodeMetaRenderConfiguration.METADATA_TAG
-    }
-    metaInfo
 }
 
 typealias DiagnosticsMap = Multimap<FirFile, DiagnosticWithKmpCompilationMode, List<DiagnosticWithKmpCompilationMode>>

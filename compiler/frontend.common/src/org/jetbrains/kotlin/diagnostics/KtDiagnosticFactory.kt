@@ -20,11 +20,9 @@ import kotlin.reflect.KClass
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
 annotation class InternalDiagnosticFactoryMethod
 
-sealed class KtDiagnosticFactoryN(
+sealed class AbstractKtDiagnosticFactory(
     val name: String,
     val severity: Severity,
-    val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
-    val psiType: KClass<*>,
     val rendererFactory: BaseDiagnosticRendererFactory
 ) {
     val ktRenderer: KtDiagnosticRenderer
@@ -44,6 +42,25 @@ sealed class KtDiagnosticFactoryN(
         return name
     }
 }
+
+class KtSourcelessDiagnosticFactory(
+    name: String,
+    severity: Severity,
+    rendererFactory: BaseDiagnosticRendererFactory,
+) : AbstractKtDiagnosticFactory(name, severity, rendererFactory) {
+    fun create(message: String, languageVersionSettings: LanguageVersionSettings): KtDiagnosticWithoutSource? {
+        val effectiveSeverity = getEffectiveSeverity(languageVersionSettings) ?: return null
+        return KtDiagnosticWithoutSource(message, effectiveSeverity, this)
+    }
+}
+
+sealed class KtDiagnosticFactoryN(
+    name: String,
+    severity: Severity,
+    val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
+    val psiType: KClass<*>,
+    rendererFactory: BaseDiagnosticRendererFactory
+) : AbstractKtDiagnosticFactory(name, severity, rendererFactory)
 
 class KtDiagnosticFactory0(
     name: String,
