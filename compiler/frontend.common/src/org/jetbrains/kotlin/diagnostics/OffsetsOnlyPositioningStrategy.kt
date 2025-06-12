@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 
 open class OffsetsOnlyPositioningStrategy : AbstractSourceElementPositioningStrategy() {
     open fun markKtDiagnostic(element: AbstractKtSourceElement, diagnostic: KtDiagnostic): List<TextRange> {
@@ -22,7 +20,9 @@ open class OffsetsOnlyPositioningStrategy : AbstractSourceElementPositioningStra
         return markElement(startOffset, endOffset)
     }
 
-    override fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> = markKtDiagnostic(diagnostic.element, diagnostic)
+    override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
+        return markKtDiagnostic(diagnostic.element, diagnostic)
+    }
 
     override fun isValid(element: AbstractKtSourceElement): Boolean = true
 }

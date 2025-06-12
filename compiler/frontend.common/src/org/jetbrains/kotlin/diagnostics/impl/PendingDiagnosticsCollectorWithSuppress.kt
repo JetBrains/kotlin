@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics.impl
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawReporter) : BaseDiagnosticsCollector() {
@@ -42,15 +43,17 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawRepor
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()
+                val diagnosticElement = (diagnostic as? KtDiagnosticWithSource)?.element
                 when {
                     context?.isDiagnosticSuppressed(diagnostic) == true -> {
-                        if (diagnostic.element == element ||
-                            diagnostic.element.startOffset >= element.startOffset && diagnostic.element.endOffset <= element.endOffset
+                        if (diagnosticElement != null &&
+                            (diagnosticElement == element ||
+                                    diagnosticElement.startOffset >= element.startOffset && diagnosticElement.endOffset <= element.endOffset)
                         ) {
                             iterator.remove()
                         }
                     }
-                    diagnostic.element == element || commitEverything -> {
+                    diagnosticElement == element || commitEverything -> {
                         iterator.remove()
                         committedList += diagnostic
                         if (!hasErrors && diagnostic.severity == Severity.ERROR) {

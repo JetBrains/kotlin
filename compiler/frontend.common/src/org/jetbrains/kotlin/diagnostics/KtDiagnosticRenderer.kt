@@ -38,6 +38,13 @@ sealed class AbstractKtDiagnosticWithParametersRenderer(
     }
 }
 
+class KtSourcelessDiagnosticRenderer(message: String) : AbstractKtDiagnosticWithParametersRenderer(message) {
+    override fun renderParameters(diagnostic: KtDiagnostic): Array<out Any?> {
+        require(diagnostic is KtDiagnosticWithoutSource)
+        return arrayOf(diagnostic.message)
+    }
+}
+
 class KtDiagnosticWithParameters1Renderer<A>(
     message: String,
     private val rendererForA: DiagnosticParameterRenderer<A>?,

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryN
+import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -29,7 +29,7 @@ class FirComposedDiagnosticRendererFactory : DiagnosticRendererFactory, FirSessi
         }
     }
 
-    val allDiagnosticFactories: List<KtDiagnosticFactoryN>
+    val allDiagnosticFactories: List<AbstractKtDiagnosticFactory>
         get() = factories.flatMap { it.MAP.factories }
 }
 

@@ -9,7 +9,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.AbstractKtSourceElement
 
 abstract class AbstractSourceElementPositioningStrategy {
-    abstract fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange>
+    abstract fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange>
 
     abstract fun isValid(element: AbstractKtSourceElement): Boolean
 }

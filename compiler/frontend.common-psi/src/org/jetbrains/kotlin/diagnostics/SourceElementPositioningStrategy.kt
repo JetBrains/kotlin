@@ -17,7 +17,7 @@ class SourceElementPositioningStrategy(
     private val psiStrategy: PositioningStrategy<*>,
     private val offsetsOnlyPositioningStrategy: OffsetsOnlyPositioningStrategy = OffsetsOnlyPositioningStrategy(),
 ) : AbstractSourceElementPositioningStrategy() {
-    override fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange> {
+    override fun markDiagnostic(diagnostic: KtDiagnosticWithSource): List<TextRange> {
         return when (val element = diagnostic.element) {
             is KtPsiSourceElement -> psiStrategy.markDiagnostic(diagnostic)
             is KtLightSourceElement -> lightTreeStrategy.markKtDiagnostic(element, diagnostic)

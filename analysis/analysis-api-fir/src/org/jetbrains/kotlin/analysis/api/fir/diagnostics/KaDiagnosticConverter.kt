@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.diagnostics
 
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal interface KaFirDiagnosticCreator
 
@@ -58,8 +59,9 @@ internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFa
     }
 
     @Suppress("RemoveExplicitTypeArguments") // See KT-52838
-    private fun buildCreatorForPluginDiagnostic(factory: KtDiagnosticFactoryN): KaFirDiagnosticCreator {
+    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator {
         return when (factory) {
+            is KtSourcelessDiagnosticFactory -> shouldNotBeCalled()
             is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
                 KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
             }
