@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.diagnostics.impl
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.diagnostics.AbstractKtDiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryN
 import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 
 class DeduplicatingDiagnosticReporter(private val inner: DiagnosticReporter) : DiagnosticReporter() {
 
-    private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, AbstractKtDiagnosticFactory>>()
+    private val reported = mutableSetOf<Triple<String?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && reported.add(Triple(context.containingFilePath, diagnostic.element, diagnostic.factory))) {

@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 @RequiresOptIn("Please use DiagnosticReporter.reportOn method if possible")
 annotation class InternalDiagnosticFactoryMethod
 
-sealed class AbstractKtDiagnosticFactory(
+sealed class KtDiagnosticFactoryN(
     val name: String,
     val severity: Severity,
     val defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
@@ -51,7 +51,7 @@ class KtDiagnosticFactory0(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -80,7 +80,7 @@ class KtDiagnosticFactory1<A>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -113,7 +113,7 @@ class KtDiagnosticFactory2<A, B>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -148,7 +148,7 @@ class KtDiagnosticFactory3<A, B, C>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -185,7 +185,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
     defaultPositioningStrategy: AbstractSourceElementPositioningStrategy,
     psiType: KClass<*>,
     rendererFactory: BaseDiagnosticRendererFactory,
-) : AbstractKtDiagnosticFactory(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
+) : KtDiagnosticFactoryN(name, severity, defaultPositioningStrategy, psiType, rendererFactory) {
     @InternalDiagnosticFactoryMethod
     fun on(
         element: AbstractKtSourceElement,
@@ -220,7 +220,7 @@ class KtDiagnosticFactory4<A, B, C, D>(
 
 // ------------------------------ factories for deprecation ------------------------------
 
-sealed class KtDiagnosticFactoryForDeprecation<F : AbstractKtDiagnosticFactory>(
+sealed class KtDiagnosticFactoryForDeprecation<F : KtDiagnosticFactoryN>(
     val name: String,
     val deprecatingFeature: LanguageFeature,
     val warningFactory: F,

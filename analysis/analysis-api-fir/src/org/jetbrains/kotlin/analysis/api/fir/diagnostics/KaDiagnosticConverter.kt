@@ -30,7 +30,7 @@ internal fun interface KaFirDiagnostic4Creator<A, B, C, D> : KaFirDiagnosticCrea
     fun KaFirSession.create(diagnostic: KtDiagnosticWithParameters4<A, B, C, D>): KaFirDiagnostic<*>
 }
 
-internal class KaDiagnosticConverter(private val conversions: Map<AbstractKtDiagnosticFactory, KaFirDiagnosticCreator>) {
+internal class KaDiagnosticConverter(private val conversions: Map<KtDiagnosticFactoryN, KaFirDiagnosticCreator>) {
     fun convert(analysisSession: KaFirSession, diagnostic: KtDiagnostic): KaFirDiagnostic<*> {
         val creator = conversions[diagnostic.factory] ?: buildCreatorForPluginDiagnostic(diagnostic.factory)
 
@@ -58,7 +58,7 @@ internal class KaDiagnosticConverter(private val conversions: Map<AbstractKtDiag
     }
 
     @Suppress("RemoveExplicitTypeArguments") // See KT-52838
-    private fun buildCreatorForPluginDiagnostic(factory: AbstractKtDiagnosticFactory): KaFirDiagnosticCreator {
+    private fun buildCreatorForPluginDiagnostic(factory: KtDiagnosticFactoryN): KaFirDiagnosticCreator {
         return when (factory) {
             is KtDiagnosticFactory0 -> KaFirDiagnostic0Creator {
                 KaCompilerPluginDiagnostic0Impl(it as KtPsiSimpleDiagnostic, token)
@@ -102,7 +102,7 @@ internal class KaDiagnosticConverter(private val conversions: Map<AbstractKtDiag
 }
 
 internal class KaDiagnosticConverterBuilder private constructor() {
-    private val conversions = mutableMapOf<AbstractKtDiagnosticFactory, KaFirDiagnosticCreator>()
+    private val conversions = mutableMapOf<KtDiagnosticFactoryN, KaFirDiagnosticCreator>()
 
     fun add(diagnostic: KtDiagnosticFactory0, creator: KaFirDiagnostic0Creator) {
         conversions[diagnostic] = creator
