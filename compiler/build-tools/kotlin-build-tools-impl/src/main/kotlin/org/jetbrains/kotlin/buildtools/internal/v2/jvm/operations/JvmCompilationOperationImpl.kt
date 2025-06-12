@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.XUSE_FIR_IC
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy.Companion.DAEMON_JVM_ARGUMENTS
-import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
@@ -66,13 +65,11 @@ class JvmCompilationOperationImpl(
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
-    private val optionsDelegate = OptionsDelegate<JvmCompilationOperation.Option<*>>()
 
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = optionsDelegate[key]
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         optionsDelegate[key] = value
     }
-    fun <V> getOrElse(key: JvmCompilationOperation.Option<V>, default: V?) = optionsDelegate.getOrElse(key, default)
 
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
 
@@ -95,16 +92,16 @@ class JvmCompilationOperationImpl(
     }
 
     private fun JvmCompilerArgumentsImpl.toDaemonCompilationOptions(logger: KotlinLogger): CompilationOptions {
-        val ktsExtensionsAsArray =
-            optionsDelegate.getOrElse(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS, emptyArray<String>())
-        val reportCategories = arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
+        val ktsExtensionsAsArray = get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS)
+        val reportCategories = arrayOf(
+            ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
+        ) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportSeverity = if (logger.isDebugEnabled) {
             ReportSeverity.DEBUG.code
         } else {
             ReportSeverity.INFO.code
         }
-        val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? =
-            optionsDelegate.getOrElse(INCREMENTAL_COMPILATION, null)
+        val aggregatedIcConfiguration: JvmIncrementalCompilationConfiguration? = get(INCREMENTAL_COMPILATION)
         return when (aggregatedIcConfiguration) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
@@ -141,9 +138,7 @@ class JvmCompilationOperationImpl(
                 kotlinScriptExtensions = ktsExtensionsAsArray,
             )
             else -> error(
-                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. " +
-                        "In this version, it must be an instance of JvmIncrementalCompilationConfiguration " +
-                        "for incremental compilation, or null for non-incremental compilation."
+                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. " + "In this version, it must be an instance of JvmIncrementalCompilationConfiguration " + "for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
@@ -161,9 +156,7 @@ class JvmCompilationOperationImpl(
         }
 
         val jvmOptions = configureDaemonJVMOptions(
-            inheritMemoryLimits = true,
-            inheritOtherJvmOptions = false,
-            inheritAdditionalProperties = true
+            inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
         ).also { opts ->
             val daemonJvmArguments = try {
                 executionPolicy[DAEMON_JVM_ARGUMENTS]
@@ -177,19 +170,13 @@ class JvmCompilationOperationImpl(
             }
         }
         val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId,
-            clientIsAliveFile,
-            sessionIsAliveFlagFile,
-            loggerAdapter,
-            false,
-            daemonJVMOptions = jvmOptions
+            compilerId, clientIsAliveFile, sessionIsAliveFlagFile, loggerAdapter, false, daemonJVMOptions = jvmOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         val daemonCompileOptions = compilerArguments.toDaemonCompilationOptions(loggerAdapter.kotlinLogger)
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
         if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
             checkJvmFirRequirements(compilerArguments)
-        }
-        /* TODO: fix together with KT-62759
+        }/* TODO: fix together with KT-62759
          * To avoid parsing sources from freeArgs and filtering them in the daemon,
          * work around the issue by removing .java files in non-incremental mode.
          * Preferably, this should be done in the daemon.
@@ -200,21 +187,21 @@ class JvmCompilationOperationImpl(
             kotlinSources
         } else {
             val kotlinFilenameExtensions =
-                DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + optionsDelegate.getOrElse(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS, emptyArray())
+                DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
             kotlinSources.filter { it.toFile().isKotlinFile(kotlinFilenameExtensions) }
         }
         val arguments = compilerArguments.toCompilerArguments()
         arguments.freeArgs += effectiveSources.map { it.absolutePathString() }
         arguments.destination = destinationDirectory.absolutePathString()
-        val rootProjectDir = (getOrElse(INCREMENTAL_COMPILATION, null) as? JvmSnapshotBasedIncrementalCompilationConfiguration)?.options?.get(ROOT_PROJECT_DIR)
+        val rootProjectDir =
+            (get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration)?.options?.get(ROOT_PROJECT_DIR)
         val exitCode = daemon.compile(
             sessionId,
             arguments.toArgumentStrings().toTypedArray(),
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults(
-                loggerAdapter.kotlinLogger,
-                rootProjectDir?.toFile()
+                loggerAdapter.kotlinLogger, rootProjectDir?.toFile()
             )
         ).get()
 
@@ -241,30 +228,29 @@ class JvmCompilationOperationImpl(
         setupIdeaStandaloneExecution()
         val compiler = K2JVMCompiler()
         val arguments = compilerArguments.toCompilerArguments()
-        val kotlinFilenameExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + optionsDelegate.getOrElse(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS, emptyArray())
+        val kotlinFilenameExtensions =
+            DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
         arguments.destination = destinationDirectory.absolutePathString()
-        val aggregatedIcConfiguration =
-            getOrElse(INCREMENTAL_COMPILATION, null)
+        val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)
         return when (aggregatedIcConfiguration) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
-                @Suppress("DEPRECATION")
-                val kotlinSources =
-                    extractKotlinSourcesFromFreeCompilerArguments(arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS) + kotlinSources.map { it.toFile() }
+                @Suppress("DEPRECATION") val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
+                    arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+                ) + kotlinSources.map { it.toFile() }
 
                 val classpathChanges = aggregatedIcConfiguration.classpathChanges
                 val buildReporter = BuildReporter(
                     icReporter = BuildToolsApiBuildICReporter(
-                        loggerAdapter.kotlinLogger,
-                        aggregatedIcConfiguration.options[ROOT_PROJECT_DIR].toFile()
-                    ),
-                    buildMetricsReporter = DoNothingBuildMetricsReporter
+                        loggerAdapter.kotlinLogger, aggregatedIcConfiguration.options[ROOT_PROJECT_DIR].toFile()
+                    ), buildMetricsReporter = DoNothingBuildMetricsReporter
                 )
                 val verifiedPreciseJavaTracking =
                     arguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = aggregatedIcConfiguration.options[PRECISE_JAVA_TRACKING])
                 val icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures().copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 )
-                val incrementalCompiler = if (aggregatedIcConfiguration.options[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
+                val incrementalCompiler =
+                    if (aggregatedIcConfiguration.options[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
                         IncrementalFirJvmCompilerRunner(
                             aggregatedIcConfiguration.workingDirectory.toFile(),
                             buildReporter,
@@ -288,7 +274,10 @@ class JvmCompilationOperationImpl(
                 val buildDir = aggregatedIcConfiguration.options[MODULE_BUILD_DIR]
                 arguments.incrementalCompilation = true
                 incrementalCompiler.compile(
-                    kotlinSources, arguments, loggerAdapter, aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
+                    kotlinSources,
+                    arguments,
+                    loggerAdapter,
+                    aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
                     fileLocations = FileLocations(rootProjectDir.toFile(), buildDir.toFile())
                 ).asCompilationResult
             }
@@ -298,9 +287,7 @@ class JvmCompilationOperationImpl(
                 compiler.exec(loggerAdapter, Services.EMPTY, arguments).asCompilationResult
             }
             else -> error(
-                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. " +
-                        "In this version, it must be an instance of JvmSnapshotBasedIncrementalCompilationConfiguration " +
-                        "for incremental compilation, or null for non-incremental compilation."
+                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. " + "In this version, it must be an instance of JvmSnapshotBasedIncrementalCompilationConfiguration " + "for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
@@ -316,7 +303,8 @@ private fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncrement
 
 private val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
     get() {
-        val snapshotFiles = ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
+        val snapshotFiles =
+            ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
         return when {
             !shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
                 snapshotFiles
@@ -337,22 +325,23 @@ private val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges
 private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
 ): Boolean {
-    val languageVersion: LanguageVersion = try { arguments[LANGUAGE_VERSION] } catch (_: Exception) { null }
-        ?.let {
+    val languageVersion: LanguageVersion = try {
+        arguments[LANGUAGE_VERSION]
+    } catch (_: Exception) {
+        null
+    }?.let {
             LanguageVersion.fromVersionString(it.value)
         } ?: LanguageVersion.LATEST_STABLE
 
     check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
         "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"
     }
-    @Suppress("DEPRECATION")
-    check(arguments[XUSE_FIR_IC]) {
+    @Suppress("DEPRECATION") check(arguments[XUSE_FIR_IC]) {
         "FIR incremental compiler runner requires '-Xuse-fir-ic' to be present in arguments"
     }
 
     return true
 }
-
 
 
 private fun <T : CommonToolArguments> KClass<T>.newArgumentsInstance(): T {
@@ -366,7 +355,7 @@ private fun <T : CommonToolArguments> KClass<T>.newArgumentsInstance(): T {
 internal fun <T : CommonToolArguments> toArgumentStrings(
     thisArguments: T, type: KClass<T>,
     shortArgumentKeys: Boolean,
-    compactArgumentValues: Boolean
+    compactArgumentValues: Boolean,
 ): List<String> = ArrayList<String>().apply {
     val defaultArguments = type.newArgumentsInstance()
     type.memberProperties.forEach { property ->
@@ -382,11 +371,17 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
         val argumentStringValues = when {
             property.returnType.classifier == Boolean::class -> listOf(rawPropertyValue?.toString() ?: false.toString())
 
-            (property.returnType.classifier as? KClass<*>)?.java?.isArray == true ->
-                getArgumentStringValue(argumentAnnotation, rawPropertyValue as Array<*>?, compactArgumentValues)
+            (property.returnType.classifier as? KClass<*>)?.java?.isArray == true -> getArgumentStringValue(
+                argumentAnnotation,
+                rawPropertyValue as Array<*>?,
+                compactArgumentValues
+            )
 
-            property.returnType.classifier == List::class ->
-                getArgumentStringValue(argumentAnnotation, (rawPropertyValue as List<*>?)?.toTypedArray(), compactArgumentValues)
+            property.returnType.classifier == List::class -> getArgumentStringValue(
+                argumentAnnotation,
+                (rawPropertyValue as List<*>?)?.toTypedArray(),
+                compactArgumentValues
+            )
 
             else -> listOf(rawPropertyValue.toString())
         }
@@ -396,8 +391,7 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
 
         argumentStringValues.forEach { argumentStringValue ->
 
-            when {
-                /* We can just enable the flag by passing the argument name like -myFlag: Value not required */
+            when {/* We can just enable the flag by passing the argument name like -myFlag: Value not required */
                 rawPropertyValue is Boolean && rawPropertyValue -> {
                     add(argumentName)
                 }

@@ -20,7 +20,6 @@ import java.nio.file.Path
 class JvmClasspathSnapshottingOperationImpl(
     private val classpathEntry: Path,
 ) : BuildOperationImpl<JvmClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
-    private val optionsDelegate = OptionsDelegate<JvmClasspathSnapshottingOperation.Option<*>>()
 
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = optionsDelegate[key]
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
@@ -28,8 +27,8 @@ class JvmClasspathSnapshottingOperationImpl(
     }
 
     override fun execute(executionPolicy: ExecutionPolicy?, logger: KotlinLogger?): JvmClasspathEntrySnapshot {
-        val granularity = optionsDelegate.getOrElse(JvmClasspathSnapshottingOperation.GRANULARITY, ClassSnapshotGranularity.CLASS_LEVEL)
-        val parseInlinedLocalClasses = optionsDelegate.getOrElse(JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES, false)
+        val granularity = get(JvmClasspathSnapshottingOperation.GRANULARITY)
+        val parseInlinedLocalClasses = get(JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES)
 
         val origin = ClasspathEntrySnapshotter.snapshot(
             classpathEntry.toFile(),

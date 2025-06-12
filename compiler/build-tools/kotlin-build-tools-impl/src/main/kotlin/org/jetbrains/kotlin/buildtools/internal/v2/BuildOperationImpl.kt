@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.buildtools.internal.v2
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.v2.internal.Option
 import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 
 abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val optionsDelegate = OptionsDelegate<BuildOperation.Option<*>>()
+    protected val optionsDelegate = OptionsDelegate()
 
-    override fun <V> get(key: BuildOperation.Option<V>): V? = optionsDelegate[key]
+    override fun <V> get(key: BuildOperation.Option<V>): V = optionsDelegate[key as Option]
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        optionsDelegate[key as Option] = value
     }
 
     abstract fun execute(executionPolicy: ExecutionPolicy? = null, logger: KotlinLogger? = null): R

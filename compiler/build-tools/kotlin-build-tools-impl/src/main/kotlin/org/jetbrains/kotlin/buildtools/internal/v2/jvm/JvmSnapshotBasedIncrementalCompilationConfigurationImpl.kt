@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.buildtools.internal.v2.jvm
 
+
 import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 
 class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions {
-    private val optionsDelegate = OptionsDelegate<JvmSnapshotBasedIncrementalCompilationOptions.Option<*>>()
+    private val optionsDelegate = OptionsDelegate()
 
-    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = optionsDelegate[key]
-
-    override fun <V> set(
-        key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>,
-        value: V,
-    ) {
+    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = optionsDelegate[key] as V
+    override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
         optionsDelegate[key] = value
     }
 }

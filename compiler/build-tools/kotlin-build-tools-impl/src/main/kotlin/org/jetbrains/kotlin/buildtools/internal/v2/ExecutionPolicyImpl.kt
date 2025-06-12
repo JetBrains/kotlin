@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
 
 class ExecutionPolicyImpl : ExecutionPolicy {
-    private val optionsDelegate = OptionsDelegate<ExecutionPolicy.Option<*>>()
+    private val optionsDelegate = OptionsDelegate()
 
     override fun <V> get(key: ExecutionPolicy.Option<V>): V = optionsDelegate[key]
 

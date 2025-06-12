@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.api.v2
 
+import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.WithDefault
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmClasspathSnapshottingOperation
+
 public interface ExecutionPolicy {
-    public class Option<V> internal constructor(public val id: String)
+    public interface Option<V>
 
     public operator fun <V> get(key: Option<V>): V
 
@@ -18,10 +21,13 @@ public interface ExecutionPolicy {
     }
 
     public companion object {
-        @JvmField
-        public val EXECUTION_MODE: Option<ExecutionMode> = Option("EXECUTION_MODE")
+        private fun <V> optional(id: String, defaultValue: V): Option<V> =
+            object : WithDefault<V>(id, defaultValue), Option<V> {}
 
         @JvmField
-        public val DAEMON_JVM_ARGUMENTS: Option<List<String>> = Option("DAEMON_JVM_ARGUMENTS")
+        public val EXECUTION_MODE: Option<ExecutionMode> = optional("EXECUTION_MODE", ExecutionMode.IN_PROCESS)
+
+        @JvmField
+        public val DAEMON_JVM_ARGUMENTS: Option<List<String>> = optional("DAEMON_JVM_ARGUMENTS", emptyList())
     }
 }
