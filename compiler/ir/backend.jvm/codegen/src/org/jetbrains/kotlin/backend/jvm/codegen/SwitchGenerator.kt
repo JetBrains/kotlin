@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.IrWhenUtils
 import org.jetbrains.kotlin.codegen.`when`.SwitchCodegen.Companion.preferLookupOverSwitch
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Label
@@ -62,11 +63,13 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         val firstCondition = callToLabels[0].call
         if (firstCondition.symbol != context.irBuiltIns.eqeqSymbol) return null
-        val subject = firstCondition.arguments[0]
+        val subject = firstCondition.arguments[0] ?: return null
         return when {
             subject is IrCall && subject.isCoerceFromUIntToInt() ->
                 generateUIntSwitch(subject.arguments[0]!! as? IrGetValue, calls, callToLabels, expressionToLabels, elseExpression)
-            subject is IrGetValue || subject is IrConst && subject.type.isString() -> // also generate tableswitch for literal string subject
+            subject is IrGetValue
+                    || subject is IrConst && subject.type.isString()  // also generate tableswitch for literal string subject
+                    || subject.isByteOrShortToInt() ->
                 generatePrimitiveSwitch(subject, calls, callToLabels, expressionToLabels, elseExpression)
             else ->
                 null
@@ -111,6 +114,12 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         )
     }
 
+    fun IrExpression.isByteOrShortToInt(): Boolean {
+        if (this !is IrCall) return false
+        val fqName = symbol.owner.fqNameWhenAvailable?.asString()
+        return fqName == "kotlin.Byte.toInt" || fqName == "kotlin.Short.toInt"
+    }
+
     private fun generatePrimitiveSwitch(
         subject: IrExpression,
         conditions: List<IrCall>,
@@ -122,7 +131,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         if (!areConstantComparisons(conditions)) return null
 
         return when {
-            subject is IrGetValue && areConstIntComparisons(conditions) -> {
+            (subject is IrGetValue || subject.isByteOrShortToInt()) && areConstIntComparisons(conditions) -> {
                 val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
                 IntSwitch(
                     subject,
@@ -187,8 +196,17 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             return lhs.all { it != null && it.value == lhs[0]!!.value }
         }
 
+        fun isValidCallToIntLHS(): Boolean {
+            val lhs = conditions.map {
+                val call = it.takeIf { it.symbol == context.irBuiltIns.eqeqSymbol }?.arguments[0] ?: return false
+                if (!call.isByteOrShortToInt()) return false
+                (call as IrCall).arguments[0] as? IrGetValue
+            }
+            return lhs.all { it != null && it.symbol.owner == lhs[0]!!.symbol.owner }
+        }
+
         // All conditions are equality checks && all LHS refer to the same tmp variable.
-        if (!isValidIrGetValueTypeLHS() && !isValidIrConstTypeLHS())
+        if (!isValidIrGetValueTypeLHS() && !isValidIrConstTypeLHS() && !isValidCallToIntLHS())
             return false
 
         // All RHS are constants
@@ -218,7 +236,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         subjectTypePredicate: (IrType) -> Boolean,
         irConstPredicate: (IrConst) -> Boolean
     ): Boolean {
-        val lhs = conditions.map { it.arguments[0] as? IrGetValue ?: it.arguments[0] as IrConst }
+        val lhs = conditions.map { it.arguments[0] as? IrGetValue ?: it.arguments[0] as? IrConst ?: it.arguments[0] as IrCall }
         if (lhs.any { !subjectTypePredicate(it.type) })
             return false
 
@@ -314,7 +332,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     }
 
     inner class IntSwitch(
-        subject: IrGetValue,
+        subject: IrExpression,
         elseExpression: IrExpression?,
         expressionToLabels: ArrayList<ExpressionToLabel>,
         private val cases: List<ValueToLabel>

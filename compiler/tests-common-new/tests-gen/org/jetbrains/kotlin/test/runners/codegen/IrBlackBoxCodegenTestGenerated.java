@@ -61546,6 +61546,36 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("lookupSwitchOverByte.kt")
+    public void testLookupSwitchOverByte() {
+      runTest("compiler/testData/codegen/box/when/lookupSwitchOverByte.kt");
+    }
+
+    @Test
+    @TestMetadata("lookupSwitchOverChar.kt")
+    public void testLookupSwitchOverChar() {
+      runTest("compiler/testData/codegen/box/when/lookupSwitchOverChar.kt");
+    }
+
+    @Test
+    @TestMetadata("lookupSwitchOverInt.kt")
+    public void testLookupSwitchOverInt() {
+      runTest("compiler/testData/codegen/box/when/lookupSwitchOverInt.kt");
+    }
+
+    @Test
+    @TestMetadata("lookupSwitchOverMixTypes.kt")
+    public void testLookupSwitchOverMixTypes() {
+      runTest("compiler/testData/codegen/box/when/lookupSwitchOverMixTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("lookupSwitchOverShort.kt")
+    public void testLookupSwitchOverShort() {
+      runTest("compiler/testData/codegen/box/when/lookupSwitchOverShort.kt");
+    }
+
+    @Test
     @TestMetadata("matchNotNullAgainstNullable.kt")
     public void testMatchNotNullAgainstNullable() {
       runTest("compiler/testData/codegen/box/when/matchNotNullAgainstNullable.kt");
@@ -61687,6 +61717,30 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     @TestMetadata("switchOptimizationWithGap.kt")
     public void testSwitchOptimizationWithGap() {
       runTest("compiler/testData/codegen/box/when/switchOptimizationWithGap.kt");
+    }
+
+    @Test
+    @TestMetadata("tableSwitchOverByte.kt")
+    public void testTableSwitchOverByte() {
+      runTest("compiler/testData/codegen/box/when/tableSwitchOverByte.kt");
+    }
+
+    @Test
+    @TestMetadata("tableSwitchOverChar.kt")
+    public void testTableSwitchOverChar() {
+      runTest("compiler/testData/codegen/box/when/tableSwitchOverChar.kt");
+    }
+
+    @Test
+    @TestMetadata("tableSwitchOverInt.kt")
+    public void testTableSwitchOverInt() {
+      runTest("compiler/testData/codegen/box/when/tableSwitchOverInt.kt");
+    }
+
+    @Test
+    @TestMetadata("tableSwitchOverShort.kt")
+    public void testTableSwitchOverShort() {
+      runTest("compiler/testData/codegen/box/when/tableSwitchOverShort.kt");
     }
 
     @Test

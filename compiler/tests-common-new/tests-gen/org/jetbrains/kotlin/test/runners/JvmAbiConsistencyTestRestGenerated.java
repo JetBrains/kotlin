@@ -13197,12 +13197,6 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
-      @TestMetadata("lookupSwitch.kt")
-      public void testLookupSwitch() {
-        runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitch.kt");
-      }
-
-      @Test
       @TestMetadata("lookupSwitchWithSubjectVal.kt")
       public void testLookupSwitchWithSubjectVal() {
         runTest("compiler/testData/codegen/bytecodeText/when/lookupSwitchWithSubjectVal.kt");
@@ -13266,12 +13260,6 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       @TestMetadata("switchOptimizationDuplicates.kt")
       public void testSwitchOptimizationDuplicates() {
         runTest("compiler/testData/codegen/bytecodeText/when/switchOptimizationDuplicates.kt");
-      }
-
-      @Test
-      @TestMetadata("tableSwitch.kt")
-      public void testTableSwitch() {
-        runTest("compiler/testData/codegen/bytecodeText/when/tableSwitch.kt");
       }
 
       @Test
