@@ -76,6 +76,7 @@ typedef void* CSNotificationBlock;
 constexpr CSTypeRef kCSNull = { 0, nullptr };
 
 constexpr auto kCSNow = 1ull<<63;
+constexpr uint32_t kCSSymbolicatorDisallowDaemonCommunication = 0x00000800;
 
 #if defined (__x86_64__)
 constexpr CSArchitecture hostArchitecture = {
@@ -232,7 +233,7 @@ CSSymbolicatorRef createSymbolicatorWithCurrentImage() {
   relocationInfo->base = imageInfo->base;
   relocationInfo->extent = imageInfo->extent;
 
-  return CSSymbolicatorCreateWithBinaryImageList(imageInfo, 1, 0, nullptr);
+  return CSSymbolicatorCreateWithBinaryImageList(imageInfo, 1, kCSSymbolicatorDisallowDaemonCommunication, nullptr);
 }
 
 bool TryInitializeCoreSymbolication() {
