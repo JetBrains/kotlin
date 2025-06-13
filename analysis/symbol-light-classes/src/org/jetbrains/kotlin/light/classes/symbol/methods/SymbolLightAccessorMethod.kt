@@ -387,13 +387,13 @@ internal class SymbolLightAccessorMethod private constructor(
             if (declaration.getter?.isNotDefault != true && declaration.setter?.isNotDefault != true && declaration.visibility == KaSymbolVisibility.PRIVATE) return
 
             if (declaration.isJvmField) return
-            val propertyTypeIsValueClass = hasTypeForValueClassInSignature(callableSymbol = declaration, suppressJvmNameCheck = true)
+            val propertySignatureHasValueClass = hasValueClassInSignature(callableSymbol = declaration)
 
             fun KaPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
                 if (declaration.hasReifiedParameters) return false
 
                 when {
-                    !propertyTypeIsValueClass -> {}
+                    !propertySignatureHasValueClass -> {}
                     /*
                      * For top-level properties with value class in return type compiler mangles only setter
                      *
@@ -411,9 +411,9 @@ internal class SymbolLightAccessorMethod private constructor(
                      *     private static Ljava/lang/String; topLevelProp
                      *  }
                      */
-                    this is KaPropertyGetterSymbol && lightClass is SymbolLightClassForFacade && !hasTypeForValueClassInSignature(
+                    this is KaPropertyGetterSymbol && lightClass is SymbolLightClassForFacade && !hasValueClassInSignature(
                         callableSymbol = declaration,
-                        ignoreReturnType = isTopLevel,
+                        skipReturnTypeCheck = isTopLevel,
                     ) -> {
                     }
 
