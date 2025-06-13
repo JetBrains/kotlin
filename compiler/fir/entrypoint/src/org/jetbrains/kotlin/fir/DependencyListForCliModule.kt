@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
 import org.jetbrains.kotlin.name.Name
+import java.io.FileNotFoundException
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.exists
-import kotlin.io.path.isSymbolicLink
 
 /**
  * This class represents the set of dependencies for some source module.
@@ -108,10 +107,14 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
             destination.add(moduleData)
             if (paths.isEmpty()) return
             val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
-            paths.mapTo(filterSet) {
+            paths.mapNotNullTo(filterSet) {
                 val path = Paths.get(it)
-                if (path.isSymbolicLink()) path.toRealPath()
-                else path.toAbsolutePath()
+                try {
+                    path.toRealPath()
+                } catch (_: FileNotFoundException) {
+                    // This is protection from unresolved symlinks
+                    path.toAbsolutePath()
+                }
             }
         }
 
