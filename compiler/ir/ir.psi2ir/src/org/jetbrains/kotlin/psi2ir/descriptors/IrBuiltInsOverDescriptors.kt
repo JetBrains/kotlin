@@ -560,7 +560,9 @@ class IrBuiltInsOverDescriptors(
         return binaryOperatorCache.getOrPut(key) {
             classifier.functions.single {
                 val function = it.owner
-                function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
+                function.name == name && function.parameters.singleOrNull { parameter ->
+                    parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context
+                }?.type == rhsType
             }
         }
     }
