@@ -92,8 +92,8 @@ object FirDiagnosticRenderers {
     /**
      * Maximum amount of symbols in lines before summarization.
      */
-    private const val MAX_SYMBOLS_ON_NEXT_LINES_WITHOUT_SUMMARY = 10
-    private const val MAX_SYMBOLS_ON_GROUP_IN_SUMMARY = 3
+    private const val MAX_SYMBOLS_ON_NEXT_LINES_WITHOUT_SUMMARY = 15
+    private const val MAX_SYMBOLS_ON_GROUP_IN_SUMMARY = 4
 
     /**
      * Adds a line break before the list, then prints one symbol per line.
