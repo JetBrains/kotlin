@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.hasRecursiveTypeParametersWithGivenSelfType
 import org.jetbrains.kotlin.resolve.calls.inference.isRecursiveTypeParameter
-import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.IncorporationConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
@@ -97,14 +93,16 @@ class VariableFixationFinder(
         // After 2.2, `WITH_COMPLEX_DEPENDENCY` means the variable only contains non-proper constraints or constraints with ILT.
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT, // Same as before but also has a constraint to types like `Long`, `Int`, etc.
+        WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_UPPER, // Same as before but also has a constraint to types like `Long`, `Int`, etc.
         WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY, // Same as WITH_COMPLEX_DEPENDENCY but also has a constraint T = ... not dependent on others
         ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
 
+        READY_FOR_FIXATION_LOWER_NOTHING,
+        READY_FOR_FIXATION_LOWER,
         // We prefer LOWER T >: SomeRegularType to UPPER T <: SomeRegularType, KT-41934 is the only reason known
         READY_FOR_FIXATION_UPPER,
-        READY_FOR_FIXATION_LOWER,
 
         // Currently used in 2.2+ ONLY for self-type based declared upper bounds
         // Captured types are difficult to manipulate, so with T <: Captured(...)
@@ -160,8 +158,9 @@ class VariableFixationFinder(
 
             // 1.5+ (questionable) logic: we prefer LOWER constraints to UPPER constraints, mostly because of KT-41934
             // TODO: try to reconsider (see KT-76518)
+            !hasLowerProperConstraint() -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
             hasLowerNonNothingProperConstraint() -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER
-            else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+            else -> TypeVariableFixationReadiness.READY_FOR_FIXATION_LOWER_NOTHING
         }
     }
 
@@ -261,13 +260,17 @@ class VariableFixationFinder(
     context(c: Context)
     private fun TypeConstructorMarker.hasDependencyToOtherTypeVariables(): Boolean {
         for (constraint in c.notFixedTypeVariables[this]?.constraints ?: return false) {
-            val dependencyPresenceCondition = { type: KotlinTypeMarker ->
-                type.typeConstructor() != this && c.notFixedTypeVariables.containsKey(type.typeConstructor())
-            }
-            if (constraint.type.lowerBoundIfFlexible().argumentsCount() != 0 && constraint.type.contains(dependencyPresenceCondition))
-                return true
+            if (constraint.dependsOnUnfixedTypeVariables(this)) return true
         }
         return false
+    }
+
+    context(c: Context)
+    private fun Constraint.dependsOnUnfixedTypeVariables(tV: TypeConstructorMarker): Boolean {
+        val dependencyPresenceCondition = { type: KotlinTypeMarker ->
+            type.typeConstructor() != tV && c.notFixedTypeVariables.containsKey(type.typeConstructor())
+        }
+        return type.lowerBoundIfFlexible().argumentsCount() != 0 && type.contains(dependencyPresenceCondition)
     }
 
     context(c: Context)
@@ -289,7 +292,9 @@ class VariableFixationFinder(
 
         return when {
             hasProperNonIltEqualityConstraint -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_EQUALITY
-            hasProperNonIltConstraint -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+            hasProperNonIltConstraint && (hasLowerProperConstraint() || constraints.any { it.kind == ConstraintKind.UPPER && it.dependsOnUnfixedTypeVariables(this) })
+                -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT
+            hasProperNonIltConstraint -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY_AND_PROPER_NON_ILT_UPPER
             else -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         }
     }
@@ -335,6 +340,16 @@ class VariableFixationFinder(
             it.kind.isLower() && it.isProperArgumentConstraint() && !it.type.typeConstructor().isNothingConstructor()
         }
     }
+
+    context(c: Context)
+    private fun TypeConstructorMarker.hasLowerProperConstraint(): Boolean {
+        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+
+        return constraints.any {
+            it.kind.isLower() && it.isProperArgumentConstraint()
+        }
+    }
+
 
     context(c: Context)
     private fun Constraint.isSelfTypeConstraint(): Boolean {
