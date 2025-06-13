@@ -223,7 +223,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG).disableKlibsCrossCompilation()
         ) {
             enableTryNext()
 
@@ -329,7 +329,11 @@ class TryNextIT : KGPBaseTest() {
     @TestMetadata("native-configuration-cache")
     @BrokenOnMacosTest(failureExpectation = BrokenOnMacosTestFailureExpectation.ALWAYS)
     fun smokeTestForNativeTasks(gradleVersion: GradleVersion) {
-        project("native-configuration-cache", gradleVersion) {
+        project(
+            "native-configuration-cache",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation(),
+        ) {
             enableTryNext()
             build("build") {
                 assertOutputContains(

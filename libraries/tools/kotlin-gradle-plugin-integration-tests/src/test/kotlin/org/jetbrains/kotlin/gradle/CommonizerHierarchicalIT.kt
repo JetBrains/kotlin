@@ -19,7 +19,12 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @DisplayName("Commonize hierarchically metadata compilations")
     @GradleTest
     fun testCommonizeHierarchicallyMetadataCompilations(gradleVersion: GradleVersion) {
-        nativeProject("commonizeHierarchically", gradleVersion) {
+        nativeProject(
+            "commonizeHierarchically",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                .disableKlibsCrossCompilation(),
+        ) {
             if (HostManager.hostIsMac) {
                 build(":p1:compileIosMainKotlinMetadata") {
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/metadata/iosMain/klib/p1_iosMain")
@@ -57,7 +62,12 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
     @DisplayName("Commonize hierarchically Klibrary compilations")
     @GradleTest
     fun testCommonizeHierarchicallyKlibraryCompilations(gradleVersion: GradleVersion) {
-        nativeProject("commonizeHierarchically", gradleVersion) {
+        nativeProject(
+            "commonizeHierarchically",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                .disableKlibsCrossCompilation()
+        ) {
             if (HostManager.hostIsMac) {
                 build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
                     assertDirectoryInProjectExists("p1/build/classes/kotlin/iosArm64/main/klib/p1")
