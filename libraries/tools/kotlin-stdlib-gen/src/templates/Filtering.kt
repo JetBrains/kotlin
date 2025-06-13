@@ -504,7 +504,7 @@ object Filtering : TemplateGroupBase() {
             val iterator = listIterator(size)
             while (iterator.hasPrevious()) {
                 if (!predicate(iterator.previous())) {
-                    iterator.next()
+                    val _ = iterator.next()
                     val expectedSize = size - iterator.nextIndex()
                     if (expectedSize == 0) return emptyList()
                     return ArrayList<T>(expectedSize).apply {
@@ -579,6 +579,7 @@ object Filtering : TemplateGroupBase() {
 
         doc { "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -660,6 +661,7 @@ object Filtering : TemplateGroupBase() {
             and returns the result of predicate evaluation on the ${f.element}.
             """ }
         sample("samples.collections.Collections.Filtering.filterIndexedTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -713,6 +715,7 @@ object Filtering : TemplateGroupBase() {
 
         doc { "Appends all elements not matching the given [predicate] to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterTo")
+        annotation("@IgnorableReturnValue")
         typeParam("C : TCollection")
         returns("C")
 
@@ -765,6 +768,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are not `null` to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterNotNullTo")
+        annotation("@IgnorableReturnValue")
         returns("C")
         typeParam("C : TCollection")
         typeParam("T : Any")
@@ -782,6 +786,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are instances of specified type parameter R to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterIsInstanceTo")
+        annotation("@IgnorableReturnValue")
         typeParam("reified R")
         typeParam("C : MutableCollection<in R>")
         inline()
@@ -828,6 +833,7 @@ object Filtering : TemplateGroupBase() {
     } builder {
         doc { "Appends all elements that are instances of specified class to the given [destination]." }
         sample("samples.collections.Collections.Filtering.filterIsInstanceToJVM")
+        annotation("@IgnorableReturnValue")
         genericStarProjection = true
         typeParam("C : MutableCollection<in R>")
         typeParam("R")

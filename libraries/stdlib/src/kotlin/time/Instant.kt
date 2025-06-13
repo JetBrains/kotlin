@@ -725,22 +725,20 @@ private fun formatIso(instant: Instant): String = buildString {
         if (number < 10) append('0')
         append(number)
     }
-    run {
-        val number = ldt.year
-        when {
-            number.absoluteValue < 1_000 -> {
-                val innerBuilder = StringBuilder()
-                if (number >= 0) {
-                    innerBuilder.append((number + 10_000)).deleteAt(0)
-                } else {
-                    innerBuilder.append((number - 10_000)).deleteAt(1)
-                }
-                append(innerBuilder)
+    val number = ldt.year
+    when {
+        number.absoluteValue < 1_000 -> {
+            val innerBuilder = StringBuilder()
+            if (number >= 0) {
+                innerBuilder.append((number + 10_000)).deleteAt(0)
+            } else {
+                innerBuilder.append((number - 10_000)).deleteAt(1)
             }
-            else -> {
-                if (number >= 10_000) append('+')
-                append(number)
-            }
+            append(innerBuilder)
+        }
+        else -> {
+            if (number >= 10_000) append('+')
+            append(number)
         }
     }
     append('-')

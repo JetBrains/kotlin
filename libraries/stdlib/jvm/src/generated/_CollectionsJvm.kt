@@ -30,6 +30,7 @@ public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)

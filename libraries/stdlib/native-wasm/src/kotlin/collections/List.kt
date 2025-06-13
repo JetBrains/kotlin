@@ -132,8 +132,10 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.add
      */
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -146,6 +148,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAll
      */
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -163,9 +166,12 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAllAt
      */
+    @IgnorableReturnValue
     public actual fun addAll(index: Int, elements: Collection<E>): Boolean
 
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
 
@@ -179,6 +185,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.set
      */
+    @IgnorableReturnValue
     public actual operator fun set(index: Int, element: E): E
 
     /**
@@ -205,6 +212,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.removeAt
      */
+    @IgnorableReturnValue
     public actual fun removeAt(index: Int): E
 
     // List Iterators

@@ -17,6 +17,7 @@ public expect interface Appendable {
      *
      * @param value the character to append.
      */
+    @IgnorableReturnValue
     public fun append(value: Char): Appendable
 
     /**
@@ -24,6 +25,7 @@ public expect interface Appendable {
      *
      * @param value the character sequence to append. If [value] is `null`, then the four characters `"null"` are appended to this Appendable.
      */
+    @IgnorableReturnValue
     public fun append(value: CharSequence?): Appendable
 
     /**
@@ -36,6 +38,7 @@ public expect interface Appendable {
      *
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
+    @IgnorableReturnValue
     public fun append(value: CharSequence?, startIndex: Int, endIndex: Int): Appendable
 }
 

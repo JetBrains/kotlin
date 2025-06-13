@@ -469,10 +469,12 @@ private fun rangeCheck(size: Int, fromIndex: Int, toIndex: Int) {
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkIndexOverflow(index: Int): Int
 
 @PublishedApi
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 internal expect fun checkCountOverflow(count: Int): Int
 
 

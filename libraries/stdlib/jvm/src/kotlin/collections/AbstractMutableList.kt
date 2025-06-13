@@ -34,6 +34,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      *
      * @return the element that has been removed.
      */
+    @IgnorableReturnValue
     abstract override fun removeAt(index: Int): E
 
     /**

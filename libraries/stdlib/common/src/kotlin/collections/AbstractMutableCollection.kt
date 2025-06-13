@@ -16,6 +16,7 @@ public expect abstract class AbstractMutableCollection<E> : MutableCollection<E>
 
     abstract override val size: Int
     abstract override fun iterator(): MutableIterator<E>
+    @IgnorableReturnValue
     abstract override fun add(element: E): Boolean
 
     override fun isEmpty(): Boolean
@@ -23,10 +24,13 @@ public expect abstract class AbstractMutableCollection<E> : MutableCollection<E>
     override fun containsAll(elements: Collection<E>): Boolean
 
 
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
 }
-

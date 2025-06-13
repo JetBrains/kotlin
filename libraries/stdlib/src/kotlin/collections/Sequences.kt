@@ -421,7 +421,7 @@ internal class SubSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (position < startIndex && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 position++
             }
         }
@@ -544,7 +544,7 @@ internal class DropSequence<T>(
         // Shouldn't be called from constructor to avoid premature iteration
         private fun drop() {
             while (left > 0 && iterator.hasNext()) {
-                iterator.next()
+                val _ = iterator.next()
                 left--
             }
         }
@@ -727,4 +727,3 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  */
 public fun <T : Any> generateSequence(seedFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
     GeneratorSequence(seedFunction, nextFunction)
-

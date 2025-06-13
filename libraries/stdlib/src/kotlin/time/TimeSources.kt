@@ -165,7 +165,7 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
     private var reading: Long = 0L
 
     init {
-        markNow() // fix zero reading in the super time source
+        val _ = markNow() // fix zero reading in the super time source
     }
 
     override fun read(): Long = reading
