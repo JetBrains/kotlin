@@ -10,6 +10,10 @@ public final class Script /* Script*/ extends kotlin.script.templates.standard.S
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public static final class Clazz /* Script.Clazz*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper getBar();//  getBar()
+
   public  Clazz();//  .ctor()
 }
 

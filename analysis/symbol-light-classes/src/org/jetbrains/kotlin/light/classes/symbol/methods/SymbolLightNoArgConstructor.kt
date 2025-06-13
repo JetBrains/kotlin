@@ -25,7 +25,12 @@ internal class SymbolLightNoArgConstructor(
     private val visibility: String,
     methodIndex: Int,
     private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
-) : SymbolLightMethodBase(lightMemberOrigin, containingClass, methodIndex) {
+) : SymbolLightMethodBase(
+    lightMemberOrigin = lightMemberOrigin,
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = false,
+) {
     override fun getName(): String = containingClass.name ?: ""
 
     override fun isConstructor(): Boolean = true

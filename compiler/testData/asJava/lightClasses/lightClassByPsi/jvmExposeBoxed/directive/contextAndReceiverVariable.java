@@ -1,4 +1,10 @@
 public final class A /* A*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  public final int getF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  getF(@org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() B)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B, int);//  setF(@org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() B, int)
+
   public  A();//  .ctor()
 }
 

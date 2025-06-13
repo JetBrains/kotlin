@@ -19,6 +19,10 @@ public final class Test /* Test*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() StringWrapper s;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.Nullable() StringWrapper getS();//  getS()
+
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String ok();//  ok()
 

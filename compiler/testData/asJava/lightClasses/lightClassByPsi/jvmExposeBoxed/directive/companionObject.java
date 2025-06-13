@@ -20,6 +20,13 @@ public final class StringWrapper /* StringWrapper*/ {
 }
 
 public static final class Companion /* StringWrapper.Companion*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   @kotlin.jvm.JvmStatic()
   public final void regularStaticFunction();//  regularStaticFunction()
 

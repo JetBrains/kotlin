@@ -1,6 +1,9 @@
 public final class GlobalLateinitKt /* GlobalLateinitKt*/ {
   public static @org.jetbrains.annotations.NotNull() java.lang.String foo;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public static final void setFoo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setFoo(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()
 }

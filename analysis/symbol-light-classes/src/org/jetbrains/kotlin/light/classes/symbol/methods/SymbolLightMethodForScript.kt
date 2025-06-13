@@ -22,9 +22,10 @@ internal sealed class SymbolLightMethodForScript(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
 ) : SymbolLightMethodBase(
-    LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
-    containingClass,
-    methodIndex
+    lightMemberOrigin = LightMemberOriginForDeclaration(ktScript, JvmDeclarationOriginKind.OTHER),
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = false,
 ) {
     abstract override fun getName(): String
 
