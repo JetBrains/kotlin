@@ -238,7 +238,7 @@ object ComposableTargetChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             ?: return
         if (calleeFunction.isComposable(context.session)) {
             updateParents(context)
-            val infer = context.session.composableTargetSessionStorage.infer
+            val infer = FirApplierInferencer(context, reporter)
             val call = inferenceNodeOf(expression, context)
             val target = callableInferenceNodeOf(expression, calleeFunction, context)
             val parameters = calleeFunction.parameters()
@@ -255,12 +255,11 @@ object ComposableTargetChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     }
 }
 
-internal class FirApplierInferencer(private val session: FirSession) {
-    private var _context: CheckerContext? = null
-    private var _reporter: DiagnosticReporter? = null
-
-    private val context: CheckerContext get() = _context ?: error("CheckerContext is not set")
-    private val reporter: DiagnosticReporter get() = _reporter ?: error("DiagnosticReporter is not set")
+internal class FirApplierInferencer(
+    private val context: CheckerContext,
+    private val reporter: DiagnosticReporter,
+) {
+    private val session = context.session
 
     private val infer = ApplierInferencer(
         typeAdapter = object : TypeAdapter<InferenceNodeType> {
@@ -331,20 +330,12 @@ internal class FirApplierInferencer(private val session: FirSession) {
         }
     )
 
-    context(context: CheckerContext, reporter: DiagnosticReporter)
     fun visitCall(
         call: FirInferenceNode,
         target: FirInferenceNode,
         arguments: List<FirInferenceNode>
     ) {
-        try {
-            _context = context
-            _reporter = reporter
-            infer.visitCall(call, target, arguments)
-        } finally {
-            _context = null
-            _reporter = null
-        }
+        infer.visitCall(call, target, arguments)
     }
 }
 
@@ -364,7 +355,6 @@ context(session: FirSession)
 private val FirElement.parent: FirElement? get() = session.composableTargetSessionStorage.getParent(this)
 
 internal class ComposableTargetSessionStorage(session: FirSession) : FirExtensionSessionComponent(session) {
-    val infer = FirApplierInferencer(session)
     private val schemes = ConcurrentHashMap<FirElement, LazyScheme>()
     private val parent = ConcurrentHashMap<FirElement, FirElement>()
     private val lambdaToExpression = ConcurrentHashMap<FirAnonymousFunction, FirElement>()
