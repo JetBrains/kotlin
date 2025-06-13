@@ -53,7 +53,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
-    override val analysisSessionProvider: () -> KaFirSession
+    override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withPsiValidityAssertion {
@@ -87,7 +87,7 @@ internal class KaFirDataFlowProvider(
 
     private val KtExpression.isExplicitSmartCastInfoTarget: Boolean
         get() {
-            // we want to handle only most top-level parenthesised expressions
+            // we want to handle only most top-level parenthesized expressions
             if (parent is KtParenthesizedExpression) return false
 
             // expressions like `|foo.bar()|` or `|foo?.baz()|` are ignored
@@ -236,7 +236,7 @@ internal class KaFirDataFlowProvider(
     private fun computeDefaultExpression(
         defaultStatement: KtExpression,
         firDefaultStatement: FirElement,
-        firValuedReturnExpressions: List<FirReturnExpression>
+        firValuedReturnExpressions: List<FirReturnExpression>,
     ): DefaultExpressionInfo? {
         if (firDefaultStatement in firValuedReturnExpressions) {
             return null
@@ -259,12 +259,14 @@ internal class KaFirDataFlowProvider(
             is FirJump<*>,
             is FirThrowExpression,
             is FirUnitExpression,
-            is FirErrorExpression -> {
+            is FirErrorExpression,
+                -> {
                 return null
             }
 
             is FirBlock,
-            is FirResolvedQualifier -> {
+            is FirResolvedQualifier,
+                -> {
                 if (firDefaultStatement.resolvedType.isUnit) {
                     return null
                 }
@@ -314,7 +316,7 @@ internal class KaFirDataFlowProvider(
     }
 
     private fun ControlFlowGraphIndex.computeHasEscapingJumps(firDefaultStatement: FirElement, collector: FirElementCollector): Boolean {
-        val firTargets = buildSet<FirElement> {
+        val firTargets = buildSet {
             add(firDefaultStatement)
             addAll(collector.firReturnExpressions)
             addAll(collector.firBreakExpressions)
@@ -411,7 +413,8 @@ internal class KaFirDataFlowProvider(
         return when (this) {
             is ExitNodeMarker, is ExitValueParameterNode, is WhenSubjectExpressionExitNode, is AnonymousObjectExpressionExitNode,
             is SmartCastExpressionExitNode, is PostponedLambdaExitNode, is DelegateExpressionExitNode, is WhenBranchResultExitNode,
-            is ElvisExitNode, is ExitSafeCallNode, is LocalClassExitNode, is ElvisLhsExitNode -> {
+            is ElvisExitNode, is ExitSafeCallNode, is LocalClassExitNode, is ElvisLhsExitNode,
+                -> {
                 true
             }
             else -> {
@@ -525,7 +528,8 @@ internal class KaFirDataFlowProvider(
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = visitFunction(simpleFunction)
         override fun visitErrorFunction(errorFunction: FirErrorFunction) = visitFunction(errorFunction)
         override fun visitConstructor(constructor: FirConstructor) = visitFunction(constructor)
-        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) = visitFunction(errorPrimaryConstructor)
+        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor) =
+            visitFunction(errorPrimaryConstructor)
 
         override fun visitFunction(function: FirFunction) {
             firFunctionDeclarations.add(function)
