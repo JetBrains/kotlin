@@ -30,12 +30,12 @@ import kotlin.test.assertEquals
 
 fun box(): String {
     assertEquals(
-        "[test.B<kotlin.Any!, T!>, test.A<T, kotlin.Any>, kotlin.Any]",
+        "[test.B<kotlin.Any!, T!>, test.A<T!, kotlin.Any!>, kotlin.Any]",
         C::class.allSupertypes.toString(),
     )
 
     assertEquals(
-        "[test.B<U!, kotlin.collections.(Mutable)List<U!>!>, test.A<kotlin.collections.(Mutable)List<U!>, U>, kotlin.Any]",
+        "[test.B<U!, kotlin.collections.(Mutable)List<U!>!>, test.A<kotlin.collections.(Mutable)List<U!>!, U!>, kotlin.Any]",
         D::class.allSupertypes.toString(),
     )
 

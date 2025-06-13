@@ -13,6 +13,14 @@ import kotlin.reflect.full.createType
 
 class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjection>) {
     fun substitute(type: KType): KTypeProjection {
+        val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
+        val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
+        if (lowerBound != null && upperBound != null) {
+            val substitutedLower = substitute(lowerBound).run { lowerBoundIfFlexible() ?: this }
+            val substitutedUpper = substitute(upperBound).run { upperBoundIfFlexible() ?: this }
+            return KTypeProjection(substitutedLower.variance, createPlatformKType(substitutedLower.type!!, substitutedUpper.type!!))
+        }
+
         val classifier = type.classifier ?: return KTypeProjection.invariant(type)
         substitution[classifier]?.let { result ->
             val (variance, resultingType) = result
@@ -41,6 +49,12 @@ class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KTypeProjec
             (other as AbstractKType).isDefinitelyNotNullType || (isDefinitelyNotNullType && !other.isMarkedNullable)
         )
     }
+
+    private fun KTypeProjection.lowerBoundIfFlexible(): KTypeProjection? =
+        (type as? AbstractKType)?.lowerBoundIfFlexible()?.let { KTypeProjection(variance, it) } ?: this
+
+    private fun KTypeProjection.upperBoundIfFlexible(): KTypeProjection? =
+        (type as? AbstractKType)?.upperBoundIfFlexible()?.let { KTypeProjection(variance, it) } ?: this
 
     companion object {
         fun create(klass: KClass<*>, arguments: List<KTypeProjection>): KTypeSubstitutor =
