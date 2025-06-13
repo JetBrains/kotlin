@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -28,6 +30,14 @@ import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 internal class KaFirSymbolInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSymbolInformationProvider<KaFirSession>(), KaFirSessionComponent {
+    private companion object {
+        private val OBSOLETE_SYMBOL_DEPRECATION_INFO = SimpleDeprecationInfo(
+            deprecationLevel = DeprecationLevelValue.HIDDEN,
+            propagatesToOverrides = true,
+            message = null,
+        )
+    }
+
     override val KaSymbol.deprecationStatus: DeprecationInfo?
         get() = withValidityAssertion {
             if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
@@ -38,12 +48,14 @@ internal class KaFirSymbolInformationProvider(
                 return null
             }
 
-            if (firSymbol.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
-                return SimpleDeprecationInfo(
-                    deprecationLevel = DeprecationLevelValue.HIDDEN,
-                    propagatesToOverrides = true,
-                    message = null,
-                )
+            val firSymbol = this.firSymbol
+
+            // A symbol exists for compatibility reasons and should never be referenced in user code
+            val isObsoleteSymbol = firSymbol.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk
+                    || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
+
+            if (isObsoleteSymbol) {
+                return OBSOLETE_SYMBOL_DEPRECATION_INFO
             }
 
             return when (firSymbol) {
