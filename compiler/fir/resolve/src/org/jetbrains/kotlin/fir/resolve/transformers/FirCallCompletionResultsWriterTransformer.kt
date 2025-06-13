@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -1143,6 +1144,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun extracted(expression: FirExpression, branchesTypes: List<ConeKotlinType>) {
+        if (with(session.typeContext) { branchesTypes.any { type -> type.contains { it.isError() } }}) return
         val refinedTypeForDataFlow = with(NewCommonSuperTypeCalculator) {
             with(session.typeContext) {
                 commonSuperType(branchesTypes)
@@ -1151,11 +1153,9 @@ class FirCallCompletionResultsWriterTransformer(
 
         val currentType = expression.resultType
         if (!refinedTypeForDataFlow.isUnitOrFlexibleUnit && !currentType.isUnitOrFlexibleUnit &&
-            currentType != refinedTypeForDataFlow
+            currentType != refinedTypeForDataFlow && AbstractTypeChecker.isSubtypeOf(session.typeContext, refinedTypeForDataFlow, expression.resultType)
         ) {
-            expression.resultType = currentType.withAttributes(
-                currentType.attributes.add(RefinedTypeForDataFlowTypeAttribute(refinedTypeForDataFlow))
-            )
+            expression.resultType = refinedTypeForDataFlow
         }
     }
 

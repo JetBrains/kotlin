@@ -2,13 +2,12 @@
 // TARGET_BACKEND: JVM
 // ISSUE: KT-74588
 
-// FILE: JavaUtils.java
-public class JavaUtils {
+// FILE: MyJava.java
+public class MyJava {
     // Nullable
     public static <T extends String> T findViewById(int id) {
-        return null;
+        return "OK";
     }
-
 }
 
 // FILE: main.kt
@@ -19,7 +18,7 @@ fun foo(t: String?) {
     view = if (t != null) {
         t
     } else {
-        Utils.findViewById(1000)
+        MyJava.findViewById(1000)
     }
 }
 
@@ -27,5 +26,5 @@ fun box(): String {
     foo(null)
     if (view != null) return "fail 1"
     foo("OK")
-    return view
+    return view!!
 }
