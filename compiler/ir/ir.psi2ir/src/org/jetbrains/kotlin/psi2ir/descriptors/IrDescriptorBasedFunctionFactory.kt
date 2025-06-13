@@ -436,8 +436,9 @@ class IrDescriptorBasedFunctionFactory(
             newFunction.parent = this
             newFunction.overriddenSymbols =
                 descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
-            newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
-                newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
+
+            descriptor.dispatchReceiverParameter?.let {
+                newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
             }
             newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
                 newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
