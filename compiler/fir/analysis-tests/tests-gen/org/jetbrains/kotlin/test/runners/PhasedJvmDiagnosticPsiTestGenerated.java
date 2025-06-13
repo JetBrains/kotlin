@@ -51725,6 +51725,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("dslMarkerPropagation.kt")
+      public void testDslMarkerPropagation() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/annotations/dslMarkerPropagation.kt");
+      }
+
+      @Test
       @TestMetadata("functionInsideFileAnnotation.kt")
       public void testFunctionInsideFileAnnotation() {
         runTest("compiler/fir/analysis-tests/testData/resolve/annotations/functionInsideFileAnnotation.kt");

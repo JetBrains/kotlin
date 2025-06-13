@@ -469,6 +469,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE by warning<PsiElement>()
 
         val IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED by error<KtAnnotationEntry>()
+
+        val DSL_MARKER_PROPAGATES_TO_MANY by warning<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
