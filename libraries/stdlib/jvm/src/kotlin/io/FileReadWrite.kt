@@ -89,7 +89,7 @@ public fun File.readBytes(): ByteArray = inputStream().use { input ->
     // when RS >> ES, ES << DBS => RS + DBS + DBS+1 + RS + ES = 2RS + 2DBS + ES
     val extra = ExposingBufferByteArrayOutputStream(DEFAULT_BUFFER_SIZE + 1)
     extra.write(extraByte)
-    input.copyTo(extra)
+    val _ = input.copyTo(extra)
 
     val resultingSize = result.size + extra.size()
     if (resultingSize < 0) throw OutOfMemoryError("File $this is too big to fit in memory.")
@@ -170,7 +170,7 @@ internal fun OutputStream.writeTextImpl(text: String, charset: Charset) {
 
         text.toCharArray(charBuffer.array(), leftover, startIndex, endIndex)
         charBuffer.limit(copyLength + leftover)
-        encoder.encode(charBuffer, byteBuffer, /*endOfInput = */endIndex == text.length).also { check(it.isUnderflow) }
+        encoder.encode(charBuffer, byteBuffer, /*endOfInput = */endIndex == text.length).let { check(it.isUnderflow) }
         this.write(byteBuffer.array(), 0, byteBuffer.position())
 
         if (charBuffer.position() != charBuffer.limit()) {

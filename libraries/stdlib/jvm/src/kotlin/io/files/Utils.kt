@@ -234,7 +234,7 @@ public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int
 
         this.inputStream().use { input ->
             target.outputStream().use { output ->
-                input.copyTo(output, bufferSize)
+                val _ = input.copyTo(output, bufferSize)
             }
         }
     }

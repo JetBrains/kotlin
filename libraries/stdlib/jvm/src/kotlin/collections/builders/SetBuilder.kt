@@ -21,7 +21,7 @@ internal class SetBuilder<E> internal constructor(
     constructor(initialCapacity: Int) : this(MapBuilder<E, Nothing>(initialCapacity))
 
     fun build(): Set<E> {
-        backing.build()
+        val _ = backing.build()
         return if (size > 0) this else Empty
     }
 

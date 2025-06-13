@@ -306,6 +306,7 @@ internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
+@IgnorableReturnValue
 internal actual fun checkRadix(radix: Int): Int {
     if (radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")

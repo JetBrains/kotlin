@@ -105,7 +105,8 @@ kotlin {
                                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                                 "-opt-in=kotlin.ExperimentalMultiplatform",
                                 "-Xcontext-parameters",
-                                "-Xcompile-builtins-as-part-of-stdlib"
+                                "-Xcompile-builtins-as-part-of-stdlib",
+                                "-Xreturn-value-checker=full"
                             )
                         )
                     }
