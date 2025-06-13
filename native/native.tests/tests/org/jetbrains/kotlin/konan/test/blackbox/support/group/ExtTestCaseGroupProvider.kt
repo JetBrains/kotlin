@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.PartialLinkageMode
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.get
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -46,7 +50,8 @@ import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_LOG_LEVEL
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -548,6 +553,18 @@ private class ExtTestDataFile(
             }
         )
         val fileCheckStage = retrieveFileCheckStage()
+
+        fun calculatePartialLinkageConfig(): UsedPartialLinkageConfig {
+            val usedPLConfig = settings.get<UsedPartialLinkageConfig>()
+            val plMode = structure.directives.listValues(PARTIAL_LINKAGE_MODE.name)?.let {
+                PartialLinkageMode.valueOf(it.last())
+            } ?: usedPLConfig.config.mode
+            val plLogLevel = structure.directives.listValues(PARTIAL_LINKAGE_LOG_LEVEL.name)?.let {
+                PartialLinkageLogLevel.valueOf(it.last())
+            } ?: usedPLConfig.config.logLevel
+            return UsedPartialLinkageConfig(PartialLinkageConfig(plMode, plLogLevel))
+        }
+
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
@@ -562,6 +579,7 @@ private class ExtTestDataFile(
                 fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) }
             ),
             fileCheckStage = fileCheckStage,
+            partialLinkageConfig = calculatePartialLinkageConfig(),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
         testCase.initialize(

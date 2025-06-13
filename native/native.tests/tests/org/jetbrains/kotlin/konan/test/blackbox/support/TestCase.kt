@@ -7,12 +7,14 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allRegularDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOnDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriendDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.UsedPartialLinkageConfig
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -230,6 +232,7 @@ class TestCase(
     val extras: Extras,
     val fileCheckStage: String? = null, // KT-62157: TODO move it to extras
     val expectedFailure: Boolean = false,
+    val partialLinkageConfig: UsedPartialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig.DEFAULT),
 ) {
     val checks = when (kind) {
         TestKind.STANDALONE_NO_TR, TestKind.STANDALONE_LLDB -> checks

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.codegen.ProjectInfo
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TargetBackend
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import org.opentest4j.TestAbortedException
 import java.io.File
 
@@ -135,6 +133,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
                 this += createLibraryDependencies(otherDependencies)
                 this += cacheDependencies
             },
+            partialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.DEFAULT, PartialLinkageLogLevel.DEFAULT)),
             expectedArtifact = executableArtifact
         )
 
@@ -182,6 +181,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = compilerArgs,
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+            partialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.DEFAULT, PartialLinkageLogLevel.DEFAULT)),
             extras = DEFAULT_EXTRAS
         ).apply {
             initialize(null, null)

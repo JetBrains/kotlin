@@ -577,7 +577,7 @@ object NativeTestSupport {
 
         val mode = findPartialLinkageMode(enclosingTestClass)
             ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { findPartialLinkageMode(it) }
-            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode.
+            ?: UsePartialLinkage.Mode.DISABLED // The default mode for test pipelines.
 
         val config = when (mode) {
             UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)

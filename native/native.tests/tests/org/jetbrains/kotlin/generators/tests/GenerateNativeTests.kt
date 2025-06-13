@@ -56,6 +56,7 @@ fun main() {
                 annotations = listOf(
                     *frontendClassic(),
                     provider<UseExtTestCaseGroupProvider>(),
+                    *partialLinkage(),
                     codegenBox(),
                 )
             ) {
@@ -78,6 +79,7 @@ fun main() {
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
+                    *partialLinkage(),
                     codegenBox(),
                 )
             ) {
@@ -519,6 +521,10 @@ private fun forceDebugMode() = annotation(
 )
 
 private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
+
+private fun partialLinkage() = arrayOf(
+    annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DEFAULT),
+)
 
 private fun noPartialLinkage() = arrayOf(
     annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DISABLED),

@@ -45,4 +45,4 @@ internal class DisabledTestDataFiles(val filesAndDirectories: Set<File>)
 /**
  * Which PL mode and PL log level to use in tests.
  */
-internal class UsedPartialLinkageConfig(val config: PartialLinkageConfig)
+class UsedPartialLinkageConfig(val config: PartialLinkageConfig)

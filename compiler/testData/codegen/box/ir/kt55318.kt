@@ -1,5 +1,10 @@
-// IGNORE_BACKEND_K1: NATIVE, WASM
+// IGNORE_BACKEND_K1: WASM
 // ISSUE: KT-55318
+// NATIVE_STANDALONE
+// PARTIAL_LINKAGE_MODE: ENABLE
+// PARTIAL_LINKAGE_LOG_LEVEL: INFO
+// ^^^ Test requires partial linking, though NativeCodegenBoxTestNoPLGenerated turns it off by default.
+//     So, PARTIAL_LINKAGE_MODE must be enabled explicitly, and NATIVE_STANDALONE must be specified.
 
 // MODULE: lib
 // FILE: lib.kt

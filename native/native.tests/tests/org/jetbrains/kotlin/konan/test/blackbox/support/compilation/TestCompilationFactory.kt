@@ -159,6 +159,7 @@ class TestCompilationFactory {
 
         // Long pass.
         val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
+        val partialLinkageConfig = rootModules.first().testCase.partialLinkageConfig // Should be identical inside the same test case group.
         val extras = testCases.first().extras // Should be identical inside the same test case group.
         val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
         if (fileCheckStage != null)
@@ -177,6 +178,7 @@ class TestCompilationFactory {
             ExecutableCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
+                partialLinkageConfig = partialLinkageConfig,
                 sourceModules = sourceModulesToCompileExecutable,
                 extras = extras,
                 dependencies = dependenciesToCompileExecutable,
