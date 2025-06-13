@@ -57,9 +57,18 @@ internal class KaFirDataFlowProvider(
 ) : KaBaseSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
     override val KtExpression.smartCastInfo: KaSmartCastInfo?
         get() = withPsiValidityAssertion {
-            val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this) ?: return null
-            val type = firSmartCastExpression.smartcastType.coneType.asKtType()
-            return KaBaseSmartCastInfo(type, firSmartCastExpression.isStable)
+            with(analysisSession) {
+                val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this@smartCastInfo) ?: return null
+                val originalType = firSmartCastExpression.originalExpression.resolvedType.asKtType()
+                val smartCastType = firSmartCastExpression.smartcastType.coneType.asKtType()
+
+                if (originalType.semanticallyEquals(smartCastType)) {
+                    // Skip trivial smart casts
+                    return null
+                }
+
+                return KaBaseSmartCastInfo(smartCastType, firSmartCastExpression.isStable)
+            }
         }
 
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
