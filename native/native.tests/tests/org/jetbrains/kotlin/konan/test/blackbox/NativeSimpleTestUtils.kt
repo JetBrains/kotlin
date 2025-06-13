@@ -240,7 +240,8 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-        extras = extras
+        extras = extras,
+        partialLinkageConfig = testRunSettings.get(),
     ).apply {
         initialize(null, null)
     }
@@ -264,7 +265,8 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = checks,
-        extras = extras
+        extras = extras,
+        partialLinkageConfig = testRunSettings.get(),
     ).apply {
         initialize(null, null)
     }
@@ -285,7 +287,8 @@ internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-        extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
+        extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
+        partialLinkageConfig = testRunSettings.get(),
     ).apply {
         initialize(null, null)
     }
@@ -311,6 +314,7 @@ fun AbstractNativeSimpleTest.generateObjCFrameworkTestCase(
         nominalPackageName = PackageName(moduleName),
         checks = checks,
         extras = extras,
+        partialLinkageConfig = testRunSettings.get(),
     ).apply {
         initialize(givenDependencies, null)
     }
@@ -343,7 +347,8 @@ private fun AbstractNativeSimpleTest.compileToExecutableInOneStage(
         extras = testCase.extras,
         dependencies = dependencies,
         expectedArtifact = getExecutableArtifact(),
-        tryPassSystemCacheDirectory = tryPassSystemCacheDirectory
+        tryPassSystemCacheDirectory = tryPassSystemCacheDirectory,
+        partialLinkageConfig = testRunSettings.get(),
     )
     return compilation.result
 }

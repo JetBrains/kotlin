@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.compilation
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
@@ -645,6 +646,7 @@ class ExecutableCompilation(
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: Executable,
     tryPassSystemCacheDirectory: Boolean = true,
+    val partialLinkageConfig: UsedPartialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig.DEFAULT),
 ) : FinalBinaryCompilation<Executable>(
     settings = settings,
     cacheMode = settings.get(),
@@ -655,8 +657,6 @@ class ExecutableCompilation(
     tryPassSystemCacheDirectory
 ) {
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
-
-    private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
