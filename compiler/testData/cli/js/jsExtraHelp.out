@@ -183,6 +183,7 @@ where advanced options include:
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
+  -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

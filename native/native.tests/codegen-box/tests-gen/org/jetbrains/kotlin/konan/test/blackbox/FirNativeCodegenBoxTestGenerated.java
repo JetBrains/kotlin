@@ -43455,6 +43455,48 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @UseExtTestCaseGroupProvider()
+      @Tag("codegen-box")
+      public class CatchParameter {
+        @Test
+        public void testAllFilesPresentInCatchParameter() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("nestedReifiedCatch.kt")
+        public void testNestedReifiedCatch() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/nestedReifiedCatch.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableExceptionType.kt")
+        public void testNullableExceptionType() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/nullableExceptionType.kt");
+        }
+
+        @Test
+        @TestMetadata("nullableNothing.kt")
+        public void testNullableNothing() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/nullableNothing.kt");
+        }
+
+        @Test
+        @TestMetadata("reificationClash.kt")
+        public void testReificationClash() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/reificationClash.kt");
+        }
+
+        @Test
+        @TestMetadata("tryCatchReifiedType.kt")
+        public void testTryCatchReifiedType() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
+        }
+      }
     }
 
     @Nested
