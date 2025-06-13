@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.codegen.ProjectInfo
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -135,6 +135,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
                 this += createLibraryDependencies(otherDependencies)
                 this += cacheDependencies
             },
+            partialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.DEFAULT, PartialLinkageLogLevel.DEFAULT)),
             expectedArtifact = executableArtifact
         )
 
@@ -182,6 +183,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = compilerArgs,
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+            usedPartialLinkageConfig = UsedPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.DEFAULT, PartialLinkageLogLevel.DEFAULT)),
             extras = DEFAULT_EXTRAS
         ).apply {
             initialize(null, null)

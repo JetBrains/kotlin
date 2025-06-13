@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
-import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
-import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -159,6 +157,7 @@ class TestCompilationFactory {
 
         // Long pass.
         val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
+        val partialLinkageConfig = rootModules.first().testCase.usedPartialLinkageConfig // Should be identical inside the same test case group.
         val extras = testCases.first().extras // Should be identical inside the same test case group.
         val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
         if (fileCheckStage != null)
@@ -176,6 +175,7 @@ class TestCompilationFactory {
             ExecutableCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
+                partialLinkageConfig = partialLinkageConfig,
                 sourceModules = sourceModulesToCompileExecutable,
                 extras = extras,
                 dependencies = dependenciesToCompileExecutable,
