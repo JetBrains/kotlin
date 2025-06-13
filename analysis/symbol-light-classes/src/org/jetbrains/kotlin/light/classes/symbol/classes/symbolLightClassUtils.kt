@@ -454,25 +454,20 @@ internal fun KaSession.addPropertyBackingFields(
 }
 
 /**
- * @param suppressJvmNameCheck **true** if [hasJvmNameAnnotation] should be omitted.
- * E.g., if [JvmName] is checked manually later
+ * Whether the [callableSymbol] has a value class in its signature.
+ *
+ * @param skipValueParametersCheck whether to skip value parameter types of the callable symbol during the check
+ * (effectively the same as [argumentsSkipMask] with bits for all arguments)
+ * @param argumentsSkipMask a bit mask specifying which value arguments of the callable symbol should be skipped during the check
+ * @param skipReturnTypeCheck whether to skip the return type of the callable symbol during the check
  */
-internal fun KaSession.hasTypeForValueClassInSignature(
+internal fun KaSession.hasValueClassInSignature(
     callableSymbol: KaCallableSymbol,
-    ignoreReturnType: Boolean = false,
-    suppressJvmNameCheck: Boolean = false,
+    skipValueParametersCheck: Boolean = false,
     argumentsSkipMask: BitSet? = null,
-    ignoreValueParameters: Boolean = false,
+    skipReturnTypeCheck: Boolean = false,
 ): Boolean {
-    // Declarations with JvmName can be accessible from Java
-    when {
-        suppressJvmNameCheck -> {}
-        callableSymbol.hasJvmNameAnnotation() -> return false
-        callableSymbol !is KaKotlinPropertySymbol -> {}
-        callableSymbol.getter?.hasJvmNameAnnotation() == true || callableSymbol.setter?.hasJvmNameAnnotation() == true -> return false
-    }
-
-    if (!ignoreReturnType) {
+    if (!skipReturnTypeCheck) {
         val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
         // Only explicitly declared types can be checked to avoid contract violations
         if (psiDeclaration?.typeReference != null && typeForValueClass(callableSymbol.returnType)) return true
@@ -480,7 +475,7 @@ internal fun KaSession.hasTypeForValueClassInSignature(
 
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
-    if (!ignoreValueParameters && callableSymbol is KaFunctionSymbol) {
+    if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
             argumentsSkipMask?.get(index) != true && typeForValueClass(valueParameter.returnType)
         }

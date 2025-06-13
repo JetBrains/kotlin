@@ -250,7 +250,12 @@ internal class SymbolLightSimpleMethod private constructor(
             ProgressManager.checkCanceled()
 
             if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
-            if (hasTypeForValueClassInSignature(functionSymbol, ignoreReturnType = isTopLevel, ignoreValueParameters = true)) return
+            if (!functionSymbol.hasJvmNameAnnotation() && hasValueClassInSignature(
+                    functionSymbol,
+                    skipValueParametersCheck = true,
+                    skipReturnTypeCheck = isTopLevel,
+                )
+            ) return
 
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
