@@ -25,9 +25,9 @@ internal object NativeVersionChecker : KotlinGradleProjectChecker {
 
         val nativeVersion = project.nativeProperties.kotlinNativeVersion.map { KotlinToolingVersion(it) }.orNull
         val kotlinVersion = project.kotlinToolingVersion
-        if (nativeVersion != null && nativeVersion > kotlinVersion) {
-            collector.report(project, KotlinToolingDiagnostics.NewNativeVersionDiagnostic(nativeVersion, kotlinVersion))
-        }
+//        if (nativeVersion != null && nativeVersion > kotlinVersion) {
+//            collector.report(project, KotlinToolingDiagnostics.NewNativeVersionDiagnostic(nativeVersion, kotlinVersion))
+//        }
         if (nativeVersion != null && nativeVersion < kotlinVersion) {
             collector.report(project, KotlinToolingDiagnostics.OldNativeVersionDiagnostic(nativeVersion, kotlinVersion))
         }
