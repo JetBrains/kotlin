@@ -611,6 +611,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
   }
 
   @Test
+  @TestMetadata("syntheticPropertyNoJavaOrigin.kt")
+  public void testSyntheticPropertyNoJavaOrigin() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticPropertyNoJavaOrigin.kt");
+  }
+
+  @Test
   @TestMetadata("typeAnnotationOnBackingField.kt")
   public void testTypeAnnotationOnBackingField() {
     runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeAnnotationOnBackingField.kt");
