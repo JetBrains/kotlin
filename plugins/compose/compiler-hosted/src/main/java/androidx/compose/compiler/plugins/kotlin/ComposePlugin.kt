@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
+import androidx.compose.compiler.plugins.kotlin.lower.ComposeRuntimeVersion
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -83,6 +84,10 @@ object ComposeConfiguration {
         )
     val SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY =
         CompilerConfigurationKey<Boolean>("Skip IR lowering transformation when finding Compose runtime fails")
+    val TARGET_RUNTIME_VERSION_KEY =
+        CompilerConfigurationKey<String>(
+            "Target Compose runtime version for the compiler."
+        )
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -221,6 +226,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val TARGET_RUNTIME_VERSION_OPTION = CliOption(
+            "targetRuntimeVersion",
+            "<version>",
+            "Override target Compose runtime version for the compiler. " +
+                    "Normally, this is determined through the Compose runtime dependency at compile time.",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -242,6 +255,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         TRACE_MARKERS_OPTION,
         FEATURE_FLAG_OPTION,
         SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
+        TARGET_RUNTIME_VERSION_OPTION,
     )
 
     override fun processOption(
@@ -357,6 +371,12 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_KEY,
             value == "true"
         )
+        TARGET_RUNTIME_VERSION_OPTION -> {
+            configuration.put(
+                ComposeConfiguration.TARGET_RUNTIME_VERSION_KEY,
+                value
+            )
+        }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
@@ -704,6 +724,10 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             )
             featureFlags.validateFeatureFlags(configuration)
 
+            val targetRuntimeVersion = configuration.get(
+                ComposeConfiguration.TARGET_RUNTIME_VERSION_KEY,
+            )?.let { ComposeRuntimeVersion.fromString(it) }
+
             // Compatibility with older features configuration options
             // New features should not create a explicit option
             featureFlags.setFeature(FeatureFlag.IntrinsicRemember, intrinsicRememberEnabled)
@@ -762,6 +786,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 skipIfRuntimeNotFound = skipIrLoweringIfRuntimeNotFound,
                 messageCollector = configuration.messageCollector,
                 indyJvmLambdasEnabled = jvmLambdaScheme == JvmClosureGenerationScheme.INDY,
+                targetRuntimeVersion = targetRuntimeVersion,
             )
         }
     }
