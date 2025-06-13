@@ -1,4 +1,10 @@
 public final class GlobalVariableContextKt /* GlobalVariableContextKt*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z);//  getF(@org.jetbrains.annotations.NotNull() Z)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public static final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
 @<error>()

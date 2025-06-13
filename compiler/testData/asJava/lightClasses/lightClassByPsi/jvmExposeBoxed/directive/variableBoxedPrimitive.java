@@ -1,4 +1,11 @@
 public final class Foo /* Foo*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper getFoo();//  getFoo()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setFoo(@org.jetbrains.annotations.NotNull() IntWrapper);//  setFoo(@org.jetbrains.annotations.NotNull() IntWrapper)
+
   public  Foo();//  .ctor()
 }
 

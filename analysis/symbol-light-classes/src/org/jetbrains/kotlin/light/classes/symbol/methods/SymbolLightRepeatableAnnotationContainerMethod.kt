@@ -21,6 +21,7 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = METHOD_INDEX_BASE,
+    isJvmExposedBoxed = false,
 ) {
     override fun getNameIdentifier(): PsiIdentifier? = null
     override fun isDeprecated(): Boolean = false

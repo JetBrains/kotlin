@@ -44,9 +44,10 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
 ) : SymbolLightMethodBase(
-    lightMemberOrigin,
-    containingClass,
-    methodIndex,
+    lightMemberOrigin = lightMemberOrigin,
+    containingClass = containingClass,
+    methodIndex = methodIndex,
+    isJvmExposedBoxed = false,
 ) {
     internal constructor(
         functionSymbol: FType,
