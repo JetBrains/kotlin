@@ -355,7 +355,7 @@ class IrDescriptorBasedFunctionFactory(
                     isHidden = false,
                 )
                 vDeclaration.parent = fDeclaration
-                fDeclaration.valueParameters += vDeclaration
+                fDeclaration.parameters += vDeclaration
             }
 
             fDeclaration.parent = this
