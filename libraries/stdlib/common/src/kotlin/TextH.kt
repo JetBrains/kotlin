@@ -458,8 +458,6 @@ public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
  * @param ignoreCase the flag indicating if the string characters should be compared with the [prefix] characters
  *  in a case-insensitive manner; by default, comparison is case-sensitive.
  *
- * @throws IndexOutOfBoundsException if [startIndex] is negative or exceeds the length of the string.
- *
  * @sample samples.text.Strings.startsWithPrefixAtPositionCaseSensitive
  * @sample samples.text.Strings.startsWithPrefixAtPositionCaseInsensitive
  */
