@@ -337,6 +337,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             errorType = SirType.never
+                            constructingType = SirType.void
                         }
                     )
                     declarations.add(
@@ -345,6 +346,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             errorType = SirType.any
+                            constructingType = SirType.void
                         }
                     )
                     declarations.add(
@@ -353,6 +355,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             errorType = SirType.void
+                            constructingType = SirType.void
                         }
                     )
                 }
@@ -710,6 +713,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = true
                             isOverride = false
+                            constructingType = SirType.void
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -755,6 +759,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
+                            constructingType = SirType.void
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -785,6 +790,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
+                            constructingType = SirType.void
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -815,6 +821,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
                             isOverride = false
+                            constructingType = SirType.void
                             parameters.addAll(
                                 listOf(
                                     SirParameter(
@@ -1405,6 +1412,7 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
+                            constructingType = SirType.void
                             body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
                         }
                     )
