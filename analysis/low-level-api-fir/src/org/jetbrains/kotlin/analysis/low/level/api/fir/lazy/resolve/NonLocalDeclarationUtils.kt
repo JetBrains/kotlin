@@ -10,14 +10,17 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-internal fun elementCanBeLazilyResolved(element: KtElement?, codeFragmentAware: Boolean): Boolean = when (element) {
+/**
+ * Note: The `KtCodeFragment` itself is technically lazy-resolvable, but the function doesn't support it yet.
+ */
+internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (element) {
     null -> false
     is KtFunctionLiteral -> false
-    is KtTypeParameter -> elementCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false), codeFragmentAware)
-    is KtScript -> elementCanBeLazilyResolved(element.parent as? KtFile, codeFragmentAware)
-    is KtFile -> codeFragmentAware || element !is KtCodeFragment
-    is KtDestructuringDeclarationEntry -> elementCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration, codeFragmentAware)
-    is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration, codeFragmentAware)
+    is KtTypeParameter -> elementCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false))
+    is KtScript -> elementCanBeLazilyResolved(element.parent as? KtFile)
+    is KtFile -> element !is KtCodeFragment
+    is KtDestructuringDeclarationEntry -> elementCanBeLazilyResolved(element.parent as? KtDestructuringDeclaration)
+    is KtParameter -> elementCanBeLazilyResolved(element.ownerDeclaration)
     is KtCallableDeclaration, is KtEnumEntry, is KtDestructuringDeclaration, is KtAnonymousInitializer -> {
         val parentToCheck = when (val parent = element.parent) {
             is KtClassOrObject, is KtFile -> parent
@@ -26,13 +29,13 @@ internal fun elementCanBeLazilyResolved(element: KtElement?, codeFragmentAware: 
             else -> null
         }
 
-        elementCanBeLazilyResolved(parentToCheck.takeUnless { it is KtEnumEntry }, codeFragmentAware)
+        elementCanBeLazilyResolved(parentToCheck.takeUnless { it is KtEnumEntry })
     }
 
-    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property, codeFragmentAware)
+    is KtPropertyAccessor -> elementCanBeLazilyResolved(element.property)
     is KtClassOrObject -> element.isTopLevel() || element.getClassId() != null
     is KtTypeAlias -> element.isTopLevel() || element.getClassId() != null
-    is KtModifierList -> element.isNonLocalDanglingModifierList(codeFragmentAware)
+    is KtModifierList -> element.isNonLocalDanglingModifierList()
     !is KtNamedDeclaration -> false
     else -> errorWithAttachment("Unexpected ${element::class}") {
         withPsiEntry("declaration", element)
@@ -59,14 +62,14 @@ internal fun elementCanBeLazilyResolved(element: KtElement?, codeFragmentAware: 
  * fun foo() {}
  * ```
  * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
- * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.buildErrorTopLevelDeclarationForDanglingModifierList
+ * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.buildErrorNonLocalDeclarationForDanglingModifierList
  */
-private fun KtModifierList.isNonLocalDanglingModifierList(codeFragmentAware: Boolean): Boolean {
+private fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
     val parentToCheck = when (val parent = parent) {
         is KtFile -> parent
         is KtClassBody -> (parent.parent as? KtClassOrObject).takeUnless { it is KtEnumEntry }
         else -> null
     }
 
-    return elementCanBeLazilyResolved(parentToCheck, codeFragmentAware)
+    return elementCanBeLazilyResolved(parentToCheck)
 }

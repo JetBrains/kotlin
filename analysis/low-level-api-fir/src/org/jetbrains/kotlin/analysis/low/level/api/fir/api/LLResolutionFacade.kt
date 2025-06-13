@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -141,7 +142,9 @@ class LLResolutionFacade internal constructor(
             "Declaration should be resolvable module, instead it had ${targetModule::class}"
         }
 
-        val nonLocalContainer = targetDeclaration.getNonLocalContainingOrThisElement(codeFragmentAware = true)
+        // All elements inside a code fragment are local
+        val nonLocalContainer = targetDeclaration.containingKtFile as? KtCodeFragment
+            ?: targetDeclaration.getNonLocalContainingOrThisElement()
             ?: errorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", targetDeclaration, ::getModule)
                 withEntry("module", targetModule) { it.moduleDescription }

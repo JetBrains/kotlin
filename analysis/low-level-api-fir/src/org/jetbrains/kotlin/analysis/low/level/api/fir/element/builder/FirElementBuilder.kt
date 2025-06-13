@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.parentsWithSelfCodeFragmentAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.requireTypeIntersectionWith
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.*
@@ -350,16 +348,6 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
     ): FirAnnotation? = annotations.find { it.psi == annotationEntry }
 }
 
-private fun KtElement.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
-    is KtPropertyAccessor -> this.property == callableDeclaration
-    is KtParameter -> {
-        val ownerDeclaration = ownerDeclaration
-        ownerDeclaration == callableDeclaration || ownerDeclaration?.isPartOf(callableDeclaration) == true
-    }
-    is KtTypeParameter -> containingDeclaration == callableDeclaration
-    else -> false
-}
-
 internal val KtTypeParameter.containingDeclaration: KtDeclaration?
     get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
 
@@ -382,56 +370,20 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
 }
 
 /**
- * Returns the first non-local element from [parentsWithSelf] or [parentsWithSelfCodeFragmentAware]
- * (depends on [codeFragmentAware] flag) that contains the given elements, based on the specified predicate.
+ * Returns the first non-local element from [parentsWithSelf] that contains the given elements, based on the specified predicate.
  *
  * The resulting element can be considered reachable at [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructure
  */
-internal fun PsiElement.getNonLocalContainingOrThisElement(
-    codeFragmentAware: Boolean = false,
-    predicate: (KtElement) -> Boolean = { true },
-): KtElement? {
-    var candidate: KtElement? = null
-
-    val elementsToCheck = if (codeFragmentAware) {
-        parentsWithSelfCodeFragmentAware
-    } else {
-        parentsWithSelf
-    }
-
-    for (parent in elementsToCheck) {
-        candidate?.let { notNullCandidate ->
-            if (parent is KtEnumEntry ||
-                parent is KtCallableDeclaration &&
-                !notNullCandidate.isPartOf(parent) ||
-                parent is KtAnonymousInitializer ||
-                parent is KtObjectLiteralExpression ||
-                parent is KtCallElement ||
-                parent is KtCodeFragment ||
-                parent is PsiErrorElement
-            ) {
-                // The candidate turned out to be local. Let's find another one.
-                candidate = null
-            }
-        }
-
-        // A new candidate only needs to be proposed when `candidate` is null.
-        if (candidate == null &&
-            parent is KtElement &&
-            elementCanBeLazilyResolved(parent, codeFragmentAware) &&
-            predicate(parent)
-        ) {
-            if (codeFragmentAware && this.containingFile is KtCodeFragment) {
-                candidate = parent
-            } else {
-                return parent
-            }
+internal fun PsiElement.getNonLocalContainingOrThisElement(predicate: (KtElement) -> Boolean = { true }): KtElement? {
+    for (parent in parentsWithSelf) {
+        if (parent is KtElement && elementCanBeLazilyResolved(parent) && predicate(parent)) {
+            return parent
         }
     }
 
-    return candidate
+    return null
 }
 
 private inline fun <reified T : KtElement> PsiElement.parentsOfType(stopDeclaration: KtDeclaration?): Sequence<T> {

@@ -181,7 +181,7 @@ internal class FileStructure private constructor(
             }
 
             override fun visitModifierList(list: KtModifierList) {
-                if (elementCanBeLazilyResolved(list, codeFragmentAware = false)) {
+                if (elementCanBeLazilyResolved(list)) {
                     addStructureElementForTo(list, structureElements)
                 }
             }
