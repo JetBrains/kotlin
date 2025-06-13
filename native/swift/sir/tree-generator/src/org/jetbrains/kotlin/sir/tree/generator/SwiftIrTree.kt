@@ -148,6 +148,8 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         customParentInVisitor = callable
         parent(callable)
 
+        +field("constructingType", typeType)
+
         +field("isFailable", boolean)
         +listField("parameters", parameterType)
 

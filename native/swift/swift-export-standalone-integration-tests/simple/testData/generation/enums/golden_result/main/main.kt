@@ -51,3 +51,9 @@ public fun Enum_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.i
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__")
+public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __e = kotlin.native.internal.ref.dereferenceExternalRCRef(e) as kotlin.Enum<kotlin.Enum<*>>
+    val _result = enumId(__e)
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}

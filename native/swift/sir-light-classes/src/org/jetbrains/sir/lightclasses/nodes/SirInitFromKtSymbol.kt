@@ -63,6 +63,7 @@ internal class SirInitFromKtSymbol(
     }
 
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
+    override val constructingType: SirType by lazyWithSessions { translateReturnType() }
 
     override var body: SirFunctionBody? = null
 }
