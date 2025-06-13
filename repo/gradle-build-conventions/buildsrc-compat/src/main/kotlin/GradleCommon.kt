@@ -615,6 +615,7 @@ fun Project.configureKotlinCompileTasksGradleCompatibility() {
         configureGradleCompatibility()
     }
     configureBuildToolsApiVersionForGradleCompatibility()
+    project.extra["oldCompilerForGradleCompatibility"] = true
 }
 
 /**

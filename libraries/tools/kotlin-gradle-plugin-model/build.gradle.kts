@@ -6,3 +6,5 @@ plugins {
 dependencies {
     api(platform(project(":kotlin-gradle-plugins-bom")))
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

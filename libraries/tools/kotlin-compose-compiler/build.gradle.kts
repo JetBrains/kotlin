@@ -75,3 +75,5 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         dependsOn(testing.suites.named("functionalTest"))
     }
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

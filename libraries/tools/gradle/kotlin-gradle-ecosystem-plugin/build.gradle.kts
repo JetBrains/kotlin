@@ -23,3 +23,5 @@ dependencies {
 tasks.named<KotlinApiBuildTask>("apiBuild") {
     inputJar.value(tasks.named<Jar>("jar").flatMap { it.archiveFile })
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

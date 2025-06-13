@@ -19,3 +19,5 @@ gradlePlugin {
         }
     }
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

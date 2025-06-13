@@ -36,3 +36,5 @@ tasks.withType<PublishToMavenRepository>()
 tasks.named("publishPlugins") {
     enabled = false
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

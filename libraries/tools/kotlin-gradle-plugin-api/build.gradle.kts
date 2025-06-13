@@ -41,3 +41,5 @@ tasks {
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }
+
+extra["oldCompilerForGradleCompatibility"] = true

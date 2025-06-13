@@ -643,3 +643,5 @@ registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_MIN,
     GradlePluginVariant.GRADLE_88,
 )
+
+extra["oldCompilerForGradleCompatibility"] = true

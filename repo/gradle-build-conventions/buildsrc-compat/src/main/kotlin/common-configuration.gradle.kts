@@ -166,15 +166,28 @@ fun Project.configureKotlinCompilationOptions() {
                     freeCompilerArgs.add("-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction")
                 }
 
-                if (!skipJvmDefaultAllForModule(project.path)) {
-                    freeCompilerArgs.add("-Xjvm-default=all")
+                if (!skipJvmDefaultForModule(project.path)) {
+                    freeCompilerArgs.add(
+                        if (project.shouldUseOldJvmDefaultArgument())
+                            "-Xjvm-default=all"
+                        else
+                            "-jvm-default=no-compatibility"
+                    )
                 } else {
-                    freeCompilerArgs.add("-Xjvm-default=disable")
+                    freeCompilerArgs.add(
+                        if (project.shouldUseOldJvmDefaultArgument())
+                            "-Xjvm-default=disable"
+                        else
+                            "-jvm-default=disable"
+                    )
                 }
             }
         }
     }
 }
+
+private fun Project.shouldUseOldJvmDefaultArgument(): Boolean =
+    extra.has("oldCompilerForGradleCompatibility") && extra.get("oldCompilerForGradleCompatibility") == true
 
 fun Project.configureArtifacts() {
     tasks.withType<Javadoc>().configureEach {
@@ -309,7 +322,7 @@ fun Project.configureTests() {
 }
 
 // TODO: migrate remaining modules to the new JVM default scheme.
-fun skipJvmDefaultAllForModule(path: String): Boolean =
+fun skipJvmDefaultForModule(path: String): Boolean =
 // Gradle plugin modules are disabled because different Gradle versions bundle different Kotlin compilers,
     // and not all of them support the new JVM default scheme.
     "-gradle" in path || "-runtime" in path || path == ":kotlin-project-model" ||
