@@ -467,10 +467,8 @@ internal fun KaSession.hasValueClassInSignature(
     argumentsSkipMask: BitSet? = null,
     skipReturnTypeCheck: Boolean = false,
 ): Boolean {
-    if (!skipReturnTypeCheck) {
-        val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
-        // Only explicitly declared types can be checked to avoid contract violations
-        if (psiDeclaration?.typeReference != null && typeForValueClass(callableSymbol.returnType)) return true
+    if (!skipReturnTypeCheck && hasValueClassInReturnType(callableSymbol)) {
+        return true
     }
 
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
@@ -482,6 +480,31 @@ internal fun KaSession.hasValueClassInSignature(
     }
 
     return false
+}
+
+internal fun KaSession.hasValueClassInReturnType(callableSymbol: KaCallableSymbol): Boolean {
+    val psiDeclaration = callableSymbol.psi as? KtCallableDeclaration
+    val shouldCheckType = psiDeclaration == null || psiDeclaration.typeReference != null
+    // Only explicitly declared types can be checked to avoid contract violations
+    return shouldCheckType && typeForValueClass(callableSymbol.returnType)
+}
+
+/**
+ * Whether a declaration would have a mangled name due to value classes in its signature
+ */
+internal fun hasMangledNameDueValueClassesInSignature(
+    hasValueClassInParameterType: Boolean,
+    hasValueClassInReturnType: Boolean,
+    isTopLevel: Boolean,
+): Boolean = when {
+    // Non-return type is a value class -> mangled name
+    hasValueClassInParameterType -> true
+
+    // No value class in signature at all -> no mangling
+    !hasValueClassInReturnType -> false
+
+    // For top-level declarations a value class in return position don't lead to mangling
+    else -> !isTopLevel
 }
 
 internal fun KaSession.typeForValueClass(type: KaType): Boolean {

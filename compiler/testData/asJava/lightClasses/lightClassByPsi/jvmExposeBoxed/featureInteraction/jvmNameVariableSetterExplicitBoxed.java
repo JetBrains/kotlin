@@ -1,6 +1,10 @@
 public final class Foo /* Foo*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmName(name = "setter")
+  public final void setter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setter(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmName(name = "setter")
   public final void setter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setter(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  Foo();//  .ctor()

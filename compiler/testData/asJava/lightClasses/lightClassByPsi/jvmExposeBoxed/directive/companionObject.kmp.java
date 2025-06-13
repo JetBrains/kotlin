@@ -23,6 +23,13 @@ public static final class Companion /* StringWrapper.Companion*/ {
   @<error>()
   public final void regularStaticFunction();//  regularStaticFunction()
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void setStaticVariable(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setStaticVariable(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   private  Companion();//  .ctor()
 
   public final int getRegularStaticVariable();//  getRegularStaticVariable()
