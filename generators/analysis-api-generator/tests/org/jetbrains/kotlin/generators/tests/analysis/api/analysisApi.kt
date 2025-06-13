@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatu
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolSubstitutionTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider.AbstractHLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.dataFlowInfoProvider.AbstractHLSmartCastInfoTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substitutorProvider.AbstractCreateInheritanceTypeSubstitutorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substututorFactory.AbstractSubstitutorBuilderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
@@ -510,12 +510,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("smartCastProvider") {
-        test<AbstractHLSmartCastInfoTest> {
-            model(it, "smartCastInfo")
-        }
-    }
-
     component("symbolDeclarationOverridesProvider") {
         test<AbstractOverriddenDeclarationProviderTest> {
             model(it, "overriddenSymbols")
@@ -735,6 +729,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     }
 
     component("dataFlowInfoProvider") {
+        test<AbstractHLSmartCastInfoTest> {
+            model(it, "smartCastInfo")
+        }
+
         test<AbstractExitPointSnapshotTest>(filter = frontendIs(FrontendKind.Fir)) {
             model(it, "exitPointSnapshot")
         }
