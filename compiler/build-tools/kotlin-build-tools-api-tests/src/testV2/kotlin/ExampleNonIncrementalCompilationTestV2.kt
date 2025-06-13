@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.buildtools.api.tests.v2.compilation.assertions.asser
 import org.jetbrains.kotlin.buildtools.api.tests.v2.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.v2.compilation.model.project
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy.Companion.EXECUTION_MODE
 import org.junit.jupiter.api.DisplayName
 
-class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
+class ExampleNonIncrementalCompilationTestV2 : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(executionMode: ExecutionPolicy.ExecutionMode) = runTest {

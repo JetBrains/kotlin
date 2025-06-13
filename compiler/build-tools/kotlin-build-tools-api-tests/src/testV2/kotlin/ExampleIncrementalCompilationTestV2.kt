@@ -23,7 +23,7 @@ import kotlin.io.path.writeText
 /**
  * Avoid using this DSL unless you face a scenario that can't be solved within the scenario DSL
  */
-class ExampleIncrementalCompilationTest : BaseCompilationTest() {
+class ExampleIncrementalCompilationTestV2 : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
@@ -50,7 +50,7 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with 2 modules and custom compilation options")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun testTwoModules(executionMode: ExecutionPolicy.ExecutionMode) = runTest{
+    fun testTwoModules(executionMode: ExecutionPolicy.ExecutionMode) = runTest {
         project(executionMode.toExecutionPolicy()) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))

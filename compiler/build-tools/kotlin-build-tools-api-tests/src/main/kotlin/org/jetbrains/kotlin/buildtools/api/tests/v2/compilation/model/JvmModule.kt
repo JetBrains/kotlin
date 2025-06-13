@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.api.tests.v2.BaseTestV2
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
@@ -104,7 +103,7 @@ class JvmModule(
         )
         snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = snapshotConfig.granularity
         snapshotOperation[PARSE_INLINED_LOCAL_CLASSES] = snapshotConfig.useInlineLambdaSnapshotting //todo is it the same setting?
-        val snapshotResult: JvmClasspathEntrySnapshot = BaseTestV2.kotlinToolchain.executeOperation(snapshotOperation)
+        val snapshotResult = BaseTestV2.kotlinToolchain.executeOperation(snapshotOperation)
         val hash = snapshotResult.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
             .withIndex()
@@ -112,7 +111,7 @@ class JvmModule(
         // see details in docs for `CachedClasspathSnapshotSerializer` for details why we can't use a fixed name
         val snapshotFile = icWorkingDir.resolve("dep-$hash.snapshot")
         snapshotFile.createParentDirectories()
-        snapshotResult.saveSnapshot(snapshotFile)
+        snapshotResult.saveSnapshot(snapshotFile.toFile())
         return snapshotFile
     }
 
@@ -133,16 +132,16 @@ class JvmModule(
             val snapshotIcOptions = compilationOperation.createSnapshotBasedIcOptions()
             snapshotIcOptions[MODULE_BUILD_DIR] = buildDirectory
             snapshotIcOptions[ROOT_PROJECT_DIR] = project.projectDirectory
-            snapshotIcOptions[PRECISE_JAVA_TRACKING] = false
-            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.BACKUP_CLASSES] = false
-            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY] = true
-            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER] = false
-            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.OUTPUT_DIRS] = setOf(icWorkingDir, outputDirectory)
+//            snapshotIcOptions[PRECISE_JAVA_TRACKING] = false
+//            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.BACKUP_CLASSES] = false
+//            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY] = true
+//            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER] = false
+//            snapshotIcOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.OUTPUT_DIRS] = setOf(icWorkingDir, outputDirectory)
             snapshotIcOptions[FORCE_RECOMPILATION] = forceNonIncrementalCompilation
-            snapshotIcOptions[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] = false
+//            snapshotIcOptions[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] = false
 
             val incrementalConfiguration = JvmSnapshotBasedIncrementalCompilationConfiguration(
-                icWorkingDir,
+                icCachesDir,
                 sourcesChanges,
                 snapshots.map { it.toPath() },
                 icWorkingDir.resolve("shrunk-classpath-snapshot.bin"),

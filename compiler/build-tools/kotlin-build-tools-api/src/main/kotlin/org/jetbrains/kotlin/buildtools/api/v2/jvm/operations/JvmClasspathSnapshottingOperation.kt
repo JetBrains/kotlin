@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalBuildToolsApi::class)
+
 package org.jetbrains.kotlin.buildtools.api.v2.jvm.operations
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.WithDefault
-import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmClasspathEntrySnapshot
 
-public interface JvmClasspathSnapshottingOperation : BuildOperation<JvmClasspathEntrySnapshot> {
+public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
     public interface Option<V>
 
     public operator fun <V> get(key: Option<V>): V

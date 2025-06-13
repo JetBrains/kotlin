@@ -64,7 +64,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
         public val RECOMPILATION_CLEANUP_DIRS: Option<Path> = mandatory("REBUILD_CLEANUP_DIRS")
 
         @JvmField
-        public val OUTPUT_DIRS: Option<Set<Path>> = mandatory("OUTPUT_DIRS")
+        public val OUTPUT_DIRS: Option<Set<Path>?> = optional("OUTPUT_DIRS", null)
 
         @JvmField
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =

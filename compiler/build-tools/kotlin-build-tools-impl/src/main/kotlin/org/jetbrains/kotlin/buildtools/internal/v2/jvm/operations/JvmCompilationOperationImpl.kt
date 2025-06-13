@@ -118,7 +118,7 @@ class JvmCompilationOperationImpl(
                     reportCategories = reportCategories,
                     reportSeverity = reportSeverity,
                     requestedCompilationResults = requestedCompilationResults,
-                    outputFiles = aggregatedIcConfiguration.options[OUTPUT_DIRS].map { it.toFile() },
+                    outputFiles = aggregatedIcConfiguration.options[OUTPUT_DIRS]?.map { it.toFile() },
                     multiModuleICSettings = null, // required only for the build history approach
                     modulesInfo = null, // required only for the build history approach
                     rootProjectDir = aggregatedIcConfiguration.options[ROOT_PROJECT_DIR].toFile(),
@@ -254,7 +254,7 @@ class JvmCompilationOperationImpl(
                         IncrementalFirJvmCompilerRunner(
                             aggregatedIcConfiguration.workingDirectory.toFile(),
                             buildReporter,
-                            outputDirs = aggregatedIcConfiguration.options[OUTPUT_DIRS].map { it.toFile() },
+                            outputDirs = aggregatedIcConfiguration.options[OUTPUT_DIRS]?.map { it.toFile() },
                             classpathChanges = classpathChanges,
                             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                             icFeatures = icFeatures
@@ -263,7 +263,7 @@ class JvmCompilationOperationImpl(
                         IncrementalJvmCompilerRunner(
                             aggregatedIcConfiguration.workingDirectory.toFile(),
                             buildReporter,
-                            outputDirs = aggregatedIcConfiguration.options[OUTPUT_DIRS].map { it.toFile() },
+                            outputDirs = aggregatedIcConfiguration.options[OUTPUT_DIRS]?.map { it.toFile() },
                             classpathChanges = classpathChanges,
                             kotlinSourceFilesExtensions = kotlinFilenameExtensions,
                             icFeatures = icFeatures
@@ -330,8 +330,8 @@ private fun checkJvmFirRequirements(
     } catch (_: Exception) {
         null
     }?.let {
-            LanguageVersion.fromVersionString(it.value)
-        } ?: LanguageVersion.LATEST_STABLE
+        LanguageVersion.fromVersionString(it.value)
+    } ?: LanguageVersion.LATEST_STABLE
 
     check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
         "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"

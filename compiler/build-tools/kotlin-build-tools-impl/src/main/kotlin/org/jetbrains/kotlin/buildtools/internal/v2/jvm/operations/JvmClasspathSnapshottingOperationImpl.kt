@@ -8,25 +8,25 @@ package org.jetbrains.kotlin.buildtools.internal.v2.jvm.operations
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
-import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmClasspathSnapshottingOperation
+import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.v2.jvm.JvmClasspathEntrySnapshotImpl
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
 class JvmClasspathSnapshottingOperationImpl(
     private val classpathEntry: Path,
-) : BuildOperationImpl<JvmClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
+) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
 
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = optionsDelegate[key]
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
         optionsDelegate[key] = value
     }
 
-    override fun execute(executionPolicy: ExecutionPolicy?, logger: KotlinLogger?): JvmClasspathEntrySnapshot {
+    override fun execute(executionPolicy: ExecutionPolicy?, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity = get(JvmClasspathSnapshottingOperation.GRANULARITY)
         val parseInlinedLocalClasses = get(JvmClasspathSnapshottingOperation.PARSE_INLINED_LOCAL_CLASSES)
 
@@ -35,6 +35,6 @@ class JvmClasspathSnapshottingOperationImpl(
             ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
             DoNothingBuildMetricsReporter
         )
-        return JvmClasspathEntrySnapshotImpl(origin)
+        return ClasspathEntrySnapshotImpl(origin)
     }
 }
