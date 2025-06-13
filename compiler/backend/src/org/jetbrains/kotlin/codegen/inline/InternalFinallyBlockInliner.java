@@ -234,6 +234,16 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 //Copying finally body before non-local return instruction
                 insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
 
+                // apply line number for inlined copy of finally block if needed
+                AbstractInsnNode copiedFinallyStart = finallyBlockCopy.instructions.getFirst();
+                Integer finallyLineNumber = getFirstFinallyOperationLineNumberOrNull(finallyInfo.startIns, finallyInfo.endInsExclusive);
+                Integer finallyCopyLineNumber = getFirstFinallyOperationLineNumberOrNull(copiedFinallyStart, instrInsertFinallyBefore);
+                if (finallyLineNumber != null && !finallyLineNumber.equals(finallyCopyLineNumber)) {
+                    LabelNode label = new LabelNode();
+                    inlineFun.instructions.insertBefore(copiedFinallyStart, label);
+                    inlineFun.instructions.insertBefore(copiedFinallyStart, new LineNumberNode(finallyLineNumber, label));
+                }
+
                 nestedUnsplitBlocksWithoutFinally.addAll(clusterBlocks);
 
                 updateExceptionTable(

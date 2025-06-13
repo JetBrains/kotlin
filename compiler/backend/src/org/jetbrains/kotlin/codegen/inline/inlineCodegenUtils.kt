@@ -232,6 +232,26 @@ fun getLineNumberOrNull(insn: AbstractInsnNode?): Int? {
     return null
 }
 
+private fun getFirstFinallyOperationInstructionOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): AbstractInsnNode? {
+    var cur: AbstractInsnNode? = startIns
+    while (cur != null && cur != endInsExclusive) {
+        when {
+            cur is LabelNode || cur is LineNumberNode || cur is FrameNode -> cur = cur.next
+            isFinallyMarker(cur.next) -> cur = cur.next.next
+            else -> return cur
+        }
+    }
+    return null
+}
+
+/*
+ * Finds the line number specified for the first "operation" instruction (i.e., not label, linenumber, frame or "finally" marker)
+ * of the given instructions of "finally" block, no matter if the line number specified inside or before the block.
+ * Returns `null` if there are no operation instructions in the block, or there is no line number specified for the first one of them.
+ */
+fun getFirstFinallyOperationLineNumberOrNull(startIns: AbstractInsnNode, endInsExclusive: AbstractInsnNode): Int? =
+    getLineNumberOrNull(getFirstFinallyOperationInstructionOrNull(startIns, endInsExclusive))
+
 fun createEmptyMethodNode() = MethodNode(Opcodes.API_VERSION, 0, "fake", "()V", null, null)
 
 internal fun firstLabelInChain(node: LabelNode): LabelNode {

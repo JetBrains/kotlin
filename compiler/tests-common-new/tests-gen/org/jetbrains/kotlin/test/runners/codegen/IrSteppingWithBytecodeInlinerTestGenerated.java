@@ -655,6 +655,12 @@ public class IrSteppingWithBytecodeInlinerTestGenerated extends AbstractIrSteppi
   }
 
   @Test
+  @TestMetadata("tryOneLineFinallyAndNonLocalReturn.kt")
+  public void testTryOneLineFinallyAndNonLocalReturn() {
+    runTest("compiler/testData/debug/stepping/tryOneLineFinallyAndNonLocalReturn.kt");
+  }
+
+  @Test
   @TestMetadata("variablesWithoutInitializer.kt")
   public void testVariablesWithoutInitializer() {
     runTest("compiler/testData/debug/stepping/variablesWithoutInitializer.kt");
