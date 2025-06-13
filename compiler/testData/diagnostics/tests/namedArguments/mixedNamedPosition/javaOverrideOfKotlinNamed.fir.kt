@@ -54,3 +54,5 @@ fun test() {
     J4().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bx<!> = 2)<!>
     J4().foo(1, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>bxx<!> = 2)<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, javaFunction, javaType */

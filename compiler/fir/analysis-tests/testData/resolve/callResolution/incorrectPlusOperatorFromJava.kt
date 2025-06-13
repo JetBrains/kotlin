@@ -21,3 +21,6 @@ class Derived : Base() {
         y.length // should be ok
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, javaFunction, javaType, localProperty, operator, propertyDeclaration, stringLiteral */

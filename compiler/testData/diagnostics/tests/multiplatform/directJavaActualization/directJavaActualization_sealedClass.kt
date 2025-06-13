@@ -18,3 +18,5 @@ public sealed class Foo permits Foo.Bar, Foo.Baz {
     @kotlin.annotations.jvm.KotlinActual
     public static final class Baz extends Foo { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, nestedClass, sealed */

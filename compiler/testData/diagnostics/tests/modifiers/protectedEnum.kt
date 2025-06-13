@@ -7,3 +7,5 @@ open class Foo {
     private enum class Test2
     internal enum class Test3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, nestedClass */

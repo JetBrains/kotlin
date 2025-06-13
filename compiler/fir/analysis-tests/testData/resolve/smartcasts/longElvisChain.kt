@@ -31,3 +31,6 @@ fun test_4() {
     val c = b?.let { return it } ?: a ?: return
     throw a
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast */

@@ -46,3 +46,7 @@ fun testIsInWhenGuard(instance: SealedClass): String {
         else -> "100"
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, functionDeclaration, guardCondition, inner, integerLiteral,
+isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

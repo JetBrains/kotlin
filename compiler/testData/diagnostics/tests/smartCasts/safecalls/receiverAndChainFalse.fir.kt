@@ -8,3 +8,5 @@ fun calc(x: String?, y: Int?): Int {
     // No smart cast possible
     return <!RETURN_TYPE_MISMATCH!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, nullableType, safeCall, smartcast */

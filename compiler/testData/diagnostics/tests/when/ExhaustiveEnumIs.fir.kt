@@ -19,3 +19,6 @@ fun foo(x: MyEnum): Int {
         is <!IS_ENUM_ENTRY!>MyEnum.C<!> -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, integerLiteral, isExpression, whenExpression,
+whenWithSubject */

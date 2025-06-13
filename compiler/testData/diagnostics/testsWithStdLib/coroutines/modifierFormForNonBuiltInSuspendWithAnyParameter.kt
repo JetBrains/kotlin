@@ -83,3 +83,6 @@ fun bar() {
 
     A() suspend ""
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter */

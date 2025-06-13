@@ -15,3 +15,6 @@ fun <K, V, W> f2() where W : K, W : <!BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARA
     fun <T> f4() where T : K, T : <!REPEATED_BOUND!>K<!> {}
 }
 fun <K, V, <!BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER!>W<!>> f3() where W : K, W : V, W : Any {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localFunction, nullableType,
+typeConstraint, typeParameter */

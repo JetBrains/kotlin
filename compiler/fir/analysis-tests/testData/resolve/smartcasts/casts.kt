@@ -44,3 +44,6 @@ fun test_4(b: Any) {
     }
     b.<!UNRESOLVED_REFERENCE!>not<!>()
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, disjunctionExpression, equalityExpression, functionDeclaration,
+ifExpression, nullableType, smartcast */

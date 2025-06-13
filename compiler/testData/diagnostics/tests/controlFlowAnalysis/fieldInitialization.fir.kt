@@ -185,3 +185,7 @@ class Test5 {
         <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>d<!> = "not allowed"
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, contractCallsEffect,
+contracts, crossinline, functionDeclaration, functionalType, init, inline, lambdaLiteral, localClass, localFunction,
+localProperty, noinline, propertyDeclaration, stringLiteral */

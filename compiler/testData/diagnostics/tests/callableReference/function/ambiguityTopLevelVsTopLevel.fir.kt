@@ -8,3 +8,5 @@ fun main() {
 
     val fooRef: (Int, Any) -> Unit = ::foo
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, propertyDeclaration */

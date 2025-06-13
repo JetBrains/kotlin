@@ -18,3 +18,6 @@ fun takeBoolean(b: Boolean) {}
 fun getStringOrNull(): String? {
     return "hello"
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, tryExpression */

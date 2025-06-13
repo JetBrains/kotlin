@@ -14,3 +14,5 @@ fun test() {
     foo(<!TYPE_MISMATCH!>F().p()<!>)
     foo(<!TYPE_MISMATCH!>r()<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType */

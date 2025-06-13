@@ -15,3 +15,7 @@ fun test2(a: Array<in Int>) {
     val r: Array<out Array<in Int?>> = foo(<!TYPE_MISMATCH!>a<!>)
     foo(<!TYPE_MISMATCH!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, infix, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint, typeParameter,
+typeWithExtension */

@@ -42,3 +42,8 @@ internal fun updateVotesForDuplicates(issue: XdIssue) {
         toRecount.add(oldDup.duplicatesRootSearch())
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, checkNotNullCall, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, starProjection, thisExpression, tryExpression,
+typeConstraint, typeParameter, unnamedLocalVariable */

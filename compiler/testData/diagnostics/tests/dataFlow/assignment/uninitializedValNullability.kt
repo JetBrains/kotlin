@@ -14,3 +14,6 @@ fun test(a: Any?, flag: Boolean, x: Any?) {
         b<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

@@ -6,3 +6,5 @@ interface MyTrait: <!INTERFACE_WITH_SUPERCLASS, PLATFORM_CLASS_MAPPED_TO_KOTLIN!
     public override fun finalize()
     public <!OVERRIDING_FINAL_MEMBER!>override<!> fun wait()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override */

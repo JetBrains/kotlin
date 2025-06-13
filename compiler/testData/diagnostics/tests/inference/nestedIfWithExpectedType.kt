@@ -32,3 +32,6 @@ fun foo2(x: Int, p1: Promise<Any?>): Promise<*> {
         p1
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+nullableType, starProjection, typeParameter */

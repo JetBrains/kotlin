@@ -13,3 +13,5 @@ expect class Foo : Transitive
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class Foo : Transitive
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration */

@@ -9,3 +9,5 @@ expect fun <!AMBIGUOUS_ACTUALS{JVM}, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE{JVM}!>
 
 // MODULE: main()()(intermediate)
 <!CONFLICTING_OVERLOADS!>actual fun foo()<!> {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

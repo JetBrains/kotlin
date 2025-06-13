@@ -29,3 +29,7 @@ fun main() {
     a.add(a.leakingT)
     println(a) // [1, 2, 3, xx]!
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, starProjection, stringLiteral, typeParameter */

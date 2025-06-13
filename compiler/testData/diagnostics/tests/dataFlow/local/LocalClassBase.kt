@@ -8,3 +8,6 @@ fun test(x: Any, y: Int?) {
   class Local: Base(<!DEBUG_INFO_SMARTCAST!>x<!>, <!DEBUG_INFO_SMARTCAST!>y<!>) {
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, isExpression, localClass,
+nullableType, primaryConstructor, smartcast */

@@ -12,3 +12,6 @@ fun foo(): Int {
     else
         0
 }
+
+/* GENERATED_FIR_TAGS: andExpression, comparisonExpression, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

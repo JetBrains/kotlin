@@ -131,3 +131,7 @@ fun <L> main(x: L?, y: L) {
     foo24(x, Foo(Foo(Bar())))
     foo24(y, Foo(Foo(Bar())))
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, in, inProjection, nullableType, out, outProjection, primaryConstructor, smartcast,
+stringLiteral, typeConstraint, typeParameter */

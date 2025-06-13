@@ -7,3 +7,6 @@ fun main() {
     val w = foo() ?: java.lang.Object()
     w.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration */

@@ -25,3 +25,5 @@ public class test {
 package b
 
 fun test1() = test().getX()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, starProjection */

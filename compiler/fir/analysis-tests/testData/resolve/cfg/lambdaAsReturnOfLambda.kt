@@ -9,3 +9,6 @@ val x4: (String) -> Unit = run {
 
 fun bar(s: String) {}
 fun <R> run(block: () -> R): R = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter */

@@ -68,3 +68,6 @@ fun J.<!EXTENSION_SHADOWED_BY_MEMBER!>foo<!>(s: String) {}
 public class J {
     public void foo(String s) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+inline, integerLiteral, javaType, nullableType, reified, stringLiteral, typeConstraint, typeParameter */

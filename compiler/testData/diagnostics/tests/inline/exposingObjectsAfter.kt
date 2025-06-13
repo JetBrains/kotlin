@@ -37,3 +37,6 @@ class C2 {
         TA
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, nestedClass, objectDeclaration,
+typeAliasDeclaration */

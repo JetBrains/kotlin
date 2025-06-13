@@ -12,3 +12,6 @@ fun test() {
     foo2 { (x: Int, y: String), (z: Int, w: String) -> C(x + z, y + w) }
     foo2 { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>x: String<!>, <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>y: Int<!>), (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>z: String<!>, <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>w: Int<!>) -> C(<!ARGUMENT_TYPE_MISMATCH!>x + z<!>, <!ARGUMENT_TYPE_MISMATCH!>y + w<!>) }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

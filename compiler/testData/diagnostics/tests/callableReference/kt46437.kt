@@ -7,3 +7,6 @@ fun box(): String {
 object X {
     private val y = null
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, objectDeclaration, propertyDeclaration,
+stringLiteral */

@@ -13,3 +13,5 @@ fun test2() : suspend (Int) -> Unit = when {
 }
 
 suspend fun foo(x: Int) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, suspend, whenExpression */

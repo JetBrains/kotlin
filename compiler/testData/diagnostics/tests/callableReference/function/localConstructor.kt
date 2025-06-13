@@ -10,3 +10,6 @@ fun main() {
     val x = ::A
     checkSubtype<KFunction0<A>>(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localClass, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

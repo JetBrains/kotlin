@@ -8,3 +8,6 @@ fun foo() {
 
     x()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, operator,
+propertyDeclaration */

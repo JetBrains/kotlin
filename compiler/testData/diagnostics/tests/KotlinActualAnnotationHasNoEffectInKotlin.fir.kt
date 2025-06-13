@@ -19,3 +19,6 @@ typealias Duh = <!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual
 
 @[<!KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN!>KotlinActual<!>]
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, functionDeclaration, functionalType, javaCallableReference,
+javaFunction, lambdaLiteral, localProperty, propertyDeclaration, typeAliasDeclaration */

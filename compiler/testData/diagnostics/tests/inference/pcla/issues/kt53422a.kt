@@ -33,3 +33,7 @@ fun <IPTV> innerBuild(instructions: InnerBuildee<IPTV>.() -> Unit): InnerBuildee
 fun <PTV> buildFromValue(value: PTV, instructions: Buildee<PTV>.(PTV) -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply { instructions(value) }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

@@ -30,3 +30,6 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit) {
 
     d()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, contractCallsEffect, contracts, functionDeclaration,
+functionalType, init, lambdaLiteral, localProperty, override, propertyDeclaration */

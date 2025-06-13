@@ -58,3 +58,6 @@ object WithPropertyInBaseDifferentOrder {
         companion object : DerivedAbstract()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

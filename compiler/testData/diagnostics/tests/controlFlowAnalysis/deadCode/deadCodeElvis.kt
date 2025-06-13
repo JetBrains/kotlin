@@ -16,3 +16,6 @@ fun test2(): Int {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, getter, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

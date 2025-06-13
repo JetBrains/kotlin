@@ -24,3 +24,6 @@ interface I
 class B : A(), I { // I is necessary here
     override fun hashCode() = super.<!ABSTRACT_SUPER_CALL_WARNING!>hashCode<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

@@ -49,3 +49,7 @@ fun sealedVariant(): Int {
         is SealedBoolean.True -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

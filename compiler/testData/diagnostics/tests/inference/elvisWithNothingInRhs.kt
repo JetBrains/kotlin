@@ -21,3 +21,6 @@ fun callCall() {
   call(s = J.getArray() ?: arrayOf("a"))
   call(s = J.getArray() ?: error("error"))
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, nullableType, outProjection,
+stringLiteral, vararg */

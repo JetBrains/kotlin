@@ -51,3 +51,5 @@ class YN: Y() {
         YN.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType */

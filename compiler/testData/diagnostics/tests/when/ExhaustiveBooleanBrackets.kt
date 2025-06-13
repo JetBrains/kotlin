@@ -17,3 +17,6 @@ fun foo(arg: Boolean): String {
         ((false)) -> "falsehood"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

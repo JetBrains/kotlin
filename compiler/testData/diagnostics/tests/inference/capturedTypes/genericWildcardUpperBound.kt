@@ -15,3 +15,6 @@ interface IProducer<out T : IParent> {
 
 interface IParent
 interface IChild : IParent
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, out, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

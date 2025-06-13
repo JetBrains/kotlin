@@ -16,3 +16,5 @@ import a.*
 import b.*
 
 class Y : <!OVERLOAD_RESOLUTION_AMBIGUITY!>X<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

@@ -47,3 +47,6 @@ class B<F> : List<F> {
         throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, nullableType, operator, override,
+propertyDeclaration, typeParameter */

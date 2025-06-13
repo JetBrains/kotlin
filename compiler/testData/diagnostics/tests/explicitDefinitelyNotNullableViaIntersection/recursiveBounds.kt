@@ -11,3 +11,6 @@ fun <R : T & Any, T> bar() {}
 
 fun <<!CYCLIC_GENERIC_UPPER_BOUND!>E : <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>E & Any<!><!>> baz1() {}
 fun <<!CYCLIC_GENERIC_UPPER_BOUND!>E : <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>E & Any<!><!>> E?.baz2() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, nullableType,
+typeConstraint, typeParameter */

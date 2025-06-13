@@ -35,3 +35,6 @@ import some2.*
 import some3.*
 
 fun test() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>Some<!>.<!UNRESOLVED_REFERENCE!>foo<!>
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

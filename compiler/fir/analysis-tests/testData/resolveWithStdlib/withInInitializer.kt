@@ -12,3 +12,6 @@ class Second {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, integerLiteral, intersectionType, lambdaLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

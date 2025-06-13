@@ -59,3 +59,6 @@ data class Else(
     <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:JavaParamComponent<!>
     val f get() = a + b
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetAll, classDeclaration,
+collectionLiteral, data, getter, javaProperty, javaType, primaryConstructor, propertyDeclaration */

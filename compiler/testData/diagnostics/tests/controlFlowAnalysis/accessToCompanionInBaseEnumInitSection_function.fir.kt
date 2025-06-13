@@ -143,3 +143,8 @@ inline fun <T> inPlaceDelegate(block: () -> T): ReadOnlyProperty<Any?, T> {
 fun <T> nonInPlaceDelegate(block: () -> T): ReadOnlyProperty<Any?, T> {
     return ReadOnlyProperty { _, _ -> block() }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, companionObject, contractCallsEffect, contracts,
+enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, stringLiteral, thisExpression, typeParameter */

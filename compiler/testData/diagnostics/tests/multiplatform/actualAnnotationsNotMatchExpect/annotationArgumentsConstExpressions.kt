@@ -137,3 +137,7 @@ actual fun complexNestedAnnotations() {}
     )
 )
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>complexNestedAnnotationsNotMatch<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, annotationDeclaration, classDeclaration, classReference,
+collectionLiteral, const, enumDeclaration, enumEntry, expect, functionDeclaration, nestedClass, objectDeclaration,
+outProjection, primaryConstructor, propertyDeclaration, starProjection, stringLiteral, vararg */

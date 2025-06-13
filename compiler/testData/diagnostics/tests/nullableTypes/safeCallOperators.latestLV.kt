@@ -91,3 +91,7 @@ fun foo(a: A?) {
         a<!UNNECESSARY_SAFE_CALL!>?.<!>w.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inProjection, incrementDecrementExpression, integerLiteral, nullableType, operator,
+primaryConstructor, propertyDeclaration, safeCall, smartcast, thisExpression, typeParameter */

@@ -20,3 +20,7 @@ fun priority(op: Operation) = when(op) {
     is Operation.Plus, is Operation.Minus  -> 1
     is Operation.Times, is Operation.Slash -> 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, disjunctionExpression, functionDeclaration, integerLiteral,
+isExpression, multiplicativeExpression, nestedClass, override, primaryConstructor, propertyDeclaration, sealed,
+smartcast, whenExpression, whenWithSubject */

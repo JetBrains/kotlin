@@ -11,3 +11,5 @@ fun test(a: A, b: B) {
     baz(a, ::<!INAPPLICABLE_CANDIDATE!>fooB<!>)
     bar(::<!INAPPLICABLE_CANDIDATE!>fooB<!>, a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, typeParameter */

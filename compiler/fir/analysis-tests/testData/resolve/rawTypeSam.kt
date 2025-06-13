@@ -16,3 +16,6 @@ public interface Processor<T extends CharSequence> {
 public class RawType {
     public static void bar(Processor x) {}
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction,
+lambdaLiteral, samConversion */

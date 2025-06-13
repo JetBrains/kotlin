@@ -10,3 +10,6 @@ class My {
         Local()
     }()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+lambdaLiteral, localClass, propertyDeclaration */

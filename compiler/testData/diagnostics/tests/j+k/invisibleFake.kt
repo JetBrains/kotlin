@@ -30,3 +30,6 @@ class D extends C {
 
 // FILE: box.kt
 fun box(): String = D().foo("") // K1: D.foo, K2: B.foo
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType,
+override, stringLiteral */

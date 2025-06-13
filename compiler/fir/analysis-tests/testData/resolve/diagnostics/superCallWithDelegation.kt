@@ -11,3 +11,6 @@ class C(a: A) : B(a) {
         super.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration, superExpression */

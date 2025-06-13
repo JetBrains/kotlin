@@ -14,3 +14,5 @@ class User : Owner() {
 
     override fun getText() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, override, stringLiteral */

@@ -9,4 +9,4 @@ fun foo() {
     val e = E.<!SYNTAX!><!>
 }
 
-
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

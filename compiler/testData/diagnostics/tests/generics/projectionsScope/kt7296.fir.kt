@@ -13,3 +13,7 @@ fun main() {
 
     c.x checkType { _<ArrayList<out ArrayList<*>>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, lambdaLiteral, localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+starProjection, typeParameter, typeWithExtension */

@@ -14,3 +14,5 @@ fun test(param: String) {
 
     eat(::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>param<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral */

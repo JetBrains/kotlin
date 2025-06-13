@@ -55,3 +55,7 @@ fun testConstraint() {
 }
 
 class SubSealed : SealedInterface, <!UNRESOLVED_REFERENCE!>NestedInheritor<!>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, inner, integerLiteral,
+interfaceDeclaration, localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, typeConstraint, typeParameter */

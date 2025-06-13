@@ -14,3 +14,4 @@ class Derived : Base() {}
 // FILE: use.kt
 fun foo(): Derived = <!MISSING_DEPENDENCY_SUPERCLASS!>Derived<!>()
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

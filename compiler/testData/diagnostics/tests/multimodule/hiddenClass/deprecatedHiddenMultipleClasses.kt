@@ -45,3 +45,5 @@ fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>v2<!>
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>v3<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

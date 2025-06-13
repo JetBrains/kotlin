@@ -21,3 +21,5 @@ fun test(a: A) {
     foo(foo(a, foo(a, foo(a, a.testVal))), a)
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */

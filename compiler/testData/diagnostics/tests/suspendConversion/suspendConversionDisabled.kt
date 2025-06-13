@@ -26,3 +26,5 @@ fun test(
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f2<!>)
     foo1(<!TYPE_MISMATCH, UNSUPPORTED_FEATURE!>f3<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, stringLiteral, suspend */

@@ -28,3 +28,6 @@ fun plugAssign(condition: Boolean): Unit = when {
     condition -> x += ""
     else -> Unit
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, whenExpression */

@@ -30,3 +30,5 @@ fun main() {
             .build()
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType, starProjection */

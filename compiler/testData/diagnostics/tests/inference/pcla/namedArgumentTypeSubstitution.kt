@@ -48,3 +48,7 @@ fun <T : SortableItem> batchSourceAggregator2(
     buckets: List<BatchSource<out T>>,
     initialElements: List<T> = emptyList(),
 ): BatchSourceAggregator<T> = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, out, outProjection, propertyDeclaration, safeCall, suspend, typeConstraint,
+typeParameter */

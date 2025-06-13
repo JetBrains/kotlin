@@ -12,3 +12,5 @@ annotation class RepeatableAnnotation
 annotation class RepeatableAnnotationContainer
 
 @RepeatableAnnotation class Annotated
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, typeAliasDeclaration */

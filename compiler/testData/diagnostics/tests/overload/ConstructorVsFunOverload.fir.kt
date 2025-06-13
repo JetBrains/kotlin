@@ -38,3 +38,6 @@ class Rtyu {
 }
 
 <!CONFLICTING_OVERLOADS!>fun J(s: String)<!> { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor */

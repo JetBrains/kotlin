@@ -10,3 +10,6 @@ public class JavaClass<T> {
     public T getSomething() { return null; }
     public void setSomething(T value) { }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, flexibleType, functionDeclaration, javaProperty, javaType,
+localProperty, propertyDeclaration, stringLiteral */

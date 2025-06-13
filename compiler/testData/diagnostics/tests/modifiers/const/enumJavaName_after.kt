@@ -14,3 +14,5 @@ public enum CompressionType {
 
 // FILE: main.kt
 const val name = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>CompressionType.OK.name<!>
+
+/* GENERATED_FIR_TAGS: const, flexibleType, javaProperty, javaType, propertyDeclaration */

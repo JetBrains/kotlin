@@ -8,3 +8,6 @@ abstract class A<T : Any> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, nullableType, smartcast, typeConstraint, typeParameter */

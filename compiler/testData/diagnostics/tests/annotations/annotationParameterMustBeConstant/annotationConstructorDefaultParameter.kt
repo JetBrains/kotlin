@@ -12,3 +12,6 @@ annotation class Test4(val x: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE
 annotation class Test5(val x: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>1 + iVal + 1<!>)
 annotation class Test6(val x: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>iFun()<!>)
 annotation class Test7(val x: Int = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>1 + iFun() + 1<!>)
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration */

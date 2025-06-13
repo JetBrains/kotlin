@@ -23,3 +23,6 @@ class Test {
 }
 class B
 operator fun B.invoke(): Unit = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, smartcast */

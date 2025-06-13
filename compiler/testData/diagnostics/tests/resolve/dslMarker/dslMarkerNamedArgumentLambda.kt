@@ -36,3 +36,6 @@ fun test3() {
             })
     )
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, typeWithExtension, vararg */

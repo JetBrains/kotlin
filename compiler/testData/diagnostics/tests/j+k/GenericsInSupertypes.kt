@@ -50,3 +50,6 @@ abstract class K: C<P>() {
 abstract class AL: java.util.ArrayList<P>() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

@@ -15,3 +15,7 @@ fun <E> List<Ref<*>>.getElement(i: Int): Ref<E> = this[i] <!UNCHECKED_CAST!>as R
 fun test(list: List<Ref<*>>) {
     val data: String by list.getElement(0) <!USELESS_ELVIS!>?: error("")<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral, thisExpression, typeParameter */

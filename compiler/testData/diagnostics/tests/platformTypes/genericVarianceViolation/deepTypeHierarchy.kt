@@ -24,3 +24,6 @@ interface MyList3<A2, B> : MyList2<Any, B>
 fun bar(): MyList3<Int, out String> {
     TODO()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType, nullableType,
+outProjection, typeParameter */

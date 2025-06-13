@@ -19,3 +19,6 @@ fun bar(arg: Boolean): Int {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+nullableType, typeParameter */

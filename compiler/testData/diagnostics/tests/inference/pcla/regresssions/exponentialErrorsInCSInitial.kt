@@ -59,3 +59,8 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, break, comparisonExpression, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression,
+integerLiteral, lambdaLiteral, localFunction, localProperty, nullableType, propertyDeclaration, rangeExpression,
+thisExpression, typeParameter, whileLoop */

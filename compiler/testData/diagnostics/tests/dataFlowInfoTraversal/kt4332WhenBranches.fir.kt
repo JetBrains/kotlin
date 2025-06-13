@@ -8,3 +8,6 @@ fun testWhen(t: String?, x: String?): Int {
         else -> (t + x).length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, integerLiteral, nullableType,
+smartcast, whenExpression */

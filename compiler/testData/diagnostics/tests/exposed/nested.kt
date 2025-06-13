@@ -6,3 +6,5 @@ internal class Outer {
     // Ok, effectively internal from internal
     class Your: My()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

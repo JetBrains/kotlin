@@ -31,3 +31,6 @@ val ownerCompanionFoo = take<Owner.Companion.Foo>(Owner.Companion.Foo("2"))
 
 val ownerBar = take<Unit>(Owner.Bar("3"))
 val ownerCompanionBar = take<Owner.Companion.Bar>(Owner.Companion.Bar("4"))
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nestedClass, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

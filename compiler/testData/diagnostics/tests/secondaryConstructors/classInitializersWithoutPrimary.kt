@@ -4,3 +4,5 @@ class A {
     constructor()
     init {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, secondaryConstructor */

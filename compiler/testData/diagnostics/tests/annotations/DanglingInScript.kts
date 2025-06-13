@@ -5,3 +5,5 @@
 annotation class Ann
 
 @Ann<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, init, localProperty, propertyDeclaration */

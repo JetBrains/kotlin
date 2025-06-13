@@ -25,3 +25,5 @@ private val test2co = <!INVISIBLE_REFERENCE!>TA<!>
 
 private class C
 private typealias TA = Int
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

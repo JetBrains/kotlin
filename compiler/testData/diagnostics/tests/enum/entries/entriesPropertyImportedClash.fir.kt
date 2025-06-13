@@ -21,3 +21,6 @@ fun test() {
         entries
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

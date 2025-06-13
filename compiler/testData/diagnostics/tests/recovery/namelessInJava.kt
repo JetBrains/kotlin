@@ -18,3 +18,5 @@ class K : Nameless() {
     <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
     val<!SYNTAX!><!> : Int = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaType, propertyDeclaration */

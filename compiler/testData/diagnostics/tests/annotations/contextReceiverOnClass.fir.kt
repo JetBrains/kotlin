@@ -14,3 +14,6 @@ class ClassWithExplicitConstructor<!CONTEXT_RECEIVERS_DEPRECATED!>()<!> {
 }
 
 const val prop = "str"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

@@ -37,3 +37,6 @@ fun use(a: A, b: B, c: C) {
     B("")
     <!DEPRECATION!>C<!>("s")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, primaryConstructor,
+secondaryConstructor, stringLiteral */

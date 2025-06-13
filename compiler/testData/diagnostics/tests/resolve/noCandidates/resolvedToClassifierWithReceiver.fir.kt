@@ -38,3 +38,6 @@ fun test(x: X) {
     val object_as_fun = x.<!UNRESOLVED_REFERENCE!>B<!>()
     val class_as_val = x.<!UNRESOLVED_REFERENCE!>C<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

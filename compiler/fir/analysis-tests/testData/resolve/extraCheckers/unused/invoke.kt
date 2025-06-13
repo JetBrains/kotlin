@@ -4,3 +4,6 @@ fun foo(): Int {
     val y = fun() = 2
     return 10 * x() + y()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, functionDeclaration, integerLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration */

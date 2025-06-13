@@ -41,3 +41,6 @@ fun <T> foo(x: List<T>, y: List<T>?) {
     <!USELESS_IS_CHECK!>x is List<T><!>
     y is List<T>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, functionDeclaration, inline, intersectionType,
+isExpression, nullableType, reified, smartcast, typeConstraint, typeParameter */

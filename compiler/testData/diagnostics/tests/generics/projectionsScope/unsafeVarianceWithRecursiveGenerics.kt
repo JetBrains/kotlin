@@ -10,3 +10,7 @@ internal fun Any.matchesRendering(other: Any): Boolean {
         else -> <!DEBUG_INFO_SMARTCAST!>this<!>.canUpdateFrom(other as UpdatableRendering<*>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classReference, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, isExpression, out, smartcast, starProjection, thisExpression, typeConstraint, typeParameter,
+whenExpression */

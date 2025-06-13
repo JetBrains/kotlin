@@ -8,3 +8,5 @@ fun <R, T : Any> use(x: String?, r: R, t: T) {
 }
 
 fun <W> foo(x: W & Any) {}
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, nullableType, typeConstraint, typeParameter */

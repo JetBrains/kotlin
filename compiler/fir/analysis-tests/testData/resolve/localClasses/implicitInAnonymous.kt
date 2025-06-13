@@ -15,3 +15,6 @@ fun main() {
     useBoolean(x.w)
     useBoolean(x.z)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, comparisonExpression, equalityExpression,
+functionDeclaration, getter, integerLiteral, propertyDeclaration, thisExpression */

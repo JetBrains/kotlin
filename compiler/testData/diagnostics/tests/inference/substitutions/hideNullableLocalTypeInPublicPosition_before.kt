@@ -18,3 +18,6 @@ fun main() {
     bar(false).foo()
     bar(false)<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+override, safeCall, stringLiteral */

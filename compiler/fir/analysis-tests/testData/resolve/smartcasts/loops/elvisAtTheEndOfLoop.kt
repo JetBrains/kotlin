@@ -78,3 +78,6 @@ fun test_8() {
 
     a<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, elvisExpression, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast, whileLoop */

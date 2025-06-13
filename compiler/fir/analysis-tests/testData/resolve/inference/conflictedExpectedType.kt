@@ -6,3 +6,6 @@ fun <T : Any> foo(): MutableList<T> = TODO()
 fun main() {
     val x: MutableList<String?> = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, typeConstraint,
+typeParameter */

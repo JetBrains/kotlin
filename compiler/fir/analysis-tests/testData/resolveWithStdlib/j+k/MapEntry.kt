@@ -22,3 +22,6 @@ fun test() {
     val value = b.value
     b.setValue(null)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, nullableType, propertyDeclaration */

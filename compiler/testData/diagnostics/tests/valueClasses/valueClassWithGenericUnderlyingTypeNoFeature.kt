@@ -19,4 +19,5 @@ value class FooGenericArray<T>(val x: <!UNSUPPORTED_FEATURE!>Array<T><!>)
 @JvmInline
 value class FooGenericArray2<T>(val x: <!UNSUPPORTED_FEATURE!>Array<Array<T>><!>)
 
-
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeParameter, value */

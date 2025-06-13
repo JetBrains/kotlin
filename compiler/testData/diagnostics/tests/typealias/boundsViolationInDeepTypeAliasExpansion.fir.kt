@@ -15,3 +15,6 @@ val test5 = TC2<Number, Collection<Number>>()
 val test6 = TC2<Number, Collection<Int>>()
 val test7 = TC2<Number, List<Int>>()
 val test8 = TC2<Number, <!UPPER_BOUND_VIOLATED!>List<Any><!>>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

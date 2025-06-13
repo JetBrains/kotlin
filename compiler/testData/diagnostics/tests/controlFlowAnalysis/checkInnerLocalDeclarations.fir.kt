@@ -11,3 +11,5 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localFunction, localProperty, propertyDeclaration */

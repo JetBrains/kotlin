@@ -16,3 +16,6 @@ class Test {
         materialize()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

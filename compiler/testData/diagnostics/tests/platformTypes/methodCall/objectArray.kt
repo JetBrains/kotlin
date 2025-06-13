@@ -23,3 +23,6 @@ fun test(
     J().arr(sa)
     J().arr(san)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+javaFunction, javaType, nullableType, typeParameter, typeWithExtension */

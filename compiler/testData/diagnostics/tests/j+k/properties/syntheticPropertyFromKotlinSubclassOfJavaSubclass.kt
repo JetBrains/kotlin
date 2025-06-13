@@ -81,3 +81,5 @@ class KotlinSubclassOfJavaSubclass : EmptySubclass() {
         <!SUPER_CANT_BE_EXTENSION_RECEIVER!>super<!>.isPrivateBooleanField
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, superExpression */

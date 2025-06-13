@@ -14,3 +14,6 @@ fun main() {
         this.<!DEBUG_INFO_MISSING_UNRESOLVED!>add<!>("1")
     })
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, lambdaLiteral, nullableType, outProjection,
+stringLiteral, thisExpression, typeParameter, typeWithExtension */

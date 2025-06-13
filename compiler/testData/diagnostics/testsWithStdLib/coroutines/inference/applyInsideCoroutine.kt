@@ -35,3 +35,7 @@ val test3 = generate {
 interface A
 object B : A
 object C : A
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, objectDeclaration, propertyDeclaration, suspend, thisExpression, typeParameter,
+typeWithExtension */

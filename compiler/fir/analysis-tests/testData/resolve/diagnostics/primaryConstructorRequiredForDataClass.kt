@@ -8,3 +8,5 @@ data <!DATA_CLASS_WITHOUT_PARAMETERS!>class B<!> {
 data <!DATA_CLASS_WITHOUT_PARAMETERS!>class C<!> {
     constructor(x: Int)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, secondaryConstructor */

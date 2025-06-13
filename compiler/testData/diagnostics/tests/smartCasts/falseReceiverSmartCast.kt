@@ -14,3 +14,6 @@ open class SuperFoo {
 class Foo : SuperFoo() {
     public fun superFoo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, smartcast, stringLiteral,
+thisExpression */

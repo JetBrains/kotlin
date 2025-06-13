@@ -20,3 +20,6 @@ annotation class S(val s: String)
 
 @S(A + B)
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, collectionLiteral, const, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

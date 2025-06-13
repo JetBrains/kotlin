@@ -38,3 +38,6 @@ fun test(x: X) {
     val object_as_fun = x.<!RESOLUTION_TO_CLASSIFIER!>B<!>()
     val class_as_val = x.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, NO_COMPANION_OBJECT!>C<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

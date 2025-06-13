@@ -57,3 +57,6 @@ inline fun default2_2(noinline lambda: () -> String, dlambda: () -> String = { i
 inline fun default2_3(noinline lambda: () -> String, noinline dlambda: () -> String = { inlineFun(lambda) }) {
     lambda() + dlambda()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, crossinline, functionDeclaration, functionalType, inline, lambdaLiteral,
+noinline, stringLiteral */

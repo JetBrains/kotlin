@@ -14,3 +14,6 @@ inline fun <T, R> Iterable<T>.myMap(transform: (T) -> R): List<R> {
 fun usesGlobal(p: List<Global>) {
     p.myMap(Global::toUpperCase)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+nullableType, typeAliasDeclaration, typeParameter */

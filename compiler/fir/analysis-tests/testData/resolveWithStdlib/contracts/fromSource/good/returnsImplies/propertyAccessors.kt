@@ -32,3 +32,7 @@ fun test_2(a: A?) {
     a.isNotNull = true
     a.foo()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, getter, ifExpression, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, setter, smartcast, thisExpression */

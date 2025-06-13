@@ -17,3 +17,6 @@ class Your {
         z
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, flexibleType, ifExpression, javaType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

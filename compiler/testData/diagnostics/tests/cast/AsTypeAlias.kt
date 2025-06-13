@@ -18,3 +18,5 @@ val io = ib as IOther
 val s = d <!CAST_NEVER_SUCCEEDS!>as<!> String
 val ms = d <!CAST_NEVER_SUCCEEDS!>as<!> MyString
 
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, interfaceDeclaration, propertyDeclaration, stringLiteral,
+typeAliasDeclaration */

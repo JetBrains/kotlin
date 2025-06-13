@@ -18,3 +18,6 @@ fun f(): Unit {
     1 <!UNSAFE_OPERATOR_CALL!>in<!> set
     1 in 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, nullableType, operator, propertyDeclaration */

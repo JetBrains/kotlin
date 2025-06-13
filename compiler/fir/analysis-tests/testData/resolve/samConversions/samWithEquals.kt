@@ -35,3 +35,6 @@ fun main() {
         false
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, interfaceDeclaration,
+javaFunction, javaType, lambdaLiteral, propertyDeclaration, samConversion */

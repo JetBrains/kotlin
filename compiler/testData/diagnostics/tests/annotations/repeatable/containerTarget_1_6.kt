@@ -53,3 +53,5 @@ annotation class D3(val value: Array<B3>)
 annotation class B4
 @Target(ANNOTATION_CLASS, CLASS, TYPE_PARAMETER)
 annotation class D4(val value: Array<B4>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, primaryConstructor, propertyDeclaration */

@@ -39,3 +39,6 @@ fun case2() {
         this.yield("") // UNRESOLVED_REFERENCE
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

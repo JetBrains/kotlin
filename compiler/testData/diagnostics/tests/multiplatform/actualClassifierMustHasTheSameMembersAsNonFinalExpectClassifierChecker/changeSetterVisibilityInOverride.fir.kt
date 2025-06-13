@@ -17,3 +17,5 @@ actual open class Foo : Base() {
     override var <!EXPECT_ACTUAL_INCOMPATIBLE_PROPERTY_SETTER_VISIBILITY!>foo<!>: String = ""
         public set
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, override, propertyDeclaration, stringLiteral */

@@ -30,3 +30,6 @@ val property1: String
 context(_: Int, <!VAL_OR_VAR_ON_FUN_PARAMETER!>var<!> a: String)
 val property2: String
     get() = a
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, getter, propertyDeclaration,
+propertyDeclarationWithContext */

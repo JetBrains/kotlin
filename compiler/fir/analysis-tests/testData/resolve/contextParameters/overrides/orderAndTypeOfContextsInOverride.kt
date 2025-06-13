@@ -52,3 +52,6 @@ class Test5 : Base() {
     <!NOTHING_TO_OVERRIDE!>override<!> val b: String
         get() = "2"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+getter, override, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, stringLiteral */

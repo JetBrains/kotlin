@@ -12,3 +12,6 @@ class Foo : BaseClass() {
         f.<!INVISIBLE_MEMBER!>y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+primaryConstructor, propertyDeclaration */

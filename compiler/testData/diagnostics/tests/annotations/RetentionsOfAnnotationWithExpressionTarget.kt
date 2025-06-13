@@ -12,3 +12,5 @@ annotation class TestRetentionBinary
 @Target(AnnotationTarget.EXPRESSION)
 <!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR!>@Retention(AnnotationRetention.RUNTIME)<!>
 annotation class TestRetentionRuntime
+
+/* GENERATED_FIR_TAGS: annotationDeclaration */

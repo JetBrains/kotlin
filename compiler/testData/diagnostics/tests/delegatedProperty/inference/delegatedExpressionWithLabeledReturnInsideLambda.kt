@@ -13,3 +13,7 @@ fun test() {
         return@createDelegate { "str" }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral,
+typeParameter */

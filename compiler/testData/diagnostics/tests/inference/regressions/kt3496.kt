@@ -9,3 +9,6 @@ class B<T> {
     }
     operator fun <S> get(s : String): S = throw Exception()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, operator, propertyDeclaration,
+stringLiteral, typeParameter */

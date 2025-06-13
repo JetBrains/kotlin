@@ -60,3 +60,7 @@ fun testInference(a: A, b: B) {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("foo.PackagePrivateInterface")!>select(a, b)<!>
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, disjunctionExpression, dnnType, functionDeclaration, ifExpression,
+integerLiteral, isExpression, javaFunction, javaType, localProperty, nullableType, outProjection, propertyDeclaration,
+smartcast, typeParameter, vararg */

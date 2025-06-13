@@ -19,3 +19,4 @@ class B : A() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override, thisExpression */

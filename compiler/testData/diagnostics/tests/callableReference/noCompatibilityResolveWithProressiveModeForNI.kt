@@ -18,3 +18,6 @@ object Scope {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>r2<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

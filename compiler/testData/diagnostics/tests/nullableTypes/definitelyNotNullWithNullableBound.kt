@@ -16,3 +16,7 @@ fun <N : Number?> test(arg: N) {
         else -> true
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, elvisExpression, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

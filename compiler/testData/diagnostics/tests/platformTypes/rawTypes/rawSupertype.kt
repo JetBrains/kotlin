@@ -37,3 +37,6 @@ fun main() {
     rawA.x = strList
     rawA.foo("", strList)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaType,
+localProperty, nullableType, propertyDeclaration, stringLiteral */

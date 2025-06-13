@@ -27,3 +27,6 @@ class Test2 {
   val b = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>a<!>.<!UNRESOLVED_REFERENCE!>x<!>
   val c = a.y
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, init, integerLiteral,
+objectDeclaration, propertyDeclaration */

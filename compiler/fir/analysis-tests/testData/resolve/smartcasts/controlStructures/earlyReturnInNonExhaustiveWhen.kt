@@ -9,3 +9,6 @@ fun foo(str: String?): Int {
         return 123
     return 321
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+whenExpression */

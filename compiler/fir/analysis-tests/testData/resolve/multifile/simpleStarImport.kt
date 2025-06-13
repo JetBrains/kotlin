@@ -22,3 +22,5 @@ import b.d.*
 fun bar() {
     baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, interfaceDeclaration */

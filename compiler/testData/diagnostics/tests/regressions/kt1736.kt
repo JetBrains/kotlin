@@ -10,3 +10,5 @@ object Obj {
 }
 
 val x = Obj.method<!TOO_MANY_ARGUMENTS!>{ -> }<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, objectDeclaration, propertyDeclaration */

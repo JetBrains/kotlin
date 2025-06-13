@@ -10,3 +10,5 @@ fun main() {
 inline fun test(noinline lambda: () -> Unit) {
     lambda()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, noinline */

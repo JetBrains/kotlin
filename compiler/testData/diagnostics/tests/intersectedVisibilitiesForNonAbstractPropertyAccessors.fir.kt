@@ -21,3 +21,5 @@ interface I2 {
 }
 
 abstract class <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>B2<!> : A2(), I2
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration */

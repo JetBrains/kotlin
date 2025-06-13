@@ -21,3 +21,5 @@ public class Foo {
 // FILE: jvm.kt
 
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>Container<!> = foo.Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

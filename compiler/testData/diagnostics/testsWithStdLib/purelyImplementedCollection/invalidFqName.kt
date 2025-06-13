@@ -29,3 +29,5 @@ public class B<T> extends AbstractList<T> {}
 // FILE: main.kt
 val x = A<String>()
 val y = B<String>()
+
+/* GENERATED_FIR_TAGS: flexibleType, javaFunction, javaType, propertyDeclaration */

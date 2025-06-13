@@ -25,3 +25,6 @@ fun testNotNullAssertion() {
     receive<MyEnum>(enumProp<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
     receive<MyEnum>(<!ARGUMENT_TYPE_MISMATCH!>stringProp<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, companionObject, enumDeclaration, enumEntry, functionDeclaration, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

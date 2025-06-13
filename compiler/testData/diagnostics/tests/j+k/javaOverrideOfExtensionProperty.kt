@@ -16,3 +16,6 @@ public class JavaClass implements GenericExtensionProperty {
 
 // FILE: Test.kt
 <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class Test<!> : JavaClass()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, javaType, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, typeParameter */

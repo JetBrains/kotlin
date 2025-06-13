@@ -8,3 +8,5 @@ fun foo() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>g<!>(::<!SYNTAX!><!>)
     h(::<!SYNTAX!><!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, nullableType, typeParameter */

@@ -24,3 +24,6 @@ import first.A
 import kotlin.reflect.KProperty
 
 public operator fun <T> A.getValue(thisRef: Any?, property: KProperty<*>): T = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+operator, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

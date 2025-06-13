@@ -39,3 +39,6 @@ fun tryProblem(): String? {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, javaFunction, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, tryExpression, whenExpression */

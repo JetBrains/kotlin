@@ -19,3 +19,7 @@ fun a() {
 
     checkSubtype<Iterable<Int>>(odd)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, multiplicativeExpression, nullableType,
+propertyDeclaration, rangeExpression, typeParameter, typeWithExtension */

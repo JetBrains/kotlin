@@ -13,3 +13,6 @@ open class B {
     val A.foo: Int by Delegate
     var A.bar: Int by Delegate
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, objectDeclaration, operator,
+propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter, starProjection */

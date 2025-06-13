@@ -30,3 +30,5 @@ fun main() {
     W.bar()
     W().foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, propertyDeclaration */

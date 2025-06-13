@@ -16,3 +16,6 @@ object B {
 
 open class C
 class D : C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inline, lambdaLiteral, nullableType,
+objectDeclaration, propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter, vararg */

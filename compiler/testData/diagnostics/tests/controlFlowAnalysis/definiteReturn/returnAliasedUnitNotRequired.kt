@@ -8,3 +8,5 @@ internal fun x(): T {
     val something = "OK"
     something.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, typeAliasDeclaration */

@@ -11,3 +11,6 @@ class Derived : Base("123") {
         bar(<!INVISIBLE_MEMBER!>v<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, primaryConstructor, propertyDeclaration,
+stringLiteral */

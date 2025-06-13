@@ -42,3 +42,7 @@ fun testErrorType() = BiParam(
     intersect(First, Second),
     <!UNRESOLVED_REFERENCE!>unresolved<!>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, interfaceDeclaration, intersectionType,
+nullableType, objectDeclaration, out, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter, vararg */

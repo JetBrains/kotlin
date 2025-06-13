@@ -8,3 +8,5 @@ inline fun<reified R> foo(z: R): R = bar(1, z)
 fun box() {
     foo("abc")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, integerLiteral, nullableType, reified, stringLiteral, typeParameter */

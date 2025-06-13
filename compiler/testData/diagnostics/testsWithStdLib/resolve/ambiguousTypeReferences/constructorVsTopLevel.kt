@@ -21,3 +21,6 @@ import bar.Foo
 import bar.take
 
 val foo = take<Foo>(Foo("3"))
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter */

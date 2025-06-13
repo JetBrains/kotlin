@@ -8,3 +8,5 @@ class My {
 
     fun foo(): String = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, propertyDeclaration */

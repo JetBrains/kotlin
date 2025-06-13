@@ -15,3 +15,6 @@ fun test(bal: Array<Int>) {
 
     val f: Int = run { <!RETURN_TYPE_MISMATCH!>bar += 4<!> }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration */

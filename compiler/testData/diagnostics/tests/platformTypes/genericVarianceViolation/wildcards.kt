@@ -49,3 +49,5 @@ fun main(
     a.foo(mme)
     a.foo(me)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

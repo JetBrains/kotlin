@@ -27,3 +27,7 @@ open class Request(private val handler: ActionContext.() -> Unit) {}
 interface ActionContext {
     val session : Map<String, String>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral,
+typeWithExtension */

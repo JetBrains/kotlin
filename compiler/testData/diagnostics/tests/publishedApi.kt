@@ -79,3 +79,6 @@ class InConstructor(
 class FalsePositiveInConstructor(
     @PublishedApi internal val extensionPoint: Any
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

@@ -19,3 +19,6 @@ fun bar() {
 }
 
 fun baz(x: (Double) -> Double) {}
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, functionDeclaration, functionalType, lambdaLiteral,
+propertyDeclaration */

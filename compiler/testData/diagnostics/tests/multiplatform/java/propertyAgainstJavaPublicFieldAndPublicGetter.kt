@@ -24,3 +24,6 @@ public class JavaFoo implements I {
         return 0;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, javaType, propertyDeclaration,
+typeAliasDeclaration */

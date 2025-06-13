@@ -35,3 +35,5 @@ fun main() {
     <!INVISIBLE_REFERENCE!>ADouble<!>(4.2)
     <!INVISIBLE_REFERENCE!>Double<!>(4.2)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, typeAliasDeclaration */

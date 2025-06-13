@@ -18,3 +18,6 @@ class Delegate<F> {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): String = ""
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lateinit, localProperty, nullableType,
+operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeConstraint, typeParameter */

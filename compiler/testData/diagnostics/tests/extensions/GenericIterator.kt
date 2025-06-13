@@ -36,3 +36,7 @@ fun main() {
   }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, equalityExpression, flexibleType,
+forLoop, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, javaFunction,
+javaProperty, localProperty, nullableType, operator, override, propertyDeclaration, thisExpression, typeConstraint,
+typeParameter */

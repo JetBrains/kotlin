@@ -19,3 +19,7 @@
         try {}
 
         finally
+
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

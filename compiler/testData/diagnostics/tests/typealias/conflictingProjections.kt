@@ -15,3 +15,6 @@ typealias TestInForOutWithinAlias<T> = <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXP
 
 fun <T> testOutForInWithinResolvedType(x: <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>InAlias<out T><!>) {}
 fun <T> testInForOutWithinResolvedType(x: <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>OutAlias<in T><!>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out, outProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

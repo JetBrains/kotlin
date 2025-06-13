@@ -7,3 +7,6 @@ typealias TA<K> = (String) -> Generic<K>
 typealias RA<L> = TA<L>
 
 fun rest(it: Any) = it <!UNCHECKED_CAST!>as <!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>RA<in Any><!><!>
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, inProjection, interfaceDeclaration,
+nullableType, out, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

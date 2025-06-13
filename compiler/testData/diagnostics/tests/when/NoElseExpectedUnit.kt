@@ -16,3 +16,6 @@ fun foo(x: Int) {
     }
     return y
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+whenExpression, whenWithSubject */

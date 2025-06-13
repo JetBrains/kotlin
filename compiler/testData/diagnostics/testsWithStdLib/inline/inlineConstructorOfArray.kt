@@ -19,3 +19,6 @@ fun testMyArray(b: Boolean) {
 class MyArray<T> {
     constructor(size: Int, init: (Int) -> T)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, nullableType, secondaryConstructor, typeParameter */

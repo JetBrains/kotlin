@@ -10,3 +10,5 @@ class F() : C(10)
 class <!CONFLICTING_OVERLOADS!>G<!> : <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>C<!>(10) {
     <!CONFLICTING_OVERLOADS!>constructor()<!> : super(1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor */

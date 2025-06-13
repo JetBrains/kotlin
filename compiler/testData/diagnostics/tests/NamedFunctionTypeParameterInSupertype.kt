@@ -19,3 +19,5 @@ class E : ((k: String) -> Unit) -> Unit {
     override fun invoke(p1: (k: String) -> Unit) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, operator, override */

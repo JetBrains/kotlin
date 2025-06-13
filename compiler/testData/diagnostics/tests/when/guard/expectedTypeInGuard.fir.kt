@@ -14,3 +14,6 @@ fun expectedTypeInGuard(x: Any) {
         else -> 0
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, functionDeclaration, guardCondition, integerLiteral, isExpression, nullableType,
+typeParameter, whenExpression, whenWithSubject */

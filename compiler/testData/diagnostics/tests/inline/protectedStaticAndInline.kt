@@ -29,3 +29,6 @@ class Test : First() {
 fun box(): String {
     return Test().doTest()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, flexibleType, functionDeclaration, inline, javaFunction,
+javaProperty, javaType */

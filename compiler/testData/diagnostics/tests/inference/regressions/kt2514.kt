@@ -16,3 +16,6 @@ fun main() {
     Thread().use<Unit> { }      // compiles okay
     Thread().use<Int> { 5 + 5 } // compiles okay
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, javaFunction,
+lambdaLiteral, nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

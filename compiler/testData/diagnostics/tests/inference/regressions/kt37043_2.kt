@@ -30,3 +30,6 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber3<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>nullableNumber4<!>
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, inline, localProperty, nullableType, outProjection,
+propertyDeclaration, reified, typeParameter */

@@ -117,3 +117,6 @@ fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
         <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>l2<!> -> <!DEBUG_INFO_MISSING_UNRESOLVED!>l2<!>() }<!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
+vararg */

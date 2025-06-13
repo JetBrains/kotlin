@@ -15,3 +15,5 @@ expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>B<!> : A {
 }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, secondaryConstructor, stringLiteral */

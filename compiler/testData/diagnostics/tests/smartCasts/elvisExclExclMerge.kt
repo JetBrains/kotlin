@@ -5,3 +5,6 @@ fun test(x: Any?): Any {
     <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
     return z
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast */

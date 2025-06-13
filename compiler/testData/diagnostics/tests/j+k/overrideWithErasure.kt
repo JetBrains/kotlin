@@ -19,3 +19,5 @@ public class Derived<E extends CharSequence> extends Base<E> {
 fun main(d: Derived<CharSequence>) {
     d.foo("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, stringLiteral */

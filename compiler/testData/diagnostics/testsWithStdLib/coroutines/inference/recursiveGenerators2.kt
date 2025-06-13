@@ -22,3 +22,7 @@ val test1 = generate {
         yield(4)
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, suspend,
+typeParameter, typeWithExtension */

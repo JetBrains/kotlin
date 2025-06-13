@@ -19,3 +19,4 @@ open class Outer {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, inner, integerLiteral, primaryConstructor, secondaryConstructor, stringLiteral */

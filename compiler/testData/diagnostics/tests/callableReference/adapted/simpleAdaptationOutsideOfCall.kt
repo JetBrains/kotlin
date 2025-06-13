@@ -9,3 +9,6 @@ fun foo(dumpStrategy: String) {
 
     runForString(::baz)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, propertyDeclaration,
+stringLiteral */

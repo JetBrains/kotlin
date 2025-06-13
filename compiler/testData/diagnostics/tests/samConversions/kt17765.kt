@@ -12,3 +12,5 @@ public class Test {
 fun main(args: Array<String>) {
     Test.foo {  }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

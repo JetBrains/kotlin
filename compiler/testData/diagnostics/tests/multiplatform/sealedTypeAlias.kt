@@ -16,3 +16,5 @@ sealed class P {
     object Online : P()
     object Offline : P()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nestedClass, objectDeclaration, sealed, typeAliasDeclaration */

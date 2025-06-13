@@ -20,3 +20,7 @@ fun test(a: A) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.foo.checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, nullableType,
+override, propertyDeclaration, smartcast, stringLiteral, typeParameter, typeWithExtension */

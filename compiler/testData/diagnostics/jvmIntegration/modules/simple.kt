@@ -26,3 +26,5 @@ import foo.Foo
 fun usage() {
     Foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

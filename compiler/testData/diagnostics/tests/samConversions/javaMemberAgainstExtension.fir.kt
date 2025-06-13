@@ -29,3 +29,6 @@ fun <T> test2(r: Runnable, o: Observer<T>, l: LiveData<T>) {
     val c = l.observe({}) {} // conversion for all arguments
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit")!>c<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, samConversion, typeParameter */

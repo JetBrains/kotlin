@@ -12,3 +12,5 @@ public class InspectionApplicationBase {
 class QodanaInspectionApplication: InspectionApplicationBase() {
     suspend fun loadInspectionProfile(): String = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral, suspend */

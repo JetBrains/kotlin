@@ -11,3 +11,7 @@ fun test() {
     val a = ::Foo
     checkSubtype<() -> Foo>(a)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, localProperty, nullableType, objectDeclaration, propertyDeclaration,
+typeParameter, typeWithExtension */

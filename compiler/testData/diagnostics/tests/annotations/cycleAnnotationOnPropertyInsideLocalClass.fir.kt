@@ -13,3 +13,6 @@ fun topLevel() {
             set(@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>prop<!>) value) = Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration, setter */

@@ -16,3 +16,5 @@ fun test() {
     JavaClass.testStatic()
     testStatic()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

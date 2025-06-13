@@ -38,3 +38,7 @@ fun test() {
 
     a <!INFIX_MODIFIER_REQUIRED!>withLambda<!> { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, out, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter */

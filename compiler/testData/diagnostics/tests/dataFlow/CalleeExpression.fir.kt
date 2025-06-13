@@ -6,3 +6,6 @@ fun test(e : Any) {
         (e.f)()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, isExpression,
+primaryConstructor, propertyDeclaration, smartcast */

@@ -6,3 +6,5 @@ fun main() {
 
     <!DEBUG_INFO_MISSING_UNRESOLVED!><!NO_COMPANION_OBJECT!>Some<!>[<!SYNTAX!><!>]<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>names<!> <!DEBUG_INFO_MISSING_UNRESOLVED!><!SYNTAX!>=<!> ["ads"]<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, stringLiteral */

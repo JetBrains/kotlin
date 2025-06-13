@@ -16,3 +16,5 @@ fun test() {
     val some = Some()
     val another = <!UNRESOLVED_REFERENCE!>Another<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

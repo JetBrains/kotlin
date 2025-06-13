@@ -30,3 +30,5 @@ fun test() {
     g?.<!UNRESOLVED_REFERENCE!>foo<!>()
     h?.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, propertyDeclaration, safeCall */

@@ -40,3 +40,7 @@ fun foo(c: C) {
     c.z = ""
     c.z = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, override, propertyDeclaration, setter,
+starProjection, stringLiteral, superExpression, typeParameter, typeWithExtension */

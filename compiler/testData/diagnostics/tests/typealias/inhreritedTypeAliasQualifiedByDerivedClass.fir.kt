@@ -12,3 +12,6 @@ fun test(x: Derived.<!UNRESOLVED_REFERENCE!>Nested<!>) = x
 fun Base.testWithImplicitReceiver(x: <!UNRESOLVED_REFERENCE!>Nested<!>) {
     val y: <!UNRESOLVED_REFERENCE!>Nested<!> = x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty,
+propertyDeclaration, typeAliasDeclaration */

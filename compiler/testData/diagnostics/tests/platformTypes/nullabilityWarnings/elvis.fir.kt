@@ -66,3 +66,6 @@ fun test() {
 }
 
 fun takeNotNull(s: J) {}
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaFunction, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast */

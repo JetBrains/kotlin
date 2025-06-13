@@ -15,3 +15,6 @@ interface Base<A> {
 class MyClass(val prop: second.Base<second.Base<Int>>): Base<Base<Int>> by prop {
     interface Base<B>
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, localProperty, nestedClass, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

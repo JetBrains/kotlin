@@ -11,3 +11,6 @@ fun test(x: Int?) {
         <!ARGUMENT_TYPE_MISMATCH!>x<!> // should be no smartcast to Nothing?
     )
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType */

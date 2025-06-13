@@ -43,3 +43,6 @@ class My {
         sss<!UNSAFE_CALL!>.<!>length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, localProperty, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, safeCall, thisExpression */

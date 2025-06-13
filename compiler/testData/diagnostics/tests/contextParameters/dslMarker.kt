@@ -89,3 +89,6 @@ fun testWithContext() {
         <!UNRESOLVED_REFERENCE!>dsl<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>memberFun<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, lambdaLiteral, nullableType, propertyDeclaration, typeParameter, typeWithContext, typeWithExtension */

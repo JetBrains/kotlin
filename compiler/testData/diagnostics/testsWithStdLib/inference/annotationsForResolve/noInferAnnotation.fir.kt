@@ -97,3 +97,7 @@ fun <X> bar6(x: List<X>, y: MutableList<in X>): X = TODO()
 fun test6(x: List<Any>, y: MutableList<String>) {
     bar6(x.<!CANNOT_INFER_PARAMETER_TYPE!>filterIsInstance<!>(), y)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funInterface, funWithExtensionReceiver, functionDeclaration, in,
+inProjection, integerLiteral, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType, out,
+propertyDeclaration, samConversion, stringLiteral, typeParameter */

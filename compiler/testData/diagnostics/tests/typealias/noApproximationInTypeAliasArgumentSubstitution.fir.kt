@@ -15,3 +15,6 @@ fun <T> foo2(m: TMap<T>) = m
 
 fun bar2(m: TMap<*>) =
         <!CANNOT_INFER_PARAMETER_TYPE!>foo2<!>(<!ARGUMENT_TYPE_MISMATCH!>m<!>)
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, outProjection, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

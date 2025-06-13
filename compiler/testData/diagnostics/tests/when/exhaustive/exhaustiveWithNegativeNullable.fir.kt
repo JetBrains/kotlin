@@ -15,3 +15,6 @@ fun bar(b: Boolean?): Int {
         <!SENSELESS_COMPARISON!>null<!> -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType, smartcast,
+whenExpression, whenWithSubject */

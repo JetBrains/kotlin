@@ -37,3 +37,6 @@ class C2 {
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>TA<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, nestedClass, objectDeclaration,
+typeAliasDeclaration */

@@ -24,3 +24,6 @@ actual interface My {
     actual val <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>openValNegative<!>: Int
     actual val abstractVal: Int
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration */

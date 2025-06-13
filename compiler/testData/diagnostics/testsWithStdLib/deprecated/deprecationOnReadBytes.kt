@@ -7,3 +7,5 @@ fun InputStream.test() {
 
     <!DEPRECATION_ERROR!>readBytes<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral */

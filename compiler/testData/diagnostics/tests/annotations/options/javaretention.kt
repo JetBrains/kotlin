@@ -35,3 +35,5 @@ public class AnnotationRetentions {
 @AnnotationRetentions.BinaryAnnotation class BinaryClass
 
 @AnnotationRetentions.RuntimeAnnotation class RuntimeClass
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

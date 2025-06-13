@@ -12,3 +12,6 @@ object MyObject {
 }
 
 suspend operator fun <R> String.invoke(): R = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, objectDeclaration, operator, propertyDeclaration, stringLiteral, suspend, typeParameter */

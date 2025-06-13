@@ -30,3 +30,5 @@ object Test2 {
     }
 }
 
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, nestedClass,
+objectDeclaration, samConversion, suspend */

@@ -68,3 +68,6 @@ fun t4() : Int {
 
     return 12
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localFunction,
+localProperty, propertyDeclaration, stringLiteral */

@@ -20,3 +20,6 @@ fun test() {
     baz(id(::foo), id(id<(Int) -> Unit>(::foo)))
     baz(id(::foo), id<(Int) -> Unit>(id(::foo)))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, typeParameter */

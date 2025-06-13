@@ -16,3 +16,6 @@ class Delegate {
         return 1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration, propertyDelegate,
+starProjection */

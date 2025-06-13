@@ -21,3 +21,6 @@ actual fun matching() {}
 
 @Ann(MyEnum.FOO.name)
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun nonMatching() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

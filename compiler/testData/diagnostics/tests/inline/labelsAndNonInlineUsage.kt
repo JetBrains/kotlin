@@ -36,3 +36,5 @@ inline fun bar(s: () -> Unit) {
     (_@ s).invoke()
     (__@ _@ s).invoke()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline */

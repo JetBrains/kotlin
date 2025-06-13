@@ -12,3 +12,5 @@ package html
 abstract class Factory<T: Any> {
 fun create() : T? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

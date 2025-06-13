@@ -20,3 +20,6 @@ class SomeClass : SomeInterface {
 }
 
 <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, INLINE_CLASS_DEPRECATED!>inline<!> class InlineClass
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, lateinit, override, propertyDeclaration, setter */

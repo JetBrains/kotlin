@@ -85,3 +85,7 @@ class ScopeOwner: BaseType {
 }
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, functionDeclaration,
+functionalType, getter, inner, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration,
+operator, propertyDeclaration, propertyDelegate, setter, thisExpression, typeParameter */

@@ -30,3 +30,6 @@ actual fun parameterCount() {}
 actual fun <T> typeParameterCount() {}
 actual fun callableKind(): Int = 1
 actual fun vararg(bar: Int) = Unit
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, typeParameter, vararg */

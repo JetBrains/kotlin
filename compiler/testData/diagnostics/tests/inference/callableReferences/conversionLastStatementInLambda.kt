@@ -32,3 +32,6 @@ fun test1(): String = ""
 fun test2(): String = ""
 
 fun callWithLambda(action: () -> () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+stringLiteral */

@@ -24,3 +24,6 @@ import test.*
 fun box(): String {
     return X.doTest()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, objectDeclaration, override, stringLiteral,
+superExpression */

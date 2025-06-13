@@ -11,3 +11,5 @@ package test
 val x = 1
 
 class F1
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, localProperty, propertyDeclaration */

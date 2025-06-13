@@ -13,3 +13,6 @@ fun foo() {
         fun baz() = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, functionDeclaration, localClass, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral */

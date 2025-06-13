@@ -23,3 +23,5 @@ fun test() {
     val a = B().a
     a.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

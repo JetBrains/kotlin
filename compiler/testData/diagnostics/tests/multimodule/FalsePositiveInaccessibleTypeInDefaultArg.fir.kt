@@ -42,3 +42,6 @@ fun foo(s: String) {
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!> == <!MISSING_DEPENDENCY_CLASS!>it<!> }<!>
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Another<!>(s) <!MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER!>{ <!MISSING_DEPENDENCY_CLASS!>it<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>() == 0 }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration */

@@ -52,3 +52,6 @@ import b.<!CONFLICTING_IMPORT!>B<!>
 // FILE: 7.kt
 import a.B as <!CONFLICTING_IMPORT!>Foo<!>
 import b.B as <!CONFLICTING_IMPORT!>Foo<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver */

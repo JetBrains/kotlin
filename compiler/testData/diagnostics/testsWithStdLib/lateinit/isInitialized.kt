@@ -91,3 +91,7 @@ class OtherFooImpl : Foo() {
         ::topLevel.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration, inline,
+inner, integerLiteral, interfaceDeclaration, lateinit, localClass, localProperty, objectDeclaration, override,
+propertyDeclaration, stringLiteral, thisExpression */

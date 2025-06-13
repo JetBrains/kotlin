@@ -18,3 +18,6 @@ fun usage() {
         Test1()()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+lambdaLiteral, operator, override, typeWithContext */

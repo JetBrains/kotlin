@@ -116,3 +116,7 @@ fun main() {
     A().doOnSuccessTypeParameterProducer(::returnString)
     A().doOnSuccessTypeParameterProducer<String>(::<!INAPPLICABLE_CANDIDATE!>returnNullableString<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, inProjection,
+integerLiteral, javaType, localProperty, nullableType, outProjection, propertyDeclaration, samConversion, starProjection,
+stringLiteral, typeParameter */

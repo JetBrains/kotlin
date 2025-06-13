@@ -6,3 +6,5 @@
 actual fun <!ACTUAL_WITHOUT_EXPECT{JVM}!>foo<!>() { }
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: actual, functionDeclaration */

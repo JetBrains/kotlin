@@ -29,3 +29,8 @@ fun test() {
     <!ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION_WARNING!>@receiver:Source<!>
     for (i in 1..10) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, annotationUseSiteTargetField,
+annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetReceiver, annotationUseSiteTargetSetterParameter, break,
+comparisonExpression, equalityExpression, forLoop, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, rangeExpression, stringLiteral, whenExpression, whenWithSubject, whileLoop */

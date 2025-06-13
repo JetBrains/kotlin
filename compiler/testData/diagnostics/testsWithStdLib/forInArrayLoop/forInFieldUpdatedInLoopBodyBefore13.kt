@@ -15,3 +15,6 @@ var xs: IntArray = intArrayOf(1, 2, 3)
         if (sum != 123) throw AssertionError("sum=$sum")
         field = ys
     }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, forLoop, getter, ifExpression, integerLiteral,
+localProperty, multiplicativeExpression, propertyDeclaration, setter, stringLiteral */

@@ -19,3 +19,7 @@ interface A
 interface B : @Suppress(<!ERROR_SUPPRESSION!>"SUPERTYPE_INITIALIZED_IN_INTERFACE"<!>) A<!NO_CONSTRUCTOR!>()<!>
 
 data class D @Suppress(<!ERROR_SUPPRESSION!>"DATA_CLASS_VARARG_PARAMETER"<!>) constructor(vararg val x: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, data, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, vararg */

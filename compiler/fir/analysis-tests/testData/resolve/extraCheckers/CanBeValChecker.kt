@@ -214,3 +214,10 @@ fun withDelegate() {
     var <!VARIABLE_NEVER_READ!>s<!>: String by Delegates.notNull()
     <!ASSIGNED_VALUE_IS_NEVER_READ!>s<!> = ""
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, classDeclaration, classReference,
+comparisonExpression, contractCallsEffect, contracts, destructuringDeclaration, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression, inline,
+integerLiteral, lambdaLiteral, lateinit, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, rangeExpression, setter, smartcast, starProjection, stringLiteral, thisExpression, typeParameter,
+whileLoop */

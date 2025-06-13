@@ -22,3 +22,6 @@ fun test2(a: Inv<*>?, b: Inv<*>) {
 fun test3(a: Inv<out Any>, b: Inv<out Any>) {
     generic(select(a, b))
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, elvisExpression, equalityExpression,
+functionDeclaration, ifExpression, nullableType, outProjection, smartcast, starProjection, typeParameter */

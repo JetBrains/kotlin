@@ -68,3 +68,7 @@ fun main2(x: A1) {
     <!UNREACHABLE_CODE!>val x1 =<!> x[object {}, return, ]
     <!UNREACHABLE_CODE!>val x2 = x[fun () {}, throw Exception(), /**/]<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, classDeclaration,
+collectionLiteral, functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty,
+operator, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, vararg */

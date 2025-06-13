@@ -23,3 +23,6 @@ class Outer : Trait {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, interfaceDeclaration, localClass,
+localProperty, propertyDeclaration, superExpression, thisExpression */

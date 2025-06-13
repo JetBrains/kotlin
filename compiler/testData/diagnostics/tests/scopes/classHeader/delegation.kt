@@ -49,3 +49,7 @@ class A : I by S(
         fun foo(): Nested = null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, const, functionDeclaration,
+inheritanceDelegation, inner, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

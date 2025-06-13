@@ -12,3 +12,5 @@ enum class MyEnum2() {}
 class MyClass(): <!FINAL_SUPERTYPE, INVISIBLE_MEMBER!>MyEnum2<!>() {}
 
 class MyClass2(): <!FINAL_SUPERTYPE!>MyJavaEnum<!>() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, javaType, primaryConstructor */

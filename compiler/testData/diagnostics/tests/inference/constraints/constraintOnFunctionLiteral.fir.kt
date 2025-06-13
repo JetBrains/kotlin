@@ -9,3 +9,7 @@ fun Array<Int>.toArrayList(): ArrayList<Int> = this.mapTo(ArrayList<Int>(size), 
 
 public fun <T, R, C: MutableCollection<in R>> Array<out T>.mapTo(result: C, transform : (T) -> R) : C =
         throw Exception("$result $transform")
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+intersectionType, javaFunction, lambdaLiteral, nullableType, outProjection, stringLiteral, thisExpression,
+typeConstraint, typeParameter */

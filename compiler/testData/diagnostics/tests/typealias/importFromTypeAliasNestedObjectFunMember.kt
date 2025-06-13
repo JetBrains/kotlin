@@ -14,3 +14,5 @@ typealias ObjectInNestedClass = Outer1.Nested.Object
 
 // FILE: 2.kt
 import objectInClass.ObjectInNestedClass.clbl1
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, typeAliasDeclaration */

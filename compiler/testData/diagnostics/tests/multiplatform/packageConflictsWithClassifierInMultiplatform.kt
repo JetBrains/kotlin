@@ -17,3 +17,5 @@ package a.<!PACKAGE_OR_CLASSIFIER_REDECLARATION!>b<!>
 package c
 
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>d<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

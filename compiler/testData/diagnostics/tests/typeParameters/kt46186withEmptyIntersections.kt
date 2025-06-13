@@ -84,3 +84,6 @@ open class B {
     fun <T> f(): T where T : A, T : B = null as T
     fun g(): A = f()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inline, interfaceDeclaration,
+intersectionType, objectDeclaration, reified, typeConstraint, typeParameter */

@@ -19,3 +19,5 @@ class Test2 : Test() {
 
 fun check() = Test2().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>publicPrivateText<!> // Should be resolved to Test.publicPrivateText (Test2 member is private)
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+stringLiteral */

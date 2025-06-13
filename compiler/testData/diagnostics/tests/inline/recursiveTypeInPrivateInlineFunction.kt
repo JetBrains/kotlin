@@ -4,3 +4,5 @@
 
 private <!NOTHING_TO_INLINE!>inline<!> fun check(inf: Self<*>) = inf
 class Self<T : Self<T>>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, starProjection, typeConstraint, typeParameter */

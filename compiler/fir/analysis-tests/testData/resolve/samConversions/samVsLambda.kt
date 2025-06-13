@@ -27,3 +27,6 @@ import p2.*
 fun main() {
     bar("", "") {} // Resolves to p1.bar in K1, but to p2.bar in K2
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+samConversion, stringLiteral */

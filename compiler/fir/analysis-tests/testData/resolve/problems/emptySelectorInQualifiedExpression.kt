@@ -29,3 +29,4 @@ fun usageUnresolved3() {
     }.<!SYNTAX!><!>
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral */

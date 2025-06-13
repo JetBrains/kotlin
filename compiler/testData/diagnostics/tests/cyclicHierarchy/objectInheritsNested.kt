@@ -22,3 +22,4 @@ object H : <!CYCLIC_INHERITANCE_HIERARCHY!>G.NestedG<!>() {
     open class NestedH
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nestedClass, objectDeclaration */

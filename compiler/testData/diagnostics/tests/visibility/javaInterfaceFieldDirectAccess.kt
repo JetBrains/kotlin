@@ -17,3 +17,5 @@ class Child : PublicParentInterface {
         return <!UNRESOLVED_REFERENCE!>publicStaticField<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

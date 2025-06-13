@@ -54,3 +54,6 @@ fun testEnums(a: Enum<*>) {
 fun testLists(a: List<Int>) {
     useList(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, starProjection,
+stringLiteral */

@@ -44,3 +44,5 @@ fun test() {
     all(1)
     all("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

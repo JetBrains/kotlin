@@ -29,3 +29,6 @@ data class A7(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>java.lang.R
 typealias TA = Record
 
 data class A8(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>TA()<!>, I
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, interfaceDeclaration, primaryConstructor, propertyDeclaration,
+typeAliasDeclaration */

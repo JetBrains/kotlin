@@ -47,3 +47,6 @@ internal class Z2 {
         Z2().privateFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, primaryConstructor,
+propertyDeclaration */

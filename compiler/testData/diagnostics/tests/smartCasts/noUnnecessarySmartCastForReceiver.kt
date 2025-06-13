@@ -7,3 +7,6 @@ fun test(a: Any?) {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, nullableType,
+smartcast */

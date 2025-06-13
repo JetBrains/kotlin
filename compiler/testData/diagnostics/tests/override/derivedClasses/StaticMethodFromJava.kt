@@ -22,3 +22,5 @@ import test.Bar
 fun test() {
     Bar.<!DEBUG_INFO_CALLABLE_OWNER("test.Bar.getValue in test.Bar")!>getValue("bar")<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, stringLiteral */

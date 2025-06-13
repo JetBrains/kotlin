@@ -29,3 +29,5 @@ import viewmodel.ViewModel
 class MyViewModel: ViewModel(), IMyViewModel {
     override fun clear() = Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, override */

@@ -53,3 +53,6 @@ class Derived : Base() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, functionDeclaration, integerLiteral, javaFunction,
+javaProperty, javaType, lambdaLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion */

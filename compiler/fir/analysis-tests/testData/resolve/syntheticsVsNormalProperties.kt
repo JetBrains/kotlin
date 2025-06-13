@@ -29,3 +29,5 @@ fun test(b: B) {
     // should be CommandExecutor
     b.executor
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, localProperty, propertyDeclaration */

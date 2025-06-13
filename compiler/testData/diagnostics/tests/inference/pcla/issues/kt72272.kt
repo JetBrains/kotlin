@@ -29,3 +29,7 @@ fun networkCall(bar: String?) : String {
 fun log() {
     // no op
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, doWhileLoop, elvisExpression, functionDeclaration,
+incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+stringLiteral, tryExpression */

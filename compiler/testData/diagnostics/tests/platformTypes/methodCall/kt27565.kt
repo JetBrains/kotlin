@@ -21,3 +21,5 @@ fun foo(f: Runnable, selector: () -> Unit) {}
 fun foo(func1: () -> Unit, func2: () -> Unit) {}
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, javaType, lambdaLiteral */

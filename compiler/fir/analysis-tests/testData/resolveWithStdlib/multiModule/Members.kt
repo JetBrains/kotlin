@@ -37,3 +37,6 @@ class D : A() {
         x + x
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration */

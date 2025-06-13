@@ -61,3 +61,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, functionDeclaration,
+functionalType, getter, incrementDecrementExpression, integerLiteral, lambdaLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, setter, thisExpression, typeWithExtension */

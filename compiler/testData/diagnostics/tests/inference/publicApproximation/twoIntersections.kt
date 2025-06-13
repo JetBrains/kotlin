@@ -24,3 +24,6 @@ fun some(a: One, b: Two, c: Three) = intersectNoBound(intersect(a, b), c)
 fun test(arg: Base, arg2: Base) {
     some(O1, O2, O3).<!UNRESOLVED_REFERENCE!>base<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, nullableType, objectDeclaration,
+typeConstraint, typeParameter, vararg */

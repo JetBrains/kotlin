@@ -20,3 +20,6 @@ class MyClass2
 val x = A1::class
 @Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL!>x<!>)
 class MyClass3
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, vararg */

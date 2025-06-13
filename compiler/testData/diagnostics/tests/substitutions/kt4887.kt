@@ -8,3 +8,6 @@ public class MyClass<S, T>(param: MyClass<S, T>) {
         MyClass<S, Any>(result <!UNCHECKED_CAST!>as MyClass<S, Any><!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

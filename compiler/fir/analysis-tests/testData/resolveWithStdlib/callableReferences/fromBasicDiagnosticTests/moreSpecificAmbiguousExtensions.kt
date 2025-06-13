@@ -18,3 +18,6 @@ fun testWithExpectedType() {
     val extFun_BA_B: IB.(IA) -> Unit = IB::extFun
     val extFun_BB_B: IB.(IB) -> Unit = IB::<!OVERLOAD_RESOLUTION_AMBIGUITY!>extFun<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, localProperty, propertyDeclaration, typeWithExtension */

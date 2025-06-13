@@ -20,3 +20,7 @@ fun main() {
 
 //from standard library
 fun println(message : Any?) {}
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+thisExpression, typeConstraint, typeParameter */

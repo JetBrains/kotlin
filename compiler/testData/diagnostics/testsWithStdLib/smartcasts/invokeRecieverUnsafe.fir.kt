@@ -13,3 +13,6 @@ fun test2(a: Int?) {
         <!UNSAFE_CALL!>invoke<!>(this!!)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, nullableType,
+operator, thisExpression */

@@ -12,3 +12,6 @@ interface MutableProperty<T> {
 interface ListVM<TItemVM> {
     val currentItem: MutableProperty<TItemVM?>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, outProjection, propertyDeclaration, starProjection, typeParameter */

@@ -17,3 +17,5 @@ expect class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, PACKAGE_OR_CLASSIFIER_REDECL
 // MODULE: main()()(intermediate2)
 actual typealias <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> = Bar
 class Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, typeAliasDeclaration */

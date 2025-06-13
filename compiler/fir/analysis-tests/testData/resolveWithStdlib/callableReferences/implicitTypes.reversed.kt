@@ -6,3 +6,6 @@ fun bar(x: String) = 1
 
 fun loop1() = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>use<!>(::<!INAPPLICABLE_CANDIDATE!>loop2<!>)
 fun loop2() = loop1()
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, nullableType,
+typeParameter */

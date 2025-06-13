@@ -14,3 +14,5 @@ expect final value class A(val s: String)
 actual <!VALUE_CLASS_NOT_FINAL!>open<!> value class A(val s: String)
 
 class B : A("")
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, propertyDeclaration, stringLiteral, value */

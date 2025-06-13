@@ -35,3 +35,6 @@ fun test_5() {
     val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>create<!>("") { 1 }
     takeInt(x)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

@@ -33,3 +33,5 @@ fun test(j: J, r: KRunnable) {
     j.foo3({}, {}, r)
     j.foo3({}, {}, {})
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, samConversion */

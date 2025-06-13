@@ -11,3 +11,6 @@ fun test() {
     // For open value properties, smart casts should not work
     if (p.foo is Int) <!SMARTCAST_IMPOSSIBLE!>p.foo<!> bar 11
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, infix,
+integerLiteral, isExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast */

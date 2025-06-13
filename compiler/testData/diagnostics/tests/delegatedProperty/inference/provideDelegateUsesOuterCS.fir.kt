@@ -25,3 +25,6 @@ fun main() {
     property1.length
     property2.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, operator,
+out, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

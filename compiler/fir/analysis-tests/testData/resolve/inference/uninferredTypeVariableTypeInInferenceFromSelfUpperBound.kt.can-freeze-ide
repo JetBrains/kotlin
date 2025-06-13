@@ -23,3 +23,6 @@ class Foo<T, Q : Foo<T, Q>>
 class Bar<N, Q : Foo<N, Q>> {
     fun multiply(other: Bar<N, Q>) = 1
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+outProjection, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

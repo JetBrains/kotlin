@@ -24,3 +24,6 @@ fun box(): String = when {
     testLong(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>5L<!>) != 5L.toULong() -> "Fail: test(5L)"
     else -> "OK"
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, functionDeclaration, integerLiteral, stringLiteral,
+whenExpression */

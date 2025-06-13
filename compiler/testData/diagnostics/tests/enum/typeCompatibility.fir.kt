@@ -101,3 +101,6 @@ fun foo(
 
     mutableListAny == listString
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, equalityExpression, functionDeclaration, in, inProjection,
+integerLiteral, interfaceDeclaration, nullableType, out, outProjection, stringLiteral, typeParameter */

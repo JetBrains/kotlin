@@ -26,3 +26,6 @@ actual open class Foo : Base() {
 
     override fun existingMethodInBase() {} // override from super
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override,
+primaryConstructor, propertyDeclaration */

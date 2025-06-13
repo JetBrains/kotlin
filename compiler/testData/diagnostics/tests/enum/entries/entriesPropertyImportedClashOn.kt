@@ -22,3 +22,6 @@ fun test() {
         <!DEBUG_INFO_CALL("fqName: foo.A.Companion.entries; typeCall: variable")!>entries<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

@@ -79,3 +79,6 @@ fun test5() {
     c.x<!UNSAFE_CALL!>.<!>length // no smartcast
     d.x<!UNSAFE_CALL!>.<!>length // no smartcast
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, getter, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

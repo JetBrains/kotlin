@@ -28,3 +28,6 @@ fun test() {
     val cA = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
     val dA = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

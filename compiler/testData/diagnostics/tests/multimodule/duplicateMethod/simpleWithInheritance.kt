@@ -38,3 +38,6 @@ fun test(b: B?) {
         b<!UNNECESSARY_SAFE_CALL!>?.<!>getParent()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nullableType, override, safeCall, smartcast */

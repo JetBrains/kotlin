@@ -52,3 +52,8 @@ fun typeCheckerBehavior(x: Any, y: Any) {
         is Boolean <!UNSUPPORTED_FEATURE!>if OuterBoundedBooleanHolder<CharSequence>(true).getValue()<!> -> 600
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, capturedType, classDeclaration, equalityExpression, functionDeclaration,
+guardCondition, in, inProjection, integerLiteral, intersectionType, isExpression, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, typeAliasDeclaration, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

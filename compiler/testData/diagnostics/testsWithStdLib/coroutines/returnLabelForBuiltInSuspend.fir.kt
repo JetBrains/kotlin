@@ -26,3 +26,5 @@ fun bar() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration */

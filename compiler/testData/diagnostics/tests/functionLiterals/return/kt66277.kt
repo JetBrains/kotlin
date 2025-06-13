@@ -93,3 +93,6 @@ fun test() {
         return@l foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, propertyDeclaration, stringLiteral, typeAliasDeclaration */

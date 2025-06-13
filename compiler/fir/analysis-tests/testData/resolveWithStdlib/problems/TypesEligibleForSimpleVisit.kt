@@ -11,3 +11,5 @@ private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
     // Others
     Class::class.java, String::class.java
 )
+
+/* GENERATED_FIR_TAGS: classReference, propertyDeclaration, starProjection */

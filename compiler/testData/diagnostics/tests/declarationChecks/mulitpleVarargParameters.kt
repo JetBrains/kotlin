@@ -35,3 +35,6 @@ object O {
         fun test(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x1: Int, <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> x2: Int) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localClass,
+localFunction, nestedClass, objectDeclaration, primaryConstructor, secondaryConstructor, vararg */

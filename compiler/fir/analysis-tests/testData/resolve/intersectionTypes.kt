@@ -13,3 +13,6 @@ fun test() = select(Clazz1(), Clazz2())
 fun <T> makeNull(x: T): T? = null
 
 fun testNull() = makeNull(select(Clazz1(), Clazz2()))
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, nullableType,
+typeParameter */

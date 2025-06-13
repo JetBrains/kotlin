@@ -24,3 +24,6 @@ interface D {
     override operator fun equals(other: Any?): Boolean
     override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hashCode(): Int
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, operator, override,
+stringLiteral */

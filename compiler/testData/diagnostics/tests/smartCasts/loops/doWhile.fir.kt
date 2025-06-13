@@ -10,3 +10,5 @@ public fun foo(p: String?): Int {
     // p should be not null here
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, doWhileLoop, functionDeclaration, nullableType, smartcast */

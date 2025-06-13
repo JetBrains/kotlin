@@ -25,3 +25,7 @@ fun main() {
         prop
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionDeclarationWithContext, functionalType, getter, in,
+interfaceDeclaration, lambdaLiteral, nullableType, out, propertyDeclaration, propertyDeclarationWithContext,
+typeParameter, typeWithExtension */

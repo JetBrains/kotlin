@@ -8,3 +8,5 @@ interface B {
     val x: Int
         <!EXTERNAL_DECLARATION_IN_INTERFACE!>external<!> get
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, propertyDeclaration */

@@ -7,3 +7,6 @@ interface A {
 
 fun f() : (Int, Int) -> Int = ::add
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, typeParameter */

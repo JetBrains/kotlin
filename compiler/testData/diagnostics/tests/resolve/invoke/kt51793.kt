@@ -17,3 +17,6 @@ fun A.main() {
         k()
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration, localFunction,
+operator, propertyDeclaration, propertyWithExtensionReceiver */

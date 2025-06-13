@@ -29,3 +29,5 @@ interface D {
 class E : A(), B, D {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

@@ -18,3 +18,5 @@ public class Matcher<T> {
 fun test(x: List<String>) {
     Assert.assertThat(x, Matcher.hasItem("abc"))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, starProjection, stringLiteral */

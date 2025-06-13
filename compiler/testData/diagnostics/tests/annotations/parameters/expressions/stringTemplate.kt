@@ -19,3 +19,6 @@ val i = 1
 ) class MyClass
 
 // EXPECTED: @Ann(s1 = "a1", s2 = "a1 b", s3 = "1", s4 = "a1a1")
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral */

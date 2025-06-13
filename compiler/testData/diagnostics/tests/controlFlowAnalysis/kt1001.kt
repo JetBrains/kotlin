@@ -33,3 +33,5 @@ fun t2() : Int {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, tryExpression */

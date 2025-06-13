@@ -16,3 +16,5 @@ expect <!EXPECT_REFINEMENT_ANNOTATION_MISSING!>class Foo<!>
 actual fun foo() {}
 actual class Foo
 actual interface Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration */

@@ -7,3 +7,5 @@ fun takeLong(i: Long) {}
 fun test() {
     takeLong(if (true) 1 else 0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression */

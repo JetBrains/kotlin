@@ -27,3 +27,5 @@ interface DerivedInterface: Interface, AnotherInterface {
         get() = <!AMBIGUOUS_SUPER!>super<!>.ambiguousProp
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, integerLiteral, interfaceDeclaration, override, propertyDeclaration,
+superExpression */

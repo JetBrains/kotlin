@@ -43,3 +43,6 @@ class MyProperty2<T, R> {
 
 // -----------------
 fun println(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, setter, starProjection, stringLiteral, typeParameter */

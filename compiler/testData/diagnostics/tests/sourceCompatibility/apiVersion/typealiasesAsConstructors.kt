@@ -19,3 +19,6 @@ val test2 = C2_Alias<!NO_VALUE_FOR_PARAMETER!>()<!>
 class Test3 : <!API_NOT_AVAILABLE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>C1_Alias<!>()
 
 class Test4 : C2_Alias<!NO_VALUE_FOR_PARAMETER!>()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, secondaryConstructor,
+stringLiteral, typeAliasDeclaration */

@@ -15,3 +15,5 @@ actual open class Foo {
     actual open fun foo() {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

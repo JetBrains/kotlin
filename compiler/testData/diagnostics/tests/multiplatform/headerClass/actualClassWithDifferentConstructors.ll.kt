@@ -54,3 +54,6 @@ class <!ACTUAL_MISSING!>Bar6<!> {
 actual class Bar7 actual constructor(s: String) {
     constructor() : this("")
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeAliasDeclaration */

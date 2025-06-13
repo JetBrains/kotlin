@@ -19,3 +19,6 @@ public class C {
 
     companion object : DerivedAbstract()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, interfaceDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration */

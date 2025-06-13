@@ -16,3 +16,6 @@ fun test() {
     val v = Cls().property
     v
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

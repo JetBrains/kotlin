@@ -10,3 +10,6 @@ fun <T> materialize(): T = null as T
 fun main(x: List<String>?) {
     foo(x?.map { Foo(it) } ?: listOf(materialize<Foo<Nothing>>())) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, outProjection, primaryConstructor, safeCall, typeConstraint, typeParameter */

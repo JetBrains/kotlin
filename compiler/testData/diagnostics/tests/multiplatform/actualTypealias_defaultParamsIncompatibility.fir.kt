@@ -14,3 +14,5 @@ class FooImpl {
     fun foo(a: Int = 2) {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, typeAliasDeclaration */

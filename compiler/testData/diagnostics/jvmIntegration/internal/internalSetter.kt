@@ -40,3 +40,6 @@ fun test() {
     <!INVISIBLE_SETTER!>C().v<!> = 4
     <!INVISIBLE_SETTER!>D<Int>().v<!> = 4
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, propertyDeclaration, typeParameter */

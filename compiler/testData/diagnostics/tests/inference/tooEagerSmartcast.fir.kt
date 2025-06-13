@@ -40,3 +40,7 @@ fun main(b: Base<out Number>) {
         b.baz().length
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration,
+intersectionType, isExpression, localProperty, nullableType, out, outProjection, propertyDeclaration, smartcast,
+starProjection, typeConstraint, typeParameter */

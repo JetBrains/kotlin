@@ -85,3 +85,6 @@ fun test() {
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("({AbstractAssert<*, out (Any..Any?)> & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>}..{AbstractAssert<*, out (Any..Any?)>? & EnumerableAssert<*, out ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})>?})")!>assertion<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty, propertyDeclaration,
+starProjection, stringLiteral, whenExpression */

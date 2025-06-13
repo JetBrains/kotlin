@@ -41,3 +41,5 @@ package c
         fun foo() : Int = bazz()
 
         fun bar() = foo()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration */

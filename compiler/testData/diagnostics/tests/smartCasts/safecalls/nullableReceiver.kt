@@ -13,3 +13,6 @@ fun test(foo: Foo?) {
         foo?.bar?.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, safeCall */

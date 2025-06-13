@@ -38,3 +38,6 @@ class B : A(), I {
         <!AMBIGUOUS_SUPER!>super<!>.qux()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration, superExpression */

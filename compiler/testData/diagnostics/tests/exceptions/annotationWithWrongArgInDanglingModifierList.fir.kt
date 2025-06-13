@@ -10,3 +10,6 @@ fun foo() {
 }
 
 @Ann(fun <!ANONYMOUS_FUNCTION_WITH_NAME!>g<!>(): String { return <!RETURN_TYPE_MISMATCH!>42<!> })<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localFunction, primaryConstructor, propertyDeclaration */

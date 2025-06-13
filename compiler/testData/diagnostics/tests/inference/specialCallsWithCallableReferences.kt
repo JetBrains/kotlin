@@ -318,3 +318,7 @@ fun poll88() {
     val inv = foo7() in <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>setOf<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>::Foo7<!>)
     inv
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, checkNotNullCall, classDeclaration, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, intersectionType, localProperty,
+nullableType, propertyDeclaration, smartcast, tryExpression, typeParameter, whenExpression, whenWithSubject */

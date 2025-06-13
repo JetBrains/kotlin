@@ -45,3 +45,5 @@ private fun test(
 ) {
     editor.onTargetSelected(helper.findRunTarget())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType */

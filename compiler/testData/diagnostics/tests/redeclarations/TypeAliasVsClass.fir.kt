@@ -17,3 +17,5 @@ class Outer {
 
 // FILE: file2.kt
 typealias <!CLASSIFIER_REDECLARATION!>SomeClass<!> = Any
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, typeAliasDeclaration */

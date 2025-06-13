@@ -6,3 +6,5 @@ fun foo(y: String) {
     y.let { x = it }
     x<!UNSAFE_CALL!>.<!>length // Smart cast is not possible
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration */

@@ -10,3 +10,5 @@ private typealias Bar2 = Foo<Gau2>
 //internal class Gau : Foo<Gau>
 
 interface Foo<T>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, typeAliasDeclaration, typeParameter */

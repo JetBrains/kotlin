@@ -19,3 +19,5 @@ fun test2(f: () -> Int, g: suspend () -> Int) {
     foo(f)
     foo(g)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, suspend */

@@ -28,3 +28,5 @@ import feature.experimental.self.ImportedClass
 import feature.experimental.self.importedFunction
 import feature.experimental.self.importedProperty
 import feature.experimental.self.ImportedClass.importedObjectMember
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, objectDeclaration, propertyDeclaration */

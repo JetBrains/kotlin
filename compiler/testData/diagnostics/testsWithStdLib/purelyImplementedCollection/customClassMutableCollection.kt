@@ -31,3 +31,6 @@ fun foo() {
     val b1: Collection<String?> = x
     val b2: MutableCollection<String?> = <!TYPE_MISMATCH!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

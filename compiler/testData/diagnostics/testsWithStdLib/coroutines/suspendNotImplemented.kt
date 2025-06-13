@@ -7,3 +7,5 @@ interface A {
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class B<!> : A
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, suspend */

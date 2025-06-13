@@ -26,3 +26,6 @@ fun test1() {
     consume(++<!DEBUG_INFO_SMARTCAST!>a<!>)
     consume(<!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>a<!>++<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

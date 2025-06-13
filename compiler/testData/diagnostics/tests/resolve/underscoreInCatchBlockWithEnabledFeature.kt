@@ -57,3 +57,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, integerLiteral, javaProperty,
+lambdaLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration, tryExpression,
+unnamedLocalVariable */

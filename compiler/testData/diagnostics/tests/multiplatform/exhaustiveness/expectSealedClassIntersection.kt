@@ -47,3 +47,7 @@ fun testPlatformBad(base: Base) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, equalityExpression, expect, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, localProperty, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

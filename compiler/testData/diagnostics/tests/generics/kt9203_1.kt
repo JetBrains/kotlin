@@ -18,3 +18,6 @@ fun main() {
     val xs = stream.collect(toList())
     xs.foo()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, inProjection, interfaceDeclaration,
+localProperty, nullableType, out, propertyDeclaration, typeParameter */

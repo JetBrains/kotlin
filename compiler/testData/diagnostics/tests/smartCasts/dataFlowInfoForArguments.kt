@@ -6,3 +6,5 @@ fun bar(a: Int, b: Int) {}
 fun foo(a: Int?) {
     bar(a!!, <!DEBUG_INFO_SMARTCAST!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, nullableType, smartcast */

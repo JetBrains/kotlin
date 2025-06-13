@@ -39,3 +39,6 @@ class SamWithLambda {
     fun test25(): J<String> = J { x: String? -> "null" }
     fun test26(): J<String> = J { x: String -> "null" }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, lambdaLiteral, nullableType,
+stringLiteral */

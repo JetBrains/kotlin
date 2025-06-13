@@ -24,3 +24,5 @@ fun test(){
     val o = A()
     o.put(1, 2.0)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration */

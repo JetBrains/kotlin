@@ -22,3 +22,6 @@ class A {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+operator, propertyDeclaration */

@@ -22,3 +22,6 @@ fun annotationOnFunWithMoreThenOneContextType(a: context(@AnnotationWithTypeTarg
 fun annotationOnValueParameterWithContextType(a: context(A) (@AnnotationWithTypeTarget A) -> Unit) { }
 
 fun annotationOnExtensionParameterWithContextType(a: context(A) (@AnnotationWithTypeTarget A).() -> Unit) { }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeWithContext, typeWithExtension */

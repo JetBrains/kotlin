@@ -16,3 +16,6 @@ fun <V> checkDelegate0(delegated: KProperty0<@kotlin.internal.NoInfer V>, source
 fun test() {
     checkDelegate0(::tlValBoundVal, data::stringVal)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, propertyDelegate, stringLiteral, typeParameter */

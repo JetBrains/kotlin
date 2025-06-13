@@ -28,3 +28,7 @@ fun foo(arg: Boolean) {
         x.iterator().next().length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+intersectionType, isExpression, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast,
+starProjection, stringLiteral */

@@ -7,3 +7,6 @@ fun test() {
   if (out == x) return
   out.plus(1)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

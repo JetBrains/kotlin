@@ -22,3 +22,7 @@ open class Delegate<X> {
 }
 
 val <T> Inv<T>.x: Unit <!DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER_ERROR!>by object : Delegate<T>() {}<!>
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, dnnType, equalityExpression,
+functionDeclaration, ifExpression, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, smartcast, starProjection, typeParameter */

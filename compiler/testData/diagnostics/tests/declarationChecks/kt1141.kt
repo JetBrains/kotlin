@@ -21,3 +21,6 @@ fun foo() {
 fun foo2() {
     val r = <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object<!> : Runnable {} //no error
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localProperty, objectDeclaration, propertyDeclaration */

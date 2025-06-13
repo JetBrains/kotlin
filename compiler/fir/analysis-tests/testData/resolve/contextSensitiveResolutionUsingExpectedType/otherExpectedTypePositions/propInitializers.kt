@@ -34,3 +34,6 @@ class PropOwner(val prop: MyEnum = Option2) {
     val prop2: MyEnum = enumProp
     val prop3: MyEnum = <!INITIALIZER_TYPE_MISMATCH!>stringProp<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

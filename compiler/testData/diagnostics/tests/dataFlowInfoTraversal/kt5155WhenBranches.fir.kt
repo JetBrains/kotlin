@@ -10,3 +10,6 @@ fun foo(s: String?) {
 }
 
 fun String.foo() = true
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+smartcast, whenExpression */

@@ -22,3 +22,6 @@ fun foo(target: FirTarget<FirFunction<*>>, property: FirProperty) {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, starProjection, typeConstraint, typeParameter */

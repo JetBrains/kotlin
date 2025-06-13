@@ -16,3 +16,6 @@ fun test() {
 
 
 fun foo(mapper: (BaseClass) -> String?) {}
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, localProperty,
+nullableType, propertyDeclaration */

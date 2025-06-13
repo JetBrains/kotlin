@@ -21,3 +21,6 @@ fun hello() {
 
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, functionDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, typeParameter, vararg */

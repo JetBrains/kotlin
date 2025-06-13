@@ -4,3 +4,6 @@ val x: Int? = 0
         if (field != null) return <!DEBUG_INFO_SMARTCAST!>field<!>.hashCode()
         return null
     }
+
+/* GENERATED_FIR_TAGS: equalityExpression, getter, ifExpression, integerLiteral, nullableType, propertyDeclaration,
+smartcast */

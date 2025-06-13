@@ -20,3 +20,6 @@ val x = C.Self.<!UNRESOLVED_REFERENCE!>X<!>
 val n2 = C.Nested.Root.<!UNRESOLVED_REFERENCE!>Nested<!>.N2()
 val ic = C.Self.<!UNRESOLVED_REFERENCE!>InCompanion<!>()
 val ok = C.Self.ok
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

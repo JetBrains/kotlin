@@ -21,3 +21,6 @@ fun <T, U> coerce2(t: T): U {
     val bind = Bind(<!TYPE_MISMATCH, TYPE_MISMATCH!>constrain<!>) // WARNING: Type mismatch: inferred type is T but U was expected
     return bind.upcast(t)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, localProperty, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

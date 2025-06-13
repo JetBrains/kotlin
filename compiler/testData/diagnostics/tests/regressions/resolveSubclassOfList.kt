@@ -8,3 +8,5 @@ fun foo(p: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<String><!>) {
 
     ArrayList<String>().iterator(); // this provoked exception in SignaturesPropagationData
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

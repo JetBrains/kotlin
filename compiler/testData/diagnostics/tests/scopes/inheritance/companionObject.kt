@@ -40,3 +40,6 @@ class C: B(), A {
         C.<!UNRESOLVED_REFERENCE!>B_<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, interfaceDeclaration, nestedClass,
+objectDeclaration */

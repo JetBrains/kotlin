@@ -29,3 +29,5 @@ actual class Foo {
     actual fun bar() {}
     actual fun baz() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

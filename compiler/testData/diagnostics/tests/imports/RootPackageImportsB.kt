@@ -150,3 +150,6 @@ fun testBB() {
     nestedJavaKlassStaticFunction()
     companionObjektFunction()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, javaFunction, javaType, localProperty,
+nestedClass, nullableType, objectDeclaration, propertyDeclaration */

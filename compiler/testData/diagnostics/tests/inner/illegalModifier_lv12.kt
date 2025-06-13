@@ -45,3 +45,7 @@ class P {
 val R = object {
     inner class S
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, companionObject,
+enumDeclaration, enumEntry, functionDeclaration, inner, integerLiteral, interfaceDeclaration, localClass,
+objectDeclaration, propertyDeclaration */

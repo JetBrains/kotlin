@@ -59,3 +59,5 @@ open class COpen : IBase {
     }
 }
 
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inline, interfaceDeclaration,
+localClass, nestedClass, nullableType, override, propertyDeclaration, reified, typeParameter */

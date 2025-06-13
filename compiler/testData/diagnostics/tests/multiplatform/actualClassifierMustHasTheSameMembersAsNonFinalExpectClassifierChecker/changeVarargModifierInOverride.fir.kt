@@ -16,3 +16,5 @@ expect open class Foo : Base {
 actual open class Foo : Base() {
     override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>foo<!>(bar: IntArray) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, vararg */

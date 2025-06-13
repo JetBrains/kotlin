@@ -13,3 +13,6 @@ fun main() {
         return@foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, typeWithExtension */

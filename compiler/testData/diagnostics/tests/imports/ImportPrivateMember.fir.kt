@@ -36,3 +36,6 @@ fun testAccess() {
     <!INVISIBLE_REFERENCE!>NestedEntry<!>
     inObject()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration */

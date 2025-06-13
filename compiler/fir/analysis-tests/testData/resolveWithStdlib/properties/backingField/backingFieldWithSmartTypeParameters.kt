@@ -5,3 +5,5 @@ val items: List<String>
 fun test() {
     items.add("one more item")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, stringLiteral */

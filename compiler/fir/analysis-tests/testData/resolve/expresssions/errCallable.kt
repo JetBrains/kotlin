@@ -12,3 +12,6 @@ class My {
 fun Your.foo() {
     val x = ::<!UNRESOLVED_REFERENCE!>Nested<!> // Still should be error
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, nestedClass,
+propertyDeclaration */

@@ -7,3 +7,6 @@ fun main() {
     val fooRef: (Int, Any) -> Unit = <!TYPE_MISMATCH!>::<!TYPE_MISMATCH!>foo<!><!>
     val barRef: (Int, Any) -> Unit = <!TYPE_MISMATCH!>::<!TYPE_MISMATCH!>bar<!><!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, typeParameter */

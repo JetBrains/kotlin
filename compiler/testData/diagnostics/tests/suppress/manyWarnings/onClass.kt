@@ -3,3 +3,6 @@
 class C {
     fun foo(): String?? = ""!! <!USELESS_CAST!>as String??<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, functionDeclaration, nullableType,
+stringLiteral */

@@ -29,3 +29,5 @@ package a
 fun test1() = x1().getB()
 fun test2() = x2.<!UNRESOLVED_REFERENCE!>B<!>()
 fun test3() = x2<String>().getB()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

@@ -103,3 +103,6 @@ interface Interface
 <!WRONG_ANNOTATION_TARGET!>@SubclassOptInRequired(ApiMarker::class)<!>
 typealias TypeAlias = Interface
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, classReference,
+companionObject, data, enumDeclaration, enumEntry, funInterface, functionDeclaration, inner, interfaceDeclaration,
+localClass, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, typeAliasDeclaration, value */

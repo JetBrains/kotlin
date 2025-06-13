@@ -7,3 +7,5 @@ fun foo() {
     var boolean = false
     boolean = boolean.not()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, propertyDeclaration */

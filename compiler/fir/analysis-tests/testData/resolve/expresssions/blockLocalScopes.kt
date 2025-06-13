@@ -15,3 +15,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, localProperty, propertyDeclaration,
+stringLiteral */

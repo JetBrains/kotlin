@@ -38,3 +38,6 @@ object GoodOldCandidate {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, intersectionType, nestedClass, nullableType,
+objectDeclaration, typeConstraint, typeParameter */

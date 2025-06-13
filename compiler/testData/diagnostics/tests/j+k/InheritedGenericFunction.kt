@@ -31,3 +31,5 @@ import p.*
 abstract class K: C() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

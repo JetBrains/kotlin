@@ -55,3 +55,6 @@ fun main() {
 
     JavaSmartList.takes(1..10)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+rangeExpression, stringLiteral */

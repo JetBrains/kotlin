@@ -32,3 +32,5 @@ fun main(x: A) {
 
     D().baz()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

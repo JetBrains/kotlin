@@ -89,3 +89,6 @@ fun testTypeParameters() {
 fun testFlexibleTypes() {
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Integer.valueOf(1)<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral,
+localProperty, nullableType, override, primaryConstructor, propertyDeclaration, samConversion, value */

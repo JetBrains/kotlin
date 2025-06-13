@@ -12,3 +12,5 @@ open class `$$`(`$$$$` : `$$$$$`?) : `$`() {
         return `$$$`
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration */

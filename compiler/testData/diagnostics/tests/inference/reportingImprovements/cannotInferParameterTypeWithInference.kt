@@ -15,3 +15,5 @@ fun bar(f: (<!UNRESOLVED_REFERENCE!>A<!>)->Unit) {}
 fun test2() {
     bar { <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> } // here we don't have 'cannot infer parameter type' error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, nullableType, typeParameter */

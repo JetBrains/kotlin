@@ -25,3 +25,6 @@ fun test (j: J, k: K) {
         K::f -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, equalityExpression, functionDeclaration, javaType,
+stringLiteral, whenExpression, whenWithSubject */

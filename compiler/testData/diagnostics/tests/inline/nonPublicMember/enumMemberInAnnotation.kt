@@ -14,3 +14,6 @@ internal annotation class A(val value: Value) {
 @A(A.Value.X)
 inline fun foo() {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, enumDeclaration, enumEntry, functionDeclaration, inline, nestedClass,
+primaryConstructor, propertyDeclaration */

@@ -13,3 +13,6 @@ fun main() {
     println("2019-12-31".toIconList())
     println(null.toIconList())
 }
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, funWithExtensionReceiver, functionDeclaration, nullableType,
+propertyDeclaration, rangeExpression, smartcast, stringLiteral, whenExpression, whenWithSubject */

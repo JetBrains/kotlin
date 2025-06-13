@@ -20,3 +20,6 @@ fun bar2(a: A) {
     <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
     b.foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, localProperty, propertyDeclaration,
+smartcast */

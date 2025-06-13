@@ -23,3 +23,6 @@ fun foo(i: Int, f: () -> Unit) {
 fun bar() {
     <!NONE_APPLICABLE!>foo<!>(Any()) {}
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+lambdaLiteral */

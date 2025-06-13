@@ -5,3 +5,6 @@ class C {
         val foo: String?? = ""!! <!USELESS_CAST!>as String??<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, companionObject, nullableType,
+objectDeclaration, propertyDeclaration, stringLiteral */

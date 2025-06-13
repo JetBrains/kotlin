@@ -43,3 +43,7 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data>(
 
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, in, inline, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty,
+nullableType, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

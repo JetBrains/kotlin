@@ -24,3 +24,6 @@ fun test_4(): CharSequence? {
     if (<!USELESS_IS_CHECK!>Other is CharSequence<!>) return Other
     return null
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, inline, intersectionType, isExpression, nullableType,
+objectDeclaration, reified, smartcast, typeAliasDeclaration, typeParameter */

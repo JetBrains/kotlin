@@ -29,3 +29,6 @@ class FooImpl2<E> : Foo<E> {
 
     override fun (E & Any).bar() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+javaType, nullableType, override, typeParameter */

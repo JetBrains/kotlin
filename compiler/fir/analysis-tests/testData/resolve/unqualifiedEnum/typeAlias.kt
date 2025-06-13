@@ -11,3 +11,6 @@ fun foo(o: Other) = when (o) {
     FIRST -> 1
     SECOND -> 2
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,
+typeAliasDeclaration, whenExpression, whenWithSubject */

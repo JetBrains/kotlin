@@ -17,3 +17,5 @@ interface A : Base
 package a
 
 interface B : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, sealed */

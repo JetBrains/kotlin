@@ -44,3 +44,6 @@ fun <T : CharSequence?> foo(x: T) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar3()
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+intersectionType, isExpression, nullableType, safeCall, smartcast, typeConstraint, typeParameter */

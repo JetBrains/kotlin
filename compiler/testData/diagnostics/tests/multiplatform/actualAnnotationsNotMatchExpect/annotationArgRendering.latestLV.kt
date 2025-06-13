@@ -29,3 +29,6 @@ expect fun kclassArg()
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onType(): Any? = null
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun kclassArg() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, expect, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

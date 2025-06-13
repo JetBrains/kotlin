@@ -22,3 +22,6 @@ fun main() {
     bar(false).foo()
     bar(false)<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,
+nullableType, override, safeCall, stringLiteral */

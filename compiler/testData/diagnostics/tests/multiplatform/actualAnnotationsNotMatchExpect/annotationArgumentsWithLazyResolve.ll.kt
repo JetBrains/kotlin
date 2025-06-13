@@ -34,3 +34,6 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onFunction_positive<!>() {}
 actual fun withEmptyArguments_negative() {}
 @Ann("incorrect")
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withEmptyArguments_positive<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

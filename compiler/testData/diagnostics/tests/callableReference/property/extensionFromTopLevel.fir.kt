@@ -24,3 +24,7 @@ fun test() {
     checkSubtype<Long>(g.get(0))
     g.set(1, 0L)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, infix, integerLiteral, localProperty, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, setter, stringLiteral, typeParameter, typeWithExtension */

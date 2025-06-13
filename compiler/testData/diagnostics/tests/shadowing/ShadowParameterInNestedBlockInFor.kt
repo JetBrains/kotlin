@@ -7,3 +7,6 @@ fun f(<!UNUSED_PARAMETER!>i<!>: Int) {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+rangeExpression */

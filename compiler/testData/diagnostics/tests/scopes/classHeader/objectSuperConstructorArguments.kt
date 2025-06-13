@@ -8,3 +8,6 @@ object A : S(<!UNRESOLVED_REFERENCE!>prop1<!>, <!UNRESOLVED_REFERENCE!>prop2<!>,
         get() = 1
     fun func() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration */

@@ -9,3 +9,5 @@ fun main() {
     val y: MutableList<String> = <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>mutableListOf<`_`>()<!>
     val z: MutableList<Int> = mutableListOf<`_`>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, typeAliasDeclaration */

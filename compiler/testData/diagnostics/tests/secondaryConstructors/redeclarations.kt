@@ -27,3 +27,6 @@ class Outer {
 
     <!CONFLICTING_OVERLOADS!>fun B(x: Int)<!> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, primaryConstructor, secondaryConstructor,
+stringLiteral */

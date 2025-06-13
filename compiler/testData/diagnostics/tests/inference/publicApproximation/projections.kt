@@ -18,3 +18,6 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out Bound1>")!>testOut()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv<in Bound1>")!>testIn()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,
+nullableType, objectDeclaration, outProjection, typeConstraint, typeParameter, vararg */

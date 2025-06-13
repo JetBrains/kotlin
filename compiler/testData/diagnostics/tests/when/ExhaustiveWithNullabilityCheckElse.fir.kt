@@ -24,3 +24,6 @@ fun foo(arg: X?): Int {
         }
     } 
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, whenExpression, whenWithSubject */

@@ -44,3 +44,5 @@ fun useBox(box: Box<String>, b: B, c: C, d: D, i: BoxImpl) {
     d.foo()
     i.add("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, stringLiteral, typeParameter */

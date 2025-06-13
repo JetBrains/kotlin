@@ -36,3 +36,6 @@ fun test() {
    nameOf<Bar>()
    nameOf<Foo>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, nullableType, reified, stringLiteral,
+typeConstraint, typeParameter */

@@ -121,3 +121,6 @@ fun IfExpressionNotGuard(x: Any) {
         -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, guardCondition,
+ifExpression, isExpression, smartcast, whenExpression, whenWithSubject */

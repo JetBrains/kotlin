@@ -8,3 +8,5 @@ fun <F : Any> foo(computable: Out<F?>) {}
 fun <T : Any> bar(computable: Out<T?>) {
     foo(id(computable))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, out, typeConstraint, typeParameter */

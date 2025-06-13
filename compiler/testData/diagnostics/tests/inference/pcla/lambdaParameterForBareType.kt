@@ -20,3 +20,7 @@ fun main(a: A<*>) {
         predicate(a, this) { it is B }
     }.a
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, isExpression, lambdaLiteral, nullableType, propertyDeclaration, starProjection, suspend,
+thisExpression, typeParameter, typeWithExtension */

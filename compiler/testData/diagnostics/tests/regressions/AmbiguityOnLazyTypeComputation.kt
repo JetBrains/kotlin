@@ -12,3 +12,5 @@ class Foo() {
   fun compareTo(other : Byte)   : Int = 0
   fun compareTo(other : Char)   : Int = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

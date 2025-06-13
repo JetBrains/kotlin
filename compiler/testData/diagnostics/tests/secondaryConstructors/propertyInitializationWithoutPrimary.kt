@@ -39,3 +39,5 @@ class A {
         y = 12
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration, secondaryConstructor */

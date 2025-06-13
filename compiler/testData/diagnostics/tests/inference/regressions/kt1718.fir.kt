@@ -17,3 +17,7 @@ fun test() {
 //from library
 fun <T> arrayList(vararg values: T) : ArrayList<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, operator, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension, vararg */

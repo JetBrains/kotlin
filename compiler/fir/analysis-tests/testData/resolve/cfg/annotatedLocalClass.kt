@@ -15,3 +15,6 @@ fun foo(b: Boolean) {
 }
 
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, ifExpression, localClass,
+primaryConstructor */

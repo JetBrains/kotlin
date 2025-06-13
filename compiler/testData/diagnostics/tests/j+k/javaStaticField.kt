@@ -10,3 +10,5 @@ public interface MyInterface {
 fun main() {
     MyInterface.MY_STATIC_FIELD
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

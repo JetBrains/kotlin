@@ -6,3 +6,5 @@ fun uint(vararg a: <!OPT_IN_USAGE!>UInt<!>): <!OPT_IN_USAGE!>UIntArray<!> = <!OP
 fun ulong(vararg a: <!OPT_IN_USAGE!>ULong<!>): <!OPT_IN_USAGE!>ULongArray<!> = <!OPT_IN_USAGE!>a<!>
 
 fun rawUInt(vararg a: <!OPT_IN_USAGE!>UInt<!>): IntArray = <!OPT_IN_USAGE, RETURN_TYPE_MISMATCH!>a<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, vararg */

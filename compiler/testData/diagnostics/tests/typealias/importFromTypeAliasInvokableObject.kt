@@ -14,3 +14,5 @@ object TestCase {
 
 // FILE: 2.kt
 import simpleObject.SimpleObject.propertyLikeClbl
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, operator, propertyDeclaration, typeAliasDeclaration */

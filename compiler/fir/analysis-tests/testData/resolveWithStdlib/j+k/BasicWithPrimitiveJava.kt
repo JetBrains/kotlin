@@ -25,3 +25,6 @@ class A : Some() {
         val res3 = bar(intArrayOf(0, 2, -2))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+localProperty, propertyDeclaration */

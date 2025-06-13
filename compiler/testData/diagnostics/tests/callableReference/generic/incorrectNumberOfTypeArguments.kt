@@ -13,3 +13,6 @@ fun test_1() {
     val c = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<!>::genericValue
     val d = Foo<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>genericValue<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter */

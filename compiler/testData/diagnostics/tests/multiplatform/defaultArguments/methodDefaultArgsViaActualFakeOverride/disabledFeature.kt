@@ -14,3 +14,5 @@ open class Base {
 }
 
 actual class Foo : Base()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral */

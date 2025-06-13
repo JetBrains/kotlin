@@ -19,3 +19,6 @@ class Base {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, init, localProperty,
+nestedClass, propertyDeclaration */

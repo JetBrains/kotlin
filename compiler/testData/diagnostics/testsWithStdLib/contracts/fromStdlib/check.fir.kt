@@ -32,3 +32,5 @@ fun testCheckNotNull(x: Int?) {
     checkNotNull(x)
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, lambdaLiteral, nullableType, smartcast, stringLiteral */

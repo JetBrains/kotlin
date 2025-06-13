@@ -17,3 +17,5 @@ public class C extends A implements B {}
 
 // FILE: main.kt
 class D : C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, javaType, propertyDeclaration */

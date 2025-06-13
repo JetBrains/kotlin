@@ -18,3 +18,5 @@ actual open class Foo {
     context(Int)
     fun <!ACTUAL_MISSING!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext */

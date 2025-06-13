@@ -29,3 +29,6 @@ actual open class Foo : Base() {
     final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>overrideModality2<!>(): Any = ""
     public override fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>overrideVisibility<!>(): Any = ""
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, override,
+primaryConstructor, propertyDeclaration, stringLiteral */

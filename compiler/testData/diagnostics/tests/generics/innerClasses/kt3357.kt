@@ -18,3 +18,6 @@ class Sub<T1>(): Super<T1>() {
         override fun getOuter(): Sub<T1> = throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, inner, localProperty, nullableType, override,
+primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

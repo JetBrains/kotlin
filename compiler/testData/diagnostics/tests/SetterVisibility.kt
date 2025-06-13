@@ -25,3 +25,5 @@ class My {
         // Error: better
         <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration */

@@ -12,3 +12,5 @@ fun C.foo() {}
 
 context(_: String)
 fun C.bar() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext */

@@ -38,3 +38,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+ifExpression, isExpression, lambdaLiteral, smartcast, thisExpression, typeWithExtension */

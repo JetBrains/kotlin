@@ -14,3 +14,6 @@ fun test() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration */

@@ -7,3 +7,5 @@ fun foo() {
         @<!UNRESOLVED_REFERENCE!>foo<!><!SYNTAX!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contracts, functionDeclaration, lambdaLiteral */

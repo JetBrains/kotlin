@@ -55,3 +55,5 @@ fun test() {
 }
 
 fun f(unused: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration */

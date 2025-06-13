@@ -5,3 +5,5 @@
 @<!UNRESOLVED_REFERENCE!>Ann<!>(1) class C
 @kotlin.<!UNRESOLVED_REFERENCE!>Ann<!>(1) class D
 @kotlin.annotation.<!UNRESOLVED_REFERENCE!>Ann<!>(1) class E
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral */

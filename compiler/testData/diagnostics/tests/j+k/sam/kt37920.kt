@@ -27,3 +27,6 @@ fun main() {
 }
 
 fun getCollection(): Collection<Int> = TODO()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, localProperty,
+propertyDeclaration */

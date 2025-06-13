@@ -8,3 +8,5 @@ inline class PublicConstructor public constructor(val x: Int)
 inline class InternalConstructor internal constructor(val x: Int)
 inline class ProtectedConstructor protected constructor(val x: Int)
 inline class PrivateConstructor private constructor(val x: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration */

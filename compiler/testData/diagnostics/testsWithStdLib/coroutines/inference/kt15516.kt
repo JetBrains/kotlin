@@ -18,3 +18,7 @@ class Problem<F>(){
             println("yes")
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, ifExpression, isExpression,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, suspend,
+typeParameter, typeWithExtension */

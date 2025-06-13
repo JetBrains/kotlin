@@ -16,3 +16,6 @@ import p.*
 fun test(j: J) {
     j.s()?.length ?: ""
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, intersectionType, javaFunction, javaType,
+nullableType, safeCall, stringLiteral */

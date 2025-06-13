@@ -7,3 +7,6 @@ public fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, isExpression, localProperty, propertyDeclaration, smartcast, whileLoop */

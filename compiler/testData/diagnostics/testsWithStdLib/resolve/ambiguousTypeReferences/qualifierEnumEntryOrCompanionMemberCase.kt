@@ -35,3 +35,6 @@ import some2.*
 import some3.*
 
 fun test() = <!UNRESOLVED_REFERENCE!>Some<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

@@ -62,3 +62,5 @@ package test
 
 // val s4: -1
 <!DEBUG_INFO_CONSTANT_VALUE("-1")!>val s4: Short = <!TYPE_MISMATCH!>-1.toShort()<!><!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

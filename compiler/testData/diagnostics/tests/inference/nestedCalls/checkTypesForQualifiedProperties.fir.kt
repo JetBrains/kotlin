@@ -8,3 +8,5 @@ fun test(c: C) {
 fun foo(s: String) = s
 
 class C(val b: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration */

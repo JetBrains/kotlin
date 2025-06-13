@@ -20,3 +20,6 @@ fun bar(): Int {
     val (x, y) = <!COMPONENT_FUNCTION_ON_NULLABLE, COMPONENT_FUNCTION_ON_NULLABLE!>d<!>
     return x + y
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, data, destructuringDeclaration, funWithExtensionReceiver,
+functionDeclaration, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration, typeParameter */

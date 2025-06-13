@@ -9,3 +9,6 @@ data class <!CONFLICTING_OVERLOADS("fun copy(x: @An() Int): @An() Int")!>A(<!ANN
     @An
     <!CONFLICTING_OVERLOADS("fun copy(x: @An() Int = ...): A")!>fun copy(@An x: @An Int)<!> = x
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, data, functionDeclaration, primaryConstructor,
+propertyDeclaration */

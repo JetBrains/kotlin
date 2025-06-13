@@ -19,3 +19,5 @@ fun main() {
     c.s
     A.ANOTHER.s
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

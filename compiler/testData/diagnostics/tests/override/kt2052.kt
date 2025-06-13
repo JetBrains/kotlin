@@ -10,3 +10,5 @@ class C {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localClass, primaryConstructor */

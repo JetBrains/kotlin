@@ -10,3 +10,5 @@ interface WithInner {
 //FILE:b.kt
 package user
 import lib.WithInner.Inner
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, nestedClass */

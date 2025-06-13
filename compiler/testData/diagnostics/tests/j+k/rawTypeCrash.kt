@@ -24,3 +24,6 @@ fun test(childStubType: JsStubElementType<Any, JsStubElement<Any>>) {
         rawTypedStub.findChildStubByType(childStubType)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, interfaceDeclaration, isExpression, javaProperty,
+javaType, localProperty, propertyDeclaration, smartcast */

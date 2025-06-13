@@ -13,3 +13,6 @@ fun bar() {
 
 fun doSmth1(f: ()->Unit) {}
 fun doSmth1(g: (Int)->Unit) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

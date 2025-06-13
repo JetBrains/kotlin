@@ -11,3 +11,6 @@ class Bar<BT : Any>(t: BT?)
 fun <F> goFoo(t: F) = foo<F & Any>(t)
 
 fun <FT : Any> foo(t: FT?) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, nullableType, primaryConstructor, typeConstraint,
+typeParameter */

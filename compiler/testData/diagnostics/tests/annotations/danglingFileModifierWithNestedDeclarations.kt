@@ -19,3 +19,6 @@ annotation class Anno(val s: String)
         }
     }
 }<!><!SYNTAX, SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+localClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

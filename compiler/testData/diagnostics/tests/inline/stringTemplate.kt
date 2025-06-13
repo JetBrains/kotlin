@@ -10,3 +10,5 @@ public inline fun register(converter: (Any) -> Any) {
     "123$<!USAGE_IS_NOT_INLINABLE!>converter<!>"
     reg(converter, "123$<!USAGE_IS_NOT_INLINABLE!>converter<!>")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, stringLiteral */

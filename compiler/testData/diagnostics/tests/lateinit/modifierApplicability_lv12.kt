@@ -74,3 +74,8 @@ public class B {
         a.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, integerLiteral,
+interfaceDeclaration, lateinit, localProperty, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, propertyWithExtensionReceiver, setter, starProjection, stringLiteral, typeAliasDeclaration,
+typeConstraint, typeParameter */

@@ -10,3 +10,6 @@ class OuterClass<T1> {
 typealias ON1<T1, T2> = OuterClass<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><T1><!>.NestedClass<T2>
 typealias ON2<T1, T2> = OuterClass<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><T1><!>.NestedType<T2>
 typealias ON3<T2> = OuterClass.NestedType<T2>
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

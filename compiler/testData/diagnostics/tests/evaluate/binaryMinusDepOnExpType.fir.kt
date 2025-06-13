@@ -29,3 +29,5 @@ fun test() {
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toLong()<!>)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toShort()<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral */

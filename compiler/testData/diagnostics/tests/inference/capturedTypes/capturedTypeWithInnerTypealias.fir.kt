@@ -9,3 +9,6 @@ fun test(k: KClass<out MyString>) {
 
 @Suppress(<!ERROR_SUPPRESSION!>"UPPER_BOUND_VIOLATED"<!>)
 public val <T> KClass<T>.java: Class<T> get() = TODO()
+
+/* GENERATED_FIR_TAGS: capturedType, classReference, functionDeclaration, getter, nullableType, outProjection,
+propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeAliasDeclaration, typeParameter */

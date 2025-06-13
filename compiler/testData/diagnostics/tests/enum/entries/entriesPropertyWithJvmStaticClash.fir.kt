@@ -20,3 +20,6 @@ fun test() {
 
     A.Companion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

@@ -12,3 +12,6 @@ fun <T : WithChildren<T>> T.withDescendants() {}
 
 @JvmName("foo")
 fun WithChildren<*>.withDescendants() {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nullableType, out,
+starProjection, stringLiteral, typeConstraint, typeParameter */

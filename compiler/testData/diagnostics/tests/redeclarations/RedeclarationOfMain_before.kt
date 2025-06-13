@@ -112,3 +112,5 @@ package valid8
 package valid8
 typealias S = String
 <!CONFLICTING_OVERLOADS!>suspend fun main(args: Array<S>)<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, suspend, typeAliasDeclaration, vararg */

@@ -9,3 +9,6 @@ open class A {
 fun test() {
     (A::foo)(A.B)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration */

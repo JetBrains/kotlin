@@ -15,3 +15,5 @@ package test
 
 // val p5: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val p5 = -1.toShort()<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

@@ -76,3 +76,6 @@ fun testLateCompletion(derived: Derived, otherDerived: OtherDerived) {
         <!DEBUG_INFO_EXPRESSION_TYPE("BiParam<Inv<Out<Base>>, OtherDerived>")!>biparamLateInv(derived, otherDerived)<!>
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, nullableType, out,
+starProjection, typeParameter */

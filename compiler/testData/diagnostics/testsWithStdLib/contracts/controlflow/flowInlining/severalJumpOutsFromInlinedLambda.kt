@@ -78,3 +78,7 @@ fun nonLocalReturnAndOrdinaryExit(b: Boolean) {
     x.inc()
     s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, functionDeclaration,
+functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast, stringLiteral, typeParameter */

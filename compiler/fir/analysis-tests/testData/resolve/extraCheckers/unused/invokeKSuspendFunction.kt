@@ -7,3 +7,5 @@ suspend fun foo(action: KSuspendFunction1<String, Int>): Int {
 
     return localAction("hello")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, suspend */

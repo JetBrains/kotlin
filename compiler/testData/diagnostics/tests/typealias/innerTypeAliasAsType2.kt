@@ -24,3 +24,6 @@ fun test7(x: C<*>.TC) = x
 
 fun test8(x: C.SSDA) = x
 fun test9(x: C.SSC) = x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, starProjection, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

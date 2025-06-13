@@ -9,3 +9,6 @@ class Foo() {
         bar = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, lateinit, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

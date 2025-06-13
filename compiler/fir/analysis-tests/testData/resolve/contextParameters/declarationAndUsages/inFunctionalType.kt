@@ -35,3 +35,7 @@ fun test(){
     qux()(A(), "")
     ContextInSuperType()(A(), "")
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+getter, lambdaLiteral, nullableType, operator, override, propertyDeclaration, setter, stringLiteral, typeParameter,
+typeWithContext */

@@ -21,3 +21,6 @@ val cmds: Map<String, (Pattern) -> Number> = mapOf("" to Meter1::compute)
 fun main() {
     println(cmds.entries.last().value(Pattern()))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, functionDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, sealed, stringLiteral, typeAliasDeclaration */

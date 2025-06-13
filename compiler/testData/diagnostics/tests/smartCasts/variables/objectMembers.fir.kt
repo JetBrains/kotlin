@@ -112,3 +112,7 @@ fun objectInParallelLambda() {
     )
     <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, callableReference, classDeclaration, equalityExpression,
+functionDeclaration, functionalType, ifExpression, init, lambdaLiteral, localClass, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

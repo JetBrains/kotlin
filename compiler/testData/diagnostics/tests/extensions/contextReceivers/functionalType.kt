@@ -104,3 +104,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, thisExpression, typeWithContext, typeWithExtension */

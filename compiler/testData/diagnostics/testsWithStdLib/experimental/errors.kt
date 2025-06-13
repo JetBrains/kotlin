@@ -27,3 +27,5 @@ class Derived : Base() {
 fun test(b: Base) {
     b.<!OPT_IN_USAGE_ERROR!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

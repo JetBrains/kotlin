@@ -11,3 +11,6 @@ private val environment: List<NameAndSafeValue> by lazy {
         sortBy { it.name }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, propertyDelegate, thisExpression */

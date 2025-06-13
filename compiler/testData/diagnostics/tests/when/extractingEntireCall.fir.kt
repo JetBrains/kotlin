@@ -14,3 +14,7 @@ private fun List<FirExpression>.toAnnotationUseSiteTargets2(): Set<AnnotationUse
         else -> setOf()
     }
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

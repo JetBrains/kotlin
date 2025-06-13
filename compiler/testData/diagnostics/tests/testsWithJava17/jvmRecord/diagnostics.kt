@@ -59,3 +59,6 @@ class Outer {
 
 @JvmRecord
 data class A11(<!DATA_CLASS_VARARG_PARAMETER, JVM_RECORD_NOT_LAST_VARARG_PARAMETER!>vararg val x: String<!>, val y: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, enumEntry, functionDeclaration, inner, localClass,
+outProjection, primaryConstructor, propertyDeclaration, sealed, secondaryConstructor, vararg */

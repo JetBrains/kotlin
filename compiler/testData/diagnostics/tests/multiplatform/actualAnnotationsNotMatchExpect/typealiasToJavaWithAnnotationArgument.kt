@@ -16,3 +16,6 @@ actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> = FooImpl
 @Ann(p = 2)
 public class FooImpl {
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, integerLiteral, javaType,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration */

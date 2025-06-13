@@ -41,3 +41,7 @@ fun foo(a: A) {
         is <!INCOMPATIBLE_TYPES!>B.B1<!> -> "..."
     }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, intersectionType, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

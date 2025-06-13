@@ -30,3 +30,5 @@ class Test : IDerived1, IBase, IDerived2 {
         super<IDerived2>.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

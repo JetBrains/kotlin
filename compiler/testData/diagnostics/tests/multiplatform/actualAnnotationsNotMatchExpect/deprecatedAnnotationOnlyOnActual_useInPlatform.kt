@@ -21,3 +21,5 @@ fun main(){
     <!DEPRECATION!>warn<!>()
     <!DEPRECATION_ERROR!>error<!>()
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, stringLiteral */

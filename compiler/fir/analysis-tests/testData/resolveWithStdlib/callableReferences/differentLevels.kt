@@ -9,3 +9,6 @@ fun main() {
     foo(::bar, 1)
     foo(::bar, "")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localFunction,
+stringLiteral */

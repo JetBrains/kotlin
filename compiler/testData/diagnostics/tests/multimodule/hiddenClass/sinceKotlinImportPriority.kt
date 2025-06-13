@@ -38,3 +38,5 @@ fun test(a: <!API_NOT_AVAILABLE!>A<!>) {
     a.m1()
     a.<!UNRESOLVED_REFERENCE!>m2<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

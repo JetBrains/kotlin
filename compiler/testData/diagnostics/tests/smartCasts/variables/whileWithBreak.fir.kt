@@ -16,3 +16,7 @@ fun list(start: String) {
     // e can never be null but we do not know it
     e.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+whileLoop */

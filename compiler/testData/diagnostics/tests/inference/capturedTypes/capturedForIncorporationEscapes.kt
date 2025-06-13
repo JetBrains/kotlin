@@ -17,3 +17,6 @@ fun loadMergeRequests(boolean: Boolean) {
         loadList()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inline, interfaceDeclaration, localProperty,
+nullableType, outProjection, propertyDeclaration, reified, typeParameter */

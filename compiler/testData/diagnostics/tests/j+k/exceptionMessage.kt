@@ -20,3 +20,5 @@ fun foo(e: VcsException) {
 }
 
 public operator fun CharSequence.contains(other: CharSequence): Boolean = true
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, javaProperty, javaType, operator, stringLiteral */

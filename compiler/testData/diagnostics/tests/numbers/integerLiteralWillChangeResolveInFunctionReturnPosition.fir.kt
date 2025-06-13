@@ -18,3 +18,6 @@ fun test_6() = runWithByte { <!RETURN_TYPE_MISMATCH!>1 + 2<!> }
 
 fun <R> run(block: () -> R): R = block()
 fun runWithByte(block: () -> Byte): Byte = block()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+typeParameter */

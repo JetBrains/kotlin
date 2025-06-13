@@ -25,3 +25,6 @@ internal sealed class A {
         constructor() : this(null)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, nestedClass, nullableType, override, primaryConstructor,
+propertyDeclaration, sealed, secondaryConstructor */

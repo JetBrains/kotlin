@@ -17,3 +17,6 @@ fun runTest() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, ifExpression, in, interfaceDeclaration, lambdaLiteral,
+nullableType, operator, out, samConversion, stringLiteral, typeParameter */

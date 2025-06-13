@@ -28,3 +28,6 @@ fun foo(x: List<String>, y: LinkedList<String>, z: A<String>) {
     z.<!FUNCTION_CALL_EXPECTED!>last<!>
     z.last()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, nullableType, override, superExpression,
+typeParameter */

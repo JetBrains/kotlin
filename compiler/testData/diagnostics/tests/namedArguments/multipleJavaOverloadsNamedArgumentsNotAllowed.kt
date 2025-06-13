@@ -16,3 +16,5 @@ public class JavaClass {
 fun test(jc: JavaClass) {
     jc.greet("foo", <!NAMED_ARGUMENTS_NOT_ALLOWED!>language<!> = "language")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, stringLiteral */

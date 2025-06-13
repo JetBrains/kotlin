@@ -16,3 +16,6 @@ annotation class A3
 annotation class A4
 
 class Your(@[A1 A2] val x: Int, @[A3 A4] val y: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, annotationUseSiteTargetProperty,
+classDeclaration, primaryConstructor, propertyDeclaration */

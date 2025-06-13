@@ -14,3 +14,6 @@ fun foo() {
 
     for (@<!UNRESOLVED_REFERENCE!>Err<!>() (x,y) in bar()) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, classDeclaration, data, forLoop, functionDeclaration,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration, rangeExpression */

@@ -23,3 +23,6 @@ fun test3() {
         <!VAL_REASSIGNMENT!>s<!> = ""
     } while (s != "")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, doWhileLoop, equalityExpression, functionDeclaration,
+localProperty, propertyDeclaration, stringLiteral */

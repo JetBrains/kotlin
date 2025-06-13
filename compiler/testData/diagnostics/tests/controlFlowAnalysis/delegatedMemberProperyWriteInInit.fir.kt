@@ -39,3 +39,7 @@ class B {
         consume(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, init, integerLiteral,
+interfaceDeclaration, nullableType, operator, propertyDeclaration, propertyDelegate, setter, starProjection,
+typeParameter */

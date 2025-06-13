@@ -18,3 +18,6 @@ fun box() {
     val c = C()
     val foo = G(Int::class)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

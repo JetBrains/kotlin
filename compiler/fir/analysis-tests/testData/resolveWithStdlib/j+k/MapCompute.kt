@@ -10,3 +10,6 @@ fun <D> MutableMap<String, MutableSet<D>>.initAndAdd(key: String, value: D) {
         setOfValues
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, funWithExtensionReceiver, functionDeclaration, inProjection, lambdaLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, samConversion, thisExpression, typeParameter */

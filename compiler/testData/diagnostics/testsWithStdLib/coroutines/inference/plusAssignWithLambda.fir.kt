@@ -41,3 +41,7 @@ fun foo3(x: B) = {
     x += { <!RETURN_TYPE_MISMATCH!>""<!> }
     x += id { <!RETURN_TYPE_MISMATCH!>""<!> }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, assignment, callableReference, classDeclaration,
+functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType, operator,
+propertyDeclaration, stringLiteral, typeParameter */

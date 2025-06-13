@@ -14,3 +14,4 @@ fun foo(x: Promise<String?>) {
 }
 fun bar(x: CancellablePromise<String?>) {}
 
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, javaType, nullableType */

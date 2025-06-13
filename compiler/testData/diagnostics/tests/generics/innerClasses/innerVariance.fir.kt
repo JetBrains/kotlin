@@ -11,3 +11,5 @@ class Outer<out E, in F> {
     fun foo(x: <!TYPE_VARIANCE_CONFLICT_ERROR, TYPE_VARIANCE_CONFLICT_ERROR!>Inner<!>) {}
     fun bar(): Inner? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inner, nullableType, out, typeParameter */

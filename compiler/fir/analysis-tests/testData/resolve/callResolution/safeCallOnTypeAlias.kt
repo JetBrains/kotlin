@@ -6,3 +6,5 @@ fun foo(x: MyTypeAlias) {
 }
 
 fun bar(x: String) = x
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, safeCall, typeAliasDeclaration */

@@ -12,3 +12,6 @@ interface MyListProper : List<@Alias(CORRECT) String>
 const val CORRECT = 2 + 2
 
 typealias Alias = Anno
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, integerLiteral, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration */

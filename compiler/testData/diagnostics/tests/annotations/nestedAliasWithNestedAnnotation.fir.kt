@@ -10,3 +10,7 @@ interface OriginalInterface<T> {
         private const val prop = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, companionObject, const, integerLiteral, interfaceDeclaration, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

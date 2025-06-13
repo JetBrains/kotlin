@@ -48,3 +48,5 @@ class CTest4 : T1 {}
 class CTest5 : T1, <!SUPERTYPE_APPEARS_TWICE!>T1<!> {}
 
 class CTest6 : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>C1<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, primaryConstructor, typeParameter */

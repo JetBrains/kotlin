@@ -95,3 +95,7 @@ class C {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, classDeclaration, comparisonExpression, continue, equalityExpression, forLoop,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression,
+safeCall, smartcast, stringLiteral, whileLoop */

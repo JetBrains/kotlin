@@ -65,3 +65,6 @@ fun takeIntFinal(x: Final<Int>) {}
 fun takeIntBase(x: Base<Int>) {}
 fun takeIntDerived(x: Derived<Int>) {}
 fun takeIntFinalWithOverride(x: FinalWithOverride<Int>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, operator,
+override, smartcast, starProjection, thisExpression, typeParameter */

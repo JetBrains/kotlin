@@ -7,3 +7,5 @@ class A : Function0<Int> {
 fun main() {
     A()()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, operator, override */

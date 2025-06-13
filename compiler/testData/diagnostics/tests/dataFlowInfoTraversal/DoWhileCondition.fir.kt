@@ -19,3 +19,8 @@ fun doWhileWithBreak(x: Int?, y0: Int) {
     } while (x!! == y)
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, classDeclaration, comparisonExpression, doWhileLoop,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+incrementDecrementExpression, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+typeParameter, typeWithExtension */

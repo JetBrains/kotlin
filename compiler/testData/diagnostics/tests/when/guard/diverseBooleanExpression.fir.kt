@@ -114,3 +114,9 @@ fun infixFunInGuard(x: Any, y: Boolean?) {
         is String if x isLongerThan <!ARGUMENT_TYPE_MISMATCH!>"1"<!> && x has '!' -> x has '?'
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, checkNotNullCall, classDeclaration, comparisonExpression,
+disjunctionExpression, elvisExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+guardCondition, ifExpression, infix, integerLiteral, intersectionType, isExpression, lambdaLiteral, localProperty,
+multiplicativeExpression, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, rangeExpression,
+sealed, smartcast, stringLiteral, thisExpression, tryExpression, whenExpression, whenWithSubject */

@@ -7,3 +7,5 @@ abstract class MyClass {
         <!UNRESOLVED_REFERENCE!>println<!>(foo<String>())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, nullableType, typeParameter */

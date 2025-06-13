@@ -9,3 +9,6 @@ fun test() {
     }
     takeString(s)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

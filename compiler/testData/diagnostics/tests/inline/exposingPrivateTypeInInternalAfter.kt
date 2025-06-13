@@ -85,3 +85,7 @@ class C3 {
 
 private fun foo() = object { fun bar() {} }
 internal inline fun test() = <!LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR!>foo<!>().bar()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
+companionObject, functionDeclaration, functionalType, inline, integerLiteral, interfaceDeclaration, isExpression,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter */

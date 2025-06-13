@@ -21,3 +21,5 @@ fun TestBug() {
    val bug: Bug = SubBug()
    bug.save<Bug>() // can resolve on supertype
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

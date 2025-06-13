@@ -20,3 +20,5 @@ internal <!NOTHING_TO_INLINE!>inline<!> fun foo() {
     <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Foo<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>buildFoo<!>()
     Foo.Companion.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Nested<!>.<!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, nestedClass, objectDeclaration */

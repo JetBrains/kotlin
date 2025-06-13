@@ -26,3 +26,6 @@ fun usage(b : B?) {
 // FILE: C.kt
 package c
 class C
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, smartcast,
+typeParameter */

@@ -29,3 +29,5 @@ package one;
 
 public class Child2 extends SuperJava implements Cloneable {
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, javaType, localProperty, propertyDeclaration */

@@ -18,3 +18,5 @@ fun bar(threadLocal: ThreadLocal<String?>) {
 fun baz(ref: AtomicReference<String?>) {
     ref.get()<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType */

@@ -28,3 +28,5 @@ abstract class A2 {
 class C2 : <!FINAL_SUPERTYPE!>B2<!>() {
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override */

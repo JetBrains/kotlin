@@ -10,3 +10,6 @@ public inline fun register(converter: (Any) -> Any) {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> <!USAGE_IS_NOT_INLINABLE!>converter<!>
     })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, isExpression, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

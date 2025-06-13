@@ -19,3 +19,5 @@ fun main() {
     WithoutMRV.A // Should we ALWAYS report enum entries?
     WithoutMRV.A.foo()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, stringLiteral */

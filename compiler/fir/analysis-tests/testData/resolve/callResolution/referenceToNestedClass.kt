@@ -20,3 +20,6 @@ fun main() {
     funWithCtor(Outer::Nested)
     funWithCtor(Outer::Nested::invoke)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nestedClass, primaryConstructor,
+propertyDeclaration */

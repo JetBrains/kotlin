@@ -7,3 +7,5 @@ fun f(p: (Int) -> (String) -> Unit) {}
 fun g(cond: Boolean) {
     f(if (cond) { i -> { } } else { i -> { } })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, lambdaLiteral */

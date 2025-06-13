@@ -14,3 +14,6 @@ fun test() {
     <!EQUALITY_NOT_APPLICABLE!>Triple(0, 1, 2) === Pair("a", "b")<!>
     <!EQUALITY_NOT_APPLICABLE_WARNING!>Triple(Foo.A, 1, 2) === Pair(Foo.A, "a")<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+stringLiteral */

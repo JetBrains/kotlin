@@ -8,3 +8,6 @@ fun test() {
     val mutableProperty = Klass<*>::<!MUTABLE_PROPERTY_WITH_CAPTURED_TYPE!>mutableProperty<!>
     mutableProperty.set(Klass<Int>(), Generic<String>())
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nullableType,
+outProjection, propertyDeclaration, starProjection, typeParameter */

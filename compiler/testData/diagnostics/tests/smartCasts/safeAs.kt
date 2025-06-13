@@ -16,3 +16,5 @@ fun gav(arg: Any?) {
     arg as? String ?: return
     <!DEBUG_INFO_SMARTCAST!>arg<!>.length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast */

@@ -24,3 +24,5 @@ class C {
         companion object { }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, inner, nestedClass, objectDeclaration */

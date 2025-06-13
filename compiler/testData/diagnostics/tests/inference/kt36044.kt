@@ -9,3 +9,6 @@ fun <B> map(f: () -> B) = f()
 fun main() {
     select('a', map { { "" } })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, intersectionType, lambdaLiteral, nullableType, stringLiteral,
+typeParameter */

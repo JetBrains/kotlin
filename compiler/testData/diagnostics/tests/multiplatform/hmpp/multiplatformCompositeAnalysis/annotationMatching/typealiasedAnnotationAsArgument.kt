@@ -17,3 +17,5 @@ actual typealias Typealiased = TypealiasedImpl
 @Ann(Typealiased())
 actual fun test() {}
 
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration */

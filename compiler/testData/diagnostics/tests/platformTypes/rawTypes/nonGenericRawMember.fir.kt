@@ -33,3 +33,6 @@ fun main() {
     // Raw(A).b is not erased because it have no type parameters
     var rawInner = rawB.bar(<!ARGUMENT_TYPE_MISMATCH!>strList<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty,
+propertyDeclaration */

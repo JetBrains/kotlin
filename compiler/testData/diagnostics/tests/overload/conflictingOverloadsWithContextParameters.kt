@@ -21,3 +21,6 @@ open class X5 : C() {
     <!CONFLICTING_OVERLOADS!><!CONTEXT_PARAMETERS_UNSUPPORTED!>context(s: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
     fun some3(text: String): String<!> = ""
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+nullableType, stringLiteral, typeParameter */

@@ -5,3 +5,5 @@ class Foo {
 }
 
 val f: () -> Unit = <!UNRESOLVED_REFERENCE!>Unresolved<!>()::foo
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, propertyDeclaration */

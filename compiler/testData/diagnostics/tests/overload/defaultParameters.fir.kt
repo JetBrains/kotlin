@@ -57,3 +57,7 @@ fun test() {
 
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(null!!)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeConstraint,
+typeParameter, typeWithExtension */

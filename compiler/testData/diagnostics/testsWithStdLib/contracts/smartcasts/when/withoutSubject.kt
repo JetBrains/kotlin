@@ -30,3 +30,6 @@ fun smartcastInElse(x: Any?) {
         else -> <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, isExpression, lambdaLiteral,
+nullableType, smartcast, whenExpression */

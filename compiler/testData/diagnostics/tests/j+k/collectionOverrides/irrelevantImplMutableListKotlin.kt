@@ -105,3 +105,6 @@ fun main() {
     x.remove("")
     x.remove(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, javaType, localProperty,
+nullableType, propertyDeclaration, starProjection, stringLiteral */

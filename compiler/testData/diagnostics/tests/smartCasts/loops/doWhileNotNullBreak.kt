@@ -10,3 +10,5 @@ public fun foo(p: String?): Int {
     // p can be null despite of the break
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, doWhileLoop, equalityExpression, functionDeclaration, ifExpression, nullableType */

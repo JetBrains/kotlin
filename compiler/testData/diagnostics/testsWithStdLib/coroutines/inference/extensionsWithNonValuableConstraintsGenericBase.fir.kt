@@ -50,3 +50,7 @@ val test5 = generateSpecific {
 val test6 = <!CANNOT_INFER_PARAMETER_TYPE!>generateSpecific<!> {
     stringBase()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, starProjection,
+stringLiteral, suspend, typeParameter, typeWithExtension */

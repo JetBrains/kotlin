@@ -43,3 +43,6 @@ fun test() {
   System.out.println()
   java.lang.System.out.println()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, flexibleType, functionDeclaration, integerLiteral,
+javaFunction, javaProperty, objectDeclaration, primaryConstructor, propertyDeclaration */

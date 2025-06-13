@@ -13,3 +13,7 @@ fun test(s: String): String {
     <!UNREACHABLE_CODE!>val b =<!> TestClass { return s }
     <!UNREACHABLE_CODE!>b checkType { _<Nothing>() }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, typeParameter,
+typeWithExtension */

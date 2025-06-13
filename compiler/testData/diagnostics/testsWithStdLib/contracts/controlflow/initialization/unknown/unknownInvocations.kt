@@ -18,3 +18,6 @@ fun reassignmentAndNoInitializaiton() {
     inPlace { <!VAL_REASSIGNMENT!>x<!> = 42 }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

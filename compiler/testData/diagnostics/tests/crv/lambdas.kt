@@ -30,3 +30,6 @@ fun main() {
         stringF()
     } // stringF() is used, stringLambdaReturns is unused
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, stringLiteral */

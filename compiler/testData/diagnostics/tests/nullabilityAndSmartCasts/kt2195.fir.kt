@@ -7,3 +7,6 @@ private fun <T> sendCommand(errorCallback: (()->Unit)? = null) {
         errorCallback()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, nullableType, smartcast,
+typeParameter */

@@ -13,3 +13,6 @@ fun main() {
         val y = id(::<!CANNOT_INFER_PARAMETER_TYPE!>bar<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

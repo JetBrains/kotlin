@@ -14,3 +14,6 @@ val test2 = CIn()
 val test3 = COut()
 val test4 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>CT<!><<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
 val test5 = CT<CT<*>>()
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, inProjection, nullableType, outProjection, propertyDeclaration,
+starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

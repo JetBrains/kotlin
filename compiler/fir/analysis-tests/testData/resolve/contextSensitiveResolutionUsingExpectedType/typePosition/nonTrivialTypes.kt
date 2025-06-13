@@ -40,3 +40,7 @@ fun main(mg: MyGeneric<Any>, cs: CharSequence) {
         is <!UNRESOLVED_REFERENCE!>Right<!> -> cs.<!UNRESOLVED_REFERENCE!>y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration,
+intersectionType, isExpression, javaFunction, localProperty, nestedClass, nullableType, primaryConstructor,
+propertyDeclaration, sealed, smartcast, typeParameter, whenExpression, whenWithSubject */

@@ -13,3 +13,6 @@ fun <T : Foo> foo(x: T?) = x
 fun box() = "OK".also {
     <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null)?.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, safeCall, stringLiteral,
+typeConstraint, typeParameter */

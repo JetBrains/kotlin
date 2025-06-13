@@ -15,3 +15,6 @@ object B : C<String>()
 open class C<T> {
     private var foo: String = "abc"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, objectDeclaration, propertyDeclaration,
+stringLiteral, typeParameter */

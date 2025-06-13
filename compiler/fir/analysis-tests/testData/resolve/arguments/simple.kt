@@ -16,3 +16,5 @@ fun test() {
     foo(first = 0, second = 0.0, third = false, fourth = "", <!ARGUMENT_PASSED_TWICE!>first<!> = 1)
     foo(0, 0.0, false, <!NO_VALUE_FOR_PARAMETER!><!NAMED_PARAMETER_NOT_FOUND!>foth<!> = "")<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

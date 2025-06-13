@@ -34,3 +34,5 @@ public class Container : <!SUPERTYPE_NOT_INITIALIZED!>C<!> {
 
 // invalid, A is private, B is internal, D is protected
 public interface Test8<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>A<!>, P: <!EXPOSED_TYPE_PARAMETER_BOUND!>B<!>, F: C, N: <!EXPOSED_TYPE_PARAMETER_BOUND!>C.<!INVISIBLE_REFERENCE!>D<!><!>, M: E>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nestedClass, typeConstraint, typeParameter */

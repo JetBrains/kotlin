@@ -6,3 +6,6 @@ fun foo(): Int {
     @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>x<!>) val y = 5
     return y
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration */

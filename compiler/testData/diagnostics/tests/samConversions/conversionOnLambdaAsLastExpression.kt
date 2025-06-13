@@ -18,3 +18,6 @@ class B : A() {
 }
 
 fun <T> foo(f: () -> T): T = f()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaFunction, javaType, lambdaLiteral,
+nullableType, safeCall, samConversion, typeParameter */

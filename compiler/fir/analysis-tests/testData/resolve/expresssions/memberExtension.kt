@@ -14,3 +14,5 @@ class Bar {
         arg.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

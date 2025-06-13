@@ -9,3 +9,5 @@ package foo
 class Foo {
     val z: java.nio.ByteBuffer? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration */

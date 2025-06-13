@@ -28,3 +28,5 @@ actual abstract class Foo : Base(), I {
 actual open class Base {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, primaryConstructor */

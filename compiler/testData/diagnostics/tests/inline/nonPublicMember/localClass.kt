@@ -15,3 +15,5 @@ public class Z {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, localClass, propertyDeclaration */

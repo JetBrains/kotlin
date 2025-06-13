@@ -21,3 +21,5 @@ fun test1(a: In<A>, b: In<B>) {
 fun test2(a: Out<A>, b: Out<B>) {
     genericOut(select(a, b))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, intersectionType, nullableType, out, typeParameter */

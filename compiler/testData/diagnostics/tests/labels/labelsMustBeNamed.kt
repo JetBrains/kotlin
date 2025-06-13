@@ -37,3 +37,7 @@ fun bar(f: () -> Unit) = f
 fun test() {
     bar <!SYNTAX!>@<!>{}
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, classDeclaration, continue, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+superExpression, thisExpression, whileLoop */

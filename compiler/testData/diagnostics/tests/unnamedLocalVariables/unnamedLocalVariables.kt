@@ -51,3 +51,8 @@ val Int.<!UNDERSCORE_IS_RESERVED!>_<!>: String
 
 val <T> T.<!UNDERSCORE_IS_RESERVED!>_<!>: String
     get() = this.toString()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, destructuringDeclaration, equalityExpression,
+forLoop, functionDeclaration, getter, init, integerLiteral, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, rangeExpression, smartcast,
+thisExpression, typeParameter, unnamedLocalVariable, whenExpression, whenWithSubject */

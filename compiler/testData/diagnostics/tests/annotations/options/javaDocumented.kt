@@ -20,3 +20,5 @@ public class DocumentedAnnotations {
 @DocumentedAnnotations.NotDocAnn class Your
 
 @DocumentedAnnotations.RunDocAnn class His
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

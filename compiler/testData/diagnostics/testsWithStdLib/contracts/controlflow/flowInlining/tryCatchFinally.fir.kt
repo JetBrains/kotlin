@@ -33,3 +33,6 @@ fun innerTryCatchFinally() {
 
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression, typeParameter */

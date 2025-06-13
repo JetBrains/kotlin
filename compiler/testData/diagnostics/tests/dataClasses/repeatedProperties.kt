@@ -8,3 +8,5 @@ data class A2(val <!REDECLARATION!>x<!>: Int, val y: String) {
 }
 
 data class A3(<!REDECLARATION!>val<!SYNTAX!><!> :Int<!>, <!REDECLARATION!>val<!SYNTAX!><!> : Int<!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -55,3 +55,6 @@ fun foo(
     al.containsAll(cs)
     al.containsAll(<!TYPE_MISMATCH!>ca<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, override,
+typeParameter */

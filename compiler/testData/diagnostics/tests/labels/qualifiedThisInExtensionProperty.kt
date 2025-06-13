@@ -14,3 +14,6 @@ val Int.property1: Int
 val Int.property2 get() = run {
     this<!UNRESOLVED_REFERENCE!>@property2<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver, thisExpression */

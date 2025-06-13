@@ -25,3 +25,7 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+integerLiteral, interfaceDeclaration, lambdaLiteral, noinline, nullableType, reified, starProjection, stringLiteral,
+typeParameter, typeWithExtension */

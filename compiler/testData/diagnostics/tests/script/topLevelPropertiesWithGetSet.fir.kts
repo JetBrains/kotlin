@@ -38,3 +38,6 @@ set(value) {}
 <!EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT!>var String.testExtVarLineBreakSemi: Int<!>;
 <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = 42
 <!UNRESOLVED_REFERENCE!>set<!>(<!UNRESOLVED_REFERENCE!>value<!>) {}
+
+/* GENERATED_FIR_TAGS: assignment, getter, init, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+propertyWithExtensionReceiver, setter */

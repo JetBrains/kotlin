@@ -31,3 +31,5 @@ fun repeatingFlow(n: Int) {
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, forLoop, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, rangeExpression, typeParameter */

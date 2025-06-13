@@ -16,3 +16,6 @@ fun bar2() {
 
     val x: String by foo()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, localFunction, localProperty,
+nullableType, operator, propertyDeclaration, propertyDelegate, typeConstraint, typeParameter */

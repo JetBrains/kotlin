@@ -29,3 +29,6 @@ fun main() {
 }
 
 fun <T1, T2, R> context(with1: T1, with2: T2, block: context(T1, T2) () -> R): R = block(with1, with2)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext */

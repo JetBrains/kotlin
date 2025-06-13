@@ -4,3 +4,5 @@ fun test() {
 
   }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral */

@@ -40,3 +40,6 @@ private const val MINOR_MASK = (1 shl MINOR_BITS) - 1 // False positive error
 private const val PATCH_MASK = (1 shl PATCH_BITS) - 1    // False positive error
 
 private const val stringFromJava = Constants.FIRST + "+" + Constants.SECOND
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, companionObject, const, functionDeclaration, integerLiteral,
+javaProperty, multiplicativeExpression, nullableType, objectDeclaration, propertyDeclaration, stringLiteral */

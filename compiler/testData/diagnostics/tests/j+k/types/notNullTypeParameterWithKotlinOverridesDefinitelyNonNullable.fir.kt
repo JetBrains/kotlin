@@ -39,3 +39,6 @@ interface Q2<X> : SLRUMap<X> {
 
     override fun <K2> id(k2: K2): K2
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, interfaceDeclaration, javaType, nullableType, override,
+typeParameter */

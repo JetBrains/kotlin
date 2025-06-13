@@ -14,3 +14,6 @@ fun test(a: A) {
         val x: Int by <!DEBUG_INFO_SMARTCAST!>a<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, localProperty,
+nullableType, operator, override, propertyDeclaration, propertyDelegate, smartcast */

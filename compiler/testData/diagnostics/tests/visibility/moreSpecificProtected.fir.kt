@@ -105,3 +105,7 @@ class C : B() {
     // public fallback
     public fun baz(a1: Derived, a2: Base): M6 = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, isExpression, lambdaLiteral, nullableType, override, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension, whenExpression, whenWithSubject */

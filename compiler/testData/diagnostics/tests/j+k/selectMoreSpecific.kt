@@ -15,3 +15,6 @@ fun foo(a: A) {
     a.foo() checkType { _<String>() }
     A.bar() checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+lambdaLiteral, nullableType, typeParameter, typeWithExtension */

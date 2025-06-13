@@ -11,3 +11,5 @@ fun <T> foo(i: Inv2<T, String>) {}
 fun foo() {
     foo(createInv())
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, nullableType, starProjection, typeParameter */

@@ -14,3 +14,6 @@ suspend fun bar() {}
 fun test() {
     run(::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, interfaceDeclaration, samConversion,
+suspend */

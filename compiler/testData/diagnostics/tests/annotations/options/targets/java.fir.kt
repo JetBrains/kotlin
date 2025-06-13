@@ -81,3 +81,7 @@ import test.AnnotationTargets.*
 
     @base <!WRONG_ANNOTATION_TARGET!>@method<!> @konstructor constructor(): this(0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetFile, classDeclaration,
+functionDeclaration, integerLiteral, javaType, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

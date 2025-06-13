@@ -85,3 +85,6 @@ fun test6() {
     }
     c.x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral, whileLoop */

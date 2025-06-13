@@ -18,3 +18,6 @@ fun foo(b: Boolean) {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType,
+stringLiteral, suspend, typeParameter, typeWithExtension */

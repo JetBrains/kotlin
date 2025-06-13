@@ -47,3 +47,5 @@ private fun privateFun() {
 internal fun internalFun() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline */

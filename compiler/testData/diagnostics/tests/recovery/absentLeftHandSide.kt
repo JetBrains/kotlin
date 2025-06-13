@@ -14,3 +14,6 @@ fun html() {
 fun html1() {
     <!SYNTAX!><<!><!FUNCTION_CALL_EXPECTED!>html<!><!UNRESOLVED_REFERENCE!>><!><!SYNTAX!><<!><!DEBUG_INFO_MISSING_UNRESOLVED!>/<!><!DEBUG_INFO_MISSING_UNRESOLVED!>html<!><!DEBUG_INFO_MISSING_UNRESOLVED!>><!><!FUNCTION_CALL_EXPECTED!>html<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, functionDeclaration, integerLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration */

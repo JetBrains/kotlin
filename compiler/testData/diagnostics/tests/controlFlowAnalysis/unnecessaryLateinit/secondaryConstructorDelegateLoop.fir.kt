@@ -17,3 +17,6 @@ class Foo {
     constructor(a: Int, b: Int, c: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(a, b) {
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, integerLiteral, lateinit, propertyDeclaration, secondaryConstructor,
+stringLiteral */

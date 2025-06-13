@@ -24,3 +24,6 @@ public class JavaFoo implements I {
     public void setFoo(int i) {
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, javaType, propertyDeclaration,
+typeAliasDeclaration */

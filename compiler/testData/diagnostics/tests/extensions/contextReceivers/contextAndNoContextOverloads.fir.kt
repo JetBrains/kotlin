@@ -34,3 +34,6 @@ fun test() {
     c.foo()
     with(scope) { c.foo() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+lambdaLiteral, localProperty, override, primaryConstructor, propertyDeclaration, stringLiteral */

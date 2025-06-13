@@ -12,3 +12,6 @@ class C(a: A): B(a), A {
 fun b(c: C) {
     c.foo();
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration,
+primaryConstructor */

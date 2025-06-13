@@ -71,3 +71,8 @@ class Test5 {
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, capturedType, classDeclaration, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection, integerLiteral, intersectionType,
+localProperty, nullableType, outProjection, propertyDeclaration, safeCall, setter, smartcast, starProjection,
+stringLiteral, typeConstraint, typeParameter */

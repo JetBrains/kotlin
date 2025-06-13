@@ -13,3 +13,6 @@ fun checkersShouldRun() {
 }
 
 annotation class A
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, forLoop, functionDeclaration, localProperty, propertyDeclaration,
+unnamedLocalVariable */

@@ -31,3 +31,7 @@ fun <T: Any> assertEquals(actual : T?, expected : T?, message : Any? = null) {
             throw AssertionError(message)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, flexibleType, forLoop, functionDeclaration,
+ifExpression, integerLiteral, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+typeConstraint, typeParameter, vararg */

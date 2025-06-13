@@ -10,3 +10,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, init, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration, stringLiteral */

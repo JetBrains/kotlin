@@ -62,3 +62,6 @@ interface I {
     val open_initializedInPlace2: Int
     val open_initializedInPlace3: Int
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, interfaceDeclaration, override,
+propertyDeclaration */

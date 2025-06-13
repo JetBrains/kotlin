@@ -19,3 +19,6 @@ fun main() {
     a.foo(2, BiFunction { k, v -> null })
     a.foo(2) { k, v -> null } // See KT-12144
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction, javaType,
+lambdaLiteral, localProperty, outProjection, propertyDeclaration, samConversion */

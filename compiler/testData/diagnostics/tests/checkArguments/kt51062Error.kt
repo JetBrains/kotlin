@@ -55,3 +55,6 @@ fun main() {
 
     JavaSmartList.takes(<!PROGRESSIONS_CHANGING_RESOLVE_ERROR!>1..10<!>)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+rangeExpression, stringLiteral */

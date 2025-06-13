@@ -20,3 +20,5 @@ actual fun unexpandedOnActual() {}
 @JunitTestInLib
 actual fun expandedOnActual() {}
 
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+typeAliasDeclaration */

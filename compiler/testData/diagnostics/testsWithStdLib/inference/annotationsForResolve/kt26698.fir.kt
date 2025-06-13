@@ -20,3 +20,6 @@ fun usage(x: CX, y: CY) {
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>fooA<!>(x, y) // expected err, got ok
     <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>fooB<!>(x, y) // expected err, got ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, stringLiteral,
+typeConstraint, typeParameter */

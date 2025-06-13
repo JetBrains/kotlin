@@ -11,3 +11,7 @@ class Problem {
     val variable: Int by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!TYPE_MISMATCH!>delegate<!>()<!> // delegate returns `ReadOnlyProperty<Problem, {CharSequence & Int}>`
     fun <T : CharSequence> delegate() = null <!CAST_NEVER_SUCCEEDS!>as<!> ReadOnlyProperty<Problem, T>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funInterface, functionDeclaration, in, interfaceDeclaration,
+intersectionType, nullableType, operator, out, propertyDeclaration, propertyDelegate, starProjection, typeConstraint,
+typeParameter */

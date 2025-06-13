@@ -10,3 +10,4 @@ class A(w: Int) {
     }
 }
 
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, primaryConstructor, propertyDeclaration */

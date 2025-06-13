@@ -19,3 +19,6 @@ actual annotation class A<!EXPECT_ACTUAL_INCOMPATIBLE_VALUE_PARAMETER_VARARG!>(v
 
 @A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral, vararg */

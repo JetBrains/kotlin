@@ -9,3 +9,6 @@ annotation class my2(val i : Int = 0)
 @my2() fun foo4() {}
 @my2 fun foo41() {}
 @my2(2) fun foo42() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

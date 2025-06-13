@@ -19,3 +19,6 @@ fun main() {
 
     bar.foo
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, data, functionDeclaration,
+integerLiteral, interfaceDeclaration, localProperty, override, primaryConstructor, propertyDeclaration */

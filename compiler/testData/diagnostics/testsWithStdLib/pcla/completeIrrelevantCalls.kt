@@ -15,3 +15,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, lambdaLiteral, lateinit,
+localProperty, nullableType, propertyDeclaration */

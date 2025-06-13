@@ -4,3 +4,5 @@
 fun foo(s: String?) {
     val <!UNUSED_VARIABLE!>t<!>: String = s.toString()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration */

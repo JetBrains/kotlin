@@ -16,3 +16,6 @@ actual annotation class Ann actual constructor(actual val p: Int)
 @Ann(p = 2)
 public class FooImpl {
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, integerLiteral, javaType,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration */

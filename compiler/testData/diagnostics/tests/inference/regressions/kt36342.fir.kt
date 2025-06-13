@@ -22,3 +22,6 @@ fun test() {
     }
     <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>) ?: <!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!UNRESOLVED_REFERENCE!>unresolved<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, tryExpression, typeParameter, whenExpression */

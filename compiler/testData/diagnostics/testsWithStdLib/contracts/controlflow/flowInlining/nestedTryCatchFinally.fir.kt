@@ -97,3 +97,6 @@ fun innerFinallyInitializesOuterRethrows() {
     // Guaranteed to be initialized because all catch-clauses are rethrowing
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression, typeParameter */

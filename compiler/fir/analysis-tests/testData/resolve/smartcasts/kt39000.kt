@@ -11,3 +11,6 @@ fun main(a: A) {
         foo(a)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+propertyDeclaration, smartcast */

@@ -30,3 +30,6 @@ enum class E {
         <!UNRESOLVED_REFERENCE!>X<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+objectDeclaration, operator, propertyDeclaration */

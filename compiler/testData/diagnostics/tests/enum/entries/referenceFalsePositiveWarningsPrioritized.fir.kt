@@ -24,3 +24,6 @@ fun test() {
     // K1 warning (Ok)
     val z = E::entries
 }
+
+/* GENERATED_FIR_TAGS: callableReference, enumDeclaration, functionDeclaration, functionalType, integerLiteral,
+localProperty, propertyDeclaration */

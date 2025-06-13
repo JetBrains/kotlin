@@ -25,3 +25,6 @@ fun foo(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
     zCopy = <!LEAKED_IN_PLACE_LAMBDA!>z<!>
     zCopy()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, localProperty, propertyDeclaration */

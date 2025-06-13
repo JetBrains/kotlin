@@ -24,3 +24,6 @@ fun f2() = ANOTHER
 fun f3() = Nested()
 fun f4() = Nested.foo()
 fun f5() = values()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, nestedClass, objectDeclaration */

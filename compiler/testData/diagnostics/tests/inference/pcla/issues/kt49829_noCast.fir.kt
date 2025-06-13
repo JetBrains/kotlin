@@ -11,3 +11,6 @@ fun main() {
         println(secondParameter)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration,
+stringLiteral */

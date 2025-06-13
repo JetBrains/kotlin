@@ -34,3 +34,6 @@ fun <T : String?> T.foo() {
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar3<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+isExpression, nullableType, safeCall, smartcast, thisExpression, typeConstraint, typeParameter */

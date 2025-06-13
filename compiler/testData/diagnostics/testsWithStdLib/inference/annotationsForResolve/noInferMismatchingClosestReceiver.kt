@@ -18,3 +18,6 @@ fun main() {
 }
 
 fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, stringLiteral, typeParameter, typeWithExtension */

@@ -147,3 +147,9 @@ fun withLocal() {
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS, USELESS_JVM_EXPOSE_BOXED!>@JvmExposeBoxed<!>
     fun local() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, classDeclaration, classReference, companionObject, funWithExtensionReceiver,
+functionDeclaration, getter, inline, interfaceDeclaration, localFunction, nullableType, objectDeclaration, override,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, reified, setter, stringLiteral, suspend,
+typeParameter, value */

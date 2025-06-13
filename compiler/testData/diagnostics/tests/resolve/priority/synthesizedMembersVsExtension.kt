@@ -10,3 +10,7 @@ fun test(a: A) {
     val (b) = a
     b checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

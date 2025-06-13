@@ -30,3 +30,6 @@ object A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, interfaceDeclaration, localClass, localProperty,
+nestedClass, objectDeclaration, propertyDeclaration, stringLiteral */

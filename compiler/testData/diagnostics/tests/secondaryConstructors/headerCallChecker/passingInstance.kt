@@ -8,3 +8,6 @@ class A {
     constructor(x: Int, y: Int, z: Int = x + foo(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>) + foo(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>)) :
         this(x + foo(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>) + foo(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, secondaryConstructor,
+thisExpression */

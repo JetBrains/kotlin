@@ -18,3 +18,6 @@ fun foo(sup : Super, sub : Sub) {
 
 //from library
 fun println(message : Any?) { throw Exception() }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, nullableType,
+primaryConstructor, propertyDeclaration */

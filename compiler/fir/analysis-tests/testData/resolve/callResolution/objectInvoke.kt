@@ -6,3 +6,5 @@ object Bar {
 fun foo() {
     Bar("asd")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, operator, stringLiteral */

@@ -39,3 +39,6 @@ fun test() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+localClass, localProperty, nestedClass, objectDeclaration, propertyDeclaration, sealed */

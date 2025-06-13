@@ -17,3 +17,5 @@ fun test() {
     foo.<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>bar<!>::test
     foo.<!EXPRESSION_EXPECTED_PACKAGE_FOUND!>bar<!>::class
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, functionDeclaration */

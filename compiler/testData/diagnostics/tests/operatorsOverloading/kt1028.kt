@@ -35,3 +35,7 @@ class Test()
         control.MouseMoved.plusAssign( { it.X } ) // ok
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, forLoop, functionDeclaration, functionalType, integerLiteral,
+javaFunction, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+typeParameter */

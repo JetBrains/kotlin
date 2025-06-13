@@ -16,3 +16,6 @@ open class Value(val s: String)
 val generator = Generator()
 
 val y = generator.createValue("Omega") <!USELESS_CAST!>as Value<!>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, javaFunction, javaType, primaryConstructor,
+propertyDeclaration, stringLiteral */

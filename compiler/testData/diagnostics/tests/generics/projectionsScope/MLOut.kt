@@ -18,3 +18,7 @@ fun foo2(x: A, y: MutableList<out CharSequence>) {
     y.get(0) checkType { _<CharSequence>() }
     y.iterator() checkType { _<MutableIterator<CharSequence>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, javaFunction, javaType, lambdaLiteral, nullableType, outProjection, typeParameter,
+typeWithExtension */

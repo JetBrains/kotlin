@@ -10,3 +10,6 @@ expect fun explicitDefaultArgument()
 // No special handling for this case
 @Ann
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>explicitDefaultArgument<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

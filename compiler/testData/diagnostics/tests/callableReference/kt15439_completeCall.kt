@@ -11,3 +11,7 @@ fun test() {
                  else
                      Pair<String, String>::second)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, data, destructuringDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localClass, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

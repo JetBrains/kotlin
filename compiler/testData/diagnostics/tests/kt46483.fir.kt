@@ -10,3 +10,6 @@ fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>@TypeParameterAnn("T") T: Any<!>> w
 
 class Foo<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>@TypeParameterAnn("T") T: Any<!>> () where <!ANNOTATION_IN_WHERE_CLAUSE_ERROR!>@TypeParameterAnn("Prohibit me!!!")<!>  T : Generic<String> {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

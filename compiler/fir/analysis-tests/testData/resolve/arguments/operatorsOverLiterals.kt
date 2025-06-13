@@ -68,3 +68,6 @@ fun test_7(d: Double) {
     val x1 = 1 + d
     val x2 = d + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration */

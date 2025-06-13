@@ -53,3 +53,6 @@ fun testSealedJClassInWhen(instance: SealedJClass): Int = when {
     instance is SCOption2 -> instance.prop2
     else -> 0
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, javaProperty, javaType,
+smartcast, whenExpression, whenWithSubject */

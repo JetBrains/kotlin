@@ -20,3 +20,5 @@ class InheritsAll :
     ClassWithDefault(),
     SubInterfaceWithoutDefault,
     InterfaceWithDefault
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, override, propertyDeclaration */

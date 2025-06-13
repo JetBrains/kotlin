@@ -9,3 +9,5 @@ fun test() {
     val s = foo()
     s.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral */

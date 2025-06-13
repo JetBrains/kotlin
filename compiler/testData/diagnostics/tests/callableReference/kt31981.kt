@@ -21,3 +21,7 @@ fun main(intDTO: DTO<Int>?) {
         <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::q] = <!DEBUG_INFO_SMARTCAST!>intDTO<!>[DTO<Int>::test]!!.size
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, checkNotNullCall, classDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, nullableType, operator, propertyDeclaration, smartcast,
+starProjection, typeParameter */

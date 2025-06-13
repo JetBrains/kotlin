@@ -29,3 +29,6 @@ class MyIterable<T> : Iterable<T>
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inner, integerLiteral, nullableType, operator,
+override, primaryConstructor, propertyDeclaration, typeParameter */

@@ -44,3 +44,6 @@ actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>setOnPropertyWithoutTargetNotM
 actual var <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onSetter<!>: String
     get() = ""
     set(_) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, expect, getter,
+propertyDeclaration, setter, stringLiteral */

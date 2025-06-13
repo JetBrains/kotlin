@@ -40,3 +40,7 @@ fun main(d1: D1, d2: D2, d3: D3) {
     d3.foo().checkType { _<String?>() }
     d3.bar(1, "").checkType { _<String?>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

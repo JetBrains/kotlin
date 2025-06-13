@@ -40,3 +40,5 @@ abstract class AIBase : IBase
 abstract class AIIntermediate : AIBase(), IBaseEx
 
 class Impl : AIIntermediate()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

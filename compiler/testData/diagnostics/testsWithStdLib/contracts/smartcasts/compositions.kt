@@ -69,3 +69,6 @@ fun testNotEqualsWithVariable(x: Any?, b: Boolean) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, isExpression, lambdaLiteral, nullableType, smartcast */

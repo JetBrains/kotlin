@@ -16,4 +16,5 @@ fun check(base: Base): Base =
         }
     }
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, safeCall, smartcast, whenExpression */

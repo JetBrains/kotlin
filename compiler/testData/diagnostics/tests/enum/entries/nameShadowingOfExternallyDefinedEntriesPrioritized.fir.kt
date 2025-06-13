@@ -40,3 +40,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, enumDeclaration, functionDeclaration, integerLiteral,
+nestedClass, propertyDeclaration, stringLiteral, thisExpression */

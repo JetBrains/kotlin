@@ -43,3 +43,5 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaProperty,
+javaType, localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

@@ -55,3 +55,5 @@ inline fun testInline() {
     inst.<!INVISIBLE_REFERENCE!>a<!>()
     inst.<!INVISIBLE_REFERENCE!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, inner, localProperty, propertyDeclaration */

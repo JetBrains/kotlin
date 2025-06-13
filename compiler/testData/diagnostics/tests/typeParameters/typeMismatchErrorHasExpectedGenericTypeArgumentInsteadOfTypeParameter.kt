@@ -16,3 +16,6 @@ class Bar
 fun <MY_TYPE_PARAM : I> myRun(action: () -> MY_TYPE_PARAM): MY_TYPE_PARAM = action()
 
 val a = myRun<Foo> { <!TYPE_MISMATCH("Foo; Bar"), TYPE_MISMATCH("I; Bar")!>Bar()<!> }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

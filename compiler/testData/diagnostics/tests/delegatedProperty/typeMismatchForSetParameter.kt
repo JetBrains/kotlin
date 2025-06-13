@@ -15,3 +15,6 @@ class Delegate {
   }
   operator fun setValue(t: Any?, p: KProperty<*>, i: String) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator,
+propertyDeclaration, propertyDelegate, setter, starProjection */

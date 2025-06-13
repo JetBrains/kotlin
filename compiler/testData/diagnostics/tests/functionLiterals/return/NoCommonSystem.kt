@@ -18,3 +18,6 @@ fun commonSystemFailed(a: List<Int>) {
         else listOf(it)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, lambdaLiteral, nullableType, typeParameter, vararg */

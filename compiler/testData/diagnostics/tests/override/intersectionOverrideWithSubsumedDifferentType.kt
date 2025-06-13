@@ -15,3 +15,5 @@ interface UAnnotation : UElement {
 
 interface PsiElement
 interface PsiAnnotation : PsiElement
+
+/* GENERATED_FIR_TAGS: getter, interfaceDeclaration, nullableType, override, propertyDeclaration */

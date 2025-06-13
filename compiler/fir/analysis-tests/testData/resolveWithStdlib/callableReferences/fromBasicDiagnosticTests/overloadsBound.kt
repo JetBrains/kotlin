@@ -9,3 +9,5 @@ fun foo(p: (String) -> Unit){}
 fun bar(c: C) {
     foo(c::xf1)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType */

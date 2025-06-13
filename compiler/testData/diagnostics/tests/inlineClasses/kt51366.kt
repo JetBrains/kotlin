@@ -8,3 +8,6 @@ inline class FileSize(val bytesSize: Long): <!VALUE_CLASS_CANNOT_EXTEND_CLASSES,
     fun getMB() = getKB() / 1024
     fun getGB() = getMB() / 1024
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, multiplicativeExpression,
+primaryConstructor, propertyDeclaration */

@@ -13,3 +13,6 @@ fun Base<Int>.foo() {
         constructor(x: Int, y: Int, z: Int) : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@B<!>.foo1(""))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localClass,
+nullableType, primaryConstructor, secondaryConstructor, stringLiteral, thisExpression, typeParameter */

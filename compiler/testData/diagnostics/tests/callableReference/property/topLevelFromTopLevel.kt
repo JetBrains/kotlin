@@ -31,3 +31,7 @@ fun testY() {
     checkSubtype<String>(yy.get())
     yy.<!UNRESOLVED_REFERENCE!>set<!>("yy")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

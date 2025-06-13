@@ -30,3 +30,5 @@ interface DProvider {
 }
 
 open class Impl: DProvider
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, stringLiteral */

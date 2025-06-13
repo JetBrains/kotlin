@@ -16,3 +16,6 @@ public enum Type {
     TYPE,
     NO_TYPE;
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, localProperty, propertyDeclaration, whenExpression,
+whenWithSubject */

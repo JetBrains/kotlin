@@ -12,3 +12,7 @@ class Test {
 
 class Pair<out A, out B>(val first: A, val second: B)
 infix fun <A, B> A.to(that: B) = Pair(this, that)
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+infix, interfaceDeclaration, nullableType, out, primaryConstructor, propertyDeclaration, smartcast, thisExpression,
+typeParameter */

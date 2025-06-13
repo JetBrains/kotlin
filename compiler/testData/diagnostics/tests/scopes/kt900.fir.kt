@@ -68,3 +68,6 @@ object N {
         fun bar() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

@@ -84,3 +84,6 @@ fun asCast(s: Same, d: Direct) {
     d.annotatedClassProperty as String
     <!SMARTCAST_IMPOSSIBLE!>d.annotatedClassProperty<!>.length
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, asExpression, classDeclaration,
+functionDeclaration, ifExpression, isExpression, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

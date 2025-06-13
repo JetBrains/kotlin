@@ -100,3 +100,6 @@ public class JavaClass implements KotlinContextInterface, KotlinInterface2, Kotl
 // FILE: test.kt
 
 class KJK : JavaClass()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, javaType, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver */

@@ -10,3 +10,6 @@ fun test(x: Any) {
     }
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, init, inner, isExpression, localClass,
+smartcast */

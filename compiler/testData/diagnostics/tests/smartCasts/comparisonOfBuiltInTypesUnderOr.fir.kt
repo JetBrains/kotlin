@@ -120,3 +120,6 @@ fun test14(list: List<String>?) {
         var k: ArrayList<String>? = <!INITIALIZER_TYPE_MISMATCH!>list<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, ifExpression, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, starProjection */

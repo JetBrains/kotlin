@@ -11,3 +11,5 @@ annotation class Ann(
 @Ann(true && false, true && true) class MyClass
 
 // EXPECTED: @Ann(b1 = false, b2 = true)
+
+/* GENERATED_FIR_TAGS: andExpression, annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

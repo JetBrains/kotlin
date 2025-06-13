@@ -24,3 +24,7 @@ class A : B {
 
     fun foo(x: Int, y: Int, z: Int) = x
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral,
+multiplicativeExpression, override, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral,
+superExpression */

@@ -21,3 +21,7 @@ fun foo(a: A<String>, c: C<String>) {
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_EXPRESSION_TYPE("[Error type: Error delegation type for c]")!>y1<!>
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>y1<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration, localProperty,
+nullableType, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, starProjection,
+typeParameter */

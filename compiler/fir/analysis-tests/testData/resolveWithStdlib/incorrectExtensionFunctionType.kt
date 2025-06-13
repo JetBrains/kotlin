@@ -6,3 +6,5 @@ infix fun Int.foo(x: <!WRONG_EXTENSION_FUNCTION_TYPE!>@ExtensionFunctionType<!> 
 fun bar() {
     1 foo fun<!SYNTAX!><!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral */

@@ -6,3 +6,5 @@ class AImpl : A
 class B : <!UNSUPPORTED!>A by AImpl()<!> {
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, interfaceDeclaration, secondaryConstructor */

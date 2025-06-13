@@ -11,3 +11,5 @@ expect fun <T : A> foo(t: T): <!NO_ACTUAL_FOR_EXPECT{JVM}!>String<!>
 
 fun <T : A> foo(t: T): T = TODO()
 fun <T> foo(t: T): String = TODO()
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

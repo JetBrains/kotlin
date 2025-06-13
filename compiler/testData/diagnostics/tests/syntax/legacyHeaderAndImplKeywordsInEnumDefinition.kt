@@ -13,3 +13,5 @@ enum class Bar(val id: Int) {
 fun testHeader(): Int = Foo.header.id
 
 fun testImpl(): Int = Bar.impl.id
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, primaryConstructor, propertyDeclaration */

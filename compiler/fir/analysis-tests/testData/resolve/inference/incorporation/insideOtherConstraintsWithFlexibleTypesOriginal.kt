@@ -47,3 +47,6 @@ fun <E> funB() where E : Enum<E>, E : InterfaceC {
         InterfaceB.default(),
     )
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, companionObject, flexibleType, functionDeclaration,
+interfaceDeclaration, javaFunction, nullableType, objectDeclaration, typeConstraint, typeParameter */

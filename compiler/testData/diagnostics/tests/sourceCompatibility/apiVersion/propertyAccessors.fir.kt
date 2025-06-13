@@ -47,3 +47,5 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>v6<!> = ""
     <!UNRESOLVED_REFERENCE!>v7<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, propertyDeclaration, setter, stringLiteral */

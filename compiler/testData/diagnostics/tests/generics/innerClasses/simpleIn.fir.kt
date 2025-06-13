@@ -39,3 +39,7 @@ fun main() {
 
     outer.set(infer<Any>(""))
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+in, infix, inner, localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral, thisExpression,
+typeParameter, typeWithExtension */

@@ -45,3 +45,6 @@ fun test() {
     val x = bar
     val y = gau
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+propertyDeclaration */

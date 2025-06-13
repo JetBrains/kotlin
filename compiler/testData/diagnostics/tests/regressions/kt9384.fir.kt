@@ -11,3 +11,5 @@ fun main(args: Array<String>) {
         C()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localClass, localFunction */

@@ -13,3 +13,6 @@ fun test(t: Tr<out C>) {
     // No error because no real assignment happens
     t.v += null!!
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration,
+nullableType, operator, outProjection, propertyDeclaration, typeParameter */

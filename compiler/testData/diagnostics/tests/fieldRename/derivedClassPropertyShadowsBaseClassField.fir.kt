@@ -47,3 +47,6 @@ fun test(d: Derived) {
     d::withGetter
     Derived::withGetter
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, functionDeclaration, getter, javaType,
+lambdaLiteral, lateinit, propertyDeclaration, propertyDelegate, setter, stringLiteral */

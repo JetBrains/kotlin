@@ -8,3 +8,5 @@ typealias TA = A
 class B : TA() {
     class NestedInB : Nested()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, typeAliasDeclaration */

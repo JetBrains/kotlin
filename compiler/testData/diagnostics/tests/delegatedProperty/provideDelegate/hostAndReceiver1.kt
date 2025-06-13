@@ -8,3 +8,6 @@ object T1 {
     val String.test1 by 1
     val test2 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, objectDeclaration, operator,
+propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver */

@@ -16,3 +16,6 @@ interface IS {
 }
 
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class ZS<!> : MyMap<String, String>(), IS
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

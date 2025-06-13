@@ -30,3 +30,5 @@ actual fun <!ACTUAL_WITHOUT_EXPECT!>expectWithoutContext<!>() { }
 
 context(a: A)
 actual fun <!ACTUAL_WITHOUT_EXPECT!>mismatchedContext<!>() { }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext */

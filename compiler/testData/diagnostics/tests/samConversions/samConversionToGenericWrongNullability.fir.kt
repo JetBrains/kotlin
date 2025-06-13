@@ -221,3 +221,8 @@ fun test()  {
         <!TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES!>returnNullableString().foo2()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, checkNotNullCall, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, javaFunction,
+javaType, lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, stringLiteral, tryExpression,
+typeAliasDeclaration, typeConstraint, typeParameter, whenExpression, whenWithSubject */

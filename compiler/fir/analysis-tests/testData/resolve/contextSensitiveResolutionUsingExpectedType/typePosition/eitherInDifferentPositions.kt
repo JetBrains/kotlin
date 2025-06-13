@@ -24,3 +24,7 @@ fun foo(s: Either<String, Int>) {
 
     (s as? Right)?.value?.div(1)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, isExpression, multiplicativeExpression, nestedClass, nullableType, out,
+primaryConstructor, propertyDeclaration, safeCall, sealed, smartcast, stringLiteral, typeParameter, whenExpression */

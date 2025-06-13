@@ -41,3 +41,7 @@ fun receiverUsage() {
         Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, getter, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration,
+propertyDeclarationWithContext, propertyWithExtensionReceiver, safeCall, typeParameter */

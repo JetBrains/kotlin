@@ -32,3 +32,5 @@ import p.*
 fun test() {
     foo(B().a)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

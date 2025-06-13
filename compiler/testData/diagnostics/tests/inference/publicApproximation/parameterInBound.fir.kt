@@ -23,3 +23,6 @@ fun topLevel() = combineParams(
 fun test() {
     topLevel()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, nullableType,
+objectDeclaration, out, typeConstraint, typeParameter, vararg */

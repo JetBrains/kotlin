@@ -84,3 +84,8 @@ fun test_2_1(algorithm: Algorithm.WithoutNonce<AuthCapability<out KeyType>, KeyT
 fun test_2_2(algorithm: Algorithm.Authenticated<*, NonceTrait.Without, KeyType>) {
     algorithm.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>() // wrong receiver
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, classReference, contractConditionalEffect, contracts,
+funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression,
+lambdaLiteral, nestedClass, objectDeclaration, out, outProjection, sealed, smartcast, starProjection, thisExpression,
+typeConstraint, typeParameter */

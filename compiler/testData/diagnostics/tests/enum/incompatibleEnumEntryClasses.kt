@@ -91,3 +91,6 @@ fun foo3(e1: Enum<E1>, e2: Enum<E2>, e: Enum<*>) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, interfaceDeclaration,
+smartcast, starProjection, whenExpression, whenWithSubject */

@@ -25,3 +25,5 @@ fun test() {
     val bar = BAR
     val fooBar = Foo.BAR
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, localProperty, propertyDeclaration */

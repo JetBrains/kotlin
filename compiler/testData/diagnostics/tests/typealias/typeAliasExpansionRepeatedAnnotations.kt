@@ -15,3 +15,6 @@ val testProperty2: <!REPEATED_ANNOTATION!>@A<!> AI = 0
 
 fun testFunction1(x: <!REPEATED_ANNOTATION!>@A<!> AInt): <!REPEATED_ANNOTATION!>@A<!> AInt = x
 fun testFunction2(x: <!REPEATED_ANNOTATION!>@A<!> AI): <!REPEATED_ANNOTATION!>@A<!> AI = x
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, propertyDeclaration,
+typeAliasDeclaration */

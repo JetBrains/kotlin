@@ -39,3 +39,4 @@ import java.lang.annotation.Target;
 public @interface JavaSourceAnn {
 }
 
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, javaType, stringLiteral */

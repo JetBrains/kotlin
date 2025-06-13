@@ -13,3 +13,5 @@ interface C07I02{
 class C07C01: C07I01, C07I02 {
     override fun <!CONFLICTING_INHERITED_MEMBERS!>some<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, suspend */

@@ -45,3 +45,6 @@ fun test_6(list: List<Inv<Int>>, x: Inv<Int>, y: Inv<Number>, z: Inv<Any>) {
     list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(y)
     list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(z)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, in,
+nullableType, out, outProjection, stringLiteral, typeParameter */

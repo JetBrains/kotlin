@@ -41,3 +41,6 @@ fun test() {
 
     W[0] = 1
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, objectDeclaration, operator, stringLiteral,
+vararg */

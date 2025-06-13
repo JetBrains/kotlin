@@ -9,3 +9,5 @@ class A {
     class <!CONFLICTING_OVERLOADS!>NestedInA2<!>
     <!CONFLICTING_OVERLOADS!>fun NestedInA2()<!> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, primaryConstructor */

@@ -17,3 +17,5 @@ expect public val foo: Int
 
 // MODULE: main()()(intermediate2)
 actual public val foo: Int = 1
+
+/* GENERATED_FIR_TAGS: actual, classReference, expect, integerLiteral, propertyDeclaration */

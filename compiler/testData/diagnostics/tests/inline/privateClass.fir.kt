@@ -25,3 +25,5 @@ private inline fun x2(s: S, z: () -> Unit) {
 private fun test(): S {
     return S()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, primaryConstructor */

@@ -15,3 +15,5 @@ expect value class Value private constructor(private val x: Int)
 
 @JvmInline
 actual value class Value public constructor(val x: Int)
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, propertyDeclaration, value */

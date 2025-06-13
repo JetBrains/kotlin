@@ -10,3 +10,6 @@ enum class Key
 class Value
 
 val map = EnumMap<_, Value>(Key::class.java)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, enumDeclaration, flexibleType, javaFunction,
+propertyDeclaration */

@@ -47,3 +47,6 @@ fun foo(a: A, ka: KA) {
     a.get(0)
     ka.get(0)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, javaFunction, javaType,
+override, primaryConstructor */

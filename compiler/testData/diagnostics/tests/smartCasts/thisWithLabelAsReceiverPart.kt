@@ -38,3 +38,6 @@ fun test3() {
 fun useInt(i: Int) = i
 fun useFunction(f: A.() -> Unit) = f
 
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inner, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, smartcast,
+thisExpression, typeWithExtension */

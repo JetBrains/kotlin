@@ -11,3 +11,6 @@ inline fun <T : Any> OverloadTest.overload(value: T?, function: (T) -> Unit) {
 }
 
 fun OverloadTest.overloadBoolean(value: Boolean?) = overload(value, OverloadTest()::foo)
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, nullableType, typeConstraint, typeParameter */

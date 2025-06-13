@@ -15,3 +15,6 @@ fun consumeTicker(ticker: Ticker?) {}
 fun interface Ticker {
     fun tick(num: Int)
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

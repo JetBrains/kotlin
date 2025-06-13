@@ -7,3 +7,6 @@ fun main() {
     val fooRef: (Int, Any) -> Unit = ::foo
     val barRef: (Int, Any) -> Unit = ::<!CANNOT_INFER_PARAMETER_TYPE!>bar<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, typeParameter */

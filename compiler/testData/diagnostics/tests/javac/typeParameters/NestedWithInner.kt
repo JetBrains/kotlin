@@ -25,3 +25,5 @@ package test
 import a.*
 
 fun test() = x.Nested().getT().getT()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

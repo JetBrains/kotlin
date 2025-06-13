@@ -119,3 +119,7 @@ fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: 
 fun incompatibleEnumAndUnrelatedInterface(x: G?, i: A?) {
     <!INCOMPATIBLE_ENUM_COMPARISON!>x == i<!>
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, isExpression, nullableType, primaryConstructor,
+propertyDeclaration, smartcast, typeConstraint, typeParameter, value, whenExpression, whenWithSubject */

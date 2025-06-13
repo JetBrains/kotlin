@@ -30,3 +30,6 @@ fun test_5(map: Map<B, Int>, a: A) {
 fun test_6(map: Map<A, Int>, b: B) {
     map.get(b)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, intersectionType, localProperty,
+nullableType, outProjection, propertyDeclaration, starProjection */

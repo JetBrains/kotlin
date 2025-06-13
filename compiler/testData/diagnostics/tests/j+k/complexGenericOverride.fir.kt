@@ -16,3 +16,5 @@ public class StackJava {
 
 // FILE: test.kt
 class MySubject : StackJava.SubjectClass()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -10,3 +10,6 @@ interface Q1<out S> : Out<A1<S>>
 interface Q2<out S> : Out<A2<S>>
 interface Q3<out S> : Out<<!TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE!>A3<S><!>>
 interface Q4<out S> : Out<<!TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE!>A4<S><!>>
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, nullableType, out, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

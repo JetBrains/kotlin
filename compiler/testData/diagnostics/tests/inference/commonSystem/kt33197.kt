@@ -17,3 +17,6 @@ fun test(condition: Boolean) {
 
 fun <T> mutableListOf(): MutableList<T> = TODO()
 fun <T> emptyList(): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration,
+typeParameter */

@@ -40,3 +40,7 @@ fun usage(){
         <!AMBIGUOUS_CONTEXT_ARGUMENT!>implicit<!><A>().foo("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType, getter,
+lambdaLiteral, nullableType, propertyDeclaration, propertyDeclarationWithContext, stringLiteral, typeParameter,
+typeWithContext */

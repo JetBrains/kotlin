@@ -21,3 +21,5 @@ public class A {
 package a
 
 fun test() = A().getWeather().test()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

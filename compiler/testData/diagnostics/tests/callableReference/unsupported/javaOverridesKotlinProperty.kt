@@ -16,3 +16,5 @@ open class Base {
 }
 
 val prop = Foo::foo
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, javaCallableReference, javaType, propertyDeclaration */

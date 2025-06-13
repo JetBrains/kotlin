@@ -11,3 +11,6 @@ class A {
 
     private fun MyAlias.baz() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction,
+nullableType, propertyDeclaration, safeCall, stringLiteral, typeAliasDeclaration */

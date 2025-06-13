@@ -19,3 +19,6 @@ abstract class A<T> {
         if (x is B<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><*><!>) { }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inner, isExpression, nullableType,
+typeParameter */

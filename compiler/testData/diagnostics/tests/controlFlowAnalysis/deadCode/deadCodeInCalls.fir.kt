@@ -12,3 +12,5 @@ fun testArgumentInVariableAsFunctionCall(f: (Any) -> Unit) {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localFunction, stringLiteral */

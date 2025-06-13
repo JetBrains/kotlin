@@ -33,3 +33,5 @@ fun test() = x().getB()
 fun test2() = test().getB()
 fun test3() = test2().getB()
 fun test4() = test3().getB()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

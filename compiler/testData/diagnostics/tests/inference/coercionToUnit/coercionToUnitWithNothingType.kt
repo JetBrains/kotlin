@@ -52,3 +52,6 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, functionalType, ifExpression, integerLiteral,
+intersectionType, isExpression, javaFunction, lambdaLiteral, nullableType, smartcast, stringLiteral, typeParameter */

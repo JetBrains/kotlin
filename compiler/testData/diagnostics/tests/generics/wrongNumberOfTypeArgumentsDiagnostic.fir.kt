@@ -14,3 +14,6 @@ fun test2() {
     val m1 = java.util.HashMap<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String, String, String><!>()
     val m2 = java.util.<!CANNOT_INFER_PARAMETER_TYPE!>HashMap<!><!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

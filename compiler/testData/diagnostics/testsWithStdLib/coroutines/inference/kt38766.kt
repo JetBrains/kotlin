@@ -21,3 +21,6 @@ interface FlowCollector1<in T> {
 }
 
 interface Flow1<out T>
+
+/* GENERATED_FIR_TAGS: classReference, crossinline, functionDeclaration, functionalType, in, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, out, reified, suspend, typeParameter, typeWithExtension */

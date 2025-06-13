@@ -26,3 +26,5 @@ class A {
 
     class <!REDECLARATION!>B<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nestedClass, objectDeclaration */

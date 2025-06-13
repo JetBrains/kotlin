@@ -17,3 +17,6 @@ fun <T> x(l: Derived<T>) {
     derivedOf(1, 2, 3).maxBy<Int, Int> { it  } // works
     derivedOf(1, 2, 3).maxBy { it } // should work
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, typeConstraint, typeParameter, vararg */

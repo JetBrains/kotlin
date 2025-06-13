@@ -27,3 +27,6 @@ fun <FT> build(
 }
 
 class UserKlass
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

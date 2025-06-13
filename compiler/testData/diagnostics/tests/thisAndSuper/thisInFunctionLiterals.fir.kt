@@ -17,3 +17,7 @@ class A(val a:Int) {
     }
   }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+thisExpression, typeParameter, typeWithExtension */

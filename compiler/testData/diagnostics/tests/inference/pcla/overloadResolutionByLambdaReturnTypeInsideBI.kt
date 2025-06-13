@@ -38,3 +38,6 @@ fun <V1> A2<V1>.bar(transform: (A2<V1>) -> Res1<Int>) {}
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("bar1")
 fun <V2> A2<V2>.bar(transform: (A2<V2>) -> Res2<Int>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, suspend, typeParameter, typeWithExtension */

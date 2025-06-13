@@ -45,3 +45,5 @@ import api.*
 class Derived : Base() {
     override fun <!OPT_IN_OVERRIDE!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

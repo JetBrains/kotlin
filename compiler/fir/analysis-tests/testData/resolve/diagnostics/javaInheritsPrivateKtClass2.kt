@@ -45,3 +45,6 @@ fun test2(a: J1){
 fun test3() {
     <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!><!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>J3()<!>.foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaFunction,
+javaType, nestedClass */

@@ -15,3 +15,6 @@ class Foo {
         object : LocalIntf() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, interfaceDeclaration, lambdaLiteral, localClass,
+nullableType, propertyDeclaration, propertyDelegate, typeParameter */

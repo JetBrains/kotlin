@@ -56,3 +56,6 @@ fun test5(x: String?): Any? {
 
     return test2(x)
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration */

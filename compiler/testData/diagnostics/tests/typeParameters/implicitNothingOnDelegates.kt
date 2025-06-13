@@ -21,3 +21,7 @@ private object Scope {
         val p: Int by <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>Scope.Delegate(i)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inProjection, localProperty, nestedClass,
+nullableType, objectDeclaration, operator, outProjection, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, typeParameter */

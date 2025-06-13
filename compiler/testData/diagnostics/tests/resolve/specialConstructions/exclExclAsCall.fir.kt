@@ -27,3 +27,7 @@ fun testDataFlowInfoAfterExclExcl(a: Int?) {
 fun testUnnecessaryExclExcl(a: Int) {
     doInt(a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) //should be warning
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+typeConstraint, typeParameter */

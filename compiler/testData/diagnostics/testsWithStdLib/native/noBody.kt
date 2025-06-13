@@ -25,3 +25,6 @@ fun test() {
         external fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, external, functionDeclaration,
+localClass, objectDeclaration */

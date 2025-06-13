@@ -54,3 +54,5 @@ class Q: A() {
         val a: Int = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, init, javaFunction, javaType, localProperty, propertyDeclaration */

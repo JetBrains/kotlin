@@ -15,3 +15,6 @@ interface sealedInterface {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration, override,
+superExpression */

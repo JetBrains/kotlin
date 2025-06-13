@@ -28,3 +28,7 @@ fun main() {
         <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>id(run { this })<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral, thisExpression,
+typeConstraint, typeParameter, typeWithExtension */

@@ -35,3 +35,5 @@ fun test() {
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>p4<!>)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>p5<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, propertyDeclaration */

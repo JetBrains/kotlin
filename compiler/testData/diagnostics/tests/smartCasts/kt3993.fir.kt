@@ -9,3 +9,6 @@ fun currentAccess(user: User?): Int {
         else -> -1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression */

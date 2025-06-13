@@ -8,3 +8,5 @@ class Graph {
 
     inner class <!REDECLARATION!>Node<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, sealed */

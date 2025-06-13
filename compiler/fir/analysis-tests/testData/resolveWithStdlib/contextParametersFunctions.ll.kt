@@ -93,3 +93,6 @@ fun context15v1(): A = context(B()) { context(C()) { usage15() } }
 // red code (no context argument)
 fun context14v2() { context(B()) { <!NO_CONTEXT_ARGUMENT("c: C")!>usage14<!>() } }
 fun context15v2(): A = context(B()) { <!NO_CONTEXT_ARGUMENT("c: C")!>usage15<!>() }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+lambdaLiteral */

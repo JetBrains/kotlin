@@ -20,3 +20,6 @@ fun main() {
         this.get(0).test() // resolved to Bar.test
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+nullableType, thisExpression */

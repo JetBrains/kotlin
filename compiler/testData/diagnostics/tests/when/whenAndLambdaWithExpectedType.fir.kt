@@ -33,3 +33,5 @@ val test4: (String) -> Boolean =
             true -> <!ARGUMENT_TYPE_MISMATCH!>{ s1, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>s2<!> -> true }<!>
             else -> null!!
         }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionalType, lambdaLiteral, propertyDeclaration, whenExpression */

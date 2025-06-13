@@ -42,3 +42,6 @@ val x4 = try {
 } finally {
     0
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, getter, init, inline,
+integerLiteral, lambdaLiteral, localClass, localFunction, localProperty, propertyDeclaration, setter, tryExpression */

@@ -11,3 +11,6 @@ fun test() {
 
     assertEquals(42, u)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, intersectionType, localProperty,
+propertyDeclaration, whenExpression, whenWithSubject */

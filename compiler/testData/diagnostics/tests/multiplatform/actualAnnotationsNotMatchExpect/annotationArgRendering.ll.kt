@@ -32,3 +32,6 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit; fun 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun onType(): @Ann2(...) Any?; fun onType(): Any?; Annotation `@Ann2(s = String())` is missing on actual declaration")!>onType<!>(): Any? = null
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun kclassArg(): Unit; fun kclassArg(): Unit; Annotation `@Ann3(kclass = String::class)` is missing on actual declaration")!>kclassArg<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, expect, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

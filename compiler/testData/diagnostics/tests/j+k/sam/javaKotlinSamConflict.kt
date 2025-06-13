@@ -20,3 +20,6 @@ fun test() {
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+javaType, lambdaLiteral, localProperty, propertyDeclaration, samConversion, stringLiteral */

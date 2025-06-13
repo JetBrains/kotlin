@@ -20,3 +20,6 @@ fun String.foo(result: String?) {
         add("a")
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, stringLiteral, typeConstraint, typeParameter, typeWithExtension */

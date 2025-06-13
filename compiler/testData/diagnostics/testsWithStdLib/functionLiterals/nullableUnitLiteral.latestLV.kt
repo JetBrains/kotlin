@@ -10,3 +10,6 @@ fun test() {
     val closeL = { closeable?.close() }
     val closeLR = label@ { return@label closeable?.close() }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall */

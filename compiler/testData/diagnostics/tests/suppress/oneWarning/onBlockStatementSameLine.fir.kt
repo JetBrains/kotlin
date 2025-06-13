@@ -20,3 +20,7 @@ fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {
 
     if (i != 1) <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@Suppress("UNCHECKED_CAST") i<!> += block(x[0] as T, "" <!CAST_NEVER_SUCCEEDS!>as<!> Int).toInt()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+typeConstraint, typeParameter */

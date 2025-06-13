@@ -25,3 +25,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
         }
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, isExpression,
+localProperty, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter,
+whenExpression, whenWithSubject */

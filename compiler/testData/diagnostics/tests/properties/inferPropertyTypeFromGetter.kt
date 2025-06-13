@@ -18,3 +18,6 @@ fun use() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>Foo0().allChildren<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>Foo1().allChildren<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, integerLiteral,
+propertyDeclaration */

@@ -14,3 +14,6 @@ public fun foo() {
         System.out.println(s.length)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, integerLiteral, javaFunction,
+javaProperty, localFunction, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

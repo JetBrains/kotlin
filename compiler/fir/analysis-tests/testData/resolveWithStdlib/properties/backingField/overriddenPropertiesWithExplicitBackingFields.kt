@@ -19,3 +19,6 @@ open class B : A() {
         get() = 3.14
         set(value) {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, getter, integerLiteral,
+override, propertyDeclaration, setter */

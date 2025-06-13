@@ -9,3 +9,6 @@ operator fun <K> K.provideDelegate(receiver: Any?, property: kotlin.reflect.KPro
 operator fun <X> Delegate<X>.getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): X = TODO()
 
 class Delegate<V>
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, operator,
+propertyDeclaration, propertyDelegate, starProjection, thisExpression, typeParameter */

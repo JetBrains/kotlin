@@ -13,3 +13,6 @@ fun main(x: Int) {
     <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = f.<!CANNOT_INFER_PARAMETER_TYPE!>getValue<!>(null, ::<!UNSUPPORTED!>x<!>) // no exception after fix
     <!UNRESOLVED_REFERENCE!>print<!>(<!UNINITIALIZED_VARIABLE!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+operator, propertyDeclaration, starProjection, typeParameter */

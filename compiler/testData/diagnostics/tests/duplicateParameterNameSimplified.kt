@@ -14,3 +14,6 @@ fun test() {
         (duplicateIt(it) { a, b -> }).also { function -> }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, primaryConstructor, propertyDeclaration, typeParameter */

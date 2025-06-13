@@ -7,3 +7,6 @@ fun test() {
     for (i in <!ITERATOR_MISSING!>X()<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration, localProperty,
+nullableType, operator, propertyDeclaration, typeParameter */

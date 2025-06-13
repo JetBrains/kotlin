@@ -20,3 +20,5 @@ class RegularOuter : <!INVISIBLE_REFERENCE!>RegularBase<!>("outer")
 // FILE: derived.kt
 
 class SealedOuterInDifferentFile : <!INVISIBLE_REFERENCE!>SealedBase<!>("other file")
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, primaryConstructor, sealed, secondaryConstructor, stringLiteral */

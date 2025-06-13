@@ -27,3 +27,6 @@ fun <FT> build(
 class UserKlass
 
 fun Buildee<UserKlass>.typeInfoSourcingFunction() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

@@ -15,3 +15,6 @@ fun list(start: SomeObject): SomeObject {
     // Smart cast is not possible here due to next()
     return <!TYPE_MISMATCH!>e<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, forLoop, functionDeclaration, integerLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, rangeExpression */

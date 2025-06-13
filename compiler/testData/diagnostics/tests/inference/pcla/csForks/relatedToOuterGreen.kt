@@ -45,3 +45,7 @@ fun <T> bar(a: A<T>, w: T) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral,
+nullableType, smartcast, suspend, typeParameter, typeWithExtension */

@@ -18,3 +18,4 @@ class B : A<Some>() {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType */

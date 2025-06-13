@@ -13,3 +13,6 @@ fun cornerCases() {
 fun dummy(str: String): String {
     return str
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

@@ -21,3 +21,6 @@ fun consumeTargetType(value: TargetType) {}
 fun <PTV> buildPostponedTypeVariable(block: PTV.() -> Unit): PTV {
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter, typeWithExtension */

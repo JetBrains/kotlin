@@ -49,3 +49,6 @@ actual typealias M01 = ActualObject
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>ENUM01<!> = ActualObject
 
 actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_KIND, EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>ANNO01<!> = ActualObject
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, enumDeclaration, expect, functionDeclaration,
+interfaceDeclaration, objectDeclaration, primaryConstructor, secondaryConstructor, typeAliasDeclaration */

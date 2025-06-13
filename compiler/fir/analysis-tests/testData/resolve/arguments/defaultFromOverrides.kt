@@ -21,3 +21,6 @@ fun foo(a: A) {
     a.bar(y = 1)
     a.bar("", 2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override,
+stringLiteral */

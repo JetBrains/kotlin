@@ -19,3 +19,6 @@ fun foo(e: E, something: Any?): Int {
         <!DEBUG_INFO_CONSTANT!>something<!> -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, whenExpression, whenWithSubject */

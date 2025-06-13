@@ -32,3 +32,6 @@ typealias TA4_2 = TA4<String>
 class Test4 : TA4_2() {
     override fun render(context: Inner) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, override, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

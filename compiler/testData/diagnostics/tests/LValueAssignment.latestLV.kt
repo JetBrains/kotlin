@@ -168,3 +168,7 @@ fun Array<Int>.checkThis() {
 abstract class Ab {
     abstract fun getArray() : Array<Int>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, asExpression, assignment, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, incrementDecrementExpression, inner, integerLiteral, isExpression,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral, superExpression, thisExpression */

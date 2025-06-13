@@ -12,3 +12,6 @@ fun test(your: Your?) {
     // strange smart cast to 'Your' at this point
     your<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, nullableType, safeCall, smartcast, thisExpression, typeParameter */

@@ -63,3 +63,6 @@ object WithPropertyInBaseDifferentOrder {
         companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

@@ -15,3 +15,6 @@ interface Base {
 class MyClass(val prop: second.Base): Base by prop {
     interface Base
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, localProperty, nestedClass, primaryConstructor, propertyDeclaration */

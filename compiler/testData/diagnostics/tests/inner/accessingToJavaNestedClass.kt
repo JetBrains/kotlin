@@ -64,3 +64,6 @@ fun test() {
     val kic: K.<!UNRESOLVED_REFERENCE!>IC<!> = K().IC()
     val ki: K.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration */

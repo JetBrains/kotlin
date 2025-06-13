@@ -16,3 +16,6 @@ fun checkCannotAccess() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, ifExpression, isExpression,
+localProperty, nestedClass, propertyDeclaration */

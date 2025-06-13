@@ -27,3 +27,6 @@ fun test1(collection: MyCollection) {
     for (element in <!ITERATOR_AMBIGUITY!>collection<!>) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+localProperty, propertyDeclaration */

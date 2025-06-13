@@ -18,3 +18,7 @@ fun withVararg(vararg xs: Int) = 42
 fun test1() {
     A[::withVararg] += 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, callableReference, funInterface, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, interfaceDeclaration, localProperty, objectDeclaration, operator,
+propertyDeclaration, samConversion, vararg */

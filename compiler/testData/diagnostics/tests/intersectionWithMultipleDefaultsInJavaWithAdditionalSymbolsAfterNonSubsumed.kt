@@ -29,3 +29,5 @@ public interface PsiClass extends PsiTypeParameterListOwner, JvmClass {}
 // FILE: Main.kt
 
 class K : PsiClass
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

@@ -26,3 +26,6 @@ typealias BetaRepeatable = kotlin.jvm.JvmRepeatable
 @BetaRepeatable(DContainer::class)
 annotation class D
 annotation class DContainer(val value: Array<D>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, primaryConstructor, propertyDeclaration,
+typeAliasDeclaration */

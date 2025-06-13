@@ -31,3 +31,6 @@ abstract class Your {
 }
 
 @Synchronized fun gav() = 1
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+propertyDeclaration, setter, stringLiteral */

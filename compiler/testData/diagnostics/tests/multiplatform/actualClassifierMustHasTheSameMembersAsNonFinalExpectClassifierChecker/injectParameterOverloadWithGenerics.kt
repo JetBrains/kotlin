@@ -15,3 +15,6 @@ expect open class Foo<R> : Base<R>
 actual open class Foo<R>() : Base<R>() {
     fun <T> foo(t: T) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor,
+typeParameter */

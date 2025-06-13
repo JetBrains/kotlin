@@ -25,3 +25,6 @@ annotation class Err(
         val a: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>],
         val b: Array<String> = <!INITIALIZER_TYPE_MISMATCH!>[1]<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, integerLiteral, primaryConstructor,
+propertyDeclaration, starProjection, stringLiteral */

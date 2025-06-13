@@ -41,3 +41,6 @@ class B4 : RawADerived() {
     // Type of first parameter is not equal to overridden
     <!NOTHING_TO_OVERRIDE!>override<!> fun bar(d: Array<Array<MutableList<Array<Double>>>>) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, javaType, nullableType, override,
+starProjection */

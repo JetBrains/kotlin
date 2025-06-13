@@ -22,3 +22,6 @@ fun test_2(c: InvokeComponent) {
     val (<!PROPERTY_AS_OPERATOR!>x<!>) = FunctionComponent()
     val (<!PROPERTY_AS_OPERATOR!>y<!>) = c
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, operator, propertyDeclaration, stringLiteral */

@@ -30,3 +30,6 @@ class D : C() {
         baz("")
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor,
+stringLiteral, typeParameter */

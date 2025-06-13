@@ -15,3 +15,5 @@ class Test2 {
 
     private val otherFoo = foo
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, propertyDeclaration, stringLiteral */

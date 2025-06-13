@@ -47,3 +47,6 @@ enum class E10 : I01 {
         println(entries)
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, functionDeclaration, getter, interfaceDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

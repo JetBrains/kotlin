@@ -51,3 +51,6 @@ fun test2() {
 
 fun <T> controlFun(c: I<T>) {}
 fun <T> controlFun2(c: X<T>) {}
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, intersectionType, javaFunction, javaProperty,
+javaType, localProperty, nullableType, propertyDeclaration, typeParameter, whenExpression */

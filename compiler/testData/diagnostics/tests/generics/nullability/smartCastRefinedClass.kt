@@ -12,3 +12,6 @@ fun <T : Any?> foo(x: T) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, intersectionType, isExpression,
+nullableType, smartcast, typeConstraint, typeParameter */

@@ -17,3 +17,6 @@ actual val A.<!ACTUAL_WITHOUT_EXPECT!>expectContextActualExtension<!> : String
 context(a: A)
 actual val <!ACTUAL_WITHOUT_EXPECT!>expectExtensionActualContext<!> : String
     get() = ""
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, propertyDeclaration, propertyDeclarationWithContext,
+propertyWithExtensionReceiver, stringLiteral */

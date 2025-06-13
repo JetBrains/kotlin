@@ -11,3 +11,5 @@ val b4: Long = (1.toLong() + 2) * 2
 
 val i1: Int = (1.toByte() + 2) * 2
 val i2: Int = (1.toShort() + 2) * 2
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration */

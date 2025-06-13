@@ -23,3 +23,5 @@ val newSyntax1 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, <!CANNOT_INFER_PARAMETER
 val newSyntax2 = { a: Int, b: Int -> }
 val newSyntax3 = { <!CANNOT_INFER_PARAMETER_TYPE!>a<!>, b: Int -> }
 val newSyntax4 = { a: Int, <!CANNOT_INFER_PARAMETER_TYPE!>b<!> -> }
+
+/* GENERATED_FIR_TAGS: functionalType, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

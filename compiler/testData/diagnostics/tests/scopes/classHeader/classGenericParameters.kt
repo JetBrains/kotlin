@@ -20,3 +20,4 @@ class B<T, F, G> where T : <!UNRESOLVED_REFERENCE!>Nested<!>, F: <!UNRESOLVED_RE
     interface Interface
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, inner, interfaceDeclaration, nestedClass, typeConstraint, typeParameter */

@@ -37,3 +37,6 @@ fun test() {
     K2.<!UNRESOLVED_REFERENCE!>foo<!>()
     K2.baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, javaFunction, javaProperty,
+objectDeclaration */

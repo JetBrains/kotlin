@@ -28,3 +28,6 @@ fun test() {
     var c2 = C2()
     c2<!NO_SET_METHOD!>[0]<!> += ""
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

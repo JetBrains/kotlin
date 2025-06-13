@@ -19,3 +19,5 @@ class C: <!SINGLETON_IN_SUPERTYPE!>Bar<!>
 fun test() {
     Bar.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, objectDeclaration */

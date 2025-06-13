@@ -8,3 +8,6 @@ public fun foo(p: String?, y: String?): Int {
     } while (true)
     return y.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

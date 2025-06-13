@@ -84,3 +84,6 @@ internal class InternalClass {
         <!OPT_IN_USAGE!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, getter, inline, propertyDeclaration,
+setter */

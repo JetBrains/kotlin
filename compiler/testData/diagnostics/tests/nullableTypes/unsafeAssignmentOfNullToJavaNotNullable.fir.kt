@@ -11,3 +11,5 @@ fun foo(foo: Foo?, arg: Int?) {
     foo?.a = <!NULL_FOR_NONNULL_TYPE!>null<!>
     foo?.a = <!ASSIGNMENT_TYPE_MISMATCH!>arg<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaProperty, javaType, nullableType, safeCall */

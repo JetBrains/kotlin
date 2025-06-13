@@ -18,3 +18,6 @@ fun typeMismatchInLambda(y: String): Int {
     val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) }
     return x
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, contractCallsEffect, contracts, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

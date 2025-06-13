@@ -9,3 +9,5 @@ class D {
     fun from(vararg a : Any){}
     fun from(vararg a : String){}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, stringLiteral, vararg */

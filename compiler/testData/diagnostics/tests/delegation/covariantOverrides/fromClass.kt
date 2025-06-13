@@ -19,3 +19,6 @@ open class IDerived2 : IBase2 {
 }
 
 <!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE, PROPERTY_TYPE_MISMATCH_BY_DELEGATION!>class Broken2<!>(val b: IBase2) : IBase2 by b, IDerived2()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration, stringLiteral */

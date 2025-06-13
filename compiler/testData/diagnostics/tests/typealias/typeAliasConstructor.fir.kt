@@ -23,3 +23,6 @@ val test6a = <!INTERFACE_AS_FUNCTION!>Interface<!>()
 
 val test7 = <!UNRESOLVED_REFERENCE!>TO<!>()
 val test7a = <!UNRESOLVED_REFERENCE!>AnObject<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, objectDeclaration, primaryConstructor,
+propertyDeclaration, secondaryConstructor, stringLiteral, typeAliasDeclaration */

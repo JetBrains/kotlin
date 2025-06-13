@@ -4,3 +4,5 @@
 interface T {
   val a = <!PROPERTY_INITIALIZER_IN_INTERFACE!><!UNRESOLVED_REFERENCE!>Foo<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()<!>
 }
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, propertyDeclaration */

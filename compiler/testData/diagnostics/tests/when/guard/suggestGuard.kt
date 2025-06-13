@@ -40,3 +40,6 @@ fun ifButNotGuard2(x: Any) {
         if (x == "1") "ok" else "wrong" -> 1
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, guardCondition, ifExpression,
+integerLiteral, stringLiteral, whenExpression, whenWithSubject */

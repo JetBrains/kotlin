@@ -34,3 +34,6 @@ class H<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : <!INAPPLICABLE_CANDI
 class M<E : <!FINAL_UPPER_BOUND!>String<!>>(val balue: E) : F<Double>(3.14) {
     override var rest: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>E<!> = balue
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, override, primaryConstructor, propertyDeclaration,
+stringLiteral, typeConstraint, typeParameter */

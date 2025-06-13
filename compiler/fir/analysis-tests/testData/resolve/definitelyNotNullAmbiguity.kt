@@ -20,3 +20,5 @@ interface B : A {
 fun test(visitor: KtVisitor<String, Unit>, element: B) {
     element.accept(visitor, Unit)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, override, typeParameter */

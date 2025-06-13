@@ -68,3 +68,6 @@ fun test_3(some: Some) {
     some.<!VAL_REASSIGNMENT!>y<!> = "error"
     <!VAL_REASSIGNMENT!>z<!> = "error"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, init,
+lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral */

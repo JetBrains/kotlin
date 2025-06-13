@@ -28,3 +28,5 @@ import p.*
 fun test() {
     foo(<!TYPE_MISMATCH!>M1().a<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, typeParameter */

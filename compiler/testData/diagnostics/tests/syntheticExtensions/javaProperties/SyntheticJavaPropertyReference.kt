@@ -17,3 +17,5 @@ fun test() {
 public class JavaClass {
     public String getFoo() {}
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaCallableReference, javaType */

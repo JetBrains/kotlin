@@ -26,3 +26,6 @@ class Test {
 
     open inner class InnerClass
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, integerLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

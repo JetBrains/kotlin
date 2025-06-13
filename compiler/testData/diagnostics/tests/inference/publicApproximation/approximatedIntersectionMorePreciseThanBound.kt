@@ -18,3 +18,6 @@ fun topLevel() = anyBound(First, Second)
 fun test() {
     topLevel().param.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, nullableType,
+objectDeclaration, out, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

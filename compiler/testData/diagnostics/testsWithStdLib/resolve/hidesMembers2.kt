@@ -42,3 +42,7 @@ fun test2(a: A) {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localFunction, nullableType, stringLiteral, thisExpression, typeParameter,
+typeWithExtension */

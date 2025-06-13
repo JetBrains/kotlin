@@ -82,3 +82,6 @@ fun test(a: A, b: B) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression, typeWithExtension */

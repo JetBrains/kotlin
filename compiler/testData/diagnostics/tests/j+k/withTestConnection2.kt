@@ -26,3 +26,6 @@ public class C {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, functionDeclaration, javaFunction, nullableType,
+starProjection, typeParameter */

@@ -11,3 +11,7 @@ infix fun <T> Expect<T>.and(assertionCreator: Expect<T>.() -> Unit): Expect<T> =
 fun <K> id(x: K): K = x
 
 fun test(): Expect<Int>.(Expect<Int>.() -> Unit) -> Expect<Int> = id(Expect<Int>::and)
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter, infix,
+interfaceDeclaration, nullableType, propertyDeclaration, propertyWithExtensionReceiver, thisExpression, typeParameter,
+typeWithExtension */

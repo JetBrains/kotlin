@@ -26,3 +26,6 @@ import test.*
 fun box(): String {
     return B.doTest("O") + C.doTest("K")
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, inline, objectDeclaration, override,
+stringLiteral, superExpression */

@@ -7,3 +7,5 @@ fun main(n: Int) {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, rangeExpression */

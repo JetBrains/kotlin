@@ -37,3 +37,6 @@ private fun getKotlinInner() = UseKotlinInner().kotlinInner
 private fun getJavaInner() = UseKotlinInner().javaInner
 
 private fun getKotlinInner3() = UseKotlinInner().kotlinInner3
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, interfaceDeclaration, javaFunction,
+javaProperty, javaType, nestedClass */

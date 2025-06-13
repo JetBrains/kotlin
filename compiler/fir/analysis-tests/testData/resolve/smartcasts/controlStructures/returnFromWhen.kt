@@ -14,3 +14,6 @@ fun test_2(name: String?) {
     }
     name.length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+smartcast, whenExpression, whenWithSubject */

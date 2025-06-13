@@ -45,3 +45,6 @@ abstract class MyAbstractClass() {
 
     var n: Int                       <!WRONG_MODIFIER_TARGET!>abstract<!> get <!WRONG_MODIFIER_TARGET!>abstract<!> set(v: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, setter */

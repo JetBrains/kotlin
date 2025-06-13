@@ -35,3 +35,6 @@ inline fun <T, U> Function1<T, U>.submit() {
 inline fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.submit() {
     this + this
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+nullableType, operator, thisExpression, typeParameter, typeWithExtension */

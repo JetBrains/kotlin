@@ -34,3 +34,5 @@ actual fun <T, R> withTypeParamIncorrect<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRES
 actual fun star<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><*>)<!> {}
 actual fun starVsNonStar<!ACTUAL_WITHOUT_EXPECT!>(p: Foo.<!UNRESOLVED_REFERENCE!>Inner<!><Any>)<!> {}
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, nullableType, starProjection,
+typeAliasDeclaration, typeParameter */

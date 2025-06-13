@@ -12,3 +12,5 @@ data class A constructor(val x: Int, val s: String) {
     constructor(s: String) : this(s.length, s)
     constructor(s: CharSequence) : this(s.length, s.<!UNRESOLVED_REFERENCE!>unresolved<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration, secondaryConstructor */

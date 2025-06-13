@@ -21,3 +21,6 @@ class DIProperty<out V> : LazyDelegate<V> {
 interface LazyDelegate<out V> {
     operator fun provideDelegate(receiver: Any?, prop: KProperty<Any?>): Lazy<V>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inline, interfaceDeclaration,
+nullableType, operator, out, override, propertyDeclaration, propertyDelegate, reified, typeConstraint, typeParameter */

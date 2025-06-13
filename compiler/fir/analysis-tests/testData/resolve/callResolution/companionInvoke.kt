@@ -8,3 +8,6 @@ internal class Method<out T : String?>private constructor(val name: String, val 
 fun foo() {
     Method("asd")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration, operator,
+out, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

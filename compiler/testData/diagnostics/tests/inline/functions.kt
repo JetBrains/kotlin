@@ -12,3 +12,6 @@ inline fun testExtension(s: (p: Int) -> Unit) {
     getInlineFun(s)!!.invoke(10)
     getInlineFun(s)?.invoke(10)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+nullableType, safeCall */

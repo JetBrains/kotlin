@@ -105,3 +105,7 @@ class KClass(
 
     fun <<!WRONG_ANNOTATION_TARGET!>@baseButKotlinType<!> T> bar() {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetFile,
+annotationUseSiteTargetProperty, classDeclaration, functionDeclaration, integerLiteral, javaType, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, secondaryConstructor, typeParameter */

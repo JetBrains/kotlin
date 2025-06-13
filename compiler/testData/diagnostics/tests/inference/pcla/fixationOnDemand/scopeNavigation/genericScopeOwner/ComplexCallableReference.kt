@@ -146,3 +146,8 @@ val <SOTC> ScopeOwner<SOTC>.delegatedReadableExtensionProperty: SOTC by GenericD
 var <SOTD> ScopeOwner<SOTD>.delegatedWriteableExtensionProperty: SOTD by GenericDelegate
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, functionDeclaration,
+functionalType, getter, inner, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration,
+operator, primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, setter,
+starProjection, thisExpression, typeParameter */

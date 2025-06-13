@@ -4,3 +4,5 @@ import A as B
 enum class A {
     E<!UNRESOLVED_REFERENCE!><!>()
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

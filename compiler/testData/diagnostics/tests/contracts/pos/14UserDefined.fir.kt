@@ -81,3 +81,6 @@ inline fun case_8(block: () -> Unit) {
 fun funWithAnyArg(value_1: Any): Int {
     return value_1.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localProperty,
+propertyDeclaration, typeWithExtension */

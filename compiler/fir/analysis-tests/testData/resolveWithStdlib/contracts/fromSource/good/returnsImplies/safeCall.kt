@@ -19,3 +19,6 @@ fun test2(x: String?): Int? {
 
     return x?.length
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+isExpression, lambdaLiteral, nullableType, safeCall */

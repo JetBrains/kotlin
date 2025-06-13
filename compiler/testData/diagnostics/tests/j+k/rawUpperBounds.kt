@@ -18,3 +18,5 @@ fun foo(i: IStubFileElementType<*>) {
 }
 
 fun bar(w: StubElement<CharSequence>) {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, starProjection */

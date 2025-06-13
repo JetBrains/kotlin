@@ -35,3 +35,6 @@ fun g(a: SomeClass?) {
         <!DEBUG_INFO_SMARTCAST!>c<!>.foo
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

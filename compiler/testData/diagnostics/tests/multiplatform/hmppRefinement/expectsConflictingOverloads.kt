@@ -8,3 +8,5 @@
 
 // MODULE: main()()(common)
 actual fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

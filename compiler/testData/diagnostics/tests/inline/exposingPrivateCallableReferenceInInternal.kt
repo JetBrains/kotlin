@@ -50,3 +50,6 @@ class C {
         PC::p
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration, inline,
+integerLiteral, localProperty, nestedClass, propertyDeclaration */

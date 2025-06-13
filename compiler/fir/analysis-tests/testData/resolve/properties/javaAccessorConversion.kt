@@ -81,3 +81,6 @@ fun test_4(foo: Foo) {
 fun test_5(x: D) {
     x.isGood
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+localProperty, propertyDeclaration */

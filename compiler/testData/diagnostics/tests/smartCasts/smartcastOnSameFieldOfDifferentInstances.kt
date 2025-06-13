@@ -11,3 +11,6 @@ class A(val x: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, comparisonExpression, equalityExpression, functionDeclaration,
+integerLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, whenExpression */

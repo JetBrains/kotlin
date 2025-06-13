@@ -27,3 +27,6 @@ class E(val b: B, val c: C) : B by b, C by c
 
 class AdapterK : B, CK
 class F(val adapter: AdapterK) : B by adapter, CK by adapter
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, interfaceDeclaration, javaType, primaryConstructor,
+propertyDeclaration */

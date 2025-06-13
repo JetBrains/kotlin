@@ -12,3 +12,6 @@ val x1 = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>Foo::bar<!
 val x2 = Foo.Companion::bar
 val x3 = <!INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS!>Foo::baz<!>
 val x4 = Foo.Companion::baz
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+objectDeclaration, propertyDeclaration */

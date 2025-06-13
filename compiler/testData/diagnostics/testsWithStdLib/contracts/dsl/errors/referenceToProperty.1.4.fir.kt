@@ -13,3 +13,6 @@ class Foo(val x: Int?) {
         return x != null
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration */

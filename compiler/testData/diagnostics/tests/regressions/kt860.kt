@@ -14,3 +14,6 @@ fun <T, U: MutableCollection<in T>> Iterator<T>.to(container: U) : U {
 }
 
 fun <T> Iterator<T>.toArrayList() = to(ArrayList<T>())
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, inProjection, javaFunction,
+nullableType, typeConstraint, typeParameter, whileLoop */

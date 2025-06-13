@@ -34,3 +34,7 @@ private fun checkStartAndEnd(
         throw IllegalArgumentException("start > end: $start > $end")
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, data, disjunctionExpression,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, javaFunction, nullableType, primaryConstructor,
+propertyDeclaration, smartcast, stringLiteral, typeAliasDeclaration */

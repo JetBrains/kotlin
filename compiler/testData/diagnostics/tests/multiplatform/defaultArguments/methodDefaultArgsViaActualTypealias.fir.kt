@@ -49,3 +49,6 @@ class WithIncompatibilityImpl {
 }
 
 <!DEFAULT_ARGUMENTS_IN_EXPECT_WITH_ACTUAL_TYPEALIAS!>actual typealias <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>WithIncompatibility<!> = WithIncompatibilityImpl<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, override,
+stringLiteral, typeAliasDeclaration */

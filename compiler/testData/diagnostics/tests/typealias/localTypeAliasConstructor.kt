@@ -10,3 +10,6 @@ fun <T> id(x: T): T {
     val c: C = Local(cx).cell
     return c.x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

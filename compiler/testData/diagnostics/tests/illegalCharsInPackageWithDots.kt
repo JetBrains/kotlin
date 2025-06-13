@@ -12,3 +12,5 @@ package main
 import nest.`a bc`.`d e`.vest.*
 
 fun main() = test()
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

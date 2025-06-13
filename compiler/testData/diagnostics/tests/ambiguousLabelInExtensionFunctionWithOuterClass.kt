@@ -7,3 +7,4 @@ class Dup {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, thisExpression */

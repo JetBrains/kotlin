@@ -21,3 +21,5 @@ open class Owner {
         protected abstract fun foo(): ProtectedInA
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass */

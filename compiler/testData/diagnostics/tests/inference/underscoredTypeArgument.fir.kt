@@ -9,3 +9,6 @@ fun box(): String {
     val x = foo<Int, _> { it.toFloat() } // Pair<Int, Float>
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

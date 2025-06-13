@@ -53,3 +53,5 @@ const val equalsWithNull1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_CO
 const val equalsWithNull2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>null == null<!>
 const val equalsWithNull3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>TRUE == null<!>
 const val equalsWithNull4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, SENSELESS_COMPARISON!>STR == null<!>
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, integerLiteral, propertyDeclaration, stringLiteral */

@@ -14,3 +14,6 @@ class B
 
 val B.c : String
     get() = "test"
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, objectDeclaration, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral */

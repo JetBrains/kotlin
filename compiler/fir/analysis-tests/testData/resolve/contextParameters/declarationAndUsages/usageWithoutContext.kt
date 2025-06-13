@@ -20,3 +20,6 @@ fun usage() {
     <!NO_CONTEXT_ARGUMENT!>test<!>(<!TOO_MANY_ARGUMENTS!>A()<!>)
     <!NO_CONTEXT_ARGUMENT!>prop1<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, setter, stringLiteral */

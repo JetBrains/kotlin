@@ -52,3 +52,6 @@ class MyClass
 
 <!WRONG_ANNOTATION_TARGET!>@MyAnnotation<!>
 fun myFunction() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, collectionLiteral, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, outProjection, primaryConstructor, propertyDeclaration, vararg */

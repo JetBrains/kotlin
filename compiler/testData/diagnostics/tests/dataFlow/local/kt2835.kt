@@ -7,3 +7,6 @@ fun f(a: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast */

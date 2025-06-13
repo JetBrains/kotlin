@@ -14,3 +14,8 @@ class SecuredOrder(order: Order) : <!INAPPLICABLE_CANDIDATE!>SecuredEntity<<!UPP
 fun main() {
     val securedOrder = Order().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, intersectionType, isExpression, localProperty, nullableType, out, primaryConstructor,
+propertyDeclaration, smartcast, starProjection, thisExpression, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

@@ -13,3 +13,5 @@ fun foo(x: List<String>) {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType */

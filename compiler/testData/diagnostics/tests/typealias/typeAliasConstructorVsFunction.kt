@@ -14,3 +14,6 @@ fun A3(x: Any) = "OK"
 fun bar() {
     A3("") checkType { _<B>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, primaryConstructor, stringLiteral, typeAliasDeclaration, typeParameter, typeWithExtension */

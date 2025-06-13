@@ -17,3 +17,6 @@ class C : A
 fun <R : A> B<R>.test(){
     foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>C::bla<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

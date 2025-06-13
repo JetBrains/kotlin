@@ -31,3 +31,6 @@ fun main() {
 
 fun <T, R> with(receiver: T, block: T.() -> R): R = receiver.block()
 fun <T, R> context(with: T, block: context(T) () -> R): R = block(with)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext, typeWithExtension */

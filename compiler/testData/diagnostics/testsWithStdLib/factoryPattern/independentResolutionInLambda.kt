@@ -42,3 +42,6 @@ fun test(a: A) {
         elvis(it.descriptors, sequenceOf())
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

@@ -15,3 +15,5 @@ class B : A() {
         (<!SUPER_IS_NOT_AN_EXPRESSION!>super<!>) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, operator */

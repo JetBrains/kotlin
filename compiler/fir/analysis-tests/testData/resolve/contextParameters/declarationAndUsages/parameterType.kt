@@ -101,3 +101,7 @@ fun usage() {
         test11()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, functionDeclarationWithContext,
+functionalType, integerLiteral, javaFunction, javaType, lambdaLiteral, nullableType, safeCall, stringLiteral,
+typeParameter */

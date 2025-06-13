@@ -44,3 +44,6 @@ class Some {
         <!VAL_REASSIGNMENT!>z<!> = "error"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, init, integerLiteral, lambdaLiteral,
+localFunction, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

@@ -33,3 +33,8 @@ fun test() {
         { _: XdIssue, _: XdIssueFolder -> }
     )
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, out, primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter,
+typeWithExtension */

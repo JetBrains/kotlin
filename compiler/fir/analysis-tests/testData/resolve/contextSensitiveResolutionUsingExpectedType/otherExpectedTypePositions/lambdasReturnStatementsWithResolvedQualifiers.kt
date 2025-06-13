@@ -56,3 +56,6 @@ fun main(b: Boolean) {
         <!UNRESOLVED_REFERENCE!>Y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, sealed, typeParameter */

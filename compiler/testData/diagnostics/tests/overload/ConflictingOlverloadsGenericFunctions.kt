@@ -34,3 +34,6 @@ fun test6(x: Array<String>) = x
 
 fun <T> test7(x: Inv<T>) = x
 fun <T> Inv<T>.test7() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, outProjection,
+typeConstraint, typeParameter */

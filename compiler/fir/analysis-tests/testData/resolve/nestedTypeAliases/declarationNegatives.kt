@@ -62,3 +62,7 @@ class CapturingTAOwner<T> {
 
     typealias FunTA = (Int, List<<!UNRESOLVED_REFERENCE!>T<!>>) -> Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, in, init, inner, localClass,
+nestedClass, nullableType, out, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

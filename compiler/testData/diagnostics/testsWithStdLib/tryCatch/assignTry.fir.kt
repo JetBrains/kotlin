@@ -109,3 +109,6 @@ fun test10() {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, intersectionType, localProperty,
+nullableType, propertyDeclaration, stringLiteral, tryExpression */

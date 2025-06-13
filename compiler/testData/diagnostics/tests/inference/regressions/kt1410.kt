@@ -28,3 +28,7 @@ fun test(result: MutableList<in Any>, collection: MutableCollection<String>, pre
 
 //from library
 fun String.startsWith(prefix: String) : Boolean {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inProjection, infix, lambdaLiteral, localProperty, nullableType, outProjection,
+propertyDeclaration, thisExpression, typeParameter, typeWithExtension */

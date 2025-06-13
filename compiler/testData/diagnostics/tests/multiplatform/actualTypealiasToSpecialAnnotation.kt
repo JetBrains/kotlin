@@ -27,3 +27,5 @@ actual typealias TypealiasToPlatformPkg = kotlin.jvm.Synchronized
 typealias NonActualTypealias = kotlin.Deprecated
 
 actual typealias TypealiasNotToAnnotation = kotlin.DeprecationLevel
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, expect, stringLiteral, typeAliasDeclaration */

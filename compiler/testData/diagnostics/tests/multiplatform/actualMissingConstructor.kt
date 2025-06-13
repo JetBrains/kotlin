@@ -22,3 +22,5 @@ actual class Bar()
 actual class Bar2 {
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, secondaryConstructor */

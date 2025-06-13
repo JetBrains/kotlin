@@ -10,3 +10,5 @@ fun test() {
     val d: Char? = 'd'
     foo(<!TYPE_MISMATCH!>d!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localProperty, nullableType, propertyDeclaration */

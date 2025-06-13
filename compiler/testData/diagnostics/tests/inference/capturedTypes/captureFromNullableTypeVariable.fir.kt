@@ -12,3 +12,7 @@ fun test2(vararg a: Int?) {
     val list = a.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>filterNotNull<!>()
     list checkType { _<List<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint, typeParameter,
+typeWithExtension, vararg */

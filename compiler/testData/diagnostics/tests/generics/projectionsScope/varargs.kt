@@ -11,3 +11,6 @@ fun test(a: A<out CharSequence>, y: Array<out CharSequence>) {
     // TODO: TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS probably redundant
     a.foo(*<!TYPE_MISMATCH!>y<!>, <!TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, outProjection, stringLiteral, typeParameter,
+vararg */

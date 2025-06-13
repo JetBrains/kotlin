@@ -10,3 +10,5 @@ interface T {
 }
 
 annotation class ann
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, init, interfaceDeclaration */

@@ -28,3 +28,6 @@ interface SpecializedDerived : GenericBase<String> {
 fun testSpecializedDerived(derived: SpecializedDerived) {
     val test1: X1 = derived.foo("", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, stringLiteral, typeParameter, vararg */

@@ -103,3 +103,6 @@ class TwoParametersOuter<T, in T1> {
 }
 
 fun test19(): TwoParametersOuter<Int, <!CONFLICTING_PROJECTION!>out<!> String>.TwoParametersIntermediate<<!CONFLICTING_PROJECTION!>in<!> String, Int>.InInner<Char, Char>? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, inner, nullableType, out, outProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

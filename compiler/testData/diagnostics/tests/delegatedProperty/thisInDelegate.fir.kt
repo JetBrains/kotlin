@@ -14,3 +14,6 @@ class Delegate(i: Int) {
     return 1
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, starProjection, thisExpression */

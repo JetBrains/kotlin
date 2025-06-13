@@ -11,3 +11,5 @@ class Another @Anno("str") <!UNSUPPORTED!>context(c:Another)<!> constructor(i: I
 
 <!UNSUPPORTED!>context(_: Clazz)<!>
 class OneMore @Anno("str") <!UNSUPPORTED!>context(c:<!UNRESOLVED_REFERENCE!>Unresolved<!>)<!> constructor(s: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

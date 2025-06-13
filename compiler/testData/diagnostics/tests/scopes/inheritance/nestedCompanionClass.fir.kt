@@ -38,3 +38,6 @@ class C: A() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, init, inner, nestedClass, objectDeclaration,
+propertyDeclaration */

@@ -29,3 +29,6 @@ class A<T> {
         action.execute(<!ARGUMENT_TYPE_MISMATCH!>element<!>) // type mismatch in K1 and K2
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, inProjection, interfaceDeclaration, javaType,
+nullableType, typeParameter */

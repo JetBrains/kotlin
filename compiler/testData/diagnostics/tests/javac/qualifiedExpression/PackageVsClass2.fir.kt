@@ -46,3 +46,5 @@ fun foo() {
     a.<!UNRESOLVED_REFERENCE!>a<!>
     a.<!UNRESOLVED_REFERENCE!>a<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

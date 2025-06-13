@@ -6,3 +6,5 @@ interface A2 : <!SUPERTYPE_INITIALIZED_IN_INTERFACE, UNRESOLVED_REFERENCE!>B<!>(
 class A3 : <!UNRESOLVED_REFERENCE!>B<!>, <!UNRESOLVED_REFERENCE!>B<!>
 
 enum class A4 : <!UNRESOLVED_REFERENCE!>B<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, interfaceDeclaration */

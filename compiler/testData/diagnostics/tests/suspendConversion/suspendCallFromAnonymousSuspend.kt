@@ -10,3 +10,5 @@ fun foo() {
 suspend fun bar() {
 
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, suspend */

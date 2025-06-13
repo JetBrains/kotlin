@@ -39,3 +39,6 @@ fun <T : A> test_4(s: String) {
         { a: A -> uncheckedCast(s) }
     )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

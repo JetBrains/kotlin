@@ -28,3 +28,7 @@ fun poll56(): Any? {
     val inv = try { ::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo7<!> } catch (e: Exception) { foo7() } finally { foo7() }
     return inv
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, typeParameter, whenExpression,
+whenWithSubject */

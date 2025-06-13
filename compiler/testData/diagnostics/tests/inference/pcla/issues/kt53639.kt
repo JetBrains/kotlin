@@ -34,3 +34,7 @@ fun <PTV> initializeAndBuild(
 ): Buildee<PTV> {
     return initializer().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

@@ -21,3 +21,7 @@ fun other() = public(object : Inter {})
 fun test() {
     other().it.foo() // ok in K1, invisible reference in K2
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, capturedType, classDeclaration, dnnType, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+stringLiteral, typeConstraint, typeParameter */

@@ -53,3 +53,6 @@ class B {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression, typeParameter */

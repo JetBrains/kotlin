@@ -12,3 +12,6 @@ fun Base.foo() {
         constructor(x: Int, y: Int) : super(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@B<!>.foo1())
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localClass, nullableType,
+primaryConstructor, secondaryConstructor, thisExpression */

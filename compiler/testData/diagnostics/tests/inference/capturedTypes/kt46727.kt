@@ -117,3 +117,7 @@ fun main6() {
     takeStarBar3(bar)
     println(bar.value) // CCE: String cannot be cast to Number
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, capturedType, classDeclaration, dnnType, flexibleType,
+functionDeclaration, integerLiteral, javaFunction, javaType, localProperty, nullableType, propertyDeclaration,
+starProjection, stringLiteral, typeParameter */

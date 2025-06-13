@@ -45,3 +45,5 @@ public class Derived extends Base<String> {
 
 // FILE: main.kt
 class Impl : Derived()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

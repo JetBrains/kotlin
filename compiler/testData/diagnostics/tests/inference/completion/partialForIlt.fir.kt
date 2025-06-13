@@ -14,3 +14,5 @@ fun test() {
     takeInt(id(42))
     takeLong(id(42))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter */

@@ -20,3 +20,5 @@ open class NotFullyOptedIntoApiMarker: UnstableFunctionApi() {
     // usage is unstable, error is reported even despite SubclassOptInRequired
     override fun <!OPT_IN_OVERRIDE_ERROR!>overridableFunction<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, init, override */

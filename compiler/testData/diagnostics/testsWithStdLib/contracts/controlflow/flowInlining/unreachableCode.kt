@@ -16,3 +16,6 @@ fun throwInLambda(): Int {
     <!UNREACHABLE_CODE!>val x =<!> myRun { throw java.lang.IllegalArgumentException(); <!UNREACHABLE_CODE!>42<!> }
     <!UNREACHABLE_CODE!>return x<!>
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, integerLiteral,
+javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

@@ -13,3 +13,6 @@ public class B() {
       public class <!REDECLARATION!>FOO<!>() { }
    }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

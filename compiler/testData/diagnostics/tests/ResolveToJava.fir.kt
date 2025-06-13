@@ -59,3 +59,7 @@ fun test(l : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>) {
 // FILE: b.kt
 package xxx
   import java.lang.Class;
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, inProjection, infix, integerLiteral, javaFunction, javaProperty, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression, typeParameter, typeWithExtension */

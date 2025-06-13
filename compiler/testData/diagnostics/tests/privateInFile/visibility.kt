@@ -54,3 +54,6 @@ class Q {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration, setter */

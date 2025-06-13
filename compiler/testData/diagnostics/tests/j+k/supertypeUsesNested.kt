@@ -22,3 +22,5 @@ public class Usage {
 fun main() {
     Usage.foo().hashCode()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

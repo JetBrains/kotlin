@@ -14,3 +14,7 @@ fun test1() {
     val f3: Foo<out Int> = foo2 { it checkType { _<Int>() } }
     val f4: Foo<in Nothing> = <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo2<!> { it <!UNREACHABLE_CODE!>checkType { _<Nothing>() }<!> }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inProjection,
+infix, inline, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, reified, typeParameter,
+typeWithExtension */

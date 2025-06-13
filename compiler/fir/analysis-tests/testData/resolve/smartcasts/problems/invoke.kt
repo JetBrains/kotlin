@@ -8,3 +8,6 @@ fun Any.withInvoke(f: String.() -> Unit) {
 fun String.withInvoke(f: String.() -> Unit) {
     f()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, isExpression,
+smartcast, thisExpression, typeWithExtension */

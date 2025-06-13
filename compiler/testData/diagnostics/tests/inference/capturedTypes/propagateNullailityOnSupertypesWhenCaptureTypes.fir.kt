@@ -22,3 +22,7 @@ fun <T : Inv<K>?, K : Inv<*>?> test3(t: T) {
         t.value
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, functionDeclaration, ifExpression,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, smartcast, starProjection, typeConstraint,
+typeParameter */

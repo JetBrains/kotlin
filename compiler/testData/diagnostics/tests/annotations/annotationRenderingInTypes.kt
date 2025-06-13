@@ -24,3 +24,6 @@ var test3: Int = 0
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
 val test4 = f4 <!TYPE_MISMATCH("(Int, Int) -> Unit; (Int) -> Unit")!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH("2; Int, Int")!>single<!> -> }<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, functionDeclaration, functionalType, inProjection,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, setter, typeConstraint, typeParameter */

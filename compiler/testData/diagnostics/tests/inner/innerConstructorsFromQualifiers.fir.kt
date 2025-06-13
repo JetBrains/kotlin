@@ -35,3 +35,6 @@ fun bar() {
         Inner(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, lambdaLiteral,
+objectDeclaration, primaryConstructor, secondaryConstructor */

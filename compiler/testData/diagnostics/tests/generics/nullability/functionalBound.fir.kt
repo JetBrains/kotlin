@@ -12,3 +12,6 @@ fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
         y(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, dnnType, equalityExpression, functionDeclaration, functionalType, ifExpression,
+nullableType, smartcast, typeConstraint, typeParameter */

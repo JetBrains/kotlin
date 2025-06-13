@@ -10,3 +10,7 @@ class My(val x: Int?) {
         return@lazy null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, equalityExpression, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate,
+smartcast, whileLoop */

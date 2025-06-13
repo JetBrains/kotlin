@@ -24,3 +24,5 @@ class D : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // Error, D not in s
 // MODULE: main-jvm()()(d)
 
 class E : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>() // Error, E not in same module with actual Base
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, sealed */

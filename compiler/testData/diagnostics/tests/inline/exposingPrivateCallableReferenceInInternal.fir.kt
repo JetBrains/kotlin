@@ -50,3 +50,6 @@ class C {
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>PC<!>::<!CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_WARNING, LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING!>p<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration, inline,
+integerLiteral, localProperty, nestedClass, propertyDeclaration */

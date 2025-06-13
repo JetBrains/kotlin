@@ -27,3 +27,6 @@ fun Implementation.test() {
     val x2 = <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_SUPERCLASS, MISSING_DEPENDENCY_SUPERCLASS_WARNING!>allHierarchy<!>
     x1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, propertyWithExtensionReceiver */

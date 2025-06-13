@@ -27,3 +27,5 @@ fun main(x: A) {
 
     <!UNRESOLVED_REFERENCE!>D<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>baz<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

@@ -9,3 +9,6 @@ fun foo() {
 }
 
 fun <T : Comparable<T>> foo(vararg values: Pair<T, T>): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, typeConstraint,
+typeParameter, vararg */

@@ -12,3 +12,5 @@ public @interface ThreadSafe {
 private annotation class AutoFactoryThreadSafe(
     val threadSafe: ThreadSafe = ThreadSafe()
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaFunction, javaType, primaryConstructor, propertyDeclaration */

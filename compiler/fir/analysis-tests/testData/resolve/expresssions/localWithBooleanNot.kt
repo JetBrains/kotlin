@@ -22,3 +22,6 @@ fun foo(): Boolean {
     val some = true
     return !some
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, javaType, localProperty, override,
+propertyDeclaration */

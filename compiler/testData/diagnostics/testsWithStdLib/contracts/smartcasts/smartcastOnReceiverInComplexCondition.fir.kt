@@ -13,3 +13,7 @@ fun test(x: Any?) {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, smartcast,
+thisExpression */

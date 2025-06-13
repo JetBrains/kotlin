@@ -19,3 +19,6 @@ fun fest(list: Any) {
         list is <!CANNOT_CHECK_FOR_ERASED!>MutableList<Any?><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, isExpression, localProperty, nullableType,
+outProjection, propertyDeclaration, smartcast */

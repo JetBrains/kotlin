@@ -19,3 +19,6 @@ val safeAs = foo() as? String
 
 val fromIs = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>() is String
 val fromNoIs = <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>() !is String
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, nullableType, propertyDeclaration,
+starProjection, typeParameter */

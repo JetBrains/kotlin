@@ -19,3 +19,6 @@ annotation class First(val value: Array<KClass<*>>)
 annotation class Second(val value: Array<First>)
 
 annotation class Third(val first: First, val second: Second)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, collectionLiteral, functionDeclaration, primaryConstructor,
+propertyDeclaration, starProjection, stringLiteral */

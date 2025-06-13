@@ -6,3 +6,5 @@ fun test_1(array: Array<String>) {
 fun test_2(array: IntArray) {
     array.clone()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

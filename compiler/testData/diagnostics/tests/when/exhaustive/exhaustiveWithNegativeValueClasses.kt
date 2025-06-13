@@ -21,3 +21,6 @@ fun bar(p: MyPair): Int {
         MyPair(Enum.B) -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, primaryConstructor, propertyDeclaration, value, whenExpression, whenWithSubject */

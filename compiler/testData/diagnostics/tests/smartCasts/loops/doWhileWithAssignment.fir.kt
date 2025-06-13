@@ -369,3 +369,7 @@ fun test35(i: Int) {
         state = false
     } while (i < 10)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, comparisonExpression, doWhileLoop,
+functionDeclaration, ifExpression, incrementDecrementExpression, integerLiteral, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter */

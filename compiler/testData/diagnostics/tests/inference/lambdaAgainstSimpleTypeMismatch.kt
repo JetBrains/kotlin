@@ -6,3 +6,5 @@ fun foo(x: Int) {}
 fun n() {
     foo(<!TYPE_MISMATCH!>{ a: String -> 42 }<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

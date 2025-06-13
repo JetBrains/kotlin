@@ -23,3 +23,6 @@
     <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> val x: Int = 0
     <!NOT_A_MULTIPLATFORM_COMPILATION!>actual<!> class Inner
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+nestedClass, propertyDeclaration */

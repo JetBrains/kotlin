@@ -47,3 +47,7 @@ fun testFrom13648() {
 }
 
 fun bar() = <!UNRESOLVED_REFERENCE!>unresolved<!>
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
+ifExpression, inline, integerLiteral, localProperty, nullableType, propertyDeclaration, reified, smartcast,
+stringLiteral, typeConstraint, typeParameter */

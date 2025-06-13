@@ -25,3 +25,6 @@ fun main() {
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>property1<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>length<!>
     property2.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, operator,
+out, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

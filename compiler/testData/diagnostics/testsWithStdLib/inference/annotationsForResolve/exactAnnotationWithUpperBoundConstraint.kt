@@ -16,3 +16,6 @@ fun test() {
 
     map.getOrDefault_Exact("y", <!TYPE_MISMATCH, TYPE_MISMATCH!>"string"<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, outProjection, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

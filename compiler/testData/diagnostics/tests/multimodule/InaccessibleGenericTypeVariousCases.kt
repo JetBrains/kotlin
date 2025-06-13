@@ -54,3 +54,7 @@ fun test() {
     ::consumeBoxedConcrete
     ::consumeBoxedGeneric
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, checkNotNullCall, funWithExtensionReceiver,
+functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType, starProjection, typeParameter,
+typeWithExtension */

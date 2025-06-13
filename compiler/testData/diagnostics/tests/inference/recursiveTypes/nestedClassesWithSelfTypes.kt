@@ -22,3 +22,7 @@ abstract class AbstractAlarm<Self : AbstractAlarm<Self, Builder>, Builder : Abst
         final override fun build(): Built = TODO()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, interfaceDeclaration,
+nestedClass, override, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

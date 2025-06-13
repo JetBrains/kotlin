@@ -3,3 +3,5 @@
 
 val list: List<String>? = null
 val empty = list.orEmpty()
+
+/* GENERATED_FIR_TAGS: nullableType, propertyDeclaration */

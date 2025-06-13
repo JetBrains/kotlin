@@ -8,3 +8,6 @@ fun foo() {
     <!UNINITIALIZED_VARIABLE!>x<!>.hashCode()
     bar()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localFunction, localProperty,
+propertyDeclaration */

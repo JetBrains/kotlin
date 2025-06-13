@@ -17,3 +17,5 @@ package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>a.b<!>
 package c
 
 class d
+
+/* GENERATED_FIR_TAGS: classDeclaration */

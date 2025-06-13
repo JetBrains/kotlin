@@ -47,3 +47,5 @@ fun test4() {
 }
 
 fun fail(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeConstraint, typeParameter */

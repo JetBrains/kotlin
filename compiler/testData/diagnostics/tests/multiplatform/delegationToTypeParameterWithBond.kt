@@ -13,3 +13,6 @@ actual interface Base<T> {
     actual fun foo(): T
     fun bar():T
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation,
+interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

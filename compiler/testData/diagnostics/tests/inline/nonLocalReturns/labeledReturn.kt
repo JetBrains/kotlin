@@ -31,3 +31,6 @@ fun noInlineCall(): String {
 fun noInline(s: ()->Int) {
     s()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+stringLiteral */

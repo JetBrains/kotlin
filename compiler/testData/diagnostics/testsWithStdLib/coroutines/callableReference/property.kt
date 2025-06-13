@@ -12,3 +12,5 @@ fun test() {
 suspend fun test2() {
     c()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, propertyDeclaration, suspend */

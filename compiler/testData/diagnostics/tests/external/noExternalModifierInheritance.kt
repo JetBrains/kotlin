@@ -9,3 +9,5 @@ class B : A() {
         super.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, external, functionDeclaration, override, superExpression */

@@ -15,3 +15,7 @@ fun max(a: IntArray): Int? {
     }
     return maxI
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, disjunctionExpression, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, rangeExpression, smartcast, thisExpression */

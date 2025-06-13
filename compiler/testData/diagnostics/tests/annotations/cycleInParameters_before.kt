@@ -15,3 +15,5 @@ annotation class Z2(<!CYCLE_IN_ANNOTATION_PARAMETER_WARNING!>val value: Z1<!>) /
 annotation class A(val x: KClass<A>) // OK
 annotation class B(val x: KClass<B>) // OK
 annotation class C(val b: B) // OK
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, primaryConstructor, propertyDeclaration */

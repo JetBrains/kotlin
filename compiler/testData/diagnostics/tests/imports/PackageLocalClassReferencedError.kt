@@ -10,3 +10,5 @@ package a
 import pack1.*
 
 private class X : <!INVISIBLE_MEMBER, INVISIBLE_REFERENCE!>SomeClass<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration */

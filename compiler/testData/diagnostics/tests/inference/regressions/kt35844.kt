@@ -25,3 +25,6 @@ fun <E> mainOut(a: AOut<E>) {
 
     foo(<!DEBUG_INFO_SMARTCAST!>a<!>).b()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, functionDeclaration, intersectionType, nullableType,
+out, smartcast, starProjection, typeParameter */

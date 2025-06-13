@@ -11,3 +11,6 @@ fun baz() {
         } else task
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, inline, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

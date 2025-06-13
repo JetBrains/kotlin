@@ -15,3 +15,5 @@ import java.lang.SuppressWarnings as suppresswarnings
 class Test(<!DEPRECATED_JAVA_ANNOTATION!>@deprecated<!> val s: String,
            @suppresswarnings val x : Int) {}
 
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

@@ -14,3 +14,5 @@ public interface SLRUMap<V> {
 fun <V> SLRUMap<V>.getOrPut(value: V) {
     takeV(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, javaType, nullableType, typeParameter */

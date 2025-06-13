@@ -11,3 +11,6 @@ class A(val next: A? = null) {
         <!VAL_REASSIGNMENT!>next?.x<!> = "f"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, nullableType, primaryConstructor, propertyDeclaration,
+safeCall, stringLiteral, thisExpression */

@@ -28,3 +28,6 @@ fun main() {
     B().foo(Runnable { println() }, B.bar())
     B().foo({ println() }, { it: Any? -> it == null } )
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral,
+localFunction, nullableType, samConversion */

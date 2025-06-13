@@ -15,3 +15,6 @@ fun main() {
     numberBoxHandler(<!ARGUMENT_TYPE_MISMATCH!>inNumberBox<!>, number)
     outNumberBoxHandler(<!ARGUMENT_TYPE_MISMATCH!>inNumberBox<!>, number)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

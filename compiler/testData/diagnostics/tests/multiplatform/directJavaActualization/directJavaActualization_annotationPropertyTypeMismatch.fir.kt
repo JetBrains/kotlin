@@ -12,3 +12,5 @@
 @kotlin.annotations.jvm.KotlinActual public @interface Foo {
     @kotlin.annotations.jvm.KotlinActual String foo();
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, expect, primaryConstructor, propertyDeclaration */

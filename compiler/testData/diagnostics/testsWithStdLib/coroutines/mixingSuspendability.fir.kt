@@ -6,3 +6,5 @@ interface SyncVal { fun getVal(): Int = 1 }
 <!CONFLICTING_INHERITED_MEMBERS, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class MixSuspend<!> : AsyncVal, SyncVal {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, suspend */

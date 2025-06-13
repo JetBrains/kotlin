@@ -28,3 +28,6 @@ fun foo(): Unit {
     val c = <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>J2()<!>
     <!JAVA_CLASS_INHERITS_KT_PRIVATE_CLASS!>c.foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration,
+secondaryConstructor */

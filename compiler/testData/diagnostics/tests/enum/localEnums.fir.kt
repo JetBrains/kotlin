@@ -19,3 +19,6 @@ fun foo() {
 
     <!WRONG_MODIFIER_TARGET!>enum<!> class<!SYNTAX!><!> {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry, functionDeclaration,
+lambdaLiteral, localClass, localProperty, nestedClass, propertyDeclaration */

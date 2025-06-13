@@ -8,3 +8,6 @@ fun box() {
         for (<!BUILDER_INFERENCE_STUB_PARAMETER_TYPE!>v<!> in values) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */

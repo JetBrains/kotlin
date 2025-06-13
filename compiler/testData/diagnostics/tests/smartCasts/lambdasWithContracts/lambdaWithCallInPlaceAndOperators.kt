@@ -57,3 +57,6 @@ fun test6(x: Any) {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, contractCallsEffect, contracts, disjunctionExpression, functionDeclaration,
+functionalType, ifExpression, isExpression, lambdaLiteral, smartcast, stringLiteral */

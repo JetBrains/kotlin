@@ -10,3 +10,6 @@ open class Impl(override val x: Int) : Base {
 }
 
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, init, integerLiteral,
+interfaceDeclaration, override, primaryConstructor, propertyDeclaration, thisExpression */

@@ -9,3 +9,5 @@ interface ILeft : ITop
 interface IRight : ITop
 
 interface IDerived : ILeft, IRight
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration */

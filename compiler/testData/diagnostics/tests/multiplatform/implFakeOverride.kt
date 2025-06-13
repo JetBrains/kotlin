@@ -15,3 +15,5 @@ open class Bar {
 }
 
 actual class Foo : Bar()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral */

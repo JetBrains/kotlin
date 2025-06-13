@@ -16,3 +16,6 @@ expect class Foo: @Ann I
 typealias ITypealias = I
 
 actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> : ITypealias
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, interfaceDeclaration,
+typeAliasDeclaration */

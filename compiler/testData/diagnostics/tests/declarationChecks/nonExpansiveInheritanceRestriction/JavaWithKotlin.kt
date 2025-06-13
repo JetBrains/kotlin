@@ -14,3 +14,4 @@ public interface C<X> extends D<P<X,X>> {}
 // FILE: 1.kt
 interface P<Y1, <!EXPANSIVE_INHERITANCE!>Y2<!>> : Q<C<Y1>, C<D<Y2>>>
 
+/* GENERATED_FIR_TAGS: interfaceDeclaration, javaType, nullableType, typeParameter */

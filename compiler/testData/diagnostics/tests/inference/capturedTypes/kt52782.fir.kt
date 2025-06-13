@@ -61,3 +61,6 @@ fun box(foo: Foo<*>) {
 
     foo.test
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty, javaType,
+outProjection, starProjection, typeConstraint, typeParameter */

@@ -35,3 +35,6 @@ fun test(b: B?) {
         <!DEBUG_INFO_SMARTCAST!>b<!>?.getParent()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast */

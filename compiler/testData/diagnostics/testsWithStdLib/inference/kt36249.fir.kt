@@ -17,3 +17,6 @@ class A {
 fun main() {
     A().inv
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, nullableType, propertyDeclaration, typeConstraint, typeParameter, vararg */

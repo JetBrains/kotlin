@@ -59,3 +59,7 @@ fun test_3(e: Base) {
         is C -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral,
+isExpression, localProperty, nestedClass, nullableType, propertyDeclaration, sealed, smartcast, whenExpression,
+whenWithSubject */

@@ -25,3 +25,6 @@ class My(var x: String) {
         if (<!DEBUG_INFO_LEAKING_THIS!>y<!> != "") z = this.<!DEBUG_INFO_LEAKING_THIS!>y<!> else z = <!DEBUG_INFO_LEAKING_THIS!>y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, getter, ifExpression, init, primaryConstructor,
+propertyDeclaration, setter, stringLiteral, thisExpression */

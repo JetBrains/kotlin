@@ -14,3 +14,6 @@ fun main() {
         add("a")
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, forLoop, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, rangeExpression, safeCall, stringLiteral */

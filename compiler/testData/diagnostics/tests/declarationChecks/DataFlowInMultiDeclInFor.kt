@@ -15,3 +15,6 @@ fun foo(list: List<A>) {
         c3 + 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, forLoop, functionDeclaration, integerLiteral,
+localProperty, operator, propertyDeclaration */

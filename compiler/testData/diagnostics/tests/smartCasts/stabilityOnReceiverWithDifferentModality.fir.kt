@@ -251,3 +251,6 @@ fun test2() {
     a.a as String
     <!SMARTCAST_IMPOSSIBLE!>a.a<!>.length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, checkNotNullCall, classDeclaration, functionDeclaration, getter,
+ifExpression, isExpression, localProperty, nullableType, override, propertyDeclaration, smartcast, stringLiteral */

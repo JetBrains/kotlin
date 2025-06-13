@@ -23,3 +23,6 @@ class User : BaseClass() {
         val ui = this.ui
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration, thisExpression */

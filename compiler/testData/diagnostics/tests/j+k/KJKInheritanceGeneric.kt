@@ -17,3 +17,6 @@ class K2: J1() {
         baz()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+primaryConstructor, typeConstraint, typeParameter */

@@ -9,3 +9,6 @@ sealed class WithPrivateConstructor private constructor(val x: Int) {
 
 object First : <!INVISIBLE_REFERENCE!>WithPrivateConstructor<!>() // error
 object Second : <!INVISIBLE_REFERENCE!>WithPrivateConstructor<!>(0) // error
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, objectDeclaration, primaryConstructor, propertyDeclaration,
+sealed, secondaryConstructor, stringLiteral */

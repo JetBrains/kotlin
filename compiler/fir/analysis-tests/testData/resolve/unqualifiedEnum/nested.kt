@@ -32,3 +32,6 @@ fun bar(o: Outer, i: Inner): Int {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+localFunction, smartcast, whenExpression, whenWithSubject */

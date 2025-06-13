@@ -13,3 +13,6 @@ val x by lazy {
         it
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, propertyDelegate, stringLiteral */

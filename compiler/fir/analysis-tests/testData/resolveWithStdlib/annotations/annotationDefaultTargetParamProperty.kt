@@ -94,3 +94,6 @@ annotation class Your(
     @JavaAnn
     val s: String
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, getter, integerLiteral, javaType, outProjection,
+primaryConstructor, propertyDeclaration, vararg */

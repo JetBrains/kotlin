@@ -9,3 +9,6 @@ val x: Map<String, String> = materialize<List<Map<String, String>>>().fold(mutab
     m[s] = action
     m
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, destructuringDeclaration, functionDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

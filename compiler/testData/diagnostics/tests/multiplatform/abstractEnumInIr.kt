@@ -20,3 +20,5 @@ actual enum class MMKVMode {
 
     abstract val rawValue: String
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect, propertyDeclaration */

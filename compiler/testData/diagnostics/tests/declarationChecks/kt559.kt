@@ -30,3 +30,6 @@ abstract class D(): A() {
         return super.<!ABSTRACT_SUPER_CALL!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, primaryConstructor,
+propertyDeclaration, superExpression */

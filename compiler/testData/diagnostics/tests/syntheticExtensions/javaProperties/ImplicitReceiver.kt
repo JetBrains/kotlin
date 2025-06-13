@@ -12,3 +12,5 @@ fun useInt(i: Int) {}
 public class JavaClass {
     public int getSomething() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, javaFunction, javaProperty, javaType */

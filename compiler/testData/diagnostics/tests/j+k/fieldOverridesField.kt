@@ -18,3 +18,5 @@ public class B implements A {
 fun foo() {
     B().size
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType */

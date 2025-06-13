@@ -15,3 +15,6 @@ fun foo() {
         }<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, suspend, tryExpression, typeParameter */

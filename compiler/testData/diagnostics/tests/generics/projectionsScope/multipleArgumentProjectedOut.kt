@@ -8,3 +8,5 @@ class A<T> {
 fun test(a: A<out CharSequence>) {
     a.foo(<!TYPE_MISMATCH!>""<!>, <!TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, outProjection, stringLiteral, typeParameter */

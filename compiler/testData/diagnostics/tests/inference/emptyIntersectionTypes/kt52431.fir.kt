@@ -12,3 +12,6 @@ infix fun <T : Comparable<T>, S : T?> Expression<in S>.less(other: Expression<in
 fun main(x: Column<Long?>, y: Double) {
     x <!NONE_APPLICABLE!>less<!> y // error in 1.7.20, no error in 1.7.0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix,
+interfaceDeclaration, nullableType, typeConstraint, typeParameter */

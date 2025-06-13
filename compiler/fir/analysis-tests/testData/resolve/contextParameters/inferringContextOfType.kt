@@ -9,3 +9,5 @@ context(_: Klass) fun foo() {
     <!CANNOT_INFER_PARAMETER_TYPE!>contextOf<!>()
     contextOf<<!CANNOT_INFER_PARAMETER_TYPE!>_<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext */

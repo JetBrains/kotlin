@@ -5,3 +5,6 @@ fun foo(s: String?): Int {
     }
     return s.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, comparisonExpression, functionDeclaration, integerLiteral, nullableType,
+smartcast, whileLoop */

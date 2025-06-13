@@ -15,3 +15,5 @@ fun test() {
     takeULong(1u + 0uL)
     takeULong(1uL + 4u)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, propertyDeclaration, unaryExpression, unsignedLiteral */

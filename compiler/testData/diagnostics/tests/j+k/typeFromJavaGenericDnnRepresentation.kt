@@ -71,3 +71,6 @@ fun genericClassTest(a1: JavaGeneric<String>,
     val k27: JavaBox<String?> = a2.foo7(JavaBox(null))
     val k28: Any = <!TYPE_MISMATCH!>a2.foo7(JavaBox(null)).a<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaFunction, javaType, localProperty,
+nullableType, outProjection, propertyDeclaration, starProjection */

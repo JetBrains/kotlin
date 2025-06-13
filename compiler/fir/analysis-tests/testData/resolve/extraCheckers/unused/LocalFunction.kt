@@ -197,3 +197,6 @@ fun test13() {
     foo = 4
     use(foo)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+localFunction, localProperty, nullableType, propertyDeclaration, tryExpression, unnamedLocalVariable */

@@ -34,3 +34,7 @@ fun test() {
         // All files are closed at the end
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, interfaceDeclaration, lambdaLiteral, localProperty, override, primaryConstructor, propertyDeclaration,
+stringLiteral, tryExpression, typeWithContext */

@@ -13,3 +13,6 @@ fun test(a: String?, b: String?) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, ifExpression, nullableType,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

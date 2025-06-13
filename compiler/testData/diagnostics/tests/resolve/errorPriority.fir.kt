@@ -26,3 +26,5 @@ fun test1(myJClass: MyJClass) {
 fun test2(myJClass: MyJClass2) {
     myJClass.meth(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

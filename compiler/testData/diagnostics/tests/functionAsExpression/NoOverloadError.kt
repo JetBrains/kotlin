@@ -18,3 +18,6 @@ fun outer() {
     gar(fun() {})
     gar(fun() {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, localFunction, localProperty, nullableType,
+propertyDeclaration */

@@ -11,3 +11,5 @@ enum class Some {
         return s()
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, inline */

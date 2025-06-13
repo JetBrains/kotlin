@@ -10,3 +10,5 @@ expect enum class En {
     },
     <!EXPECTED_ENUM_ENTRY_WITH_BODY!>E3<!> { };
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, expect */

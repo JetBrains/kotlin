@@ -10,3 +10,6 @@ fun foo(arr: Array<A>) {
         checkSubtype<String>(c)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, forLoop, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter, typeWithExtension */

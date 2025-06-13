@@ -25,3 +25,5 @@ class C1 : A() {
 class C2 : F() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> val foo: Int = 3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, javaType, override, propertyDeclaration */

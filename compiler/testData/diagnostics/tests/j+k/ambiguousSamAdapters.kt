@@ -17,3 +17,5 @@ fun main() {
     A.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { "Hello!" }
     A.foo(Runnable { "Hello!" })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, lambdaLiteral, stringLiteral */

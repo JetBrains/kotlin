@@ -9,3 +9,6 @@ class SimpleKlass {
 fun test(simpleKlass: SimpleKlass) {
     val (s1) = <!COMPONENT_FUNCTION_MISSING!>simpleKlass<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, integerLiteral, localProperty,
+operator, propertyDeclaration, stringLiteral */

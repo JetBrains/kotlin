@@ -21,3 +21,6 @@ package com.winterbe.observer
 import com.winterbe.domain.IEntity
 
 class ObserverSupport<T : IEntity>(private val observers: List<Observer>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

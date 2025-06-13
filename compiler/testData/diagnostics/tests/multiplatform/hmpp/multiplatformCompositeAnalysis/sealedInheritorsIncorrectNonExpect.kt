@@ -21,3 +21,5 @@ package test
 
 /* sealed inheritors are allowed in dependsOn source sets only for expect delclations */
 class SealedExpectActual3() : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedExpectActual<!>(3)
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, sealed */

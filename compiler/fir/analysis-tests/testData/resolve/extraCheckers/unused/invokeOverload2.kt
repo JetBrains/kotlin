@@ -8,3 +8,6 @@ fun foo() {
         x(10)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, integerLiteral, localFunction, localProperty,
+propertyDeclaration */

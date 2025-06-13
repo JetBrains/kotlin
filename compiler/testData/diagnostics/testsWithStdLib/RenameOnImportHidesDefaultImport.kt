@@ -8,3 +8,5 @@ fun f() {
 }
 
 fun g(a1: KotlinArray<Int>, a2: <!UNRESOLVED_REFERENCE!>Array<!><Int>){}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral */

@@ -108,3 +108,7 @@ fun qux(
 
     "".f3(1, true)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext,
+typeWithExtension */

@@ -88,3 +88,7 @@ fun testOkInJava() {
     <!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>select(d1, d2)<!>
     foo(<!INFERRED_INVISIBLE_RETURN_TYPE_WARNING!>select(d1, d2)<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, checkNotNullCall, forLoop, functionDeclaration, ifExpression,
+integerLiteral, javaFunction, javaType, localProperty, nullableType, outProjection, propertyDeclaration, typeConstraint,
+typeParameter, vararg, whenExpression */

@@ -6,3 +6,5 @@ interface D
 class A : C, B, D {
     constructor()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, secondaryConstructor */

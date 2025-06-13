@@ -14,3 +14,5 @@ fun <T, N: T, INDIRECT: N> misleadingNullableSimple(
 ) {}
 
 fun <T> interactionWithRedundant(t: T?<!REDUNDANT_NULLABLE!>?<!>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeConstraint, typeParameter */

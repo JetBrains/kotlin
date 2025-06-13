@@ -14,3 +14,6 @@ fun <T> Flow<T>.debounce(timeoutMillis: (T) -> Long): Flow<T> = this
 fun <T> Flow<T>.debounce(timeout: (T) -> String): Flow<T> = this
 
 fun invalidFlow(x: Flow<Int>): Flow<Int> = x.debounce { value -> 0 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, out, stringLiteral, thisExpression, typeParameter */

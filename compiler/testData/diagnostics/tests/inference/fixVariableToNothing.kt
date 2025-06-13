@@ -14,3 +14,6 @@ fun test(l: List<String>): List<String> {
     val foo = l.optimizeReadOnlyList()
     return foo
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, propertyDeclaration, thisExpression, typeParameter, whenExpression, whenWithSubject */

@@ -21,3 +21,5 @@ private val test2co = <!INVISIBLE_MEMBER!>TA<!>
 
 private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!>
 private typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = Int
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

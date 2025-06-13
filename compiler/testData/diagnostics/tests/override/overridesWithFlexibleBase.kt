@@ -43,3 +43,6 @@ open class Aside<S>(val s: S) {
 }
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Diamond<!><D>(d: D) : Foo<D>, Aside<D>(d)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, flexibleType, functionDeclaration, javaFunction,
+javaType, nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

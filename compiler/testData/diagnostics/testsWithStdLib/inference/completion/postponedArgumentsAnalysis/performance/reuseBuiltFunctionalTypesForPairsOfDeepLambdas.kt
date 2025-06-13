@@ -45,3 +45,6 @@ class A {
             to(Inv { a -> }, Inv { a, b, c, d -> }),
         )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral,
+nullableType, out, primaryConstructor, propertyDeclaration, typeParameter, vararg */

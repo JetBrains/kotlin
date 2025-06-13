@@ -26,3 +26,6 @@ open class A5 {
 
 class B5_1 : A5(<!ARGUMENT_TYPE_MISMATCH!>1 + 1<!>)
 class B5_2 : A5(<!ARGUMENT_TYPE_MISMATCH!>100 * 2<!>)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral, typeParameter */

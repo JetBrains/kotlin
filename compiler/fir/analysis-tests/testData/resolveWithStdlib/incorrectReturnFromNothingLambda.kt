@@ -37,3 +37,8 @@ fun doAThing(): Result4k<MyDataWithoutAB, Unit> {
 fun failable(): Result4k<Int, Unit> {
     return Success(1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funInterface, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, integerLiteral, interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType,
+out, primaryConstructor, propertyDeclaration, sealed, smartcast, thisExpression, typeParameter, whenExpression,
+whenWithSubject */

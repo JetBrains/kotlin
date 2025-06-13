@@ -9,3 +9,6 @@ fun test(): () -> Byte {
 open class B(var f: A<() -> Byte>)
 
 class A<G>(var first : () -> Byte, val secondary: G)
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

@@ -26,3 +26,6 @@ class A3<T> {
     fun <R> test4(): (R) -> Unit = this::<!TYPE_MISMATCH!>a3<!>
     fun <R> test5(): (T) -> R = this::a3
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+thisExpression, typeParameter */

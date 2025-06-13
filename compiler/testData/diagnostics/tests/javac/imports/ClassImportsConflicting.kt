@@ -32,3 +32,5 @@ import a.a
 class A : a()
 
 fun test() = A().getO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, objectDeclaration */

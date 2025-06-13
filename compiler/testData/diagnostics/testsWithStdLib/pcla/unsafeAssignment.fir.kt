@@ -25,3 +25,7 @@ fun main(arg: Any) {
     }
     println(value.a?.<!NONE_APPLICABLE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, ifExpression, integerLiteral,
+intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+rangeExpression, safeCall, smartcast, stringLiteral, thisExpression, typeConstraint, typeParameter, typeWithExtension */

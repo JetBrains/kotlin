@@ -86,3 +86,7 @@ class ClassPropInitialization(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, equalityExpression, functionDeclaration,
+functionalType, guardCondition, init, inline, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, typeParameter, whenExpression, whenWithSubject */

@@ -67,3 +67,6 @@ fun test(m1: M1) {
     f(m1.f)
     g(<!ARGUMENT_TYPE_MISMATCH!>m1.g<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, nestedClass, objectDeclaration,
+propertyDeclaration */

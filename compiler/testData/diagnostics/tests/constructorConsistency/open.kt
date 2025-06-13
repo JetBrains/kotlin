@@ -33,3 +33,6 @@ enum class MyEnum {
 
     abstract fun foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, init, override,
+primaryConstructor, propertyDeclaration, thisExpression */

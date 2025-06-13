@@ -40,3 +40,5 @@ fun test2(b: B) {
     val b_2 = B()
     b_2.m1()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

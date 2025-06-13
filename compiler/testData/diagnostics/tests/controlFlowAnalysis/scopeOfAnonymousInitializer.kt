@@ -5,3 +5,5 @@ class AnonymousInitializers(var a: String) {
         a = "s"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, primaryConstructor, propertyDeclaration, stringLiteral */

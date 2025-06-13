@@ -5,3 +5,5 @@
 fun main() {
     1.<!NONE_APPLICABLE!>plus<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

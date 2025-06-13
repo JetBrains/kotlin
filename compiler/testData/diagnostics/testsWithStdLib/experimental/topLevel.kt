@@ -79,3 +79,6 @@ fun use() {
     val s: <!OPT_IN_USAGE!>Typealias<!> = ""
     <!OPT_IN_USAGE!>s<!>.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, typeAliasDeclaration */

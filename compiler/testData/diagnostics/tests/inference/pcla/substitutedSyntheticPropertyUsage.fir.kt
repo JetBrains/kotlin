@@ -20,3 +20,6 @@ fun main() {
         gg().foo
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, functionalType, javaProperty, javaType,
+lambdaLiteral, nullableType, stringLiteral, suspend, typeParameter, typeWithExtension */

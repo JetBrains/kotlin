@@ -16,3 +16,6 @@ fun test() {
     foo<String> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
     bar<Impl> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

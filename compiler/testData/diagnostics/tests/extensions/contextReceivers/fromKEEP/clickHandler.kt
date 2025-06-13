@@ -11,3 +11,5 @@ typealias ClickHandler = context(Button) (ClickEvent) -> Unit
 fun handleClick(clickHandler: ClickHandler) {
     clickHandler(Button(), ClickEvent())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, typeAliasDeclaration, typeWithContext */

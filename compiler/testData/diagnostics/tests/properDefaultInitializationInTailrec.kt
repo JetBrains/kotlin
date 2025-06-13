@@ -39,3 +39,6 @@ tailrec fun foo6(x: String = withEffects(), y: EnumA = EnumA.A) {
 tailrec fun foo7(x: String = withEffects(), y: KClass<out EnumA> = EnumA.A::class) {
     foo7(x, y)
 }
+
+/* GENERATED_FIR_TAGS: classReference, const, enumDeclaration, enumEntry, functionDeclaration, integerLiteral,
+outProjection, propertyDeclaration, stringLiteral, tailrec */

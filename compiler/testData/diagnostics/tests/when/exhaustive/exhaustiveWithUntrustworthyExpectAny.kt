@@ -25,3 +25,6 @@ fun foo(v: Variants): String {
 actual open class ExpectAny
 
 fun bar() = Variants.A
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, data, equalityExpression, expect, functionDeclaration, nestedClass,
+objectDeclaration, primaryConstructor, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

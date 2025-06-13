@@ -10,3 +10,6 @@ fun foo(r: Runnable, f: () -> Unit) = ""
 fun test(): String {
     return foo(Runnable {}, {})
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, stringLiteral */

@@ -9,3 +9,5 @@ fun foo(i: Int) {}
 fun test(s: String?) {
     foo(<!TYPE_MISMATCH!>s?.length<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, safeCall */

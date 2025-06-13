@@ -8,3 +8,6 @@ fun topLevelFun() {
         val @receiver:Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>42.prop<!>) Int.prop get() = 22
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetReceiver, classDeclaration, functionDeclaration,
+getter, integerLiteral, localClass, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver */

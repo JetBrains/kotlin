@@ -23,3 +23,5 @@ actual public fun foo() {}
 actual class Foo {
     actual public fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

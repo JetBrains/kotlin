@@ -7,3 +7,6 @@ operator fun A.unaryMinus() {}
 operator fun B.unaryMinus() {}
 class A
 class B
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, operator,
+propertyDeclaration, unaryExpression */

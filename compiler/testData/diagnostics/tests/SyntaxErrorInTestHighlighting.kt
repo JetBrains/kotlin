@@ -5,3 +5,5 @@
 fun get() {
     1 + 2 <!SYNTAX!>2 3 4<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

@@ -14,3 +14,5 @@ open class B1 {
 class D1 : B1() {
     <!NOTHING_TO_OVERRIDE("foo;  Potential signatures for overriding:fun foo(): Unit")!>override<!> fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, override */

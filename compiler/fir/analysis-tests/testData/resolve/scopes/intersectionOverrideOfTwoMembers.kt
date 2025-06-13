@@ -17,3 +17,5 @@ interface D : C {
     override fun foo(): Any
     override val x: Any
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

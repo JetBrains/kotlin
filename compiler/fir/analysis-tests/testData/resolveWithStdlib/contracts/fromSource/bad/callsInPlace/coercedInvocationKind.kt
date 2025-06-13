@@ -37,3 +37,6 @@ fun multiple2(block: () -> Unit) {
     block()
     block()
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+lambdaLiteral */

@@ -15,3 +15,6 @@ fun test123() {
         { it -> it }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, flexibleType, functionDeclaration, functionalType, ifExpression, javaFunction,
+lambdaLiteral, localProperty, propertyDeclaration */

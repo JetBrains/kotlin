@@ -7,3 +7,6 @@ class A : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!>() {
 typealias ANested<T> = A.Nested<T>
 
 open class B : <!CYCLIC_INHERITANCE_HIERARCHY!>ANested<Int><!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

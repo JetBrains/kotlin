@@ -26,3 +26,6 @@ fun test(x: String?): Any {
     y!!.hashCode()
     return z
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration, safeCall */

@@ -13,3 +13,6 @@ class My {
 
     fun foo(): Int = x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate, starProjection, thisExpression */

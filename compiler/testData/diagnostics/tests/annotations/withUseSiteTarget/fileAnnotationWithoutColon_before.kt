@@ -10,3 +10,6 @@ fun test2() {}
 class OnType(x: <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE!>@file<!SYNTAX!><!> Suppress("")<!> Int)
 
 fun <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE!>@file : Suppress("")<!> Int.test3() {}
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+primaryConstructor, stringLiteral */

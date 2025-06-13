@@ -64,3 +64,7 @@ object Test5 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nestedClass, objectDeclaration, propertyDeclaration, samConversion,
+stringLiteral */

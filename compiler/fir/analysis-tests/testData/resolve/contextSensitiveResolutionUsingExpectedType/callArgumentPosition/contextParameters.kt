@@ -35,3 +35,7 @@ fun testWithEnumWithProp() {
         "".a
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, functionDeclarationWithContext,
+getter, lambdaLiteral, nestedClass, objectDeclaration, propertyDeclaration, propertyDeclarationWithContext,
+propertyWithExtensionReceiver, sealed, stringLiteral */

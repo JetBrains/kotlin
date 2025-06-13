@@ -33,3 +33,6 @@ inline class Foo(val x: Int) : A, B {
 
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>lateinit var lateinitProperty: String<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, integerLiteral, interfaceDeclaration, lateinit, override,
+primaryConstructor, propertyDeclaration, setter */

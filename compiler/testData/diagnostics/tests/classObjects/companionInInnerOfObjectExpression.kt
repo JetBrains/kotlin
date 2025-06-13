@@ -82,3 +82,7 @@ class Class {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, assignment, classDeclaration, companionObject,
+functionDeclaration, functionalType, getter, inline, inner, lambdaLiteral, localClass, objectDeclaration,
+propertyDeclaration, setter */

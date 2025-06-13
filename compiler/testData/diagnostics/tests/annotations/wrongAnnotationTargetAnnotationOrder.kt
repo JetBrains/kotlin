@@ -27,3 +27,5 @@ val fieldedBadName: String = "badField"
 
 @field:GoodA
 val fieldedGoodName: String = "goodField"
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetField, interfaceDeclaration, javaType, propertyDeclaration, stringLiteral */

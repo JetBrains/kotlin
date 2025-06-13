@@ -23,3 +23,6 @@ val b1: Byte = <!DIVISION_BY_ZERO, INITIALIZER_TYPE_MISMATCH!>1 / 0<!>
 @Ann(1 / a) val b4 = 1
 
 annotation class Ann(val i : Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, integerLiteral, multiplicativeExpression, primaryConstructor,
+propertyDeclaration */

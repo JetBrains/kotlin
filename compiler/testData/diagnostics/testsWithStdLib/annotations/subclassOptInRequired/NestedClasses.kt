@@ -18,3 +18,5 @@ open class B {
 
 @OptIn(Boom2::class)
 class E2 : B.C() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, nestedClass */

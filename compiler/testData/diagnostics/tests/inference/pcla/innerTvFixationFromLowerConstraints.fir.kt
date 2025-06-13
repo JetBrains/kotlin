@@ -31,3 +31,6 @@ fun main(x: Controller<String>) {
         }
     }.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, stringLiteral, suspend, thisExpression, typeParameter, typeWithExtension */

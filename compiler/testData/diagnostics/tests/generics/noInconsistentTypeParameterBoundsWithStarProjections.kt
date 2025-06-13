@@ -11,3 +11,6 @@ interface GrandChildType1<T> : ChildType1<T>
 interface ChildType2<T> : RootType<T>
 
 class Test<T> where T : ChildType2<*>, T : GrandChildType1<*>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, starProjection, typeConstraint,
+typeParameter */

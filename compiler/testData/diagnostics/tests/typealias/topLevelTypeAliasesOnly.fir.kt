@@ -20,3 +20,5 @@ class C {
 fun foo() {
     <!UNSUPPORTED!>typealias Local = Any<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nestedClass, typeAliasDeclaration */

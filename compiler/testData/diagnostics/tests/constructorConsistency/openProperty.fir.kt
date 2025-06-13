@@ -12,3 +12,6 @@ abstract class Base {
         y = temp
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, integerLiteral, localProperty, propertyDeclaration,
+secondaryConstructor, thisExpression */

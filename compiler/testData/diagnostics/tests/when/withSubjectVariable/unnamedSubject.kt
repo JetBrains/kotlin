@@ -7,3 +7,6 @@ fun box() =
         in <!UNRESOLVED_REFERENCE!>y<!> -> ""
         else -> ""
     }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral, whenExpression,
+whenWithSubject */

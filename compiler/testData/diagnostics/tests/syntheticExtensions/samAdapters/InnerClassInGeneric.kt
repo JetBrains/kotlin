@@ -15,3 +15,6 @@ public class JavaClass<T> {
         public T doSomething(T t, X x, Runnable runnable);
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, localProperty,
+propertyDeclaration, samConversion, stringLiteral */

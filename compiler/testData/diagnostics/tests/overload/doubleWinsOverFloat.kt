@@ -19,3 +19,6 @@ fun test(arg: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, ifExpression, intersectionType,
+isExpression, smartcast */

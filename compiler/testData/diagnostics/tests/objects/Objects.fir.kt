@@ -30,3 +30,6 @@ val y = object : Foo(x) {
 }
 
 val z = y.foo()
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration, init,
+integerLiteral, objectDeclaration, override, primaryConstructor, propertyDeclaration */

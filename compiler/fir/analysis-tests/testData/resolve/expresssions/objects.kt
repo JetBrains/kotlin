@@ -5,3 +5,5 @@ object A {
 
 fun use() = A
 fun bar() = A.foo()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, thisExpression */

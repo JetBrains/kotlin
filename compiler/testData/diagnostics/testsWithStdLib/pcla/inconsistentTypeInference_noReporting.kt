@@ -8,3 +8,5 @@ fun foo() {
         println(plus(1)[0])
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, stringLiteral */

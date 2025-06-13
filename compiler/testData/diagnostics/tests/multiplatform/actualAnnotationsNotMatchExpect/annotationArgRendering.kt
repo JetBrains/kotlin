@@ -29,3 +29,6 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit defin
 actual fun onType(): Any? = null
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun kclassArg(): Unit defined in root package in file common.kt; fun kclassArg(): Unit defined in root package in file jvm.kt; Annotation `@Ann3(kclass = kotlin.String::class)` is missing on actual declaration")!>kclassArg<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, expect, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

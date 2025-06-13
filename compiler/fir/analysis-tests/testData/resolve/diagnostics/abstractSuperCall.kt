@@ -40,3 +40,6 @@ abstract class J : A() {
         super.<!ABSTRACT_SUPER_CALL!>y<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, propertyDeclaration,
+superExpression */

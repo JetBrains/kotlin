@@ -69,3 +69,7 @@ fun sixth(arg: Any?) = when (arg) {
     <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>Foo<!> -> ""
     else -> null
 }
+
+/* GENERATED_FIR_TAGS: const, enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+isExpression, nullableType, objectDeclaration, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

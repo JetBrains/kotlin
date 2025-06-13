@@ -51,3 +51,7 @@ fun main() {
         fun <T1,T2,T3,> foo10() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+inline, inner, interfaceDeclaration, localFunction, nullableType, propertyDeclaration, propertyWithExtensionReceiver,
+reified, setter, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

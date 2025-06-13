@@ -18,3 +18,6 @@ class Impl : Outer() {
         n.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, interfaceDeclaration,
+nestedClass */

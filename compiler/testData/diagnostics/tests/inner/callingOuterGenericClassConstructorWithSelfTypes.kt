@@ -21,3 +21,6 @@ open class A<X : A<X>>(a: Any?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, primaryConstructor, stringLiteral,
+typeConstraint, typeParameter */

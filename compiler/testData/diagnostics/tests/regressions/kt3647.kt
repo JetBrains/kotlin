@@ -9,3 +9,6 @@ class Test(val value: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionalType, objectDeclaration,
+primaryConstructor, propertyDeclaration */

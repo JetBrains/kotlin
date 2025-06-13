@@ -141,3 +141,7 @@ fun expectedTypeNested() {
     val x: Int = id(noContract { run { materialize() } })
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, checkNotNullCall, contractCallsEffect, contracts, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration,
+smartcast, typeParameter, vararg */

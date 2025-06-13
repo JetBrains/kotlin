@@ -16,3 +16,5 @@ fun test() {
     context(c: String)
     fun local3() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionDeclarationWithContext, localFunction */

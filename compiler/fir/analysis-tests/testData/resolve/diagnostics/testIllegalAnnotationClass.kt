@@ -22,3 +22,5 @@ package simulation
 class KotlinImporterComponent {
     class State(var directories: List<String> = ArrayList())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, nestedClass, primaryConstructor, propertyDeclaration, stringLiteral */

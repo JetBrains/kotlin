@@ -9,3 +9,5 @@ fun <K> baz(): () -> K = TODO()
 fun test() {
     foo { bar(baz()) }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

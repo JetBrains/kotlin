@@ -14,3 +14,6 @@ val cardModel = myRun {
         override val action = {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, override, propertyDeclaration, typeParameter */

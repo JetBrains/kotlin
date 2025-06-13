@@ -56,3 +56,6 @@ public class H {
     public static <X> void bar(J<X> j) {}
     public static <Y> void bar2x(J2X<Y> j2x) {}
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, functionalType, javaFunction, javaType,
+lambdaLiteral, nullableType, samConversion, smartcast, typeParameter, typeWithExtension */

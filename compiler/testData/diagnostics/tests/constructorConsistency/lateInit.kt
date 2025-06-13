@@ -15,3 +15,5 @@ class WithLateInit {
 
     fun use() = x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, lateinit, propertyDeclaration */

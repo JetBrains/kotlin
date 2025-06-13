@@ -17,3 +17,6 @@ fun <Z> topLevelFun() {
     <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class Test8<!> : Error()
     val obj = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Throwable() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localProperty, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeParameter */

@@ -25,3 +25,5 @@ interface B : A {
 interface C : A {
     override var p2: <!VAR_TYPE_MISMATCH_ON_OVERRIDE("p2; 'var p2: @An() String' defined in '/A'")!>Int<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

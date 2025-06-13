@@ -19,3 +19,6 @@ fun test() {
     aliasedNested()
     aliasedInner(foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, localProperty, nestedClass,
+propertyDeclaration, typeAliasDeclaration */

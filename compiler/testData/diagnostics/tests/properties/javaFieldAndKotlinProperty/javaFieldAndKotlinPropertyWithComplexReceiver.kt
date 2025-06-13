@@ -19,3 +19,6 @@ fun create(): My? = My()
 fun box(): String {
     return (create() ?: My()).a
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, flexibleType, functionDeclaration, javaProperty, javaType,
+nullableType, operator, propertyDeclaration, stringLiteral */

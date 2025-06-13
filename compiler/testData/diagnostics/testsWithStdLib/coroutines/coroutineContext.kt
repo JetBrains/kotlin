@@ -53,3 +53,6 @@ fun test() {
     builderSuspendSeveralArgs { _, _, _ -> kotlin.coroutines.coroutineContext }
     builderSuspendSeveralArgs { _, _, _ -> coroutineContext }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, propertyDeclaration,
+suspend */

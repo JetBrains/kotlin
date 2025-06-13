@@ -14,3 +14,6 @@ public class A<E> {
 fun foo() {
     val result: A<String> = A<String> { x, y -> 1 }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction, javaType,
+lambdaLiteral, localProperty, propertyDeclaration, samConversion */

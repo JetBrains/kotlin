@@ -7,3 +7,6 @@ interface A {
 }
 
 <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING!>object B<!> : A by B
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inheritanceDelegation, integerLiteral, interfaceDeclaration,
+objectDeclaration */

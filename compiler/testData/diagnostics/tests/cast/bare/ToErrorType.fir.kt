@@ -10,3 +10,5 @@ fun bar(p: P): Any {
     val v = p as <!UNRESOLVED_REFERENCE!>G<!>?
     return v
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

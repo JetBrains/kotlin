@@ -37,3 +37,6 @@ fun box() : String {
     val p = P()
     return p.protectedProp() + p.protectedFun()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, inline, localProperty,
+override, propertyDeclaration, stringLiteral */

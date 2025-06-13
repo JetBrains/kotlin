@@ -21,3 +21,6 @@ fun main() {
 }
 
 fun foo(): String? = null
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+override, propertyDeclaration */

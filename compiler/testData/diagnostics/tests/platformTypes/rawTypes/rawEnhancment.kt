@@ -18,3 +18,5 @@ interface X {
 }
 
 internal class C : B()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType */

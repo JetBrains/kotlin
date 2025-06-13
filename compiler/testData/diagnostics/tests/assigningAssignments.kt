@@ -11,3 +11,6 @@ fun main() {
     val b = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>nonStorages = 20<!>
     nonStorages = 20
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

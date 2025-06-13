@@ -46,3 +46,6 @@ class Y: C() {
         <!UNRESOLVED_REFERENCE!>Z<!>().A_C_Z()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, javaFunction, javaType, nestedClass,
+objectDeclaration */

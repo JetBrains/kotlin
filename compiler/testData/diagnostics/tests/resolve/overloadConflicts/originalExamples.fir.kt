@@ -19,3 +19,5 @@ fun overloadedFun2a(a: Any, b: String = "") = Wrong
 fun overloadedFun2a(a: String, b: Any = "") = Right
 
 val test2a: Right = overloadedFun2a("")
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, propertyDeclaration, stringLiteral */

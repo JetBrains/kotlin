@@ -24,3 +24,7 @@ public class AppServiceModule : AbstractModule<String>() {
         x checkType { _<String>() } // check that Class receiver is used instead of extension one
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inline, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified,
+typeParameter, typeWithExtension */

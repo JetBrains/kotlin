@@ -52,3 +52,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter, init,
+integerLiteral, localFunction, localProperty, propertyDeclaration */

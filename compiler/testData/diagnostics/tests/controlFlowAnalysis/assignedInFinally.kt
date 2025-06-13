@@ -9,3 +9,6 @@ fun test5() {
     }
     a.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+tryExpression */

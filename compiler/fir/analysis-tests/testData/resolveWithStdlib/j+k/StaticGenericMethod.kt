@@ -24,3 +24,6 @@ abstract class User<T : Freezable> {
         settings = StaticOwner.newInstance(settings.javaClass)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, dnnType, flexibleType, functionDeclaration, interfaceDeclaration,
+javaFunction, propertyDeclaration, typeConstraint, typeParameter */

@@ -16,3 +16,6 @@ val b: Int = let {
 val c: Int = let {
     if (it != null) it else 5
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, smartcast, typeParameter */

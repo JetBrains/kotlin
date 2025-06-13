@@ -46,3 +46,7 @@ class TestProperty {
         2
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, assignment, classDeclaration, functionDeclaration,
+functionalType, getter, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override,
+propertyDeclaration, setter, typeParameter */

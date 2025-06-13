@@ -37,3 +37,6 @@ class Y: X() {
         val a: Double = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, init, integerLiteral, javaFunction,
+javaType, localProperty, objectDeclaration, propertyDeclaration */

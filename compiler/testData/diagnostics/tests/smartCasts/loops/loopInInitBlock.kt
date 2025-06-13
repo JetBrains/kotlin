@@ -13,3 +13,6 @@ class Test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, forLoop, init, integerLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, rangeExpression */

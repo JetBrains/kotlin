@@ -16,3 +16,5 @@ fun <T : String?> foo(x: T) {
     bar3(<!TYPE_MISMATCH!>x<!>)
     bar4(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeConstraint, typeParameter */

@@ -14,3 +14,7 @@ interface OriginalInterface {
         private const val prop = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetReceiver, companionObject, const,
+funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral, typeConstraint, typeParameter */

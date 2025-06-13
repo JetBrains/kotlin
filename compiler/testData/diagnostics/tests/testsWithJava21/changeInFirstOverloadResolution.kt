@@ -15,3 +15,6 @@ fun somewhere() {
         val y: String = listOf("a").first()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, operator, propertyDeclaration, stringLiteral, typeWithExtension */

@@ -32,3 +32,6 @@ object A {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

@@ -58,3 +58,8 @@ class BuilderDsl<T> {
         Definition(first, second, creator)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, functionalType, infix, interfaceDeclaration, lambdaLiteral, nestedClass, nullableType,
+objectDeclaration, out, primaryConstructor, propertyDeclaration, sealed, starProjection, thisExpression,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, typeWithContext, typeWithExtension */

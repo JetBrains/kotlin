@@ -16,3 +16,6 @@ fun test() {
 
     (B::hashCode)(<!TYPE_MISMATCH!>"No."<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

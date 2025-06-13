@@ -23,3 +23,7 @@ fun foo(x: Int?) {
         bar(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, contractConditionalEffect, contracts,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+smartcast, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

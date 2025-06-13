@@ -13,3 +13,6 @@ fun main() {
 }
 
 fun doSmth(a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, tryExpression */

@@ -86,3 +86,6 @@ fun test() {
     KJK6 { TODO() }
     KJK7 { TODO() }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, javaType, lambdaLiteral, nullableType,
+operator, override, starProjection */

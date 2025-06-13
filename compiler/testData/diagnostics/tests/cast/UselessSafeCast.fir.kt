@@ -21,3 +21,6 @@ fun test(x: Int?) {
 }
 
 fun foo(x: Number?) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

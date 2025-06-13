@@ -15,3 +15,5 @@ val prop4 = 1.toShort()
 
 // val prop5: false
 val prop5 = 1.toChar()
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */

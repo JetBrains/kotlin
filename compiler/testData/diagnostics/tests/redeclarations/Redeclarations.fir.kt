@@ -14,3 +14,5 @@ package redeclarations
 // FILE: b.kt
   package <!PACKAGE_CONFLICTS_WITH_CLASSIFIER!>redeclarations.A<!>
     class A {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, objectDeclaration, propertyDeclaration */

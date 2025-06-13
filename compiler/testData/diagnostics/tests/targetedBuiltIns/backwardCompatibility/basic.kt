@@ -18,3 +18,4 @@ abstract class Test3 : java.util.AbstractMap<String, String>() {
     fun replace(key: String, value: String): String? = TODO()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override */

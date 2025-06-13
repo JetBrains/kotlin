@@ -52,3 +52,6 @@ inline var property3: context(String)() -> Unit
             }
         }
     }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, crossinline, functionDeclaration, functionalType, getter, inline,
+lambdaLiteral, noinline, propertyDeclaration, setter, stringLiteral, typeWithContext */

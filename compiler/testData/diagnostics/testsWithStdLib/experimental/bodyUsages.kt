@@ -31,3 +31,7 @@ class Delegated : I by Impl()
 @OptIn(ExperimentalAPI::class)
 val delegatedProperty by Impl()
 operator fun I.getValue(x: Any?, y: Any?) = null
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType, operator, primaryConstructor,
+propertyDeclaration, propertyDelegate */

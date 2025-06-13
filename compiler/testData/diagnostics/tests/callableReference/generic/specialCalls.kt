@@ -23,3 +23,7 @@ fun test() {
 
     (if (true) ::baz else ::baz)(1)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+whenExpression, whenWithSubject */

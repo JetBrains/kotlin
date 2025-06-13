@@ -44,3 +44,8 @@ fun badArgsInTypeAliasInstance(a: T<@TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TY
 typealias BadArgsInRecursive = (((@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int) -> Unit) -> @<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> String) -> Unit
 
 typealias BadArgsMultiple = (@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>123<!>) Int) -> Unit
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, integerLiteral, lambdaLiteral, localProperty, nullableType, operator, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter, typeWithExtension */

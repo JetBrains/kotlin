@@ -14,3 +14,6 @@ fun bare(x: SuperOuter<*>.SuperInner<*>, y: Any?) {
         return
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, inner, isExpression, nullableType,
+starProjection, typeParameter */

@@ -9,3 +9,5 @@ expect enum class Bar { X, Y, Z }
 // FILE: jvm.kt
 actual enum class Foo { B, A }
 actual enum class Bar { X, Z, Y }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, expect */

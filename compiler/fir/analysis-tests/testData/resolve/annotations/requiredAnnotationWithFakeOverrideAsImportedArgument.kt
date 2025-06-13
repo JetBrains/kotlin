@@ -13,3 +13,6 @@ object MyObject : MyInterface<Int>
 
 @Target(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>foo<!>)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, getter, interfaceDeclaration, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter */

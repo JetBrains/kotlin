@@ -16,3 +16,6 @@ private fun <T> Builder<T>.consumer(builder: Builder<T>): Unit = TODO()
 fun <T> Builder<T>.foo(): Buildee<T> = builder {
     consumer(this)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

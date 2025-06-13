@@ -27,3 +27,6 @@ fun test(
     k.f_r(f_int) { it checkType { _<Int>() } }
     k.f_pr(f_pr) { it checkType { _<PR<String, Int>>() } }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, javaType, lambdaLiteral, nullableType, samConversion, typeParameter, typeWithExtension */

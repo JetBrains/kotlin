@@ -17,3 +17,5 @@ interface C<E3> : A<E3> {
 interface D<E4> : B<E4>, C<E4> {
     // substitution-override fun foo(): E4 // (4)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

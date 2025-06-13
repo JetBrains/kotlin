@@ -10,3 +10,6 @@ fun test1(x: Any) {
         is String -> <!VAL_REASSIGNMENT!>y<!> = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration,
+stringLiteral, whenExpression, whenWithSubject */

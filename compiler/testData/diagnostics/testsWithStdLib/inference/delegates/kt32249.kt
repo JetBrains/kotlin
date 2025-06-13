@@ -16,3 +16,7 @@ object Foo {
     val x by wrapper(true)
     val y: Wrapper<Boolean> by wrapper(true)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, nullableType,
+objectDeclaration, operator, override, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter */

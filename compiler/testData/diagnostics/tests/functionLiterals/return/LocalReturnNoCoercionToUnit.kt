@@ -6,3 +6,5 @@ fun test(a: Int) {
       else return@f <!RETURN_TYPE_MISMATCH!>1<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral */

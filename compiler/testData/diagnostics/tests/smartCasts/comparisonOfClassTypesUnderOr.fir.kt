@@ -152,3 +152,6 @@ fun test11(x:A2?) {
         var k2 : A2? = x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, disjunctionExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, localProperty, nullableType, propertyDeclaration, sealed, smartcast */

@@ -25,3 +25,6 @@ fun test2() {
         Foo::b
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, ifExpression,
+localProperty, nestedClass, primaryConstructor, propertyDeclaration, typeWithExtension */

@@ -67,3 +67,6 @@ fun main(
     a.foo1(ll as List<List<Any>>)
 
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, intersectionType, javaFunction, javaType, localProperty,
+propertyDeclaration, smartcast */

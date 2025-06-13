@@ -24,3 +24,6 @@ class Foo : BaseClass() {
 
     private val v1: BaseClass.ProtSubClass = ProtSubClass()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, propertyDeclaration,
+superExpression */

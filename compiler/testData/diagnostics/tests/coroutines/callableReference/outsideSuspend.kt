@@ -10,3 +10,6 @@ suspend fun foo() {}
 fun test() {
     ::foo checkType { _<KSuspendFunction0<Unit>>() }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, suspend, typeParameter, typeWithExtension */

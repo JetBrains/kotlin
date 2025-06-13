@@ -25,3 +25,5 @@ fun test() {
     Foo.createN() <!USELESS_CAST!>as Foo?<!>
     Foo.createNN() as Foo?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

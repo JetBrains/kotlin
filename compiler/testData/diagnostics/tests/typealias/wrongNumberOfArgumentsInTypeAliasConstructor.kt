@@ -40,3 +40,7 @@ typealias MP<T1> = MyPair<String, T1>
 val testMP0 = MP<Int>("", 1)
 val testMP1 = MP(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!TYPE_MISMATCH!>""<!>)
 val testMP2 = MP<<!UPPER_BOUND_VIOLATED!>String<!>>("", "")
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, intersectionType, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

@@ -15,3 +15,6 @@ open class Test(open val ctx: Ctx) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, isExpression,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

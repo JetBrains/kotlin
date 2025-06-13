@@ -9,3 +9,5 @@ fun foo(invoke: A.()->Unit, a: A) {
 fun bar(invoke: Any.()->Any, a: Any) {
     a.invoke()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, typeWithExtension */

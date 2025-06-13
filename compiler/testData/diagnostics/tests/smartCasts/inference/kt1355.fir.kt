@@ -38,4 +38,7 @@ operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = this.put(key, val
 
 fun <T> arrayListOf(vararg values: T): MutableList<T> = throw Exception()
 
-
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, data, equalityExpression, flexibleType,
+funWithExtensionReceiver, functionDeclaration, getter, ifExpression, integerLiteral, javaFunction, nullableType,
+operator, primaryConstructor, propertyDeclaration, setter, smartcast, stringLiteral, thisExpression, typeParameter,
+vararg */

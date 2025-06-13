@@ -10,3 +10,6 @@ public class J {
 fun test() {
     val (x) = <!COMPONENT_FUNCTION_MISSING!>J.foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: destructuringDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+propertyDeclaration */

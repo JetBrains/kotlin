@@ -9,3 +9,6 @@ class My(val z: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, elvisExpression, equalityExpression, ifExpression, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, secondaryConstructor, smartcast */

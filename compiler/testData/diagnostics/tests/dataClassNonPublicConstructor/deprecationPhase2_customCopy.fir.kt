@@ -7,3 +7,6 @@ data class Data <!DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_ERROR!>private<!> c
 fun local(data: Data) {
     data.copy()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

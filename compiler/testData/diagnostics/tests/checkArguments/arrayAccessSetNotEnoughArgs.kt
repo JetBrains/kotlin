@@ -9,3 +9,6 @@ class A {
         <!NO_VALUE_FOR_PARAMETER("y")!>this[""]<!> = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, operator, stringLiteral,
+thisExpression */

@@ -6,3 +6,5 @@ fun testIt(l: List<Int>) {
         f -> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */

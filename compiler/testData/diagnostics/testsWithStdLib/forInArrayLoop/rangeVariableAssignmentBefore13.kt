@@ -38,3 +38,6 @@ fun testAssignmentNotInLoop() {
     xs = intArrayOf(4, 5, 6)
     println(xs)
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

@@ -13,3 +13,5 @@ class A : Statics() {
         foo {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

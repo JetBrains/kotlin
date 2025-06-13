@@ -19,3 +19,7 @@ fun main(a: A<*>) {
         <!USELESS_IS_CHECK!>t is <!NO_TYPE_ARGUMENTS_ON_RHS!>B<!><!>
     }.a
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, getter, interfaceDeclaration,
+isExpression, lambdaLiteral, nullableType, propertyDeclaration, starProjection, suspend, typeParameter,
+typeWithExtension */

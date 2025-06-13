@@ -24,3 +24,6 @@ fun test() {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, objectDeclaration, override, stringLiteral, typeWithExtension */

@@ -15,3 +15,5 @@ object O {}
 package c
 
 object O {}
+
+/* GENERATED_FIR_TAGS: objectDeclaration */

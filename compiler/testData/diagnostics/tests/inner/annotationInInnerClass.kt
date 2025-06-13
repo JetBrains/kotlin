@@ -4,3 +4,5 @@ class Outer {
         annotation <!NESTED_CLASS_NOT_ALLOWED("Annotation class")!>class TestNestedAnnotation<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, inner, nestedClass */

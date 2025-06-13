@@ -20,3 +20,7 @@ fun test() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg,
+whenExpression, whenWithSubject, whileLoop */

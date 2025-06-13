@@ -15,3 +15,6 @@ fun main() {
 object O {
     fun foo(aa: String, aaaa: String, bbbb: Boolean) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, localProperty, objectDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

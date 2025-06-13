@@ -34,3 +34,5 @@ class Child : PublicParentClass() {
         val z = KotlinParentClass.<!UNRESOLVED_REFERENCE!>publicStaticField<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, localProperty, propertyDeclaration */

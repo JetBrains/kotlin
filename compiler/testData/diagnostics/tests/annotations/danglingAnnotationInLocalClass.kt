@@ -8,3 +8,6 @@ fun foo() {
         @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"dangling $prop"<!>)<!SYNTAX!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+primaryConstructor, propertyDeclaration, stringLiteral */

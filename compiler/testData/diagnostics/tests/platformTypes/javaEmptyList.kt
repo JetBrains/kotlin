@@ -25,3 +25,7 @@ fun test() {
 
     checkSubtype<List<String>>(f)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, javaFunction, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

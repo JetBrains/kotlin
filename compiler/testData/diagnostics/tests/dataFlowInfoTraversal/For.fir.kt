@@ -21,3 +21,6 @@ fun foo() {
         bar(x)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, break, continue, equalityExpression, forLoop, functionDeclaration,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

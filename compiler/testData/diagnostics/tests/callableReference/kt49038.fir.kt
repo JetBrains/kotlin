@@ -12,3 +12,6 @@ fun box(): String {
     val ref1 = take(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>) // error before 1.6.20; ok, resolved to (3) since 1.6.20
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

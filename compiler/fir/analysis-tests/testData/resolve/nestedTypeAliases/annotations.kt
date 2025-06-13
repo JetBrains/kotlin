@@ -18,3 +18,6 @@ fun accessAnnotatedTA() {
     var instanceOfAnnotated1TA: String = Class.Annotated1()
     var instanceOfAnnotated2TA: String = Class.<!DEPRECATION!>Annotated2<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localProperty, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

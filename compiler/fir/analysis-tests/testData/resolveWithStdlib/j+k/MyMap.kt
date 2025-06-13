@@ -42,3 +42,6 @@ fun test(map: MutableMap<String, String>) {
         value.length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, samConversion, stringLiteral */

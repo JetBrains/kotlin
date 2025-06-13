@@ -33,3 +33,6 @@ fun test_4(s: String?) {
         s.length // Should be OK
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, nullableType,
+safeCall, smartcast */

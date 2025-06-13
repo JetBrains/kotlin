@@ -7,3 +7,5 @@
 
 @Deprecated(message = "", level = DeprecationLevel.HIDDEN) fun TestHidden() {}
 fun TestHidden() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

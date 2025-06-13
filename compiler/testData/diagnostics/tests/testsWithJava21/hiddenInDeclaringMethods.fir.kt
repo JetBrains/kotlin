@@ -50,3 +50,6 @@ fun test(short: Short, long: Long, float: Float,
 }
 
 enum class MyEnum
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, enumDeclaration, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

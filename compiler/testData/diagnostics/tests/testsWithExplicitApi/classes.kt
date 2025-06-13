@@ -47,3 +47,6 @@ public class WithNested {
 
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>enum class Foo<!> { A, B }
 public enum class Bar { A, B }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, enumDeclaration, enumEntry, functionDeclaration, inner, integerLiteral,
+nestedClass, primaryConstructor, propertyDeclaration */

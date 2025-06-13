@@ -38,3 +38,5 @@ class DerivedC : Base1, Base2, Base3 {
     @E3
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, interfaceDeclaration, override */

@@ -15,3 +15,6 @@ fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>bar<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> x + 1}
     bar { x: Int -> x + 1}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, typeParameter */

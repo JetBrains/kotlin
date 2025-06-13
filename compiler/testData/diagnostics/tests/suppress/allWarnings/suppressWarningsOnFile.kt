@@ -7,3 +7,6 @@ class C {
         val foo: String?? = null as Nothing?
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, asExpression, classDeclaration, companionObject, nullableType,
+objectDeclaration, propertyDeclaration, stringLiteral */

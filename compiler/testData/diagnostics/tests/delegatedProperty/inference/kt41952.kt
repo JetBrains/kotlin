@@ -22,3 +22,7 @@ class Delegate<R, T> {
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, operator, outProjection, propertyDeclaration, propertyDelegate,
+starProjection, typeConstraint, typeParameter */

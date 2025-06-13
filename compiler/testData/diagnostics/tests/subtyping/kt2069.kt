@@ -14,3 +14,6 @@ class T : T1 {
 
     companion object {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, objectDeclaration,
+superExpression */

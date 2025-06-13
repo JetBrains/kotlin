@@ -19,3 +19,6 @@ fun test(pipeline: A<Any, String>) {
         return@process processNested { proceed() }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,
+typeConstraint, typeParameter, typeWithExtension */

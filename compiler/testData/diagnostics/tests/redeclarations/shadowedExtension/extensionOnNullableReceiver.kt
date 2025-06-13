@@ -7,3 +7,6 @@ interface Test {
 
 fun Test?.foo() {}
 val Test?.bar: Int get() = 42
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nullableType, propertyDeclaration, propertyWithExtensionReceiver */

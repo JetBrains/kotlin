@@ -21,3 +21,5 @@ interface BoxedGenericType : Box<InaccessibleGenericSuperType<Nothing>>
 interface BoxedConcreteTypeImplementation : BoxedConcreteType
 
 interface BoxedGenericTypeImplementation : BoxedGenericType
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, nullableType, typeParameter */

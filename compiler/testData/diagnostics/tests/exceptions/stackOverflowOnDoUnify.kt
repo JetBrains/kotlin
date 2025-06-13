@@ -7,3 +7,5 @@ interface A<T1, T2>
 interface B<X> : A<X, <!UNRESOLVED_REFERENCE!>T<!>?>
 
 fun f(x: A<Int, <!UNRESOLVED_REFERENCE!>K<!>?>) = x as B
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

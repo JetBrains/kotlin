@@ -9,3 +9,6 @@ fun test() {
         .filter(String::isNotEmpty)
         .<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>collect<!>(<!UNRESOLVED_REFERENCE!>FakeClass<!>.toList())
 }
+
+/* GENERATED_FIR_TAGS: callableReference, flexibleType, functionDeclaration, inProjection, localProperty,
+propertyDeclaration, samConversion, stringLiteral */

@@ -42,3 +42,7 @@ fun <!DEPRECATION!>Obsolete<!>.receiver() {}
 fun retVal(): <!DEPRECATION!>Obsolete<!> = <!DEPRECATION!>Obsolete<!>()
 
 fun nullableRetVal(): <!DEPRECATION!>Obsolete<!>? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+interfaceDeclaration, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, setter, stringLiteral,
+typeConstraint, typeParameter, typeWithExtension */

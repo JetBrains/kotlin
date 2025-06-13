@@ -104,3 +104,7 @@ fun main() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, enumDeclaration, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, tryExpression, vararg */

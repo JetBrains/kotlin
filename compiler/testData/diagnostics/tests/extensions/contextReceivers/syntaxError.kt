@@ -6,3 +6,5 @@
 context(<!SYNTAX!><!>
 fun foo() {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

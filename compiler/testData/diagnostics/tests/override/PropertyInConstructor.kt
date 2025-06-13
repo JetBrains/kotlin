@@ -11,3 +11,5 @@ class Child(
     override val int: Int,
     override val pub: Int
 ) : Base()
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, override, primaryConstructor, propertyDeclaration */

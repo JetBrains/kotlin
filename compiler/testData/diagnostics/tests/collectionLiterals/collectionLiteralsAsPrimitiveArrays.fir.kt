@@ -17,3 +17,6 @@ fun basicTypesWithErrors() {
     val b: ShortArray = <!INITIALIZER_TYPE_MISMATCH!>[1.0]<!>
     val c: CharArray = <!INITIALIZER_TYPE_MISMATCH!>["a"]<!>
 }
+
+/* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral */

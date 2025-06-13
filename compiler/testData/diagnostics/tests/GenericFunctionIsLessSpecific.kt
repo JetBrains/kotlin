@@ -10,3 +10,6 @@ fun test() {
     checkSubtype<Int>(foo(1))
     checkSubtype<Unit>(foo("s"))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension */

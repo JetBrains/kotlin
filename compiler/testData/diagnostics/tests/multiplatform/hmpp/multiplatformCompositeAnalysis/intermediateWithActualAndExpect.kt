@@ -12,3 +12,5 @@ expect class C
 // MODULE: main()()(intermediate)
 actual class A
 actual class C
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

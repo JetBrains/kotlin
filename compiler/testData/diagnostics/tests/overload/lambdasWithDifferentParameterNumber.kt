@@ -11,3 +11,5 @@ fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!> {}
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>g<!> {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, typeWithExtension */

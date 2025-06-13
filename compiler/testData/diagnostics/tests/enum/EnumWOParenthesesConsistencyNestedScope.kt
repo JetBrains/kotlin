@@ -589,3 +589,6 @@ class Context {
 
 
 class UserKlass
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass,
+primaryConstructor, secondaryConstructor */

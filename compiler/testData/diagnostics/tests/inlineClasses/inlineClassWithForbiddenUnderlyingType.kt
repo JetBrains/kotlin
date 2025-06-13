@@ -17,3 +17,6 @@ inline class BarNullable(val u: Unit?)
 
 inline class Baz(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Nothing<!>)
 inline class BazNullable(val u: Nothing?)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter */

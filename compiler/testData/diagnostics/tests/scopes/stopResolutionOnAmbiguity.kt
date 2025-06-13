@@ -19,3 +19,6 @@ fun test(a : Any?) {
 }
 
 fun Any?.bar() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, intersectionType, isExpression, nullableType, primaryConstructor, smartcast */

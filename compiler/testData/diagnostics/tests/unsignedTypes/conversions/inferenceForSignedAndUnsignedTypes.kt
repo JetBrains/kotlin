@@ -18,3 +18,6 @@ fun foo() {
 
     id<UInt>(<!SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED!>1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, starProjection, typeParameter, typeWithExtension, unsignedLiteral */

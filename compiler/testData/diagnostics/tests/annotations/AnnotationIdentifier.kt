@@ -18,3 +18,5 @@ annotation class My
 <!NOT_AN_ANNOTATION_CLASS!>@test.annotation<!> class Your
 
 @My class Our
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration */

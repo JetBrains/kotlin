@@ -7,3 +7,6 @@ class Test<E>(var c: Collection<E>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, intersectionType, isExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, typeParameter */

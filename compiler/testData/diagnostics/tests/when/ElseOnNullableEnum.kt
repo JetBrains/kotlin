@@ -65,3 +65,7 @@ class J {
         return E.A;
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+integerLiteral, isExpression, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

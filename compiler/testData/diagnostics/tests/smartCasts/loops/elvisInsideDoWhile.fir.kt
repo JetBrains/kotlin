@@ -8,3 +8,6 @@ public fun foo(x: String?): Int {
     } while (true)
     return x.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, elvisExpression, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, intersectionType, nullableType, smartcast */

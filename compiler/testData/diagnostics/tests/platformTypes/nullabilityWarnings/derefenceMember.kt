@@ -40,3 +40,6 @@ fun test() {
         foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration */

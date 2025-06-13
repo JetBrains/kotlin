@@ -9,3 +9,5 @@ val y: Int = 1
         <!VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR!>field<!> += 1
         return 1
     }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, getter, integerLiteral, propertyDeclaration, setter */

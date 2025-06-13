@@ -10,3 +10,6 @@ inline fun <reified T : CharSequence?> foo(y: Any?) {
 }
 
 fun bar(x: CharSequence) {}
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, functionDeclaration, ifExpression, inline, isExpression,
+nullableType, reified, smartcast, typeConstraint, typeParameter */

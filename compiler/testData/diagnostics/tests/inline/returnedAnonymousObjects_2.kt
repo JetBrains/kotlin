@@ -158,3 +158,7 @@ fun test42(b: Boolean) {
     }
     x.bar()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, capturedType, classDeclaration, crossinline,
+functionDeclaration, functionalType, ifExpression, inline, integerLiteral, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration, typeParameter */

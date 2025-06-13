@@ -26,3 +26,5 @@ fun test() {
     A<String?>().bar(<!NULL_FOR_NONNULL_TYPE!>null<!>)
     A<String?>().bar("")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, stringLiteral */

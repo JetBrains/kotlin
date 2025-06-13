@@ -16,3 +16,6 @@ fun implicitCoercion() {
         return@l <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

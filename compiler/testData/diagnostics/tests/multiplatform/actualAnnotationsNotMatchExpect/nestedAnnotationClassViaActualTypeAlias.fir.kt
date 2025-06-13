@@ -19,3 +19,6 @@ actual typealias Ann = AnnImpl
 
 @AnnImpl.Nested
 actual fun foo() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, nestedClass, primaryConstructor,
+typeAliasDeclaration */

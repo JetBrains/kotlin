@@ -22,3 +22,6 @@ fun testDoWhile() {
 
 fun todo(): Nothing = throw Exception()
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: doWhileLoop, forLoop, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+localFunction, localProperty, operator, propertyDeclaration, rangeExpression, whileLoop */

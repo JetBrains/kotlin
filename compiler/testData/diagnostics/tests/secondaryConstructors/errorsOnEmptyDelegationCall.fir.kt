@@ -41,3 +41,5 @@ class A3 : B3 {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : <!INVISIBLE_REFERENCE!>super<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor */

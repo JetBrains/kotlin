@@ -12,3 +12,5 @@ fun f(
     
     a + b + c + d[0] + e[0] + f[0] // to avoid 'unused parameter'
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, integerLiteral, vararg */

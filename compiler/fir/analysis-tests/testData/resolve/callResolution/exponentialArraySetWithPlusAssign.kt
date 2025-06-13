@@ -115,3 +115,6 @@ fun test_2(x: D) {
 }
 
 fun someCallInsideLambda() {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+operator, thisExpression */

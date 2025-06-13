@@ -35,3 +35,7 @@ fun testDataFlowInfo2(a: Int?, b: Int?) {
 fun testTypeMismatch(a: String?, b: Any) {
     doInt(<!ARGUMENT_TYPE_MISMATCH!>a ?: b<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

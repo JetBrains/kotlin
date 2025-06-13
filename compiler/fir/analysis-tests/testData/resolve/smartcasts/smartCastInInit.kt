@@ -14,3 +14,6 @@ class Main {
         x.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, interfaceDeclaration,
+propertyDeclaration, smartcast */

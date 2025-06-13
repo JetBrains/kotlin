@@ -19,3 +19,6 @@ fun testAlwaysAny(x: String?): Any? {
 
     return x
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classReference, contractConditionalEffect, contracts, disjunctionExpression,
+equalityExpression, functionDeclaration, isExpression, lambdaLiteral, nullableType, smartcast */

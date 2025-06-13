@@ -6,3 +6,6 @@ class OutVariance<out T> {
     context(a: <!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>)
     fun foo(b: <!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, nullableType, out,
+typeParameter */

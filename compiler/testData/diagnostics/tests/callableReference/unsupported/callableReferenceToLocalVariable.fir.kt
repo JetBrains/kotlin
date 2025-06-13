@@ -21,3 +21,5 @@ class Test {
     fun helper() {}
 }
 
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+localProperty, propertyDeclaration */

@@ -17,3 +17,5 @@ fun bar(threadLocal: ThreadLocal<String?>) {
 fun baz(ref: AtomicReference<String?>) {
     ref.get().length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, nullableType */

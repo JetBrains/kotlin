@@ -19,3 +19,6 @@ fun B.test() = true
 fun main() {
     val x = Foo.bar(B::test) // ambiguity in NI
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

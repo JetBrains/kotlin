@@ -47,3 +47,6 @@ actual annotation class Foo5
 actual annotation class Foo6(val s: String = "value")
 
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo7<!> = Bar2
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, javaType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

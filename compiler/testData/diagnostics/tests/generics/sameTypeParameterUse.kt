@@ -15,3 +15,6 @@ class Q<R>(x: R) {
     }
 }
 fun <R> Q(x: String) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, stringLiteral,
+typeParameter */

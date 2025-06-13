@@ -10,3 +10,6 @@ public fun <E> Foo(c: A<E>) {
     val b: Foo<E> = Foo(c.size())  // OK
     val c: Foo<Int> = Foo(c.size()) // OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

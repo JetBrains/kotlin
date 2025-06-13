@@ -18,3 +18,6 @@ typealias TC = AliasedC
 var ta: TA? = null
 var tb = TB()
 var tc = TC {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral,
+nullableType, propertyDeclaration, typeAliasDeclaration */

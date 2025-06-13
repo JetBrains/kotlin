@@ -4,3 +4,5 @@ class C(val map: MutableMap<String, Any>) {
 }
 
 var bar by hashMapOf<String, Any>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate, setter */

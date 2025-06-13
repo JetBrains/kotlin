@@ -29,3 +29,6 @@ fun <X> foo(s: Slice<X>): X? {
 fun <T> id(x: T): T = x
 
 fun <Y> bar(w: Slice<Y>): Y? = null
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+interfaceDeclaration, intersectionType, nullableType, propertyDeclaration, smartcast, typeParameter */

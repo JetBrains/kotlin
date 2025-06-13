@@ -24,3 +24,6 @@ actual typealias Ann = some.my.Ann
 
 @Ann
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+typeAliasDeclaration */

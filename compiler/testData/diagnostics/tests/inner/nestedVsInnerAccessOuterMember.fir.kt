@@ -26,3 +26,6 @@ class Outer {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nestedClass, propertyDeclaration,
+stringLiteral, thisExpression */

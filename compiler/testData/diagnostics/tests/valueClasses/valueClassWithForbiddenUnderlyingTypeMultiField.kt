@@ -47,3 +47,6 @@ value class Baz2(val u: Int, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYP
 
 @JvmInline
 value class BazNullable(val u: Nothing?, val y: Nothing?)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, value */

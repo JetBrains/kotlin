@@ -36,3 +36,6 @@ fun test(b: B<String>?) {
         b?.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, typeParameter */

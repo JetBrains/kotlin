@@ -31,3 +31,6 @@ fun test2(f: Foo) {
         Any::class.java -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, equalityExpression, functionDeclaration, interfaceDeclaration,
+whenExpression, whenWithSubject */

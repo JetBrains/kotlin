@@ -18,3 +18,6 @@ fun printMessages() {
     Message.NOTHING.text<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
     <!DEBUG_INFO_SMARTCAST!>Message.NOTHING.text<!>.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, enumDeclaration, enumEntry, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, smartcast */

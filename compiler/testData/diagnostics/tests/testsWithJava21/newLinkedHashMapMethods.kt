@@ -16,3 +16,5 @@ fun foo(x: LinkedHashMap<Int, String>, y: java.util.SequencedMap<Int, String>, z
     z.<!UNRESOLVED_REFERENCE!>putFirst<!>(0, "0")
     z.<!UNRESOLVED_REFERENCE!>putLast<!>(1, "1")
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, nullableType, stringLiteral */

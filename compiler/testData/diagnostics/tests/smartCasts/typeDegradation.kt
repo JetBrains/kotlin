@@ -17,3 +17,6 @@ fun foo(d: Derived, a: Another?): Base? {
     val ad = a ?: d
     return ad
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, thisExpression */

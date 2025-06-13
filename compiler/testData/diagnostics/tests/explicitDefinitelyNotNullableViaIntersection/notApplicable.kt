@@ -17,3 +17,6 @@ fun <F> (F & Any).bar9(x: () -> Unit) {}
 
 fun <F> bar10(x: F & <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Any<!> & String) {}
 fun <F> bar11(x: <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Double<!> & <!INCORRECT_LEFT_COMPONENT_OF_INTERSECTION!>Any<!> & String) {}
+
+/* GENERATED_FIR_TAGS: dnnType, funWithExtensionReceiver, functionDeclaration, functionalType, nullableType,
+typeConstraint, typeParameter, typeWithExtension */

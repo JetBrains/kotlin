@@ -126,3 +126,7 @@ fun <T : Foo, R: Number, D: Int> main() {
         bar10(<!TYPE_MISMATCH("KProperty1<TypeVariable(K), String>; KProperty0<String>")!>::x1<!>) // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+interfaceDeclaration, localFunction, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver,
+setter, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

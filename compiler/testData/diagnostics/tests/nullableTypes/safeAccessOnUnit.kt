@@ -7,3 +7,6 @@ fun foo(my: My?): Int? {
     // ?. is required here
     return x?.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, safeCall */

@@ -20,3 +20,6 @@ class FunctionSubtype : () -> Unit {
     <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>noinline<!> f: FunctionSubtype,
     <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>crossinline<!> g: FunctionSubtype
 ) { }
+
+/* GENERATED_FIR_TAGS: classDeclaration, crossinline, functionDeclaration, functionalType, inline, noinline, operator,
+override */

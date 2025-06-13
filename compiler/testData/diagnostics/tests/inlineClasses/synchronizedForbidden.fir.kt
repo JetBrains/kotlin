@@ -88,3 +88,7 @@ fun main() {
         synchronized(block={}, lock=<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>a<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, classDeclaration, forLoop, funWithExtensionReceiver,
+functionDeclaration, getter, integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, unsignedLiteral, value */

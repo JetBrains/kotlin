@@ -12,3 +12,4 @@ fun main() {
     foo(X, Y)
 }
 
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, vararg */

@@ -11,3 +11,7 @@ abstract class KFunctionKt9005WorkAround<out R: Any?>(private val _functionInsta
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, elvisExpression, flexibleType, integerLiteral,
+javaProperty, lambdaLiteral, nullableType, out, override, primaryConstructor, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter */

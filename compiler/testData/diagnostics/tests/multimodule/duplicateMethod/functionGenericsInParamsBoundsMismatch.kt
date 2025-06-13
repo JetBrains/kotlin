@@ -40,3 +40,6 @@ fun test(b: B?) {
         b?.<!NONE_APPLICABLE!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, typeConstraint, typeParameter */

@@ -17,3 +17,6 @@ fun test() {
 
     take(B::<!INAPPLICABLE_CANDIDATE!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

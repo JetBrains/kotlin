@@ -12,3 +12,5 @@ fun main() {
     JavaClass().from("")
     JavaClass().from("", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

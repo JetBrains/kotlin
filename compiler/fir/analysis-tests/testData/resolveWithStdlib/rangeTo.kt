@@ -10,3 +10,5 @@ fun test(b: Byte, s: Short, i: Int, l: Long) {
     val x7 = i.rangeTo(1)
     val x8 = l.rangeTo(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

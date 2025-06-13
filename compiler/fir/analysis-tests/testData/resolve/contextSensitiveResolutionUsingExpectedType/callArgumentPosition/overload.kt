@@ -38,3 +38,6 @@ fun overload3(arg: MyEnum, s: String = "") { println("With 2 arguments") }
 fun test2() {
     overload3(EnumValue1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration, stringLiteral */

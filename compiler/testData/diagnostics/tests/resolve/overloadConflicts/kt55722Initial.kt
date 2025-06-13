@@ -12,3 +12,6 @@ fun foo(x: MyConsumer<in CharSequence>?, v: CharSequence) {
         x.consume(v)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, inProjection, interfaceDeclaration,
+nullableType, smartcast, typeParameter */

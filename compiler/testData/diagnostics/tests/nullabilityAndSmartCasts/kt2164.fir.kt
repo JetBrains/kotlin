@@ -37,3 +37,6 @@ fun main() {
     foo(y)
     foo(y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

@@ -123,3 +123,8 @@ object GenericDelegate {
 var <SOTB> ScopeOwner<SOTB>.delegatedExtensionProperty: SOTB by GenericDelegate
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, companionObject, functionDeclaration,
+functionalType, getter, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, objectDeclaration, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, safeCall, setter,
+starProjection, thisExpression, typeParameter */

@@ -18,3 +18,7 @@ val a2: A = try {
 } catch (t: Throwable) {
     { a: Int -> myPrint(a + this.length + 2) }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration, thisExpression, tryExpression, typeAliasDeclaration,
+typeWithExtension, whenExpression, whenWithSubject */

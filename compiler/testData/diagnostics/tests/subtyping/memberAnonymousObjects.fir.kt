@@ -5,3 +5,5 @@ class Test {
         x = <!ASSIGNMENT_TYPE_MISMATCH!>object<!> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, init, propertyDeclaration */

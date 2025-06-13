@@ -18,3 +18,6 @@ expect object <!NO_ACTUAL_FOR_EXPECT{JVM}!>O<!>
 // MODULE: jvm()()(common)
 // FILE: jvm.kt
 fun main() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, interfaceDeclaration, objectDeclaration,
+propertyDeclaration */

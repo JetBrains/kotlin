@@ -10,3 +10,6 @@ fun <T: MaybePair> foo(x: T) {
         println(<!DEBUG_INFO_SMARTCAST!>x<!>.second)
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, functionDeclaration, ifExpression, nullableType, smartcast,
+typeAliasDeclaration, typeConstraint, typeParameter */

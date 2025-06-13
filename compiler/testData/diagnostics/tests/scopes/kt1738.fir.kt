@@ -10,3 +10,6 @@ fun test(a: A) {
     a.<!INVISIBLE_REFERENCE!>i<!>++
     a.j++
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression,
+primaryConstructor, propertyDeclaration */

@@ -10,3 +10,5 @@ expect <!CONFLICTING_OVERLOADS!>fun foo()<!>
 <!EXPECTED_DECLARATION_WITH_BODY!>expect fun bar()<!> {}
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

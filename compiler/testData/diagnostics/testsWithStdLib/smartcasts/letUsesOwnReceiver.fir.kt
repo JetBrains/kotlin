@@ -6,3 +6,5 @@ fun foo(s: String?) {
     s?.let { f(s) }
     s?.let { f(it) }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, nullableType, safeCall, smartcast */

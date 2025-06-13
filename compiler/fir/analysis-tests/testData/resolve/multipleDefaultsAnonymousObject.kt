@@ -13,3 +13,6 @@ fun bar(): Int {
     }
     return o.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, override, propertyDeclaration */

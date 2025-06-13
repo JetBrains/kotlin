@@ -66,3 +66,6 @@ fun test7() : Map<A, A> = emptyStrangeMap()
 fun <U, V: U> foo(): U = throw Exception()
 
 fun test8(): Int = foo()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

@@ -33,3 +33,5 @@ fun f6(x: JAndI10) = x.foo()
 
 interface JAndI11 : J, I11
 fun f7(x: JAndI11) = x.foo()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, stringLiteral */

@@ -25,3 +25,6 @@ fun Baz(x: Foo): Baz {
 }
 
 fun testBaz(e: Foo) = Baz(e)
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+operator, primaryConstructor, propertyDeclaration, stringLiteral */

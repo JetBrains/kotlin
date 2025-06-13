@@ -22,3 +22,5 @@ public class FooImpl {
 
     public void injectedMethod() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

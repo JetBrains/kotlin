@@ -22,3 +22,6 @@ fun test() {
 
     foo<A, String>(A::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

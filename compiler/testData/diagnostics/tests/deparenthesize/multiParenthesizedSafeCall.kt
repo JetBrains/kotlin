@@ -3,3 +3,5 @@
 fun f(s : String?) : Boolean {
     return (((s?.equals("a"))))!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, nullableType, safeCall, stringLiteral */

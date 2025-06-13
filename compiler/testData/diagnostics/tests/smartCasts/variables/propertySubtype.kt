@@ -10,3 +10,6 @@ fun foo(m: MyClass): Int {
     m.p = "xyz"
     return bar(m.p)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

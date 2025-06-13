@@ -7,3 +7,5 @@ class A {
         class B
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration */

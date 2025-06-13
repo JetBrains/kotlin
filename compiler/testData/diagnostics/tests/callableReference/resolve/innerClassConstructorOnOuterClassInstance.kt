@@ -13,3 +13,6 @@ fun foo(a: A) {
         val v = a::InnerInA
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, ifExpression, inner, isExpression,
+localProperty, propertyDeclaration */

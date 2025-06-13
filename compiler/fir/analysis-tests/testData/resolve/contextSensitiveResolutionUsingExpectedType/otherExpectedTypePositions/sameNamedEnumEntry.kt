@@ -14,3 +14,5 @@ fun test(a: A) {
     }
 }
 
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

@@ -13,3 +13,6 @@ fun foo() {
 
     ::baz
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nullableType, propertyDeclaration, typeParameter */

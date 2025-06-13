@@ -25,3 +25,5 @@ fun charAndNormal() {
     val b = charArrayOf('a', 'b', 'c')
     <!EQUALITY_NOT_APPLICABLE!>a == b<!>
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, localProperty, propertyDeclaration */

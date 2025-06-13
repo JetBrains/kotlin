@@ -50,3 +50,5 @@ fun testLambda(lMyClass: (arg: MyClass) -> Unit) {
     lMyClass(<!UNRESOLVED_REFERENCE!>superFunc<!>())
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, functionalType, lambdaLiteral,
+nestedClass, objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

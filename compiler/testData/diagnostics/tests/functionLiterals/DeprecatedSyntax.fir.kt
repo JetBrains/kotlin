@@ -23,3 +23,5 @@ val newSyntax1 = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>a<!>, <!VALUE_PARAME
 val newSyntax2 = { a: Int, b: Int -> }
 val newSyntax3 = { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>a<!>, b: Int -> }
 val newSyntax4 = { a: Int, <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>b<!> -> }
+
+/* GENERATED_FIR_TAGS: functionalType, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

@@ -22,3 +22,6 @@ class Foo(var x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression, init,
+isExpression, localProperty, primaryConstructor, propertyDeclaration, smartcast */

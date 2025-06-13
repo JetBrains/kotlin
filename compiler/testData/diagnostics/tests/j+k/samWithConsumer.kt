@@ -23,3 +23,7 @@ fun test(a: A<out Number>) {
         it.toInt()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, infix, javaType, lambdaLiteral, nullableType, outProjection, samConversion, typeParameter,
+typeWithExtension */

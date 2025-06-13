@@ -29,3 +29,6 @@ fun test_2() {
         }
     cards[0][0][0] = <!ARGUMENT_TYPE_MISMATCH!>MARKED<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, functionDeclaration, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, objectDeclaration, propertyDeclaration, sealed */

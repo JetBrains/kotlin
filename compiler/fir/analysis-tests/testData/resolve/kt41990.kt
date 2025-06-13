@@ -7,3 +7,6 @@ fun String.test_1(s: String) {
     getLambda()()
     getLambda()(s)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType,
+typeWithExtension */

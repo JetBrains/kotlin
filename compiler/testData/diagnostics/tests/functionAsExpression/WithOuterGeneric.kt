@@ -31,3 +31,7 @@ class Outer<O> {
         devNull(fun (): O = null!!)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+getter, init, localFunction, nullableType, propertyDeclaration, propertyWithExtensionReceiver, thisExpression,
+typeParameter */

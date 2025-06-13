@@ -13,3 +13,6 @@ fun <T : <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Foo<!>> foo(x: T?) 
 fun box() = "OK".also {
     foo(null)?.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, safeCall, stringLiteral,
+typeConstraint, typeParameter */

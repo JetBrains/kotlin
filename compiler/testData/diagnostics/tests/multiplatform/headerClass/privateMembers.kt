@@ -27,3 +27,6 @@ actual class A actual private constructor() {
     actual var baz: Any? = null
         private set
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, stringLiteral */

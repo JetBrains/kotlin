@@ -16,3 +16,5 @@ fun baz(x: (String) -> Unit) {}
 fun bar() {
     baz(A::foo)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference */

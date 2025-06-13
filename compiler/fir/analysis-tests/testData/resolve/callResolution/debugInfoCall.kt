@@ -22,3 +22,6 @@ fun main() {
 
     a.<!DEBUG_INFO_CALL("fqName: B.invoke; typeCall: variable&invoke")!>bar(1)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+interfaceDeclaration, localFunction, localProperty, operator, propertyDeclaration, stringLiteral */

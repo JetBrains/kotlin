@@ -21,3 +21,6 @@ annotation class B2 {
     class Container
 }
 annotation class D2(val value: Array<B2>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, nestedClass, primaryConstructor,
+propertyDeclaration */

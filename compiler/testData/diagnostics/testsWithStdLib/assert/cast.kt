@@ -19,3 +19,6 @@ fun test2() {
     assert((a as B).bool())
     <!DEBUG_INFO_SMARTCAST!>a<!><!UNNECESSARY_SAFE_CALL!>?.<!>bool()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, propertyDeclaration, safeCall, smartcast */

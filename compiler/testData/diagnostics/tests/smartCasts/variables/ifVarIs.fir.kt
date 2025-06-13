@@ -8,3 +8,6 @@ public fun foo() {
     if (s is String) 
         bar(s)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, isExpression, javaFunction, javaProperty,
+localProperty, propertyDeclaration, smartcast, stringLiteral */

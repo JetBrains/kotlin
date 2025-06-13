@@ -37,3 +37,7 @@ fun main(x: Foo<out Number?>, y: Bar<out Number?>, z1: Foo<out Number>, z2: Bar<
     <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo1<!>()<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Type is unknown")!>z2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>boo2<!>()<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, classDeclaration, flexibleType, funWithExtensionReceiver,
+functionDeclaration, javaType, nullableType, out, outProjection, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

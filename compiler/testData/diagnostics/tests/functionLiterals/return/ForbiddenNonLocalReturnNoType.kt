@@ -18,3 +18,5 @@ fun test3() {
 }
 
 fun <T> run(f: () -> T): T { return f() }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localFunction, nullableType, typeParameter */

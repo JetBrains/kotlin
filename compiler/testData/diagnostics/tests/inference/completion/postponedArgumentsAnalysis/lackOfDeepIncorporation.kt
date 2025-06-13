@@ -58,3 +58,6 @@ class Foo<out A> {
         fun <A> bar(x: A) = materialize<Foo<A>>()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, out, propertyDeclaration, typeParameter */

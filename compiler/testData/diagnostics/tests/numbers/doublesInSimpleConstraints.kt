@@ -23,3 +23,6 @@ fun test() {
 
     val e: Float = <!TYPE_MISMATCH, TYPE_MISMATCH!>id(1)<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, intersectionType, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

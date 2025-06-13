@@ -86,3 +86,6 @@ fun useTrueAndFalseInFalseBranch(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, isExpression,
+lambdaLiteral, nullableType, smartcast */

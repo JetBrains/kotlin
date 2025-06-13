@@ -14,3 +14,5 @@ package a
 import b.TA
 
 class MyClass : <!FINAL_SUPERTYPE!>TA<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, typeAliasDeclaration */

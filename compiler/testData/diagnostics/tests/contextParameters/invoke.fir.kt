@@ -108,3 +108,7 @@ fun qux(
 
     "".<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>f3<!>(1, true)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, functionalType,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext,
+typeWithExtension */

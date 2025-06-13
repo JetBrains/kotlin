@@ -20,3 +20,6 @@ fun test() {
         emit(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

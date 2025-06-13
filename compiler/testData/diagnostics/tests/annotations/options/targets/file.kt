@@ -23,3 +23,5 @@ package test
 package test
 
 @common class Correct
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration */

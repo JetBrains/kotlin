@@ -105,3 +105,5 @@ fun test(
     (charBufferXYCharAt as CharSequence).get(0)
     (charBufferXYCharAt as CharAt).charAt(0)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral, javaFunction, javaType */

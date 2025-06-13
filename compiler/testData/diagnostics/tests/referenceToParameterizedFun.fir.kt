@@ -7,3 +7,6 @@ fun box(): String {
     val foo = ::<!CANNOT_INFER_PARAMETER_TYPE!>consume<!>
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter */

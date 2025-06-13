@@ -37,3 +37,7 @@ fun box(): String {
     }
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, ifExpression, isExpression,
+javaFunction, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection,
+stringLiteral */

@@ -12,3 +12,6 @@ fun f() {
     fun <T> doEmit(collector: FlowCollector<T>) {}
     flowOf(1).<!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>transform<!> { doEmit(this) }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, in, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localFunction, nullableType, out, thisExpression, typeParameter, typeWithExtension */

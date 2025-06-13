@@ -9,3 +9,6 @@ fun test(ints: List<Int>) {
         ints.reduce1 { a, b -> a + b }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter */

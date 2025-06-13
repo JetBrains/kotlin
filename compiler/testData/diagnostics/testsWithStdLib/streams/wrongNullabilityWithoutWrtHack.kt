@@ -24,3 +24,7 @@ fun run(filter: IntPredicate, allProcesses: Stream<Process>): List<IntLongPair> 
         else null
     }.toList()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+inProjection, interfaceDeclaration, javaFunction, lambdaLiteral, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, samConversion, smartcast */

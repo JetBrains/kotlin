@@ -54,3 +54,7 @@ fun foo(x: String?, y: String?, z: String?) {
         z.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, checkNotNullCall, disjunctionExpression, elvisExpression,
+equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast */

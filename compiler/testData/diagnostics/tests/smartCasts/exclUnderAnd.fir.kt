@@ -11,4 +11,7 @@ fun foo(p: Boolean, v: D?): String {
     if (p || v!! == D("?", false)) v<!UNSAFE_CALL!>.<!>a
     else v.a
     return ""
-} 
+}
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, classDeclaration, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

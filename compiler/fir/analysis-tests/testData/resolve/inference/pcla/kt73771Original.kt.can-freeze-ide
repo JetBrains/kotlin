@@ -75,3 +75,5 @@ val townsWiki = buildList {
                     ""
             ).run(::add)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, lambdaLiteral, propertyDeclaration, stringLiteral */

@@ -9,3 +9,6 @@ public inline fun <reified T : Any, reified R : Any> register(converter: (T) -> 
     <!USAGE_IS_NOT_INLINABLE!>converter<!> as (Any) -> Any
     reg(<!USAGE_IS_NOT_INLINABLE!>converter<!> as (Any) -> Any)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, inline, intersectionType, reified, smartcast,
+stringLiteral, typeConstraint, typeParameter */

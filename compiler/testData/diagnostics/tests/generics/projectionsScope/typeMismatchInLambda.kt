@@ -25,3 +25,7 @@ fun test(a: A<out CharSequence>, z: Out<CharSequence>) {
         <!TYPE_MISMATCH, TYPE_MISMATCH!>""<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, comparisonExpression, functionDeclaration, functionalType,
+ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, nullableType, out, outProjection,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter */

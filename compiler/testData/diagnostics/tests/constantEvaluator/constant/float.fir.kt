@@ -24,3 +24,5 @@ val prop7 = 1e-1f
 
 // val prop8: 0.1.toFloat()
 val prop8 = 1.0e-1f
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

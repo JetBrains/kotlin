@@ -13,3 +13,6 @@ fun use() {
     // No smart cast should be here!
     foo(bar { x = null }, <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode())
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, elvisExpression, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

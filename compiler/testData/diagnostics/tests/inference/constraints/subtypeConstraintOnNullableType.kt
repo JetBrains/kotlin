@@ -22,3 +22,7 @@ fun test(a: A<Int>, aN: A<Int?>, o: Out<Int?>) {
     //T = Int, T? >: Int? => T = Int
     notNullable checkType { _<Int>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

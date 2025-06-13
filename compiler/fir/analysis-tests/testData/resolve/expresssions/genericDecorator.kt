@@ -18,3 +18,5 @@ public abstract class Decorator<T extends LookupElement> extends LookupElement {
 class MyDecorator : <!SUPERTYPE_NOT_INITIALIZED!>Decorator<LookupElement><!> {
     override fun getLookupString(): String = delegate.lookupString
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, override */

@@ -15,3 +15,7 @@ fun test() {
     val safeFooCall = foo() as? String
     safeFooCall checkType { _<String?>() }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, typeParameter,
+typeWithExtension */

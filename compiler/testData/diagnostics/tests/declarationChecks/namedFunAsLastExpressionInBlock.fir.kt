@@ -73,3 +73,7 @@ fun success() {
     }
     y checkType { _<Unit>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localFunction, localProperty,
+nullableType, propertyDeclaration, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

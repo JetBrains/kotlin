@@ -23,3 +23,7 @@ fun foo(v: Variants): String {
         is Variants.B -> "B"
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, data, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, lambdaLiteral, nestedClass, objectDeclaration, sealed, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

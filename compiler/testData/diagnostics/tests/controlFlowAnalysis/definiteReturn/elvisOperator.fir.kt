@@ -20,3 +20,6 @@ fun test3(): String {
 fun test4(): String {
     run { run { null } ?: return "" }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, lambdaLiteral, nullableType,
+stringLiteral */

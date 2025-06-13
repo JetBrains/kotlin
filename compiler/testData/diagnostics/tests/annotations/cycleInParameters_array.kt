@@ -10,3 +10,5 @@ annotation class AnnotationWithArray(
 annotation class AnnotationWithVararg(
     vararg val args: AnnotationWithVararg
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, outProjection, primaryConstructor, propertyDeclaration, vararg */

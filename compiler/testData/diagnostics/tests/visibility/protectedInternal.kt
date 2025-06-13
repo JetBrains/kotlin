@@ -12,3 +12,5 @@ internal class Derived : Base() {
     override val a = B()
         get() = field
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, override, propertyDeclaration */

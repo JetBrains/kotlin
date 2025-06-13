@@ -20,3 +20,6 @@ fun baz(arg: Array<Int> = <!UNSUPPORTED!>[]<!>) {
 class Foo(
     val v: Array<Int> = <!UNSUPPORTED!>[]<!>
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, functionDeclaration, ifExpression, integerLiteral,
+localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

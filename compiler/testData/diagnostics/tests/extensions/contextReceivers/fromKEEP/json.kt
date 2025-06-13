@@ -27,3 +27,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, thisExpression,
+typeWithExtension */

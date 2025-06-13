@@ -20,3 +20,5 @@ fun kk(a: KotlinEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a
 fun jj2(a: JavaEnumA, b: JavaEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
 fun jk2(a: JavaEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
 fun kk2(a: KotlinEnumA, b: KotlinEnumB) = <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>a === b<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, equalityExpression, functionDeclaration, javaType */

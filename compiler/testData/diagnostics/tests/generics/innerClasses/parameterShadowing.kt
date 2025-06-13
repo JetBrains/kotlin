@@ -18,3 +18,6 @@ fun main() {
     inner.foo().checkType { _<Int>() }
     inner.outerE().checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

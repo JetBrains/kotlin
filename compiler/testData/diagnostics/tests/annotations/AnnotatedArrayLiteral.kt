@@ -15,3 +15,6 @@ fun foo0() {
 @X(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Z()<!> arrayOf()<!>)
 fun foo1() {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, primaryConstructor,
+propertyDeclaration */

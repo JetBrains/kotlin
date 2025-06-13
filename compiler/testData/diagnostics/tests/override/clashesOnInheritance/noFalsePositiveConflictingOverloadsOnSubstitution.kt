@@ -18,3 +18,6 @@ fun main() {
     m.foo()
     m.foo<Int>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

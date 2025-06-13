@@ -30,3 +30,6 @@ fun main() {
     val x20 = String?::hashCode::hashCode
     val x21 = kotlin.String?::hashCode::hashCode
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, elvisExpression, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration */

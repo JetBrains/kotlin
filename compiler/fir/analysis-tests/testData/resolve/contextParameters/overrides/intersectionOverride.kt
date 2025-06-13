@@ -68,3 +68,6 @@ fun usage(a: IntersectionInterface, b: IntersectionInterfaceWithSameContext) {
         IntersectionClassWithSameContext().b
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+interfaceDeclaration, lambdaLiteral, override, propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

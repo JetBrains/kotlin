@@ -19,3 +19,5 @@ expect class Bar {
 
 // FILE: jvm.kt
 actual typealias Bar = Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, javaType, nestedClass, typeAliasDeclaration */

@@ -9,3 +9,4 @@ fun foo() {
     }
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, intersectionType, lambdaLiteral, stringLiteral */

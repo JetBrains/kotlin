@@ -5,3 +5,5 @@ class ClassB() {
     private inner class ClassC: <!SYNTAX!>super<!><!SYNTAX!>.<!>@<!UNRESOLVED_REFERENCE!>ClassA<!>()<!SYNTAX!><!> {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, primaryConstructor */

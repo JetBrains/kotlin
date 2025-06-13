@@ -9,3 +9,6 @@ fun test() {
     val foo: Collection<Foo> = <!TYPE_MISMATCH!>java.util.Collections.singleton(nullable)<!>
     val foo1: Collection<Foo> = java.util.Collections.singleton(nullable!!)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,
+localProperty, nullableType, propertyDeclaration */

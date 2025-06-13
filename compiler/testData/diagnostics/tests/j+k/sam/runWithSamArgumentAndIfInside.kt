@@ -31,3 +31,7 @@ fun test(p: Boolean) {
     J.run { if (p) listOf("") else emptyList() }
     K.run { if (p) listOf("") else emptyList() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, companionObject, flexibleType, funInterface, functionDeclaration,
+ifExpression, interfaceDeclaration, javaFunction, javaType, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
+samConversion, starProjection, stringLiteral, typeParameter */

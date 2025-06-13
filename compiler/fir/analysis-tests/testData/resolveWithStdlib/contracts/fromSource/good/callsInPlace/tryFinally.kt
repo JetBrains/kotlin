@@ -88,3 +88,6 @@ inline fun test_8(f: () -> Int): Int {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, tryExpression, unnamedLocalVariable */

@@ -20,3 +20,6 @@ fun main() {
     for ((i: Any,) in listOf(Pair(1,2))) {}
     for ((i: Any,/**/) in listOf(Pair(1,2))) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

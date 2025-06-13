@@ -9,3 +9,7 @@ fun test(a: Int) {
     }
     checkSubtype<Unit>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, comparisonExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+typeParameter, typeWithExtension */

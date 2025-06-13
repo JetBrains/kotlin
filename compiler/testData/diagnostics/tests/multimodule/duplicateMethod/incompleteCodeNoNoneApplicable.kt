@@ -20,3 +20,5 @@ fun test() {
     // There should be no "none applicable" error here
     f(
 <!SYNTAX!><!>}
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration */

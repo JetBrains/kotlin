@@ -661,3 +661,7 @@ fun test57() {
         x = materialize()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, contractCallsEffect, contracts, forLoop, functionDeclaration,
+functionalType, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+rangeExpression, smartcast, stringLiteral, typeParameter */

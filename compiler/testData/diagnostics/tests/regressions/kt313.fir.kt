@@ -10,3 +10,6 @@ fun <T : Any> T?.npe() : T {
       throw NullPointerException()
     return this;
 }
+
+/* GENERATED_FIR_TAGS: dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+nullableType, smartcast, thisExpression, typeConstraint, typeParameter */

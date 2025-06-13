@@ -23,3 +23,5 @@ actual public fun <!AMBIGUOUS_EXPECTS!>foo<!>() {}
 actual class <!AMBIGUOUS_EXPECTS, PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo<!> {
     actual public fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

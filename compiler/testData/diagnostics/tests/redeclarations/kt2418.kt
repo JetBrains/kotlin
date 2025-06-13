@@ -27,3 +27,5 @@ enum class D {
     class <!REDECLARATION!>FOO<!> {}
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, integerLiteral, nestedClass,
+propertyDeclaration */

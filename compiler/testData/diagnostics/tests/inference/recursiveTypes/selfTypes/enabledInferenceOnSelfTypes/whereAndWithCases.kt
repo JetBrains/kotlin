@@ -38,3 +38,6 @@ fun withTest(a: I1<*>, b: I3<*>) {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, in, interfaceDeclaration, lambdaLiteral, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

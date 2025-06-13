@@ -32,3 +32,5 @@ open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class Parent<!> : GrandParent(), ISecon
 class OtherIntermediate : Parent(), ISecondary
 
 abstract class Child : Parent(), IChild
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

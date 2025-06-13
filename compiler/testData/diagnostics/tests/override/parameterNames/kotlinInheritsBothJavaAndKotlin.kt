@@ -13,3 +13,5 @@ interface KotlinTrait {
 }
 
 <!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class BothTraitsSubclass<!> : JavaInterface, KotlinTrait
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType */

@@ -43,3 +43,7 @@ fun f2(future: OurFuture<String>, e: Either.Left<String>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral,
+localProperty, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, samConversion, typeParameter,
+whenExpression */

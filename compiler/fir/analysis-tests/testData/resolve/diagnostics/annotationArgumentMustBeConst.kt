@@ -30,3 +30,6 @@ class Class {
 )
 @Ann3(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>arr<!>)
 fun test() {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, collectionLiteral, const,
+functionDeclaration, integerLiteral, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

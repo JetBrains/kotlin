@@ -24,3 +24,6 @@ val bar: Bar = run {
     if (x == null) throw Exception()
     <!RETURN_TYPE_MISMATCH!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter */

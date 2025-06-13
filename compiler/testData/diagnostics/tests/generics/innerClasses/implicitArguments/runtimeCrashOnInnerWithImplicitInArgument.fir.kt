@@ -30,3 +30,7 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, functionalType, in, inner,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+thisExpression, typeParameter */

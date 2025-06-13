@@ -22,3 +22,5 @@ fun test() {
     <!OPT_IN_USAGE_ERROR("Experimental; This is an experimental API")!>someFunction<!>()
     <!OPT_IN_USAGE_ERROR("ExperimentalWithConcatenation; This is an experimental API")!>anotherFunction<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, stringLiteral */

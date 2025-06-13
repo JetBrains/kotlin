@@ -19,3 +19,6 @@ fun main() {
     x.foo = true
     x.bar = true
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, localProperty,
+propertyDeclaration */

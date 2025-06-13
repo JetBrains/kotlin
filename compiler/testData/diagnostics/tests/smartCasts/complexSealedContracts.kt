@@ -81,3 +81,8 @@ fun main() {
 fun nonNullPrint(printMe: String) {
     println(printMe)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, data, funWithExtensionReceiver,
+functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression, javaFunction, lambdaLiteral,
+localProperty, nestedClass, nullableType, out, override, primaryConstructor, propertyDeclaration, sealed, smartcast,
+thisExpression, typeConstraint, typeParameter */

@@ -55,3 +55,6 @@ fun h(): Int {
         if (true) return 12
     }
 } // should work
+
+/* GENERATED_FIR_TAGS: assignment, break, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, propertyDeclaration, smartcast, stringLiteral, whileLoop */

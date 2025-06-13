@@ -10,3 +10,5 @@ interface IRight {
 interface IDiamond : ILeft, IRight {
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>(): String = "IDiamond"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, stringLiteral */

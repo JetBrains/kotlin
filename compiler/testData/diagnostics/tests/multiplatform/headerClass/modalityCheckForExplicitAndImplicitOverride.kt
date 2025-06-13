@@ -35,3 +35,5 @@ open class WithFinal {
 }
 
 actual open class Foo3 : WithFinal()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, override, propertyDeclaration, stringLiteral, superExpression */

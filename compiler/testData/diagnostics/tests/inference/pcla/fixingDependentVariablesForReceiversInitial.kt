@@ -29,3 +29,7 @@ class State {
 }
 
 class CurveSet<CY : Any>(units: Units<CY>)
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, suspend, typeConstraint,
+typeParameter, typeWithExtension */

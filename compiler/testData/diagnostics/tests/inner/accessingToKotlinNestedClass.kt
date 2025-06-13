@@ -44,3 +44,6 @@ fun test() {
     val dic: D.<!UNRESOLVED_REFERENCE!>IC<!> = D().IC()
     val di: D.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration, localProperty, nestedClass,
+nullableType, propertyDeclaration */

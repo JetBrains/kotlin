@@ -56,3 +56,6 @@ fun main() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, typeWithExtension */

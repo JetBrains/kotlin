@@ -36,3 +36,8 @@ fun main(x: List<Instance>) {
         Simple.ListSimple(EnumMap<Format, List<Instance>>(Format::class.java), ::LinkedList)
     ) { it.format } // Internal Error occurred while analyzing this expression
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, classReference, enumDeclaration, enumEntry, flexibleType,
+funWithExtensionReceiver, functionDeclaration, functionalType, javaCallableReference, javaFunction, javaType,
+lambdaLiteral, localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration, samConversion,
+typeConstraint, typeParameter */

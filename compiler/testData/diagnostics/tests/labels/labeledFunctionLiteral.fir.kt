@@ -16,3 +16,5 @@ fun lambda() {
         return this@lambda
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, localProperty, propertyDeclaration, thisExpression */

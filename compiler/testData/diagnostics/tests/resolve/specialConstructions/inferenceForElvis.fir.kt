@@ -7,3 +7,7 @@ fun test() {
     val x = foo { it checkType { _<String>() }} ?: "" // foo() is inferred as foo<String>, which isn't very good
     val y: Any = foo { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>it<!> checkType { _<Any>() } } ?: "" // but for now it's fixed by specifying expected type
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeConstraint, typeParameter,
+typeWithExtension */

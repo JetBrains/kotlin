@@ -15,3 +15,6 @@ fun box() {
         go2(x::<!INAPPLICABLE_CANDIDATE!>id<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, suspend, thisExpression */

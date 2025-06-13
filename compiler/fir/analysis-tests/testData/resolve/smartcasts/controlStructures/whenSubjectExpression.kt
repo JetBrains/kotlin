@@ -17,3 +17,6 @@ fun whenWithSubjectVariable(x: Any) {
         else -> y.toInt()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, isExpression, localProperty,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

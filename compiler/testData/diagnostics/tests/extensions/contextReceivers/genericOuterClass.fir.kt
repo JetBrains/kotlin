@@ -15,3 +15,5 @@ fun Collection<Int>.bar() {
     B<Int>()
     <!NO_CONTEXT_ARGUMENT!>B<!><String>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

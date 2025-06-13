@@ -14,3 +14,6 @@ fun test(): String {
     val value: Any = randomValue() ?: return "<<null>>"
     return value.toString()
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

@@ -284,3 +284,6 @@ val sameDefaultArgument = defaultArgument
 interface UserInterface
 interface UserInterfaceA
 interface UserInterfaceB
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral, typeAliasDeclaration, typeConstraint, typeParameter */

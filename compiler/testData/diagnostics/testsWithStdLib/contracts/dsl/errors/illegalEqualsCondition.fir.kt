@@ -29,3 +29,6 @@ fun equalNullWithCall() {
         <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (get() == null)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, lambdaLiteral,
+nullableType */

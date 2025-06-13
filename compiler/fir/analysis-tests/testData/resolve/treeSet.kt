@@ -4,3 +4,5 @@
 import java.util.*
 
 val x: SortedSet<Int> = TreeSet()
+
+/* GENERATED_FIR_TAGS: flexibleType, javaFunction, propertyDeclaration */

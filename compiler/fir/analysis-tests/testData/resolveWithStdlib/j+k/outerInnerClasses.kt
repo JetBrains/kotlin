@@ -33,3 +33,5 @@ class K2: J1() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, javaFunction, javaType */

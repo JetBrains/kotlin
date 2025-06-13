@@ -56,3 +56,5 @@ fun test_4(d: D) {
     d.<!FUNCTION_CALL_EXPECTED!>x3<!>
     d.<!FUNCTION_CALL_EXPECTED!>x4<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, override, stringLiteral */

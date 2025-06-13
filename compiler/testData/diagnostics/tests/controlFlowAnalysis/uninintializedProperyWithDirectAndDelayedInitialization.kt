@@ -17,3 +17,5 @@ class B {
     }
     val d = a
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration */

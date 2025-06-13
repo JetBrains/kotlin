@@ -6,3 +6,5 @@ fun <E> foo() where E: I {}
 fun <E> fooE1() where <!SYNTAX!><!>: I {}
 fun <E> fooE2() where E: <!SYNTAX!><!>{}
 fun <E> fooE3() where <!SYNTAX!><!>{}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

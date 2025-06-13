@@ -12,3 +12,6 @@ data object Second
 <!WRONG_MODIFIER_TARGET!>data<!> interface Third
 
 <!WRONG_MODIFIER_TARGET!>data<!> annotation class Fourth(val x: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, data, enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration */

@@ -89,3 +89,6 @@ fun testWithContext() {
         dsl.memberFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, lambdaLiteral, nullableType, propertyDeclaration, typeParameter, typeWithContext, typeWithExtension */

@@ -12,3 +12,6 @@ fun foo() {
     if (x == null) return
     A().bar(x)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

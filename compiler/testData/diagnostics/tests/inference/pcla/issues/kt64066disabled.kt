@@ -25,3 +25,7 @@ fun box2() {
         uncompilingFun = { handleInt(it) }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter,
+typeWithExtension */

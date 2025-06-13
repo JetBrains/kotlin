@@ -21,3 +21,6 @@ fun main(intProp: PropKey<Int>, w: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

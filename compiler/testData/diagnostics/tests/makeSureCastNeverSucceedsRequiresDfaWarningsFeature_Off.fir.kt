@@ -9,3 +9,6 @@ class Bar {
     fun render() = print(this)
 }
 val a = (Foo() as? Bar)?.render()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, propertyDeclaration, safeCall,
+thisExpression */

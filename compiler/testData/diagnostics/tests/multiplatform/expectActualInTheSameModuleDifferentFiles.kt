@@ -15,3 +15,5 @@ expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class B<!>
 
 // FILE: jvm2.kt
 actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class B<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

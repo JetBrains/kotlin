@@ -68,3 +68,8 @@ operator fun <X> X.getValue(reference: X, property: Any?): Value = Value
 val <B> B.delegatedProperty: Value by Any()
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, interfaceDeclaration, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, propertyWithExtensionReceiver, safeCall,
+typeParameter */

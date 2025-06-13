@@ -25,3 +25,6 @@ fun foo(): Any = ""
 class A {
     static A create() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, flexibleType, functionDeclaration, ifExpression, integerLiteral, isExpression,
+javaFunction, javaType, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

@@ -12,3 +12,6 @@ fun main() {
         add("")
     }.get().length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,
+stringLiteral, typeParameter, typeWithExtension */

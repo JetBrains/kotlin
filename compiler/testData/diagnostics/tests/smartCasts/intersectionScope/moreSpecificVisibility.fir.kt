@@ -15,3 +15,6 @@ fun test(x: A) {
         x.bar
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, propertyDeclaration, smartcast */

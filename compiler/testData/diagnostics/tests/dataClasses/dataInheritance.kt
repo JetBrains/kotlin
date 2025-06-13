@@ -13,3 +13,6 @@ class Derived: Base(42)
 data class Complex(val y: Int): SuperInterface, SuperClass()
 
 <!DATA_CLASS_OVERRIDE_CONFLICT!>data<!> class SubData(val sss: String) : <!FINAL_SUPERTYPE!>Complex<!>(42)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, integerLiteral, interfaceDeclaration, primaryConstructor,
+propertyDeclaration */

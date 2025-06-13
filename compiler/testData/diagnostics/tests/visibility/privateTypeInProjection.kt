@@ -15,3 +15,5 @@ fun test() {
     B<<!INVISIBLE_REFERENCE!>A<!>>()
     foo<<!INVISIBLE_REFERENCE!>A<!>>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, typeParameter */

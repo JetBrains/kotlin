@@ -26,3 +26,6 @@ class C<R>() {
 
 var c1: Int by C()
 var c2: Int <!DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>by<!> C<Number>()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, setter, starProjection, typeParameter */

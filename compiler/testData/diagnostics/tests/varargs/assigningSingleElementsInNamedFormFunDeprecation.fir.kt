@@ -58,3 +58,7 @@ fun testMany(a: Any) {
     manyFoo(v = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>a as Int<!>)
     manyFoo(s = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>a <!CAST_NEVER_SUCCEEDS!>as<!> String<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, asExpression, classDeclaration, functionDeclaration, integerLiteral,
+localClass, localProperty, nullableType, primaryConstructor, propertyDeclaration, smartcast, stringLiteral,
+typeParameter, vararg */

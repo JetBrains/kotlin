@@ -49,3 +49,7 @@ fun testExpectedType() {
     <!CANNOT_INFER_PARAMETER_TYPE!>testReverseFakeIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
     <!CANNOT_INFER_PARAMETER_TYPE!>testRegularIntersection<!>(<!UNRESOLVED_REFERENCE!>InheritorObject<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration,
+localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+typeConstraint, typeParameter */

@@ -22,3 +22,5 @@ class B : A() {
         bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override, thisExpression */

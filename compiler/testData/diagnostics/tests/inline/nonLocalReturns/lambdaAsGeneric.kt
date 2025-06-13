@@ -10,3 +10,5 @@ fun box() : String {
 <!NOTHING_TO_INLINE!>inline<!> fun <T> test(p: T) {
     p.toString()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, lambdaLiteral, nullableType, stringLiteral, typeParameter */

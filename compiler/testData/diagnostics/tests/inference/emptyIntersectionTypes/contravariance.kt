@@ -9,3 +9,5 @@ fun main(x: List<Int>, y: Int) {
         x.mapTo(mutableSetOf()) { y }
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral */

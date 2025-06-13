@@ -17,3 +17,7 @@ fun test() {
     val x2 = joinT(<!ARGUMENT_TYPE_MISMATCH!>Unit<!>, "2")
     checkSubtype<String?>(x2)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+localProperty, nullableType, propertyDeclaration, starProjection, stringLiteral, typeConstraint, typeParameter,
+typeWithExtension, vararg */

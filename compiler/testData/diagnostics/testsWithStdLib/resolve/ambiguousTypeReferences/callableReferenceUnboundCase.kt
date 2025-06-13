@@ -19,3 +19,5 @@ fun test() =
     // Ok in both K1 & K2.
     // K1 & K2 resolve this to kotlin.collections.HashMap.
     HashMap<String, String>::size
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration */

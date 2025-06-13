@@ -44,3 +44,7 @@ fun main(a: A<*>, c: C) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("CommonSupertype")!>x2<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, starProjection,
+suspend, thisExpression, typeParameter, typeWithExtension */

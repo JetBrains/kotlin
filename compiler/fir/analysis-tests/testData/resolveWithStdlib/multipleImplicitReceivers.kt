@@ -22,3 +22,6 @@ fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, operator, propertyDeclaration, propertyWithExtensionReceiver */

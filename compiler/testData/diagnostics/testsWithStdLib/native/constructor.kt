@@ -10,3 +10,5 @@ class A {
 }
 
 class C <!WRONG_MODIFIER_TARGET!>external<!> constructor()
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, primaryConstructor, secondaryConstructor */

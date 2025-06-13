@@ -19,3 +19,6 @@ fun foo(x: List<String>) {
 
     y.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

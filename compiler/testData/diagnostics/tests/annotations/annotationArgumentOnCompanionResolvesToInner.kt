@@ -13,3 +13,6 @@ class TopLevelClass() {
         const val inner = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, integerLiteral,
+objectDeclaration, primaryConstructor, propertyDeclaration */

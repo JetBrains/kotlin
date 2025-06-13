@@ -21,3 +21,5 @@ abstract class NewInspectionProfile
 
 // FILE: InspectionProfileEntry.java
 public abstract class InspectionProfileEntry {}
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty */

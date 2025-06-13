@@ -47,3 +47,6 @@ fun testRequireWithFailingMessageAndDefiniteReturn(x: Any, b: Boolean) {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, smartcast,
+stringLiteral */

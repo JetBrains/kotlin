@@ -20,3 +20,6 @@ fun testSmartcastToSealedInSubjectInitializer2(x: Any?) {
         is Right -> "R"
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, isExpression, localProperty, nullableType,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

@@ -11,3 +11,6 @@ class Outer {
     
     val outerState = 42
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localClass, nestedClass,
+propertyDeclaration */

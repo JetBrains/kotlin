@@ -16,3 +16,5 @@ open class MyClassEx : MyClass()
 fun main(j: MyClassImpl) {
     j.myField
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

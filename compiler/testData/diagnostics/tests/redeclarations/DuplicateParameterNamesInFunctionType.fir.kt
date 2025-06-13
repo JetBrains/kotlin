@@ -18,3 +18,5 @@ fun test3(f: <!DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE, REPEATED_ANNOTATION!>(
 fun test4(f: <!REPEATED_ANNOTATION!>(@ParameterName("b") @ParameterName("a") Int, @ParameterName("a") Int) -> Unit<!>) {
     f(1, 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, stringLiteral */

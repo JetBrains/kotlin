@@ -18,3 +18,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, functionDeclaration, functionalType, ifExpression, inline,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, thisExpression, whileLoop */

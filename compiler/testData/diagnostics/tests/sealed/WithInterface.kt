@@ -10,3 +10,6 @@ sealed class Page : Parent {
 
 // Ok: page is a Parent so it can be easily a Child
 fun test(page: Page): Boolean = page is Child
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, nestedClass,
+objectDeclaration, sealed */

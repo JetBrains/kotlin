@@ -15,3 +15,6 @@ fun test() {
         <!SMARTCAST_IMPOSSIBLE!>prop<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, ifExpression,
+isExpression, nullableType, propertyDeclaration, propertyDeclarationWithContext, smartcast, stringLiteral */

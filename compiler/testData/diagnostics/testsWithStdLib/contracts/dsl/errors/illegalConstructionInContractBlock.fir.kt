@@ -54,3 +54,7 @@ fun localValInContract(x: Any?) {
         returns() implies (x is String)
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, doWhileLoop, equalityExpression, forLoop,
+functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, rangeExpression, whenExpression, whenWithSubject, whileLoop */

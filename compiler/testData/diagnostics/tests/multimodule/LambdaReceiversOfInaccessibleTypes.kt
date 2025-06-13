@@ -18,3 +18,6 @@ fun test() {
     withConcreteReceiver {}
     withGenericReceiver {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,
+starProjection, typeParameter, typeWithExtension */

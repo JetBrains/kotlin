@@ -19,3 +19,7 @@ fun main() {
     val t: String = a.foo({p -> <!RETURN_TYPE_MISMATCH!>p<!>})
     checkSubtype<String>(t)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, thisExpression,
+typeParameter, typeWithExtension */

@@ -59,3 +59,6 @@ abstract class MyLegalAbstractClass2<T>(t : T) : MyTrait<Int>, MyAbstractClass<I
     fun bar(t: T) = t
     <!CONFLICTING_OVERLOADS!>val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>R<!>> pr : T<!> = t
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+override, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

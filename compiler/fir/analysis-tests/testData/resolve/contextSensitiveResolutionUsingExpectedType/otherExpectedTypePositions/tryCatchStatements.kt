@@ -75,3 +75,7 @@ fun testTryCatch() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral,
+tryExpression, typeParameter */

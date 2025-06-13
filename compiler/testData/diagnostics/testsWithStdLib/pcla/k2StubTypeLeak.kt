@@ -19,3 +19,6 @@ interface Inv<T> {
 }
 
 fun <K> mk(): K = TODO()
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, thisExpression, typeConstraint, typeParameter, typeWithExtension */

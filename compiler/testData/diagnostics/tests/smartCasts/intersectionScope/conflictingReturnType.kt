@@ -14,3 +14,7 @@ fun test(c: Any) {
         c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, interfaceDeclaration, intersectionType, isExpression, nullableType, smartcast, typeParameter,
+typeWithExtension */

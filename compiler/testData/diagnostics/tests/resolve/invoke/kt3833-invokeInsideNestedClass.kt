@@ -35,3 +35,5 @@ class C{
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, functionalType, inner, nestedClass,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration */

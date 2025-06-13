@@ -10,3 +10,6 @@ class Outer {
 
     val y = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localProperty, propertyDeclaration,
+stringLiteral */

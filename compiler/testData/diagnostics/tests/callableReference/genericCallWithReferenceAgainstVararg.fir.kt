@@ -26,3 +26,6 @@ fun <T> myLet(t: T, block: (T) -> Unit) {}
 fun <T> myLet(block: (T) -> Unit) {}
 fun myLetExplicit1(block: (Int) -> Unit) {}
 fun myLetExplicit2(block: (IntArray) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, nullableType, typeAliasDeclaration,
+typeParameter, vararg */

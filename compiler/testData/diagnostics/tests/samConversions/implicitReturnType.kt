@@ -16,3 +16,6 @@ class C2 : FunInterface {
 fun interface FunInterface : () -> Unit
 
 fun compose(funInterfaces: FunInterface) = funInterfaces
+
+/* GENERATED_FIR_TAGS: classDeclaration, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
+operator, override */

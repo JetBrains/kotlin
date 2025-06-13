@@ -45,3 +45,5 @@ fun test_5(someBoolean: Boolean) {
     }
 }
 
+/* GENERATED_FIR_TAGS: const, equalityExpression, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

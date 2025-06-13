@@ -12,3 +12,6 @@ fun foo(a: A<*, String, B<*, String>>, b1: B<*, String>, b2: B<*, *>, b3: B<Stri
     <!DEBUG_INFO_EXPRESSION_TYPE("A<B<*, *>, kotlin.String, B<kotlin.Any?, kotlin.String>>")!>a.copy(b1, "", b1)<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A<B<*, *>, kotlin.String, B<kotlin.Any?, kotlin.String>>")!>a.copy(b3, "", b1)<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, out, starProjection, stringLiteral,
+typeConstraint, typeParameter */

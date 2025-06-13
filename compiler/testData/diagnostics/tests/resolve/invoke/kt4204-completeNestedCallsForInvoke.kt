@@ -24,3 +24,6 @@ public class Pair<out A, out B> (
     public val first: A,
     public val second: B
 )
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, nullableType, out,
+primaryConstructor, propertyDeclaration, typeParameter */

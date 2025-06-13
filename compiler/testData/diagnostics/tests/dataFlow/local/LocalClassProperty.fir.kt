@@ -11,3 +11,6 @@ fun test(x: Any?) {
     val s: String = x
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, isExpression, localClass,
+nullableType, propertyDeclaration, smartcast */

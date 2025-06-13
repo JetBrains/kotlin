@@ -26,3 +26,6 @@ public class x {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, integerLiteral, objectDeclaration, propertyDeclaration,
+stringLiteral */

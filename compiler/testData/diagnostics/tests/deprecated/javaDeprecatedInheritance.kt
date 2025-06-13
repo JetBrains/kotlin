@@ -54,3 +54,5 @@ fun use(a: A, b: B, c: C) {
     B.bar()
     C.<!DEPRECATION!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaProperty, javaType */

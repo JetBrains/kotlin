@@ -12,3 +12,7 @@ fun test(it: Any) {
 fun rest(it: Any) {
     val that = it <!UNCHECKED_CAST!>as Generic<<!CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION!>TA<in Any><!>><!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, inProjection, interfaceDeclaration,
+localProperty, nullableType, out, outProjection, propertyDeclaration, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

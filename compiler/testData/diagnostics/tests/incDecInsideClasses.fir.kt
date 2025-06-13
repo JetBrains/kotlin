@@ -9,3 +9,6 @@ class MatchSticksInc {
 class MatchSticksPlus {
     operator fun String.plus(s: String) = this + "|"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, operator,
+stringLiteral, thisExpression */

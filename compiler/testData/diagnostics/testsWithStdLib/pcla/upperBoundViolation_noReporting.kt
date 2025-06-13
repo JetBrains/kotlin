@@ -9,3 +9,6 @@ fun main() {
         printGenericNumber(this[0])
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

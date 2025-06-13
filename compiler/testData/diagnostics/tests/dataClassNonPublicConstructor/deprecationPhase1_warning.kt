@@ -75,3 +75,8 @@ fun topLevel(data: GenericDataForRef<Int>) {
     GenericDataForRef<in Int>::copy
     GenericDataForRef<out Int>::copy
 }
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, companionObject, data,
+funWithExtensionReceiver, functionDeclaration, integerLiteral, localClass, localFunction, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression, typeConstraint, typeParameter,
+vararg */

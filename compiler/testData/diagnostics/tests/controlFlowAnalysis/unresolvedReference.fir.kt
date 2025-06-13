@@ -48,3 +48,6 @@ fun bar3(): Int {
     val b = c
     return b
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+propertyDeclaration, whenExpression */

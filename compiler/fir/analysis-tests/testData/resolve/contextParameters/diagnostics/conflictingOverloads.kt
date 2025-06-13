@@ -79,3 +79,6 @@ interface TypeASubType : TypeA
 
 context(b: TypeA) fun foo() {}
 context(a: TypeASubType, b: TypeB) <!CONTEXTUAL_OVERLOAD_SHADOWED!>fun foo()<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+stringLiteral */

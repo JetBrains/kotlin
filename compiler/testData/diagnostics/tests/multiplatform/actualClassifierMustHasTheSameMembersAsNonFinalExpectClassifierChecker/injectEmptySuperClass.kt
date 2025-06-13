@@ -17,3 +17,6 @@ actual open class Foo : InjectedEmptySuperClass() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

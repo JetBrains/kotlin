@@ -12,3 +12,6 @@ open class Your {
 }
 
 annotation class His(<!WRONG_MODIFIER_CONTAINING_DECLARATION!>override<!> val x: Int): <!SUPERTYPES_FOR_ANNOTATION_CLASS!>Your()<!>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, override, primaryConstructor,
+propertyDeclaration */

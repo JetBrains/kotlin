@@ -10,3 +10,6 @@ public fun foo() {
         bar(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, ifExpression, integerLiteral, isExpression,
+javaFunction, javaProperty, localProperty, propertyDeclaration, smartcast, stringLiteral */

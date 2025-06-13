@@ -84,3 +84,7 @@ fun arrays() {
     val a = intArrayOf(1, 2, 3)
     arrayOf(1, 2)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, checkNotNullCall, classDeclaration,
+destructuringDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral, lambdaLiteral, lateinit,
+localProperty, nullableType, propertyDeclaration, propertyDelegate, stringLiteral */

@@ -19,3 +19,5 @@ fun test() =
     // K1 resolves this to kotlin.collections.HashMap.
     // K2 resolves this to java.util.HashMap
     <!DEBUG_INFO_CALL("fqName: kotlin.collections.HashMap.<init>; typeCall: function")!>HashMap<String, String>()<!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

@@ -48,3 +48,7 @@ open class ScopeOwner: BaseType {
 interface IntersectionArgument
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, smartcast, typeParameter */

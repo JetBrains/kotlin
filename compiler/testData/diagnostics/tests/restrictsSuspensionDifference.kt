@@ -14,3 +14,6 @@ suspend fun test() {
     testLambda(TestScope, 10)
     testLambda.invoke(TestScope, 10)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, getter, integerLiteral, objectDeclaration,
+propertyDeclaration, suspend, typeWithExtension */

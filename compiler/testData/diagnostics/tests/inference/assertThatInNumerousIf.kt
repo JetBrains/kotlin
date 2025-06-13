@@ -86,3 +86,6 @@ fun test() {
         Assertions.assertThat(sessionIds)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, integerLiteral, javaFunction, localProperty,
+propertyDeclaration, starProjection, stringLiteral */

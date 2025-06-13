@@ -11,3 +11,6 @@ class Scope<InterfaceT, ImplementationT : InterfaceT>(private val implClass: <!U
             .<!CANNOT_INFER_PARAMETER_TYPE!>toSet<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

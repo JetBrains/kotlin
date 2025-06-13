@@ -22,3 +22,5 @@ val d: () -> Int = l@ {
 val e: () -> Int = l@ {
     <!RETURN_TYPE_MISMATCH!>if (flag) 4<!>
 }
+
+/* GENERATED_FIR_TAGS: functionalType, ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

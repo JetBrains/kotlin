@@ -11,3 +11,5 @@ fun foo() {
     z.addAll(y)
     z.add("Omega")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral */

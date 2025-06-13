@@ -36,3 +36,6 @@ actual val <!ACTUAL_WITHOUT_EXPECT!>actualWithoutContext<!>: String
 context(a: A)
 actual val <!ACTUAL_WITHOUT_EXPECT!>mismatchedContext<!> : String
     get() = ""
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral */

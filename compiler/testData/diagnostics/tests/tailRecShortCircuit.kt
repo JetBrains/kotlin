@@ -28,3 +28,7 @@ tailrec fun foo4(counter : Int) : Int? {
 
     return <!NON_TAIL_RECURSIVE_CALL!>foo4<!>(-1) ?: <!NON_TAIL_RECURSIVE_CALL!>foo4<!>(-2) ?: foo4(counter - 1)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, disjunctionExpression, elvisExpression,
+equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+nullableType, safeCall, tailrec, thisExpression */

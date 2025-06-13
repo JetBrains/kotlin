@@ -49,3 +49,6 @@ interface Test<in I, out O, P> {
     fun neOk34(i: Inv<<!UNRESOLVED_REFERENCE!>C<!>>)
     fun neOk35(i: Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><P, P><!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out, outProjection,
+typeParameter */

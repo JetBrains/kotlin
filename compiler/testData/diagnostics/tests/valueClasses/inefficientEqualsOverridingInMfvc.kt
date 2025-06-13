@@ -27,3 +27,6 @@ value class MFVC3(val x: Int, val y: Int) {
 
     override fun hashCode() = 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+isExpression, nullableType, operator, override, primaryConstructor, propertyDeclaration, smartcast, value */

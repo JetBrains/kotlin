@@ -15,3 +15,6 @@ import p.*
 fun test(j: J) {
     j.s()?.length.checkType { _<Int?>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, safeCall, typeParameter, typeWithExtension */

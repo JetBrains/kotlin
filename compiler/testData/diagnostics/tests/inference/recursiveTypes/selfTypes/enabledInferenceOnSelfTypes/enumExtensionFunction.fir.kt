@@ -14,3 +14,6 @@ fun enumStarTest(a: Enum<*>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)")!>a.foo()<!>
     a.bar()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, funWithExtensionReceiver, functionDeclaration, localProperty, propertyDeclaration,
+starProjection, typeConstraint, typeParameter, vararg */

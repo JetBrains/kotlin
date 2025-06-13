@@ -7,3 +7,5 @@ fun foo() {
 }
 
 fun <T> id(x: T) = x
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localFunction, nullableType, typeParameter */

@@ -4,3 +4,6 @@ fun calc(x: List<String>?): Int {
     x?.subList(0, x.size - 1)<!UNSAFE_CALL!>.<!>get(x<!UNSAFE_CALL!>.<!>size)
     return x!!.size
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, integerLiteral, nullableType, safeCall,
+smartcast */

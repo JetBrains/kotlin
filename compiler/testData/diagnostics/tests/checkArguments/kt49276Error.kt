@@ -37,3 +37,6 @@ fun main() {
 
     append4(<!PROGRESSIONS_CHANGING_RESOLVE_ERROR("fun <E : Collection<*>> append4(x: E): Unit")!>1..10<!>)    // warning
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, in, integerLiteral, nullableType,
+primaryConstructor, rangeExpression, starProjection, stringLiteral, typeConstraint, typeParameter */

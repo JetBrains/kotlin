@@ -10,3 +10,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration */

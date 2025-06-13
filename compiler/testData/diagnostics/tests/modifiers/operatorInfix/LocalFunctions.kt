@@ -39,3 +39,7 @@ fun a() {
 
 fun consumeInt(i: Int) {}
 fun consumeString(s: String) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, infix,
+integerLiteral, lambdaLiteral, localFunction, localProperty, multiplicativeExpression, operator, propertyDeclaration,
+stringLiteral */

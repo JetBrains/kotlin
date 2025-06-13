@@ -6,3 +6,5 @@ fun nullableFun(): Int? = null
 fun Int.foo() {}
 
 val test1 = <!SAFE_CALLABLE_REFERENCE_CALL!>nullableFun()?::<!UNSAFE_CALL!>foo<!><!>
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, nullableType, propertyDeclaration */

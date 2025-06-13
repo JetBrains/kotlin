@@ -31,3 +31,6 @@ class Example2 {
         <!UNRESOLVED_REFERENCE!>-<!>this
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, operator,
+stringLiteral, thisExpression, unaryExpression */

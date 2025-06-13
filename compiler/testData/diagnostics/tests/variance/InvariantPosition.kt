@@ -46,3 +46,6 @@ interface Test<in I, out O, P> {
     var neOk34: Inv<<!UNRESOLVED_REFERENCE!>C<!>>
     var neOk35: Inv<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><P, P><!>
 }
+
+/* GENERATED_FIR_TAGS: in, inProjection, interfaceDeclaration, nullableType, out, outProjection, propertyDeclaration,
+typeParameter */

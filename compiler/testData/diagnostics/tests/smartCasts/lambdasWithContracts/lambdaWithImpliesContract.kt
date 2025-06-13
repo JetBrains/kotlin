@@ -54,3 +54,7 @@ fun test5(a :A?) {
     require(a?.e?.d.valueIsNotNull())
     a<!UNSAFE_CALL!>.<!>e<!UNSAFE_CALL!>.<!>d<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, lambdaLiteral, nullableType, propertyDeclaration, safeCall,
+smartcast, stringLiteral, thisExpression */

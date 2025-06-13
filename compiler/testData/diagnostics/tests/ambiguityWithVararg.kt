@@ -14,3 +14,5 @@ fun main() {
 
     val workInBoth = array(intArrayOf(1, 2, 3))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

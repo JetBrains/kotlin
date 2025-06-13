@@ -19,3 +19,7 @@ fun test(foo: Foo<*>) {
         x
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, starProjection,
+typeParameter */

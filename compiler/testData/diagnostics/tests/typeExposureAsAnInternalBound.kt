@@ -15,3 +15,4 @@ internal open class Bar
 fun <T : Box<Unit, Bar>> bar(x: T?) = x
 fun <T : Box<Bar, Foo>> baz(x: T?) = x
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */

@@ -35,3 +35,5 @@ class A {
         field = "test"
         get() = field.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

@@ -16,3 +16,6 @@ object A {
 
 //from library
 val <T> T.javaClass : Class<T> get() = throw Exception()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, ifExpression, interfaceDeclaration, isExpression, nullableType,
+objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, smartcast, starProjection, typeParameter */

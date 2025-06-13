@@ -4,3 +4,5 @@ class Dup {
     this@Dup
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, thisExpression */

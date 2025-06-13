@@ -39,3 +39,6 @@ class A {
             "" to id { a, b, c, d -> }
         )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

@@ -36,3 +36,6 @@ class Outer {
         fun test6(): Int = <!TYPE_MISMATCH!>fun (): Int = 1<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, localProperty, nestedClass, propertyDeclaration */

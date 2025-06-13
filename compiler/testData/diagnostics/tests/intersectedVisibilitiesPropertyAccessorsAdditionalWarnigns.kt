@@ -37,3 +37,5 @@ interface I4 {
 }
 
 abstract class B3 : I3, I4
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration */

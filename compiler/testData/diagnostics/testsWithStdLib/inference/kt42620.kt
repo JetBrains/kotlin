@@ -14,3 +14,6 @@ fun main3() = if (true) { Foo::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>minus<!> }
 fun main4() = try { Foo::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>minus<!> } finally { Foo::<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>times<!> }
 
 fun main5() = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>minus<!><!> ?: <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>times<!><!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, tryExpression,
+whenExpression */

@@ -21,3 +21,6 @@ fun test() {
     <!MISSING_DEPENDENCY_CLASS!>withConcreteParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleConcreteType<!>) {})
     <!MISSING_DEPENDENCY_CLASS!>withGenericParameter<!>(fun(arg: <!UNRESOLVED_REFERENCE!>InaccessibleGenericType<!><*>) {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+starProjection, typeParameter */

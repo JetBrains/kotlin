@@ -15,3 +15,5 @@ fun main(a: A, ml: Any) {
         a.foo(ml <!UNCHECKED_CAST!>as List<Any><!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, isExpression, javaFunction, javaType, smartcast */

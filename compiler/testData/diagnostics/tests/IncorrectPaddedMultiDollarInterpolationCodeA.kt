@@ -274,3 +274,6 @@ const val stringWithInterpolationAsInvalidConstantInitializer27 = <!CONST_VAL_WI
 const val stringWithInterpolationAsInvalidConstantInitializer28 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$"""padding $${0 + runTimeConstant} padding"""<!>
 const val stringWithInterpolationAsInvalidConstantInitializer29 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$"""padding $$$${0 + runTimeConstant} padding"""<!>
 const val stringWithInterpolationAsInvalidConstantInitializer30 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER, UNSUPPORTED_FEATURE!>$$$$$$$$"""padding $$$$$$$${0 + runTimeConstant} padding"""<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, const, functionDeclaration, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, stringLiteral */

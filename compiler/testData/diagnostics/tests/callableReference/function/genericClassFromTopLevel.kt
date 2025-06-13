@@ -13,3 +13,7 @@ fun bar() {
 
     checkSubtype<KFunction1<A<String>, String>>(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

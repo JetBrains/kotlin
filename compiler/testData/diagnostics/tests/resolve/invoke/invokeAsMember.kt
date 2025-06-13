@@ -60,3 +60,6 @@ fun test(d: D, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, lambdaLiteral, operator,
+propertyDeclaration, propertyWithExtensionReceiver */

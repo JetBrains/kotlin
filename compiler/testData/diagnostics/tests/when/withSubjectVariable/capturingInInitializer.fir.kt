@@ -36,3 +36,7 @@ fun testUnsafeCaptureVarInInitializer() {
 
     x<!UNSAFE_CALL!>.<!>inc() // NB smart cast should be impossible
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, equalityExpression, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

@@ -24,3 +24,5 @@ fun testPlatform() {
         return
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, functionalType, inline, lambdaLiteral */

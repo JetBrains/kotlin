@@ -8,3 +8,6 @@ interface WithCopy<T> {
 <!DATA_CLASS_OVERRIDE_DEFAULT_VALUES_ERROR!>data<!> class Test(val str: String) : WithCopy<String> {
     <!CONFLICTING_OVERLOADS!>override fun copy(str: String)<!> = Test(str)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, interfaceDeclaration, nullableType, override,
+primaryConstructor, propertyDeclaration, typeParameter */

@@ -26,3 +26,6 @@ fun exhaustiveWhen(x: Any): String {
         else -> return ""
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, guardCondition, isExpression, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

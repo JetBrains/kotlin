@@ -11,3 +11,6 @@ fun test(f: <!UNSUPPORTED_FEATURE!>context(String, Int)<!> Boolean.() -> Unit) {
     }
     <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>f<!>("", 1, true)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral,
+typeWithContext, typeWithExtension */

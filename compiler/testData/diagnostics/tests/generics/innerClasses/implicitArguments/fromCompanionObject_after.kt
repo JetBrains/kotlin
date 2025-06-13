@@ -22,3 +22,6 @@ class A {
         val y: Outer<String>.Inner<Char> = Inner<Char>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, typeParameter */

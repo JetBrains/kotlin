@@ -40,3 +40,6 @@ value class Foo(val x: Int) : A, B {
 
     lateinit <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>var lateinitProperty: String<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, getter, integerLiteral, interfaceDeclaration,
+lateinit, override, primaryConstructor, propertyDeclaration, setter, value */

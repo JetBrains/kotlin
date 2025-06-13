@@ -28,3 +28,5 @@ class Child : PublicParentClass() {
         return publicStaticField                                          // Ok!
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

@@ -16,3 +16,5 @@ expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> : Base
     @kotlin.annotations.jvm.KotlinActual public void foo() {}
     @kotlin.annotations.jvm.KotlinActual @Override void fakeOverride() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, primaryConstructor */

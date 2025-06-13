@@ -17,3 +17,6 @@ fun main() {
 }
 
 fun foo(x: String) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, suspend, typeParameter, typeWithExtension */

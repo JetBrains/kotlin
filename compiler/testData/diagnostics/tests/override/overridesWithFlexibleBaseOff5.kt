@@ -16,3 +16,5 @@ class Box<T>
     <!NOTHING_TO_OVERRIDE!>override<!> fun simple(t: T & Any) {}
     <!NOTHING_TO_OVERRIDE!>override<!> fun box(box: Box<T & Any>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, override, typeParameter */

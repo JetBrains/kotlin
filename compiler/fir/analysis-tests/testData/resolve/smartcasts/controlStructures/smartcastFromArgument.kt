@@ -11,3 +11,5 @@ fun test(a: Any) {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration, smartcast */

@@ -45,3 +45,5 @@ fun testBasicNotEquals(x: Int?) {
     x<!UNSAFE_CALL!>.<!>inc()
 }
 
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, ifExpression,
+lambdaLiteral, nullableType, smartcast */

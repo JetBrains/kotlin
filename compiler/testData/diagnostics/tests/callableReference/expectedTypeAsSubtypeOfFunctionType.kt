@@ -11,3 +11,5 @@ fun test() {
     takeIt(42, <!TYPE_MISMATCH!>::cr<!>)
     takeIt(42, <!TYPE_MISMATCH!>{ }<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, nullableType, typeParameter */

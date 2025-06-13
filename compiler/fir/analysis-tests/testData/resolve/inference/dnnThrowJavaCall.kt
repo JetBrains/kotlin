@@ -37,3 +37,6 @@ import java.io.File
 fun getExcludedDirs(project: Project, excludedProjects: List<Project>): List<File> {
     return project.plugins.findPlugin(IdeaPlugin::class.java)?.excludeDirs?.toList() ?: emptyList()
 }
+
+/* GENERATED_FIR_TAGS: classReference, elvisExpression, flexibleType, functionDeclaration, javaFunction, javaProperty,
+javaType, nullableType, safeCall */

@@ -10,3 +10,6 @@ class MyClass(var p: Any) {
         return bar(p)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

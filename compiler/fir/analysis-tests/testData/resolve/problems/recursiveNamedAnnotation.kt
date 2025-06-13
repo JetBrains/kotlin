@@ -19,3 +19,5 @@ public @interface Service {
 
 @Service(value = "Your")
 class My
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, stringLiteral */

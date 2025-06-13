@@ -25,3 +25,6 @@ actual open class Foo<R> : Base<R>() {
     override fun contextReceiverType() {}
     override fun R.extensionReceiverType() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, checkNotNullCall, classDeclaration, expect, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, nullableType, override, typeParameter */

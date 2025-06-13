@@ -13,3 +13,6 @@ open class C(b: B) : B2 by <!TYPE_MISMATCH!>b<!> {} //no error in K2, K1 - [TYPE
 fun main() {
   val c = C(B()).d() //runtime AbstractMethodError
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, localProperty,
+primaryConstructor, propertyDeclaration */

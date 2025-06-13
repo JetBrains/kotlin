@@ -6,3 +6,6 @@ annotation class A() {
     <!ANNOTATION_CLASS_MEMBER, MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val bar: Nothing?<!>
     <!ANNOTATION_CLASS_MEMBER!>val baz<!> get() = Unit
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, getter, init, nullableType, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

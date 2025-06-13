@@ -21,3 +21,6 @@ val f12: Function0<<!CONFLICTING_PROJECTION("Function0<in Int>")!>in<!> Int> = {
 val f13: Function0<*> = {  -> "" }
 val f14: Function<Int> = {  -> <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
 val f15: Function<Int> = { <!RETURN_TYPE_MISMATCH("Int; String")!>""<!> }
+
+/* GENERATED_FIR_TAGS: functionalType, ifExpression, inProjection, integerLiteral, intersectionType, lambdaLiteral,
+outProjection, propertyDeclaration, starProjection, stringLiteral, typeWithExtension */

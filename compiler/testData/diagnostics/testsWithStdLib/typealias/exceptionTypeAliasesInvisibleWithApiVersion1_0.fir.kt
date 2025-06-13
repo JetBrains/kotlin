@@ -8,3 +8,5 @@ val barException = kotlin.<!NONE_APPLICABLE!>Exception<!>("bar")
 
 fun f(e: Exception, e2: java.lang.Exception, e3: kotlin.<!API_NOT_AVAILABLE!>Exception<!>) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, propertyDeclaration, stringLiteral */

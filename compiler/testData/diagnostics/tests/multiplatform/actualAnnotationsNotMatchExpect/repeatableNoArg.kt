@@ -22,3 +22,5 @@ actual fun oneMoreOnExpect() {}
 @AnnNoArg
 @AnnNoArg
 actual fun oneMoreOnActual() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration */

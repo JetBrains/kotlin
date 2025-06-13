@@ -10,3 +10,5 @@ annotation class Ann(
 @Ann(1.toFloat(), 1.0.toFloat()) class MyClass
 
 // EXPECTED: @Ann(b1 = 1.0.toFloat(), b2 = 1.0.toFloat())
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

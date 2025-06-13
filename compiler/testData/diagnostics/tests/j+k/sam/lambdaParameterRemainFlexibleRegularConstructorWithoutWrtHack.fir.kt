@@ -17,3 +17,5 @@ fun main() {
         x<!UNSAFE_CALL!>.<!>length // Should not be unsafe call
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, nullableType, samConversion */

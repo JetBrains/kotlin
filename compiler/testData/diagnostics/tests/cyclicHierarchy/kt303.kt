@@ -10,3 +10,5 @@ open class Bar() : <!CYCLIC_INHERITANCE_HIERARCHY!>Foo<!>() {
 }
 
 val x : Int = <!TYPE_MISMATCH!>Foo()<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

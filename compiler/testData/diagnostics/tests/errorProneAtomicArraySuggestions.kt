@@ -83,3 +83,6 @@ fun testKotlinArray() {
     kkb = kb
     kb.compareAndSetAt(0, false, true)
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, assignment, classReference, flexibleType, functionDeclaration,
+integerLiteral, javaFunction, localProperty, propertyDeclaration */

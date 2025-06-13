@@ -22,3 +22,6 @@ fun test(
 
     val c1 = <!FORBIDDEN_IDENTITY_EQUALS!>bu1 === bu2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>bu1 !== bu2<!>
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, localProperty,
+propertyDeclaration, unsignedLiteral */

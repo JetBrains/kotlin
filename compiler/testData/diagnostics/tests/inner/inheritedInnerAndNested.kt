@@ -67,3 +67,6 @@ fun test() {
     H.<!UNRESOLVED_REFERENCE!>Inner<!>().box() // should be an error
     I.Inner().box()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inner, javaFunction, javaType, nestedClass,
+objectDeclaration, stringLiteral */

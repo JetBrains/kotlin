@@ -10,3 +10,5 @@ interface B {
 open class A() : B{
     override fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, primaryConstructor */

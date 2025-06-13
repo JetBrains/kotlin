@@ -27,3 +27,5 @@ actual fun <!ACTUAL_WITHOUT_EXPECT!>expectValueParamActualContext<!>() { }
 context(a: A)
 actual fun <!ACTUAL_WITHOUT_EXPECT!>expectExtensionActualContext<!>() { }
 
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext */

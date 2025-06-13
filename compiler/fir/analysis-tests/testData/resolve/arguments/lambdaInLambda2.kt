@@ -27,3 +27,6 @@ fun test() {
         Function { method: PsiMethod? -> method?.containingClass }
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall */

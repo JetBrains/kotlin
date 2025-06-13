@@ -126,3 +126,7 @@ fun <T : Foo, R: Number, D: Int> main() {
         <!CANNOT_INFER_PARAMETER_TYPE!>bar10<!>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, getter,
+interfaceDeclaration, localFunction, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver,
+setter, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

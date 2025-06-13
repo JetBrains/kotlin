@@ -20,3 +20,6 @@ class C : A {
 fun main() {
     <!OPT_IN_USAGE_ERROR!>A<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+secondaryConstructor */

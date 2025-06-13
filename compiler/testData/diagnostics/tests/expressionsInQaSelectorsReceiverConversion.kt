@@ -11,3 +11,5 @@ typealias TA = Int.() -> Int
 fun rest(f: TA) {
     2.(f)()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, typeAliasDeclaration, typeWithExtension */

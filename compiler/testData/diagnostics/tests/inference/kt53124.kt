@@ -25,3 +25,6 @@ package exp
 
 val Ns.Foo<*>.name
     get() = this.bar.name
+
+/* GENERATED_FIR_TAGS: flexibleType, getter, javaProperty, javaType, propertyDeclaration, propertyWithExtensionReceiver,
+starProjection, thisExpression */

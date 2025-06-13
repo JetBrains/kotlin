@@ -73,3 +73,6 @@ fun rain() {
     <!EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a.b.maybeC<!>?::class
     <!RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS!>a.b.maybeC<!>?::<!TYPE_MISMATCH, UNSAFE_CALL!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, classReference, functionDeclaration, getter, inner,
+integerLiteral, nestedClass, nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall, typeParameter */

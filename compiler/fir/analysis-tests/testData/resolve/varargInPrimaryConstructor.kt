@@ -12,3 +12,6 @@ fun test_2(vararg strings: String) {
         s.length
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, forLoop, functionDeclaration, localProperty, outProjection,
+primaryConstructor, propertyDeclaration, vararg */

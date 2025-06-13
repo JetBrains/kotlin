@@ -19,3 +19,6 @@ fun foo(x1: S, y1: String?) {
     y2.length
     t.length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration, typeAliasDeclaration */

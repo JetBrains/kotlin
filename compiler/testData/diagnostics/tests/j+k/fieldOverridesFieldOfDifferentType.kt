@@ -19,3 +19,6 @@ public class B extends A {
 fun foo() {
     B().size.checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaProperty, javaType, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

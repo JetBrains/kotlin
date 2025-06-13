@@ -33,3 +33,6 @@ abstract class Intermediate : I {
 }
 
 actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FakeOverrideActual<!> : Intermediate(), I
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration,
+interfaceDeclaration, override */

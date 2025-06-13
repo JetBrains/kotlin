@@ -9,3 +9,5 @@ open class First<T> {
 open class Second : First<A>() {
     override fun test(item: A) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, typeParameter */

@@ -8,3 +8,7 @@ fun test() {
     val r = foo( { 4 }, { "${it + 1}" } )
     r checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

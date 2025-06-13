@@ -59,3 +59,7 @@ val test7 = generate {
 val test8 = generate {
     safeExtension()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, outProjection, propertyDeclaration,
+stringLiteral, suspend, typeParameter, typeWithExtension */

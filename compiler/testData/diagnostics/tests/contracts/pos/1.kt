@@ -19,3 +19,5 @@ inline fun case_4(block: () -> Unit) {
     kotlin.contracts.contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return block()
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, lambdaLiteral */

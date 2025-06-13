@@ -11,3 +11,5 @@ class C() : B() {
 fun invokeIt() {
     C().foo2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, primaryConstructor */

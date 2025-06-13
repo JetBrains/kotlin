@@ -9,3 +9,5 @@ public fun foo(x: String?): Int {
     // x is null because of the break
     return x<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, doWhileLoop, elvisExpression, functionDeclaration, nullableType, smartcast */

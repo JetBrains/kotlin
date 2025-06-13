@@ -23,3 +23,5 @@ import j.*
 class K : Observable<String>({})
 
 class J : Observable<String>(null)
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaType, lambdaLiteral, samConversion */

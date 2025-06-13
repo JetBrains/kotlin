@@ -9,3 +9,5 @@ class List {}
 
 fun arrayOfNulls(){}
 val arrayOfNulls: Int = 0
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration */

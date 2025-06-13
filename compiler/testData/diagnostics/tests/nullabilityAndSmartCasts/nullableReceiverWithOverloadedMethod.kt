@@ -28,3 +28,6 @@ class B {
         })
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, propertyDeclaration, stringLiteral */

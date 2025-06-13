@@ -42,3 +42,6 @@ enum class Enum8(val a: String) {
     constructor(): this(10)
     <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(x: Int)<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor, stringLiteral */

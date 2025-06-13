@@ -10,3 +10,6 @@ fun foo() {}
 val bar = foo(
     <!TOO_MANY_ARGUMENTS("fun foo(): Unit")!>15<!>
 )
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

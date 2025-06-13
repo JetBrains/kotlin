@@ -17,3 +17,6 @@ fun main() {
   val by : C<out String> = bar()
   val bz : C<*> = <!CANNOT_INFER_PARAMETER_TYPE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, typeParameter */

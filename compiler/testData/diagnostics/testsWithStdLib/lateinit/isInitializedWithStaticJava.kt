@@ -14,3 +14,5 @@ fun test() {
 
     JavaClass()::field.<!LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT!>isInitialized<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaFunction, javaType */

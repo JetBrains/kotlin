@@ -13,3 +13,6 @@ class Outer {
 fun outer() {
     class Test3 : <!CLASS_CANNOT_BE_EXTENDED_DIRECTLY!>Enum<Test3><!>("", 0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localClass, nestedClass, nullableType,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -30,3 +30,5 @@ fun testKotlinMap(a: Map<String, String>) {}
 fun testJavaSet(a: java.util.HashSet<String>){}
 fun testJavaList(a: java.util.ArrayList<String>) {}
 fun testJavaMap(a: java.util.HashMap<String, String>) {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType */

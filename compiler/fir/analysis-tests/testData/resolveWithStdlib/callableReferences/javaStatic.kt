@@ -19,3 +19,5 @@ fun main() {
     foo2(JavaClass::bar)
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(JavaClass::bar)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaCallableReference, javaType */

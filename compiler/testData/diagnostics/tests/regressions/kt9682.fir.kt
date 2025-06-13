@@ -27,3 +27,6 @@ fun test2(foo: Foo) {
     foo as IFoo2
     foo.bar() // should be ambiguity
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType,
+localProperty, propertyDeclaration, smartcast, thisExpression */

@@ -32,3 +32,6 @@ fun testLambda() {
 fun testMultiple(x: java.lang.Integer) {
     <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> && <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, equalityExpression, flexibleType, functionDeclaration, javaFunction,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

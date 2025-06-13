@@ -22,3 +22,6 @@ fun foo(
 }
 
 fun twoBooleans(x: Boolean, y: Boolean) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

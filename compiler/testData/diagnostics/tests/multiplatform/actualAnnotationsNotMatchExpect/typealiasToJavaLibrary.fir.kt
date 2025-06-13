@@ -13,3 +13,5 @@ expect annotation class MyDeprecatedMatch
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MyDeprecatedNotMatch = java.lang.Deprecated
 
 actual typealias MyDeprecatedMatch = java.lang.Deprecated
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, typeAliasDeclaration */

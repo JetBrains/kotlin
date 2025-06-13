@@ -54,3 +54,8 @@ fun test_delegates() {
     testMember
     testMember = ""
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, comparisonExpression, contractConditionalEffect,
+contracts, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, isExpression,
+lambdaLiteral, localProperty, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, safeCall, setter, smartcast, stringLiteral, thisExpression */

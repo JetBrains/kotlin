@@ -15,3 +15,6 @@ fun test(m: MyInt) {
     var i = 1
     i <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 34
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, primaryConstructor, propertyDeclaration */

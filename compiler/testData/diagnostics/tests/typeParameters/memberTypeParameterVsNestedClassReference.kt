@@ -53,3 +53,6 @@ class OuterClassWithClass<OuterParam> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, init, inner, localProperty, nestedClass,
+nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

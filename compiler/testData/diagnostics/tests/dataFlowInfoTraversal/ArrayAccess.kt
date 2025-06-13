@@ -12,3 +12,6 @@ fun foo() {
     "123"[<!TYPE_MISMATCH!>x<!>];
     if (x != null) "123"[<!DEBUG_INFO_SMARTCAST!>x<!>];
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

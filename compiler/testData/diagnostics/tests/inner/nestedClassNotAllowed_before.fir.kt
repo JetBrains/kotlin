@@ -25,3 +25,5 @@ enum class E {
         <!NESTED_CLASS_NOT_ALLOWED!>class D<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, inner, localClass, nestedClass */

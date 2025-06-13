@@ -24,3 +24,5 @@ actual annotation class <!EXPECT_ACTUAL_INCOMPATIBLE_ILLEGAL_REQUIRES_OPT_IN!>Bo
 
 @RequiresOptIn
 actual annotation class MyOptIn
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetFile, classReference, expect */

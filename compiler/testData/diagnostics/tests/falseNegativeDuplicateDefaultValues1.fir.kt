@@ -14,3 +14,6 @@ open class Keker<P> {
 class Implementation<P>() : Keker<P>(), SomeRandomOverride<P> {
     override fun child(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_DEPRECATION_WARNING!>props: Int<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+override, primaryConstructor, typeParameter */

@@ -13,3 +13,6 @@ val x : (Int) -> Int = {@test <!TYPE_MISMATCH, UNINITIALIZED_VARIABLE!>x<!> <!SY
 
 class Hello(@test args: Any) {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, primaryConstructor, propertyDeclaration, setter */

@@ -32,3 +32,6 @@ fun bar(b: Boolean): MyEnum {
     if (b) return X
     return L
 }
+
+/* GENERATED_FIR_TAGS: assignment, enumDeclaration, enumEntry, functionDeclaration, getter, ifExpression, localProperty,
+propertyDeclaration */

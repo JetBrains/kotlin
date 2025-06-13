@@ -9,3 +9,5 @@ import bar.* // Must not be an error
 
 // FILE: other.kt
 package bar
+
+/* GENERATED_FIR_TAGS:  */

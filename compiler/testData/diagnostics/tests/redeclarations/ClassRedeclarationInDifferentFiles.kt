@@ -10,3 +10,5 @@ package test
 
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!>
 class F2
+
+/* GENERATED_FIR_TAGS: classDeclaration */

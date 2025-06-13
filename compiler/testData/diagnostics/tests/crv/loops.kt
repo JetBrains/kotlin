@@ -49,3 +49,7 @@ fun operators() {
     -nonLocal // unary minus — unused, should be reported
     nonLocal + nonLocal // unused, should be reported
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, asExpression, assignment,
+comparisonExpression, doWhileLoop, forLoop, functionDeclaration, incrementDecrementExpression, integerLiteral,
+localProperty, propertyDeclaration, rangeExpression, unaryExpression, vararg, whileLoop */

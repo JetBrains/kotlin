@@ -13,3 +13,6 @@ fun foo(y: Int) {
     @Ann
     x += 2
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration */

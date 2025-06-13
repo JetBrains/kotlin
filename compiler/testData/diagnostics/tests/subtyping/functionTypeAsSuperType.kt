@@ -45,3 +45,6 @@ abstract class C1: C(), Function1<Int, Double>
 
 abstract class C2<T>: C(), E<T>, (Int, C) -> Double
 abstract class C3<T>: C(), E<T>, Function2<Int, C, Double>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+operator, override, typeParameter */

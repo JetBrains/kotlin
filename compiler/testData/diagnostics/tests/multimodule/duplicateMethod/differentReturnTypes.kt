@@ -35,3 +35,6 @@ fun test(b: B?) {
         b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getParent<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast */

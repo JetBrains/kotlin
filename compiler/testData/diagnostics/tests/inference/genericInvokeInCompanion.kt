@@ -38,3 +38,6 @@ fun main() {
     <!FUNCTION_CALL_EXPECTED!>C<Int><!>.<!UNRESOLVED_REFERENCE!>invoke<!><Int, Int, Int>("")
     <!FUNCTION_CALL_EXPECTED!>C<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>invoke<!><Int, Int>("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration, operator,
+stringLiteral, typeParameter */

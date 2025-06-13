@@ -22,3 +22,5 @@ fun bar() {
 }
 
 fun cond() = true
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, tryExpression, whileLoop */

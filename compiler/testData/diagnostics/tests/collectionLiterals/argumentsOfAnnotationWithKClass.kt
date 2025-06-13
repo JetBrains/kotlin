@@ -29,3 +29,6 @@ fun test6() {}
 
 @Bar
 fun test7() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, collectionLiteral, functionDeclaration,
+integerLiteral, nullableType, primaryConstructor, propertyDeclaration, starProjection, stringLiteral, typeParameter */

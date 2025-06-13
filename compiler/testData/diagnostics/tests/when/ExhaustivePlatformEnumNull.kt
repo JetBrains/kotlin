@@ -31,3 +31,6 @@ fun foo(): Int {
         null -> 0
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+smartcast, whenExpression, whenWithSubject */

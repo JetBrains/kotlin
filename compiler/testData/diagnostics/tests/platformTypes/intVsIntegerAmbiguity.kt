@@ -37,3 +37,5 @@ fun test(i: Int, ni: Int?) {
     J.foo(J.getInteger())
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, javaFunction, javaType, nullableType, typeParameter, typeWithExtension */

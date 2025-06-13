@@ -13,3 +13,7 @@ fun foo() {
         (y + My(0)).x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, classDeclaration, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, operator, primaryConstructor,
+propertyDeclaration, smartcast, thisExpression */

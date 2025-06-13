@@ -7,3 +7,5 @@ class A {
     constructor(x: String) {}
     constructor(): <!NONE_APPLICABLE!>this<!>('a') {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, secondaryConstructor */

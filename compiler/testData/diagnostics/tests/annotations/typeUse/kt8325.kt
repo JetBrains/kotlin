@@ -6,3 +6,5 @@
 fun foo() {
     object : @<!UNRESOLVED_REFERENCE!>__UNRESOLVED__<!> Any() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration */

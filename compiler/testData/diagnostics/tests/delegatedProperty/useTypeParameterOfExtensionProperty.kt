@@ -22,3 +22,7 @@ fun main(listInt: List<Int>, listStr: List<String>) {
     listInt.foo = 42
     useString(listStr.foo) // CCE
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+propertyWithExtensionReceiver, setter, typeConstraint, typeParameter */

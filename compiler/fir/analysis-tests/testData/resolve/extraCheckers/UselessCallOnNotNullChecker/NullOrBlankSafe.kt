@@ -3,3 +3,5 @@
 
 val s: String? = ""
 val blank = s.isNullOrBlank()
+
+/* GENERATED_FIR_TAGS: nullableType, propertyDeclaration, stringLiteral */

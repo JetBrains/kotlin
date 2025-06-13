@@ -6,3 +6,6 @@ fun test(a: Any?) {
 }
 
 fun <T> Any.foo(t: T) = t
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, typeParameter */

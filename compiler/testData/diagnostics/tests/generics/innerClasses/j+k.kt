@@ -28,3 +28,7 @@ fun main() {
     strInt.bar().checkType { _<Int>() }
     strInt.outer().checkType { _<Outer<String>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

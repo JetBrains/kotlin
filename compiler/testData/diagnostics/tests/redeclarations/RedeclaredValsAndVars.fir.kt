@@ -29,3 +29,6 @@ fun testNoRedeclaration(list: List<Int>, b: Boolean) {
     }
     val (`_`, _) = A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, forLoop, functionDeclaration, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, operator, propertyDeclaration, stringLiteral, unnamedLocalVariable */

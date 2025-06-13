@@ -15,3 +15,5 @@ import java.util.Date
 fun foo() {
     Date.<!UNRESOLVED_REFERENCE!>methodWhichDoesNotExistInJdk<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

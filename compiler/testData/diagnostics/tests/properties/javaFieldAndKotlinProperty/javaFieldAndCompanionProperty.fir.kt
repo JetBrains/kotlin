@@ -28,3 +28,7 @@ class Sub : Base() {
         return "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, equalityExpression, flexibleType,
+functionDeclaration, ifExpression, javaCallableReference, javaFunction, javaProperty, javaType, objectDeclaration,
+propertyDeclaration, stringLiteral, thisExpression */

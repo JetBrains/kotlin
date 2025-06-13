@@ -18,3 +18,5 @@ fun t1() = ok1()
 fun t2() = ok2()
 fun t3() = ok3()
 fun t4() = ok4()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

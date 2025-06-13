@@ -12,3 +12,6 @@ fun foo(x: List<String>, y: A) {
     x.stream().filter { it.length > 0 }.collect(Collectors.toList())
     y.stream().filter { it.length > 0 }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, functionDeclaration, inProjection, integerLiteral,
+interfaceDeclaration, javaFunction, lambdaLiteral, override, samConversion, starProjection */

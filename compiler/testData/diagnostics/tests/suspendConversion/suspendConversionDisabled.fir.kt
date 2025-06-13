@@ -26,3 +26,5 @@ fun test(
     foo1(<!ARGUMENT_TYPE_MISMATCH!>f2<!>)
     foo1(<!ARGUMENT_TYPE_MISMATCH!>f3<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, lambdaLiteral, stringLiteral, suspend */

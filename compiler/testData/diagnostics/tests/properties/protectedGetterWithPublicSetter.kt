@@ -119,3 +119,6 @@ fun test(s: Super) {
     s.<!INVISIBLE_MEMBER!>name<!> = s.<!INVISIBLE_MEMBER!>name<!>
     s.setName("")
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, flexibleType, functionDeclaration, inner,
+javaFunction, javaProperty, javaType, localProperty, nestedClass, propertyDeclaration, stringLiteral */

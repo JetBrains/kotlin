@@ -9,3 +9,6 @@ fun main() {
     foo(A::prop)
     foo(A::baz)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, integerLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

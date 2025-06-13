@@ -36,3 +36,6 @@ fun test() {
         })
     })
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, functionDeclaration, functionalType,
+integerLiteral, objectDeclaration, operator, override, propertyDeclaration */

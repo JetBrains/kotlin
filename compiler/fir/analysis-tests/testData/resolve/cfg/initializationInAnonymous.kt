@@ -18,3 +18,6 @@ fun create() = object : I {
     }
     override var j: Int = 2
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, functionDeclaration, init, integerLiteral,
+interfaceDeclaration, nullableType, override, propertyDeclaration */

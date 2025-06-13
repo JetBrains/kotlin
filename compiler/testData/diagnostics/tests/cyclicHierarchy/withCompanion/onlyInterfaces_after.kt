@@ -18,3 +18,6 @@ open class Container {
         override fun m() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,
+objectDeclaration, override */

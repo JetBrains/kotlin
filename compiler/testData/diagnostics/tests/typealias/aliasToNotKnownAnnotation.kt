@@ -22,3 +22,5 @@ import wrapper.KAnn
 
 @KAnn
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, primaryConstructor, typeAliasDeclaration */

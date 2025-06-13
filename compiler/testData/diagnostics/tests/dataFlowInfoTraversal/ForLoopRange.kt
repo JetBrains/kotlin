@@ -7,3 +7,6 @@ fun foo(arr: Array<Int>?) {
     }
     checkSubtype<Array<Int>>(<!DEBUG_INFO_SMARTCAST!>arr<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter, typeWithExtension */

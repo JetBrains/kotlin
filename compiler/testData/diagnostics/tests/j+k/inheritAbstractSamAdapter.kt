@@ -18,3 +18,5 @@ class C: B {
     override fun bar(r: Runnable?) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override */

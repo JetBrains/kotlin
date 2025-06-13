@@ -19,3 +19,6 @@ fun main() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

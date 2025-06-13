@@ -28,3 +28,7 @@ fun <T : Metric?> register(name: String, metric: T): T? {
         else -> return null
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, functionalType, inProjection,
+interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, sealed, smartcast, starProjection, typeConstraint, typeParameter, whenExpression, whenWithSubject */

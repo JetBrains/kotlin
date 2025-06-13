@@ -9,3 +9,5 @@
 class FooImpl
 
 actual typealias <!ACTUAL_WITHOUT_EXPECT!>Foo<!> = FooImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, typeAliasDeclaration */

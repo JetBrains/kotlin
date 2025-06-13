@@ -14,3 +14,5 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>c<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, localFunction */

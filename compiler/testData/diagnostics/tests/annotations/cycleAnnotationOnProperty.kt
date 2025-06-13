@@ -10,3 +10,5 @@ var prop
     get() = 22
     @Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>prop<!>)
     set(@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>prop<!>) value) = Unit
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, getter, integerLiteral, primaryConstructor, propertyDeclaration, setter */

@@ -115,3 +115,8 @@ fun test(arg: ITestContravariant2<<!REDUNDANT_PROJECTION!>in<!> SealedClass>): S
     is <!UNRESOLVED_REFERENCE!>SealedInheritor2<!> -> "201"
     else -> "301"
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, dnnType, equalityExpression, flexibleType, functionDeclaration,
+guardCondition, ifExpression, in, inProjection, integerLiteral, interfaceDeclaration, intersectionType, isExpression,
+javaProperty, javaType, localProperty, nestedClass, nullableType, override, primaryConstructor, propertyDeclaration,
+sealed, smartcast, stringLiteral, typeConstraint, typeParameter, whenExpression, whenWithSubject */

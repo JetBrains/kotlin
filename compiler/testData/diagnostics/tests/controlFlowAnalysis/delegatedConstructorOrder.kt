@@ -26,3 +26,6 @@ class B {
         this.a = a
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, propertyDeclaration, secondaryConstructor, thisExpression,
+whileLoop */

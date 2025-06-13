@@ -25,3 +25,5 @@ fun main3() {
     // no warning, execution order is already right
     foo3(y = {  }(), x = arrayOf({  }()))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, vararg */

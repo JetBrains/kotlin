@@ -12,3 +12,6 @@ public class B(override public val x: Any) : A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration,
+isExpression, override, primaryConstructor, propertyDeclaration, smartcast */

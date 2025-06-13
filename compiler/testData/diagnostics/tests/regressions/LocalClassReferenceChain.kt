@@ -14,3 +14,6 @@ fun test2() {
         val c: LocalA.LocalB.LocalC = LocalC()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inner, localClass, localFunction,
+localProperty, propertyDeclaration */

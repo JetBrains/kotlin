@@ -8,3 +8,5 @@ fun f() {
         annotation <!LOCAL_ANNOTATION_CLASS_ERROR, NESTED_CLASS_NOT_ALLOWED!>class Nested<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, localClass, nestedClass */

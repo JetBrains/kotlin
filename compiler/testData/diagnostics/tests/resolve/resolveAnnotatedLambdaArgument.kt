@@ -12,3 +12,6 @@ fun foo() {
     bar<Int> @Ann @[Ann] { x -> x }
     bar<Int> @Ann @[Ann] label@{ x -> x }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

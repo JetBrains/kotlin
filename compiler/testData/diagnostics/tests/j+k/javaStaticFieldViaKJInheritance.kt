@@ -12,3 +12,5 @@ interface MyInterfaceEx : MyInterface
 fun main() {
     MyInterfaceEx.<!UNRESOLVED_REFERENCE!>MY_STATIC_FIELD<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType */

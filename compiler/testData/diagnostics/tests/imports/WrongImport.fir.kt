@@ -77,3 +77,6 @@ import a.D.Companion.foo
 import a.D.Companion.<!UNRESOLVED_IMPORT!>foo<!>.bar
 import a.D.Companion.bar
 import a.D.Companion.<!UNRESOLVED_IMPORT!>bar<!>.foo
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration */

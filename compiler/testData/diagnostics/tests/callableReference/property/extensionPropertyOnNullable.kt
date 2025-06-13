@@ -10,3 +10,7 @@ fun test() {
     checkSubtype<Int>(f.get(null))
     checkSubtype<Int>(f.get(""))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, infix, integerLiteral, localProperty, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral, typeParameter, typeWithExtension */

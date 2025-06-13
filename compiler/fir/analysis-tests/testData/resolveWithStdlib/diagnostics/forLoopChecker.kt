@@ -110,3 +110,6 @@ fun test(
     for (i in range0);
     for (i in range1);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, getter, integerLiteral, localProperty, operator,
+primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver */

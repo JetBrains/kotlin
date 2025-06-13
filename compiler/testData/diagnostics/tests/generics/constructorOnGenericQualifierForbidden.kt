@@ -34,3 +34,6 @@ fun test(
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Generic<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>Inner<!>()
     TA().Inner()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, nullableType, typeAliasDeclaration,
+typeParameter */

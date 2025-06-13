@@ -20,3 +20,6 @@ class Outer<E> {
 class E
 
 fun bar(x: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'Outer'")!>Inner<!>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, localProperty, nestedClass,
+nullableType, propertyDeclaration, typeParameter */

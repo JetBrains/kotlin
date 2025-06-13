@@ -36,3 +36,5 @@ val configurations1 = listOf(
         2
     }
 )
+
+/* GENERATED_FIR_TAGS: integerLiteral, lambdaLiteral, propertyDeclaration */

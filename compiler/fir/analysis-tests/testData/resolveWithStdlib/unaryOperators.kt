@@ -17,3 +17,6 @@ fun foo(u: U) {
     val g = "" !in u
     val f = <!USELESS_IS_CHECK!>"" !is Boolean<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, localProperty, operator,
+propertyDeclaration, stringLiteral, unaryExpression */

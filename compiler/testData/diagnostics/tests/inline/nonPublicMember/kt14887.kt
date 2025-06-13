@@ -7,3 +7,5 @@
 fun main() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline */

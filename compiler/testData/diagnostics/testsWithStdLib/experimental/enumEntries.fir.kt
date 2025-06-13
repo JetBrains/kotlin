@@ -15,3 +15,6 @@ fun test() {
     <!OPT_IN_USAGE_ERROR!>Some<!>()
     <!OPT_IN_USAGE_ERROR!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, enumDeclaration, functionDeclaration, primaryConstructor,
+propertyDeclaration */

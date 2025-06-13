@@ -51,3 +51,5 @@ fun asSafe() {
     1f <!CAST_NEVER_SUCCEEDS!>as?<!> Double
     1f <!USELESS_CAST!>as? Float<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, integerLiteral */

@@ -36,3 +36,6 @@ expect interface <!NO_ACTUAL_FOR_EXPECT!>Outer<!> {
         fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+nestedClass, override, propertyDeclaration, stringLiteral */

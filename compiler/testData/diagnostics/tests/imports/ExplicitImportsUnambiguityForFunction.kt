@@ -19,3 +19,5 @@ import a.X
 fun foo() {
     val v: Int = X()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

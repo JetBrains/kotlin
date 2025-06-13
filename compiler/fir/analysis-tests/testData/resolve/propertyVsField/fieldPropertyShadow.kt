@@ -27,3 +27,6 @@ class Derived : Test(), KotlinProxy {
         zyxw // field!
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, interfaceDeclaration, javaProperty,
+javaType, propertyDeclaration, stringLiteral */

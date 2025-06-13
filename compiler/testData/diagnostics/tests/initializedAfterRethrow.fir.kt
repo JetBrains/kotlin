@@ -221,3 +221,6 @@ object InnerFinallyWithCatch {
         p = "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, init, integerLiteral, localProperty, objectDeclaration,
+propertyDeclaration, stringLiteral, tryExpression */

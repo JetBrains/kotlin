@@ -30,3 +30,7 @@ class Buildee<TV> {
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression, typeParameter,
+typeWithExtension */

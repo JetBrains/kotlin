@@ -36,3 +36,6 @@ class Container {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

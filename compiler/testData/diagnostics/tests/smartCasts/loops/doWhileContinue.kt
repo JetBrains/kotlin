@@ -10,3 +10,6 @@ public fun foo(p: String?): Int {
     // p should be smart casted despite of continue
     return <!DEBUG_INFO_SMARTCAST!>p<!>.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral */

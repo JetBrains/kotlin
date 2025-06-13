@@ -40,3 +40,6 @@ fun test1(b: B?) {
     if (b !is C)  return
     b?.foo<String>("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType, override,
+safeCall, smartcast, stringLiteral, typeParameter */

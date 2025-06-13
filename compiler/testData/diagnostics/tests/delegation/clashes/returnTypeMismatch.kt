@@ -58,3 +58,5 @@ abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED, RETURN_TYPE_MISMATCH_ON_INHERITANCE
 
 abstract <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class Test12<!> : IInt, IStr, IAny by CAny()
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, nullableType, override, stringLiteral, typeParameter */

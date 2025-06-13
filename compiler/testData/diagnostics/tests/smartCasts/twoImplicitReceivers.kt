@@ -17,3 +17,6 @@ fun test(a: IA, b: IB) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, lambdaLiteral, objectDeclaration, smartcast, thisExpression */

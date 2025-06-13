@@ -17,3 +17,5 @@ fun <F : String?> bar(x: F) {
     x.<!INAPPLICABLE_CANDIDATE!>foo2<!><<!UPPER_BOUND_VIOLATED!>F<!>>()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, nullableType,
+primaryConstructor, typeConstraint, typeParameter */

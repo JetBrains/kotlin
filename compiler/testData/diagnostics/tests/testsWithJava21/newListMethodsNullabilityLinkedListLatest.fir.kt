@@ -33,3 +33,6 @@ fun <E> removeFirstLastArrayListE(s: LinkedList<E>) {
     var x2 = s.removeLast()
     x1 = <!NULL_FOR_NONNULL_TYPE!>null<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter */

@@ -23,3 +23,7 @@ fun test() {
 }
 
 fun foo(): Int = 0
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, infix, integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

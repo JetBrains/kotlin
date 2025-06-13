@@ -91,3 +91,6 @@ fun test_4(x: Any) {
     }
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, interfaceDeclaration, intersectionType,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

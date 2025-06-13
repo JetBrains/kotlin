@@ -14,3 +14,6 @@ fun smartCastInterference(b: B) {
         <!SMARTCAST_IMPOSSIBLE!>a<!>.foo(b)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+nullableType, propertyDeclaration, smartcast */

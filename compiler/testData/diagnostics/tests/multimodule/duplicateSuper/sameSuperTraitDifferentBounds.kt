@@ -28,3 +28,6 @@ class Foo: A, B {
     override fun <T> foo(t: Array<T>) {}
     override fun <T: Base> foo(t: Array<T>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+typeConstraint, typeParameter */

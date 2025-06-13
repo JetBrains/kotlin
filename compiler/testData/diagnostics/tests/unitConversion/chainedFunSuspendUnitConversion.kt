@@ -17,3 +17,6 @@ fun test(f: () -> String, s: SubInt) {
     foo(s)
     foo(::bar)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funInterface, functionDeclaration, functionalType,
+interfaceDeclaration, samConversion, stringLiteral, suspend */

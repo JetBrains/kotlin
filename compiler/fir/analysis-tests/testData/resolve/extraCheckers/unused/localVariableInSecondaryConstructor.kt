@@ -9,3 +9,6 @@ fun main() {
 
     LocalClass().arg
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localClass, localProperty,
+primaryConstructor, propertyDeclaration, secondaryConstructor */

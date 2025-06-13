@@ -10,3 +10,5 @@ fun test() {
     <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>actual<!> fun() {}
     <!WRONG_MODIFIER_TARGET!>override<!> fun() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration */

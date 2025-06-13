@@ -168,3 +168,6 @@ var internalSetter: String
         x.a
         z.a
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, nestedClass, propertyDeclaration, propertyDeclarationWithContext,
+setter, stringLiteral */

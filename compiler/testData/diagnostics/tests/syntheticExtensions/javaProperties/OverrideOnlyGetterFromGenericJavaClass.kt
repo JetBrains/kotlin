@@ -32,3 +32,6 @@ fun foo(
     javaTable.selection = selection
     kotlinTable.selection = selection
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType,
+nullableType, override, typeParameter */

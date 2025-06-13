@@ -50,3 +50,6 @@ fun testNoSmartCast4(s: String?) {
     )
     s<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+nullableType, smartcast, stringLiteral, typeConstraint, typeParameter */

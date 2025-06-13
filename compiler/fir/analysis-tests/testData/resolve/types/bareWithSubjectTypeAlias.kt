@@ -13,3 +13,7 @@ fun foo() {
         is A.B -> a.x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, isExpression, localProperty, nestedClass, nullableType,
+out, primaryConstructor, propertyDeclaration, sealed, smartcast, typeAliasDeclaration, typeParameter, whenExpression,
+whenWithSubject */

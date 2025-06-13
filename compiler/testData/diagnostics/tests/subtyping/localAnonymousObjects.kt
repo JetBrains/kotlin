@@ -4,3 +4,5 @@ fun test() {
     var x = object {}
     x = <!TYPE_MISMATCH!>object<!> {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, functionDeclaration, localProperty, propertyDeclaration */

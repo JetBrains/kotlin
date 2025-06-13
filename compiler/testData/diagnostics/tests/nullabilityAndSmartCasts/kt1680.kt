@@ -14,3 +14,6 @@ fun foo() {
     if (y != null) {}
     if (y == null) {}
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration */

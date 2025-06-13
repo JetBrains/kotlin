@@ -40,3 +40,6 @@ fun main() {
     val a20: () -> () -> () -> Unit = fun() = fun() = {}
     val a21: () -> () -> () -> Int = fun() = <!RETURN_TYPE_MISMATCH!>fun() = {}<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, asExpression, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

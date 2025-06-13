@@ -14,3 +14,6 @@ fun cancelOrProceed(handler: (cancel: () -> Unit, proceed: () -> Unit) -> Unit) 
         handler(x::cancel) { x.resume("") }
     }.length
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, in,
+interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral, typeParameter */

@@ -36,3 +36,6 @@ fun main() {
     useBoolean(b.inner.w)
     useBoolean(b.inner.z)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, equalityExpression,
+functionDeclaration, getter, inner, integerLiteral, localClass, localProperty, propertyDeclaration, thisExpression */

@@ -20,3 +20,5 @@ actual val x2 = 2
 
 actual val <!REDECLARATION!>x3<!> = 3
 val <!ACTUAL_MISSING, REDECLARATION!>x3<!> = 3
+
+/* GENERATED_FIR_TAGS: actual, expect, integerLiteral, propertyDeclaration */

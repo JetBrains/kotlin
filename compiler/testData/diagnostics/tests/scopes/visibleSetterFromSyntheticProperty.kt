@@ -20,3 +20,6 @@ public abstract class Java {
 fun Java.test(name: String) {
     this.name = name
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty, javaType,
+thisExpression */

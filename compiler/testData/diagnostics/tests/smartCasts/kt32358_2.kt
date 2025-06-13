@@ -19,3 +19,6 @@ fun smartIt(p1: String?, p2: String?) {
     p2 ?: callItContracted { return }
     <!DEBUG_INFO_SMARTCAST!>p2<!>.length
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, elvisExpression, functionDeclaration, functionalType, inline,
+lambdaLiteral, nullableType, smartcast, typeParameter */

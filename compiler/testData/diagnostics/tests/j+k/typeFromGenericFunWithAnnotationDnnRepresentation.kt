@@ -130,3 +130,5 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
 }
 
 fun takeString(a: String){}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType, safeCall, stringLiteral */

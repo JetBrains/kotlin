@@ -22,3 +22,7 @@ val test1 = generate {
         })
     })
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+functionalType, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

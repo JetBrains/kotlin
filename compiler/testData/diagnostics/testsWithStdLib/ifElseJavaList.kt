@@ -16,3 +16,5 @@ fun call(): List<Int> {
     // No errors should be here
     return Java.get(if (true) ArrayList<Int>() else listOf(0))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, integerLiteral, javaFunction */

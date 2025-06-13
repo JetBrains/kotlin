@@ -10,3 +10,6 @@ class A : I by impl {
         val impl = object : I {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, inheritanceDelegation,
+interfaceDeclaration, objectDeclaration, propertyDeclaration */

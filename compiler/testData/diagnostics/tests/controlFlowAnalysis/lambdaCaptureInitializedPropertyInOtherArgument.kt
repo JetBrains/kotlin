@@ -83,3 +83,7 @@ fun test8() {
         A(if (true) { x = ""; "" } else { x = ""; "" })
     )
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+ifExpression, init, inline, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral,
+tryExpression */

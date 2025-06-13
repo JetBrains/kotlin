@@ -11,3 +11,5 @@ suspend fun test() {
         val prop = <!NON_LOCAL_SUSPENSION_POINT!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, localClass, propertyDeclaration, suspend */

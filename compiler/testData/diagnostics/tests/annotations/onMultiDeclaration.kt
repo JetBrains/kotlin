@@ -7,3 +7,6 @@ fun test(): Any? {
 
 annotation class ann
 data class P(val a: Int, val b: Int)
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, data, destructuringDeclaration,
+functionDeclaration, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration */

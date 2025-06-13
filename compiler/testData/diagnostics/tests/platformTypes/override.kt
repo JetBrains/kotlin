@@ -27,3 +27,6 @@ fun test() {
     s.get(0)
     s!!.get(0)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+localProperty, propertyDeclaration */

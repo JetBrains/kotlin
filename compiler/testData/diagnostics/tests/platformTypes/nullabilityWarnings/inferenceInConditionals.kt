@@ -27,3 +27,5 @@ fun elvis(c: J): Any? {
     return null ?: c.nn()
 }
 
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, javaFunction, javaType, nullableType,
+safeCall */

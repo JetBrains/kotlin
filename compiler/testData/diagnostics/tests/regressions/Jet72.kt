@@ -19,3 +19,7 @@ fun test(room : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>) {
     }
   }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, flexibleType, forLoop,
+functionDeclaration, ifExpression, javaFunction, javaProperty, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, safeCall, smartcast, stringLiteral */

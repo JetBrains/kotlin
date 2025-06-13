@@ -48,3 +48,5 @@ open class KotlinClass_2 : KotlinClass() {
 open class KotlinClass2_2 : KotlinClass2() {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, typeParameter */

@@ -19,3 +19,5 @@ fun bar(x: A<String>) {
     x.<!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>("", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, stringLiteral, typeParameter */

@@ -4,3 +4,5 @@ interface IA {
 
     override fun equals(other: Any?): Boolean
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, operator, override, stringLiteral */

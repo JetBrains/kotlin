@@ -15,3 +15,5 @@ class MyClass : JavaClass() {
 }
 
 fun box() = MyClass().check(Nested())
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, stringLiteral */

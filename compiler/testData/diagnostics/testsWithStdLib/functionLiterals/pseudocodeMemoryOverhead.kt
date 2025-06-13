@@ -371,3 +371,6 @@ class BigInteger(val value: String) {
     fun and(o: BigInteger): BigInteger = o
     fun xor(o: BigInteger): BigInteger = o
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, functionDeclaration, integerLiteral, lambdaLiteral,
+nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection, stringLiteral, typeParameter */

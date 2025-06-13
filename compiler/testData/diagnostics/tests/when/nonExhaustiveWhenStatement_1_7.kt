@@ -154,3 +154,7 @@ fun test_16(x: Boolean?) {
         null -> ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+interfaceDeclaration, isExpression, nestedClass, nullableType, sealed, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

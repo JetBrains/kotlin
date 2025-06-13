@@ -10,3 +10,6 @@ fun foo(): IncDec {
     x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
     return x
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, intersectionType,
+localProperty, operator, propertyDeclaration, smartcast */

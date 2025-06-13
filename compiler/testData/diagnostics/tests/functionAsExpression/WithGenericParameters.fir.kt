@@ -17,3 +17,6 @@ fun outer() {
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (t: T) {})
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> () where T:A {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, functionDeclaration, interfaceDeclaration, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

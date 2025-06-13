@@ -6,3 +6,5 @@ class Some {
         return Nested()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

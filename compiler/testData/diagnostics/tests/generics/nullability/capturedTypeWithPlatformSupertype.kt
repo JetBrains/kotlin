@@ -17,3 +17,5 @@ interface Sample
 fun test(s: SubFirst<*>) {
     First.bind(s)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType, starProjection */

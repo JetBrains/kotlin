@@ -15,3 +15,5 @@ class C: A() {
 class D {
     fun qux() { B().<!INVISIBLE_REFERENCE!>foo<!>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

@@ -13,3 +13,5 @@ public interface JavaInterface<V> {
 interface KotlinInterface<X> : JavaInterface<X> {
     override <!SYNTAX!><<!><!SYNTAX!>T<!><!SYNTAX!>><!> fun interfaceMethod(x: X)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaType, nullableType, typeParameter */

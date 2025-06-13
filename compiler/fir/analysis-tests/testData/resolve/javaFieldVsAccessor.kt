@@ -15,3 +15,6 @@ fun test(a: A) {
     val int = a.x // <- should be int
     val string = a.getX()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

@@ -38,3 +38,5 @@ actual interface I2 {
 actual interface ExpectInterface : I1, I2 {
     actual override fun foo(x: Int)
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, interfaceDeclaration, override */

@@ -6,3 +6,6 @@ class My {
         <!DEBUG_INFO_SMARTCAST!>y<!>.hashCode()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

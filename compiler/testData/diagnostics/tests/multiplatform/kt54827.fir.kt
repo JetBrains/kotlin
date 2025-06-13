@@ -11,3 +11,5 @@
 actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_TYPE_PARAMETER_COUNT!>SomeClass<!> {
     actual fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nullableType, typeParameter */

@@ -8,3 +8,6 @@ fun box() {
         for (v in values) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */

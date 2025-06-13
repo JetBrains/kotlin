@@ -30,3 +30,5 @@ fun test() {
     bar { it.toString() }
     bar { some -> some.toString() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral */

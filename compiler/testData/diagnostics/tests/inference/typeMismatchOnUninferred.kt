@@ -6,3 +6,5 @@ fun <T> bar(x: T & Any) {
     val z: T = x
     foo22(<!TYPE_MISMATCH!>z<!>)
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, localProperty, nullableType, propertyDeclaration, typeParameter */

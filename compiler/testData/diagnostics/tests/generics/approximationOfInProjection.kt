@@ -13,3 +13,6 @@ fun test_2() {
     val b: Bound<*> = Bound(1)
     val vl: Number = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>b.value<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, inProjection, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

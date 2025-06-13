@@ -20,3 +20,5 @@ fun test() {
     val a: Foo = Foo.create()
     Foo().takeFoo(a)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, propertyDeclaration */

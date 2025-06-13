@@ -14,3 +14,5 @@ actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>A<!> {
 
 // MODULE: main()()(intermediate)
 actual typealias B = String
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral, typeAliasDeclaration */

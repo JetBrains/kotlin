@@ -7,3 +7,6 @@ fun foo(x: Number) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+nullableType, smartcast, typeParameter, typeWithExtension, whenExpression, whenWithSubject */

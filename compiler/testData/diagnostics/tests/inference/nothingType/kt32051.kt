@@ -31,3 +31,6 @@ fun <X> callAdjustIt(t: BiType<*, *>, x: X, level: LevelA) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("BiType<X, LevelA>")!>x4<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+localProperty, nullableType, out, propertyDeclaration, starProjection, typeParameter */

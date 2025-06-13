@@ -104,3 +104,7 @@ fun testIntersection(both: B): Int {
     }
     return i
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, intersectionType, isExpression, localProperty, propertyDeclaration, sealed, smartcast,
+whenExpression, whenWithSubject */

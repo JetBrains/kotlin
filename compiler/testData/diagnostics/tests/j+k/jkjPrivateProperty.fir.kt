@@ -71,3 +71,6 @@ fun unresolvedReferences() {
     JavaMutableChild8().getData()
     JavaMutableChild8().setData("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, override,
+propertyDeclaration, stringLiteral */

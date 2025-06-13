@@ -17,3 +17,6 @@ fun test2() {
     firstLambda = { x -> <!UNINITIALIZED_VARIABLE!>secondLambda<!>.invoke(x) }
     secondLambda = { y -> firstLambda.invoke(y) }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+propertyDeclaration */

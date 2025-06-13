@@ -20,3 +20,6 @@ fun tryCatchFinally(x: Int?) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, typeParameter, typeWithExtension */

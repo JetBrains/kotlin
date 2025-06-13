@@ -28,3 +28,7 @@ fun test(s: SelectorFor<State>): Double {
 
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inline, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+typeParameter, typeWithExtension */

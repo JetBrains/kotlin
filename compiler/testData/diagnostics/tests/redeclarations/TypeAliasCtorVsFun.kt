@@ -14,3 +14,6 @@ class Outer {
 
     <!CONFLICTING_OVERLOADS!>fun CC(x: Int)<!> = x
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, primaryConstructor, propertyDeclaration,
+typeAliasDeclaration */

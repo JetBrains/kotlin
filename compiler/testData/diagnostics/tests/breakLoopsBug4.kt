@@ -10,3 +10,5 @@ fun foo() {
         abstract inner class C : <!CYCLIC_INHERITANCE_HIERARCHY!>A.<!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>Inner<!><!>() // INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass */

@@ -48,4 +48,7 @@ class A<E<!SYNTAX!><!>
     var bar = EmptyContinuation(
         <!SYNTAX!><!SYNTAX!><!>.<!><!FUNCTION_EXPECTED!>bar<!><!SYNTAX!><!>
 
-    class EmptyContinuation : A<<!SYNTAX, SYNTAX!><!>
+    class EmptyContinuation : A<
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, elvisExpression, functionDeclaration, interfaceDeclaration,
+nestedClass, nullableType, propertyDeclaration, safeCall, stringLiteral, typeConstraint, typeParameter */<!SYNTAX, SYNTAX!><!>

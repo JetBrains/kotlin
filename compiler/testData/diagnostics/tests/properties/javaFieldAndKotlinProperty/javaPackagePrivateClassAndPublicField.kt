@@ -30,3 +30,6 @@ private class Final : Intermediate() {
 
 fun box(): String =
     Final().foo
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, propertyDeclaration,
+stringLiteral */

@@ -35,3 +35,6 @@ public fun X.gav(): Int {
     else
         return 0
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+integerLiteral, nullableType, propertyDeclaration, smartcast */

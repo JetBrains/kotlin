@@ -8,3 +8,6 @@ enum class Foo {;
         private fun foo() = "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, objectDeclaration, propertyDeclaration,
+stringLiteral */

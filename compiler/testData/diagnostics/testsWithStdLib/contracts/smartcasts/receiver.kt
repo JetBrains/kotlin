@@ -34,3 +34,6 @@ class UnstableReceiver {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, nullableType,
+propertyDeclaration, smartcast, thisExpression */

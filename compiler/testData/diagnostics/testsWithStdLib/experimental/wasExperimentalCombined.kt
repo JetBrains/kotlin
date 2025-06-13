@@ -51,3 +51,6 @@ fun test5(t: <!OPT_IN_USAGE_ERROR!>T<!>) {}
 @ClassMarker
 @TypeAliasMarker
 fun test6(t: T) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration,
+secondaryConstructor, stringLiteral, typeAliasDeclaration */

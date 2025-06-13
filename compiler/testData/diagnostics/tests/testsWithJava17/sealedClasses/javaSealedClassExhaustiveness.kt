@@ -105,3 +105,6 @@ fun test_error_6(sameFile: SameFileNonSealed) {
         is SameFileNonSealed.B.D -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, javaType, localProperty, propertyDeclaration,
+smartcast, whenExpression, whenWithSubject */

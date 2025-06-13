@@ -29,3 +29,6 @@ private interface PrivateInFile {
 
 // Exposes 'PrivateInFile$Private' via 'expose'
 class Derived : PrivateInFile
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nestedClass, propertyDeclaration */

@@ -25,3 +25,6 @@ fun test_3(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, intersectionType, isExpression, localProperty,
+propertyDeclaration, smartcast, whenExpression */

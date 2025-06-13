@@ -26,3 +26,6 @@ fun test1() {
     consume(++a)
     consume(a++)
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast */

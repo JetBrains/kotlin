@@ -11,3 +11,6 @@ fun test(a: A) = when (a) {
     A.A -> "A"
     A.B -> "B"
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

@@ -18,3 +18,6 @@ open class A {
         receiver2.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inline, localProperty,
+propertyDeclaration, thisExpression */

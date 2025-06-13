@@ -13,3 +13,6 @@ fun test3(x: Map<Int, String>) = check(x).size
 fun test4(x: Map<Int, String>) = check(x)[<!MEMBER_PROJECTED_OUT!>"42"<!>]
 
 fun test5(x: Map<Int, String>) = check(x)[<!MEMBER_PROJECTED_OUT!>42<!>]
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, starProjection, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

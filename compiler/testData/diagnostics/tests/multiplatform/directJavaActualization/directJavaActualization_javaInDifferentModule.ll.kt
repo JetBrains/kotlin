@@ -19,3 +19,5 @@ expect class A
 // MODULE: m3-jvm(m2-jvm)()(m1-common)
 // FILE: A.kt
 actual class A
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

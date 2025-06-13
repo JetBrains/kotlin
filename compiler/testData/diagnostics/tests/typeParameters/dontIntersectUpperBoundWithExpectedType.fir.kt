@@ -16,3 +16,6 @@ fun main() {
 
 fun <T : Appendable> wtf(): T = TODO()
 val bar: Int = <!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>wtf<!>() // happily compiles
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

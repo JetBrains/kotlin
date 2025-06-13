@@ -20,3 +20,6 @@ public abstract class Foo {
 
 // FILE: 1.kt
 fun <T> Foo.Observable<T>.bindTo(a: Foo): Foo.Observable<T>  = compose(a.bindToLifecycle())
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, javaType, nullableType,
+typeParameter */

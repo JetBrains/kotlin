@@ -55,3 +55,7 @@ fun <T> testNullableTypeParameter(arg: T?) = when (arg) {
     null -> true
     is T -> false
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, isExpression, nestedClass, nullableType, objectDeclaration, sealed, smartcast, typeParameter,
+whenExpression, whenWithSubject */

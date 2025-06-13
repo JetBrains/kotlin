@@ -4,3 +4,5 @@ fun foo() {
     <!SUPER_NOT_AVAILABLE!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
     <!SUPER_NOT_AVAILABLE!>super<Nothing><!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

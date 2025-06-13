@@ -16,3 +16,7 @@ fun MySealed.getOrElse() = when (this) {
     is Right -> y
     else -> ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+intersectionType, isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

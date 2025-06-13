@@ -11,3 +11,5 @@ expect fun <!NO_ACTUAL_FOR_EXPECT{JVM}!>foo<!>()
 package jvm
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

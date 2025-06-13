@@ -14,3 +14,5 @@ fun test3() {
     try {
     } catch (<!SYNTAX!><!>{}<!SYNTAX!>)<!> {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, tryExpression */

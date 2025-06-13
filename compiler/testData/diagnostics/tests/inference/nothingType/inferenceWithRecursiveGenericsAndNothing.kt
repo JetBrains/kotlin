@@ -15,3 +15,6 @@ fun <T : In<T>> foo(o: Out<T>): Recursive<T>? = null
 fun test(o: Out<Parent>) {
     foo(o) ?: return
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, in, interfaceDeclaration, nullableType,
+out, typeConstraint, typeParameter */

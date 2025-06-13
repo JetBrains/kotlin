@@ -12,3 +12,5 @@ enum class EnumClass {
     abstract fun foo(): Int
     abstract val bar: String
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, propertyDeclaration */

@@ -65,3 +65,6 @@ fun foo(
     "" in al
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in al
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, nullableType,
+operator, override, stringLiteral, typeParameter */

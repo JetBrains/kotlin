@@ -18,3 +18,5 @@ package test.p; fun foo() {}
 
 // FILE: f.kt
 package test.p; fun foo(<!UNUSED_PARAMETER!>a<!>: C) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, override, typeParameter */

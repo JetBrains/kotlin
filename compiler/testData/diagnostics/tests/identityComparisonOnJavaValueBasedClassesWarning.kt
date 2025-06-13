@@ -32,3 +32,6 @@ fun testLambda() {
 fun testMultiple(x: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Integer<!>) {
     x === x && x === x
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, equalityExpression, flexibleType, functionDeclaration, javaFunction,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

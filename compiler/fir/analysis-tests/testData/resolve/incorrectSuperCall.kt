@@ -22,3 +22,5 @@ open class B {
         baz()       // Ok
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

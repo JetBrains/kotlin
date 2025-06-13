@@ -66,3 +66,6 @@ fun test4() {
     x.<!UNRESOLVED_REFERENCE!>length<!>
     x.<!UNRESOLVED_REFERENCE!>inc<!>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

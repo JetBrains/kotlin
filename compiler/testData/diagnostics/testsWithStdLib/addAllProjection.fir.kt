@@ -12,3 +12,5 @@ fun test(mc: MutableCollection<out CharSequence>) {
     mc.addAll(emptyList())
     mc.addAll(emptyList<Nothing>())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, outProjection, stringLiteral */

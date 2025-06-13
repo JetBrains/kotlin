@@ -13,3 +13,6 @@ enum class SomeClass {
 
 val resultEntries = SomeClass.entries
 val resultEntriesRef = SomeClass::<!OVERLOAD_RESOLUTION_AMBIGUITY!>entries<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, nestedClass, objectDeclaration,
+propertyDeclaration */

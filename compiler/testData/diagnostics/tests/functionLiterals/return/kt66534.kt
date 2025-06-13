@@ -143,3 +143,6 @@ fun test() {
         return@l null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, flexibleType, functionDeclaration, functionalType, ifExpression,
+integerLiteral, javaFunction, javaProperty, lambdaLiteral, nullableType, propertyDeclaration, stringLiteral */

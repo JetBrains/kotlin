@@ -37,3 +37,6 @@ fun testCrossinline() {
     lambda()
     <!SMARTCAST_IMPOSSIBLE!>x<!>.length // bad
 }
+
+/* GENERATED_FIR_TAGS: assignment, crossinline, functionDeclaration, functionalType, inline, lambdaLiteral,
+localProperty, noinline, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter */

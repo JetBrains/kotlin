@@ -33,3 +33,7 @@ fun test() {
         withLock { TODO() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+javaFunction, javaType, lambdaLiteral, localProperty, nullableType, out, propertyDeclaration, samConversion,
+typeParameter */

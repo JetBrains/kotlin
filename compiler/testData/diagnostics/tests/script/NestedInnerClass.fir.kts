@@ -25,3 +25,6 @@ class Nested {
         fun i() = this@Inner.innerProp
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, localProperty, propertyDeclaration,
+stringLiteral, thisExpression */

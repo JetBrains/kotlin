@@ -48,3 +48,5 @@ package a
 <!CONFLICTING_OVERLOADS!>public fun invalidFun0()<!> {}
 
 public val <!REDECLARATION!>invalidProp0<!> = 1
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, propertyDeclaration */

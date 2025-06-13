@@ -8,3 +8,7 @@ interface A<T : A<T?>?> {
 fun testA(a: A<*>) {
     a.foo() checkType { _<A<*>?>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, starProjection, typeConstraint, typeParameter,
+typeWithExtension */

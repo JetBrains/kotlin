@@ -13,3 +13,6 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(<!ACTUAL_FUNCTION_WITH_D
 
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+outProjection, typeConstraint, typeParameter */

@@ -11,3 +11,6 @@ fun foo(): Int {
     <!ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE!>@ExprAnn a <!UNRESOLVED_REFERENCE!>+=<!> 1<!>
     return a
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration */

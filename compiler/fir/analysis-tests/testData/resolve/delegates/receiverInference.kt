@@ -16,3 +16,6 @@ fun <R: XEntity, V> mkProp(): Provider<Prop<R, V>> = Provider()
 class MyEnt: XEntity {
     val d: String by mkProp()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+operator, out, propertyDeclaration, propertyDelegate, typeConstraint, typeParameter */

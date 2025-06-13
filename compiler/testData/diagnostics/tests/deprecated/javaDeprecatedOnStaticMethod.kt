@@ -12,3 +12,5 @@ public class JavaClass {
 fun main() {
     JavaClass.<!DEPRECATION!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

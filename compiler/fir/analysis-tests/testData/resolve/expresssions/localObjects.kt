@@ -20,3 +20,6 @@ fun test() {
 }
 
 val bb = <!UNRESOLVED_REFERENCE!>B<!>.foo()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral, localClass,
+localProperty, objectDeclaration, propertyDeclaration */

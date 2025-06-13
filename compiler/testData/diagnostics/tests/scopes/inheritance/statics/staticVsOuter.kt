@@ -19,3 +19,6 @@ class C: B() {
         val a: Int = foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, javaFunction, javaType, localProperty,
+propertyDeclaration, stringLiteral */

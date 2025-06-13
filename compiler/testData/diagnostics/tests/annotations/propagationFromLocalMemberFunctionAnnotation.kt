@@ -11,3 +11,6 @@ fun foo() {
         fun baz() = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, functionDeclaration, localClass, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral */

@@ -10,3 +10,5 @@ interface ATrait : <!INTERFACE_WITH_SUPERCLASS!>A<!> {
         <!SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE!>super<A><!>.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, superExpression */

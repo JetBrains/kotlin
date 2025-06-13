@@ -11,3 +11,6 @@ class My {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, ifExpression, init, integerLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

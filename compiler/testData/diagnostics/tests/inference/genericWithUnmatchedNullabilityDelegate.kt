@@ -11,3 +11,7 @@ fun main() {
         foo("") ?: emptyMap()
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, inline, interfaceDeclaration, intersectionType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyDelegate, reified, stringLiteral,
+typeConstraint, typeParameter */

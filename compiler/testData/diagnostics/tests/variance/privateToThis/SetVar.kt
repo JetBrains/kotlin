@@ -36,3 +36,6 @@ class Test<in I, out O> {
 fun <I, O> test(t: Test<I, O>) {
     t.<!INVISIBLE_MEMBER("i; private/*private to this*/; 'Test'")!>i<!> = getT()
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, companionObject, functionDeclaration, in, init,
+lambdaLiteral, nullableType, objectDeclaration, out, propertyDeclaration, thisExpression, typeParameter */

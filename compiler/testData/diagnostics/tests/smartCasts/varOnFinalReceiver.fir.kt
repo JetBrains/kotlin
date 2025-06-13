@@ -85,3 +85,7 @@ fun test7(){
 
     b = Stable()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, functionalType, getter,
+ifExpression, interfaceDeclaration, isExpression, lambdaLiteral, localProperty, nullableType, override,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

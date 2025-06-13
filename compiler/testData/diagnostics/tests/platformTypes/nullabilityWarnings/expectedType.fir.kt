@@ -31,3 +31,6 @@ fun test() {
     checkSubtype<J?>(platformN)
     checkSubtype<J?>(platformJ)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaProperty, javaType, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

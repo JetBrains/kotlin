@@ -34,3 +34,6 @@ fun test4() {
         nullableAny.length
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, assignment, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

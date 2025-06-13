@@ -9,3 +9,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

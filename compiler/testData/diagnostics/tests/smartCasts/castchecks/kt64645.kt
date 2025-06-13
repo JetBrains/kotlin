@@ -17,3 +17,6 @@ fun foo2(x: NullableBox) {
         x.value
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, typeAliasDeclaration, typeConstraint, typeParameter */

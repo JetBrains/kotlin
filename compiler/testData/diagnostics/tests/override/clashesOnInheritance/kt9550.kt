@@ -12,3 +12,5 @@ interface B {
 <!CONFLICTING_INHERITED_MEMBERS!>interface C1<!> : A, B {
     <!CONFLICTING_OVERLOADS!>override fun bar()<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

@@ -22,3 +22,6 @@ enum class MyEnum {
         MyEnum.<!UNINITIALIZED_ENUM_ENTRY!>A<!>.someProperty
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, init, integerLiteral, localClass,
+propertyDeclaration */

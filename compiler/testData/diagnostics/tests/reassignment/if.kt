@@ -10,3 +10,5 @@ fun foo(f: Boolean): Int {
     <!VAL_REASSIGNMENT!>i<!> = 3
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, ifExpression, integerLiteral, localProperty, propertyDeclaration */

@@ -26,3 +26,7 @@ fun main() {
     b = 23
     b.and(4)
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, inProjection, integerLiteral,
+interfaceDeclaration, nullableType, operator, outProjection, propertyDeclaration, propertyDelegate, setter,
+starProjection, stringLiteral, typeConstraint, typeParameter */

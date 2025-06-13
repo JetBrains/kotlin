@@ -38,3 +38,5 @@ actual open class Container {
     actual open fun <!EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openInternalFun<!>() {}    // BAD: internal+open -> public
     actual internal fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY, EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY!>openPublicFun<!>() {}  // BAD: open+public -> internal
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

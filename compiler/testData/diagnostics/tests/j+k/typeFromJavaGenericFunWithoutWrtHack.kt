@@ -68,3 +68,6 @@ fun geneticFunTest() {
 
 fun takeString(a: String){}
 fun takeAny(a: Any){}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, integerLiteral, javaFunction, javaType,
+nullableType, outProjection, starProjection, stringLiteral */

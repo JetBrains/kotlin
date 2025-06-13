@@ -36,3 +36,6 @@ class Derivied3(foo: String) : Derived2() {
         this.<!INVISIBLE_SETTER!>foo<!> = param
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, init, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

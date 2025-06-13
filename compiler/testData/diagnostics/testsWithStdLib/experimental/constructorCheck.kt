@@ -30,3 +30,7 @@ fun test() {
     <!OPT_IN_USAGE_ERROR!>foo<!>()
     <!OPT_IN_USAGE_ERROR!>foo<!>(null)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, elvisExpression, enumDeclaration,
+enumEntry, functionDeclaration, integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+safeCall, secondaryConstructor */

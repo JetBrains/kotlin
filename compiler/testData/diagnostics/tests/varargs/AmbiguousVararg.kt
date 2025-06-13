@@ -7,3 +7,5 @@ fun foo(vararg t : Int) = ""
 fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral, vararg */

@@ -31,3 +31,6 @@ object DefaultHttpClientWithBy : HttpClient by client {
 object DefaultFqHttpClient : HttpClient by <!UNINITIALIZED_VARIABLE!>DefaultFqHttpClient.client<!> {
     val client = HttpClientImpl()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inheritanceDelegation, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, propertyDeclaration, propertyDelegate */

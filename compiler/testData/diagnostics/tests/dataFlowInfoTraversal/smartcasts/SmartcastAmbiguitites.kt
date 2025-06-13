@@ -15,3 +15,6 @@ fun test(a : Any?) {
       }
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, nullableType, primaryConstructor, smartcast */

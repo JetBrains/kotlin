@@ -11,3 +11,6 @@ operator fun <K: Comparable<K>> Box<K>.provideDelegate(receiver: Any?, property:
 operator fun <Q: Comparable<Q>> Q.getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): Q = TODO()
 
 class Box<V> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, intersectionType, nullableType,
+operator, propertyDeclaration, propertyDelegate, starProjection, typeConstraint, typeParameter */

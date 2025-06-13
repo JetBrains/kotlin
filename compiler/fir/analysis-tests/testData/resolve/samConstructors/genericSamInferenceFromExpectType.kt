@@ -37,3 +37,6 @@ fun main() {
         2
     )
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, inProjection, integerLiteral, javaType,
+lambdaLiteral, nullableType, outProjection, typeParameter */

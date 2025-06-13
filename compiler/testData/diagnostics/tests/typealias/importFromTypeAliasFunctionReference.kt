@@ -12,3 +12,6 @@ object TestCase {
 
 // FILE: 2.kt
 import simpleObject.SimpleObject.functionReference
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, objectDeclaration, propertyDeclaration,
+typeAliasDeclaration */

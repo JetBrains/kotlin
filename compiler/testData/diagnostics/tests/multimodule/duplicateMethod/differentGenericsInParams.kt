@@ -43,3 +43,6 @@ fun test(b: B?) {
         b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(null, null)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nullableType,
+outProjection, override, safeCall, smartcast, typeParameter */

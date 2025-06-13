@@ -38,3 +38,7 @@ actual fun StringDemoInterface.<!ACTUAL_WITHOUT_EXPECT("Actual function 'plusK';
 class StringDemo(override val value: String) : StringDemoInterface
 
 fun box() = StringDemo("O").plusK()
+
+/* GENERATED_FIR_TAGS: actual, additiveExpression, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, override, primaryConstructor, propertyDeclaration, stringLiteral,
+thisExpression, typeAliasDeclaration */

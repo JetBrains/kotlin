@@ -13,3 +13,5 @@ val prop3 = 0x7777777777
 
 // val prop4: 10
 const val prop4 = '\n'.code
+
+/* GENERATED_FIR_TAGS: const, propertyDeclaration */

@@ -15,3 +15,5 @@ fun main() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion, stringLiteral */

@@ -18,3 +18,6 @@ fun main() {
 
   s.size = 2.0
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration */

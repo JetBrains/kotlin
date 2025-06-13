@@ -10,3 +10,6 @@ fun testNoSubjectVariableName(x: Int?) {
         else -> "not 0"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

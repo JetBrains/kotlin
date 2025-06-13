@@ -27,3 +27,4 @@ val bar: <!OVERLOAD_RESOLUTION_AMBIGUITY!>HashMap<String, String><!>? = null    
 // Similar behavior to test() above
 val baz = foo() is <!OVERLOAD_RESOLUTION_AMBIGUITY!>HashMap<*, *><!>              // Case 6
 
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, isExpression, nullableType, propertyDeclaration, stringLiteral */

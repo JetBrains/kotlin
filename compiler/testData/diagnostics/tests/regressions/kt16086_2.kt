@@ -13,3 +13,5 @@ package b
 import a.IEntity
 
 class ObserverSupport<T : IEntity>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, typeConstraint, typeParameter */

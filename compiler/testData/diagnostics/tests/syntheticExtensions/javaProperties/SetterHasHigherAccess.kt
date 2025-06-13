@@ -15,3 +15,6 @@ public class JavaClass {
     protected int getSomething() { return 1; }
     public void setSomething(int value) {}
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, incrementDecrementExpression, integerLiteral, javaProperty,
+javaType, localProperty, propertyDeclaration */

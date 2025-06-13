@@ -5,3 +5,6 @@ fun bar(): Int = {
     i = 42
     <!DEBUG_INFO_SMARTCAST!>i<!>
 }()
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast */

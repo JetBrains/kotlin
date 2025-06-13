@@ -11,3 +11,5 @@ annotation class Ann(
 @Ann(<!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 / 1<!>, <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE!>1 / 1<!>, 1 / 1, 1 / 1) class MyClass
 
 // EXPECTED: @Ann(b = 1.toByte(), i = 1, l = 1.toLong(), s = 1.toShort())
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration */

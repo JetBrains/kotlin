@@ -53,3 +53,6 @@ val property3: String
         implicit<Int>().inc()
         return implicit<A>().foo("")
     }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, nullableType,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral, typeParameter */

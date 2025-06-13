@@ -11,3 +11,5 @@ fun callIsolatedFunFace() {
     referIsolatedFunFace(<!INTERFACE_AS_FUNCTION!>FunAlias<!> {})
     referIsolatedFunFace(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, typeAliasDeclaration */

@@ -14,3 +14,6 @@ fun foo(annotation: Annotation): Int {
         return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+primaryConstructor, propertyDeclaration */

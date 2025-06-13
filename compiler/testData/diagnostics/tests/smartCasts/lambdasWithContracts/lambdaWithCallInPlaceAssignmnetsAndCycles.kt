@@ -521,3 +521,7 @@ fun test42() {
         y++
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, break, checkNotNullCall, contractCallsEffect, contracts, forLoop,
+functionDeclaration, functionalType, incrementDecrementExpression, integerLiteral, isExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, rangeExpression, smartcast, stringLiteral, typeParameter, whileLoop */

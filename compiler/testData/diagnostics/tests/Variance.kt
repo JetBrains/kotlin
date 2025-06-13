@@ -39,3 +39,6 @@ fun f(ints: Array<Int>, any: Array<Any>, numbers: Array<Number>) {
     copy3<Int>(ints, numbers)
     copy4(ints, numbers) //ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, localProperty, nullableType, out,
+outProjection, primaryConstructor, propertyDeclaration, typeParameter */

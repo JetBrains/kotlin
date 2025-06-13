@@ -13,3 +13,5 @@ public class JavaClass {
 
     public JavaClass(String... ss) {  }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

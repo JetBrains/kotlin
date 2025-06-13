@@ -14,3 +14,6 @@ inline fun Function1<Int, Unit>.inlineExt() {
     var d = this
     d = this
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, inline, localProperty,
+propertyDeclaration, thisExpression, typeWithExtension */

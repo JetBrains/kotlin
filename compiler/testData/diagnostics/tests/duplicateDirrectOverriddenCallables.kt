@@ -13,3 +13,6 @@ interface Intermediate<P> : Base<P>
 class Implementation<P>() : Intermediate<P>, Base<P> {
     override fun child(props: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+override, primaryConstructor, typeParameter */

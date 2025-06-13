@@ -19,3 +19,5 @@ fun bar(): Int {
     }<!UNSAFE_CALL!>.<!>length
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType,
+propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

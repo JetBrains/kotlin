@@ -11,3 +11,6 @@ fun test() {
 fun <T : View> foo(): T? {
     return null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, typeConstraint, typeParameter */

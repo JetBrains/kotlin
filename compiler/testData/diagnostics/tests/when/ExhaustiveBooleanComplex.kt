@@ -19,3 +19,6 @@ fun foo(arg: Boolean): String {
         (2 == 1) -> "falsehood"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, stringLiteral, whenExpression,
+whenWithSubject */

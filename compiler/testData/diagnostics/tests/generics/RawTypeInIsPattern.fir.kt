@@ -12,3 +12,6 @@ public fun foo(a: Any, b: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Map<!>) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, isExpression, nullableType, outProjection, smartcast, starProjection,
+whenExpression, whenWithSubject */

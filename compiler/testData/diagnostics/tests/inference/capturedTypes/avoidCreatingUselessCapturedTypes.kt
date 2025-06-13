@@ -2237,3 +2237,5 @@ object Entities {
 //        "&zwj;" to 8205,
         "&zwnj;" to 8204)
 }
+
+/* GENERATED_FIR_TAGS: integerLiteral, objectDeclaration, propertyDeclaration, stringLiteral */

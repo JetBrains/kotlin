@@ -10,3 +10,6 @@ fun foo(list: List<XY>) {
         list.map { (x3, y3) -> x3 + y3 }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, classDeclaration, data, equalityExpression, forLoop,
+functionDeclaration, ifExpression, lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration */

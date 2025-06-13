@@ -7,3 +7,6 @@ fun foo(maybe: Int?) {
     val i : Int = maybe ?: throw RuntimeException("No value")
     System.out.println(i)
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaFunction, javaProperty, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

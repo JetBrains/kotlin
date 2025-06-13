@@ -72,3 +72,6 @@ fun main() {
     useInLoop()
     expression()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, ifExpression, isExpression, javaFunction, javaType,
+localProperty, propertyDeclaration, stringLiteral, unnamedLocalVariable */

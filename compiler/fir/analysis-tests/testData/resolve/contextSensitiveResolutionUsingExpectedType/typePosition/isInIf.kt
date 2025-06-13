@@ -44,3 +44,6 @@ fun testIsInIf(instance: SealedClass): String {
 
     return ""
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, functionDeclaration, ifExpression, inner, integerLiteral,
+isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral */

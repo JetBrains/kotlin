@@ -7,3 +7,5 @@ class C {
 }
 
 fun C.g(f: (String) -> Unit = { s -> f() }) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral */

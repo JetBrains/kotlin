@@ -8,3 +8,6 @@ fun foo() {
         if (i == 13) return
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, equalityExpression, forLoop, functionDeclaration, ifExpression,
+integerLiteral, localProperty, propertyDeclaration, rangeExpression */

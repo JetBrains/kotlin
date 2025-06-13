@@ -71,3 +71,6 @@ object Test5 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, localProperty,
+nestedClass, nullableType, objectDeclaration, outProjection, propertyDeclaration, stringLiteral, typeParameter, vararg */

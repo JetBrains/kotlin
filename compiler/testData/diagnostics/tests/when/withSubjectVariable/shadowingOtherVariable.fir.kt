@@ -26,3 +26,6 @@ fun testShadowinLocalVariable() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

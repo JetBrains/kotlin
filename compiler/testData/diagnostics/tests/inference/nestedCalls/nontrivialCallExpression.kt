@@ -18,3 +18,6 @@ fun test(array: Array<Int>) {
 
     bar(makeNullable(foo(emptyList())) ?: 0)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, elvisExpression, functionDeclaration, integerLiteral, nullableType,
+typeConstraint, typeParameter */

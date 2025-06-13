@@ -11,3 +11,6 @@ fun calc(x: String?): Int {
     // Here x is also not null
     return <!DEBUG_INFO_SMARTCAST!>x<!>.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, safeCall, smartcast */

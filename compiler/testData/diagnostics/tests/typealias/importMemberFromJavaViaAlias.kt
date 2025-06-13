@@ -27,3 +27,5 @@ fun foo(
 ) {
     member()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, typeAliasDeclaration */

@@ -23,3 +23,6 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, stringLiteral,
+suspend, thisExpression, typeParameter, typeWithExtension */

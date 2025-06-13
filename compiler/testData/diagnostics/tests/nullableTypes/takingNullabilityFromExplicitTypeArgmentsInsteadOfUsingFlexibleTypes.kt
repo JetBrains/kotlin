@@ -36,3 +36,6 @@ class Bar<T, K: Any> {
     val foos18 = <!DEBUG_INFO_EXPRESSION_TYPE("J<T>")!>J<<!UPPER_BOUND_VIOLATED!>T<!>>()<!>
     val foos19 = <!DEBUG_INFO_EXPRESSION_TYPE("J<T?>")!>J<<!UPPER_BOUND_VIOLATED!>T?<!>>()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaFunction, javaType, nullableType, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

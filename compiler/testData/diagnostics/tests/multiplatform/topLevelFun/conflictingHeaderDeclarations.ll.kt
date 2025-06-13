@@ -9,3 +9,5 @@ expect <!CONFLICTING_OVERLOADS!>fun foo()<!>
 expect fun foo(x: Int)
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: expect, functionDeclaration */

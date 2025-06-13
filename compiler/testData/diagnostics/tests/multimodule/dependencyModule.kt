@@ -54,3 +54,5 @@ fun test2() {
     inst.<!INVISIBLE_MEMBER!>ClassInternal<!>()
     inst.<!INVISIBLE_MEMBER!>ClassPrivate<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

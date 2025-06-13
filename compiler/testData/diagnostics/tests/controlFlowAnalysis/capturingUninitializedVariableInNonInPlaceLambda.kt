@@ -70,3 +70,7 @@ class A {
 
     val x = 10
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, classReference, contractCallsEffect, contracts,
+functionDeclaration, functionalType, init, inline, integerLiteral, lambdaLiteral, localFunction, nullableType,
+propertyDeclaration, stringLiteral */

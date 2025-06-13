@@ -103,3 +103,7 @@ class DefiniteInitializationAfterThrow {
     }
     fun bar() = false
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+ifExpression, init, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral, typeParameter */

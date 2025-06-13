@@ -7,3 +7,5 @@ fun foo(action: KFunction1<String, Int>): Int {
 
     return localAction("hello")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, stringLiteral */

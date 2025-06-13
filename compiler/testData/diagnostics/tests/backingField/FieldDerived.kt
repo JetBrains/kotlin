@@ -18,3 +18,5 @@ class NoBackingField: Base() {
     override val x: Int
         get() = 5
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, getter, integerLiteral, override, propertyDeclaration */

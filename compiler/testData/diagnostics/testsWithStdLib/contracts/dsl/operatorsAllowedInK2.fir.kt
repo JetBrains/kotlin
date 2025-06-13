@@ -142,3 +142,9 @@ fun test_ranges(r: Any, aa: A?) {
         r.from
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, classDeclaration, comparisonExpression,
+contractCallsEffect, contractConditionalEffect, contracts, elvisExpression, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, incrementDecrementExpression,
+integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, operator, primaryConstructor,
+propertyDeclaration, rangeExpression, safeCall, smartcast, thisExpression, unaryExpression */

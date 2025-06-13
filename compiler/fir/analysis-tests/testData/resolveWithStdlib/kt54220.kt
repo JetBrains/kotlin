@@ -5,3 +5,6 @@ fun box() = when {
     c != 3u -> "fail"
     else -> "OK"
 }
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, functionDeclaration, propertyDeclaration, stringLiteral,
+unsignedLiteral, whenExpression */

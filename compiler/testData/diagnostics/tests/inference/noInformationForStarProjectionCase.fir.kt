@@ -11,3 +11,5 @@ fun main() {
         <!CANNOT_INFER_PARAMETER_TYPE!>mutableListOf<!>()
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, starProjection */

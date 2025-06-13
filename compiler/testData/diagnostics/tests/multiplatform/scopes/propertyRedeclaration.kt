@@ -39,3 +39,6 @@ actual abstract class D {
     actual val <!REDECLARATION!>x<!> = 0
     val <!ACTUAL_MISSING, REDECLARATION!>x<!> = 0
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration */

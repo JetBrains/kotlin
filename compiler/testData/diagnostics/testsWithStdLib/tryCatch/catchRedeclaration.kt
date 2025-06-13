@@ -53,3 +53,6 @@ fun test5() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

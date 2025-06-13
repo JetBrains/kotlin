@@ -16,3 +16,6 @@ fun foo(t: T) {
 
     zzz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction,
+override */

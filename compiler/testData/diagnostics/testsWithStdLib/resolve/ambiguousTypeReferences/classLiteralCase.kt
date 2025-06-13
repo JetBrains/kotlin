@@ -18,3 +18,5 @@ import some.*
 // K1: misses both some.HashMap and java.util.HashMap due to ambiguous classifiers, takes kotlin.collections.HashMap from the next scope
 // K2: works the same way currently. See logic in BodyResolveComponents.resolveRootPartOfQualifier
 fun test() = HashMap::class
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, starProjection */

@@ -22,3 +22,6 @@ public class B<E> implements A<E> {
 fun main() {
     B<String>().foo("") { "" }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion,
+stringLiteral */

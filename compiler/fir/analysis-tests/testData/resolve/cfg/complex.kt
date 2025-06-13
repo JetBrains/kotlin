@@ -19,3 +19,7 @@ inline fun <reified T : Any> List<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, forLoop, funWithExtensionReceiver, functionDeclaration, ifExpression, inline,
+interfaceDeclaration, isExpression, localProperty, nullableType, propertyDeclaration, reified, smartcast, starProjection,
+thisExpression, tryExpression, typeConstraint, typeParameter, whenExpression */

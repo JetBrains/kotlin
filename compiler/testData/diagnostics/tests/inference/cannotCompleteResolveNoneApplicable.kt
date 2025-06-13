@@ -8,3 +8,5 @@ fun <T> f(a: Any, t: T, l: MutableList<T>) {}
 fun test(l: List<Int>) {
     <!NONE_APPLICABLE!>f<!>(1, "", l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

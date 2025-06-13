@@ -10,3 +10,6 @@ fun foo(): Int {
     } while (j < 5)
     return i
 }
+
+/* GENERATED_FIR_TAGS: assignment, comparisonExpression, doWhileLoop, functionDeclaration, incrementDecrementExpression,
+integerLiteral, localProperty, propertyDeclaration */

@@ -46,3 +46,6 @@ fun foo(a: Any?) {
 }
 
 fun <R> test2(j: JJJJ<R>) = j.get() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, functionDeclaration, javaProperty, javaType, localProperty,
+nullableType, propertyDeclaration, typeParameter */

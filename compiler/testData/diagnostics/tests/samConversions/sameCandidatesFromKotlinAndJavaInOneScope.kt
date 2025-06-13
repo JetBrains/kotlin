@@ -26,3 +26,6 @@ fun test(c: C) {
     c.pluginManagement {
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, javaType, lambdaLiteral,
+typeWithExtension */

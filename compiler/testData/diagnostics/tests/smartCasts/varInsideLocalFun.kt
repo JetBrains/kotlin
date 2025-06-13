@@ -16,3 +16,6 @@ public class MyClass
 
     fun method1(str: String) = str
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

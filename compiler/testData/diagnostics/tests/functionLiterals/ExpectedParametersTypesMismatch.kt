@@ -43,3 +43,5 @@ fun test1() {
          <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!>-> <!CONSTANT_EXPECTED_TYPE_MISMATCH, CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!>
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

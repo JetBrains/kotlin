@@ -48,3 +48,6 @@ interface I {
 }
 
 data class DC(val <!SUSPEND_OVERRIDDEN_BY_NON_SUSPEND!>v<!>: Int) : I
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, interfaceDeclaration, override, primaryConstructor,
+propertyDeclaration, suspend */

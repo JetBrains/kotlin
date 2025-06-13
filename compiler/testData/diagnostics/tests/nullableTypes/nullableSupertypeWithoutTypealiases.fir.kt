@@ -21,3 +21,6 @@ interface Foo1
 
 class Bar5: Foo<!NULLABLE_SUPERTYPE!>?<!>, Foo1<!NULLABLE_SUPERTYPE!>?<!>
 class Bar6: <!NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS_WARNING!>F2<!>, Foo1<!NULLABLE_SUPERTYPE!>?<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType, primaryConstructor,
+typeAliasDeclaration */

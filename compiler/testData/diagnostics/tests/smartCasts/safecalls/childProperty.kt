@@ -40,3 +40,6 @@ fun test5(a:A?){
     var k2: Int = <!TYPE_MISMATCH!><!DEBUG_INFO_SMARTCAST!>a<!>.e<!UNSAFE_CALL!>.<!>d<!>
     var k3: Int? = <!DEBUG_INFO_SMARTCAST!>a<!>.b
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast */

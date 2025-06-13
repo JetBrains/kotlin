@@ -11,3 +11,6 @@ val test = <!CANNOT_INFER_PARAMETER_TYPE!>foo2<!>().plus("") <!USELESS_CAST!>as 
 
 fun <T> T.bar() = this
 val barTest = "".bar() <!CAST_NEVER_SUCCEEDS!>as<!> Number
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, thisExpression, typeParameter */

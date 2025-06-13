@@ -70,3 +70,7 @@ fun test_returnsNull(a: A?, s: Any?, b: Boolean) {
         s.<!UNRESOLVED_REFERENCE!>length<!> // should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, safeCall, smartcast, stringLiteral,
+whenExpression, whenWithSubject */

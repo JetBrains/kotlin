@@ -11,3 +11,6 @@ val <T : KClass<*>> T.myJava1: Class<*>
 
 val <E : Any, T : KClass<E>> T.myJava2: Class<E>
     get() = <!DEBUG_INFO_EXPRESSION_TYPE("java.lang.Class<E>")!>javaImpl<!>
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, getter, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, starProjection, typeConstraint, typeParameter */

@@ -108,3 +108,7 @@ import test.Marker1
 <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.Marker1.NestedClass<!>
 
 fun f12(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.A.Marker.NestedClass.NestedClass2<!>) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, companionObject, const,
+functionDeclaration, integerLiteral, localProperty, nestedClass, nullableType, objectDeclaration, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, typeAliasDeclaration, vararg */

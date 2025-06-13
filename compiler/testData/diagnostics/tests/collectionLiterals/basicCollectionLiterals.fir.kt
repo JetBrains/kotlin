@@ -22,3 +22,7 @@ fun check() {
 
     [1, ""] checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Array<Any>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, intersectionType, lambdaLiteral, localProperty, nullableType, outProjection,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

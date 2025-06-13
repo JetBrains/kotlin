@@ -18,3 +18,7 @@ private val privateObj by MyDelegate {
 fun test() {
     privateObj.x
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter */

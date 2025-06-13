@@ -25,3 +25,5 @@ expect class C
 <!DUPLICATE_CLASS_NAMES!>actual class B<!>
 
 <!DUPLICATE_CLASS_NAMES!>actual class C<!>
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect */

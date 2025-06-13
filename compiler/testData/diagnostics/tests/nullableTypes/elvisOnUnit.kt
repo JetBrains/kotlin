@@ -11,3 +11,5 @@ fun foo(x: My?) {
     // See also KT-7936, KT-8347
     x?.other() ?: another()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, nullableType, safeCall */

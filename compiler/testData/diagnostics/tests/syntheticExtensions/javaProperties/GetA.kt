@@ -10,3 +10,5 @@ fun foo(javaClass: JavaClass) {
 public class JavaClass {
     public int getA() { return 1; }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

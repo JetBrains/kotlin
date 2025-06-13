@@ -30,3 +30,6 @@ fun main() {
     foo<Int> @Ann("") label@/* */
     { x -> x }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

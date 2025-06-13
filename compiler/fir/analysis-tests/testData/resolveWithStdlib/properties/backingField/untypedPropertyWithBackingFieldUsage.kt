@@ -62,3 +62,5 @@ val constWithFieldTypeBlock: Int
 val constWithFieldTypeExpression: Int
     field = 3.14
     get() = 10
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

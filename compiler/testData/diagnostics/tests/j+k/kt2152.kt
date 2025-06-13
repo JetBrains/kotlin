@@ -10,3 +10,4 @@ public class Ccc extends Bbb {
 //FILE: Ddd.kt
 import Ccc
 
+/* GENERATED_FIR_TAGS: classDeclaration */

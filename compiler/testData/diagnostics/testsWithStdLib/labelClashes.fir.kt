@@ -63,3 +63,6 @@ object OtherTests2 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+objectDeclaration, stringLiteral, thisExpression, typeAliasDeclaration, typeWithExtension */

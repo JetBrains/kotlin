@@ -32,3 +32,6 @@ class Foo<T> {
     val p = T::class
     fun f() = T::class
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, functionDeclaration, getter, localFunction,
+localProperty, nullableType, propertyDeclaration, starProjection, typeConstraint, typeParameter */

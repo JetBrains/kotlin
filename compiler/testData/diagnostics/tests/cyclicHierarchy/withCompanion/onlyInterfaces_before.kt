@@ -17,3 +17,6 @@ open class Container {
         <!NOTHING_TO_OVERRIDE!>override<!> fun m() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,
+objectDeclaration, override */

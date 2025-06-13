@@ -64,3 +64,6 @@ fun invokeTest(goodArgs: Array<String>) {
     J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args)
     J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, flexibleType, functionDeclaration,
+ifExpression, integerLiteral, javaFunction, javaProperty, javaType, nullableType, propertyDeclaration, smartcast, vararg */

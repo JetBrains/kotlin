@@ -19,3 +19,5 @@ interface J extends K {
     SubG bar();
     SubG baz();
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

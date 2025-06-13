@@ -25,3 +25,6 @@ object CalculatedVariables {
 }
 
 class TimeIndex
+
+/* GENERATED_FIR_TAGS: anonymousFunction, asExpression, classDeclaration, data, functionalType, lambdaLiteral,
+nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

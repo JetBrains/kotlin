@@ -42,3 +42,6 @@ class B {
         x9 = arg
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, lateinit, propertyDeclaration,
+propertyWithExtensionReceiver, secondaryConstructor, setter, stringLiteral */

@@ -12,3 +12,5 @@ fun foo(jalw: java.util.ListWithSomethingOverridden<String>, jal: java.util.Arra
     l.<!DEPRECATION!>somethingNonExisting<!>
     l.<!DEPRECATION!>getSomethingNonExisting<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty */

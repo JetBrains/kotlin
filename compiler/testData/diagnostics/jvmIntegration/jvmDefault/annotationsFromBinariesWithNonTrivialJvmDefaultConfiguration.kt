@@ -27,3 +27,6 @@ fun test(pluginContext: IrPluginContext) {
     pluginContext.optInModuleDescriptor
     pluginContext.deprecatedModuleDescriptor
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, getter, interfaceDeclaration, propertyDeclaration,
+stringLiteral */

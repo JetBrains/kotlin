@@ -17,3 +17,6 @@ abstract class A {
 
     class C(override val a: A?): A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, localProperty, nestedClass,
+nullableType, override, primaryConstructor, propertyDeclaration */

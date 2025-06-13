@@ -19,3 +19,5 @@ fun main() {
         ""
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, stringLiteral */

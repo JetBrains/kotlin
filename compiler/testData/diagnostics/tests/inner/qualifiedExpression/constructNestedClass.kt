@@ -16,3 +16,5 @@ fun f4() = Outer.<!RESOLUTION_TO_CLASSIFIER!>Inner<!>()
 fun f5() = Outer.Inner.<!RESOLUTION_TO_CLASSIFIER!>InnerInner<!>()
 fun f6() = Outer().Inner()
 fun f7() = Outer().Inner().InnerInner()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass */

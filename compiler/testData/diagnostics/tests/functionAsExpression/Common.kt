@@ -19,3 +19,7 @@ val funfun = fun() = fun() = 5
 val parentesized = (fun () {})
 val parentesizedWithType = checkSubtype<() -> Unit>((fun () {}))
 val withType = checkSubtype<() -> Unit>((fun () {}))
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, const, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, typeWithExtension */

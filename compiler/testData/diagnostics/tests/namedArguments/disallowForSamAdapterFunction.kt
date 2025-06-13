@@ -16,3 +16,5 @@ package test
 fun test() {
     J.foo("", <!NAMED_ARGUMENTS_NOT_ALLOWED!>r<!> = { }, <!NAMED_ARGUMENTS_NOT_ALLOWED!>z<!> = false)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, lambdaLiteral, samConversion, stringLiteral */

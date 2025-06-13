@@ -20,3 +20,5 @@ abstract class My {
     open var t: Int = 0
         <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, propertyDeclaration */

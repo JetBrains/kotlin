@@ -54,3 +54,6 @@ fun bar(inv: Inv<String>, out: Out<String>, i: In<CharSequence>, cs: CharSequenc
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>fooExt<!>(inv)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, typeParameter, typeWithExtension, vararg */

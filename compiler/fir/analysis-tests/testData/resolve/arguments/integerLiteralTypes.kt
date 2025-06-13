@@ -47,3 +47,6 @@ fun test_6() {
     @Ann(<!ARGUMENT_TYPE_MISMATCH!>300<!>)
     val x = ""
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

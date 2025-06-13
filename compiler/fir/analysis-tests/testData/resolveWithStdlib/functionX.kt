@@ -10,3 +10,6 @@ val y: Function1<String, String> = { it }
 class MyFunction : Function2<Int, String, Unit> {
     override fun invoke(p1: Int, p2: String) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, lambdaLiteral, operator, override,
+propertyDeclaration */

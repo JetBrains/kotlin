@@ -34,3 +34,6 @@ val moreThenOneContextWithAnnotationProperty: String
 context(@AnnotationWithConstructor("") a: @AnnotationWithConstructor("") String)
 val annotationWithConstructorProperty: String
     get() = a
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+primaryConstructor, propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

@@ -16,3 +16,6 @@ fun myMap(x: List<Int>): Int {
 }
 
 infix fun List<Int>.myMap(x: () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, integerLiteral,
+lambdaLiteral */

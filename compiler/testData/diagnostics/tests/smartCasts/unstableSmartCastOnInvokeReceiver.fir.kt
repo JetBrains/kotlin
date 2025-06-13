@@ -12,3 +12,6 @@ fun someFun(someInterface: SomeInterface) {
         someInterface.<!SMARTCAST_IMPOSSIBLE_ON_IMPLICIT_INVOKE_RECEIVER!>interfaceMethod<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, interfaceDeclaration,
+nullableType, propertyDeclaration, smartcast */

@@ -37,3 +37,7 @@ fun mixedReceiver(s: String?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, nullableType, smartcast,
+thisExpression */

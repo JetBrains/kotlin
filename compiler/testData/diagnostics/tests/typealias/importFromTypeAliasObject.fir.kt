@@ -14,3 +14,5 @@ import bar.<!TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT_ERROR("HostAlias; Host")!
 fun test() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, typeAliasDeclaration */

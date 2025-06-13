@@ -23,3 +23,5 @@ fun bar(e: DerivedEnum) {}
 fun baz(s: String) {
     DerivedEnum.x
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, javaProperty, javaType */

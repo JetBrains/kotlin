@@ -13,3 +13,5 @@ fun main2() {
     { "" }.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>bar<!>()
     "".bar()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

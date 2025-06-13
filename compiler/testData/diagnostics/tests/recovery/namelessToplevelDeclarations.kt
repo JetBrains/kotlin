@@ -25,3 +25,6 @@ object<!SYNTAX!><!> {
 enum class<!SYNTAX!><!> {}
 
 annotation class<!SYNTAX!><!> {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, objectDeclaration, propertyDeclaration */

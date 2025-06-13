@@ -8,3 +8,5 @@ interface My
 
 val z: Array<out My>
     get() = emptyArray()
+
+/* GENERATED_FIR_TAGS: getter, interfaceDeclaration, outProjection, propertyDeclaration */

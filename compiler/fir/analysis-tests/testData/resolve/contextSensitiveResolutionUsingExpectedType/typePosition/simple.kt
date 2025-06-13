@@ -11,3 +11,6 @@ fun MySealed.getOrElse() = when (this) {
     is Left -> x
     is Right -> y
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

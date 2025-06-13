@@ -34,3 +34,5 @@ import pkg.Foo2.<!INVISIBLE_REFERENCE!>Bar<!>.baz
 import pkg.<!INVISIBLE_REFERENCE!>Foo3<!>.<!INVISIBLE_REFERENCE!>Bar<!>.<!INVISIBLE_REFERENCE!>baz<!>
 
 class MainSource
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration */

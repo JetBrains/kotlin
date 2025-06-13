@@ -11,3 +11,6 @@ class Main {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

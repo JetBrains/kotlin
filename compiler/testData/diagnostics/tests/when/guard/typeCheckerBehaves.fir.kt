@@ -52,3 +52,8 @@ fun typeCheckerBehavior(x: Any, y: Any) {
         is Boolean if <!CONDITION_TYPE_MISMATCH!><!INAPPLICABLE_CANDIDATE!>OuterBoundedBooleanHolder<!><<!UPPER_BOUND_VIOLATED!>CharSequence<!>>(true).getValue()<!> -> 600
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, capturedType, classDeclaration, equalityExpression, functionDeclaration,
+guardCondition, in, inProjection, integerLiteral, intersectionType, isExpression, nullableType, out, outProjection,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, typeAliasDeclaration, typeConstraint, typeParameter,
+whenExpression, whenWithSubject */

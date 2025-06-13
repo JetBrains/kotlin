@@ -34,3 +34,6 @@ fun test_2() {
     }
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

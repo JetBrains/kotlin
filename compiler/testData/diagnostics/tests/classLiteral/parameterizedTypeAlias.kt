@@ -103,3 +103,6 @@ fun test() {
     UnusedArrayAlias<Int>::class
     UnusedArrayAlias<*>::class
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, in, nullableType, out,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

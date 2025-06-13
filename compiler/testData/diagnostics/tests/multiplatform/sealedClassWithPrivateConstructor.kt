@@ -10,3 +10,5 @@ expect sealed class Frame private constructor()
 // FILE: jvm.kt
 
 actual sealed class Frame actual constructor()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, sealed */

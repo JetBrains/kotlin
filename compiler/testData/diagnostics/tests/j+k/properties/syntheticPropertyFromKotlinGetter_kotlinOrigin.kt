@@ -56,3 +56,5 @@ fun test_4(d: D) {
     d.<!UNRESOLVED_REFERENCE!>x3<!>
     d.<!UNRESOLVED_REFERENCE!>x4<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType, override, stringLiteral */

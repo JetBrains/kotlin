@@ -6,3 +6,5 @@ class A {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, propertyDeclaration */

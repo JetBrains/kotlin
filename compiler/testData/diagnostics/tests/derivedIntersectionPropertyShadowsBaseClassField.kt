@@ -22,3 +22,6 @@ class Derived : Proxy, Intermediate() {
         <!BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, javaType,
+propertyDeclaration, stringLiteral */

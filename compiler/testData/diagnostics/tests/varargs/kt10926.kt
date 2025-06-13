@@ -134,3 +134,6 @@ fun box(): String {
 
     return if (all.all { it == "OK" }) "OK" else "NOK"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, vararg */

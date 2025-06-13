@@ -10,3 +10,6 @@ interface ConverterFromString<T> {
         override fun ofS(s: String): T? = if (s == nullText) null else this@ConverterFromString.ofS(s)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, nullableType, override, thisExpression, typeParameter */

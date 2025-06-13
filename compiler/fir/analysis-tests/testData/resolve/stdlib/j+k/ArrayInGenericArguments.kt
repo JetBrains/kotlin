@@ -18,3 +18,5 @@ fun main() {
     Keys.getData(Keys.X)[0].length
     Keys.getData(Keys.Y).length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty */

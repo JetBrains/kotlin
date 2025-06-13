@@ -59,3 +59,6 @@ fun test_3(e: JavaEnum) {
         JavaEnum.C -> 2
     }.plus(0)
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

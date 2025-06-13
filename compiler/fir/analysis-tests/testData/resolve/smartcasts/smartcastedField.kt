@@ -32,3 +32,6 @@ fun test_2(x: Property<String>) {
         x.id
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, intersectionType, isExpression, javaFunction,
+javaType, propertyDeclaration, smartcast */

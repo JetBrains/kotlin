@@ -11,3 +11,5 @@ public abstract class XBreakpointType<B extends XBreakpoint<P>, P extends XBreak
 
 // FILE: main.kt
 fun foo(x: XBreakpointType<XBreakpoint<*>, *>) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, starProjection */

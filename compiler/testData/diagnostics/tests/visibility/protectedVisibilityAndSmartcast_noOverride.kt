@@ -67,3 +67,6 @@ abstract class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, nestedClass, propertyDeclaration */

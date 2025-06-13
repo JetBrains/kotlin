@@ -16,3 +16,5 @@ object O {
 
     <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object C
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, inner, objectDeclaration */

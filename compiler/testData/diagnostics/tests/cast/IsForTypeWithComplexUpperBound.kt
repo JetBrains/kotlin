@@ -33,3 +33,6 @@ class InNothing : In<Nothing>
 fun <T, S : In<T>> test6(a: S) {
     a is InNothing
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, isExpression, nullableType, out,
+outProjection, typeConstraint, typeParameter */

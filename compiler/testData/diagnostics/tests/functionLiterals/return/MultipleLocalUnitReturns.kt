@@ -10,3 +10,5 @@ fun main() {
         execute { Any() }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType, typeParameter */

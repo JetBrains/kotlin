@@ -9,3 +9,5 @@ fun foo(p: Processor<in CharSequence>, s: String?) {
 public interface Processor<T> {
     boolean process(T t);
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inProjection, javaType, nullableType */

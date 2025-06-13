@@ -14,3 +14,5 @@ fun test() {
     runWithA <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>s<!> -> }<!>
     runWithA <!ARGUMENT_TYPE_MISMATCH!>{ s: String -> }<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, typeWithContext */

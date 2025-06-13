@@ -11,3 +11,5 @@ fun foo(x: String): String {
         return x     // <- Wrong UNREACHABLE_CODE
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration, tryExpression */

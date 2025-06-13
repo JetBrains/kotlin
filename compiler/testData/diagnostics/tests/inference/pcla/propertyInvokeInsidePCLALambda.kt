@@ -17,3 +17,6 @@ fun bar(
         foo(this).propertyForInvoke()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, thisExpression, typeParameter, typeWithExtension */

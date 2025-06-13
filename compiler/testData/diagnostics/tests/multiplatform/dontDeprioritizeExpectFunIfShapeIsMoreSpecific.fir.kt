@@ -13,3 +13,5 @@ fun test(): String = f(42) // Should be resolved to (2) because the shape is mor
 // FILE: jvm.kt
 
 actual fun f(element: Int): String = "asdf"
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, integerLiteral, stringLiteral, vararg */

@@ -48,3 +48,7 @@ fun <FT> build(
 }
 
 class UserKlass
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, init, lambdaLiteral,
+localClass, localFunction, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

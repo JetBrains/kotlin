@@ -21,3 +21,5 @@ fun foo(
     consumeString(String(stringBuffer))
     consumeString(String(stringBuilder))
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

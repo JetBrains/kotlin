@@ -22,3 +22,6 @@ fun box(): String {
     test2()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, localProperty, propertyDeclaration, stringLiteral,
+tryExpression */

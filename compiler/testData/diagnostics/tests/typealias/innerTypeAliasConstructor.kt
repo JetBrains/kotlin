@@ -18,3 +18,6 @@ val test1 = c.<!UNRESOLVED_REFERENCE!>P1<!><String>("", 1)
 val test2 = c.<!UNRESOLVED_REFERENCE!>P2<!><String>(1, "")
 val test3 = c.<!UNRESOLVED_REFERENCE!>P1<!>("", 1)
 val test4 = c.<!UNRESOLVED_REFERENCE!>P2<!>(1, "")
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

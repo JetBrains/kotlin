@@ -8,3 +8,6 @@ object B : A by B {
 interface A {
     val bar: String
 }
+
+/* GENERATED_FIR_TAGS: inheritanceDelegation, interfaceDeclaration, objectDeclaration, override, propertyDeclaration,
+stringLiteral */

@@ -74,3 +74,6 @@ class Test5<A, out B, C>(foo: Any?, bar: Any?) {
     private fun bar2(): Int = bar2(1)
     private fun bar2(i: Int) = 2
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, elvisExpression, functionDeclaration, in, integerLiteral,
+nullableType, out, primaryConstructor, propertyDeclaration, thisExpression, typeParameter */

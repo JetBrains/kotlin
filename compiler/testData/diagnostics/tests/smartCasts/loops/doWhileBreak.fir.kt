@@ -10,3 +10,6 @@ public fun foo(p: String?): Int {
     // p should be smart casted despite of break
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast, stringLiteral */

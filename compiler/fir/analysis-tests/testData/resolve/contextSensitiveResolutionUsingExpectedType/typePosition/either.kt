@@ -11,3 +11,7 @@ fun <E, A> Either<E, A>.getOrElse(default: A) = when (this) {
     is Left -> default
     is Right -> value
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+isExpression, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, sealed, smartcast, typeParameter,
+whenExpression, whenWithSubject */

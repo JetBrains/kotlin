@@ -93,3 +93,6 @@ fun test_7(a: A, inv1: Invariant1<A>, inv2: Invariant1<in A>, inv3: Invariant1<o
     inv2.take(a)
     inv3.take(<!MEMBER_PROJECTED_OUT!>a<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out,
+outProjection, primaryConstructor, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

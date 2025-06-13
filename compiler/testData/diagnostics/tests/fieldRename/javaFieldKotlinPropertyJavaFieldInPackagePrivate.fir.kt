@@ -26,3 +26,6 @@ public class C extends B {}
 fun box(): String {
     return C().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>f<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+propertyDeclaration, stringLiteral */

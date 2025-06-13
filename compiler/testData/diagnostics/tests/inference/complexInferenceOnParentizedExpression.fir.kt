@@ -36,3 +36,7 @@ fun test_2() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, interfaceDeclaration, lambdaLiteral, objectDeclaration, operator, propertyDeclaration,
+propertyWithExtensionReceiver, typeConstraint, typeParameter, typeWithExtension */

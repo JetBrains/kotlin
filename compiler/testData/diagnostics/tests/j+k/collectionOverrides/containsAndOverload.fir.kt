@@ -25,3 +25,6 @@ fun foo(a: A, ka: KA) {
     "" in ka
     <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, operator, override,
+stringLiteral */

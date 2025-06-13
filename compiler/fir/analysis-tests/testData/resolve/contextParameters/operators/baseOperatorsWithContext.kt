@@ -90,3 +90,7 @@ fun usage() {
     b <!NO_CONTEXT_ARGUMENT!>+=<!> 1
     b <!NO_CONTEXT_ARGUMENT!>++<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty, operator,
+propertyDeclaration, thisExpression, unaryExpression */

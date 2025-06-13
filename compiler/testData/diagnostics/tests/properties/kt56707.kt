@@ -12,3 +12,6 @@ class Foo {
 fun use() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Set<Foo>")!>Foo().allChildren<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, getter, lambdaLiteral,
+propertyDeclaration */

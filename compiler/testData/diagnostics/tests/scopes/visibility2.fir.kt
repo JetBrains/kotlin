@@ -51,3 +51,6 @@ class Q {
 class NewClass : java.util.ArrayList<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>() {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> override fun toString() = "a"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, objectDeclaration, override,
+propertyDeclaration, stringLiteral */

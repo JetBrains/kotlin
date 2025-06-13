@@ -43,3 +43,6 @@ fun set(p: Any) {
 fun foo(s: String) {
     s.<!UNRESOLVED_REFERENCE!>xxx<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+init, integerLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

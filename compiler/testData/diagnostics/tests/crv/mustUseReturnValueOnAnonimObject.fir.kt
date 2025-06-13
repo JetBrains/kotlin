@@ -10,3 +10,5 @@ fun test() {
         fun compute(): Int = 24
     }).compute()<!>
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, integerLiteral, propertyDeclaration */

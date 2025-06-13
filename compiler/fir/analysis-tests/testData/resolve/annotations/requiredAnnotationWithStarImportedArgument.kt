@@ -5,3 +5,5 @@ import kotlin.annotation.AnnotationTarget.*
 
 @Target(ANNOTATION_CLASS)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration */

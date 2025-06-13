@@ -55,3 +55,5 @@ fun test() {
     E.bar()
     E.baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType */

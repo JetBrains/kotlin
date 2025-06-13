@@ -17,3 +17,6 @@ private fun doTest() : Int {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, tryExpression */

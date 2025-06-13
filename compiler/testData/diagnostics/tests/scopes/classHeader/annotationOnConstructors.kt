@@ -65,3 +65,7 @@ constructor() {
         fun foo(): Nested = null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, classDeclaration, classReference, companionObject, const,
+functionDeclaration, inner, integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, secondaryConstructor, starProjection */

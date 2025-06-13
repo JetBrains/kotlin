@@ -39,3 +39,5 @@ fun test(b: B) {
     val b_4: B = a.B()
     b_4.m1()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration */

@@ -11,3 +11,6 @@ fun <T, Q> List<T>.map1(f: (T)-> Q): List<T>? = tail!!.map1(f)
 fun <T, Q> List<T>.map2(f: (T)-> Q): List<T>? = tail.sure().map2(f)
 
 fun <T, Q> List<T>.map3(f: (T)-> Q): List<T>? = tail.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>sure<!><T>().<!DEBUG_INFO_MISSING_UNRESOLVED!>map3<!>(f)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+nullableType, primaryConstructor, propertyDeclaration, thisExpression, typeConstraint, typeParameter */

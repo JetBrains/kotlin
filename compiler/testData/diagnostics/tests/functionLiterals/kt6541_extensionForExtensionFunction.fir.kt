@@ -9,3 +9,6 @@ object Z {
 }
 
 val t2 = Z add <!ARGUMENT_TYPE_MISMATCH!>{ } <!TOO_MANY_ARGUMENTS!>{ }<!><!>
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, propertyDeclaration, typeWithExtension */

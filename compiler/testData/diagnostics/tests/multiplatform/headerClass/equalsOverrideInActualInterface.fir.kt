@@ -7,3 +7,5 @@ expect interface Base
 actual interface Base {
     override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>equals<!>(other: Any?): Boolean
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, interfaceDeclaration, nullableType, operator, override */

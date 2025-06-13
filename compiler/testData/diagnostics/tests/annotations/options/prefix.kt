@@ -13,3 +13,6 @@ fun foo(): Int {
     @ExprAnn ++x
     return x
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, incrementDecrementExpression,
+integerLiteral, localProperty, propertyDeclaration */

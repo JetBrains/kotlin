@@ -23,3 +23,6 @@ fun test(): MyFlow<Int> {
         myEmptyFlow()
     )
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+in, interfaceDeclaration, lambdaLiteral, nullableType, out, starProjection, typeParameter, typeWithExtension */

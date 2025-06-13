@@ -10,3 +10,5 @@ fun main() {
         val f: KFunction0<A> = x
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localClass, propertyDeclaration */

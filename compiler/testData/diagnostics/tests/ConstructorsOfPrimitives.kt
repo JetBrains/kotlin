@@ -9,3 +9,5 @@ fun test() {
     <!INVISIBLE_MEMBER!>Char<!>()
     <!INVISIBLE_MEMBER!>Boolean<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

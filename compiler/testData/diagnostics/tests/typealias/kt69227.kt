@@ -7,3 +7,7 @@ typealias ModelWithIdAlias<T4, T5> = ModelWithId<T4, T5>
 fun main() {
     ModelWithIdAlias<IModel<Int>, Int>(1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

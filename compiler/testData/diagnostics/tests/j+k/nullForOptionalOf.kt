@@ -7,3 +7,5 @@ import java.util.*
 fun use(x: String?) {
     Optional.of(<!TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, nullableType */

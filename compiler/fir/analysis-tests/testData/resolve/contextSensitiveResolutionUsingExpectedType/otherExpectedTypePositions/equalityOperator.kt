@@ -57,3 +57,7 @@ fun foo(a: MyEnum) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter, whenExpression,
+whenWithSubject */

@@ -8,3 +8,7 @@ fun foo(a: Number) {
     checkSubtype<Int>(a)
     checkSubtype<String>(x)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, destructuringDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, localProperty, nullableType, operator, propertyDeclaration, smartcast,
+stringLiteral, typeParameter, typeWithExtension */

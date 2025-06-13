@@ -4,3 +4,5 @@ fun foo(i: Int) {
     <!FUNCTION_EXPECTED!>i<!>()
     <!FUNCTION_EXPECTED!>1<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

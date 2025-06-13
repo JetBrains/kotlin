@@ -53,3 +53,7 @@ fun test() {
     y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
     y().bar() checkType { _<A<Any, Double, Short, Char>>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, inner, lambdaLiteral, localClass, localProperty, nullableType, propertyDeclaration,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter, typeWithExtension */

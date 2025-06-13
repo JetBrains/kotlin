@@ -9,3 +9,5 @@ class MyClass: @MyClass.NestedAnnotation OuterInterface {
     @Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
     annotation class NestedAnnotation
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, interfaceDeclaration, nestedClass */

@@ -148,3 +148,9 @@ class Z(b: B) : Y(b) {
 }
 
 class WithSetter(@set:E6 var withSetter: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFieldDelegate, annotationUseSiteTargetParam,
+annotationUseSiteTargetProperty, annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter,
+annotationUseSiteTargetReceiver, annotationUseSiteTargetSetterParameter, classDeclaration, classReference,
+funWithExtensionReceiver, functionDeclaration, getter, inheritanceDelegation, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nestedClass, override, primaryConstructor, propertyDeclaration, propertyDelegate, setter */

@@ -77,3 +77,7 @@ fun <TypeParameter> test(
         boxedTypeParameter.unbox<TypeParameter>()
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, integerLiteral, interfaceDeclaration, intersectionType, nullableType, outProjection, smartcast,
+stringLiteral, typeParameter */

@@ -15,3 +15,5 @@ expect open class Foo : Base
 actual open class Foo : Base() {
     final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>foo<!>() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override */

@@ -162,3 +162,8 @@ fun test8() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, anonymousObjectExpression, break, classDeclaration,
+continue, equalityExpression, functionDeclaration, functionalType, ifExpression, init, inline, integerLiteral,
+lambdaLiteral, localClass, localFunction, nullableType, primaryConstructor, propertyDeclaration, secondaryConstructor,
+stringLiteral, typeParameter, whenExpression, whenWithSubject, whileLoop */

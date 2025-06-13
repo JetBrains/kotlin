@@ -20,3 +20,6 @@ class B : A() {
     fun f1() = constVal
     fun f2() = jvmFieldVal
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

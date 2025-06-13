@@ -9,3 +9,6 @@ annotation class Anno(val position: String)
 val property: Int get() = 0
 
 const val prop = "str"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, getter, integerLiteral, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral */

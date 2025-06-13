@@ -41,3 +41,7 @@ fun test() {
     takeInt(<!TYPE_MISMATCH!>ImplicitIndirect.bar<!>) // should be an error
     takeInt(ImplicitIndirect.baz)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, starProjection, stringLiteral,
+typeParameter */

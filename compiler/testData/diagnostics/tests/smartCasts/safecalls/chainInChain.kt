@@ -5,3 +5,5 @@ fun calc(x: List<String>?, y: List<Int>?) {
                y?.get(0) ?: 1) // But safe call is NECESSARY here for y
      ?.get(<!DEBUG_INFO_SMARTCAST!>x<!>.size)
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, integerLiteral, nullableType, safeCall, smartcast */

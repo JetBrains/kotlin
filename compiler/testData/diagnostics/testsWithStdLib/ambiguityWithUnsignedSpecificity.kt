@@ -11,3 +11,5 @@ fun of(size: ULong) {
 fun of(size: Int) {}
 
 fun of(size: Long) {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, nullableType, typeParameter */

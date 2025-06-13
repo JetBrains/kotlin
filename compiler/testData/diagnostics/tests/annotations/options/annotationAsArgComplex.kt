@@ -10,3 +10,5 @@ fun registerQuickFix(annotation: Annotation) {
     annotation.setProblemGroup()
     val fixes = annotation.getQuickFixes()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

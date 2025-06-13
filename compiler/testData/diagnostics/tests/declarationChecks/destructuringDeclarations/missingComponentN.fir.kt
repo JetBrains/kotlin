@@ -15,3 +15,6 @@ fun test() {
     val g: (A) -> Int = { <!COMPONENT_FUNCTION_MISSING!>(_, _, _)<!> -> 2 }
     val h: (A) -> Int = { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, _) -> 3}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, operator, propertyDeclaration, stringLiteral, unnamedLocalVariable */

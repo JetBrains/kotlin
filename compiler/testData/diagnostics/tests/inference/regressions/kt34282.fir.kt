@@ -8,3 +8,5 @@ fun foo(x: String) = ""
 fun main() {
     bar(::<!NONE_APPLICABLE!>foo<!>) // no report about unresolved callable reference for `foo`
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, stringLiteral */

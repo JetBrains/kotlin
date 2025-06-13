@@ -27,3 +27,5 @@ class A : B() {
     class NestedInA1 : NestedInB()
     class NestedInA2 : NestedInC()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

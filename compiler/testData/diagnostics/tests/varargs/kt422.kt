@@ -17,3 +17,6 @@ fun test1() {
     array("A", "A")
     array(1, 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, outProjection, stringLiteral, typeParameter,
+vararg */

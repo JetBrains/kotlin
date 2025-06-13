@@ -468,3 +468,6 @@ class A20<
 fun check(b: A20<*, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *, *>) {
     b.add("1").add("2").build()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, starProjection, stringLiteral,
+typeConstraint, typeParameter */

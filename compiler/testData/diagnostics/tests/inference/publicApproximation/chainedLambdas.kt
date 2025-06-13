@@ -33,3 +33,6 @@ fun test(arg: First) {
     chained1(arg).<!UNRESOLVED_REFERENCE!>first<!>()
     chained2(arg).<!UNRESOLVED_REFERENCE!>first<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, interfaceDeclaration, intersectionType, isExpression,
+lambdaLiteral, smartcast */

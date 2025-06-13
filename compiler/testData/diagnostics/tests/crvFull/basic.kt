@@ -62,3 +62,6 @@ fun main() {
     A().alreadyApplied()
     val x = bar()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, enumDeclaration, enumEntry, functionDeclaration,
+getter, localFunction, localProperty, propertyDeclaration, setter, stringLiteral */

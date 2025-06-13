@@ -19,3 +19,6 @@ public class JavaClass<X> {
 interface I<T> {
     T run(T t);
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaType, lambdaLiteral, localProperty,
+propertyDeclaration, samConversion, stringLiteral */

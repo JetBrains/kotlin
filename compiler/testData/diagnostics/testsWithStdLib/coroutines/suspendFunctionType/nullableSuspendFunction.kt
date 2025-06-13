@@ -9,3 +9,5 @@ fun foo() {
     test2?.<!ILLEGAL_SUSPEND_FUNCTION_CALL!>invoke<!>()
     test3?.<!ILLEGAL_SUSPEND_FUNCTION_CALL!>invoke<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, nullableType, propertyDeclaration, safeCall, suspend */

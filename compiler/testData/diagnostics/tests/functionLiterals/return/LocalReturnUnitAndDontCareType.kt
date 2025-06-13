@@ -20,3 +20,5 @@ val c = run {
 
     return@run <!RETURN_TYPE_MISMATCH!>4<!>
 }
+
+/* GENERATED_FIR_TAGS: ifExpression, integerLiteral, lambdaLiteral, propertyDeclaration */

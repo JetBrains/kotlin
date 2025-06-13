@@ -7,3 +7,6 @@ class C {
         return v
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

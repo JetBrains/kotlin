@@ -23,3 +23,6 @@ fun box(): String {
     C().foo()
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaProperty,
+javaType, safeCall, stringLiteral */

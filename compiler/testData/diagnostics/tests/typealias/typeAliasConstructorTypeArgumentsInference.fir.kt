@@ -31,3 +31,7 @@ fun testProjections1(x: Pair<in Int, out String>) = <!CANNOT_INFER_PARAMETER_TYP
 fun testProjections2(x: Pair<in Int, out Number>) = <!CANNOT_INFER_PARAMETER_TYPE!>F<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 fun testProjections3(x: Pair<in Number, out Int>) = <!CANNOT_INFER_PARAMETER_TYPE!>F<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 fun testProjections4(x: Pair<in Int, in Int>) = <!CANNOT_INFER_PARAMETER_TYPE!>F<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, integerLiteral, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

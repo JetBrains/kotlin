@@ -47,3 +47,7 @@ fun catchThrowIfNotCalled() {
     // x *isn't* initialized here!
     println(<!UNINITIALIZED_VARIABLE!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression,
+typeParameter */

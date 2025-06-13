@@ -34,3 +34,6 @@ fun test() {
     fooLong(1) checkType { _<Int>() }
     fooLong(1u) checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithExtension, unsignedLiteral */

@@ -24,3 +24,6 @@ fun foo(mr: MyRecord) {
     takeInt(mr.y)
     takeStringArray(mr.z)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty, javaType,
+outProjection, stringLiteral */

@@ -66,3 +66,7 @@ fun usage() {
     DerivedOverrideWithContext().bar()(A())
     DerivedOverrideWithContext().x(A())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType, getter,
+lambdaLiteral, nullableType, override, propertyDeclaration, stringLiteral, typeParameter, typeWithContext,
+typeWithExtension */

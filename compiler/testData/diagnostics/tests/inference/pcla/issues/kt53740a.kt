@@ -36,3 +36,6 @@ fun <PTV> parallelBuild(
 ): Buildee<PTV> {
     return null!!
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

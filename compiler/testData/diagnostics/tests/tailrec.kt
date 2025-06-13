@@ -8,3 +8,6 @@ private tailrec fun Context.findActivityOrNull(): Activity? {
 abstract class Context
 open class Activity
 var mBase: Context = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType,
+propertyDeclaration, safeCall, tailrec */

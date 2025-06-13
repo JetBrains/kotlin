@@ -13,3 +13,5 @@ fun test2(lambda: Int.(s: String) -> Unit) {
 fun test3(lambda: Int.(@ParameterName("x") String) -> Unit) {
     lambda(<!NO_VALUE_FOR_PARAMETER!>1)<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, stringLiteral, typeWithExtension */

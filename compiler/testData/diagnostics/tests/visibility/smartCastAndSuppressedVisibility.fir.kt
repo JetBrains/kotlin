@@ -20,3 +20,6 @@ private fun test_1(x: A) {
         x.bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, isExpression, override,
+primaryConstructor, propertyDeclaration, sealed, smartcast, stringLiteral */

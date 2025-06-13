@@ -8,3 +8,5 @@ fun foo() {
 
 context(s: String)
 fun bar() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext */

@@ -22,3 +22,5 @@ import wrapper.<!UNRESOLVED_IMPORT!>KAnn<!>
 
 @<!NOT_AN_ANNOTATION_CLASS!>KAnn<!>
 fun foo() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

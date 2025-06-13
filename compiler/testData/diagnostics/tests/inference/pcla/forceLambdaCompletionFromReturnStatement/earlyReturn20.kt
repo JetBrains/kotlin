@@ -17,3 +17,6 @@ fun main(b: Boolean) {
         container.consume({ arg: String -> })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType,
+typeParameter */

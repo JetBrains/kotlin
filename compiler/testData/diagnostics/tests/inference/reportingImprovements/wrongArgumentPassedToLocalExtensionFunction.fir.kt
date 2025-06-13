@@ -19,3 +19,6 @@ fun Int.test(f: String.(Int) -> Unit) {
         f(<!ARGUMENT_TYPE_MISMATCH!>0.0<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+stringLiteral, typeWithExtension */

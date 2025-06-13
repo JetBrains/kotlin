@@ -86,3 +86,6 @@ class InnerClassInsideTypealiasImpl {
 }
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias InnerClassInsideTypealias = InnerClassInsideTypealiasImpl
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nestedClass,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

@@ -41,3 +41,6 @@ fun <E3 : Enum<E3>> funB() {
         defaultB(),
     )
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, nullableType,
+typeConstraint, typeParameter */

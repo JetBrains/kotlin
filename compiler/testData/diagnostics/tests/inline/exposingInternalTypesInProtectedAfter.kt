@@ -18,3 +18,5 @@ internal class Internal
 
 @PublishedApi
 internal class Published
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, inline, isExpression */

@@ -19,3 +19,7 @@ val Any?.isNotNull: Boolean
         }
         return this@isNotNull != null
     }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, getter, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression */

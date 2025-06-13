@@ -18,3 +18,6 @@ fun baz() {
     y checkType { _<List<Int>>() }
     z checkType { _<List<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, lambdaLiteral, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

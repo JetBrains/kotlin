@@ -25,3 +25,6 @@ object C {
 
     <!JVM_STATIC_ON_CONST_OR_JVM_FIELD!>@TAStatic @JvmField val x<!> = 1;
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, integerLiteral, objectDeclaration, propertyDeclaration,
+typeAliasDeclaration */

@@ -27,3 +27,6 @@ fun test2(inv: Inv<out CharSequence>) {
     val a = select(foo { inv.createArray() }, emptyArray())
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<out kotlin.CharSequence>")!>a<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, functionalType, interfaceDeclaration,
+javaFunction, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter */

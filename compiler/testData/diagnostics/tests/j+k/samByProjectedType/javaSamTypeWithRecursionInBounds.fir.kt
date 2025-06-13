@@ -35,3 +35,6 @@ fun test_3() {
         null!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral,
+samConversion, starProjection */

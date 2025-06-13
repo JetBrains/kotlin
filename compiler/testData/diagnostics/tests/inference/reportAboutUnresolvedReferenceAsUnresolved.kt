@@ -7,3 +7,6 @@ fun consume(s: String) {}
 fun test() {
     consume(1.map(::<!UNRESOLVED_REFERENCE!>foo<!>))
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, nullableType,
+thisExpression, typeParameter */

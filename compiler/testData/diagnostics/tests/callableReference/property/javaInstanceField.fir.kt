@@ -25,3 +25,6 @@ fun test() {
     val privFinRef: KProperty1<JavaClass, String?> = JavaClass::<!INVISIBLE_REFERENCE!>privateFinal<!>
     val privMutRef: KMutableProperty1<JavaClass, Any?> = JavaClass::<!INVISIBLE_REFERENCE!>privateMutable<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaCallableReference, javaType, localProperty, nullableType,
+propertyDeclaration */

@@ -13,3 +13,5 @@ fun test(g: () -> Double, s: SubInt) {
     foo(g)
     foo(s)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, stringLiteral, suspend */

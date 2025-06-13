@@ -32,3 +32,6 @@ fun platformTest_1(x: Base) = when (x) {
 fun platformTest_2(x: Base) = <!NO_ELSE_IN_WHEN!>when<!> (x) {
     is PlatformDerived -> 2
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, isExpression,
+primaryConstructor, sealed, smartcast, typeAliasDeclaration, whenExpression, whenWithSubject */

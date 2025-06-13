@@ -34,3 +34,6 @@ fun bak() {
     val it = mutableListOf(mutableListOf(10))
     (it[0]) += 20
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration, stringLiteral, thisExpression */

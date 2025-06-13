@@ -34,3 +34,6 @@ var thingWithNullableField: Number
     set(value) {
         field = value.toString()
     }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, getter, integerLiteral, lateinit, nullableType,
+propertyDeclaration, setter */

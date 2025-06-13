@@ -19,3 +19,6 @@ enum class SomeEnum {
 fun <V, T> someFunction(): String where T : Enum<T>, T : SomeInterface<V> {
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration, nullableType,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

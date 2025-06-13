@@ -8,3 +8,6 @@ interface Factory {
     val supportsMultilevelIntrospection: Boolean
         get() = false
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, getter, interfaceDeclaration, propertyDeclaration,
+stringLiteral */

@@ -12,3 +12,6 @@ public fun foo(pp: String?): Int {
     // Smart cast is NOT possible here
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

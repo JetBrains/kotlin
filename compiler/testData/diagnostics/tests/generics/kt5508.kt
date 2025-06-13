@@ -23,3 +23,5 @@ abstract class A<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, override, typeParameter */

@@ -78,3 +78,6 @@ fun test6() {
     }
     a<!UNSAFE_CALL!>.<!>hashCode() // a is null here
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, tryExpression */

@@ -20,3 +20,6 @@ class StandardPipelineFactory(val config:  ChannelPipeline.()->Unit) : ChannelPi
         return pipeline
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, localProperty,
+override, primaryConstructor, propertyDeclaration, typeWithExtension */

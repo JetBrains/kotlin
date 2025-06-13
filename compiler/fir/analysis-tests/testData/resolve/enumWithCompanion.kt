@@ -10,3 +10,6 @@ enum class EC {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+objectDeclaration, smartcast, whenExpression, whenWithSubject */

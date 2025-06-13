@@ -42,3 +42,6 @@ actual fun withDifferentArgLessOnExpect() {}
 
 @AnnWithArg(s = "1")
 actual fun withSameArgLessOnActual() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, primaryConstructor,
+propertyDeclaration, stringLiteral */

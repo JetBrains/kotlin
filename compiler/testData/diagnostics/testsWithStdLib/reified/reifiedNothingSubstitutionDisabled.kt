@@ -17,3 +17,7 @@ fun box() {
 
     val f = javaClass<<!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>Nothing<!>>()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classReference, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, reified, stringLiteral, typeConstraint,
+typeParameter */

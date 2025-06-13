@@ -36,3 +36,7 @@ class IgnoringParser : Parser<Unit>()
 
 operator fun <T> IgnoringParser.plus(other: Parser<T>): TransformParser<Pair<Unit, T>, T> =
     TODO()
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, operator, out, propertyDeclaration, propertyDelegate, starProjection,
+typeParameter, typeWithExtension */

@@ -43,3 +43,5 @@ fun test1() {
          -> <!RETURN_TYPE_MISMATCH!>42<!>
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

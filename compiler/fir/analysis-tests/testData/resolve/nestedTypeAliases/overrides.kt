@@ -48,3 +48,5 @@ open class SubSubAliasHolder : SubAliasHolder() {
     private val nestNested: NestedTA = Nested3()
     private val testInner: InnerTA = Inner3()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, propertyDeclaration, typeAliasDeclaration */

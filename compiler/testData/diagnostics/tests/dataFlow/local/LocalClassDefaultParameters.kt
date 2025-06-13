@@ -6,3 +6,6 @@ fun test(x: Any) {
     fun foo(s: String = <!DEBUG_INFO_SMARTCAST!>x<!>): String = s
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, localClass, primaryConstructor,
+smartcast */

@@ -23,3 +23,5 @@ import some.*
 import some3.*
 
 fun test() = <!NONE_APPLICABLE!>Some<!>.<!UNRESOLVED_REFERENCE!>foo<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration */

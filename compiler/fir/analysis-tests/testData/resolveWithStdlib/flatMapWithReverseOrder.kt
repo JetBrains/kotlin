@@ -33,3 +33,6 @@ fun specifyTypeTest(fragments: Set<MergeFragment>) {
 }
 
 fun testFun(i: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, forLoop, functionDeclaration, javaFunction, lambdaLiteral,
+localProperty, propertyDeclaration */

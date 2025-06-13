@@ -14,3 +14,6 @@ fun test(s: Simple?): Simple? {
 
 inline fun <R> myRun(block: () -> R): R = TODO()
 inline fun <K, V> K.let(block: (K) -> V): V = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+lambdaLiteral, nullableType, safeCall, typeParameter */

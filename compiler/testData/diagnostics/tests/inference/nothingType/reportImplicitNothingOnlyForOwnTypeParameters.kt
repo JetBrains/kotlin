@@ -11,3 +11,6 @@ fun main() {
         null
     }.getOrNull() // don't report IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+out, typeParameter */

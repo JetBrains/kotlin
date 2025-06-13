@@ -11,3 +11,6 @@ public fun foo(p: String?): Int {
     // p can be null because break is earlier than return
     return p<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, equalityExpression, functionDeclaration, ifExpression, integerLiteral, nullableType,
+smartcast, whileLoop */

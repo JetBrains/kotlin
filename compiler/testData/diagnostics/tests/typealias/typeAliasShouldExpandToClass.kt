@@ -18,3 +18,6 @@ class Outer {
     typealias ToTypeParam3<T1, T2> = <!TYPEALIAS_SHOULD_EXPAND_TO_CLASS!>ToTypeParam2<T1><!>
     typealias ToTypeParam4 = ToTypeParam1<Any>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionalType, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

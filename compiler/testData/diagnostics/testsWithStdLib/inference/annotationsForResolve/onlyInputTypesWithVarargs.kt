@@ -26,3 +26,5 @@ fun test3(ns: String?, nullableStrs: Array<out String?>, nonNullableStrs: Array<
     ns in nullableStrs
     ns in nonNullableStrs
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, outProjection, stringLiteral, vararg */

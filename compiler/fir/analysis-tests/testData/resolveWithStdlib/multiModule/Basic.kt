@@ -18,3 +18,4 @@ import hello.Hello
 
 fun foo(hello: Hello): String = hello.msg
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, starProjection */

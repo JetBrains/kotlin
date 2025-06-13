@@ -19,3 +19,6 @@ fun test2(b: Boolean, f: () -> String?) = run { // implicit return type
     }
     { "2" }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, tryExpression */

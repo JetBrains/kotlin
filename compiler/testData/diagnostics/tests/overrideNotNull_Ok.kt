@@ -11,3 +11,6 @@ open class AbstractFE1UastTest {
 class Legacy: AbstractFE1UastTest() {
     override var testDataDir: File? = File("").parentFile // K1 & K2: ok
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, javaFunction, javaProperty, nullableType, override,
+propertyDeclaration, stringLiteral */

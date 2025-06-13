@@ -52,3 +52,7 @@ fun test_6() {
         return@run
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, break, continue, doWhileLoop, equalityExpression, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+whileLoop */

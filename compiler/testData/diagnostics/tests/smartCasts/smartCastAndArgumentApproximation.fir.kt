@@ -7,3 +7,7 @@ inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(
     for (element in this) if (element is R) destination.add(element)
     return destination
 }
+
+/* GENERATED_FIR_TAGS: capturedType, forLoop, funWithExtensionReceiver, functionDeclaration, ifExpression, inProjection,
+inline, isExpression, localProperty, nullableType, propertyDeclaration, reified, smartcast, starProjection,
+thisExpression, typeConstraint, typeParameter */

@@ -24,3 +24,6 @@ fun testB(b: B<*, *>) {
     b.t().r().size
 }
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, interfaceDeclaration, lambdaLiteral, nullableType, outProjection, starProjection, typeConstraint, typeParameter,
+typeWithExtension */

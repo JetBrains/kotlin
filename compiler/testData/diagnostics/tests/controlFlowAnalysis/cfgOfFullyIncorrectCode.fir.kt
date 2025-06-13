@@ -18,4 +18,8 @@
 
         <!SYNTAX!><!>try {}
 
-        finally<!SYNTAX!><!>
+        finally
+
+<!SYNTAX!><!>}<!SYNTAX!><!>
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral, tryExpression */

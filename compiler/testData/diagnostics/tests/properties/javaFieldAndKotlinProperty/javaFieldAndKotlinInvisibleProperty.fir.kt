@@ -25,3 +25,6 @@ fun box(): String {
     if (d.foo() != "12") return "Error writing: ${d.foo()}"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaCallableReference, javaFunction, javaProperty, javaType, localProperty, propertyDeclaration, stringLiteral */

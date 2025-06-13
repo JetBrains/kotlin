@@ -42,3 +42,7 @@ interface Builder<T> {
 }
 
 data class Wrapped<T>(val value: T)
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, data, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

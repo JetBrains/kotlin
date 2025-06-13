@@ -68,3 +68,6 @@ fun test_8(b: Boolean?) {
         b.not() // OK
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+propertyDeclaration, smartcast */

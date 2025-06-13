@@ -57,3 +57,6 @@ fun wrongReturnType(x: String?): Any? {
 
     return "true"
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+integerLiteral, lambdaLiteral, nullableType, stringLiteral */

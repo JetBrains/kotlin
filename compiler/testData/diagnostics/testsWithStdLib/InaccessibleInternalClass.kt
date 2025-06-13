@@ -15,3 +15,5 @@ interface I {
     val v1: FilteringSequence
     val <!EXPOSED_PROPERTY_TYPE!>v2<!>: <!INVISIBLE_REFERENCE!>IndexingSequence<!><String>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, propertyDeclaration */

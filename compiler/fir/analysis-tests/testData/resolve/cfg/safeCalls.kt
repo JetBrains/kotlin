@@ -23,3 +23,6 @@ fun test_3(x: A?, y: String?) {
         y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

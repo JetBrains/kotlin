@@ -8,3 +8,6 @@ class Test(protected var prop1: Int = 1) {
         prop2 = 4
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

@@ -7,3 +7,5 @@ open class A {
 class B : A() {
     fun foo() : String = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, stringLiteral */

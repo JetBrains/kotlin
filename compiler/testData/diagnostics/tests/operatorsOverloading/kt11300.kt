@@ -10,3 +10,6 @@ fun main() {
     <!OPERATOR_MODIFIER_REQUIRED!>a<!NO_SET_METHOD!>[1]<!><!> += 3
     <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!> = a[1] + 3
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration,
+incrementDecrementExpression, integerLiteral, localProperty, operator, propertyDeclaration */

@@ -21,3 +21,6 @@ fun testOutOut() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, out I1>")!>cst1<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*, out kotlin.Any>")!>cst2<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, localProperty, nullableType, objectDeclaration, out,
+outProjection, propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

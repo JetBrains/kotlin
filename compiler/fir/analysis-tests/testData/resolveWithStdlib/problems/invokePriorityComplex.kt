@@ -23,3 +23,6 @@ fun main() {
 
     EE.foo.<!UNRESOLVED_REFERENCE!>a<!> // (1) !!! in old FE and FIR
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, lambdaLiteral,
+nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration */

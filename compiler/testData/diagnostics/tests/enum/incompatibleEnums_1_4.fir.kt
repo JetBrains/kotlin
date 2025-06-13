@@ -144,3 +144,7 @@ fun foo10(e4: E4, invString: Inv<String>) {
     E4.A == invString
     invString == E4.A
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+interfaceDeclaration, nullableType, smartcast, starProjection, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

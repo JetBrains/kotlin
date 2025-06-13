@@ -58,3 +58,6 @@ inline fun inlineFunWithInvokeNonInline(noinline s: (p: Int) -> Unit, ext: Int.(
         11
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral,
+javaFunction, javaType, lambdaLiteral, noinline, samConversion, thisExpression, typeWithExtension */

@@ -36,3 +36,5 @@ fun test_4(f: () -> Unit) {
     } while (getCondition())
 }
 
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, doWhileLoop, functionDeclaration, functionalType,
+lambdaLiteral, whileLoop */

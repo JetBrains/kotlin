@@ -51,3 +51,6 @@ interface B {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration,
+interfaceDeclaration, localProperty, nestedClass, objectDeclaration, propertyDeclaration */

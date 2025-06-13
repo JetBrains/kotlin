@@ -12,3 +12,5 @@ fun foo(x : B<*>) {
 
 fun bar1(x : Out<Out<*>>) { }
 fun bar2(x : Out<*>) { }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, out, starProjection, typeParameter */

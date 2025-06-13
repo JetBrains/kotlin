@@ -9,3 +9,7 @@ fun test() {
     val v = foo(Pair(1))
     checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>v<!>) // check that it is not error type
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter,
+typeWithExtension, vararg */

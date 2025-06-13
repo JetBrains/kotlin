@@ -15,3 +15,5 @@ annotation class Ann
 actual enum class <!EXPECT_ACTUAL_INCOMPATIBLE_ENUM_ENTRIES!>E<!> {
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FOO<!>
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, enumDeclaration, enumEntry, expect */

@@ -34,3 +34,6 @@ class K: J.C() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction,
+javaType, nullableType */

@@ -18,3 +18,6 @@ class B {
     @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     val s: String = ""
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

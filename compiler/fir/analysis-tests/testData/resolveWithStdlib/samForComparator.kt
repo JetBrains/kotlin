@@ -9,3 +9,5 @@ fun main() {
         x.length - y.length
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, flexibleType, functionDeclaration, inProjection, lambdaLiteral, samConversion */

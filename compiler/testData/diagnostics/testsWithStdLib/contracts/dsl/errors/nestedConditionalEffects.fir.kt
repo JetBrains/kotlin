@@ -10,3 +10,5 @@ fun foo(boolean: Boolean) {
         <!ERROR_IN_CONTRACT_DESCRIPTION!>(returns() implies (boolean)) <!UNRESOLVED_REFERENCE!>implies<!> (!boolean)<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contracts, functionDeclaration, lambdaLiteral */

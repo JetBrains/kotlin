@@ -28,3 +28,6 @@ fun <TF> foo() {
                 <!WRONG_MODIFIER_TARGET!>inner<!> typealias LTLF = List<TLF>
             }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass,
+localFunction, nestedClass, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

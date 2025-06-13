@@ -15,3 +15,5 @@ fun quux(x: Int?): Unit {
 	x?.baz()
 	x?.bar()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType, safeCall */

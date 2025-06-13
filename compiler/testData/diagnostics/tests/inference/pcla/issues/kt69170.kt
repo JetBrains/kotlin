@@ -22,3 +22,7 @@ fun foo() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

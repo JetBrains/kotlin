@@ -44,3 +44,5 @@ suspend fun baz() {
         <!RETURN_NOT_ALLOWED!>return@baz<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: crossinline, functionDeclaration, functionalType, inline, lambdaLiteral, noinline, suspend */

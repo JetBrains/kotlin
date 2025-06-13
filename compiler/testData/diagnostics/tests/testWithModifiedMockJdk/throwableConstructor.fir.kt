@@ -9,3 +9,5 @@ abstract class A : <!NONE_APPLICABLE!>Throwable<!>(1.0) {}
 fun foo() {
     <!NONE_APPLICABLE!>Throwable<!>(1.5)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

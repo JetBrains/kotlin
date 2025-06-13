@@ -25,3 +25,6 @@ fun test() {
     MyClass(CorrectTypeEnum.CorrectEnum1)
     MyClass(<!ARGUMENT_TYPE_MISMATCH!>WrongTypeEnum.WrongEnum1<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, interfaceDeclaration,
+outProjection, override, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

@@ -24,3 +24,6 @@ class Foo<in T> : Base<<!TYPE_VARIANCE_CONFLICT_ERROR!>T<!>>() {
         val flex = f.<!INVISIBLE_MEMBER!>flex<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, flexibleType, functionDeclaration, in, javaType, localProperty,
+nullableType, propertyDeclaration, typeParameter */

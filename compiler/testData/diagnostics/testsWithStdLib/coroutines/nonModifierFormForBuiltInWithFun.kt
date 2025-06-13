@@ -29,3 +29,6 @@ fun main(suspend: WLambdaInvoke) {
 class WLambdaInvoke {
     operator fun Int.invoke(l: () -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, operator */

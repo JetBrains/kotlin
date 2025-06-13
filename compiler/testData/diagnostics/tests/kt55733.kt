@@ -6,3 +6,5 @@ fun main() {
     val stringBuilder = <!NO_COMPANION_OBJECT!>StringBuilder<!>
     val exception = <!NO_COMPANION_OBJECT!>IllegalStateException<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, propertyDeclaration */

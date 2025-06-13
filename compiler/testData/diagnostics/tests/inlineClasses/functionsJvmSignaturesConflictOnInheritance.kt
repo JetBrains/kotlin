@@ -15,3 +15,6 @@ interface PasswordVerifier {
 }
 
 interface NameAndPasswordVerifier : NameVerifier, PasswordVerifier
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, primaryConstructor,
+propertyDeclaration */

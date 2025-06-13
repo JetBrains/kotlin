@@ -7,3 +7,5 @@ fun test() {
     //no type inference error
     foo(<!UNRESOLVED_REFERENCE!>aaab<!>, <!UNRESOLVED_REFERENCE!>bbb<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeParameter */

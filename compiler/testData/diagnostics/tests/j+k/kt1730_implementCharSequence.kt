@@ -24,3 +24,5 @@ public class C implements java.lang.CharSequence {
 
 // FILE: T.kt
 class T : C()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

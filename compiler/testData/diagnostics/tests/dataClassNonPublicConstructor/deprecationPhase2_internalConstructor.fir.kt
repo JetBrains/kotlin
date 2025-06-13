@@ -33,3 +33,6 @@ fun local() {
         copy()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localClass, localFunction, objectDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

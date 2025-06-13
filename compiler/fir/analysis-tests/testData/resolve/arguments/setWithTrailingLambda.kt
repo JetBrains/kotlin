@@ -17,3 +17,6 @@ interface Key<V : Any, in Domain>
 interface EditorDataKey<T : Any> : Key<T, EditorData>
 
 object SomeKey : EditorDataKey<(String, bar: Any) -> Unit>
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, data, functionDeclaration, in, interfaceDeclaration, lambdaLiteral,
+nullableType, objectDeclaration, operator, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

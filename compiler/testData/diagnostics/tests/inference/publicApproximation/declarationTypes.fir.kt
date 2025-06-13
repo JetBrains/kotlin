@@ -57,3 +57,7 @@ fun test(cls: Cls, obj: Obj) {
     obj.publicProperty
     obj.publicMemberFunction()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, getter, interfaceDeclaration,
+intersectionType, localFunction, localProperty, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver,
+typeConstraint, typeParameter, vararg */

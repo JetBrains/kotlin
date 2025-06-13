@@ -8,3 +8,6 @@ val Int.fooB get() = this@fooB
 fun Int.fooC(): Int = this@fooC
 
 fun Int.fooD() = this@fooD
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, getter, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression */

@@ -21,3 +21,6 @@ object J {
 fun foo5() = J.id(object : I {})
 
 fun bar3() = foo5()?.toString()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+objectDeclaration, propertyDeclaration, safeCall, typeParameter */

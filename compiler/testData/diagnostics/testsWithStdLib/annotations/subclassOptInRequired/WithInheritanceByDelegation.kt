@@ -11,3 +11,6 @@ open class InheritingByDelegationA(arg: ToBeInheritedByDelegation): <!OPT_IN_TO_
 
 @SubclassOptInRequired(ApiMarker::class)
 open class InheritingByDelegationB(arg: ToBeInheritedByDelegation): ToBeInheritedByDelegation by arg
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, inheritanceDelegation,
+interfaceDeclaration, primaryConstructor */

@@ -20,3 +20,6 @@ interface Flow<out T>
 interface FlowCollector<in T> {
     suspend fun emit(value: T)
 }
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, functionalType, in, integerLiteral, interfaceDeclaration,
+lambdaLiteral, nullableType, out, suspend, typeParameter, typeWithExtension */

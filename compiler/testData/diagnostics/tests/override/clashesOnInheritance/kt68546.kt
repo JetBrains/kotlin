@@ -24,3 +24,6 @@ interface Scope {
         println("untyped")
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+out, stringLiteral, typeParameter */

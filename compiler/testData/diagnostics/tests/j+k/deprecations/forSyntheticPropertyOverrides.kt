@@ -39,3 +39,6 @@ fun main(kotlinClass: KotlinClass, kotlinSubClass: KotlinSubClass) {
     kotlinSubClass.foo
     kotlinSubClass.bar
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+override, stringLiteral, superExpression */

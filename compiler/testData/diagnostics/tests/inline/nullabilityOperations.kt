@@ -16,3 +16,6 @@ inline fun submit(action: Function1<Int, Int>) {
     <!USAGE_IS_NOT_INLINABLE!>action<!>?.invoke(10)
     <!USAGE_IS_NOT_INLINABLE!>action<!>!!.invoke(10)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, inline, integerLiteral,
+nullableType, safeCall, thisExpression */

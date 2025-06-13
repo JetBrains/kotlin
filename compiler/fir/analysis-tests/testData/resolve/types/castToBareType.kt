@@ -16,3 +16,6 @@ fun test(symbol: AbstractFirBasedSymbol<*>) {
     val firAdaptee = symbol.fir as FirFunction
     foo(firAdaptee)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, functionDeclaration, interfaceDeclaration, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

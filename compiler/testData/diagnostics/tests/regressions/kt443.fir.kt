@@ -13,3 +13,6 @@ class N() : M() {
         }
     override val b: Int = a + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, getter, integerLiteral, override,
+primaryConstructor, propertyDeclaration, superExpression */

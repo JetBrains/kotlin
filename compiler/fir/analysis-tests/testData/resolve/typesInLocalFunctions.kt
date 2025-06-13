@@ -9,3 +9,6 @@ fun foo(): () -> Boolean {
         return { true }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, isExpression, lambdaLiteral,
+localProperty, propertyDeclaration */

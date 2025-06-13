@@ -69,3 +69,6 @@ fun test4() {
         <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION("D; buildPartList")!>right = { add("") }<!>
     )
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, intersectionType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

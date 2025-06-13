@@ -18,3 +18,6 @@ val i3 = i1 // val with var in initializer
 const val i4 = i2 // val with val in initializer
 var i5 = i1 // var with var in initializer
 var i6 = i2 // var with val in initializer
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, integerLiteral, primaryConstructor,
+propertyDeclaration, vararg */

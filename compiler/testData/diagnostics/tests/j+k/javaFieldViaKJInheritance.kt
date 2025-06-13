@@ -12,3 +12,5 @@ class MyClassEx : MyClass()
 fun main(j: MyClassEx) {
     j.myField
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaProperty, javaType */

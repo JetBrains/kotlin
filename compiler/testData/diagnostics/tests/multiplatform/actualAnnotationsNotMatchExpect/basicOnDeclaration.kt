@@ -40,3 +40,5 @@ actual class AnnotationInside {
     @Ann
     actual fun onlyOnActual() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration */

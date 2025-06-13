@@ -19,3 +19,6 @@ fun _when(e: Either<C1, C2>): Any {
         else -> e
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, nullableType, out,
+primaryConstructor, propertyDeclaration, smartcast, typeParameter, whenExpression, whenWithSubject */

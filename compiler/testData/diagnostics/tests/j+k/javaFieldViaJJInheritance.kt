@@ -14,3 +14,5 @@ public class MyClassEx extends MyClass {
 fun main(j: MyClassEx) {
     j.myField
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

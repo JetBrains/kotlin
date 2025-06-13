@@ -84,3 +84,5 @@ public class Foo {
 package foo;
 
 public class Foo2 {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, propertyDeclaration */

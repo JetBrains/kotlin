@@ -10,3 +10,6 @@ fun test1(l: List<Number>) {
 
     val s: String = <!TYPE_MISMATCH!>l.<!TYPE_MISMATCH!>firstTyped<!>()<!>
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

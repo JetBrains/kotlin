@@ -31,3 +31,6 @@ class C: A() {
         bar(z)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral,
+multiplicativeExpression, override, tailrec */

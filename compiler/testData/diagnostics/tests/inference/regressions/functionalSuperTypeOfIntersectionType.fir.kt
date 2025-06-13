@@ -11,3 +11,7 @@ open class A<Y: Function0<Any>>(val f1: Y, val f2: Y) {
         A<Function0<Any>>({ -> x}, func1)
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, assignment, classDeclaration, functionDeclaration, functionalType,
+integerLiteral, intersectionType, lambdaLiteral, localProperty, outProjection, primaryConstructor, propertyDeclaration,
+smartcast, typeConstraint, typeParameter */

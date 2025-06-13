@@ -29,3 +29,6 @@ class A {
         val y = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, lambdaLiteral, localFunction, localProperty,
+propertyDeclaration, stringLiteral */

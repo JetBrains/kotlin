@@ -11,3 +11,5 @@ fun main() {
 inline fun test(block: () -> Unit) {
     <!USAGE_IS_NOT_INLINABLE!>block<!>.call()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral */

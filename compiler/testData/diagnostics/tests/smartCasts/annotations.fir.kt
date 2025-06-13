@@ -12,3 +12,6 @@ interface ImplA<T> {
             foo as T
         } else null
 }
+
+/* GENERATED_FIR_TAGS: asExpression, getter, ifExpression, interfaceDeclaration, intersectionType, isExpression,
+nullableType, out, propertyDeclaration, smartcast, starProjection, stringLiteral, thisExpression, typeParameter */

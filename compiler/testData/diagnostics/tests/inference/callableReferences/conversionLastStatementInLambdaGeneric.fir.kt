@@ -29,3 +29,6 @@ fun <T> test1(): T = "" as T
 fun <T> test2(): T = "" as T
 
 fun callWithLambda(action: () -> () -> Unit) {}
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

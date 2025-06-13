@@ -28,3 +28,6 @@ class Player
 
     private fun launch(block: suspend Any.() -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, javaFunction, lambdaLiteral, localFunction,
+suspend, typeWithExtension */

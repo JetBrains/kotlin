@@ -26,3 +26,7 @@ fun foo() {
     A.B().bar() checkType { _<Outer<Float, Long>.Inner<String>>() }
     A.B().x() checkType { _<Map<String, Float>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, nestedClass, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter, typeWithExtension */

@@ -21,3 +21,6 @@ class C : GA<Any>() {
 fun main(args: Array<String>) {
     C.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, nullableType, objectDeclaration,
+primaryConstructor, typeParameter */

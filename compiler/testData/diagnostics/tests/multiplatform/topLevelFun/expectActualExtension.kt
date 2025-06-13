@@ -27,3 +27,5 @@ actual fun test4(x: (String) -> Unit){}
 actual fun (String.() -> Unit).test5(){}
 
 actual fun ((String) -> Unit).test6(){}
+
+/* GENERATED_FIR_TAGS: actual, expect, funWithExtensionReceiver, functionDeclaration, functionalType, typeWithExtension */

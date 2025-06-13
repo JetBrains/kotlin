@@ -26,3 +26,6 @@ fun test4(c: C) {
     a = 3
     a + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, destructuringDeclaration, functionDeclaration,
+integerLiteral, localProperty, operator, propertyDeclaration */

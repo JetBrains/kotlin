@@ -31,3 +31,6 @@ fun test_3(b: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(b) {
     true -> "true"
     (s1 == s2) -> "false"
 }
+
+/* GENERATED_FIR_TAGS: const, equalityExpression, functionDeclaration, integerLiteral, propertyDeclaration, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

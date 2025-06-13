@@ -12,3 +12,7 @@ fun List<Int>.decimateEveryEvenThird() = sequence {
         counter += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, equalityExpression, forLoop,
+funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral, localProperty,
+multiplicativeExpression, propertyDeclaration, thisExpression */

@@ -26,3 +26,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionalType, interfaceDeclaration, lambdaLiteral, localFunction, nullableType, override, thisExpression,
+typeParameter, typeWithExtension */

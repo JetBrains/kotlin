@@ -27,3 +27,6 @@ fun <M> foo(other: Out<M>): Inv<Out2<M>> = TODO()
 fun main() {
     invOut2String.u.x.length
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nullableType, operator, out,
+propertyDeclaration, propertyDelegate, starProjection, typeParameter */

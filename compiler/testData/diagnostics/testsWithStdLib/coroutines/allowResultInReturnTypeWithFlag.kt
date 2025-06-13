@@ -7,3 +7,5 @@ val resultP: Result<Int> = result()
 fun f(r1: Result<Int>?) {
     r1 ?: 0
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, integerLiteral, nullableType, propertyDeclaration */

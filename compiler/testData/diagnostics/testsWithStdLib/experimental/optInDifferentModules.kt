@@ -44,3 +44,7 @@ fun bar() {
     <!OPT_IN_USAGE_ERROR!>foo<!>()
     val y = <!OPT_IN_USAGE_ERROR!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, comparisonExpression, enumDeclaration,
+enumEntry, functionDeclaration, ifExpression, integerLiteral, localProperty, primaryConstructor, propertyDeclaration,
+stringLiteral */

@@ -38,3 +38,6 @@ val prop10 = prop9 + "b"
 
 // val prop11: 6
 val prop11 = "kotlin".length
+
+/* GENERATED_FIR_TAGS: additiveExpression, classReference, enumDeclaration, enumEntry, integerLiteral,
+propertyDeclaration, stringLiteral */

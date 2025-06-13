@@ -40,3 +40,6 @@ fun main() {
     barResult.y = strMap
     barResult.foo("", strList, null)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaProperty, localProperty,
+nullableType, propertyDeclaration, stringLiteral */

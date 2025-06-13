@@ -57,3 +57,6 @@ fun test(a: KotlinClass, b: KotlinClass2) {
     JavaClassSamePackage.<!INVISIBLE_REFERENCE!>CONST1<!>
     JavaClassSamePackage.CONST2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+override, propertyDeclaration, stringLiteral */

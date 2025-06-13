@@ -25,3 +25,6 @@ fun test2() {
         <!NO_CONTEXT_ARGUMENT!>function<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, ifExpression,
+interfaceDeclaration, isExpression, smartcast */

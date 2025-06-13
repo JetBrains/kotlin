@@ -59,3 +59,6 @@ class TestPCParameters(w : Int, x : Int, val y : Int, var z : Int) : Super(w) {
   fun foo() = <!UNRESOLVED_REFERENCE!>x<!>
 
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, getter, init,
+integerLiteral, primaryConstructor, propertyDeclaration, setter */

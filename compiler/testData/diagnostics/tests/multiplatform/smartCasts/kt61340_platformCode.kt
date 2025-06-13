@@ -26,3 +26,6 @@ fun platform() {
     val bar = Bar()
     if (bar.bus is String) <!SMARTCAST_IMPOSSIBLE!>bar.bus<!>.length
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, getter, ifExpression, integerLiteral,
+isExpression, localProperty, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

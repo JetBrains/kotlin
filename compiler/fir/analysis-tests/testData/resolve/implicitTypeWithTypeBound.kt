@@ -7,3 +7,6 @@ fun test(other: TypeWithBoundedGeneric<*>) = myRun { other }
 interface SomeType
 
 abstract class TypeWithBoundedGeneric<T : SomeType>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, starProjection, typeConstraint, typeParameter */

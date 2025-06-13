@@ -23,3 +23,6 @@ fun use() {
     for (x in <!DEPRECATION!>Iter()<!>) {}
     for (x in <!DEPRECATION, DEPRECATION!>Iter2()<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, localProperty, nestedClass, operator,
+propertyDeclaration, stringLiteral */

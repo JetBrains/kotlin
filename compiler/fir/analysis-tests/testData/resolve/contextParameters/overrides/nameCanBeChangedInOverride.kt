@@ -19,3 +19,6 @@ class Derived : Base() {
     override val b: String
         get() = "2"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter, override,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

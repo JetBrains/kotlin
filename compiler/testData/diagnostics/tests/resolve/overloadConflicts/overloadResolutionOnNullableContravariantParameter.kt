@@ -22,3 +22,5 @@ import b.*
 fun main() {
     foo<String> {  }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

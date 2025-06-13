@@ -18,3 +18,6 @@ fun foo2(x: Int) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<kotlin.String, () -> kotlin.Int>?")!>x<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

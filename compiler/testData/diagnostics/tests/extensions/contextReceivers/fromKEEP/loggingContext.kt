@@ -15,3 +15,6 @@ context(LoggingContext)
 fun performSomeBusinessOperation(withParams: Params) {
     log.info("Operation has started")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, interfaceDeclaration, propertyDeclaration,
+stringLiteral */

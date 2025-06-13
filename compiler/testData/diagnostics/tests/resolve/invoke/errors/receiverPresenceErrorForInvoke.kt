@@ -12,3 +12,5 @@ fun test2(f: (Int) -> Int) {
 
     2.<!NO_RECEIVER_ALLOWED!>(f)<!>(2)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, typeWithExtension */

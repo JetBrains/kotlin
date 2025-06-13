@@ -13,3 +13,5 @@ fun test(ann: Ann) {
     ann.value
     ann.<!FUNCTION_EXPECTED!>value<!>() // should be an error
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty, javaType */

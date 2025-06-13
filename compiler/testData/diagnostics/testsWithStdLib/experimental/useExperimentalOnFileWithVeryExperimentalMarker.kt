@@ -32,3 +32,5 @@ fun usage() {
     f()
     g()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classReference, functionDeclaration */

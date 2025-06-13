@@ -20,3 +20,6 @@ fun smartCast(item: Any?) {
         listeners.forEach { it.added(current) }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

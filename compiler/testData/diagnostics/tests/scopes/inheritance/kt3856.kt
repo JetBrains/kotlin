@@ -33,3 +33,7 @@ class E: C() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, init, integerLiteral, lambdaLiteral, nestedClass, objectDeclaration,
+primaryConstructor, propertyDeclaration, thisExpression, typeWithExtension */

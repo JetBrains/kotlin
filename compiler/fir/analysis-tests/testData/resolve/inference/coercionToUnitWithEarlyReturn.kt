@@ -17,3 +17,6 @@ fun main(x: A?) {
 
     foo(lambda)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall */

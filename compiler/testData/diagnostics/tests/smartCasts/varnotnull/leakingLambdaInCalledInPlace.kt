@@ -10,3 +10,6 @@ fun main() {
     p = null
     block()
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

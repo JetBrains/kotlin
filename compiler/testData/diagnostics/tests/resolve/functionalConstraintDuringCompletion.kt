@@ -24,3 +24,6 @@ fun bar(a: In<Any>, value: In<suspend () -> String>) {
 }
 
 suspend fun baz() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, in, interfaceDeclaration, lambdaLiteral, nullableType,
+stringLiteral, suspend, typeParameter */

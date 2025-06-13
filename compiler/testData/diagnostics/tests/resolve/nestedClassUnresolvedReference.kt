@@ -23,3 +23,5 @@ class Outer {
     inner class Inner
     object O
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass, objectDeclaration */

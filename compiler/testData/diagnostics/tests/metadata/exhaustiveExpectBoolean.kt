@@ -10,3 +10,6 @@ fun checkExpectBooleanIsExhaustive(b: Boolean): Int {
         false -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, smartcast, whenExpression,
+whenWithSubject */

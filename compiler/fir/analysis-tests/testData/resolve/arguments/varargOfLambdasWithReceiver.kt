@@ -8,3 +8,5 @@ fun test() {
                    length
                })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, vararg */

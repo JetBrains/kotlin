@@ -3,3 +3,5 @@
 
 val that: Number
     <!UNSUPPORTED_FEATURE!>field = 4<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */

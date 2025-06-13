@@ -61,3 +61,6 @@ fun test_6(c: C) {
     val x = <!CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION!>foo { c }<!>
     takeString(x)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

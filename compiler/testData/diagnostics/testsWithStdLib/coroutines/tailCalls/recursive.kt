@@ -18,3 +18,5 @@ suspend fun int3(): Int {
     int3()
     return int3()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, suspend */

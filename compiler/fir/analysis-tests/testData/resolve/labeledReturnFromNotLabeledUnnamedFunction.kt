@@ -8,3 +8,5 @@ fun test(): String {
         return@notInline
     })
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, stringLiteral */

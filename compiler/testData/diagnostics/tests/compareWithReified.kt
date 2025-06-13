@@ -6,3 +6,5 @@ inline fun <reified T> foo(v: T) {
     // This is a comparison of companion objects
     Int == Int
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, inline, nullableType, reified, typeParameter */

@@ -34,3 +34,6 @@ fun foo(a: () -> Unit, b: () -> Unit, c: () -> Unit, d: () -> Unit, e: () -> Uni
 
     e()
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+init, lambdaLiteral, localClass, propertyDeclaration, secondaryConstructor */

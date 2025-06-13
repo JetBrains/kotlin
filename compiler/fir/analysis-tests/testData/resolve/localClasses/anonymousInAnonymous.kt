@@ -7,3 +7,5 @@ fun foo() {
         val foobar = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, localProperty, propertyDeclaration, stringLiteral */

@@ -22,3 +22,6 @@ val x: Any = x@{
 
     myEmptyList<String>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter */

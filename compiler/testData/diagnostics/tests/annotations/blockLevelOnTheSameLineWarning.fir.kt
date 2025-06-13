@@ -62,3 +62,8 @@ fun foo(y: IntArray) {
 }
 
 infix fun Int.foo(other: Int) = 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, anonymousObjectExpression, assignment,
+comparisonExpression, funWithExtensionReceiver, functionDeclaration, functionalType, incrementDecrementExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, multiplicativeExpression, operator, primaryConstructor,
+propertyDeclaration, stringLiteral */

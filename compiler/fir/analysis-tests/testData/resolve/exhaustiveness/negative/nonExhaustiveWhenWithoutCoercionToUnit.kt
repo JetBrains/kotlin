@@ -9,3 +9,6 @@ fun test(a: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, isExpression, lambdaLiteral, nullableType,
+typeParameter, whenExpression, whenWithSubject */

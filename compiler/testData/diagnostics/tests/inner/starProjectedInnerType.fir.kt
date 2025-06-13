@@ -9,3 +9,6 @@ class A<D : Any>  {
         w.innerFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, starProjection, typeConstraint,
+typeParameter */

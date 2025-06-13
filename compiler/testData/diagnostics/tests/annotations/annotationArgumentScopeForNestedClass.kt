@@ -50,3 +50,6 @@ class Subclass : SuperClass() {
         fun foo() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, functionDeclaration, inner,
+integerLiteral, nestedClass, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -15,3 +15,6 @@ class A {
             <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this@A<!>.prop
     )
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+integerLiteral, propertyDeclaration, propertyWithExtensionReceiver, secondaryConstructor, thisExpression */

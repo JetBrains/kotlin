@@ -37,3 +37,5 @@ fun test() {
     val i = o.Inner()
     i.gau()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration, thisExpression */

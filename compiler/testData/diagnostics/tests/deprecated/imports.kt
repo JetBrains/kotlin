@@ -8,3 +8,5 @@ class C {
 }
 
 fun useAlias(c : <!DEPRECATION!>C2<!>) { c.use() }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

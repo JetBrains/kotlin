@@ -28,3 +28,6 @@ fun test_1() {
         b.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, functionDeclaration, ifExpression, interfaceDeclaration,
+isExpression, localProperty, nullableType, propertyDeclaration, smartcast */

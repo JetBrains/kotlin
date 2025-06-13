@@ -23,3 +23,6 @@ abstract class Some : BaseState() {
 
     val hideBySeverityBase: MutableSet<Int> by propertyBase(mutableSetOf())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, propertyDeclaration,
+propertyDelegate, starProjection, thisExpression, typeParameter */

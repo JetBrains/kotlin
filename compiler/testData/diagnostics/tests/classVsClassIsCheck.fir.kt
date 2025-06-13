@@ -12,3 +12,5 @@ fun test(e: Exception) {
         throw e
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, intersectionType, isExpression, smartcast */

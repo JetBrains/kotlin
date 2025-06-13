@@ -31,3 +31,5 @@ actual interface I2 {
 }
 
 actual interface I3 {}
+
+/* GENERATED_FIR_TAGS: actual, expect, funInterface, functionDeclaration, interfaceDeclaration */

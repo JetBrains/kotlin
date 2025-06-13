@@ -17,3 +17,6 @@ fun test() {
     val i: Int = <!INITIALIZER_TYPE_MISMATCH!>A.entries<!>
     A.Companion.entries
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, functionDeclaration, getter, integerLiteral, localProperty,
+nullableType, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

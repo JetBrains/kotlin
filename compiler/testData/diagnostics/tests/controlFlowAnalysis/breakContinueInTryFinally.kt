@@ -23,3 +23,5 @@ fun bar(): String {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, functionDeclaration, stringLiteral, tryExpression, whileLoop */

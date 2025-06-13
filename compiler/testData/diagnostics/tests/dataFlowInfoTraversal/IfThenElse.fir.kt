@@ -29,3 +29,6 @@ fun foo() {
     bar(z!!)
     if (<!SENSELESS_COMPARISON!>z != null<!>) bar(z<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration, smartcast */

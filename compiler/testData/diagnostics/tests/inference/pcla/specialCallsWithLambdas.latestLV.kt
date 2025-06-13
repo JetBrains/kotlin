@@ -195,3 +195,8 @@ fun poll86(): Flow<String> {
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration,
+functionalType, ifExpression, in, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, localProperty,
+nullableType, out, outProjection, primaryConstructor, propertyDeclaration, stringLiteral, suspend, tryExpression,
+typeParameter, typeWithExtension, vararg, whenExpression, whenWithSubject */

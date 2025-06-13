@@ -4,3 +4,5 @@
 class A(val x: Int = 1, val y: Int = 2) {
     constructor(): this(0, 0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, secondaryConstructor */

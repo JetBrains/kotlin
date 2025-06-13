@@ -51,3 +51,7 @@ class C {
         x.inc()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, classReference, contractCallsEffect, contracts, functionDeclaration,
+functionalType, ifExpression, init, inline, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, typeParameter */

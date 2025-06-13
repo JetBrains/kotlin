@@ -435,3 +435,7 @@ typealias SameUserKlassB = UserKlassB
 interface UserInterface
 interface UserInterfaceA
 interface UserInterfaceB
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, interfaceDeclaration, nestedClass, nullableType,
+primaryConstructor, reified, secondaryConstructor, stringLiteral, tailrec, typeAliasDeclaration, typeConstraint,
+typeParameter */

@@ -14,3 +14,5 @@ package p
 class R<T: R<T>>
 
 class Derived: p.Base<String>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, typeConstraint, typeParameter */

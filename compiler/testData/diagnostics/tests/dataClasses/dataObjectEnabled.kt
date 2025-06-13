@@ -2,3 +2,5 @@
 // LANGUAGE: +DataObjects
 // FIR_IDENTICAL
 data object Object
+
+/* GENERATED_FIR_TAGS: data, objectDeclaration */

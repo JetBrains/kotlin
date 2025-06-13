@@ -14,3 +14,5 @@ fun f(o: Out<Out<*>>, i: In<In<*>>, inv: Inv<Inv<*>>) {
     <!CANNOT_INFER_PARAMETER_TYPE!>choose2<!>(i)
     <!CANNOT_INFER_PARAMETER_TYPE!>choose3<!>(<!ARGUMENT_TYPE_MISMATCH!>inv<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, nullableType, out, starProjection, typeParameter */

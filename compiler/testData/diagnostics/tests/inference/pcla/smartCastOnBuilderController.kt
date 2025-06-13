@@ -17,3 +17,6 @@ fun foo() {
 }
 
 fun baz(cont: Controller<String>) {}
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, intersectionType,
+lambdaLiteral, nullableType, smartcast, typeParameter */

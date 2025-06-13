@@ -183,3 +183,6 @@ fun test_14(q: Q) {
         q.data<!UNSAFE_CALL!>.<!>s // should be UNSAFE_CALL and NOT SMARTCAST_IMPOSSIBLE
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, functionDeclaration, getter, ifExpression,
+interfaceDeclaration, nullableType, override, primaryConstructor, propertyDeclaration, safeCall, smartcast */

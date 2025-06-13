@@ -14,3 +14,5 @@ fun main() {
         x.length // Should not be unsafe call
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType, lambdaLiteral, nullableType */

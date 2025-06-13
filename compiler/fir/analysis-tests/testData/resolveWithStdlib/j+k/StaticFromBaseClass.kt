@@ -22,3 +22,6 @@ fun test() {
     val project = PlatformDataKeys.PROJECT
     val member = PlatformDataKeys().MEMBER
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

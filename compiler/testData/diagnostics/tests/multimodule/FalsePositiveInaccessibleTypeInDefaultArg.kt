@@ -42,3 +42,6 @@ fun foo(s: String) {
     Another(s) { it == it }
     Another(s) { it.hashCode() == 0 }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration */

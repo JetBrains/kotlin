@@ -29,3 +29,6 @@ class B : A() {
 fun baz(a: A) {
     a.<!INVISIBLE_MEMBER!>foo<!> { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, isExpression, javaFunction, javaType,
+lambdaLiteral, primaryConstructor, propertyDeclaration, samConversion, smartcast */

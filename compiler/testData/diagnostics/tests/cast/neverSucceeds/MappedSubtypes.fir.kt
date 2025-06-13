@@ -13,3 +13,5 @@ fun test4(s: Sub) = s as JCS
 
 fun test5(js: JSub) = js <!CAST_NEVER_SUCCEEDS!>as<!> Sub
 fun test6(s: Sub) = s <!CAST_NEVER_SUCCEEDS!>as<!> JSub
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration */

@@ -9,3 +9,5 @@ annotation class my
 <!DEPRECATED_JAVA_ANNOTATION!>@Retention(RetentionPolicy.RUNTIME)<!>
 <!DEPRECATED_JAVA_ANNOTATION!>@Target(ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR)<!>
 annotation class my1
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty */

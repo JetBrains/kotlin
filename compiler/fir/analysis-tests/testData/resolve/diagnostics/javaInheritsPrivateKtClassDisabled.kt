@@ -28,3 +28,6 @@ fun foo(): Unit {
     val c = J2()
     c.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration,
+secondaryConstructor */

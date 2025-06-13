@@ -45,3 +45,6 @@ fun foo() {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, infix, integerLiteral,
+nullableType, propertyDeclaration, whenExpression, whenWithSubject */

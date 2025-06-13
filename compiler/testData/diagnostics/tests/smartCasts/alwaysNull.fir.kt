@@ -21,3 +21,7 @@ fun bar(s: String?) {
     s as String?
     s <!CAST_NEVER_SUCCEEDS!>as<!> String
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, assignment, checkNotNullCall, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast, stringLiteral */

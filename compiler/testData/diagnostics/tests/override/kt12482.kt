@@ -10,3 +10,5 @@ interface B : A {
 open class C : A
 
 class D : C(), B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral */

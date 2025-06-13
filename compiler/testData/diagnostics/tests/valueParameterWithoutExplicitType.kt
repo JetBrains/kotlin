@@ -2,3 +2,5 @@
 fun foo(
     <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>x<!>
 ) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

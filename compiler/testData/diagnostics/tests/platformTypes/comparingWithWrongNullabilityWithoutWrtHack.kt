@@ -9,3 +9,6 @@ fun foo() {
         it != ""
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, inProjection, javaFunction, lambdaLiteral,
+nullableType, outProjection, samConversion, stringLiteral */

@@ -21,3 +21,6 @@ fun test2() {
     val a = produceBoxedInaccessibleType()
     consumeBoxedInaccessibleType(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, outProjection,
+propertyDeclaration, typeParameter */

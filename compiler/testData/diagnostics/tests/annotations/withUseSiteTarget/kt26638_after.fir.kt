@@ -21,3 +21,7 @@ var c = " "
 <!REPEATED_ANNOTATION!>@get:Ann(20)<!>
 val d: String
     <!REPEATED_ANNOTATION!>@Ann(30)<!> <!REPEATED_ANNOTATION!>@Ann(40)<!> get() = "foo"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter,
+annotationUseSiteTargetPropertySetter, annotationUseSiteTargetSetterParameter, assignment, getter, integerLiteral,
+primaryConstructor, propertyDeclaration, setter, stringLiteral */

@@ -10,3 +10,5 @@ fun test0() {
     val a = IntArray(0)
     foo0(*a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

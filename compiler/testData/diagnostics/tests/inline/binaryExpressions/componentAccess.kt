@@ -18,3 +18,6 @@ inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, 
     val (d1, e1) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>s<!>
     val (d2, e2) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>ext<!>
 }
+
+/* GENERATED_FIR_TAGS: destructuringDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+integerLiteral, localProperty, nullableType, operator, propertyDeclaration, typeParameter, typeWithExtension */

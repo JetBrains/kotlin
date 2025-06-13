@@ -16,3 +16,6 @@ fun foo(f: File, c: Customer) {
 
 val File.name1: String
     get() = getName()
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, javaFunction, primaryConstructor,
+propertyDeclaration, propertyWithExtensionReceiver */

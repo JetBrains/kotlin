@@ -13,3 +13,5 @@ package test
 
 // val prop4: 10
 <!DEBUG_INFO_CONSTANT_VALUE("10")!>const val prop4 = '\n'.code<!>
+
+/* GENERATED_FIR_TAGS: const, propertyDeclaration */

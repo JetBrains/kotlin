@@ -28,3 +28,6 @@ fun main(x: Foo<*>?) {
     // `*` inside `MutableList` and `List` have to become the same captured type
     takeFoo(<!DEBUG_INFO_SMARTCAST!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, flexibleType, functionDeclaration, ifExpression, isExpression,
+javaProperty, javaType, localProperty, nullableType, propertyDeclaration, smartcast, starProjection, typeParameter */

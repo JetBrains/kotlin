@@ -21,3 +21,5 @@ interface Measure<
         M : Measure<K, S, U, M>,
         >
     : Comparable<Measure<K, S, *, *>>
+
+/* GENERATED_FIR_TAGS: interfaceDeclaration, starProjection, typeConstraint, typeParameter */

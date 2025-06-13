@@ -24,3 +24,6 @@ val bar = object {
         fun function() = field
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter, inner,
+localClass, propertyDeclaration, secondaryConstructor, thisExpression */

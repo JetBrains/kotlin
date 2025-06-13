@@ -22,3 +22,5 @@ fun main() {
 }
 
 fun println(s: String) = s
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

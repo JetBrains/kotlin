@@ -46,3 +46,6 @@ fun <T> twoBoxes(box: Inv<T>, box2: Inv<T>, value: T) {}
 fun testContradiction(box1: Inv<Any>, box2: Inv<String>) {
     twoBoxes(box1, <!ARGUMENT_TYPE_MISMATCH!>box2<!>) { "" }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

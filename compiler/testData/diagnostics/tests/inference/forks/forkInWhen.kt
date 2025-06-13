@@ -19,3 +19,7 @@ fun test(b: Base<B>) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, functionalType, in, inProjection,
+interfaceDeclaration, lambdaLiteral, nullableType, primaryConstructor, starProjection, stringLiteral, typeConstraint,
+typeParameter, whenExpression, whenWithSubject */

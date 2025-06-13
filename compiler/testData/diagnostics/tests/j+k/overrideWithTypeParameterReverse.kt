@@ -19,3 +19,6 @@ public class Sub implements Super {
 // FILE: SubSub.kt
 class SubSub : OtherSuper, Sub()
 class SubSub2 : Sub(), OtherSuper
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeConstraint, typeParameter */

@@ -12,3 +12,6 @@ fun test(l: A){
 
 }
 fun consumeInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, integerLiteral,
+nullableType, override, superExpression, typeParameter */

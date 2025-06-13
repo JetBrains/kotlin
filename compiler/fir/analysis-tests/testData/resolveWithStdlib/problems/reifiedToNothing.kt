@@ -20,3 +20,6 @@ fun parse(token: String, flag: Boolean): Result? {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, reified, tryExpression, typeConstraint, typeParameter */

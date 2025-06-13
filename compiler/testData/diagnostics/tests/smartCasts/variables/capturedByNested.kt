@@ -21,3 +21,6 @@ fun test() {
         <!SMARTCAST_IMPOSSIBLE!>s<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, functionDeclaration,
+functionalType, ifExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

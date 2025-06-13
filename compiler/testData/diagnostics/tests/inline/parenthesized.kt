@@ -26,3 +26,6 @@ inline fun propagation(s: (p: Int) -> Unit) {
     inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label@<!> s))
     inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label2@<!> <!REDUNDANT_LABEL_WARNING!>label@<!> s))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,
+integerLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

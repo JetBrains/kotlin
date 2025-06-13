@@ -23,3 +23,5 @@ fun test2(l: List<<!UNRESOLVED_REFERENCE!>AA<!>>) {
         <!UNRESOLVED_REFERENCE!>it<!>!!
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, ifExpression, lambdaLiteral */

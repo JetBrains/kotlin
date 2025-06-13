@@ -378,3 +378,7 @@ class InlineWithT {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, contractCallsEffect, contracts, crossinline, functionDeclaration,
+functionalType, ifExpression, init, inline, intersectionType, lambdaLiteral, localProperty, noinline, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

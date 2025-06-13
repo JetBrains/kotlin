@@ -21,3 +21,6 @@ interface Bar {
 
 val List<Bar>.serializationWhitelists
     get() = flatMapTo(LinkedHashSet(), Bar::serializationWhitelists)
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, getter, integerLiteral,
+interfaceDeclaration, propertyDeclaration, propertyWithExtensionReceiver */

@@ -14,3 +14,5 @@ class A {
         <!RETURN_VALUE_NOT_USED!>foo()<!>               //unused
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, functionDeclaration, integerLiteral, localFunction */

@@ -5,3 +5,5 @@ fun foo(x: String) {}
 fun bar() {
     foo(10)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral */

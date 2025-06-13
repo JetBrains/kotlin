@@ -12,3 +12,6 @@ fun foo(arg: Int?) {
     // Unsafe because of lambda
     <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

@@ -14,3 +14,6 @@ public fun foo(pp: String?): Int {
     // (we could provide it but p = null makes it much harder)
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whileLoop */

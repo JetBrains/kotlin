@@ -19,3 +19,6 @@ interface B<T> {
 
     fun getDefault(): T
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration,
+nullableType, override, typeParameter */

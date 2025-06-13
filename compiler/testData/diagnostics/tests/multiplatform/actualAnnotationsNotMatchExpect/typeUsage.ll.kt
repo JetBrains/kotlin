@@ -106,3 +106,7 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReturnType<!>(arg: () 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReceiverType<!>(arg: Any.() -> Unit) {}
 
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeArgType<!>(arg: (arg: Any) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, functionalType, inner, interfaceDeclaration, nullableType, outProjection, starProjection,
+stringLiteral, typeConstraint, typeParameter, typeWithExtension */

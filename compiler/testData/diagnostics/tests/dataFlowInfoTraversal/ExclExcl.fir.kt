@@ -22,3 +22,6 @@ fun f4(x: Int?) {
 fun f5(x: Int?) {
     if (x == null) else bar(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, nullableType, smartcast */

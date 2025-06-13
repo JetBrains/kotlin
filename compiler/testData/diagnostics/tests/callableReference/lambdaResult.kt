@@ -42,3 +42,7 @@ fun main(x: Inv<Int>) {
         ::bar
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, stringLiteral,
+typeParameter */

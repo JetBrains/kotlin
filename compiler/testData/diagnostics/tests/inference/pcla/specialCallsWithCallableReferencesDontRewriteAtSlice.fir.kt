@@ -76,3 +76,8 @@ fun poll85(): Flow<String> {
         inv
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, getter, in, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, nullableType, out, primaryConstructor, propertyDeclaration, propertyWithExtensionReceiver, setter,
+suspend, typeParameter, typeWithExtension */

@@ -32,3 +32,6 @@ class A(val w: Char) {
         y = 8
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, primaryConstructor, propertyDeclaration,
+secondaryConstructor */

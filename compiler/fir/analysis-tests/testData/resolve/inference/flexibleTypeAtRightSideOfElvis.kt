@@ -35,3 +35,7 @@ fun testWithStatic4(x1: String?, w: Int): String {
     }
     return x
 }
+
+/* GENERATED_FIR_TAGS: assignment, elvisExpression, equalityExpression, flexibleType, functionDeclaration,
+integerLiteral, javaFunction, javaProperty, localProperty, nullableType, propertyDeclaration, smartcast, whenExpression,
+whenWithSubject */

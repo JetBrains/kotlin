@@ -8,3 +8,5 @@
 
 @JvmInline
 <!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>inline<!> class B(val x: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, value */

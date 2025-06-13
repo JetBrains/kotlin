@@ -25,3 +25,6 @@ fun test_2(x: Any, s: String) {
     requreIsInstanceOf(x, s)
     x.length
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, functionDeclaration, ifExpression, inline, isExpression,
+nullableType, reified, smartcast, typeParameter */

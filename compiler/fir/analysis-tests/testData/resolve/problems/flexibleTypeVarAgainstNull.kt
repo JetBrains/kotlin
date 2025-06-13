@@ -14,3 +14,5 @@ public class JavaClass<T> {
 fun main() {
     JavaClass<String>(null).foo().length
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

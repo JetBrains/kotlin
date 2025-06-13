@@ -40,3 +40,6 @@ fun testWrong() {
   <!VARIABLE_EXPECTED!>B()<!> /= 1
   <!VARIABLE_EXPECTED!>B()<!> %= 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+localProperty, multiplicativeExpression, operator, propertyDeclaration */

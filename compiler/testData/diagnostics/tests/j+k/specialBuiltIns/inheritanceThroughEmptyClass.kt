@@ -83,3 +83,5 @@ public abstract class AbstractSerializableListDecorator<E> extends AbstractColle
 import java.util.*
 
 class UniqueArrayList<E> : AbstractSerializableListDecorator<E>(), MutableSet<E>
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, nullableType, typeParameter */

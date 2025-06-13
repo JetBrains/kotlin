@@ -10,3 +10,5 @@ fun main() {
 }
 
 fun requiresInt(i: Int) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration */

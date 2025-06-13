@@ -5,3 +5,5 @@ class C {
         @Suppress("warnings")
         get(): String?? = null as Nothing?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, getter, nullableType, propertyDeclaration, stringLiteral */

@@ -21,3 +21,6 @@ val sealedTest: SealedBase.() -> ToState? = <!INITIALIZER_TYPE_MISMATCH!>{
 val nonSealedTest: NonSealedBase.() -> ToState? = <!INITIALIZER_TYPE_MISMATCH!>{
     when(this) {}
 }<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, sealed, typeWithExtension, whenExpression, whenWithSubject */

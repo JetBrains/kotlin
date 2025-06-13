@@ -138,3 +138,6 @@ val inProperty = @<!OPT_IN_USAGE!>EAnno<!> fun() {}
 
 val inPropertyAccessor: () -> Unit
     get() = @<!OPT_IN_USAGE!>EAnno<!> fun() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, classReference, functionDeclaration,
+functionalType, getter, localFunction, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration */

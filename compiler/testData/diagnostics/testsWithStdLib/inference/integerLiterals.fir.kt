@@ -21,3 +21,6 @@ fun test_3(list: List<X>) {
     val props = list.map { Pair(it.toLong() ?: 0, it.toLong() ?: 0) }
     props
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, functionDeclaration, ifExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration */

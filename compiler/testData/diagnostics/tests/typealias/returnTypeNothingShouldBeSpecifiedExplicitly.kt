@@ -9,3 +9,5 @@ val <!ABBREVIATED_NOTHING_PROPERTY_TYPE!>testValWithGetter<!>: N get() = null!!
 fun testFunN(): Nothing = null!!
 val testValN: Nothing = null!!
 val testValWithGetterN: Nothing get() = null!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, getter, propertyDeclaration, typeAliasDeclaration */

@@ -29,3 +29,6 @@ class WithPrivateCompanion {
         fun staticFunction() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter, classDeclaration,
+companionObject, functionDeclaration, getter, integerLiteral, objectDeclaration, propertyDeclaration, setter */

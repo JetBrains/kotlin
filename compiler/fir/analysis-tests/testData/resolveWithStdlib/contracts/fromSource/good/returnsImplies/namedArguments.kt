@@ -29,3 +29,5 @@ fun test_3(x: Any, y: Any) {
     y.length
 }
 
+/* GENERATED_FIR_TAGS: andExpression, classReference, contractConditionalEffect, contracts, disjunctionExpression,
+functionDeclaration, ifExpression, isExpression, lambdaLiteral, smartcast */

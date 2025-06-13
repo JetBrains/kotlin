@@ -16,3 +16,6 @@ fun test1() {
 fun test2() {
     ::foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) })
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classReference, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, nullableType, typeParameter, vararg */

@@ -41,3 +41,7 @@ private class ScrapingOffPresenter : Presenter<Flow<ScrapingOffEvent>, ScrapingO
 class ScrapingOffEvent
 class ScrapingOffOutput
 class ScrapingOffModel
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, data, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, override, primaryConstructor, propertyDeclaration,
+typeConstraint, typeParameter */

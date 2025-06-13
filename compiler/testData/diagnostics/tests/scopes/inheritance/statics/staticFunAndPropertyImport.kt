@@ -44,3 +44,5 @@ import B.baz
 
 // class cannot be imported by subclass
 import B.<!CANNOT_BE_IMPORTED!>quux2<!>
+
+/* GENERATED_FIR_TAGS:  */

@@ -28,3 +28,7 @@ fun <ETV> Buildee<out ETV>.extensionSetOutProjectedTypeVariable(value: ETV) {}
 fun <PTV> build(instructions: Buildee<PTV>.() -> Unit): Buildee<PTV> {
     return Buildee<PTV>().apply(instructions)
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

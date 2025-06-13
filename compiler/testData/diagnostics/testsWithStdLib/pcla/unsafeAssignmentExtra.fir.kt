@@ -77,3 +77,9 @@ fun main(arg: Any, condition: Boolean) {
         baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, incrementDecrementExpression, integerLiteral, interfaceDeclaration,
+intersectionType, isExpression, lambdaLiteral, localFunction, localProperty, nullableType, outProjection,
+propertyDeclaration, propertyDelegate, smartcast, starProjection, stringLiteral, thisExpression, typeConstraint,
+typeParameter, typeWithExtension, whenExpression, whenWithSubject */

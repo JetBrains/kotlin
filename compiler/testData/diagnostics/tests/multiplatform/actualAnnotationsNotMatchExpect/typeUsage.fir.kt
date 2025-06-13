@@ -106,3 +106,7 @@ actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: kotlin.jvm.functio
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun funcTypeReceiverType(arg: Any.() -> Unit) {}
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun funcTypeArgType(arg: (arg: Any) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, funWithExtensionReceiver,
+functionDeclaration, functionalType, inner, interfaceDeclaration, nullableType, outProjection, starProjection,
+stringLiteral, typeConstraint, typeParameter, typeWithExtension */

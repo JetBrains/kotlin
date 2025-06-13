@@ -22,3 +22,5 @@ public class JavaClass {
         return 0;
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, integerLiteral, javaProperty, javaType */

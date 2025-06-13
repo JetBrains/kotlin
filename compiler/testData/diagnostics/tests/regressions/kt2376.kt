@@ -10,3 +10,5 @@ fun main() {
 public class Test {
     void number(Number n){}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType */

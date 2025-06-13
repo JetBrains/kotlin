@@ -7,3 +7,5 @@ class TestInitValInLambdaCalledOnce {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, lambdaLiteral, propertyDeclaration */

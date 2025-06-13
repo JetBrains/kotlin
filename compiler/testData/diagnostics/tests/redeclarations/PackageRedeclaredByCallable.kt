@@ -7,3 +7,5 @@ package a
 fun a() {}
 
 val a = ""
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, stringLiteral */

@@ -15,3 +15,6 @@ interface I<out T> {
 
 interface ModelListPropertyCore<T> : ModelPropertyCore<List<T>>
 interface ModelPropertyCore<T>
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, out, outProjection, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

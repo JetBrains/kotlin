@@ -54,3 +54,6 @@ class B : A() {
     override fun foo(a: Derived): M1 = TODO()
     public fun foo(a: Base): String = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, isExpression, override,
+propertyDeclaration, whenExpression, whenWithSubject */

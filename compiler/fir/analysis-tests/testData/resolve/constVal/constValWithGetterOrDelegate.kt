@@ -25,3 +25,6 @@ const val e: Boolean
 
 const val property: String = "123"
     <!CONST_VAL_WITH_GETTER!>get() = field + " 123 123"<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, const, functionDeclaration, getter, integerLiteral,
+nullableType, operator, propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

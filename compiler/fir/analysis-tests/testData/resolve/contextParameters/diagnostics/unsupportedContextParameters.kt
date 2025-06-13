@@ -119,3 +119,10 @@ fun localFunctionsContextParametersWithoutType() {
     context(<!CONTEXT_PARAMETER_WITHOUT_NAME, UNRESOLVED_REFERENCE!>a<!>)
     fun contextReceiverSyntax() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, classDeclaration, crossinline, destructuringDeclaration,
+enumDeclaration, forLoop, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, functionalType,
+getter, init, inline, integerLiteral, interfaceDeclaration, localFunction, localProperty, noinline, nullableType,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, propertyDeclarationWithContext, propertyDelegate,
+propertyWithExtensionReceiver, rangeExpression, secondaryConstructor, setter, stringLiteral, thisExpression,
+typeAliasDeclaration, typeWithContext, unnamedLocalVariable, vararg, whenExpression, whenWithSubject */

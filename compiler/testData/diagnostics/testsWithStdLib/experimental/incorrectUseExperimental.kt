@@ -15,3 +15,4 @@ fun f2() {}
 @OptIn(<!OPT_IN_ARGUMENT_IS_NOT_MARKER!>NotAMarker::class<!>, <!OPT_IN_ARGUMENT_IS_NOT_MARKER!>NotBMarker::class<!>)
 fun f3() {}
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

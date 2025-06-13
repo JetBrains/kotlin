@@ -130,3 +130,5 @@ abstract class D8 : IVarDefault, WithInternalVar()
 abstract class E8 : IVarDefault, WithVarInternalSet()
 abstract class F8 : IVarDefault, WithVarProtectedSet()
 abstract class G8 : IVarDefault, WithVarPrivateSet()
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */

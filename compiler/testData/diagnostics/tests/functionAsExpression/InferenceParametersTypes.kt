@@ -18,3 +18,7 @@ fun test2(a: () -> List<Int>) {
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }
 
 val b: (Int) -> Unit = <!TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>x: String<!>) {}<!>
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

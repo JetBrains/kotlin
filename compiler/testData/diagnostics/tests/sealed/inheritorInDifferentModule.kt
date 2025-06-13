@@ -17,3 +17,5 @@ class A : Base()
 package a
 
 class B : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>Base<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, sealed */

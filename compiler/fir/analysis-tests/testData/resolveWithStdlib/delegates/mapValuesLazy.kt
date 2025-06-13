@@ -11,3 +11,5 @@ val recProp by lazy {
     }
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType,
+propertyDeclaration, propertyDelegate, stringLiteral */

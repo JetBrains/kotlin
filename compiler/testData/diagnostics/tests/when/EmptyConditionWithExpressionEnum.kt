@@ -19,3 +19,6 @@ fun foo(arg: My): Int {
         else -> return -1
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral, smartcast,
+whenExpression, whenWithSubject */

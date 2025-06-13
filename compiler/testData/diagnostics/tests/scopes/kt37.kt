@@ -15,3 +15,6 @@ fun box(): String {
     if (c.<!INVISIBLE_MEMBER!>f<!> != 610) return "fail"
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression, init,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration, stringLiteral */

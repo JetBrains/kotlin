@@ -53,3 +53,6 @@ fun f7(s: Int?): Int {
         else -> s
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, integerLiteral, isExpression,
+nullableType, smartcast, whenExpression, whenWithSubject */

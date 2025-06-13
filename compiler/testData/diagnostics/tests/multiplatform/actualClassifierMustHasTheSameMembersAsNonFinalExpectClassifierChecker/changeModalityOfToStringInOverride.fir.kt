@@ -11,3 +11,5 @@ expect open class Foo
 actual open class Foo {
     final override fun <!EXPECT_ACTUAL_INCOMPATIBLE_MODALITY!>toString<!>() = "Foo"
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, override, stringLiteral */

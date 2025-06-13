@@ -11,3 +11,4 @@ fun test(a: A) {
     a.<!NONE_APPLICABLE!>foo<!>()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral */

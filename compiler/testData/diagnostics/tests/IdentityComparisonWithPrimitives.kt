@@ -80,3 +80,6 @@ val test_jna = <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>j === na<!> || <!IMPLICIT_B
 val test_fna = <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>f === na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na === f<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>f !== na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na !== f<!>
 val test_dna = <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>d === na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na === d<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>d !== na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na !== d<!>
 val test_cna = <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>c === na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na === c<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>c !== na<!> || <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>na !== c<!>
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, equalityExpression, integerLiteral, nullableType, propertyDeclaration,
+smartcast */

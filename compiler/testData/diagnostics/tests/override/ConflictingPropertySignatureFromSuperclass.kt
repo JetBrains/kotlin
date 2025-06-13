@@ -8,3 +8,6 @@ open class Aaa() {
 open class Bbb() : Aaa() {
     <!CONFLICTING_OVERLOADS!>val <T> bar<!> = "aa"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter */

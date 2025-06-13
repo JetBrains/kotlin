@@ -14,3 +14,5 @@ fun foo(x: Int): Any {
         2 -> 0
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, whenExpression, whenWithSubject */

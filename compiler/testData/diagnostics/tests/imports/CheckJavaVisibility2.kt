@@ -61,3 +61,5 @@ class C {
         JavaPackageLocal.javaMPackage()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaProperty, javaType, propertyDeclaration */

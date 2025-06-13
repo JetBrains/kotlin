@@ -44,3 +44,6 @@ expect class Outer {
     @kotlin.annotations.jvm.KotlinActual public static class F3 {}
     @kotlin.annotations.jvm.KotlinActual public class F4 {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, expect, funInterface, functionDeclaration, inner,
+interfaceDeclaration, nestedClass, primaryConstructor, propertyDeclaration, value */

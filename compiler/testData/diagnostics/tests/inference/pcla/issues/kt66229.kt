@@ -16,3 +16,6 @@ fun bar() {
         mapValues { (key: Int, value: String) -> "1" }
     }
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, thisExpression */

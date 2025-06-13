@@ -37,3 +37,6 @@ fun test_3() {
     }
     takeB(b) // should be OK
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+localProperty, primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

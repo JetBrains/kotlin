@@ -59,3 +59,5 @@ interface F {
         <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> val a = 3
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, integerLiteral, interfaceDeclaration, objectDeclaration, propertyDeclaration */

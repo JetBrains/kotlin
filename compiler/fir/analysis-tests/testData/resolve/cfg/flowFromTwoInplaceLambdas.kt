@@ -89,3 +89,7 @@ fun test7() {
         x.length // ok - aliased
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classReference, contractCallsEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, ifExpression, integerLiteral, interfaceDeclaration, isExpression, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter */

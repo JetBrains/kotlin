@@ -27,3 +27,6 @@ fun main2() {
     foo2(MyClass2.bar)
     foo2(bar)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, getter, objectDeclaration,
+propertyDeclaration, propertyWithExtensionReceiver */

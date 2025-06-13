@@ -13,3 +13,6 @@ class B3<E> : A<<!UPPER_BOUND_VIOLATED!>E<!>>
 class B4<E : CharSequence> : A<E>
 
 fun <X : CharSequence, Y1 : X, Y2: Y1?> foo(a: A<X>, b: A<Y1>, c: A<<!UPPER_BOUND_VIOLATED!>Y2<!>>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

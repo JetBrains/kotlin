@@ -39,3 +39,7 @@ fun huh(arg: Foo?) {
     <!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.alias[42])<!>++
     ++<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(arg?.alias[42])<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+incrementDecrementExpression, integerLiteral, nullableType, operator, propertyDeclaration, safeCall, smartcast,
+stringLiteral, thisExpression */

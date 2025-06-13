@@ -55,3 +55,6 @@ fun test() {
         s2 = null
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

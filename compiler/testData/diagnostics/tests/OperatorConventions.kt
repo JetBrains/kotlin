@@ -129,3 +129,7 @@ fun useDelegate() {
 fun resolveToExtension() {
     val (<!PROPERTY_AS_OPERATOR!>uwu<!>) = X() // KT-65760
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, destructuringDeclaration, forLoop,
+funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral, localProperty, nestedClass, nullableType,
+objectDeclaration, operator, override, propertyDeclaration, propertyDelegate, setter, starProjection, stringLiteral */

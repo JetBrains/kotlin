@@ -19,3 +19,5 @@ class Temp {
     @Ann(cascade = [<!UNRESOLVED_REFERENCE!>unresolved<!>])
     var x: Int = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, integerLiteral, javaType, propertyDeclaration */

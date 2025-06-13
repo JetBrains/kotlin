@@ -5,3 +5,5 @@ interface A {
         ENTRY
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, interfaceDeclaration, nestedClass */

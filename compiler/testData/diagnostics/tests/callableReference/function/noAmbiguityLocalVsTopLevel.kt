@@ -8,3 +8,5 @@ fun main() {
 
     ::bar
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, localFunction */

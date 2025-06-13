@@ -62,3 +62,5 @@ class Test6 : E, <!EXPOSED_SUPER_CLASS, FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZ
 class Test7 : D.<!UNRESOLVED_REFERENCE!>PublicButProtected<!> {
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, interfaceDeclaration, nestedClass */

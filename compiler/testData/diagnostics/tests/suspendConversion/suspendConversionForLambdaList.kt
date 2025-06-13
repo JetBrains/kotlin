@@ -20,3 +20,6 @@ fun foo() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, javaFunction, javaType, lambdaLiteral,
+localProperty, propertyDeclaration, suspend */

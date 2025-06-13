@@ -40,3 +40,6 @@ fun main() {
     }
     // resulting expression type: TypePair<Parent, Parent>
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+nullableType, typeConstraint, typeParameter */

@@ -13,3 +13,6 @@ val o = object {
         A().foo(f) // Ambiguity here!
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+nullableType, propertyDeclaration, typeParameter */

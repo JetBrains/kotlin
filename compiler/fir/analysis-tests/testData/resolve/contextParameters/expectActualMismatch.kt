@@ -40,3 +40,6 @@ actual val <!ACTUAL_WITHOUT_EXPECT!>wrongContextType<!> : String
 context(c: A)
 actual val <!EXPECT_ACTUAL_INCOMPATIBLE_CONTEXT_PARAMETER_NAMES!>wrongContextName<!> : String
     get() = ""
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, propertyDeclaration, propertyDeclarationWithContext,
+stringLiteral */

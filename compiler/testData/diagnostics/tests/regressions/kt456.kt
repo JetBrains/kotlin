@@ -30,3 +30,6 @@ class C() {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, primaryConstructor, propertyDeclaration,
+tryExpression */

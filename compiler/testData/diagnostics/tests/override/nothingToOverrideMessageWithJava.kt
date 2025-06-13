@@ -36,3 +36,5 @@ class JavaBaseImpl: JavaBase() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun test7(a: Nothing): Any { return 1 }
     <!NOTHING_TO_OVERRIDE!>override<!> fun test8(a: JavaBase) {}
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, integerLiteral, javaType, override */

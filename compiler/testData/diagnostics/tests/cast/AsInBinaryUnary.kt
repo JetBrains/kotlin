@@ -29,3 +29,6 @@ fun error2(x: Base, y: Impl2): Impl1 = <!TYPE_MISMATCH!>x + y<!>
 fun minus3(x: Impl2): Impl1 = -(x as Base)
 
 fun error3(x: Impl2): Impl1 = <!TYPE_MISMATCH!>-x<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, operator, unaryExpression */

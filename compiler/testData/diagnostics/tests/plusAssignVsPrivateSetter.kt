@@ -23,3 +23,6 @@ fun test(b: B) {
     b.x += "x"
     b.y += "y"
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, lateinit, operator,
+propertyDeclaration, stringLiteral */

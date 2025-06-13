@@ -15,3 +15,7 @@ fun test(a: A) {
         a.foo().checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+infix, interfaceDeclaration, isExpression, lambdaLiteral, nullableType, override, smartcast, typeParameter,
+typeWithExtension */

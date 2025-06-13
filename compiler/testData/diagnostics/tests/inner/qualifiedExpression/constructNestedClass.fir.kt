@@ -16,3 +16,5 @@ fun f4() = Outer.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
 fun f5() = Outer.Inner.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>InnerInner<!>()
 fun f6() = Outer().Inner()
 fun f7() = Outer().Inner().InnerInner()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nestedClass */

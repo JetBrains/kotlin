@@ -16,3 +16,5 @@ interface F : C, D {
         throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override */

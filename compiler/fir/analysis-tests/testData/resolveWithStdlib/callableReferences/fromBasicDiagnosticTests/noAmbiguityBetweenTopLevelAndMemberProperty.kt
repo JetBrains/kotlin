@@ -13,3 +13,6 @@ class O {
 
 val someProperty0 = property(::subject)
 val someProperty1 = property(O::subject)
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

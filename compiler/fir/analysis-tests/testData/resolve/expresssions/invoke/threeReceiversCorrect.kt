@@ -25,3 +25,6 @@ fun test(a: A, b: B, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, nullableType,
+propertyDeclaration, propertyWithExtensionReceiver, typeParameter, typeWithExtension */

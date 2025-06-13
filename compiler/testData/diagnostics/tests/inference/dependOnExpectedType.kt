@@ -54,3 +54,7 @@ fun <T> list(value: T) : ArrayList<T> {
 fun <S> newList() : ArrayList<S> {
     return ArrayList<S>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, integerLiteral, intersectionType, javaFunction, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

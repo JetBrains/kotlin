@@ -3,3 +3,5 @@
 
 val s = ""
 val s1 = s.<!USELESS_CALL_ON_NOT_NULL!>orEmpty()<!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration, stringLiteral */

@@ -11,3 +11,5 @@ class B : A() {
         super<!UNEXPECTED_SAFE_CALL!>?.<!>f()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, safeCall, superExpression */

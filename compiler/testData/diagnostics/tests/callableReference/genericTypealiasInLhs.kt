@@ -190,3 +190,6 @@ fun test_3() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>BoundedPairSpecificAlias<!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
     BoundedPairSpecificAlias<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, Int, Int><!>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, nullableType, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

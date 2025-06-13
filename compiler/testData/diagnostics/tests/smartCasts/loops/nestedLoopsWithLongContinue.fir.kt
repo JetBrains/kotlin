@@ -18,3 +18,6 @@ public fun foo(p: String?, r: String?, q: String?): Int {
     r.length
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, nullableType, smartcast, whileLoop */

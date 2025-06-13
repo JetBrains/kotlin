@@ -46,3 +46,5 @@ fun test(a_b: a.b) {
 fun test2(ab_c: a.b.c) {
     ab_c.ab_c()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

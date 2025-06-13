@@ -30,3 +30,6 @@ actual open class Foo : Transitive() {
 
     override fun injected(param: String): String = "" // covariant override
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType, override,
+primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

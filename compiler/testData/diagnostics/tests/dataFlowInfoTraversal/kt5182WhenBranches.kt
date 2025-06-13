@@ -12,3 +12,5 @@ fun foo(a: A) = when {
     true -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo() //'foo' is unresolved, smart cast doesn't work
     else -> <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, smartcast, whenExpression */

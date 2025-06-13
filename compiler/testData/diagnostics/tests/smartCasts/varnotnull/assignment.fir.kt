@@ -9,3 +9,6 @@ fun foo() {
     v = "abc"
     v.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral */

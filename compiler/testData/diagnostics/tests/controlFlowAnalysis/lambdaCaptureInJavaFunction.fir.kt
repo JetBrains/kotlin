@@ -41,3 +41,7 @@ fun test3(){
         if (true) { x = ""; "" } else { x = ""; "" }
     )
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, functionalType, ifExpression,
+inline, javaFunction, javaType, lambdaLiteral, localProperty, override, propertyDeclaration, samConversion,
+stringLiteral */

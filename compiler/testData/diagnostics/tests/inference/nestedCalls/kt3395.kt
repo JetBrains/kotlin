@@ -34,3 +34,7 @@ fun test(t: String) {
 
     println("Some" + foo(t)) // t was marked with black square
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+infix, integerLiteral, javaFunction, localProperty, nullableType, out, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter, vararg */

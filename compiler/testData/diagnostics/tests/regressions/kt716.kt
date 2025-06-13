@@ -17,3 +17,7 @@ fun <T> getJavaClass() = typeinfo<T>().getJavaClass()
 fun main() {
     System.out.println(getJavaClass<String>())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+javaFunction, javaProperty, localProperty, nullableType, propertyDeclaration, starProjection, thisExpression,
+typeParameter */

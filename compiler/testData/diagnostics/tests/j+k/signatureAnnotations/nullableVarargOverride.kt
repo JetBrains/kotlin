@@ -22,3 +22,6 @@ class B : BaseClass() {
         super.loadCache(*args)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType, outProjection,
+override, superExpression, vararg */

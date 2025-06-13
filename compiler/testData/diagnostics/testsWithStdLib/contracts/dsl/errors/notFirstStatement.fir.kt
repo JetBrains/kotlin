@@ -75,3 +75,7 @@ fun case_7(cond: Boolean): Boolean {
     }
     return true
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, contractCallsEffect, contractConditionalEffect, contracts,
+equalityExpression, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localClass,
+localFunction, localProperty, nullableType, propertyDeclaration */

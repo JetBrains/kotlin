@@ -11,3 +11,5 @@ fun foo(x: Int = 0) {}
 fun test() {
     take(::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, starProjection */

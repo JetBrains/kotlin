@@ -32,3 +32,6 @@ class Outer {
             return field
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, incrementDecrementExpression,
+integerLiteral, localClass, localFunction, propertyDeclaration */

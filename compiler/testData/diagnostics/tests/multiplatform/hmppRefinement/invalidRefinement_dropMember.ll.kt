@@ -14,3 +14,5 @@ expect class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!>
 
 // MODULE: main()()(intermediate)
 actual class Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

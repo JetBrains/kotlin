@@ -16,3 +16,7 @@ fun <T, V> foo(t: C<out T>, v: C<out V>) {
         assignable<V> { t.value }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, equalityExpression, functionDeclaration, functionalType,
+ifExpression, intersectionType, lambdaLiteral, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+smartcast, typeParameter */

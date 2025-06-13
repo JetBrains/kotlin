@@ -10,3 +10,5 @@ fun main() {
         "mergeSort" to { a: Array<Int> -> }
     ))
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, lambdaLiteral, localFunction, stringLiteral */

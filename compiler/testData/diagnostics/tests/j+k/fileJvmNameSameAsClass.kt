@@ -19,3 +19,6 @@ class Foo {
 
     interface Inner
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, flexibleType, functionDeclaration,
+interfaceDeclaration, javaFunction, javaType, nestedClass, stringLiteral */

@@ -9,3 +9,5 @@ object B {
     val <!REDECLARATION!>a<!> : Int = 1
     val <!REDECLARATION!>a<!> : Int = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nestedClass, objectDeclaration, propertyDeclaration */

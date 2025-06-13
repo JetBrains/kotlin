@@ -12,3 +12,4 @@ val test1a: X1 = overloadedFun("", "")
 val test1b: X1 = overloadedFun("", args = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR, TYPE_MISMATCH!>""<!>)
 val test1c: X2 = overloadedFun("", "", "", flag = true)
 
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, propertyDeclaration, stringLiteral, vararg */

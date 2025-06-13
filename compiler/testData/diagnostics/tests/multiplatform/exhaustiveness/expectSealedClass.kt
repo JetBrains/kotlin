@@ -39,3 +39,7 @@ fun testPlatformBad(base: Base) {
         B -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, equalityExpression, expect, functionDeclaration, integerLiteral,
+isExpression, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast,
+whenExpression, whenWithSubject */

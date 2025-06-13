@@ -22,3 +22,6 @@ val field = object : MyInterface {
     @OptIn(MyAnn::class)
     override fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classReference, functionDeclaration,
+interfaceDeclaration, override, propertyDeclaration */

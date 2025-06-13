@@ -14,3 +14,6 @@ val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T: <!UNSUPPORTED_FEATURE
 class A2<T> where T : <!UNSUPPORTED_FEATURE!>context(Double)<!> (Int) -> Unit
 
 interface B2<T, U : <!UNSUPPORTED_FEATURE!>context(T)<!> () -> Unit>
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithContext, typeWithExtension */

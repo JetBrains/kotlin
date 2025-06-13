@@ -42,3 +42,6 @@ actual fun skippedAnnotationsOnExpectOnly() {}
 actual class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 
 actual open class SubclassOptInRequiredOnExpectOnly
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, classReference, expect, functionDeclaration,
+stringLiteral */

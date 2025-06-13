@@ -33,3 +33,7 @@ class B {
         checkSubtype<KFunction0<A.Nested>>(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, localProperty, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, typeParameter, typeWithExtension */

@@ -17,3 +17,5 @@ fun foo(a: A, ka: KA) {
     "" in ka
     <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> in ka
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, stringLiteral */

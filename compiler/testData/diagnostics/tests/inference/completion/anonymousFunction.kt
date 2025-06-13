@@ -22,3 +22,6 @@ fun testNestedCalls() {
     id<String>(inferFromLambda(fun() = materialize()))
     id<String>(inferFromLambda2(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun<!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>()<!> = materialize()<!>))
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

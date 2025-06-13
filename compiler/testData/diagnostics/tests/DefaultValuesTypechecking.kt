@@ -37,3 +37,6 @@ fun boo(
     y: Int
 ) {
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localFunction, primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral */

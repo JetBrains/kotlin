@@ -18,3 +18,5 @@ package b
 class B {
     companion object Companion
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, companionObject, objectDeclaration, propertyDeclaration */

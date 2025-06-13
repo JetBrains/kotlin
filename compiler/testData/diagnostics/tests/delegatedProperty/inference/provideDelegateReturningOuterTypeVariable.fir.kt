@@ -18,3 +18,7 @@ fun bar2(a: A) {
 
     val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> foo { x: A -> }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, localFunction, localProperty, nullableType, operator, propertyDeclaration, propertyDelegate,
+starProjection, stringLiteral, thisExpression, typeParameter */

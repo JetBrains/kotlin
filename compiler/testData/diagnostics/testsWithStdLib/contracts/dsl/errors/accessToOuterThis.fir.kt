@@ -40,3 +40,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, inner, interfaceDeclaration, lambdaLiteral, nullableType, thisExpression */

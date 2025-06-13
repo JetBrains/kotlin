@@ -10,3 +10,6 @@ class C {
         map<!NO_SET_METHOD!>[""]<!> += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, nullableType, operator, propertyDeclaration, stringLiteral */

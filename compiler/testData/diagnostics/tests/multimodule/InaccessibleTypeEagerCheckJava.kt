@@ -13,3 +13,4 @@ public class Derived extends Base {}
 // FILE: use.kt
 fun foo(): Derived = Derived()
 
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

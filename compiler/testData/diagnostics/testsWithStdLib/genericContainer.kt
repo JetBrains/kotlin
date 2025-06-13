@@ -12,3 +12,6 @@ public class GenericContainer<SELF extends GenericContainer<SELF>> {
 // FILE: test.kt
 
 val container = GenericContainer("nginx")
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, javaFunction, javaType, outProjection, propertyDeclaration,
+starProjection, stringLiteral */

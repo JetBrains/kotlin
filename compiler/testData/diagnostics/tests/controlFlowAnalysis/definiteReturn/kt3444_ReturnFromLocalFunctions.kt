@@ -17,3 +17,4 @@ fun main() {
     box()
 }
 
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction */

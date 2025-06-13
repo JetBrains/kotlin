@@ -30,3 +30,6 @@ public inline fun test(): String {
 fun box(): String {
     return test()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, flexibleType, functionDeclaration, inline,
+javaFunction, javaProperty, javaType, localProperty, propertyDeclaration */

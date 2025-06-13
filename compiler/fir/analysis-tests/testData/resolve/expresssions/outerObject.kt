@@ -9,3 +9,6 @@
          }
      }
  }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, propertyDeclaration */

@@ -9,3 +9,5 @@ public interface Foo {
 
 // FILE: test.kt
 const val b = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>Foo.A<!>
+
+/* GENERATED_FIR_TAGS: const, javaProperty, propertyDeclaration */

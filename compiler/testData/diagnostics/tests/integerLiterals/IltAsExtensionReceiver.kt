@@ -34,3 +34,6 @@ fun test_Short() {
     2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
     2<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, ifExpression, integerLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, safeCall, stringLiteral */

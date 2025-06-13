@@ -7,3 +7,6 @@ data class Example(val a: String, val b: Int) {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, destructuringDeclaration, functionDeclaration, localProperty,
+primaryConstructor, propertyDeclaration */

@@ -4,3 +4,5 @@
 
 @RequiresOptIn
 annotation class ExperimentalAPI
+
+/* GENERATED_FIR_TAGS: annotationDeclaration */

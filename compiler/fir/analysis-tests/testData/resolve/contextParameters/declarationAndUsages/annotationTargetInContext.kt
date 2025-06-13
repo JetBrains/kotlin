@@ -27,3 +27,6 @@ fun baz(): String {
 context(<!WRONG_ANNOTATION_TARGET!>@AnnotationWithTypeTarget<!> a: <!WRONG_ANNOTATION_TARGET!>@AnnotationWithValueTarget<!> String)
 val qux : String
     get() = a
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext */

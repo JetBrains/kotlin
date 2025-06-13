@@ -40,3 +40,7 @@ fun usage() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, functionDeclarationWithContext, functionalType,
+inProjection, integerLiteral, interfaceDeclaration, intersectionType, lambdaLiteral, nullableType, outProjection,
+starProjection, stringLiteral, typeConstraint, typeParameter, typeWithContext */

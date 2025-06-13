@@ -27,3 +27,6 @@ fun test() {
     t
     t.id // should be OK
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration,
+starProjection */

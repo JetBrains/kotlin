@@ -13,3 +13,5 @@ fun foo(a: A) {
     a.<!UNRESOLVED_REFERENCE!>`1`<!>
     a.get1()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

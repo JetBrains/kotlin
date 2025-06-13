@@ -42,3 +42,6 @@ fun main() {
     <!SMARTCAST_IMPOSSIBLE!>w.f<!>.f = z
     w.f!!.f = z
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, localProperty, nullableType,
+propertyDeclaration, smartcast */

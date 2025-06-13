@@ -13,3 +13,5 @@ package a
 import pack1.SomeClass.*
 
 private class X : <!EXPOSED_SUPER_CLASS, FINAL_SUPERTYPE, INVISIBLE_REFERENCE, INVISIBLE_REFERENCE!>N<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass */

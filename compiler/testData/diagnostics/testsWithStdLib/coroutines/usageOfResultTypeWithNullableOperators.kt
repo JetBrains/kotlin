@@ -39,3 +39,7 @@ fun nullableOperators(r1: Result<Int>?, b: Boolean) {
         returnInt() ?: returnInt() ?: asFun() ?: 0
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, functionalType, getter, ifExpression,
+integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, safeCall, smartcast,
+typeParameter */

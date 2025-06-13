@@ -12,3 +12,6 @@ fun foo(a: Any) {
         <!DEBUG_INFO_SMARTCAST!>a<!>.copy("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, ifExpression, isExpression, nullableType, out,
+primaryConstructor, propertyDeclaration, smartcast, starProjection, stringLiteral, typeParameter */

@@ -26,3 +26,7 @@ fun main(s: MyFoo?) {
 }
 
 fun <R1> myLet(block: () -> R1): R1 = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

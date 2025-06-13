@@ -21,3 +21,6 @@ where
 {
     fun anyTwoSegments(comparator: EachSegmentComparator<<!UNRESOLVED_REFERENCE!>ComputableSegment<!><NumberType, PointType>>): Boolean
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, nullableType, out,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

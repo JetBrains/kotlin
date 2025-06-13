@@ -19,3 +19,6 @@ class TopLevelClass {
     @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>)
     <!WRONG_MODIFIER_TARGET!>inner<!> typealias B = @Anno(<!ARGUMENT_TYPE_MISMATCH, NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>CONST<!>) String
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

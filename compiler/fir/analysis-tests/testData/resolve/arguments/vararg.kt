@@ -17,3 +17,5 @@ fun test() {
     bar(0, "", <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>true<!>)<!>
     bar(0, z = false, y = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>""<!>, <!ARGUMENT_PASSED_TWICE!>y<!> = "other", <!ARGUMENT_PASSED_TWICE!>y<!> = "yet other")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, stringLiteral, vararg */

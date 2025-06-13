@@ -5,3 +5,5 @@
 
 <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
 <!CONFLICTING_OVERLOADS!>fun main(args: Array<String>)<!> {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

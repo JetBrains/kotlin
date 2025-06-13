@@ -19,3 +19,6 @@ actual typealias Foo = JavaFoo
 // FILE: JavaFoo.java
 public class JavaFoo implements I {
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, integerLiteral, interfaceDeclaration, javaType,
+propertyDeclaration, typeAliasDeclaration */

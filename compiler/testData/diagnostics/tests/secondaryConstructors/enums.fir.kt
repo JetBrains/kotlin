@@ -39,3 +39,6 @@ enum class D(val prop: Int) {
 
     abstract fun f(): Int
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, enumDeclaration, enumEntry, functionDeclaration, integerLiteral,
+primaryConstructor, propertyDeclaration, secondaryConstructor */

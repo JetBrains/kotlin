@@ -20,3 +20,5 @@ fun suppressed() {
     val lambda = StableInterface {}
 }
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, funInterface, functionDeclaration,
+interfaceDeclaration, lambdaLiteral, localProperty, override, propertyDeclaration */

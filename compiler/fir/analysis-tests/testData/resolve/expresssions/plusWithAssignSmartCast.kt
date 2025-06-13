@@ -10,3 +10,6 @@ class Foo {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, nullableType, propertyDeclaration, smartcast, stringLiteral */

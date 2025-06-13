@@ -16,3 +16,6 @@ fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f2<!>()
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>f3<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, integerLiteral, localProperty,
+propertyDeclaration, stringLiteral */

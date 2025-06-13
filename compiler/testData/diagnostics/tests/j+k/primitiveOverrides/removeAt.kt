@@ -35,3 +35,5 @@ public class Java1 extends AbstractMutableList<Integer> {
 
 // FILE: 1.kt
 class A : Java1()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

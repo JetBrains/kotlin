@@ -222,3 +222,7 @@ fun f(g: <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(A, B)<!> () -> Unit, val
 fun test() {
     val lf: <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(A, B)<!> () -> Unit = { }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+functionalType, getter, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, nullableType, out,
+propertyDeclaration, propertyDeclarationWithContext, typeAliasDeclaration, typeParameter, typeWithContext */

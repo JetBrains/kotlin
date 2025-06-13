@@ -7,3 +7,6 @@ fun test() {
     val a2 = A<Int, B>()
     val a3 = A<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>, <!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>*<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, localProperty, nullableType, out, propertyDeclaration,
+typeParameter */

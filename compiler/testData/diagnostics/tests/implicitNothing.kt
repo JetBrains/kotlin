@@ -51,3 +51,6 @@ class Derived : Base {
 
     override fun foo() = null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, init, interfaceDeclaration,
+lambdaLiteral, localFunction, localProperty, override, propertyDeclaration */

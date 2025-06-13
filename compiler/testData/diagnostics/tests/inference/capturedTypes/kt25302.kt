@@ -17,3 +17,6 @@ class KotlinCollectionUser1 {
         accept(ofK("").collect(toSetK<String>()))
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, nullableType,
+starProjection, stringLiteral, typeParameter */

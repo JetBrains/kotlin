@@ -33,3 +33,6 @@ public class BaseJava {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, flexibleType, functionDeclaration, javaFunction, javaType,
+override, superExpression, typeAliasDeclaration */

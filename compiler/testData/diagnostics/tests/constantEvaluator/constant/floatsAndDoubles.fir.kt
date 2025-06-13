@@ -48,3 +48,5 @@ val prop15: Double = 1.2E400
 
 // val prop16: 0.0.toDouble()
 val prop16: Double = 1.2E-400
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, javaProperty, propertyDeclaration, unaryExpression */

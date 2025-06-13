@@ -14,3 +14,6 @@ class QueryParameter<A> : Expression<A>()
 fun <T, S : T?> Expression<in S>.wrap(value: T): QueryParameter<T> = null as QueryParameter<T>
 
 fun <T : Number?, S : T> Expression<T>.rem(t: S): ModOp<T, S> = ModOp(this, wrap(t))
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection,
+intersectionType, nullableType, primaryConstructor, propertyDeclaration, thisExpression, typeConstraint, typeParameter */

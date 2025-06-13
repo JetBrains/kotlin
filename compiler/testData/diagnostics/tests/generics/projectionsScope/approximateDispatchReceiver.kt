@@ -14,3 +14,6 @@ fun test(b: B<*>) {
     b.bar()
     b.bar() checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, starProjection, stringLiteral, typeParameter, typeWithExtension */

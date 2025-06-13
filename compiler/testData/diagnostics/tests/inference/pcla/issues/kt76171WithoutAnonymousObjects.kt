@@ -31,3 +31,7 @@ class FakeMutableState<T>(var value: T) {
         value = newValue
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter, starProjection, suspend,
+typeParameter, typeWithExtension */

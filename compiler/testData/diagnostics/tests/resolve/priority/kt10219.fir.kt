@@ -21,3 +21,6 @@ fun a(c: Calendar) {
         timeInMillis = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, javaProperty, javaType, lambdaLiteral,
+propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral */

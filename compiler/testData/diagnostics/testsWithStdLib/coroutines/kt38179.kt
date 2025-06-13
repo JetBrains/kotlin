@@ -19,3 +19,6 @@ private fun buildMapOfMaps(): Map<MyType, Map<MyEnum, MyOtherEnum>> {
             { _, accumulator, element -> accumulator.also { map -> map[element.key.second] = element.value } }
         )
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, enumDeclaration, enumEntry, flexibleType, functionDeclaration,
+javaFunction, lambdaLiteral, localProperty, propertyDeclaration, typeAliasDeclaration */

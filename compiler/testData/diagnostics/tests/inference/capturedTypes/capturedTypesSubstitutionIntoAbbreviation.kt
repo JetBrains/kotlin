@@ -33,3 +33,7 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("Action<CapturedType(*)> /* = (kotlin.Any?) -> kotlin.Unit */")!>getTag7().action<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.Any?) -> kotlin.Any?")!>getTag8().action<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, data, functionDeclaration, functionalType, in, inProjection,
+integerLiteral, lambdaLiteral, nullableType, out, primaryConstructor, propertyDeclaration, starProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

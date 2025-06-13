@@ -25,3 +25,6 @@ class TTopLevelClass<<!UNSUPPORTED_FEATURE, WRONG_ANNOTATION_TARGET!>@TA1<!> <!U
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localClass,
+nestedClass, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

@@ -110,3 +110,5 @@ fun case9() {
     val x1 = C(l1)
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+localProperty, primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

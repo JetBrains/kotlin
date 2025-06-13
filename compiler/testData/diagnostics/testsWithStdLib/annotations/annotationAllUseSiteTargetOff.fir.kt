@@ -13,3 +13,6 @@ fun foo(): <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@all:Default<!> Int {
     val y = <!WRONG_ANNOTATION_TARGET!>@all:Default<!> x
     return y
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetAll, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration */

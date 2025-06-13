@@ -12,3 +12,6 @@ fun test() {
 }
 
 fun contract(test: Test) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, stringLiteral,
+typeWithExtension */

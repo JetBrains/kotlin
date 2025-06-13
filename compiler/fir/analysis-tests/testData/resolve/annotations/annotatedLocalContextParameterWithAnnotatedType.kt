@@ -14,3 +14,6 @@ fun f1() {
         fun baz(): String = "hello"
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+getter, localClass, primaryConstructor, propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

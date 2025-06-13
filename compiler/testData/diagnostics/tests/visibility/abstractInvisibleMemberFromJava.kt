@@ -20,3 +20,5 @@ import base.*
 fun foo() {
     Impl().foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

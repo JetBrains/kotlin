@@ -18,3 +18,6 @@ class Cls {
 }
 
 fun take(arg: Any) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, ifExpression, interfaceDeclaration, isExpression,
+propertyDeclaration, propertyWithExtensionReceiver, smartcast */

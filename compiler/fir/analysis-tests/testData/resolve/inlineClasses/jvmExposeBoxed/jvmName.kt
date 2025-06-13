@@ -22,3 +22,6 @@ fun bar2(ic: IC): IC = TODO()
 <!JVM_EXPOSE_BOXED_REQUIRES_NAME!>@JvmExposeBoxed<!>
 @JvmName("foo")
 fun barIC2(): IC = TODO()
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral, value */

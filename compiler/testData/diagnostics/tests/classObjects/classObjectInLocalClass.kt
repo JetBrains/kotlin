@@ -9,3 +9,6 @@ fun test() {
         <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, companionObject, functionDeclaration, localClass,
+objectDeclaration */

@@ -16,3 +16,6 @@ fun main() {
 
 fun <T : Appendable> wtf(): T = TODO()
 val bar: Int = <!TYPE_MISMATCH!><!TYPE_MISMATCH!>wtf<!>()<!> // happily compiles
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, typeConstraint, typeParameter */

@@ -6,3 +6,5 @@ fun foo() {}
 fun bar(
     x: List<<!UNSUPPORTED_FEATURE!>context(String)<!> () -> Unit>
 ) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext */

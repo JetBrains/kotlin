@@ -34,3 +34,5 @@ fun test() {
     inst.<!INVISIBLE_MEMBER!>a<!>()
     inst.<!INVISIBLE_MEMBER!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

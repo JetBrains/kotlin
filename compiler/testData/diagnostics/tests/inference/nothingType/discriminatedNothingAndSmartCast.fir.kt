@@ -17,3 +17,6 @@ fun test(s: String?, silent: Boolean) {
 
     s.length
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, functionDeclaration, ifExpression, inline,
+interfaceDeclaration, localProperty, nullableType, propertyDeclaration, reified, smartcast, typeParameter */

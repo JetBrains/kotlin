@@ -36,3 +36,5 @@ object WrongType {
         bar(::foo) // Should resolve to (1) because (3) has wrong type on top of being adapted
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, objectDeclaration */

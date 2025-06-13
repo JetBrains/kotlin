@@ -8,3 +8,6 @@ val bar = ""
 val n = null
 
 val g: String? = null
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

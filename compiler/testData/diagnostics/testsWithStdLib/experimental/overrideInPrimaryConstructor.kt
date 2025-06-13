@@ -14,3 +14,6 @@ class SubFoo(
     @OptIn(E::class)
     override val bar: String,
 ) : Foo()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, override, primaryConstructor,
+propertyDeclaration */

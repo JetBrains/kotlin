@@ -46,3 +46,6 @@ fun innerTryCatchInitializes() {
     // Here x=I because outer try-catch either exited normally (x=I) or catched exception (x=I, with reassingment, though)
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, tryExpression, typeParameter */

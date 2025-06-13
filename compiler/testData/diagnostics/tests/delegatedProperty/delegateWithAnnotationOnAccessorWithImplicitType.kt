@@ -16,3 +16,8 @@ class MyDelegate {
     operator fun getValue(thisRef: Any?, property: KProperty<*>) = 42
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFieldDelegate,
+annotationUseSiteTargetPropertyGetter, annotationUseSiteTargetPropertySetter, annotationUseSiteTargetSetterParameter,
+classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, setter, starProjection */

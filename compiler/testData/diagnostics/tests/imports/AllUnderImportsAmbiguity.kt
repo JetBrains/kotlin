@@ -16,3 +16,5 @@ import a.*
 import b.*
 
 class Y : <!UNRESOLVED_REFERENCE!>X<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

@@ -17,3 +17,6 @@ val b /*:String */ = foo {
 
     "Ok"
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, functionalType, ifExpression, integerLiteral,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, typeParameter */

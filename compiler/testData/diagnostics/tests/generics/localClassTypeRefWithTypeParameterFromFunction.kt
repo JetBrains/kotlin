@@ -13,3 +13,6 @@ class A<T> {
     private inner class Inner
     private val test = ArrayList<Inner>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, nullableType, propertyDeclaration,
+typeParameter */

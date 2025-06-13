@@ -50,3 +50,7 @@ fun foo() {
     val
     (a, b) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>1<!>
 }
+
+/* GENERATED_FIR_TAGS: destructuringDeclaration, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, propertyDelegate, starProjection,
+stringLiteral */

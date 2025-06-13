@@ -26,3 +26,6 @@ fun test(){
         override fun get() = JavaBox(null).a
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, javaFunction, javaType,
+lambdaLiteral, localProperty, nullableType, override, propertyDeclaration */

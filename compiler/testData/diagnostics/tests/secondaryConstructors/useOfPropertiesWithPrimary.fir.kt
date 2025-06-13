@@ -29,3 +29,6 @@ class A(val w: Int) {
         x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!> + w
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, init, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

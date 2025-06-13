@@ -23,3 +23,6 @@ fun test1(flag: Boolean) {
         else -> ""
     }<!>)
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, intersectionType, stringLiteral,
+whenExpression, whenWithSubject */

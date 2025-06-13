@@ -10,3 +10,5 @@ object A {
 
 // FILE: 2.kt
 import objectProperties.ObjectWithProps.a
+
+/* GENERATED_FIR_TAGS: integerLiteral, objectDeclaration, propertyDeclaration, typeAliasDeclaration */

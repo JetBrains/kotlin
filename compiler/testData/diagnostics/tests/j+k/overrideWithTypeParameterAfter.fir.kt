@@ -57,3 +57,5 @@ open class NotNullGeneric<B : Any> : SuperGeneric<B> {
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class NotNullSubGeneric<!><B : Any> : OtherSuperGeneric<B>, NotNullGeneric<B>()
 
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, javaType, nullableType, override, typeConstraint,
+typeParameter */

@@ -13,3 +13,6 @@ class LateinitProperties {
     <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
     private lateinit var y1: String
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, lateinit,
+propertyDeclaration */

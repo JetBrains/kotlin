@@ -11,3 +11,6 @@ class _Pair<A>(val a: A)
 fun test() {
     _arrayList(_Pair(1))._sortBy <!TYPE_MISMATCH, TYPE_MISMATCH!>{ it -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

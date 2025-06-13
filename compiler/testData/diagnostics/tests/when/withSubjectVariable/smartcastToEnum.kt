@@ -18,3 +18,6 @@ fun testSmartcastToEnumInSubjectInitializer2(e: E?) {
         E.SECOND -> "s"
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression, whenWithSubject */

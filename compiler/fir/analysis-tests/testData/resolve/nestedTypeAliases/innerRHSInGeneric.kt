@@ -78,4 +78,5 @@ fun test() {
     GenericTAOwner<Int>().InnerTAWithTP<Int>()
 }
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, nullableType, thisExpression, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

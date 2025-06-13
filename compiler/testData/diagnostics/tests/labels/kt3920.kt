@@ -9,3 +9,6 @@ fun test() {
         2
     }
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, functionDeclaration, ifExpression, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration */

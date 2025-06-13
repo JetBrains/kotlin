@@ -109,3 +109,6 @@ fun testRepeatOnInitializedVar(x: Int) {
     }
     println(y)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, equalityExpression, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, thisExpression */

@@ -25,3 +25,6 @@ fun test() {
     n = J.staticN
     n = J.staticJ
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, nullableType,
+propertyDeclaration */

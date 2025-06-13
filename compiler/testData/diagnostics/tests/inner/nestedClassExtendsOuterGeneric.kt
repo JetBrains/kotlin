@@ -12,3 +12,6 @@ open class Outer<T> {
     
     fun foo(): T = null!!
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nestedClass, nullableType,
+superExpression, typeParameter */

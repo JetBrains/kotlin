@@ -22,3 +22,5 @@ class A {
 
 val x = <!ILLEGAL_SUSPEND_FUNCTION_CALL!>foo<!>()
 val y = <!ILLEGAL_SUSPEND_FUNCTION_CALL!>bar<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, init, objectDeclaration, propertyDeclaration, suspend */

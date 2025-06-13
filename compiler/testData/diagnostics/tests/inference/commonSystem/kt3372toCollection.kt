@@ -12,3 +12,7 @@ fun test(list: List<Int>) {
     val set = list.toCollection(HashSet())
     set checkType { _<HashSet<Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeConstraint, typeParameter,
+typeWithExtension */

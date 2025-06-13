@@ -19,3 +19,6 @@ actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Ann<!> = AnnImpl
 
 @AnnImpl.Nested
 actual fun foo() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, nestedClass, primaryConstructor,
+typeAliasDeclaration */

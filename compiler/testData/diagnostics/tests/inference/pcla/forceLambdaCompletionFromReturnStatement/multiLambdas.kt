@@ -14,3 +14,6 @@ fun main() {
         <!BUILDER_INFERENCE_MULTI_LAMBDA_RESTRICTION!>{ container -> container.consume("") }<!>,
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, stringLiteral,
+typeParameter */

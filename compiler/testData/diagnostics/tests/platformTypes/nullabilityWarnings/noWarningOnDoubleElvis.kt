@@ -8,3 +8,5 @@ fun test() {
 
 fun <T> nullable(): T? = TODO()
 fun take(x: Any) {}
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, nullableType, stringLiteral, typeParameter */

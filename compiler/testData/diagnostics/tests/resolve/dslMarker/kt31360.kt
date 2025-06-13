@@ -25,3 +25,7 @@ fun f() {
         property
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, getter, interfaceDeclaration,
+lambdaLiteral, nullableType, propertyDeclaration, propertyWithExtensionReceiver, starProjection, typeParameter,
+typeWithExtension */

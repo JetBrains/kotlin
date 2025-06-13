@@ -41,3 +41,6 @@ fun foo(x: B<*>) {
     Test.rawB.field.consume("")
     val y: Any = Test.rawB.field.produce()
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, javaProperty, javaType,
+localProperty, propertyDeclaration, starProjection, stringLiteral */

@@ -21,3 +21,5 @@ fun B.bar() {
     h1()
     h2()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext */

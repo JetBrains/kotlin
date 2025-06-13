@@ -14,3 +14,6 @@ fun testExpectedType() {
 
     receive<MyEnum>(id(EnumValue1))
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, nullableType, propertyDeclaration,
+typeParameter */

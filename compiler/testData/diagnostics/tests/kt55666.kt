@@ -18,3 +18,5 @@ fun label2simple1() {
 fun main() {
     label2simple1()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral, localFunction */

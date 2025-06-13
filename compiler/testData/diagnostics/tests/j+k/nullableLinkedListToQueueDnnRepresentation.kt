@@ -45,3 +45,5 @@ class C {
 fun test(c: C, jj: LinkedList<String?>) {
     c.bar(<!TYPE_MISMATCH!>jj<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nullableType */

@@ -13,3 +13,5 @@ public class Foo {}
 import pcg.Foo
 
 class Bar() : <!OPT_IN_TO_INHERITANCE_ERROR!>Foo<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType, primaryConstructor */

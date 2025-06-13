@@ -14,3 +14,5 @@ interface Foo
 fun test(p: Foo) {
     SomeUtil.isNullOrEmpty(p)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction */

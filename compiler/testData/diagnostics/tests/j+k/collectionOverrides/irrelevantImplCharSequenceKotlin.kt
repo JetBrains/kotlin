@@ -27,3 +27,6 @@ fun main() {
     x[0]
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaType, localProperty,
+propertyDeclaration */

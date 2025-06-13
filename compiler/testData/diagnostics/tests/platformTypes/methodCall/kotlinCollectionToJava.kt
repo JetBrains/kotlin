@@ -7,3 +7,5 @@ import java.util.*
 fun test(map: Map<Any, Any>) {
     HashMap(map)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction */

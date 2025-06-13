@@ -25,3 +25,5 @@ fun test_2() {
         this@apply.contract("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, stringLiteral, thisExpression */

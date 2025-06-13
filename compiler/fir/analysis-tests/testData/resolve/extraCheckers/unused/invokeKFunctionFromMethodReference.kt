@@ -7,3 +7,6 @@ fun foo(): Int {
 
     return localAction("hello")
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, localFunction, localProperty, propertyDeclaration,
+stringLiteral */

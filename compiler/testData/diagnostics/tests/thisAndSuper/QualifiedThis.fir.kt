@@ -11,3 +11,5 @@ class A() {
   val y = this.foo()
   val z = foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, thisExpression */

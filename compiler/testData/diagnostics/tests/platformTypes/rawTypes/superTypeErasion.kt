@@ -17,3 +17,5 @@ public class Test extends BaseOperation {}
 fun main() {
     val x = Test()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

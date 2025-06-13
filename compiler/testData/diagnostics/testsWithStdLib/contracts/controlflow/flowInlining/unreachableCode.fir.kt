@@ -16,3 +16,6 @@ fun throwInLambda(): Int {
     val x = myRun { throw java.lang.IllegalArgumentException(); 42 }
     return x
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contracts, functionDeclaration, functionalType, inline, integerLiteral,
+javaFunction, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

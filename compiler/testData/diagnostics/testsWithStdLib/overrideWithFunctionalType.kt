@@ -17,3 +17,6 @@ interface Base {
 fun main() {
     Derived().foo<String> { "" }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, functionalType, interfaceDeclaration, javaFunction, javaType,
+lambdaLiteral, nullableType, stringLiteral, typeConstraint, typeParameter */

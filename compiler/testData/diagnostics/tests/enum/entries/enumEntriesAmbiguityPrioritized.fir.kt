@@ -8,3 +8,5 @@ enum class Ambiguous {
 }
 
 val e = Ambiguous.<!OVERLOAD_RESOLUTION_AMBIGUITY!>entries<!>.<!UNRESOLVED_REFERENCE!>ordinal<!>
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, propertyDeclaration */

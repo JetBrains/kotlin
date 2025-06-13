@@ -20,3 +20,5 @@ fun test4() {}
 @Deprecated("")
 @DeprecatedSinceKotlin("1.3.70")
 fun test5() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

@@ -15,3 +15,6 @@ class B : A {
     = Unit
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, typeConstraint,
+typeParameter */

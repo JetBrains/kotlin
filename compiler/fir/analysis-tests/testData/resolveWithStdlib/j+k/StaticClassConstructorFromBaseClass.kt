@@ -18,3 +18,5 @@ class User : AbstractClass() {
 fun test() {
     AbstractClass.StaticClass()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

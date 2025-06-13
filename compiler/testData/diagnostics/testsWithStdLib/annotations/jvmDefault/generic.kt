@@ -60,3 +60,5 @@ interface D2 : ANonDefault, D<String> {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, override, typeParameter */

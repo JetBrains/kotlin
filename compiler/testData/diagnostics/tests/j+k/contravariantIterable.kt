@@ -20,3 +20,5 @@ fun test(x: List<String>, y: List<*>, z: MutableList<*>, w: MutableList<in CharS
     A.bar(z.iterator())
     A.bar(w.iterator())
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, inProjection, javaFunction, nullableType, starProjection */

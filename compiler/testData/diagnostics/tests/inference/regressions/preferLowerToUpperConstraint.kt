@@ -11,3 +11,5 @@ fun takeInt(x: Int) {}
 fun main(x: Int) {
     foo(x) { prev: Int?, new -> takeInt(new) } // `new` is `Int` in OI, `Int?` in NI
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, typeConstraint, typeParameter */

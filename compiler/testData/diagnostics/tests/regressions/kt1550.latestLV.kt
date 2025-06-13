@@ -12,3 +12,6 @@ fun main()
   System.out.println(<!WRAPPED_LHS_IN_ASSIGNMENT_ERROR!>(c[1])<!>--)
   System.out.println(-(c[2]))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, incrementDecrementExpression, integerLiteral, javaFunction,
+javaProperty, localProperty, propertyDeclaration, unaryExpression */

@@ -20,3 +20,6 @@ fun test() {
     }
     x.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classReference, contractCallsEffect, contracts, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

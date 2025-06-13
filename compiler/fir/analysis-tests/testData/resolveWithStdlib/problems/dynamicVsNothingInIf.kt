@@ -14,3 +14,6 @@ class Test(val something: String?) {
 }
 
 fun <T> parse(data: String): T = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

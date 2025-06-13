@@ -10,3 +10,5 @@ fun test() {
         <!NOTHING_TO_INLINE!>inline<!> <!EXTERNAL_DECLARATION_CANNOT_BE_INLINED!>external<!> fun foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, external, functionDeclaration, inline, localClass */

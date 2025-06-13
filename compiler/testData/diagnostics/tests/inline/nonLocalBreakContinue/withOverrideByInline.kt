@@ -25,3 +25,6 @@ fun test(a: Test, b: Test2){
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, break, classDeclaration, continue, forLoop, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, localProperty, override, propertyDeclaration, rangeExpression */

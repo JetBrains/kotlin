@@ -17,3 +17,6 @@
             field = value
         }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, integerLiteral, localClass,
+propertyDeclaration, setter */

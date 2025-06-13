@@ -5,3 +5,6 @@ class Array<E>(e: E) {
         e as Any?
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, integerLiteral, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

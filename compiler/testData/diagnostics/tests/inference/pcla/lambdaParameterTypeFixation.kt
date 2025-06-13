@@ -16,3 +16,7 @@ fun foo() {
 }
 
 fun <R, F : Controller<in R>> bar(f: F, x: R, b: (R) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inProjection, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, suspend, thisExpression, typeConstraint, typeParameter,
+typeWithExtension */

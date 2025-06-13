@@ -35,3 +35,5 @@ public class Parent extends GrandParent implements ISecondary {
 class OtherIntermediate : Parent(), ISecondary
 
 abstract class Child : Parent(), IChild
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

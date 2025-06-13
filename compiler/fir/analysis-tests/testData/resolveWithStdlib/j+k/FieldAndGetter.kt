@@ -13,3 +13,5 @@ public class JavaClass {
 fun test(jc: JavaClass) {
     jc.field
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType */

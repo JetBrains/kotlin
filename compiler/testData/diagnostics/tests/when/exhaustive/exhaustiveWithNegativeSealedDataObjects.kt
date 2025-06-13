@@ -56,3 +56,6 @@ fun quux(v: Variants): String {
 
     return v.<!UNRESOLVED_REFERENCE!>test<!>()
 }
+
+/* GENERATED_FIR_TAGS: data, equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+nestedClass, objectDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

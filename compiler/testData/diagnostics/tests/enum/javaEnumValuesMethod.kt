@@ -11,3 +11,6 @@ public enum A {
 fun main() {
      checkSubtype<Array<A>>(A.values())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+javaFunction, javaType, nullableType, typeParameter, typeWithExtension */

@@ -22,3 +22,6 @@ actual class Outer {
         fun injectedMethod() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nestedClass,
+propertyDeclaration */

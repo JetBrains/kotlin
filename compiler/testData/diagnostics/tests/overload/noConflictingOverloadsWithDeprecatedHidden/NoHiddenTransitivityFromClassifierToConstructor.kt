@@ -18,3 +18,5 @@ class KlassD {
     <!CONFLICTING_OVERLOADS!>constructor()<!>
 }
 <!CONFLICTING_OVERLOADS!>fun KlassD()<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, secondaryConstructor, stringLiteral */

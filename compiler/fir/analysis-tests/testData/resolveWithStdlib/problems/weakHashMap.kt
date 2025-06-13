@@ -9,3 +9,4 @@ fun foo() {
     someMap[""]
 }
 
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, nullableType, propertyDeclaration, stringLiteral */

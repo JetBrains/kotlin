@@ -36,3 +36,6 @@ fun test(b: B?) {
         b?.getParent()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+nullableType, override, safeCall, smartcast */

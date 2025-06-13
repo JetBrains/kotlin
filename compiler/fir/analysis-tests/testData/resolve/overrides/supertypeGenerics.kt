@@ -13,3 +13,6 @@ class C : Base<String>(), I<String>
 fun f(list: List<Int>, s: List<String>) {
     C().f(list, s)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

@@ -33,3 +33,6 @@ fun testReferenceArray() {
     it.compareAndExchangeAcquire(0, 127, 128)
     it.compareAndExchangeRelease(0, 127, 128)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localProperty,
+propertyDeclaration */

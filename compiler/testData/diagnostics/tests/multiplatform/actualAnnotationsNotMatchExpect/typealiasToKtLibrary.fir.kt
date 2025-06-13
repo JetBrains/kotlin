@@ -43,3 +43,7 @@ expect abstract class MyAbstractIterator<T> {
 actual typealias MyDeprecatedMatch = kotlin.Deprecated
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> typealias MyAbstractIterator<T> = AbstractIterator<T>
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classDeclaration, expect, functionDeclaration, nullableType,
+primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeParameter */

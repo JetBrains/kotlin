@@ -26,3 +26,6 @@ fun main() {
     foo@ <!NO_COMPANION_OBJECT!>System<!>
     null <!UNRESOLVED_REFERENCE!>in<!> System
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, isExpression, javaFunction,
+lambdaLiteral, nullableType, propertyDeclaration */

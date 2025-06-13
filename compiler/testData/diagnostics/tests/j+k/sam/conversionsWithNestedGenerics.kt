@@ -21,3 +21,5 @@ fun test(w: Derived) {
 }
 
 fun call() {}
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral, samConversion */

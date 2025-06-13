@@ -6,3 +6,6 @@ class A<T> {
 
     fun test() = foo(bar(""))
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, stringLiteral,
+typeParameter */

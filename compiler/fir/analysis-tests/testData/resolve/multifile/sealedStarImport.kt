@@ -22,3 +22,6 @@ abstract class Factory {
 
     abstract fun createExtra(): Extra
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed */

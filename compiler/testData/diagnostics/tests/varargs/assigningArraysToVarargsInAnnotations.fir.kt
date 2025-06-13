@@ -44,3 +44,6 @@ fun foo1() {}
 
 @IntAnn(i = intArrayOf(0))
 fun foo2() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral, javaType,
+outProjection, primaryConstructor, propertyDeclaration, stringLiteral, vararg */

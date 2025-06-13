@@ -39,3 +39,6 @@ value class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x:
 value class Id<T>(val x: T)
 @JvmInline
 value class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+typeConstraint, typeParameter, value */

@@ -12,3 +12,5 @@ open class Any() {
 
     public open fun toString(): String = TODO()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, operator, primaryConstructor */

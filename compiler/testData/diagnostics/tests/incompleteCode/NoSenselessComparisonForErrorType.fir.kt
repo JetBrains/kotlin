@@ -7,3 +7,5 @@ fun foo() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, propertyDeclaration */

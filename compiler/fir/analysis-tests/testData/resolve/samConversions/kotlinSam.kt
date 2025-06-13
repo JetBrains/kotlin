@@ -40,3 +40,6 @@ fun main() {
     foo4(f)
 
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, override, propertyDeclaration, samConversion */

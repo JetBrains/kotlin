@@ -22,3 +22,6 @@ class A {
     val q = null ?:
     fun String.() = 6
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+integerLiteral, localFunction, localProperty, nullableType, propertyDeclaration, typeWithExtension */

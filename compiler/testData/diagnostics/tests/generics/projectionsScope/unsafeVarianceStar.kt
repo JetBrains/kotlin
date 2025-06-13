@@ -9,3 +9,5 @@ fun test(a: A<*>) {
     a.foo(null)
     a.foo(Any())
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, out, starProjection, typeParameter */

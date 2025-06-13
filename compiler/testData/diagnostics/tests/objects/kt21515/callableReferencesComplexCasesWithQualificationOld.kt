@@ -68,3 +68,6 @@ object D {
         val a = D.Base.Companion.FromBaseCompanion::foo
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, functionDeclaration, integerLiteral,
+nestedClass, objectDeclaration, propertyDeclaration */

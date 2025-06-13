@@ -9,3 +9,6 @@ fun foo(m: MyClass): Int {
     m.p = "xyz"
     return bar(<!ARGUMENT_TYPE_MISMATCH!>m.p<!>)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral */

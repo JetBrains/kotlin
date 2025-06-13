@@ -14,3 +14,6 @@ fun foo() {
         var foo2 = bar
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, const, functionDeclaration, getter, localClass,
+nullableType, primaryConstructor, propertyDeclaration, stringLiteral */

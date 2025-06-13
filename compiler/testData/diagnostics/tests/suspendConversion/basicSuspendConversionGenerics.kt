@@ -29,3 +29,6 @@ fun test(f: (Int) -> String, g: () -> String) {
     val a5 = foo3(id(f))
     <!DEBUG_INFO_EXPRESSION_TYPE("Inv2<kotlin.Int, kotlin.String>")!>a5<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, localProperty, nullableType,
+propertyDeclaration, suspend, typeParameter */

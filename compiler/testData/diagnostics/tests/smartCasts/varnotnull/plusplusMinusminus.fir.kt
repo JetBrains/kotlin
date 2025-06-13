@@ -19,3 +19,7 @@ fun bar(arg: Long?): Long {
     }
     return 0L
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, assignment, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty,
+nullableType, operator, propertyDeclaration, safeCall, smartcast, thisExpression */

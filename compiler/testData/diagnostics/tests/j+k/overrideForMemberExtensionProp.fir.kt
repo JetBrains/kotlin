@@ -39,3 +39,6 @@ fun test(x: Derived) {
     x.<!UNRESOLVED_REFERENCE!>getB<!>()
     x.b
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, javaCallableReference,
+javaProperty, javaType, lambdaLiteral, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

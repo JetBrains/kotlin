@@ -10,3 +10,5 @@ interface My {
         get() = ""
     <!REDUNDANT_MODIFIER!>open<!> abstract val z: Double
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, getter, interfaceDeclaration, propertyDeclaration, stringLiteral */

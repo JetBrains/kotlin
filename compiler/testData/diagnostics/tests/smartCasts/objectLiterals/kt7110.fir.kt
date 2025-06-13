@@ -10,3 +10,6 @@ fun foo(o: String?): Int {
     a.bar()
     return o.length
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, smartcast */

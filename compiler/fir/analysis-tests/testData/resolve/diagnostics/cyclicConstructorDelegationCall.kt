@@ -66,3 +66,6 @@ open class M {
 class U : M {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, primaryConstructor, secondaryConstructor,
+stringLiteral, typeParameter */

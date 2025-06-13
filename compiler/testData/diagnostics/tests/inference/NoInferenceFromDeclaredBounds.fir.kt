@@ -10,3 +10,6 @@ fun foo1() {
 val n : Nothing = null.sure()
 
 fun <T : Any> T?.sure() : T = this!!
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, nullableType,
+propertyDeclaration, thisExpression, typeConstraint, typeParameter */

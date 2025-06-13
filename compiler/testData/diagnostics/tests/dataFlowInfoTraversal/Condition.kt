@@ -6,3 +6,7 @@ fun foo(x: Int?): Boolean {
     checkSubtype<Int>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: andExpression, checkNotNullCall, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast,
+typeParameter, typeWithExtension */

@@ -23,3 +23,6 @@ interface C {
 
 @Suppress(<!ERROR_SUPPRESSION!>"PROPERTY_WITH_NO_TYPE_NO_INITIALIZER"<!>)
 <!MUST_BE_INITIALIZED!>val z<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration, secondaryConstructor, stringLiteral, value */

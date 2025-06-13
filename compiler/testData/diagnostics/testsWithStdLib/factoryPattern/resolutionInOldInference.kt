@@ -24,3 +24,6 @@ fun test_1() {
     val x = create { "" }
     takeString("")
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

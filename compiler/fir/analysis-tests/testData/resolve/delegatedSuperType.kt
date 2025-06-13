@@ -8,3 +8,6 @@ class B : A {
 }
 
 class C(val b: B) : A by b
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration, override,
+primaryConstructor, propertyDeclaration */

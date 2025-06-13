@@ -30,3 +30,7 @@ fun local() {
 }
 
 <!INCOMPATIBLE_MODIFIERS!>sealed<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class Sealed(val x: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localClass, localFunction, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+thisExpression */

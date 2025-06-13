@@ -12,3 +12,6 @@ fun foo(x: List<String>) {
         flatMap { x }
     }
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+stringLiteral, typeParameter */

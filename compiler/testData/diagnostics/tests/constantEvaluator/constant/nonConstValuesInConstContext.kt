@@ -31,3 +31,6 @@ class C {
     @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>this.Z<!>)
     fun explicitThis() {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, classDeclaration, const, functionDeclaration, getter,
+integerLiteral, lambdaLiteral, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral, thisExpression */

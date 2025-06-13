@@ -16,3 +16,5 @@ class C : B() {
 fun box(): String {
     return C().a
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override, propertyDeclaration, stringLiteral */

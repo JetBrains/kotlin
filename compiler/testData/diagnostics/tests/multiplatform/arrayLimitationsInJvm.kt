@@ -14,3 +14,6 @@ fun test() {
     val res = <!UNSUPPORTED!>foo<!>()
     bar(<!UNSUPPORTED!>res<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

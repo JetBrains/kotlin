@@ -30,3 +30,6 @@ interface BodySpec<B, S : BodySpec<B, S>> {
 interface WithDnn<T : WithDnn<T>?> {
     fun <K : T & Any> bar() {}
 }
+
+/* GENERATED_FIR_TAGS: capturedType, dnnType, flexibleType, functionDeclaration, interfaceDeclaration, javaType,
+nullableType, starProjection, typeConstraint, typeParameter */

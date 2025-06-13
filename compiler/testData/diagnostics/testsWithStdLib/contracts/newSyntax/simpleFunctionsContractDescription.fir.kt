@@ -22,3 +22,6 @@ fun calculateNumber(block: () -> Int): Int contract [
     val num = block()
     return num
 }
+
+/* GENERATED_FIR_TAGS: contractCallsEffect, contractConditionalEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, localProperty, nullableType, propertyDeclaration, smartcast */

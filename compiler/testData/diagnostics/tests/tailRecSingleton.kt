@@ -52,3 +52,6 @@ enum class E {
 
     abstract fun rec()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+objectDeclaration, tailrec, thisExpression */

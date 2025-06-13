@@ -10,5 +10,4 @@ fun testCommasAndWhitespaces() {
 
 fun todo(): Nothing = throw Exception()
 
-
-
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localFunction, stringLiteral */

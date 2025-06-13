@@ -24,3 +24,5 @@ fun bar() {
     OuterSuccessor().<!UNRESOLVED_REFERENCE!>NestedTA<!>()
     Outer().OuterTA()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, typeAliasDeclaration */

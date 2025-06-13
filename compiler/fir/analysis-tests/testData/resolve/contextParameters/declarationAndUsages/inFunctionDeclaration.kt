@@ -32,3 +32,5 @@ fun usage4() {
     test()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType,
+lambdaLiteral, nullableType, stringLiteral, typeParameter, typeWithContext */

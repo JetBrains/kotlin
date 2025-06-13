@@ -17,3 +17,6 @@ object DerivedImpl : IDerived {
 class Test1 : IBase by BaseImpl
 
 class Test2 : IDerived by DerivedImpl
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration,
+objectDeclaration, override, stringLiteral */

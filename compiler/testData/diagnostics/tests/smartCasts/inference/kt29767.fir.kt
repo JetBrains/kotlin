@@ -9,3 +9,6 @@ fun test(a: MutableList<out Int?>?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, smartcast */

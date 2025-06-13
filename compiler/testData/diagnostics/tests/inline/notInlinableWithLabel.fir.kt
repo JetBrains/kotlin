@@ -12,3 +12,5 @@ inline fun bar(s: () -> Unit) {
 fun main() {
     bar { }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, lambdaLiteral */

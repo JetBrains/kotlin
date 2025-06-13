@@ -370,3 +370,7 @@ fun test35() {
         state = false
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, checkNotNullCall, forLoop, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, isExpression, localProperty, nullableType, propertyDeclaration,
+rangeExpression, smartcast, stringLiteral, typeParameter */

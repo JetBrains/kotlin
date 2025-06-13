@@ -10,3 +10,5 @@ val y: List<@[<!WRONG_ANNOTATION_TARGET!>base<!>] String>? = null
 annotation class typeAnn
 
 fun foo(list: List<@typeAnn Int>) = list
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, nullableType, propertyDeclaration */

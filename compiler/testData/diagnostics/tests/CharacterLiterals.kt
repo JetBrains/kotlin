@@ -12,3 +12,5 @@ fun test(c : Char) {
   test('\'')
   test('\"')
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

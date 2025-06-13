@@ -29,3 +29,6 @@ fun main() {
      */
     foo(values, Test.bar())
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, flexibleType, functionDeclaration, javaFunction, localProperty,
+nullableType, outProjection, propertyDeclaration, typeParameter */

@@ -19,3 +19,6 @@ expect class <!NO_ACTUAL_FOR_EXPECT{JVM}!>C2<!> : C1
 // MODULE: jvm()()(common)
 // FILE: jvm.kt
 fun main() {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration,
+primaryConstructor, propertyDeclaration, value */

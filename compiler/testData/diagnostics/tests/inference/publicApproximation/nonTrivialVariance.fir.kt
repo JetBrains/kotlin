@@ -53,3 +53,6 @@ fun test15(first: First, second: Second) = Out(Inv(Out(intersect(first, second))
 fun test16(first: First, second: Second) = Out(Out(In(intersect(first, second))))
 fun test17(first: First, second: Second) = Out(In(Out(intersect(first, second))))
 fun test18(first: First, second: Second) = In(Out(Out(intersect(first, second))))
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, interfaceDeclaration, intersectionType, nullableType,
+objectDeclaration, out, outProjection, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

@@ -16,3 +16,6 @@ fun test(x: A) {
         x.getFoo().foo
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, javaFunction, javaProperty, javaType, smartcast */

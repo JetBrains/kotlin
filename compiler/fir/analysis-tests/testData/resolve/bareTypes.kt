@@ -22,3 +22,6 @@ fun test3(a: A<String>) {
         a.add("")
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+localProperty, nullableType, out, propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter */

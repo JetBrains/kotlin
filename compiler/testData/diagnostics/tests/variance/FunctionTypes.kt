@@ -12,3 +12,6 @@ interface Test<in I, out O, P> {
     fun neOk2(i: (In<<!TYPE_VARIANCE_CONFLICT_ERROR!>O<!>>) -> In<<!TYPE_VARIANCE_CONFLICT_ERROR!>I<!>>)
     <!TYPE_VARIANCE_CONFLICT_ERROR, TYPE_VARIANCE_CONFLICT_ERROR!>fun neOk3()<!> = getT<(In<I>) -> In<O>>()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, in, interfaceDeclaration, nullableType,
+out, typeParameter */

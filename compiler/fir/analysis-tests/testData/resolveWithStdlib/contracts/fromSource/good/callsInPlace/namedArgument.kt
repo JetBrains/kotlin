@@ -19,3 +19,6 @@ inline fun test_2(g: () -> Unit) {
     contract { callsInPlace(g, InvocationKind.EXACTLY_ONCE) }
     myRun(g)
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType, inline,
+lambdaLiteral */

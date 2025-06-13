@@ -9,3 +9,6 @@ fun foo() {
     bar(<!TYPE_MISMATCH!>if (x == null) <!DEBUG_INFO_CONSTANT!>x<!> else x<!>)
     if (x != null) bar(x + x/(x-x*x))
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+localProperty, multiplicativeExpression, nullableType, propertyDeclaration, smartcast */

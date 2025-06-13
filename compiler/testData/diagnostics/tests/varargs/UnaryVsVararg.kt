@@ -9,3 +9,5 @@ fun test1() {
     val a = IntArray(0)
     foo1(1, *a)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, propertyDeclaration, stringLiteral, vararg */

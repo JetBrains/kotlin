@@ -9,3 +9,5 @@
 value class DPoint(val x: Double, val y: Double = <!MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER!>Double.NaN<!>) {
     fun f(otherDPoint: DPoint = DPoint(1.0, 2.0)) = Unit
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration, value */

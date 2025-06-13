@@ -17,3 +17,6 @@ interface SimplePortalTransitionProvider {
 internal abstract class BaseFeaturePortal<K> : SimplePortalTransitionProvider by VerticalPortalTransitionProvider
 
 internal class FeaturePortal : BaseFeaturePortal<Nav>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, interfaceDeclaration, nullableType, objectDeclaration,
+override, propertyDeclaration, stringLiteral, typeParameter */

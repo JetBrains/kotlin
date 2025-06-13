@@ -51,3 +51,6 @@ fun test3() = Map.of<String, String>()
 import some.Map
 
 fun test4() = Map.of()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, flexibleType, functionDeclaration, integerLiteral,
+javaFunction, objectDeclaration */

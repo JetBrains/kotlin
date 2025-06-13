@@ -35,3 +35,7 @@ fun usage(a: IntersectionInterface<A>){
         IntersectionClass<A>().foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+interfaceDeclaration, lambdaLiteral, nullableType, override, propertyDeclaration, propertyDeclarationWithContext,
+stringLiteral, typeParameter */

@@ -22,3 +22,5 @@ public class Foo {
 class <!ACTUAL_MISSING!>Foo<!><T>(t: T) {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, nullableType, primaryConstructor, typeParameter */

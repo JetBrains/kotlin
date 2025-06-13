@@ -70,3 +70,7 @@ class MemberScopeViaTypealiasImpl {
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> val onGetter: String = ""
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual<!> fun onType(param: Any) {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration, expect,
+functionDeclaration, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeAliasDeclaration,
+typeParameter */

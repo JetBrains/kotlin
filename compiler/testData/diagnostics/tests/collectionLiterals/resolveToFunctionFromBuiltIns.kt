@@ -17,3 +17,6 @@ fun local() {
     val s1: Array<String> = [""]
     val s2: Array<String> = []
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral */

@@ -5,3 +5,6 @@
 annotation class My(val x: Int)
 
 fun foo(): @My(42) Int = 24
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration */

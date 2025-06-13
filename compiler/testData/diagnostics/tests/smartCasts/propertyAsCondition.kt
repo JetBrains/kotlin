@@ -30,3 +30,6 @@ fun bar(x: Boolean?) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

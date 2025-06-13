@@ -21,3 +21,6 @@ fun main() {
         println("a suspending function: $someSuspendingFunctionReference")
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, lambdaLiteral, localProperty,
+primaryConstructor, propertyDeclaration, stringLiteral, suspend */

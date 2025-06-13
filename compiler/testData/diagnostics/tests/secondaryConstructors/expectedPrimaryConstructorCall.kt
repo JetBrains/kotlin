@@ -8,3 +8,5 @@ open class B(x: Int)
 class C(x: Int) : B(x) {
     constructor(): <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>super<!>(1)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, secondaryConstructor */

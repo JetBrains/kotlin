@@ -21,3 +21,6 @@ abstract class D<T : Right> : C<T>()
 
 // We should not have intersection override f() in this class
 class Z : D<Bottom>(), B<Bottom>
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+typeConstraint, typeParameter */

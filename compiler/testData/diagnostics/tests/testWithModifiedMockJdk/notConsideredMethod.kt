@@ -12,3 +12,7 @@ fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {
     y.<!DEPRECATION!>nonExistingMethod<!>("")
     z.<!DEPRECATION!>nonExistingMethod<!>("")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, interfaceDeclaration, lambdaLiteral, nullableType, override, stringLiteral, typeParameter,
+typeWithExtension */

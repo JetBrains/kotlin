@@ -12,3 +12,6 @@ class A : B {
     constructor(x: String): super(x)
     constructor(): super()
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, primaryConstructor,
+secondaryConstructor, stringLiteral, typeParameter, vararg */

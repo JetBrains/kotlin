@@ -54,3 +54,6 @@ fun testOnExtensionReceivers() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, integerLiteral, lambdaLiteral, thisExpression, typeWithExtension */

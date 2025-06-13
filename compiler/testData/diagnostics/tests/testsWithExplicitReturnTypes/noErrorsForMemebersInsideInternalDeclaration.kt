@@ -22,3 +22,5 @@ internal class Outer {
         fun foo() = "789"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass, propertyDeclaration, stringLiteral */

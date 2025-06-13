@@ -15,3 +15,6 @@ class Some(var foo: Int) {
         foo = 2
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, ifExpression, init, integerLiteral,
+lambdaLiteral, primaryConstructor, propertyDeclaration, secondaryConstructor */

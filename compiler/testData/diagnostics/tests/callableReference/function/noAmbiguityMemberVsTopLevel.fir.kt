@@ -30,3 +30,6 @@ class A {
         expectFunction1String(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

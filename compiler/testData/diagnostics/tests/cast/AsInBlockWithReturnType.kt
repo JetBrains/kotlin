@@ -51,3 +51,6 @@ fun <T> testDependent() {
 
 fun <T> listOf(vararg elements: T): List<T> = TODO()
 fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> = TODO()
+
+/* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localFunction, nullableType, typeParameter, vararg */

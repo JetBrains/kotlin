@@ -6,3 +6,6 @@ fun bar(doIt: Int.() -> Int) {
     i.<!UNSAFE_IMPLICIT_INVOKE_CALL!>doIt<!>()
     i?.doIt()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, localProperty, nullableType,
+propertyDeclaration, safeCall, typeWithExtension */

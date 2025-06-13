@@ -9,3 +9,5 @@ class A {
 fun create() = A()
 
 val foo = create()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, thisExpression */

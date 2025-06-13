@@ -21,3 +21,6 @@ fun bar(n: Number?) {
     takeN(JavaClass.simpleId(n)).div(1)
     takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>length<!>
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localFunction, nullableType,
+stringLiteral */

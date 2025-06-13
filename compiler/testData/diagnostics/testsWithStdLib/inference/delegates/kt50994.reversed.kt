@@ -40,3 +40,7 @@ fun <SC : Entity, TC : Entity> SC.children(
 interface Delegate<R : Entity, T> : ReadWriteProperty<R, T>
 
 interface Entity
+
+/* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, classDeclaration, classReference, funWithExtensionReceiver,
+functionDeclaration, inline, interfaceDeclaration, nullableType, propertyDeclaration, propertyDelegate, reified, setter,
+typeConstraint, typeParameter */

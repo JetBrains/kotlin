@@ -13,3 +13,6 @@ fun <T> test1(vararg t: T) {
 }
 
 fun <T> foo(a: Array<T>): Array<T> = a
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, lambdaLiteral, nullableType, outProjection, typeParameter, typeWithExtension, vararg */

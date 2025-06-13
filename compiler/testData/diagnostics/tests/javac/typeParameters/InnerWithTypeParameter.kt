@@ -22,3 +22,5 @@ import a.*
 fun test() = x<String>().getT()
 fun test2() = x<Int>().y<String>().getT()
 fun test3() = x<Int>().y<String>().getZ()
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType */

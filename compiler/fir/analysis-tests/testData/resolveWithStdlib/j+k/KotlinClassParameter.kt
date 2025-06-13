@@ -12,3 +12,5 @@ fun main() {
     JavaClass.baz(KotlinClass())
     JavaClass.baz(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, stringLiteral */

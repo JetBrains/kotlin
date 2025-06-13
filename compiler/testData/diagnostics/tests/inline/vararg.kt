@@ -16,3 +16,6 @@ inline fun Function1<Int, Unit>.inlineExt(s: (p: Int) -> Unit, noinline b: (p: I
 inline fun subInline(vararg s: (p: Int) -> Unit) {}
 
 fun subNoInline(vararg s: (p: Int) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, noinline, thisExpression,
+vararg */

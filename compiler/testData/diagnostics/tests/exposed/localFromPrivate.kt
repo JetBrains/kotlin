@@ -15,3 +15,6 @@ fun f(): Int {
     val x = object : D() { }
     return x.hashCode()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, localProperty,
+nestedClass, propertyDeclaration */

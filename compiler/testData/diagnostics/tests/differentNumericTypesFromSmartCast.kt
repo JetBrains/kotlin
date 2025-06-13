@@ -12,3 +12,5 @@ fun fest(x: Any, y: Any) =
 
 fun fest(x: Float, y: Double) =
     <!EQUALITY_NOT_APPLICABLE!>x === y<!>
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, isExpression, smartcast */

@@ -20,3 +20,5 @@ fun test2(x: <!API_NOT_AVAILABLE!>C_1_1_Alias<!>) = x
 fun test3(x: List<<!API_NOT_AVAILABLE!>C_1_1_Alias<!>>) = x
 
 fun test4(x: <!API_NOT_AVAILABLE!>L<!>) = x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral, typeAliasDeclaration */

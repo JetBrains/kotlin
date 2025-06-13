@@ -22,3 +22,6 @@ fun test_2(a: Any) {
         is Int -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, isExpression, localProperty, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

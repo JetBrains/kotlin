@@ -29,3 +29,6 @@ val extension = build {
 val safeExtension = build {
     safeExtensionAdd("foo")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

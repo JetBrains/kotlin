@@ -23,3 +23,6 @@ fun user(): Int {
     <!OPT_IN_USAGE_ERROR!>z<!> = 15
     return x + <!OPT_IN_USAGE_ERROR!>y<!> + z
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, annotationUseSiteTargetPropertySetter, assignment,
+functionDeclaration, integerLiteral, propertyDeclaration, setter */

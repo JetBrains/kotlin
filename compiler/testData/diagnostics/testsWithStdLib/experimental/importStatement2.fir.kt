@@ -9,3 +9,5 @@ annotation class Ann()
 package b
 
 import Ann
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, primaryConstructor */

@@ -68,3 +68,6 @@ fun testApp() {
     id(Processor.makePlatform(Unit))
     id(Processor.makePlatform<Nothing?>(null))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+nullableType, override, propertyDeclaration, stringLiteral, typeParameter */

@@ -20,3 +20,6 @@ public class Bar3 {
 <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>data class FooData2<!>(val i: Int, val s: String) {
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>object NestedObject<!> {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, nestedClass, objectDeclaration, primaryConstructor,
+propertyDeclaration */

@@ -16,3 +16,5 @@ fun <T : String?> foo(x: T) {
     <!CANNOT_INFER_PARAMETER_TYPE!>bar3<!>(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
     bar4(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, typeConstraint, typeParameter */

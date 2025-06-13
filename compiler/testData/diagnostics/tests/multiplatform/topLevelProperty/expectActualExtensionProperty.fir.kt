@@ -31,3 +31,6 @@ actual val <T> T.e : String
     get() = ""
 
 actual val <!ACTUAL_WITHOUT_EXPECT!>f<!> : String = ""
+
+/* GENERATED_FIR_TAGS: actual, expect, functionalType, getter, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral, typeParameter, typeWithExtension */

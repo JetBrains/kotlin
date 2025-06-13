@@ -12,3 +12,5 @@ interface DbContextOwner : TxExecutor {
 interface TxExecutor {
     fun foo(p: Int = 1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, override */

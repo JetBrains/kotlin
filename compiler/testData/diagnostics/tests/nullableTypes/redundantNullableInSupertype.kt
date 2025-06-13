@@ -9,3 +9,6 @@ fun <T> interaction(t: T) {
     if (t == null) {}
 
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+typeParameter */

@@ -62,3 +62,6 @@ class C {
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>PC<!>::<!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>p<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration, inline,
+integerLiteral, localProperty, nestedClass, propertyDeclaration */

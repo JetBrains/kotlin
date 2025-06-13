@@ -36,3 +36,6 @@ fun <E> removeFirstLastArrayListE(s: LinkedList<E>) {
     var x2 = s.removeLast()
     x1 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, localProperty, nullableType, propertyDeclaration, stringLiteral,
+typeParameter */

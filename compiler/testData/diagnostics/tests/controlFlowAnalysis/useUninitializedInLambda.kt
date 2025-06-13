@@ -6,3 +6,5 @@ fun foo() {
     var v: Any
     bar { <!UNINITIALIZED_VARIABLE!>v<!>.hashCode() }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localProperty, propertyDeclaration */

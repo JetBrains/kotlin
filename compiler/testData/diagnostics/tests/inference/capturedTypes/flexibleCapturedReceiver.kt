@@ -18,3 +18,6 @@ fun doSmth(compilations: NamedDomainObjectCollection<out KotlinCompilation<out A
 
     compilations.getByName().internal
 }
+
+/* GENERATED_FIR_TAGS: capturedType, flexibleType, functionDeclaration, getter, integerLiteral, interfaceDeclaration,
+javaType, localProperty, nullableType, outProjection, propertyDeclaration, propertyWithExtensionReceiver, typeParameter */

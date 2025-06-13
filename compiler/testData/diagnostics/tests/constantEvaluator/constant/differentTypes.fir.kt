@@ -44,3 +44,5 @@ val prop15: A = <!INITIALIZER_TYPE_MISMATCH!>1<!>
 
 // val prop16: 1
 val prop16: A? = <!INITIALIZER_TYPE_MISMATCH!>1<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

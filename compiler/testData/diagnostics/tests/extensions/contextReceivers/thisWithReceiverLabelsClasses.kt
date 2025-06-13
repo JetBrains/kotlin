@@ -12,3 +12,6 @@ context(A) class B {
 
     fun f() = x + this@A.x
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, propertyDeclaration,
+thisExpression */

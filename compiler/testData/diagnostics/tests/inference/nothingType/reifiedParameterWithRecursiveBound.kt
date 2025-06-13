@@ -34,3 +34,6 @@ inline fun <reified T : Out<T>> testOut(): T {
         throw Exception()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inline, localProperty, nullableType, out,
+propertyDeclaration, reified, tryExpression, typeConstraint, typeParameter */

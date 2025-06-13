@@ -17,3 +17,5 @@ inline fun <reified T> ok5(block: () -> T): Pair<Array<T>, Array<T>> = Pair(
         arrayOf(block()), arrayOf()
 )
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral,
+nullableType, reified, typeParameter */

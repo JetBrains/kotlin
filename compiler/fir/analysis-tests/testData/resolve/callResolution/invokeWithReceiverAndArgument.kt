@@ -28,3 +28,6 @@ class Outer<E> {
 
     fun bar(i: Inner) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inner, interfaceDeclaration, localProperty,
+nestedClass, nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithExtension */

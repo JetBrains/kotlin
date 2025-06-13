@@ -22,3 +22,6 @@ interface I {
             @Synchronized @JvmStatic set(value) {}
     }
 }
+
+/* GENERATED_FIR_TAGS: companionObject, functionDeclaration, getter, interfaceDeclaration, objectDeclaration,
+propertyDeclaration, setter, stringLiteral */

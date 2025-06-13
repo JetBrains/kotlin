@@ -26,3 +26,5 @@ fun usage() {
 fun take(a: Lib) {}
 
 fun take(a: Other) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

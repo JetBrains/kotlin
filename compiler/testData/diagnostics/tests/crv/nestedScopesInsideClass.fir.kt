@@ -17,3 +17,6 @@ fun test() {
     <!RETURN_VALUE_NOT_USED!>A.foo()<!>                 //unused
     <!RETURN_VALUE_NOT_USED!>A.Nested().bar()<!>        //unused
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration */

@@ -13,3 +13,5 @@ expect fun <!AMBIGUOUS_ACTUALS, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>()
 
 // FILE: jvm2.kt
 actual fun <!AMBIGUOUS_EXPECTS, EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>main<!>() {}
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration */

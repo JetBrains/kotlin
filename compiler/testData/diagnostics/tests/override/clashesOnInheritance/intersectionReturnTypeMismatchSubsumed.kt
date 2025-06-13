@@ -40,3 +40,5 @@ public interface CallableDescriptor {
     @Nullable
     String getReturnType();
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

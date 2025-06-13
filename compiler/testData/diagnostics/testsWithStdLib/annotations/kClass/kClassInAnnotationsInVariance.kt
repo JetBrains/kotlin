@@ -26,3 +26,6 @@ class MyClass4
 
 @Ann2(<!TYPE_MISMATCH!>B2::class<!>)
 class MyClass5
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, inProjection, primaryConstructor,
+propertyDeclaration */

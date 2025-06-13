@@ -9,3 +9,5 @@ class A {
 
 fun foo() = A.E.E1
 fun bar() = A.E.E2
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass */

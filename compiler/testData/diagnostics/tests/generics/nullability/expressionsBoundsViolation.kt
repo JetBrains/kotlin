@@ -16,3 +16,6 @@ fun <F : String?> bar(x: F) {
     x<!UNSAFE_CALL!>.<!>foo2()
     x.foo2<<!UPPER_BOUND_VIOLATED!>F<!>>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, nullableType,
+primaryConstructor, typeConstraint, typeParameter */

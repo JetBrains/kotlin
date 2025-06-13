@@ -42,3 +42,6 @@ fun bar() {
         Inner("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, integerLiteral, lambdaLiteral,
+objectDeclaration, primaryConstructor, secondaryConstructor, stringLiteral */

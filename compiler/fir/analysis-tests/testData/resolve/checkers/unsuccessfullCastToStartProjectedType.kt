@@ -8,3 +8,5 @@ class Foo2 : Foo<Int>()
 fun process(foo: Foo<Long>) {
     foo as Foo1<*>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, starProjection, typeParameter */

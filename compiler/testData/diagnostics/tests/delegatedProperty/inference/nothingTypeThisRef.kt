@@ -21,3 +21,6 @@ val x by builder {}
 fun main() {
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, operator,
+propertyDeclaration, propertyDelegate, starProjection, stringLiteral */

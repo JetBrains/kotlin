@@ -23,3 +23,6 @@ fun main() {
     bar(false).foo()
     bar(false)?.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction,
+nullableType, override, safeCall, stringLiteral */

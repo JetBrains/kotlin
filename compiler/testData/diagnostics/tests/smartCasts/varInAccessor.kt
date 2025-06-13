@@ -16,3 +16,6 @@ var x: Int = 0
             field = param
         }
     }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, getter, ifExpression, integerLiteral, localProperty, nullableType,
+propertyDeclaration, setter, smartcast */

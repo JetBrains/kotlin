@@ -22,3 +22,6 @@ private fun foo(p: Sealed) {
         is SubClass2 -> "2"
     }.length // should be resolved, but when is not considered as sealed because type of p is not a sealed class
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, isExpression, lambdaLiteral, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

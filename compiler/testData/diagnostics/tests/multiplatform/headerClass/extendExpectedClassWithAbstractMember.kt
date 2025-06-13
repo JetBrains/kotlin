@@ -73,3 +73,6 @@ expect open class <!NO_ACTUAL_FOR_EXPECT{JVM}!>BaseGImpl<!>() : BaseG {
 class DerivedG1 : BaseGImpl()
 
 // MODULE: m1-jvm()()(m1-common)
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, interfaceDeclaration, override, primaryConstructor,
+sealed, superExpression */

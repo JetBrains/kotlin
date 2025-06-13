@@ -55,3 +55,5 @@ fun use3() {
     e2()
     <!OPT_IN_USAGE!>e3<!>()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, functionDeclaration */

@@ -37,3 +37,5 @@ fun ok2() {}
 
 @RequireKotlin("0.0.0")
 fun ok3() {}
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, stringLiteral */

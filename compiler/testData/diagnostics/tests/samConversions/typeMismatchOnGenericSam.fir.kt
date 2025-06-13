@@ -9,3 +9,6 @@ fun interface MySam<T> {
         y.execute(p1)
     }
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, samConversion, typeParameter */

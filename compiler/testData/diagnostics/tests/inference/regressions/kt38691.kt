@@ -13,3 +13,6 @@ fun <R> main(fn: () -> R) {
     val x2 = foo<R>(materializeInv(), fn) // OK
     val x3 = foo<R>(materializeInv(), ::bar) // OK
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localFunction, localProperty, nullableType, propertyDeclaration, typeParameter */

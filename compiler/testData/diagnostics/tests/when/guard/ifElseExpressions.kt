@@ -35,3 +35,6 @@ fun IEEInGuard(x: Any) {
         else -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, equalityExpression, functionDeclaration, guardCondition,
+ifExpression, integerLiteral, isExpression, nullableType, smartcast, whenExpression, whenWithSubject */

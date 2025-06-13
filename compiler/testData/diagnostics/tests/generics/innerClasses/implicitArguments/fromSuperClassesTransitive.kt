@@ -19,3 +19,7 @@ fun foo() {
     Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
     Derived().baz() checkType { _<Map<Char, Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, inner, lambdaLiteral, nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter,
+typeWithExtension */

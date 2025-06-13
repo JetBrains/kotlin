@@ -17,3 +17,6 @@ suspend fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, functionalType, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, suspend, tryExpression, typeParameter */

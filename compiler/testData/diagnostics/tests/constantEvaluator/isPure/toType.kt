@@ -15,3 +15,5 @@ package test
 
 // val prop5: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop5 = 1.toChar()<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration */

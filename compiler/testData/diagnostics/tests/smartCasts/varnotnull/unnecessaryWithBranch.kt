@@ -12,3 +12,7 @@ class MyClass {
         return s.foo()
     }    
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, comparisonExpression, elvisExpression, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral,
+thisExpression */

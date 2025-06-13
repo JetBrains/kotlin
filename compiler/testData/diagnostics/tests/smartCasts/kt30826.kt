@@ -18,3 +18,6 @@ fun foo(x: I1?) {
     y = null
     bar()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, classDeclaration, functionDeclaration, interfaceDeclaration,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast */

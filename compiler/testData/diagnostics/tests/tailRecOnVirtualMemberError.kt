@@ -170,3 +170,6 @@ val z = object : A() {
         baz(y)
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, integerLiteral, nestedClass, objectDeclaration, override, propertyDeclaration, sealed, tailrec */

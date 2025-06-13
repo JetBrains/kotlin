@@ -33,3 +33,7 @@ sealed interface Mapper<out E> {
 
     fun get(): E
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, functionalType, inProjection, inline,
+integerLiteral, interfaceDeclaration, nestedClass, nullableType, out, primaryConstructor, propertyDeclaration, reified,
+sealed, starProjection, typeConstraint, typeParameter */

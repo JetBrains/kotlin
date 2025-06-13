@@ -63,3 +63,6 @@ fun <T> test5(v: T): T {
     val t: T = a
     return t
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, intersectionType, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

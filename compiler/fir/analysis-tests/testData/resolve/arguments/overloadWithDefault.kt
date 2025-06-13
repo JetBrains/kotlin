@@ -7,3 +7,5 @@ interface A {
 fun test(a: A) {
     a.foo { true }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral */

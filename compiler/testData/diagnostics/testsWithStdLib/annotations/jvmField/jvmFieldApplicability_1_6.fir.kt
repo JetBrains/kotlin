@@ -147,3 +147,8 @@ object IObject {
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     private val r: Result<Int> = TODO()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFieldDelegate, assignment, classDeclaration,
+companionObject, const, functionDeclaration, getter, integerLiteral, interfaceDeclaration, lambdaLiteral, lateinit,
+localProperty, objectDeclaration, override, primaryConstructor, propertyDeclaration, propertyDelegate,
+secondaryConstructor, setter, stringLiteral, unsignedLiteral */

@@ -36,3 +36,6 @@ class Test<in I, out O> {
 fun <I, O> test(t: Test<I, O>) {
     t.apply(t.<!INVISIBLE_REFERENCE!>i<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, functionDeclaration, in, init, lambdaLiteral,
+nullableType, objectDeclaration, out, propertyDeclaration, thisExpression, typeParameter */

@@ -6,3 +6,5 @@ class B1 : A()
 class B2 : A()
 
 annotation class Ann1(val arg: Array<out KClass<out A>>)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, outProjection, primaryConstructor, propertyDeclaration */

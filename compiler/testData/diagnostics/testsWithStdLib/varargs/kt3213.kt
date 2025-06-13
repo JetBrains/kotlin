@@ -7,3 +7,6 @@ fun test(a: Array<out String>) {
 
     b checkType { _<List<String>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, typeWithExtension */

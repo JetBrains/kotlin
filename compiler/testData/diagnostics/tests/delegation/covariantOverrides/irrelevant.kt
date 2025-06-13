@@ -18,3 +18,6 @@ interface IDerived2 {
 }
 
 <!PROPERTY_TYPE_MISMATCH_ON_INHERITANCE!>class Broken2<!>(val b: IBase2) : IBase2 by b, IDerived2
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inheritanceDelegation, interfaceDeclaration,
+primaryConstructor, propertyDeclaration */

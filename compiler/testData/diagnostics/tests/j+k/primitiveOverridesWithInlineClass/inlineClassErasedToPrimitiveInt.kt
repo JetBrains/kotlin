@@ -30,3 +30,6 @@ package kt
 import j.J
 
 fun jfoo(x: J) = x.foo()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, javaType,
+nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

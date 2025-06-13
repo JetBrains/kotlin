@@ -23,3 +23,5 @@ fun foo() {
     Impl().foo()
     Impl().packagePrivateFoo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

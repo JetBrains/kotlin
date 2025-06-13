@@ -19,3 +19,6 @@ fun foo(javaEnum: JavaEnum) = <!NO_ELSE_IN_WHEN!>when<!> (javaEnum) {
     <!UNRESOLVED_REFERENCE!>first<!>() -> 1
     second -> 2
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaProperty, javaType,
+whenExpression, whenWithSubject */

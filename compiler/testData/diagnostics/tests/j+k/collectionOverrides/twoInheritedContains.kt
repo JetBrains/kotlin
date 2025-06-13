@@ -18,3 +18,5 @@ public abstract class B extends A implements I {}
 
 // FILE: main.kt
 abstract class KB : B()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

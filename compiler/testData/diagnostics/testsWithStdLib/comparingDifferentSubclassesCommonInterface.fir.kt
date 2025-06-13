@@ -12,3 +12,5 @@ fun test(a: A, b: B) {
     <!EQUALITY_NOT_APPLICABLE!>a === b<!>
     a === b as I
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, functionDeclaration, interfaceDeclaration */

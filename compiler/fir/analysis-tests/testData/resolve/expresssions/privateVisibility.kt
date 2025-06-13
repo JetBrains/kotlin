@@ -74,3 +74,6 @@ fun secondTest() {
     <!INVISIBLE_REFERENCE!>foo<!>() // hidden
     <!INVISIBLE_REFERENCE!>Private<!>() // hidden
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inner, localClass, nestedClass,
+objectDeclaration */

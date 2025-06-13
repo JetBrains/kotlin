@@ -28,3 +28,6 @@ fun Any.getOrElse2() = <!NO_ELSE_IN_WHEN!>when<!> (this) {
     is <!OVERLOAD_RESOLUTION_AMBIGUITY!>Left<!> -> <!UNRESOLVED_REFERENCE!>x<!>
     is <!UNRESOLVED_REFERENCE!>Right<!> -> <!UNRESOLVED_REFERENCE!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

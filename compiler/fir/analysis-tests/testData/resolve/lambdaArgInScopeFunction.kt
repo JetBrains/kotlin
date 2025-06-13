@@ -39,3 +39,7 @@ fun case2(kotlinClass: KotlinClass) {
 
     lambda.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Unit, KotlinClass?>>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localProperty, nullableType, operator, override, primaryConstructor, propertyDeclaration, safeCall,
+typeParameter, typeWithExtension */

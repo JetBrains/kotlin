@@ -33,3 +33,6 @@ fun main() {
 
     JavaUsage.foo(x)
 }
+
+/* GENERATED_FIR_TAGS: comparisonExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+lambdaLiteral, localProperty, propertyDeclaration, samConversion */

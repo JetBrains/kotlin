@@ -53,3 +53,5 @@ fun test(a: A) {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, nullableType, stringLiteral, thisExpression, typeParameter, typeWithExtension */

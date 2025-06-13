@@ -9,3 +9,5 @@ fun foo() {
     var i = 1  //should be an error 'variable i is assigned but never accessed'
     i = 2
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

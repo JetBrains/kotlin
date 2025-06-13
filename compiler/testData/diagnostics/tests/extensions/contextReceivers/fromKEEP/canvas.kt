@@ -18,3 +18,6 @@ class Circle : Shape {
 object MyCanvas : Canvas
 
 fun test() = with(MyCanvas) { Circle().draw() }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+lambdaLiteral, objectDeclaration, override */

@@ -53,3 +53,6 @@ fun test_2(e: A) {
         is C -> 1
     }.plus(0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, isExpression, localProperty,
+propertyDeclaration, sealed, smartcast, whenExpression, whenWithSubject */

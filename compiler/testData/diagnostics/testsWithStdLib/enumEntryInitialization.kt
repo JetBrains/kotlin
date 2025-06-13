@@ -42,3 +42,6 @@ enum class JvmTarget(val description: String) {
         }
     })
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, lambdaLiteral, primaryConstructor,
+propertyDeclaration, propertyDelegate, smartcast, stringLiteral, whenExpression, whenWithSubject */

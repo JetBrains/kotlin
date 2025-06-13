@@ -40,3 +40,5 @@ import test.My
 class Your {
     internal fun bar() = <!INACCESSIBLE_TYPE!>My.foo()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction */

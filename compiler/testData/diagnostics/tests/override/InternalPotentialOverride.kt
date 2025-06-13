@@ -21,3 +21,5 @@ class B : A() {
 class BG : AG<String>() {
     fun bar(arg: Int) = arg
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, stringLiteral, typeParameter */

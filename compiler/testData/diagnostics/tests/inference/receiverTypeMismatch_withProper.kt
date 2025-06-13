@@ -14,3 +14,5 @@ fun setup(configuration: Configuration<*>) {
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>directoryPath<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, javaType, lambdaLiteral, starProjection */

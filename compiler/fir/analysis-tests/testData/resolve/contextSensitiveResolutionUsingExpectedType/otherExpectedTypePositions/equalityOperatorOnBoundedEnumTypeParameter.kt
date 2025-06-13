@@ -57,3 +57,7 @@ fun <T : MyEnum> foo(a: T) {
         else -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, typeConstraint, typeParameter, whenExpression,
+whenWithSubject */

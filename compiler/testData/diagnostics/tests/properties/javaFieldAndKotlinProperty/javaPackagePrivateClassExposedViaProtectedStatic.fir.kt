@@ -30,3 +30,6 @@ class KotlinWrapper : JavaWrapper() {
 fun box(): String {
     return KotlinWrapper().bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, nestedClass,
+propertyDeclaration, stringLiteral */

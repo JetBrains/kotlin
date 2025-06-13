@@ -66,3 +66,5 @@ fun testByteOperatorInfixCall(c6: C<Byte>) {
     c6.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 + 2<!>)
     c6.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 shr 2<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, typeParameter */

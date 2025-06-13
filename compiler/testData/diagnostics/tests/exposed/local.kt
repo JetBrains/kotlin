@@ -18,3 +18,5 @@ abstract class My
 fun bar() = run {
     object: My() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass */

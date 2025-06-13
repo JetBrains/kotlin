@@ -16,3 +16,5 @@ fun <T: Any, INDIRECT: T> notNullUpperBound(t: T, ind: INDIRECT) {
     if (<!SENSELESS_COMPARISON!>ind != null<!>) {} // still a warning
 }
 
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, typeConstraint,
+typeParameter */

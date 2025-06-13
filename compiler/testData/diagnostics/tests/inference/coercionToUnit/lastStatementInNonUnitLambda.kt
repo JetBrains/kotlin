@@ -7,3 +7,5 @@ fun main(a: Array<String>) {
         <!EXPECTED_TYPE_MISMATCH!>a[0] = ""<!>
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral */

@@ -24,3 +24,6 @@ fun <S> test(i: Int, s: S) {
 
     takeInvInt(create(i))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, primaryConstructor,
+propertyDeclaration, typeParameter */

@@ -12,3 +12,7 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: break, continue, equalityExpression, forLoop, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inline, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration, rangeExpression,
+stringLiteral */

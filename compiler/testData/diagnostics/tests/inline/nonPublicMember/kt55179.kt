@@ -20,3 +20,5 @@ internal <!NOTHING_TO_INLINE!>inline<!> fun foo() {
     Foo.<!PRIVATE_CLASS_MEMBER_FROM_INLINE_WARNING!>buildFoo<!>()
     Foo.Companion.Nested.bar()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, nestedClass, objectDeclaration */

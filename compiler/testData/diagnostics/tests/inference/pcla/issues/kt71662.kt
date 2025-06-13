@@ -20,3 +20,6 @@ class GenericKlass<GKT>(arg: GKT)
 object TypeArgument
 
 fun <PH> PH.fix() {}
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, typeParameter */

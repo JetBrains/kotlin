@@ -17,3 +17,5 @@ package foo
 fun main() {
     Bar.baz()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

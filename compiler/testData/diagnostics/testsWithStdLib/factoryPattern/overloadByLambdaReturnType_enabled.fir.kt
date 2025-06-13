@@ -61,3 +61,6 @@ fun test_6(c: C) {
     val x = foo { c }
     takeString(x)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

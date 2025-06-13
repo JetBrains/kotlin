@@ -11,3 +11,6 @@ fun main() {
         foo("")
     )
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, inline, interfaceDeclaration, intersectionType, localProperty, nullableType,
+propertyDeclaration, reified, stringLiteral, typeConstraint, typeParameter */

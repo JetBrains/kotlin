@@ -12,3 +12,6 @@ object T3 {
 
     val test1: String by delegate()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, typeParameter */

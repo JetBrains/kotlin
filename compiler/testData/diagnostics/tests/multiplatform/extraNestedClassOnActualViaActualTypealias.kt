@@ -14,3 +14,5 @@ class FooImpl {
 }
 
 actual typealias Foo = FooImpl
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, nestedClass, typeAliasDeclaration */

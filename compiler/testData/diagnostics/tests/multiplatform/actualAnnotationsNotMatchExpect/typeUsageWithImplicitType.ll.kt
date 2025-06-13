@@ -12,3 +12,5 @@ expect fun foo(): @Ann Int
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>() = 1
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, integerLiteral */

@@ -75,3 +75,6 @@ fun bar() {
         println()
     })
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+infix, lambdaLiteral, localProperty, nullableType, propertyDeclaration, suspend, typeParameter */

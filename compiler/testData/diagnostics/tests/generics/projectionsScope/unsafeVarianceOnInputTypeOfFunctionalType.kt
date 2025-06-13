@@ -21,3 +21,6 @@ fun caller(
     holder3.f(a)
     holder3.f2(a)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, out, outProjection, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

@@ -16,3 +16,5 @@ package a.b
 package c
 
 class d
+
+/* GENERATED_FIR_TAGS: classDeclaration */

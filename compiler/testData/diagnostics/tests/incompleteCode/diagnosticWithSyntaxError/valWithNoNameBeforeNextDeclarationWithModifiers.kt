@@ -15,3 +15,5 @@ abstract class A {
 
     private val private<!SYNTAX!><!> fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration */

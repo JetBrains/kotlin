@@ -28,3 +28,7 @@ public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, inline,
+javaFunction, localProperty, nullableType, propertyDeclaration, thisExpression, tryExpression, typeConstraint,
+typeParameter */

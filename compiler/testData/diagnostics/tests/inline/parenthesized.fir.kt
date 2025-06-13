@@ -26,3 +26,6 @@ inline fun propagation(s: (p: Int) -> Unit) {
     inlineFunWithInvoke((label@ s))
     inlineFunWithInvoke((<!MULTIPLE_LABELS_ARE_FORBIDDEN!>label2@<!> label@ s))
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline,
+integerLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

@@ -11,3 +11,6 @@ public fun foo() {
         fooNotNull(<!DEBUG_INFO_SMARTCAST!>s<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, ifExpression, javaFunction, javaProperty,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

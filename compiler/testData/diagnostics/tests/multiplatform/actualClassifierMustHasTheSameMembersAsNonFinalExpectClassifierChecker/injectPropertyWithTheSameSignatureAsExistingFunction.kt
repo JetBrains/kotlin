@@ -15,3 +15,5 @@ actual open class Foo {
 
     val foo: Int = 42
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

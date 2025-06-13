@@ -10,3 +10,5 @@ enum class Foo {
 fun main() {
     Foo.entries
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration */

@@ -21,3 +21,6 @@ public class JavaClass {
         return null;
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, flexibleType, getter, javaFunction, lambdaLiteral, nullableType,
+propertyDeclaration, safeCall, stringLiteral */

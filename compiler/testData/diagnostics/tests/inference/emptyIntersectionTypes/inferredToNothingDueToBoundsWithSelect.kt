@@ -24,3 +24,6 @@ fun foo(path: Path, e: Entity<*>): String {
     // Tv <: Path
     return select(e.isEqualTo(), path).foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, interfaceDeclaration, nullableType, starProjection,
+stringLiteral, typeConstraint, typeParameter */

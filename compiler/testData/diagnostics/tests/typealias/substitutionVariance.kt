@@ -69,3 +69,6 @@ fun invOut_Star(x: Inv3<*>) = x
 
 fun nested_conflicting_type_argument(x: In<Out<<!CONFLICTING_PROJECTION!>in<!> Int>>) = x
 fun nested_redundant_type_argument(x: In<Out<<!REDUNDANT_PROJECTION!>out<!> Int>>) = x
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, nullableType, out, outProjection,
+propertyDeclaration, starProjection, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

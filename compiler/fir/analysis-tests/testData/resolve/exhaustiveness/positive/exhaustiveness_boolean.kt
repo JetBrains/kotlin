@@ -24,3 +24,6 @@ fun test_2(b: Boolean?) {
         null -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, integerLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, whenExpression, whenWithSubject */

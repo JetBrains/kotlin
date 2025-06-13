@@ -8,3 +8,6 @@ fun DummyClass001.component2() = "2"
 fun testDummyClass001() {
     val (<!OPERATOR_MODIFIER_REQUIRED!>a<!>, <!OPERATOR_MODIFIER_REQUIRED!>b<!>) = DummyClass001()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+localProperty, propertyDeclaration, stringLiteral */

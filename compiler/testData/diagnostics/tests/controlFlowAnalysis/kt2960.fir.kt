@@ -35,3 +35,6 @@ class A {
 }
 
 fun doSmth(i: Int) = i
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter,
+integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

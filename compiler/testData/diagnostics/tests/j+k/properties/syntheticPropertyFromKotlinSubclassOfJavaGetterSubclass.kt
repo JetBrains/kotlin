@@ -47,3 +47,5 @@ class KotlinSubclassOfJavaGetterSubclass : JavaSubclassOfGetter() {
         consumeInt(<!TYPE_MISMATCH!>super.<!INVISIBLE_MEMBER!>privateField<!><!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaProperty, javaType, superExpression */

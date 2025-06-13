@@ -4,3 +4,5 @@ class Dup {
     this<!AMBIGUOUS_LABEL!>@Dup<!>
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, thisExpression */

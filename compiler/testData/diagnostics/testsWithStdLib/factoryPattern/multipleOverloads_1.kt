@@ -36,3 +36,6 @@ fun test() {
 }
 
 fun takeUByteList(list: List<UByte>) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, unsignedLiteral */

@@ -18,3 +18,5 @@ private class Explicit {
         fun create() = Explicit()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration */

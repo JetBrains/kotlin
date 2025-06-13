@@ -9,3 +9,5 @@ fun foo() {}
 fun test() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral */

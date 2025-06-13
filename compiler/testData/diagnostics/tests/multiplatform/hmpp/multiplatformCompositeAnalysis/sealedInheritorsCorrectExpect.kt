@@ -29,3 +29,6 @@ actual class Sealed2() : Sealed(2)
 actual sealed interface SealedIface
 actual class SealedImpl1() : SealedIface
 actual class SealedImpl2() : SealedIface
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, sealed */

@@ -66,3 +66,5 @@ fun test() {
 
     OO.field
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

@@ -10,3 +10,5 @@ val a7: Long = 0x1<!WRONG_LONG_SUFFIX!>l<!>
 val a8: Long = 0X1<!WRONG_LONG_SUFFIX!>l<!>
 val a9: Long = 0b1<!WRONG_LONG_SUFFIX!>l<!>
 val a10: Long = 0B1<!WRONG_LONG_SUFFIX!>l<!>
+
+/* GENERATED_FIR_TAGS: propertyDeclaration */

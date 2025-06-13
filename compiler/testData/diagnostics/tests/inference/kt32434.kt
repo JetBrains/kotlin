@@ -31,3 +31,6 @@ object CacheMonoKotlin {
 
 fun findByName_java(name: String): Mono<AttributeDefinition> = CacheMonoJava.lookup(cache.asMap(), name)
 fun findByName_kotlin(name: String): Mono<AttributeDefinition> = CacheMonoKotlin.lookup(cache.asMap(), name)
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, interfaceDeclaration, javaFunction, nullableType,
+objectDeclaration, outProjection, propertyDeclaration, typeParameter */

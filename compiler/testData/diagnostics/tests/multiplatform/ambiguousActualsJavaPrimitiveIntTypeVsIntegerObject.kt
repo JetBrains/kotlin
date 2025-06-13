@@ -17,3 +17,5 @@ public class FooImpl {
     public void push(int value) {}
     public void push(Integer value) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

@@ -4,3 +4,5 @@ val x = object {
     val <!REDECLARATION!>y<!> = 1
     val <!REDECLARATION!>y<!> = 2
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, integerLiteral, propertyDeclaration */

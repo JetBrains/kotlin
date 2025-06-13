@@ -9,3 +9,5 @@ fun bar() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localFunction */

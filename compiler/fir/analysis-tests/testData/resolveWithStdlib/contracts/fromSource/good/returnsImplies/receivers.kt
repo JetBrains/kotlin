@@ -43,3 +43,7 @@ fun A?.test_5() {
     myRequireNotNull()
     foo()
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, lambdaLiteral, nullableType,
+smartcast, thisExpression */

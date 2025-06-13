@@ -13,3 +13,5 @@ fun bar() {
     }
 }
 
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, getter, localClass, propertyDeclaration,
+secondaryConstructor, thisExpression */

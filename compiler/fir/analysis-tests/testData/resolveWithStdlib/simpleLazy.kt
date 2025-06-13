@@ -16,3 +16,6 @@ class Some {
         z.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, propertyDelegate, stringLiteral */

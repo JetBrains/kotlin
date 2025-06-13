@@ -17,3 +17,6 @@ fun f(type: KClass1<*>): KFunction1<Any>? =
         // So to fix the issue we use 'out starProjectionType' instead of star-projection itself in approximation
         // Note that in new inference there should be no approximation for IN-position types (they must remain captured)
         type.primaryConstructor
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, functionDeclaration, getter, interfaceDeclaration, nullableType,
+out, propertyDeclaration, propertyWithExtensionReceiver, starProjection, typeConstraint, typeParameter */

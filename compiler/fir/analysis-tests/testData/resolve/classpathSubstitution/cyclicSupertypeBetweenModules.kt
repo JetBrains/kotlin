@@ -10,3 +10,5 @@ interface Intermediate : ToSubstitute
 interface ToSubstitute : <!CYCLIC_INHERITANCE_HIERARCHY!>Intermediate<!>
 
 class Usage : Intermediate
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration */

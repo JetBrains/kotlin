@@ -25,3 +25,6 @@ class D extends C {}
 
 // FILE: box.kt
 fun box(): String = D().<!INVISIBLE_MEMBER!>foo<!>("")
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, nullableType,
+override, stringLiteral */

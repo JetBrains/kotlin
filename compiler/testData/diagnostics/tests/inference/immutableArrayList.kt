@@ -17,3 +17,5 @@ class Foo<T>: Sub<T> {
         return Foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType, nullableType, typeParameter */

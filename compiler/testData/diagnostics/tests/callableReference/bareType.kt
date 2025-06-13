@@ -17,3 +17,6 @@ class Outer<T> {
 fun f3() = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Outer.Inner<!>::hashCode
 
 fun f4() = Outer.NotInner::hashCode
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, inner, nestedClass, nullableType,
+starProjection, typeParameter */

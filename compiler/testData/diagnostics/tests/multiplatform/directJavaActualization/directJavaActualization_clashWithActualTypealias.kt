@@ -14,3 +14,5 @@ public class Foo {}
 // FILE: test.kt
 actual typealias Foo = Bar
 class Bar
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, typeAliasDeclaration */

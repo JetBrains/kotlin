@@ -9,3 +9,6 @@ fun foo(s: String?): Int {
     // This call is unsafe due to break
     return s<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, comparisonExpression, doWhileLoop, functionDeclaration, ifExpression,
+integerLiteral, nullableType */

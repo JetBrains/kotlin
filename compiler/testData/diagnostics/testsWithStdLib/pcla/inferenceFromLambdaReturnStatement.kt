@@ -10,3 +10,6 @@ private fun <V> getNonEdt(): SafeResult<V> {
     checkNotEdt { return it }
     return SafeResult()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral, nullableType,
+typeParameter */

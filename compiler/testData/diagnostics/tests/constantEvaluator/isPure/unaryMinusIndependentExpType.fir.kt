@@ -62,3 +62,5 @@ val s3: Long = <!INITIALIZER_TYPE_MISMATCH!>-1.toShort()<!>
 
 // val s4: false
 val s4: Short = <!INITIALIZER_TYPE_MISMATCH!>-1.toShort()<!>
+
+/* GENERATED_FIR_TAGS: integerLiteral, propertyDeclaration, unaryExpression */

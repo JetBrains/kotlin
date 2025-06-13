@@ -14,3 +14,6 @@ fun main() {
         <!UNRESOLVED_REFERENCE!>xs<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, typeConstraint, typeParameter */

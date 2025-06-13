@@ -59,3 +59,6 @@ fun use3(
     newValExperimentalInThePast
     NewClassExperimentalInThePast()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, propertyDeclaration,
+stringLiteral, typeAliasDeclaration */

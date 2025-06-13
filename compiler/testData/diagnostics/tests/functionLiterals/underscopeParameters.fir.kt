@@ -47,3 +47,6 @@ fun bar() {
 
     foo(fun(x: Int, _: String) {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

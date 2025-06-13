@@ -18,3 +18,5 @@ class X {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localClass, nestedClass */

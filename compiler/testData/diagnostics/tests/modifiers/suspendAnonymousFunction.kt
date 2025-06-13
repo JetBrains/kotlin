@@ -6,3 +6,5 @@ fun foo() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration */

@@ -19,3 +19,5 @@ actual typealias Foo = FooImpl
 fun test() {
     foo(<!ARGUMENT_TYPE_MISMATCH!>FooImpl.Nested()<!>)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, typeAliasDeclaration */

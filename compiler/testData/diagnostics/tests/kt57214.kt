@@ -19,3 +19,5 @@ annotation class ConfigField()
 annotation class ConfigField()
 
 class ConfigurationTarget(@ConfigField val target: String)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration */

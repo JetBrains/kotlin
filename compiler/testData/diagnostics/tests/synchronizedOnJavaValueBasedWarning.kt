@@ -61,3 +61,6 @@ fun testLambda() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty,
+lambdaLiteral, localProperty, propertyDeclaration, typeAliasDeclaration */

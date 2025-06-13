@@ -39,3 +39,6 @@ inline fun foo2(bar1: (String.() -> Int) -> Int) {
         11
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, thisExpression,
+typeWithExtension */

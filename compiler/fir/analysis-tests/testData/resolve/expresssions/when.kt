@@ -5,3 +5,6 @@ fun bar(arg: Any?) = when (arg) {
     is Int -> arg <!USELESS_CAST!>as Int<!>
     else -> 42
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, ifExpression, integerLiteral, isExpression, nullableType,
+smartcast, whenExpression, whenWithSubject */

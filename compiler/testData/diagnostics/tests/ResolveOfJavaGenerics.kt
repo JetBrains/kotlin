@@ -22,3 +22,5 @@ fun test(a : java.util.ArrayList<Int>) {
 fun test(a : java.lang.Class<Int>) {
 
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, localProperty, nullableType, propertyDeclaration */

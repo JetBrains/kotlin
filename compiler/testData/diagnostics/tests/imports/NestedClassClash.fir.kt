@@ -30,3 +30,5 @@ import a.D.*
 fun test2(b: <!OVERLOAD_RESOLUTION_AMBIGUITY!>B<!>) {
     <!UNRESOLVED_REFERENCE!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nestedClass */

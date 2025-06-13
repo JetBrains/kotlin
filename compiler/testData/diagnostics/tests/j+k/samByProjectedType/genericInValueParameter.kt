@@ -32,3 +32,7 @@ fun main() {
         x -> x checkType { _<CharSequence?>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, outProjection, samConversion, starProjection, typeParameter,
+typeWithExtension */

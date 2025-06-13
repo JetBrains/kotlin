@@ -94,3 +94,7 @@ fun <T> joinG(x : Int, vararg a : T) : String {
 fun <T: Any> joinT(x : Int, vararg a : T) : T? {
     return null
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, forLoop, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, javaFunction, localProperty, nullableType, outProjection,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter, typeWithExtension, vararg */

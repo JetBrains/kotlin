@@ -37,3 +37,7 @@ fun test(nullableSample: ISample, any: Any) {
         a ?: a?.materialize()
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, elvisExpression, funWithExtensionReceiver, functionDeclaration,
+interfaceDeclaration, intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast, stringLiteral, typeConstraint, typeParameter */

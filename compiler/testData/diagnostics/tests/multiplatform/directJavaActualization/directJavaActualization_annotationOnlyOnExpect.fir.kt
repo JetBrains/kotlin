@@ -13,3 +13,5 @@ annotation class Annot
 // FILE: Foo.java
 @kotlin.annotations.jvm.KotlinActual
 public class Foo {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, expect */

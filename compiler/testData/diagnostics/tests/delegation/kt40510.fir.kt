@@ -13,3 +13,5 @@ public abstract class A {
 import foo.A
 
 class <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>DelegatedA<!>(val a: A) : <!DELEGATION_NOT_TO_INTERFACE, SUPERTYPE_NOT_INITIALIZED!>A<!> by a
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, javaType, primaryConstructor, propertyDeclaration */

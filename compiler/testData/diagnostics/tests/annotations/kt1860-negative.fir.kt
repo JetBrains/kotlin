@@ -9,3 +9,6 @@ val x : (Int) -> Int = {@<!UNRESOLVED_REFERENCE!>varargs<!> <!RETURN_TYPE_MISMAT
 
 class Hello(@<!UNRESOLVED_REFERENCE!>varargs<!> args: Any) {
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+primaryConstructor, propertyDeclaration, setter */

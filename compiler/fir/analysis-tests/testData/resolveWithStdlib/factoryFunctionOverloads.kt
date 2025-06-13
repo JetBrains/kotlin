@@ -16,3 +16,6 @@ fun foo(c: C, b: B, bn: B?) {
     val y = A(b)
     val z = A(bn)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, interfaceDeclaration, localProperty,
+nullableType, primaryConstructor, propertyDeclaration */

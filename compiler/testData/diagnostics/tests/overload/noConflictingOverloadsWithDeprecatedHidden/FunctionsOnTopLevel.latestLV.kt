@@ -495,3 +495,7 @@ interface UserInterfaceD
 typealias SameUserInterface = UserInterface
 typealias SameUserInterfaceA = UserInterfaceA
 typealias SameUserInterfaceB = UserInterfaceB
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, infix, inline,
+interfaceDeclaration, nullableType, operator, outProjection, propertyDeclaration, reified, starProjection, stringLiteral,
+tailrec, typeAliasDeclaration, typeConstraint, typeParameter */

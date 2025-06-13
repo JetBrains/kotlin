@@ -20,3 +20,6 @@ fun main() {
 
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, ifExpression,
+javaFunction, javaType, localProperty, nullableType, propertyDeclaration */

@@ -15,3 +15,5 @@ actual class Foo {
     fun <!ACTUAL_MISSING!>bar<!>(): String = "bar"
     fun <!ACTUAL_MISSING!>bas<!>(g: Int) {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, stringLiteral */

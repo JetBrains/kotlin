@@ -14,3 +14,6 @@ object Inference1 {
 
     val test2: String by delegate<Inference1>()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,
+objectDeclaration, operator, propertyDeclaration, propertyDelegate, typeParameter */

@@ -14,3 +14,5 @@ actual <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class Foo<!> : Base() {
 actual open class Base {
     fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor */

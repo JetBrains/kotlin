@@ -14,3 +14,6 @@ data class DontFallbackToPrivateToThis<out T> private constructor(val t: T) {
         other.copy()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, nullableType, out, primaryConstructor,
+propertyDeclaration, typeParameter */

@@ -16,3 +16,5 @@ fun main() {
     test2<Foo>(materialize())
     test3<Foo>(materialize())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, nullableType, outProjection, typeParameter */

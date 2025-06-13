@@ -68,3 +68,6 @@ fun notEqualsNull(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, nullableType, safeCall, smartcast */

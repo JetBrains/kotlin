@@ -38,3 +38,5 @@ expect open class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>() : Base {
 public interface JavaBase {
     default void fakeOverrideInActual() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, inner, nestedClass, primaryConstructor */

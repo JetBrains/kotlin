@@ -19,3 +19,6 @@ fun main() {
     (-128).toByte()
     -128.toByte()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter, unaryExpression */

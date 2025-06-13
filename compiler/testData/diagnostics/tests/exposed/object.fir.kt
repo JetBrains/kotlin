@@ -29,3 +29,6 @@ open class Test {
         fun <!EXPOSED_FUNCTION_RETURN_TYPE!>create<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, nestedClass,
+nullableType, objectDeclaration, propertyDeclaration */

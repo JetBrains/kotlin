@@ -9,3 +9,6 @@ fun main() {
         yieldAll(outputList)
     }
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration */

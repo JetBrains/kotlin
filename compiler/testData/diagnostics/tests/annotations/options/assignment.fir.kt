@@ -11,3 +11,6 @@ fun foo(): Int {
     <!WRAPPED_LHS_IN_ASSIGNMENT_WARNING!>@ExprAnn a<!> += 1
     return a
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration */

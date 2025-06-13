@@ -138,3 +138,6 @@ fun Another10.main(x: Bar10<String>?) {
     x?.value {}
     x?.value<!UNSAFE_CALL!>.<!>invoke({})
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, safeCall, typeConstraint, typeParameter */

@@ -152,3 +152,5 @@ fun test2(ab_c: c) {
 
     ab_fun()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nestedClass, propertyDeclaration */

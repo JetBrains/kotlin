@@ -52,3 +52,6 @@ fun test3() {
     println(<!UNINITIALIZED_VARIABLE!>x<!>)
     println(<!UNINITIALIZED_VARIABLE!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, functionDeclaration, getter, init,
+integerLiteral, localClass, localFunction, localProperty, propertyDeclaration */

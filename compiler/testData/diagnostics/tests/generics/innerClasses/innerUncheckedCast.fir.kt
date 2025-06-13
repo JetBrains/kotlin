@@ -30,3 +30,7 @@ class Outer<E> {
         z as Inner
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, capturedType, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, inner, isExpression, lambdaLiteral, nullableType,
+propertyDeclaration, smartcast, starProjection, typeParameter, typeWithExtension */

@@ -29,3 +29,6 @@ inline fun inlineFunWrongExtension(s: (p: Int) -> Unit) {
 inline fun inlineFunNoInline(noinline s: (p: Int) -> Unit) {
     s.noInlineExt(11)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, infix, inline, integerLiteral,
+noinline, thisExpression */

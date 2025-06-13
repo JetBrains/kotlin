@@ -16,3 +16,6 @@ fun testLocalDelegatedProperty() {
         xs = arrayOf("d", "e", "f")
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, forLoop, functionDeclaration, localProperty, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, setter, stringLiteral, typeParameter */

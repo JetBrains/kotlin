@@ -18,3 +18,6 @@ fun foo(v: Variants): String {
         is Variants.A -> "A"
     }
 }
+
+/* GENERATED_FIR_TAGS: data, functionDeclaration, ifExpression, interfaceDeclaration, isExpression, nestedClass,
+objectDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

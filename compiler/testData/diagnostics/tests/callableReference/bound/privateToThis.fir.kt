@@ -31,3 +31,7 @@ class Foo<out T>(name: T) {
     context(t: T)
     private fun func2(): T = t
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, callableReference, classDeclaration, functionDeclaration,
+functionDeclarationWithContext, lambdaLiteral, localProperty, nullableType, out, primaryConstructor, propertyDeclaration,
+thisExpression, typeParameter */

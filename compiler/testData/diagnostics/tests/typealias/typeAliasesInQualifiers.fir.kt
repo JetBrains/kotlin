@@ -74,3 +74,6 @@ fun foo(
     test.EnumSample.Nested::func
     test.EnumAlias.<!UNRESOLVED_REFERENCE!>Nested<!>::func
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass,
+objectDeclaration, typeAliasDeclaration */

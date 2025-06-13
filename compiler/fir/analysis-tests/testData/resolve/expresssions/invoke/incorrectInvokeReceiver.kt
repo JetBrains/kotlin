@@ -9,3 +9,6 @@ fun sss() {
     // because with local some invoke isn't applicable
     some()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty, operator,
+propertyDeclaration, stringLiteral, thisExpression */

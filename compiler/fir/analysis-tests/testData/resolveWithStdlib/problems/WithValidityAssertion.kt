@@ -64,4 +64,6 @@ interface KtCallableSymbol
 
 interface KtSymbolByFirBuilder
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+interfaceDeclaration, lambdaLiteral, nullableType, operator, override, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral, typeAliasDeclaration, typeParameter */

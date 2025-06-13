@@ -26,3 +26,6 @@ class Delegate {
         return Delegate()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, operator, propertyDeclaration,
+propertyDelegate, starProjection, stringLiteral */

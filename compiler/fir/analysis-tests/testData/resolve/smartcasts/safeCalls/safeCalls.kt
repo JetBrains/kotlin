@@ -37,3 +37,6 @@ fun test_5(x: A?) {
     x?.let { return }?.boo(x.bool())
     x<!UNSAFE_CALL!>.<!>id()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, lambdaLiteral, nullableType, safeCall, smartcast, stringLiteral */

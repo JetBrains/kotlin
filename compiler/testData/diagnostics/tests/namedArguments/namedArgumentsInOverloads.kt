@@ -14,3 +14,5 @@ fun test(d: C) {
     d.foo(a1 = 1, a2 = 1.0)
     d.foo(b1 = 1, b2 = "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, stringLiteral */

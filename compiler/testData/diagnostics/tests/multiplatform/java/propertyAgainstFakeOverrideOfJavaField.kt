@@ -33,3 +33,6 @@ abstract class AbstractMyHashMap<K, V> implements MyMap<K, V> {
         return values;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, interfaceDeclaration, javaType, nullableType,
+propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

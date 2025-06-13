@@ -28,3 +28,6 @@ fun <K, T> addElementToSlice(
 
     a.add(element)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration, typeParameter */

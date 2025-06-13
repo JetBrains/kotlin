@@ -11,3 +11,5 @@ class J extends K {
 class K : <!CYCLIC_INHERITANCE_HIERARCHY!>J<!>() {
     fun bar() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType */

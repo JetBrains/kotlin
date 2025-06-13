@@ -12,3 +12,6 @@ interface B {
 fun <T> test(x: T) where T : B, T : A {
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+interfaceDeclaration, nullableType, typeConstraint, typeParameter, typeWithExtension */

@@ -8,3 +8,5 @@ class Derived : A.Base()
 fun test() {
     class DerivedLocal : <!SEALED_SUPERTYPE!>A.Base<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, nestedClass, sealed */

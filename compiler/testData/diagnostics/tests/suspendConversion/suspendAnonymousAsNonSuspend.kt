@@ -8,3 +8,6 @@ fun main() {
         suspend fun() {} // CCE
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, nullableType,
+typeParameter */

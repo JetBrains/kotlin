@@ -27,3 +27,6 @@ fun unresolvedParameter() = JavaSuperClass().foo(<!NO_VALUE_FOR_PARAMETER!><!NAM
 
 
 fun multipleParameters() = JavaSuperClass().multipleParameters(<!NAMED_ARGUMENTS_NOT_ALLOWED!>first<!> = 1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>second<!> = 2L, <!NAMED_ARGUMENTS_NOT_ALLOWED!>third<!> = "3")
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaFunction, javaType, override,
+stringLiteral */

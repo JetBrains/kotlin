@@ -47,3 +47,6 @@ fun overloading() {
     var z = B()
     <!TYPE_MISMATCH!>z += x<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, integerLiteral,
+intersectionType, localProperty, multiplicativeExpression, operator, propertyDeclaration, smartcast */

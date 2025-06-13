@@ -11,3 +11,5 @@ fun bar(l: List<Int>) = l
 fun test(a: A) {
     bar(a[12])
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, operator, typeParameter */

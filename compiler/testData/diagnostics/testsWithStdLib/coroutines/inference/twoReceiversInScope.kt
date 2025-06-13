@@ -29,3 +29,6 @@ private fun <T> MyFlow<T>.idScoped(): MyFlow<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, funWithExtensionReceiver, functionDeclaration,
+functionalType, in, interfaceDeclaration, lambdaLiteral, nullableType, out, typeParameter, typeWithExtension */

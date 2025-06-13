@@ -20,3 +20,7 @@ fun test() {
     assertEquals(namesByTeam, mutableNamesByTeam1)
     assertEquals(namesByTeam, mutableNamesByTeam2)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, inProjection, javaFunction, lambdaLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

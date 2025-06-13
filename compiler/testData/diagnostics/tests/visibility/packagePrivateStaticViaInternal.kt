@@ -19,3 +19,5 @@ internal class Child : KotlinParentClass() {
         <!INVISIBLE_MEMBER!>publicStaticMethod<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

@@ -8,3 +8,5 @@ val b = l@ {
 
     return@l <!RETURN_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>r<!>
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, ifExpression, lambdaLiteral, propertyDeclaration, stringLiteral */

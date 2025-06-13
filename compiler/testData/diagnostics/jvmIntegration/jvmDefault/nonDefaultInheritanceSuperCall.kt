@@ -28,3 +28,6 @@ class KotlinClass : UExpression {
         return super.evaluate()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+stringLiteral, superExpression */

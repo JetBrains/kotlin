@@ -30,3 +30,7 @@ fun test() {
 }
 
 fun takeDouble(value: Double) {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, thisExpression, typeConstraint,
+typeParameter, unaryExpression */

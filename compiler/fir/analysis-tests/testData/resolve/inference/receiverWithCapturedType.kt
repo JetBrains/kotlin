@@ -35,3 +35,7 @@ fun test_2_2(resolvedCall: ResolvedCall<in CallableDescriptor>, d: CallableDescr
 fun test_2_3(resolvedCall: ResolvedCall<CallableDescriptor>, d: CallableDescriptor) {
     val x = resolvedCall.updateD(d) // should be ok
 }
+
+/* GENERATED_FIR_TAGS: assignment, capturedType, funWithExtensionReceiver, functionDeclaration, inProjection,
+interfaceDeclaration, localProperty, outProjection, propertyDeclaration, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

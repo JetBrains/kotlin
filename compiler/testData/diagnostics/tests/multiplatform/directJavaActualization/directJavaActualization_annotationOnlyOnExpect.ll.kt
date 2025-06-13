@@ -16,3 +16,5 @@ expect class Foo
 // FILE: Foo.java
 @kotlin.annotations.jvm.KotlinActual
 public class Foo {}
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, expect */

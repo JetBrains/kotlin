@@ -24,3 +24,5 @@ interface Explicit : C, D {
 }
 
 interface Implicit : C, D
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, override, propertyDeclaration */

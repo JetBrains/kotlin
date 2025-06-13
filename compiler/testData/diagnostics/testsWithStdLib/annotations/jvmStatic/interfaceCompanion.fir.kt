@@ -60,3 +60,6 @@ interface B {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: companionObject, external, functionDeclaration, integerLiteral, interfaceDeclaration,
+objectDeclaration, propertyDeclaration */

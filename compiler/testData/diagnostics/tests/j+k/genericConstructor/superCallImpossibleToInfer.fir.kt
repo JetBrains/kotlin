@@ -19,3 +19,6 @@ class C : A<CharSequence> {
     constructor(x: List<String>) : <!CANNOT_INFER_PARAMETER_TYPE("Q")!>super<!>("", x)
     constructor(x: List<Int>, y: Int) : super("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix, javaType,
+nullableType, primaryConstructor, secondaryConstructor, stringLiteral, typeParameter, typeWithExtension */

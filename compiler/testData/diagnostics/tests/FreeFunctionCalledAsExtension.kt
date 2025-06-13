@@ -14,3 +14,5 @@ fun foo(a: <!WRONG_EXTENSION_FUNCTION_TYPE!>@AliasedEFT<!> A) {
     // Only kotlin.Function{n} type annotated with @Extension should
     "".<!UNRESOLVED_REFERENCE!>a<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, stringLiteral, typeAliasDeclaration */

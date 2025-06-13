@@ -23,3 +23,7 @@ fun f4(s: Int?) {
     if (u == Unit) u = <!INVALID_IF_AS_EXPRESSION!>if<!> (s == 239);
     return u
 }
+
+/* GENERATED_FIR_TAGS: andExpression, asExpression, assignment, checkNotNullCall, classDeclaration, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter, typeWithExtension */

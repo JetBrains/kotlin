@@ -25,3 +25,6 @@ fun main() {
     val x3: suspend (Int) -> Unit = takeSimpleFunction(<!DEBUG_INFO_EXPRESSION_TYPE("suspend (kotlin.Int) -> kotlin.Unit")!>id <!TYPE_MISMATCH!>{ it }<!><!>, <!DEBUG_INFO_EXPRESSION_TYPE("suspend (kotlin.Int) -> kotlin.Unit"), TYPE_MISMATCH!>{ x -> x }<!>)
     val x4: (Int) -> Unit = <!TYPE_MISMATCH, TYPE_MISMATCH!>takeSimpleFunction(<!TYPE_MISMATCH!>id<suspend (Int) -> Unit> {}<!>, <!DEBUG_INFO_EXPRESSION_TYPE("suspend (kotlin.Int) -> kotlin.Unit"), TYPE_MISMATCH!>{}<!>)<!>
 }
+
+/* GENERATED_FIR_TAGS: capturedType, functionDeclaration, functionalType, integerLiteral, lambdaLiteral, localProperty,
+nullableType, outProjection, propertyDeclaration, suspend, typeConstraint, typeParameter, vararg */

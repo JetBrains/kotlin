@@ -18,3 +18,6 @@ fun myMain() {
 
     fun baz() = foo("") { x -> x }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, localFunction, localProperty, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

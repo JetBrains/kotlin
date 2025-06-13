@@ -51,3 +51,7 @@ fun foo() {
         y checkType { _<Int>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, checkNotNullCall, classDeclaration, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

@@ -21,3 +21,7 @@ class Q {
         y.prop.checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration,
+funWithExtensionReceiver, functionDeclaration, functionalType, infix, lambdaLiteral, nullableType, propertyDeclaration,
+typeParameter, typeWithExtension */

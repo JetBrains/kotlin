@@ -11,3 +11,6 @@ fun test() {
     var b: @A Int = 0
     b = 15
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

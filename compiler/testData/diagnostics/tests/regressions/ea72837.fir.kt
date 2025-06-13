@@ -8,3 +8,5 @@ fun foo() {
     <!CANNOT_INFER_PARAMETER_TYPE!>g<!>(::<!SYNTAX!><!>)
     h(::<!SYNTAX!><!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, nullableType, typeParameter */

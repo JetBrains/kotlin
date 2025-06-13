@@ -18,3 +18,6 @@ fun bar(e: Enum): Int {
         Enum.C -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+smartcast, whenExpression, whenWithSubject */

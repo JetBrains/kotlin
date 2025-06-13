@@ -77,3 +77,6 @@ fun test7(x: String?) {
         p<!UNSAFE_CALL!>.<!>length // Bad (p = null)
     }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, assignment, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral, typeParameter */

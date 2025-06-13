@@ -33,3 +33,5 @@ public class JC implements JI<String> {
 class C1(client: JC) : JI<Int> by <!TYPE_MISMATCH!>client<!>
 
 class C2(client: JC) : JI<String> by client
+
+/* GENERATED_FIR_TAGS: classDeclaration, inheritanceDelegation, javaType, primaryConstructor */

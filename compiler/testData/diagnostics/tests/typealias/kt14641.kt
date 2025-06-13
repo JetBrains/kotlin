@@ -10,3 +10,6 @@ fun f() {
     val a = A()
     a.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, NO_COMPANION_OBJECT!>BAlias<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration,
+typeAliasDeclaration */

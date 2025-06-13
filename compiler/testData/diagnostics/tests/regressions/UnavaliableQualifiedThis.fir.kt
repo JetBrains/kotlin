@@ -12,3 +12,6 @@ interface Iterator<out T> {
         get() = this<!UNRESOLVED_LABEL!>@map<!>.hasNext
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, getter, interfaceDeclaration,
+nullableType, out, override, propertyDeclaration, thisExpression, typeParameter */

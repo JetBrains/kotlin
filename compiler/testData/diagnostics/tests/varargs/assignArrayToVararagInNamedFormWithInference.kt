@@ -9,3 +9,5 @@ fun main() {
 }
 
 fun <T> foo(vararg x: T) {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, nullableType, typeParameter, vararg */

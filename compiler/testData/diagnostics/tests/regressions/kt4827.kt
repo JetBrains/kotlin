@@ -15,3 +15,5 @@ fun f() {
     <!RESOLUTION_TO_CLASSIFIER!>TestInterface<!>()
     C.<!RESOLUTION_TO_CLASSIFIER!>I<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, interfaceDeclaration */

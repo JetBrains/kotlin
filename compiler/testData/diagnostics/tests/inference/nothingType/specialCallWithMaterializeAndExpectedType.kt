@@ -7,3 +7,6 @@ fun foo() {
 }
 
 fun <K> materialize(): K = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, localProperty, nullableType, propertyDeclaration,
+typeParameter */

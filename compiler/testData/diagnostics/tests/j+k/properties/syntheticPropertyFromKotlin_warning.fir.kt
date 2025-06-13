@@ -26,3 +26,5 @@ fun test_2(x: Impl) {
     x.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN("fun getBar(): String; getBar")!>bar<!>
     x.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN("fun setBar(value: String!): Unit; setBar")!>bar<!> = "a"
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, javaProperty, javaType, stringLiteral */

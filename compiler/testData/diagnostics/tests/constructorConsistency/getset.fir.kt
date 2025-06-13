@@ -25,3 +25,6 @@ class My(var x: String) {
         if (y != "") z = this.y else z = y
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, getter, ifExpression, init, primaryConstructor,
+propertyDeclaration, setter, stringLiteral, thisExpression */

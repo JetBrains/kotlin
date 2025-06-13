@@ -12,3 +12,6 @@ fun test_2(b: Boolean, y: Int) {
     val x = if (b) y else null
     takeInt(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, localProperty, nullableType,
+propertyDeclaration */

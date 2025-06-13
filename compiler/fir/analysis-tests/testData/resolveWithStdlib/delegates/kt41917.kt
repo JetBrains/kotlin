@@ -22,3 +22,6 @@ interface B {
 }
 
 class C : A(), B
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, operator,
+primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, stringLiteral, typeParameter */

@@ -24,3 +24,6 @@ fun test() {
     Foo().foo {} checkType { _<Int>() }
     Foo().bar {} checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaFunction, javaType, lambdaLiteral, nullableType, samConversion, typeParameter, typeWithExtension */

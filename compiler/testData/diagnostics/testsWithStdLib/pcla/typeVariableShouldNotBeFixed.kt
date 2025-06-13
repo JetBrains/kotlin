@@ -32,3 +32,6 @@ private fun foo(model: Model) {
         )
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, inProjection, javaType, lambdaLiteral,
+nullableType, thisExpression, typeParameter */

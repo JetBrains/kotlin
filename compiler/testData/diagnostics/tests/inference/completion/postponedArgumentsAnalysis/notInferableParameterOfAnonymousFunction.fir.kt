@@ -16,3 +16,6 @@ fun main() {
 
     select<Any?>(fun (<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!>) {}, fun (<!CANNOT_INFER_VALUE_PARAMETER_TYPE!>x<!>) {})
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, capturedType, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, vararg */

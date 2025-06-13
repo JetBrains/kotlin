@@ -54,3 +54,8 @@ object X {
         <!YIELD_IS_RESERVED!>yield<!>::toInt
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, checkNotNullCall, destructuringDeclaration,
+enumDeclaration, enumEntry, forLoop, funWithExtensionReceiver, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, operator, propertyDeclaration, rangeExpression, typeAliasDeclaration,
+typeConstraint, typeParameter, vararg */

@@ -19,3 +19,5 @@ fun test() {
     }
 }
 
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, functionDeclaration, inner,
+lambdaLiteral, localClass, nestedClass, primaryConstructor */

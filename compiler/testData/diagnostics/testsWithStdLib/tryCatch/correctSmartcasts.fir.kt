@@ -86,3 +86,6 @@ fun test6(s: String?) {
     }
     s.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, tryExpression */

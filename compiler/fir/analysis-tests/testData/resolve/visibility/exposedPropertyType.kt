@@ -22,3 +22,6 @@ class Property {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var var5: A.AInnerPublic<!>
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var <!EXPOSED_PROPERTY_TYPE!>var6<!>: A.<!INVISIBLE_REFERENCE!>AInnerProtectedEnum<!><!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, nestedClass, primaryConstructor,
+propertyDeclaration */

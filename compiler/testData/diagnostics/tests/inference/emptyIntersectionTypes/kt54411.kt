@@ -20,3 +20,7 @@ private fun <C> createSegment(prev: OneElementSegment<C>?) = OneElementSegment<C
 class OneElementSegment<O>() : Segment<OneElementSegment<O>>()
 
 abstract class Segment<S : Segment<S>>
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, inline, interfaceDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

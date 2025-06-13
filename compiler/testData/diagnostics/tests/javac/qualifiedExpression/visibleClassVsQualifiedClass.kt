@@ -57,3 +57,6 @@ package a
 fun test(_b: b) {
     _b.a_b()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, localProperty, nestedClass,
+propertyDeclaration */

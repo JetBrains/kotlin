@@ -7,3 +7,5 @@ fun test(a: Any, b: Any, s: String, i: Int) {
     }
     <!EQUALITY_NOT_APPLICABLE!>s == i<!>
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, functionDeclaration, ifExpression, isExpression, smartcast */

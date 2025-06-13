@@ -17,3 +17,6 @@ public class B extends A {
         return 10;
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, integerLiteral, javaType,
+override */

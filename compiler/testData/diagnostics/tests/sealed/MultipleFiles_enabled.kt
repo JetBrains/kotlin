@@ -42,3 +42,6 @@ typealias TA = Base
 
 class E : <!SEALED_INHERITOR_IN_DIFFERENT_PACKAGE!>Base<!>()
 class E2 : <!SEALED_INHERITOR_IN_DIFFERENT_PACKAGE!>TA<!>()
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, inner, localClass, nestedClass,
+propertyDeclaration, sealed, typeAliasDeclaration */

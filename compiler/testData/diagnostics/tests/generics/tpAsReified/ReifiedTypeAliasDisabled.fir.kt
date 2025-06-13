@@ -6,3 +6,6 @@
 class Foo<T>
 
 typealias Alias<<!REIFIED_TYPE_PARAMETER_ON_ALIAS_WARNING!>reified<!> R> = Foo<R>
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, reified, typeAliasDeclaration,
+typeAliasDeclarationWithTypeParameter, typeParameter */

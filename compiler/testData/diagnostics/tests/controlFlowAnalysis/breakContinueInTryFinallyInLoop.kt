@@ -22,3 +22,6 @@ fun testContinue(b: Boolean, s: String?) {
         x!!.length
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, break, checkNotNullCall, continue, elvisExpression, functionDeclaration,
+localProperty, nullableType, propertyDeclaration, smartcast, tryExpression, whileLoop */

@@ -70,3 +70,7 @@ fun test5() {
 
 //use
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, comparisonExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, infix, integerLiteral, interfaceDeclaration, localProperty,
+nullableType, operator, outProjection, propertyDeclaration, starProjection, typeParameter, vararg */

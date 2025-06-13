@@ -21,3 +21,6 @@ inline fun <reified T : Any> bar() {
 }
 
 val m = Map<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><String><!>::class
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, inline, localProperty, outProjection,
+propertyDeclaration, reified, starProjection, typeConstraint, typeParameter */

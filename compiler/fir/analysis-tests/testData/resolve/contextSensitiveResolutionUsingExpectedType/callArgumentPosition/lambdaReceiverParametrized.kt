@@ -55,3 +55,6 @@ fun testReceiveParametrizedLambda() {
 
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, const, equalityExpression, functionDeclaration, functionalType,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral,
+typeParameter */

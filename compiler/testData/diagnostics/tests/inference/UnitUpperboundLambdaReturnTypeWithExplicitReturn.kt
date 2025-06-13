@@ -19,3 +19,5 @@ fun test(x: Boolean) {
             bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, ifExpression, lambdaLiteral, typeConstraint, typeParameter */

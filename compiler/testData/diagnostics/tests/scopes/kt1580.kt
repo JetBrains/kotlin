@@ -15,3 +15,5 @@ import lib.WithInner
 
 fun main(a : WithInner, b : WithInner.Inner) {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nestedClass */

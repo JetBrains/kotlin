@@ -4,3 +4,5 @@ class My(x: String) {
 
     fun foo(x: String) = "$x$y"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, primaryConstructor, propertyDeclaration */

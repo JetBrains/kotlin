@@ -8,3 +8,5 @@ fun main() {
     <!EQUALITY_NOT_APPLICABLE!>A() == B()<!>
     <!EQUALITY_NOT_APPLICABLE!>A() === B()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration */

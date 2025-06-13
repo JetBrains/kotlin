@@ -3,3 +3,5 @@
 open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NoC<!>
 class NoC1 : NoC()
 open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>NoC<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration */

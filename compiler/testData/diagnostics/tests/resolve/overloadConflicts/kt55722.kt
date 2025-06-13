@@ -16,3 +16,6 @@ fun <T> bar(x: A<in T>) {
         x.foo(null) // Shouldn't be OVERLOAD_RESOLUTION_AMBIGUITY
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, inProjection, interfaceDeclaration, isExpression, nullableType,
+override, smartcast, typeParameter */

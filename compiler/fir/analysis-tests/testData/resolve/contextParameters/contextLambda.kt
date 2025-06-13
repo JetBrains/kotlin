@@ -12,3 +12,6 @@ fun test() {
         <!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, functionalType, lambdaLiteral,
+typeWithContext */

@@ -16,3 +16,7 @@ inline fun <reified E: Event> EventHandler<E>.withPriority() = EventListener(thi
 inline fun <reified E: Event> EventHandler<E>.withDefaultPriority() = withPriority()
 
 abstract class Event
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, functionalType,
+inline, noinline, nullableType, objectDeclaration, operator, primaryConstructor, reified, thisExpression,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */

@@ -49,3 +49,7 @@ fun falseNegativeNotExhaustive(x: Any) {
         is Int if { _ : String -> <!EQUALITY_NOT_APPLICABLE_WARNING!>x == "10"<!> } ("11") -> println('q')
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, guardCondition,
+isExpression, lambdaLiteral, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+smartcast, stringLiteral, whenExpression, whenWithSubject */

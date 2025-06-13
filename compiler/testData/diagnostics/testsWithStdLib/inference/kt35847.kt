@@ -16,3 +16,6 @@ object A {
         has(::toInt) // throwing an exception here
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, integerLiteral, nullableType, objectDeclaration,
+typeParameter */

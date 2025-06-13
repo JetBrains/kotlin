@@ -11,3 +11,6 @@ fun <X> bar(): Inv<X> = null!!
 fun test() {
     <!CANNOT_INFER_PARAMETER_TYPE!>foo<!>(<!CANNOT_INFER_PARAMETER_TYPE!>bar<!>())
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, interfaceDeclaration, nullableType, typeConstraint,
+typeParameter */

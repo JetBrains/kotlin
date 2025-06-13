@@ -67,3 +67,7 @@ fun test(bool: Boolean) {
     } else null
     test13
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeParameter, vararg */

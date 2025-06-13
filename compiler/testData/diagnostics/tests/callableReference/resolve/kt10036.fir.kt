@@ -18,3 +18,7 @@ fun OverloadTest.overloadBoolean(value: Boolean?) = overload(value, OverloadTest
 
 // Works fine
 fun OverloadTest.overloadBoolean2(value: Boolean?) = overload(value) { foo(it) }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, dnnType, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, inline, lambdaLiteral, nullableType, objectDeclaration, smartcast,
+typeConstraint, typeParameter, typeWithExtension */

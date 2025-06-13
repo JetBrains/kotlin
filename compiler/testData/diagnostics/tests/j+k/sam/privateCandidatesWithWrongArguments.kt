@@ -20,3 +20,5 @@ package bar
 fun main() {
     foo.A.<!INVISIBLE_MEMBER!>f<!> {}
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

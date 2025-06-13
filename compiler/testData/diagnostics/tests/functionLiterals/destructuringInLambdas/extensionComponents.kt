@@ -53,3 +53,7 @@ fun bar() {
 //
 //    }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+integerLiteral, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

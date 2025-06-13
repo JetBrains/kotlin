@@ -16,3 +16,5 @@ fun cloneable(c: Cloneable) = <!CANNOT_INFER_PARAMETER_TYPE!>J<!>(<!ARGUMENT_TYP
 fun serializable(s: Serializable) = <!CANNOT_INFER_PARAMETER_TYPE!>J<!>(<!ARGUMENT_TYPE_MISMATCH!>s<!>)
 
 fun <T> both(t: T) where T : Cloneable, T : Serializable = J(t)
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, typeConstraint, typeParameter */

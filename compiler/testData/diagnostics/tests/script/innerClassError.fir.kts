@@ -3,3 +3,5 @@
 // LANGUAGE: +ProhibitScriptTopLevelInnerClasses
 
 <!INNER_ON_TOP_LEVEL_SCRIPT_CLASS_ERROR!>inner<!> class A
+
+/* GENERATED_FIR_TAGS: classDeclaration, localProperty, propertyDeclaration */

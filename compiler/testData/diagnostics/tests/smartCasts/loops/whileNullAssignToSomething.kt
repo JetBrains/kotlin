@@ -8,3 +8,6 @@ fun main() {
     }
     <!DEBUG_INFO_SMARTCAST!>result<!>.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, equalityExpression, functionDeclaration, ifExpression, incrementDecrementExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whileLoop */

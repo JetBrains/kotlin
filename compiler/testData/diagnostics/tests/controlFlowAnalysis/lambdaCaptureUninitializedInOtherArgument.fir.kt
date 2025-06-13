@@ -100,3 +100,7 @@ fun test8() {
         { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" } <!USELESS_ELVIS!>?: { <!CAPTURED_VAL_INITIALIZATION!>x<!> = "" ; "" }<!>
     )
 }
+
+/* GENERATED_FIR_TAGS: andExpression, anonymousFunction, anonymousObjectExpression, assignment, elvisExpression,
+functionDeclaration, functionalType, guardCondition, ifExpression, inline, isExpression, lambdaLiteral, localProperty,
+propertyDeclaration, stringLiteral, whenExpression, whenWithSubject */

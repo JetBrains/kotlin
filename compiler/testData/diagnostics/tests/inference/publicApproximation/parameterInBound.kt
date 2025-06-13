@@ -23,3 +23,6 @@ fun topLevel() = <!DEBUG_INFO_EXPRESSION_TYPE("{WithParam1<{Bound1 & Bound2}> & 
 fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("WithParam1<Bound1>")!>topLevel()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, nullableType,
+objectDeclaration, out, typeConstraint, typeParameter, vararg */

@@ -17,3 +17,5 @@ fun test(x: List<Int>, y: List<String>) {
     A<String>("", y)
     A<CharSequence>("", y)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, stringLiteral */

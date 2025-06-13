@@ -37,3 +37,5 @@ public class Z2 {
         privateFun()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, integerLiteral, propertyDeclaration */

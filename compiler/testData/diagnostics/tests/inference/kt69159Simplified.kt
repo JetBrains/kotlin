@@ -14,3 +14,6 @@ fun main(x: MyExpression<String>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>getElement(x.min())!!<!>
     getElement(x.min())!!.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration, in,
+inProjection, interfaceDeclaration, nullableType, typeConstraint, typeParameter */

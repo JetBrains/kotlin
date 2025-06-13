@@ -31,3 +31,6 @@ fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+objectDeclaration, propertyDeclaration */

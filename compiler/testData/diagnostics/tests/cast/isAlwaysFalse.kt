@@ -68,3 +68,6 @@ fun test_5(a: A) {
         !is BI -> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, interfaceDeclaration, intersectionType,
+isExpression, smartcast, whenExpression, whenWithSubject */

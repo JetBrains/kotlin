@@ -102,3 +102,6 @@ private class X {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, inline, javaFunction, javaType, nestedClass,
+propertyDeclaration, setter, stringLiteral */

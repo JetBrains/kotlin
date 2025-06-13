@@ -16,3 +16,5 @@ package b
 import a.Y as X
 
 class Y : X() // class from explicit import should take priority
+
+/* GENERATED_FIR_TAGS: classDeclaration */

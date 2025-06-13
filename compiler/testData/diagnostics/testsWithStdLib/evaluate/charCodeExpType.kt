@@ -7,3 +7,5 @@ const val p4: Short = '\n'.code.toShort()
 const val e2: Long = <!TYPE_MISMATCH!>'\n'.code<!>
 const val e3: Byte = <!TYPE_MISMATCH!>'\n'.code<!>
 const val e4: Short = <!TYPE_MISMATCH!>'\n'.code<!>
+
+/* GENERATED_FIR_TAGS: const, propertyDeclaration */

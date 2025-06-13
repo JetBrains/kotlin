@@ -13,3 +13,6 @@ class ClassA {
 }
 
 fun String.method1() = this
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, nullableType, thisExpression, typeParameter, typeWithExtension */

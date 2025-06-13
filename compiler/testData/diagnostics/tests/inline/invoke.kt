@@ -26,3 +26,6 @@ inline fun Function1<Int, Unit>.inlineExt() {
     this <!INFIX_MODIFIER_REQUIRED!>invoke<!> 11
     this(11)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, integerLiteral, noinline,
+thisExpression, typeWithExtension */

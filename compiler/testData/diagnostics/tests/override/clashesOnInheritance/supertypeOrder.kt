@@ -20,3 +20,5 @@ interface KotlinInterface {
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class KJ<!> : KotlinInterface , JavaInterface {
     override fun bar(o: Any?) { }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType, override */

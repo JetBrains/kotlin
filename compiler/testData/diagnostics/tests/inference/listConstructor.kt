@@ -31,3 +31,8 @@ fun <T, C: MutableCollection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, forLoop, funWithExtensionReceiver,
+functionDeclaration, functionalType, inProjection, infix, integerLiteral, javaFunction, localProperty, nullableType,
+outProjection, propertyDeclaration, stringLiteral, thisExpression, typeConstraint, typeParameter, typeWithExtension,
+vararg */

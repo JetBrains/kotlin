@@ -3,3 +3,5 @@
 fun foo(z: (Int) -> String) {
     foo <!ARGUMENT_TYPE_MISMATCH("Function1<Int, Unit>; Function1<Int, String>")!>{}<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral */

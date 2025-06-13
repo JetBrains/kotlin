@@ -12,3 +12,5 @@ data class DataA(val x: Int)
 
 @kotlin.ExposedCopyVisibility
 data class DataB(val x: Int)
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, primaryConstructor, propertyDeclaration */

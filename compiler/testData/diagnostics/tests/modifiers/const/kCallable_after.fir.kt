@@ -19,3 +19,6 @@ const val lengthPropName = String::length.name
 
 const val errorAccess = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>SomeClassWithName(1)::property.name<!>
 const val errorPlus = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"" + SomeClassWithName(1)::property<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, callableReference, classDeclaration, const, functionDeclaration,
+integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

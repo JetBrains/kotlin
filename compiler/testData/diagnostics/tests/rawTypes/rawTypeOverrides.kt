@@ -15,3 +15,5 @@ abstract class C1 : Java1() {
 fun test(java1: Java1, l: List<*>) {
     java1.removeAll(l)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, override, starProjection */

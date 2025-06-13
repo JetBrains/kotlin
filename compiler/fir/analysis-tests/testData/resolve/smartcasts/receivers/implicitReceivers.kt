@@ -83,3 +83,7 @@ fun Any.test_6() {
     this <!CAST_NEVER_SUCCEEDS!>as<!> String
     length
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, integerLiteral, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast, starProjection,
+thisExpression, typeParameter, typeWithExtension, whenExpression */

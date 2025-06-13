@@ -6,3 +6,5 @@ class Aaa() {
     @Deprecated("a", level = DeprecationLevel.HIDDEN)
     val <!REDECLARATION!>a<!> = 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

@@ -25,3 +25,5 @@ fun test() {
     <!INVISIBLE_MEMBER!>O1<!>
     <!INACCESSIBLE_TYPE!><!INVISIBLE_MEMBER!>JC1<!>()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType, nestedClass, objectDeclaration */

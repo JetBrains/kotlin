@@ -66,4 +66,6 @@ interface TargetManager {
     val target: KonanTarget
 }
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inheritanceDelegation, interfaceDeclaration,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, sealed,
+stringLiteral */

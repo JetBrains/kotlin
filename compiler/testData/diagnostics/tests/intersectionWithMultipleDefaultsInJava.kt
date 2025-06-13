@@ -34,3 +34,5 @@ public abstract class AbstractIntSet extends AbstractIntCollection implements In
 // FILE: Main.kt
 
 class KotlinClass : AbstractIntSet()
+
+/* GENERATED_FIR_TAGS: classDeclaration, javaType */

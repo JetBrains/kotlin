@@ -18,3 +18,7 @@ fun test(x: Any): Int {
     }
     else return 0
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, destructuringDeclaration, funWithExtensionReceiver,
+functionDeclaration, ifExpression, integerLiteral, interfaceDeclaration, intersectionType, isExpression, localProperty,
+operator, propertyDeclaration, smartcast */

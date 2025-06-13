@@ -42,3 +42,6 @@ internal inline fun internalInline() {
     val pc = <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, LESS_VISIBLE_TYPE_IN_INLINE_ACCESSED_SIGNATURE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>PrivateClass<!>()
     <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>pc<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, inline, integerLiteral, localProperty,
+objectDeclaration, operator, primaryConstructor, propertyDeclaration, thisExpression */

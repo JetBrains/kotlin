@@ -76,3 +76,7 @@ fun testSafeTypeCast(i: SealedClass) {
     consume<SealedClass.SealedInheritor1?>(i as? SealedInheritor1)
     consume<SealedClass.SealedInheritor2?>(i as? SealedInheritor2)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, companionObject, functionDeclaration, inner, integerLiteral,
+localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, safeCall, sealed,
+smartcast, stringLiteral, typeParameter */

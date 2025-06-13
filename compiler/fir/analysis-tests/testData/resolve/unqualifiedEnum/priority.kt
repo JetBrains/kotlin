@@ -32,3 +32,6 @@ fun bar(s: Second) = <!NO_ELSE_IN_WHEN!>when<!> (s) {
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
     FOUR -> 4
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, integerLiteral,
+propertyDeclaration, whenExpression, whenWithSubject */

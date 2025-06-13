@@ -9,3 +9,5 @@ fun foo(x: List<String>) {
         flatMap { x }
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */

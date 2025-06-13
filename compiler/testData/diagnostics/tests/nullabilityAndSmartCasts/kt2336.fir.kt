@@ -10,3 +10,6 @@ fun main() {
 }
 
 fun foo(a: Boolean) = a
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, equalityExpression, functionDeclaration, ifExpression, localProperty,
+nullableType, propertyDeclaration, smartcast */

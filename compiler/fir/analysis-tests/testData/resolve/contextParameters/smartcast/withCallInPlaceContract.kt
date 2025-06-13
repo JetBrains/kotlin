@@ -29,3 +29,7 @@ fun test() {
         myRun()
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, contractCallsEffect, contracts, functionDeclaration,
+functionDeclarationWithContext, functionalType, ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, typeParameter */

@@ -162,3 +162,7 @@ class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MOD
 class Outer {
     <!INCOMPATIBLE_MODIFIERS!>inner<!> <!INCOMPATIBLE_MODIFIERS!>sealed<!> class Inner
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, enumDeclaration, functionDeclaration, getter, init,
+inner, integerLiteral, interfaceDeclaration, localProperty, objectDeclaration, primaryConstructor, propertyDeclaration,
+sealed, secondaryConstructor, setter, stringLiteral, tryExpression, vararg */

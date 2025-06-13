@@ -53,3 +53,6 @@ fun referToAliasedSimpleType(x: Any?) {
         returns() implies (x is SimpleType)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractConditionalEffect, contracts, functionDeclaration, functionalType,
+inline, isExpression, lambdaLiteral, nullableType, reified, starProjection, typeAliasDeclaration, typeParameter */

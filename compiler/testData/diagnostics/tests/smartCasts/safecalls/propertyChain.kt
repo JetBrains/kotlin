@@ -13,3 +13,6 @@ fun bar(y: MyClass?) {
     // !! is NOT necessary here, because y?.x != null
     y<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.x
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, elvisExpression, functionDeclaration, integerLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast */

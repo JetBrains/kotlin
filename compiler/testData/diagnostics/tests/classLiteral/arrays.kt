@@ -9,3 +9,5 @@ val a04 = Array<Array<Any?>?>::class
 val a05 = Array<IntArray?>::class
 val a06 = kotlin.Array::class
 val a07 = kotlin.Array<IntArray?>::class
+
+/* GENERATED_FIR_TAGS: classReference, nullableType, propertyDeclaration, starProjection */

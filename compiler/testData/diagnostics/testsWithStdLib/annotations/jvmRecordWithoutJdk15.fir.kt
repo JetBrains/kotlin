@@ -9,3 +9,5 @@ class MyRec(
     val y: Int,
     vararg val z: Double,
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, vararg */

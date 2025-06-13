@@ -22,3 +22,5 @@ public class IntBox extends Box<Integer> {
 fun main() {
     IntBox().put(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, javaType */

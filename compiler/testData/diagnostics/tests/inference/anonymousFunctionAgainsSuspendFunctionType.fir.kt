@@ -6,3 +6,5 @@ fun foo(f: suspend () -> Unit) {
 fun bar() {
     foo(<!ARGUMENT_TYPE_MISMATCH("Function0<Unit>; SuspendFunction0<Unit>")!>fun () {}<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, suspend */

@@ -18,3 +18,6 @@ fun topLevel() = run {
 fun test() {
     topLevel()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, intersectionType, lambdaLiteral,
+localProperty, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

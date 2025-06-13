@@ -74,3 +74,7 @@ fun repeatingFlow2(n: Int) {
 
     <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, forLoop, functionDeclaration, functionalType,
+ifExpression, integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+rangeExpression, typeParameter */

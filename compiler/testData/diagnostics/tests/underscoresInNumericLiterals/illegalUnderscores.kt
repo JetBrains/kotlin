@@ -17,3 +17,5 @@ fun foo() {
     <!ILLEGAL_UNDERSCORE!>1.0e+_0<!>
     <!ILLEGAL_UNDERSCORE!>1.0e-_0<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

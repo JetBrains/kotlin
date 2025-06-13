@@ -25,3 +25,6 @@ fun bar() {
 }
 
 fun gav(v: String) = v
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaFunction, localProperty, nullableType,
+propertyDeclaration, smartcast */

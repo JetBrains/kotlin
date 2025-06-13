@@ -19,3 +19,5 @@ interface J extends K<String> {
     SubG<String, G<String>> bar();
     SubG<String, G<String>> baz();
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeParameter */

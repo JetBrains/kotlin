@@ -14,3 +14,6 @@ fun forReference(ref: Any?) {}
 fun test() {
     forReference(G<Int?>::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+nullableType, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter, vararg */

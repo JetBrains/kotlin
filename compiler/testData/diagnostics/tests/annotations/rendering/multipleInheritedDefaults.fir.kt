@@ -25,3 +25,6 @@ class AB2 : A, B {
     @An
     override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES("foo; a: @An() Int;     fun foo(a: @An() Int = ...): Unit, defined in A    fun foo(a: @An() Int = ...): Unit, defined in B")!>@An a: @An Int<!>) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral,
+interfaceDeclaration, override */

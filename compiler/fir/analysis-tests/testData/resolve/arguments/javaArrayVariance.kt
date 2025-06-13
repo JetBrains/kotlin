@@ -17,3 +17,5 @@ fun test(array: Array<B>) {
     takeA(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
     takeOutA(array)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, outProjection */

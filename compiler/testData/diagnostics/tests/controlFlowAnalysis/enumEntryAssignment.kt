@@ -24,3 +24,5 @@ fun test() {
     <!VAL_REASSIGNMENT!>Some.A<!> = null!!
     <!VAL_REASSIGNMENT!>Some.B<!> = null!!
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, enumDeclaration, enumEntry, functionDeclaration, init */

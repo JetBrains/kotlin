@@ -44,3 +44,6 @@ fun test3(node: Foo3<*>) {
     node.data.get(C)
 }
 
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, enumDeclaration, enumEntry, flexibleType, functionDeclaration,
+interfaceDeclaration, intersectionType, localProperty, nullableType, objectDeclaration, outProjection,
+primaryConstructor, propertyDeclaration, starProjection, typeConstraint, typeParameter */

@@ -11,3 +11,6 @@ class Outer {
     constructor(x: Int, y: Int, z: Int = x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>().prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.Inner().prop) :
         this(x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>().prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.Inner().prop)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, inner, integerLiteral,
+propertyDeclaration, secondaryConstructor, thisExpression */

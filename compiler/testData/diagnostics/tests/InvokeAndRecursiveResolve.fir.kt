@@ -17,3 +17,6 @@ class C {
     val bar = test()
     val test = <!UNRESOLVED_REFERENCE!>bar<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nullableType, propertyDeclaration,
+typeParameter */

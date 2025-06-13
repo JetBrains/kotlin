@@ -16,3 +16,6 @@ fun foo(tp: TaskProvider<out CharSequence>) {
         length
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funInterface, funWithExtensionReceiver, functionDeclaration, inProjection,
+interfaceDeclaration, javaType, lambdaLiteral, nullableType, outProjection, samConversion, typeParameter */

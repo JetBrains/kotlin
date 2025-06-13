@@ -20,3 +20,7 @@ fun foo() {
     noSetter = 2
     noSetter = <!TYPE_MISMATCH!>""<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, setter, stringLiteral, typeParameter,
+typeWithExtension */

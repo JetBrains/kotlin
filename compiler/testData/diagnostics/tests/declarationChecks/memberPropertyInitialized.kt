@@ -13,3 +13,6 @@ class Clazz() {
         <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!> = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

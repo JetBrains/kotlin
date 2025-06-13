@@ -30,3 +30,6 @@ fun test() {
 
     SamConstructor.foo(null)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, javaFunction, javaType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, samConversion */

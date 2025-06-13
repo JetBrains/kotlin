@@ -14,3 +14,5 @@ import bar.HostAlias.foo
 fun test() {
     foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, objectDeclaration, typeAliasDeclaration */

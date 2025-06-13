@@ -29,3 +29,6 @@ fun main() {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, functionDeclaration, functionalType, ifExpression, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

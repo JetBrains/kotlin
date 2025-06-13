@@ -12,3 +12,5 @@ class Success<T>(<!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override val valu
     <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override val success : Boolean = true
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, nullableType, out, override, primaryConstructor,
+propertyDeclaration, typeParameter */

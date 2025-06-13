@@ -38,3 +38,6 @@ fun foo(arg: Int) {
     // Function expression, ok
     fast(f)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, anonymousFunction, callableReference,
+functionDeclaration, functionalType, inline, integerLiteral, lambdaLiteral, localProperty, propertyDeclaration */

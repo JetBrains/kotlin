@@ -72,3 +72,7 @@ open class GenericScopeOwnerSubtype<B>: GenericScopeOwner<B>()
 interface TypeArgument
 
 object Interloper: BaseType
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+isExpression, lambdaLiteral, localProperty, nullableType, objectDeclaration, propertyDeclaration, starProjection,
+typeParameter */

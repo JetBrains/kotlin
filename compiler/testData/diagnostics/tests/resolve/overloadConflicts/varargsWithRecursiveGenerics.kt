@@ -21,3 +21,5 @@ val test2: String = J.foo(a, a)
 val test3: String = J.foo(a, a, a)
 val test4: Int = J.foo(a, a, a, a)
 val test5: Int = J.foo(a, a, a, a, a)
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, flexibleType, javaFunction, propertyDeclaration */

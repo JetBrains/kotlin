@@ -13,3 +13,5 @@ enum class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

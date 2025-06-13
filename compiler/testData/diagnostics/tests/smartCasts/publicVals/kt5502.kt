@@ -15,3 +15,6 @@ public class Foo(protected val maxParsingTimeInMillis: Long?) {
         return true
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, equalityExpression,
+functionDeclaration, ifExpression, nullableType, primaryConstructor, propertyDeclaration, smartcast */

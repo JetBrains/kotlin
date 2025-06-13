@@ -52,3 +52,5 @@ fun test3() {
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>()
     <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>inst<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>B<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration */

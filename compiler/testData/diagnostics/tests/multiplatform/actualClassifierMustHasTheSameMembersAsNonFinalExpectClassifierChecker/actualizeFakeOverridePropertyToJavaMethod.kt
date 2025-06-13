@@ -25,3 +25,6 @@ public class FooImpl extends Base {
         return 1;
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, integerLiteral, javaType, primaryConstructor,
+propertyDeclaration, typeAliasDeclaration */

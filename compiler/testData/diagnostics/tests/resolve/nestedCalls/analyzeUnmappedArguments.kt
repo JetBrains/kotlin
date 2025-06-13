@@ -9,3 +9,5 @@ fun test() {
 }
 
 fun foo(x: Int) = x
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, thisExpression */

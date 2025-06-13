@@ -35,3 +35,6 @@ fun unused(cond: Boolean) {
 fun underscore() {
     val _ = stringF()
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, safeCall, stringLiteral, unnamedLocalVariable */

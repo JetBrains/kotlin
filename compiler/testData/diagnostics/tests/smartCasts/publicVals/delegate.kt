@@ -22,3 +22,6 @@ class Example {
         return if (r != null) <!DEBUG_INFO_SMARTCAST!>r<!> else ""
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, ifExpression, nullableType, operator,
+propertyDeclaration, propertyDelegate, smartcast, starProjection, stringLiteral */

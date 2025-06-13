@@ -10,3 +10,5 @@ class Foo(val str: String?) {
 
     val second = str.isNullOrEmpty()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration */

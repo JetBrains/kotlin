@@ -20,3 +20,6 @@ fun test(a: Any): String {
     // When is not exhaustive
     return <!TYPE_MISMATCH!>q<!>
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, isExpression, localProperty,
+nullableType, propertyDeclaration, whenExpression, whenWithSubject */

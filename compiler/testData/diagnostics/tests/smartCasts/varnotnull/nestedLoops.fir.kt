@@ -18,3 +18,6 @@ public fun foo(qq: String?): Int {
     // Smart cast is possible
     return q.length
 }
+
+/* GENERATED_FIR_TAGS: break, checkNotNullCall, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, whileLoop */

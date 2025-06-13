@@ -10,3 +10,6 @@ fun test(a: A) {
     if (a !is B) return
     val c = <!DEBUG_INFO_SMARTCAST!>a<!>.f() // type mismatch
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, thisExpression, typeParameter */

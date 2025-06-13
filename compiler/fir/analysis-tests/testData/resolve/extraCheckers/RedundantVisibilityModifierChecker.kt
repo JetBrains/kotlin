@@ -93,3 +93,8 @@ private class Foo {
 private open class ProtectedInOpenPrivateClass {
     protected fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, classDeclaration, enumDeclaration, enumEntry,
+functionDeclaration, getter, inline, inner, integerLiteral, interfaceDeclaration, localClass, localProperty,
+multiplicativeExpression, nestedClass, nullableType, objectDeclaration, override, primaryConstructor,
+propertyDeclaration, sealed, secondaryConstructor, setter, typeConstraint, typeParameter */

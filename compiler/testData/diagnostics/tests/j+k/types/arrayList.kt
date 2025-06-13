@@ -16,3 +16,6 @@ import java.util.*;
 public class J<T> extends ML<T> {
     public List<T> foo() { return null; }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, nullableType,
+typeParameter */

@@ -17,3 +17,5 @@ typealias BInner0 = B.Inner
 private typealias MyString = String
 
 fun foo(): MyString = ""
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, stringLiteral, typeAliasDeclaration */

@@ -5,3 +5,5 @@ val items: List<String>
 fun test() {
     items.<!UNRESOLVED_REFERENCE!>add<!>("one more item")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, propertyDeclaration, stringLiteral */

@@ -13,3 +13,6 @@ open class Base<T> {
 }
 
 actual class Foo : Base<Int>()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, nullableType,
+primaryConstructor, typeParameter */

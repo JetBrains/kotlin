@@ -94,3 +94,6 @@ fun foo(x: java.util.SequencedCollection<String>, y: java.util.SequencedSet<Stri
     z.first
     z.last
 }
+
+/* GENERATED_FIR_TAGS: assignment, flexibleType, functionDeclaration, javaProperty, localProperty, nullableType,
+propertyDeclaration, stringLiteral */

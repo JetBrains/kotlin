@@ -35,3 +35,6 @@ expect enum class ExpEnumClass {
 
     <!WRONG_MODIFIER_CONTAINING_DECLARATION("protected; final expect class")!>protected<!> val bar: Int
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, enumDeclaration, enumEntry, expect, functionDeclaration, integerLiteral,
+propertyDeclaration */

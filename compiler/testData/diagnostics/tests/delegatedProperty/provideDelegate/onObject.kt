@@ -9,3 +9,6 @@ object O {
 }
 
 val x: String by O
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, objectDeclaration, operator,
+propertyDeclaration, propertyDelegate, stringLiteral */

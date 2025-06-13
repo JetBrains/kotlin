@@ -14,3 +14,6 @@ fun test() {
     val a: Boolean = <!TYPE_MISMATCH!>listOf(1).contains1("")<!>
     val b: Boolean = listOf(1).contains1(1)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -21,3 +21,6 @@ fun testLambda() {
 }
 
 inline fun <R> myRun(block: () -> R): R = block()
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, functionalType, ifExpression, inline, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

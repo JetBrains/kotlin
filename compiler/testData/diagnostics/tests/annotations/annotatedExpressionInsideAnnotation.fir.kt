@@ -33,3 +33,6 @@ fun foo41() {
 @W(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Z()<!> [<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>]) // Both ANNOTATION_USED_AS_ANNOTATION_ARGUMENT and ANNOTATION_ON_ANNOTATION_ARGUMENT
 fun foo50() {
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, primaryConstructor,
+propertyDeclaration */

@@ -43,3 +43,6 @@ class A {
 
     <!JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION!>@JvmStatic<!> val z2 = 1;
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, companionObject, functionDeclaration, integerLiteral, nestedClass,
+objectDeclaration, override, propertyDeclaration, setter */

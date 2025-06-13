@@ -15,3 +15,5 @@ class Foo {
     constructor(a: Int, b: Int) : this(a) {
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, lateinit, propertyDeclaration, secondaryConstructor, stringLiteral */

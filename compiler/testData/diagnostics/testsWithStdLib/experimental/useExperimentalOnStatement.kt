@@ -18,3 +18,6 @@ fun use(): String {
     @OptIn(ExperimentalAPI::class)
     return function()
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classReference, forLoop, functionDeclaration, integerLiteral,
+localProperty, propertyDeclaration, rangeExpression, stringLiteral */

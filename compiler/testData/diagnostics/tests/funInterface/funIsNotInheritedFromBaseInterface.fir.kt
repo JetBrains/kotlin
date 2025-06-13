@@ -18,3 +18,5 @@ fun test() {
     takeWithoutFun(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
     takeWithFun {}
 }
+
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, interfaceDeclaration, lambdaLiteral, samConversion */

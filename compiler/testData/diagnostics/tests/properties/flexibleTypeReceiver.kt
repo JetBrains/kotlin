@@ -19,3 +19,6 @@ abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration,
+javaProperty, javaType, lambdaLiteral, nestedClass, propertyDeclaration */

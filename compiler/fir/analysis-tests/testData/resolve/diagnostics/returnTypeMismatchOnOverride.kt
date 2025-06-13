@@ -68,3 +68,6 @@ open class GoodDerrived : Base<Y, W>() {
 open class BadDerrived : Base<Y, W>() {
     override fun kek(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String<!> = "test"
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, override, primaryConstructor,
+propertyDeclaration, stringLiteral, typeConstraint, typeParameter */

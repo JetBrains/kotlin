@@ -18,3 +18,6 @@ fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
     i.invoke1(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     i.invoke2(<!ARGUMENT_TYPE_MISMATCH!>y<!>)
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, in, interfaceDeclaration, localProperty,
+nullableType, out, outProjection, propertyDeclaration, stringLiteral, typeParameter */

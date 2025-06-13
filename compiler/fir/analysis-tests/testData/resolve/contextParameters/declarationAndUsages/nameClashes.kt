@@ -43,3 +43,7 @@ context(a: String)
 fun a() {
     a.length
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, getter, inline, interfaceDeclaration,
+localFunction, nullableType, propertyDeclaration, propertyDeclarationWithContext, propertyWithExtensionReceiver, reified,
+setter, stringLiteral, typeParameter */

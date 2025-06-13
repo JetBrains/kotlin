@@ -19,3 +19,6 @@ fun test_2(someBoolean: Boolean) {
         <!CONFUSING_BRANCH_CONDITION_ERROR!>false && false<!> -> 2
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, const, disjunctionExpression, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

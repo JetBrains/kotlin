@@ -30,3 +30,6 @@ fun testMaterialize() {
     }
     checkExactType<Buildee<Nothing?>>(<!TYPE_MISMATCH("Buildee<Nothing?>; Buildee<Nothing>"), TYPE_MISMATCH("Buildee<Nothing>; Buildee<Nothing?>")!>buildee<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, lambdaLiteral, localFunction,
+localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

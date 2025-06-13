@@ -33,3 +33,6 @@ inline fun test_3(b: Boolean, bar: () -> Unit) {
     higherOrder { }
     if (b) higherOrder { }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractCallsEffect, contracts, functionDeclaration, functionalType, ifExpression,
+inline, lambdaLiteral */

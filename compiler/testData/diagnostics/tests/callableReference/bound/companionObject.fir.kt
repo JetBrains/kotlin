@@ -40,3 +40,7 @@ fun test() {
 
     C::bar
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, localProperty, nullableType, objectDeclaration,
+propertyDeclaration, stringLiteral, typeParameter, typeWithExtension */

@@ -17,3 +17,6 @@ actual open class Foo {
 
     actual constructor() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, primaryConstructor,
+propertyDeclaration, secondaryConstructor */

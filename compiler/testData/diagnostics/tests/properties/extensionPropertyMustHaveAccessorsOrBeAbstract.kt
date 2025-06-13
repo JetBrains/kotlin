@@ -25,3 +25,5 @@ abstract class A {
     abstract val String.testA1: Int
     abstract var String.testA2: Int
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, propertyDeclaration, propertyWithExtensionReceiver */

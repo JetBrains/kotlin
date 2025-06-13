@@ -20,3 +20,6 @@
 <!INLINE_CLASS_DEPRECATED!>inline<!> class SimpleRecursive(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>SimpleRecursive<!>)
 <!INLINE_CLASS_DEPRECATED!>inline<!> class DoubleRecursive1(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>DoubleRecursive2<!>)
 <!INLINE_CLASS_DEPRECATED!>inline<!> class DoubleRecursive2(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>DoubleRecursive1<!>)
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, starProjection,
+typeParameter, value, vararg */

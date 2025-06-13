@@ -39,3 +39,7 @@ fun <M2: WithFoo> foo(delegateResolver: ResolverForProject<M2?>): ResolverForPro
 
 // MyMap<M2, String> :< Map<M, String> => M = M2!
 // RFP<M2?> :< RFP<M> => M = M2?
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, functionDeclaration, getter,
+interfaceDeclaration, javaFunction, javaType, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+safeCall, typeConstraint, typeParameter */

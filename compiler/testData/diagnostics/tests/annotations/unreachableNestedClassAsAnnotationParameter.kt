@@ -13,3 +13,6 @@ class Outer {
         class NestedNested
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, interfaceDeclaration, nestedClass,
+nullableType, primaryConstructor, propertyDeclaration, starProjection, typeParameter */

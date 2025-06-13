@@ -9,3 +9,6 @@ fun main() {
         <!CANNOT_INFER_PARAMETER_TYPE!>printGenericNumber<!>(<!ARGUMENT_TYPE_MISMATCH!>this[0]<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, lambdaLiteral, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

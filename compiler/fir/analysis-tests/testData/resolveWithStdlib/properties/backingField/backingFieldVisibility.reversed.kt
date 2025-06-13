@@ -39,3 +39,6 @@ fun main() {
     val cB = A().c <!UNRESOLVED_REFERENCE!>+<!> 30
     val dB = A().d <!UNRESOLVED_REFERENCE!>+<!> 40
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

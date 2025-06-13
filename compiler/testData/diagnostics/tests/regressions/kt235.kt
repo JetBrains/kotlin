@@ -49,3 +49,7 @@ class MyArray1() {
 class MyNumber() {
     operator fun inc(): MyNumber = MyNumber()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration, functionalType,
+incrementDecrementExpression, integerLiteral, lambdaLiteral, localProperty, operator, primaryConstructor,
+propertyDeclaration */

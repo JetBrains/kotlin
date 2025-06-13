@@ -7,3 +7,5 @@ fun calc(x: String?): Int {
     // Smart cast because of x!! in receiver
     return x.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, integerLiteral, nullableType, safeCall, smartcast */

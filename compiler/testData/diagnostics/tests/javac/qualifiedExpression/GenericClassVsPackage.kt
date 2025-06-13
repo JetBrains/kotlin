@@ -55,3 +55,5 @@ fun test4() {
     val ab_c2 = test3()
     ab_c2.<!UNRESOLVED_REFERENCE!>a_bc<!>()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

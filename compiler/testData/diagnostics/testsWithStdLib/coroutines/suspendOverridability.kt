@@ -36,3 +36,5 @@ interface C : A {
 public interface J extends A {
     Object foo(kotlin.coroutines.Continuation<kotlin.Unit> y);
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, javaType, override, suspend */

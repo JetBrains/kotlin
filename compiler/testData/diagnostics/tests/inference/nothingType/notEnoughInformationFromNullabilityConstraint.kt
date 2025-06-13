@@ -14,3 +14,5 @@ fun test() {
 
     if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>make<!>() else TODO()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, typeParameter, vararg */

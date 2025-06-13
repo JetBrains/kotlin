@@ -9,3 +9,5 @@ sealed class Foo(
     internal val x: Bar,
     y: Bar
 )
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, sealed */

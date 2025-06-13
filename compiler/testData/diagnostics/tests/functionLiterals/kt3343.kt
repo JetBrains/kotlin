@@ -25,3 +25,6 @@ fun print(obj: Any) {}
 fun String.prt(action : (String) -> Unit){
     action(this)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral, thisExpression, tryExpression */

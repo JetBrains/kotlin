@@ -24,3 +24,7 @@ fun foo() {
         val z : Int = y
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, ifExpression, infix, integerLiteral, localProperty, nullableType,
+primaryConstructor, propertyDeclaration, smartcast, typeParameter, typeWithExtension */

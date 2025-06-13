@@ -8,3 +8,6 @@ class Box<T>
 typealias TA<K> = Box<K>
 
 fun checkList(list: TA<out <!UNRESOLVED_REFERENCE!>UnresolvedClass<!>>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, nullableType, outProjection,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

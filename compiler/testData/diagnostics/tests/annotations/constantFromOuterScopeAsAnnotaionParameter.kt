@@ -10,3 +10,6 @@ class Outer {
         class Nested
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, const, integerLiteral, nestedClass,
+objectDeclaration, primaryConstructor, propertyDeclaration */

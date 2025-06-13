@@ -105,3 +105,6 @@ fun test6(s1: String?, s2: String?) {
     s1<!UNSAFE_CALL!>.<!>length
     <!DEBUG_INFO_SMARTCAST!>s2<!>.length
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, tryExpression */

@@ -31,3 +31,6 @@ fun foo(m: MyEnum) {
         yield(<!UNRESOLVED_REFERENCE!>X<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

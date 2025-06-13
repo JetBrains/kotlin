@@ -18,3 +18,5 @@ class C : B() {
     override var b: String = ""
         private set  // This `private` is NOT unused
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, override, propertyDeclaration, sealed, stringLiteral */

@@ -9,3 +9,5 @@ fun test() {
     <!INVISIBLE_REFERENCE!>Char<!>()
     <!INVISIBLE_REFERENCE!>Boolean<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

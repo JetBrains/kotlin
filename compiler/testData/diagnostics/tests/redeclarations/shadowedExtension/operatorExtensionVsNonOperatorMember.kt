@@ -7,3 +7,5 @@ interface Test {
 
 operator fun Test.invoke() {}
 operator fun Test.<!EXTENSION_SHADOWED_BY_MEMBER!>invoke<!>(i: Int) = i
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, operator */

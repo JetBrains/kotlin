@@ -29,3 +29,6 @@ class A {
     @OptInMarker
     fun test(): Int = 5
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, nullableType,
+operator, override, stringLiteral, superExpression */

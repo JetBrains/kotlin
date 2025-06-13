@@ -16,3 +16,6 @@ fun testAnyToBoolean(x: Any) {
         false -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, isExpression, nullableType, smartcast,
+whenExpression, whenWithSubject */

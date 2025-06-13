@@ -16,3 +16,6 @@ expect value class Value(val <!AMBIGUOUS_ACTUALS{JVM}, REDECLARATION, REDECLARAT
 actual value class Value(val <!AMBIGUOUS_EXPECTS, REDECLARATION!>x<!>: Int) {
     <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>String<!>)<!>
     val <!AMBIGUOUS_EXPECTS, REDECLARATION!>x<!>: Int get() = 1}
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, integerLiteral, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, value */

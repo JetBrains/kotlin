@@ -9,3 +9,5 @@ open class A {
         c = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, init, integerLiteral, propertyDeclaration, setter */

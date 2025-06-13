@@ -19,3 +19,6 @@ fun test_2() {
     val list = listOf<Any>().map { Derived() }.toMutableList()
     list.add(<!ARGUMENT_TYPE_MISMATCH!>Base()<!>) // should be an error
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, lambdaLiteral, localFunction, localProperty,
+propertyDeclaration */

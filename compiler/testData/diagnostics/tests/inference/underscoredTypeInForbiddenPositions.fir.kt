@@ -77,3 +77,8 @@ fun test() {
 
 @Target(AnnotationTarget.TYPE)
 annotation class Anno(val x: Int)
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, asExpression, classDeclaration,
+comparisonExpression, funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, integerLiteral,
+isExpression, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration, stringLiteral,
+typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter, typeWithContext */

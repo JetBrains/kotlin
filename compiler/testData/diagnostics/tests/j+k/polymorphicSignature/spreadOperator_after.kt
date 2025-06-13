@@ -11,3 +11,5 @@ fun test(mh: MethodHandle) {
     mh.invokeExact(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("A", "B"), "C", <!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("D", "E"))
     mh.invoke(<!SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR!>*<!>arrayOf("A"))
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, stringLiteral */

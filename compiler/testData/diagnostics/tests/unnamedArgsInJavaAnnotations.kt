@@ -36,3 +36,5 @@ fun someTest() {}
 
 @Test(expected = IOException::class)
 fun someRest() {}
+
+/* GENERATED_FIR_TAGS: classReference, functionDeclaration, javaType, typeAliasDeclaration */

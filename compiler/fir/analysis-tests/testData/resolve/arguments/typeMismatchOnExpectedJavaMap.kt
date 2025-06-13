@@ -25,3 +25,6 @@ public interface BuildActionExecuter<T> extends ConfigurableLauncher<BuildAction
 fun <T> test(executor: BuildActionExecuter<T>, modelType: Class<T>, env: Map<String, String>) {
     val model = executor.setEnvironmentVariables(env)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, localProperty, nullableType, propertyDeclaration,
+typeParameter */

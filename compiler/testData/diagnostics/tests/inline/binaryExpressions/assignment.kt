@@ -31,3 +31,6 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U, ext: T.(p: U) -> V) {
     <!USAGE_IS_NOT_INLINABLE!>s<!> += s
     <!USAGE_IS_NOT_INLINABLE!>ext<!> += ext
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, inline, lambdaLiteral,
+nullableType, operator, thisExpression, typeParameter, typeWithExtension */

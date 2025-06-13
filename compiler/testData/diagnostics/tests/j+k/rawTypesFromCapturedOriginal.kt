@@ -37,3 +37,6 @@ fun StubBasedPsiElement<*>.foo(): KtStringTemplateExpression? {
     }
     return null
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, javaProperty,
+javaType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, safeCall, starProjection, stringLiteral */

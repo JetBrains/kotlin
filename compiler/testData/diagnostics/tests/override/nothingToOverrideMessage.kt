@@ -59,3 +59,6 @@ open class HasFinal {
 class ExtendsHasFinal {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+interfaceDeclaration, nullableType, override, typeParameter, vararg */

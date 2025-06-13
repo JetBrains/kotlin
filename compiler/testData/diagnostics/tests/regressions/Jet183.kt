@@ -15,3 +15,5 @@ enum class ProtocolState {
 fun box() {
    val x: ProtocolState = ProtocolState.WAITING
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

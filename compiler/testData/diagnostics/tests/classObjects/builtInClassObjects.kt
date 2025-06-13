@@ -42,4 +42,5 @@ fun box(): String {
 
 fun test(a: Any) {}
 
-
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, localProperty, propertyDeclaration, stringLiteral,
+tryExpression */

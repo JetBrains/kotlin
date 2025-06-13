@@ -13,3 +13,5 @@ fun test_2(s: String?) {
         s.length // Should be OK
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, nullableType, smartcast, whenExpression */

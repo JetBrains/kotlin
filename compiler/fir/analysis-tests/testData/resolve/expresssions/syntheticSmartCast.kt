@@ -64,3 +64,5 @@ fun test9(x: AnotherClass?) {
     x.foo
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, elvisExpression, equalityExpression, functionDeclaration, ifExpression,
+javaProperty, javaType, localProperty, nullableType, primaryConstructor, propertyDeclaration, safeCall, smartcast */

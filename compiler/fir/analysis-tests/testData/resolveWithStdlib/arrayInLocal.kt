@@ -4,3 +4,5 @@ fun foo() {
 
     convert("1", "2", "3")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction, outProjection, stringLiteral, vararg */

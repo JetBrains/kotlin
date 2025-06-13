@@ -26,3 +26,6 @@ fun box(): String {
 
     return "OK"
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, inheritanceDelegation,
+interfaceDeclaration, override, propertyDeclaration, setter, stringLiteral */

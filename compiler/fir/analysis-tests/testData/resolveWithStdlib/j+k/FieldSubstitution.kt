@@ -13,3 +13,5 @@ public class Derived : JavaClass<String>() {
         myHost.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaType */

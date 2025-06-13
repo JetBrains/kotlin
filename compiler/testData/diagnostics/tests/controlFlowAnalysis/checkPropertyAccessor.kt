@@ -39,3 +39,6 @@ class A {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, integerLiteral, localClass, localFunction,
+localProperty, propertyDeclaration */

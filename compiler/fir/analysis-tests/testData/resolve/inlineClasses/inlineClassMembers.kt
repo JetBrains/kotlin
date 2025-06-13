@@ -41,3 +41,6 @@ class Val {
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {
     <!INNER_CLASS_INSIDE_VALUE_CLASS!>inner<!> class Inner
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, inner, integerLiteral, nullableType, operator,
+override, primaryConstructor, propertyDeclaration, propertyDelegate, secondaryConstructor, setter, stringLiteral, value */

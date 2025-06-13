@@ -6,3 +6,5 @@ class A {
         <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>constructor()<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nestedClass, secondaryConstructor */

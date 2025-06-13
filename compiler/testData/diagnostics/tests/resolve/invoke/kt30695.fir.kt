@@ -17,3 +17,6 @@ fun test(a: A?) {
     a?.memberInvoke()
     a?.extensionInvoke()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, nullableType,
+operator, propertyDeclaration, safeCall */

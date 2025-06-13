@@ -36,3 +36,6 @@ class SubstitutionDerived : SubstitutionBase<Int>() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, contractCallsEffect, contracts, functionDeclaration,
+functionalType, inline, integerLiteral, lambdaLiteral, nullableType, typeParameter */

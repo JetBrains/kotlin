@@ -16,3 +16,6 @@ context(_: Describer<A>, _: Describer<B>)
 fun bar() {
     log(A())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, in, interfaceDeclaration,
+nullableType, typeParameter */

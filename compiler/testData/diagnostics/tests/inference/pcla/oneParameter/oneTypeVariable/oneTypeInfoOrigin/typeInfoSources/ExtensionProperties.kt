@@ -40,3 +40,7 @@ val Buildee<UserKlass>.typeInfoSourcingValue: UserKlass get() = UserKlass()
 var Buildee<UserKlass>.typeInfoSourcingVariable: UserKlass
     get() = UserKlass()
     set(value) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, getter, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, propertyWithExtensionReceiver, setter, stringLiteral, thisExpression, typeParameter,
+typeWithExtension */

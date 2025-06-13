@@ -9,3 +9,6 @@ class B {
         "e"
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, stringLiteral, typeParameter */

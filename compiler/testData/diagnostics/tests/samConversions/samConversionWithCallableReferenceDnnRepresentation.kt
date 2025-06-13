@@ -116,3 +116,7 @@ fun main() {
     A().doOnSuccessTypeParameterProducer(::returnString)
     A().doOnSuccessTypeParameterProducer<String>(<!TYPE_MISMATCH!>::returnNullableString<!>)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, inProjection,
+integerLiteral, javaType, localProperty, nullableType, outProjection, propertyDeclaration, samConversion, starProjection,
+stringLiteral, typeParameter */

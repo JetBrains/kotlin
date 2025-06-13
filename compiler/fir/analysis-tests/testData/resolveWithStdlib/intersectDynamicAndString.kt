@@ -7,3 +7,6 @@ fun foo() {
         val y = <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, isExpression, localProperty, propertyDeclaration,
+smartcast */

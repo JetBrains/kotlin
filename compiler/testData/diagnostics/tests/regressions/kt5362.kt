@@ -30,3 +30,6 @@ public class Manager {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, localProperty,
+nestedClass, override, primaryConstructor, propertyDeclaration, thisExpression, typeWithExtension */

@@ -11,3 +11,5 @@ fun outer() {
     bar(l@ <!NON_MEMBER_FUNCTION_NO_BODY!>fun ()<!>)
     bar(<!NON_MEMBER_FUNCTION_NO_BODY!>@ann fun ()<!>)
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, functionDeclaration, propertyDeclaration */

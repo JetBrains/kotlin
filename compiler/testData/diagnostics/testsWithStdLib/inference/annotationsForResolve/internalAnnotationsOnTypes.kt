@@ -29,3 +29,6 @@ fun test1() {
     listOf("").foo().length
     bar(1) { x -> x + 1 }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, comparisonExpression, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, lambdaLiteral, multiplicativeExpression, nullableType, starProjection, stringLiteral, typeParameter */

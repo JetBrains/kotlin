@@ -20,3 +20,6 @@ fun test1(t: T?) {
     t<!UNSAFE_CALL!>.<!>f?.invoke(1)
     t?.f?.invoke(1)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, interfaceDeclaration, nullableType,
+propertyDeclaration, safeCall, typeWithExtension */

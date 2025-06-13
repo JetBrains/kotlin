@@ -15,3 +15,6 @@ class User {
         var boo : Foo.Companion.Bar? /* <-- this reference is red */ = Foo.Companion.Bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, localProperty, nestedClass, nullableType,
+objectDeclaration, primaryConstructor, propertyDeclaration */

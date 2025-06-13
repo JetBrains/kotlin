@@ -29,3 +29,6 @@ fun equalNullWithCall() {
         returns() implies (<!ERROR_IN_CONTRACT_DESCRIPTION("only references to parameters are allowed in contract description")!>get()<!> == null)
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, equalityExpression, functionDeclaration, lambdaLiteral,
+nullableType */

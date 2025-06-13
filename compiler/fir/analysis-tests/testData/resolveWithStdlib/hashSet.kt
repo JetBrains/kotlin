@@ -19,3 +19,6 @@ fun foo() {
 
     c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.d = produce()
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, functionDeclaration, getter, javaFunction, localProperty,
+nullableType, propertyDeclaration, propertyWithExtensionReceiver, setter, smartcast, typeParameter */

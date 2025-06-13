@@ -13,3 +13,7 @@ fun Int.baz() {}
 fun test() {
     C::baz checkType { _<KProperty1<C, Int>>() }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, lambdaLiteral, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

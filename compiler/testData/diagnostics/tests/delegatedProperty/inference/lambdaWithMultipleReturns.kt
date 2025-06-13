@@ -18,3 +18,6 @@ private fun <T> myLazy(initialValue: () -> T): ReadProperty<T> = TODO()
 class ReadProperty<V>(val v: V) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): V = v
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, lambdaLiteral, nullableType,
+operator, primaryConstructor, propertyDeclaration, propertyDelegate, starProjection, typeParameter */

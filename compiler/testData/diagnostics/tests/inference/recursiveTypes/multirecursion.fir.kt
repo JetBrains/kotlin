@@ -18,3 +18,6 @@ fun test(c1: C1<Box<Box<Box<Int>>>>, c2: C2) {
 }
 
 fun <S> select(vararg args: S): S = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+nullableType, propertyDeclaration, typeConstraint, typeParameter, vararg */

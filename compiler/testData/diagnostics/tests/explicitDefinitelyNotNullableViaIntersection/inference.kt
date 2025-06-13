@@ -32,3 +32,6 @@ fun <F> main(x: F, y: F, z: F, w: F, m: F) {
     expectNN(<!TYPE_MISMATCH!>m<!>)
     expectNN(m!!)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, dnnType, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+ifExpression, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

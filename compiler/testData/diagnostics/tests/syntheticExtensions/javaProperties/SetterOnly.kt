@@ -9,3 +9,5 @@ fun foo(javaClass: JavaClass) {
 public class JavaClass {
     public void setSomething(int value) { }
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, integerLiteral, javaType */

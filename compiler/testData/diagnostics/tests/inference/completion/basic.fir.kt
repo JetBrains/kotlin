@@ -67,3 +67,6 @@ fun test9(cls: Cls) {
         InB(cls)
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, interfaceDeclaration, nullableType, out,
+outProjection, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */

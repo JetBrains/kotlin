@@ -9,3 +9,6 @@ interface OriginalInterface {
 
     @Anno("dangling $prop")<!SYNTAX!><!>
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, companionObject, const, integerLiteral, interfaceDeclaration,
+objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

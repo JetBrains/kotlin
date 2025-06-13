@@ -8,3 +8,6 @@ fun gg() {
         ff(<!DEBUG_INFO_SMARTCAST!>a<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, localProperty,
+nullableType, propertyDeclaration, smartcast, stringLiteral */

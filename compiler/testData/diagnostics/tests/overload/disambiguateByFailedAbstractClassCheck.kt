@@ -33,3 +33,5 @@ fun test() {
     <!UNRESOLVED_REFERENCE!>Cls2<!>()
     take(<!UNRESOLVED_REFERENCE!>Cls2<!>())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

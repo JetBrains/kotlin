@@ -39,3 +39,5 @@ import foo.Derived.baz
 fun test() {
     baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, javaType */

@@ -8,3 +8,5 @@ open class Outer {
     
     fun foo() = 42
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, nestedClass, superExpression */

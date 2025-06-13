@@ -8,3 +8,5 @@ value class Foo(val x: String) {
         println(i)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, secondaryConstructor, value */

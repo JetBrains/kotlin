@@ -42,3 +42,6 @@ fun usageOutside() {
     X() <!NO_CONTEXT_ARGUMENT!>infixMember<!> 1
     A() <!NO_CONTEXT_ARGUMENT!>infixTopLevelExtension<!> 1
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+infix, integerLiteral, lambdaLiteral */

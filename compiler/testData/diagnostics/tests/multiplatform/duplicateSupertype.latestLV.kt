@@ -18,3 +18,5 @@ class C : A, <!SUPERTYPE_APPEARS_TWICE!>B<!> {}
 // MODULE: jvm()()(common)
 
 actual typealias B = A
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, typeAliasDeclaration */

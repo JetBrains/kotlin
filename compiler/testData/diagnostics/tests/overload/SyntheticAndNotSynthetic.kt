@@ -7,3 +7,6 @@ fun Runnable(f: () -> Unit): Runnable = object : Runnable {
 }
 
 val x = Runnable {  }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, functionalType, lambdaLiteral, override,
+propertyDeclaration */

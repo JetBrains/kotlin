@@ -55,4 +55,6 @@ fun usage1() {
     }
 }
 
-
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, functionalType, getter,
+lambdaLiteral, nullableType, propertyDeclaration, propertyDeclarationWithContext, stringLiteral, typeParameter,
+typeWithContext */

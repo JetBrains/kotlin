@@ -55,3 +55,5 @@ fun test() {
     val _ab = c3().test()
     _ab._ab()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

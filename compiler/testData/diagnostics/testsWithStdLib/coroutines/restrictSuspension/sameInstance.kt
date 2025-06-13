@@ -52,3 +52,6 @@ suspend fun RestrictedController.l() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration, suspend, thisExpression, typeWithExtension */

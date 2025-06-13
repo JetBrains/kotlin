@@ -16,3 +16,7 @@ fun test2(a2: Array<in Int>) {
     val c2 = foo(a2)
     c2 checkType { _<Array<out Array<in Int>>>() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+inProjection, infix, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter,
+typeWithExtension */

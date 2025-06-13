@@ -35,3 +35,7 @@ fun foo() {
 
     commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<out Any>.MyIt>() }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+getter, infix, inner, integerLiteral, intersectionType, lambdaLiteral, localProperty, nullableType, operator,
+outProjection, override, propertyDeclaration, typeParameter, typeWithExtension */

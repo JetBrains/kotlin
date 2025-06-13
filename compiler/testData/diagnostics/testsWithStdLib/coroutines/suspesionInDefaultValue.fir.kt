@@ -18,3 +18,6 @@ suspend fun bar(
 
 inline fun myInline(x: () -> Unit) = 1
 inline fun myInline2(crossinline x: () -> Unit) = 1
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, crossinline, functionDeclaration, functionalType,
+inline, integerLiteral, lambdaLiteral, nullableType, suspend */

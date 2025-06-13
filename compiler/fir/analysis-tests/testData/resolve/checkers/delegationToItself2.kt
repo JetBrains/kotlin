@@ -15,3 +15,6 @@ enum class EEE {
 class Some {
     companion <!ABSTRACT_MEMBER_INCORRECTLY_DELEGATED_WARNING!>object<!> : SomeInterface by Some
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, inheritanceDelegation,
+interfaceDeclaration, objectDeclaration, propertyDeclaration */

@@ -10,3 +10,6 @@ class Foo {
 
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,
+propertyDeclaration */

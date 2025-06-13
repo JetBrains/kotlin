@@ -15,3 +15,6 @@ class C {
 fun foo() {
     C()[A<B<Int>>()] += 2
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, inheritanceDelegation, integerLiteral,
+nullableType, operator, primaryConstructor, propertyDeclaration, typeParameter */

@@ -17,3 +17,5 @@ actual open class Foo {
 
     val injectedProperty = 1
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, propertyDeclaration */

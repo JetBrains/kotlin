@@ -24,3 +24,5 @@ fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
         Sam.Result.create(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>e<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

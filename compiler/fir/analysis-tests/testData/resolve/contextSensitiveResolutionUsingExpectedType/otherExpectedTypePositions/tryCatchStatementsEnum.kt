@@ -68,3 +68,6 @@ fun main(b: Boolean, i: Int) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+nullableType, propertyDeclaration, tryExpression, typeParameter */

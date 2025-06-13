@@ -11,3 +11,6 @@ fun foo(my: My) {
     my.something!!
     when (my.something) { }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, flexibleType, functionDeclaration, javaProperty, javaType, whenExpression,
+whenWithSubject */

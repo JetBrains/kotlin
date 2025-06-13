@@ -52,3 +52,6 @@ fun test_2(a: Array<String>, b: Boolean) {
         it.toList()
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, checkNotNullCall, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, inline, lambdaLiteral, nullableType, outProjection, stringLiteral, typeParameter */

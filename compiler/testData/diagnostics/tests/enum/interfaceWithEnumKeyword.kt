@@ -7,3 +7,5 @@
     fun test()
     val foo: Int
 }
+
+/* GENERATED_FIR_TAGS: enumEntry, functionDeclaration, interfaceDeclaration, propertyDeclaration */

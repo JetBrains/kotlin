@@ -21,3 +21,6 @@ fun test() {
 
     foo1(::bar3) // Should be ambiguity
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funInterface, functionDeclaration, integerLiteral, interfaceDeclaration,
+samConversion, stringLiteral, suspend */

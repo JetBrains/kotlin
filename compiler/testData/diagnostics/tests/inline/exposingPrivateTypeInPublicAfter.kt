@@ -82,3 +82,7 @@ class C3 {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>() // already an error, should be an error
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
+companionObject, functionDeclaration, functionalType, inline, integerLiteral, interfaceDeclaration, isExpression,
+lambdaLiteral, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter */

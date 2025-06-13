@@ -18,3 +18,5 @@ fun test0() {
     receiveEnum(arg2)
     receiveEnum(<!UNRESOLVED_REFERENCE!>arg3<!>)
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, localProperty, propertyDeclaration */

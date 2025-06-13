@@ -9,3 +9,5 @@ fun f1(a: Int.() -> Unit) {
     a <!USELESS_CAST!>as (Int) -> Unit<!>
     f(a <!USELESS_CAST!>as (Int) -> Unit<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, functionalType, typeWithExtension */

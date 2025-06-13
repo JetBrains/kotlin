@@ -15,3 +15,5 @@ typealias TA = C
 import c.TA.Nested
 
 val x: Nested? = null
+
+/* GENERATED_FIR_TAGS: classDeclaration, nestedClass, propertyDeclaration, typeAliasDeclaration */

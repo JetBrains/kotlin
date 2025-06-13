@@ -14,3 +14,8 @@ fun main(args : Array<String>) {
         if ("a" == x && "a" == x) x.length else x.length() // <– ELSE ERROR
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, disjunctionExpression, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, infix, integerLiteral, intersectionType,
+isExpression, javaFunction, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, typeParameter,
+typeWithExtension */

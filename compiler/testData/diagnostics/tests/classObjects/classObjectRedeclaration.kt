@@ -20,3 +20,5 @@ class C {
 
     companion object <!REDECLARATION!>Named<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, nestedClass, objectDeclaration */

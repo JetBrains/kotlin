@@ -22,3 +22,6 @@ fun foo() {
 }
 
 fun doWithList(list: List<Int>) = list
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, javaFunction, localProperty, nullableType, propertyDeclaration, typeParameter, typeWithExtension */

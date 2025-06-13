@@ -140,3 +140,6 @@ fun use(
 
     explicitError.<!DEPRECATION_ERROR!>f<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override, stringLiteral,
+superExpression */

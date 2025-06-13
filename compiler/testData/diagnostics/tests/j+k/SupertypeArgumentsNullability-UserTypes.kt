@@ -20,3 +20,5 @@ fun main() {
     Y().foo().hashCode()
     Y().bar(null)
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, nullableType */

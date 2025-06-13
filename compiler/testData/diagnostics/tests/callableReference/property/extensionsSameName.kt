@@ -13,3 +13,6 @@ fun box() {
     check1(CharSequence::x) // error in NI, ok in OI
     check2(CharSequence::x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, getter, inProjection, propertyDeclaration,
+propertyWithExtensionReceiver, starProjection, thisExpression */

@@ -44,3 +44,7 @@ fun testPlatformBad(base: Base) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, enumDeclaration, enumEntry, equalityExpression, expect, functionDeclaration, ifExpression,
+integerLiteral, interfaceDeclaration, intersectionType, isExpression, localProperty, propertyDeclaration, smartcast,
+whenExpression, whenWithSubject */

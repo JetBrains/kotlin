@@ -16,3 +16,7 @@ fun <T> T.getOrElse2() where T : MySealed, T : CharSequence = <!NO_ELSE_IN_WHEN!
     is <!UNRESOLVED_REFERENCE!>Left<!> -> <!UNRESOLVED_REFERENCE!>x<!>
     is <!UNRESOLVED_REFERENCE!>Right<!> -> <!UNRESOLVED_REFERENCE!>y<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, interfaceDeclaration,
+intersectionType, isExpression, nestedClass, primaryConstructor, propertyDeclaration, sealed, smartcast, typeConstraint,
+typeParameter, whenExpression, whenWithSubject */

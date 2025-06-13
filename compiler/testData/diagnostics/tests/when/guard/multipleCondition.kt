@@ -43,3 +43,8 @@ fun MatchingTypes(x: Any) {
         is Ambiguous1, is Ambiguous2 <!UNSUPPORTED_FEATURE!>if true<!> -> Unit
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, anonymousObjectExpression, classDeclaration, comparisonExpression,
+disjunctionExpression, equalityExpression, functionDeclaration, guardCondition, integerLiteral, interfaceDeclaration,
+isExpression, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, smartcast, whenExpression,
+whenWithSubject */

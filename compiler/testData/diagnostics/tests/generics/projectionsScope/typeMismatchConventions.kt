@@ -18,3 +18,6 @@ fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
     a[1] = Out<Nothing>()
     a[Out<Nothing>()]
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, capturedType, classDeclaration, functionDeclaration,
+integerLiteral, nullableType, operator, out, outProjection, thisExpression, typeParameter */

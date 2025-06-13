@@ -28,3 +28,7 @@ fun test(mc1: MyClass, mc2: MyClass2) {
     checkSubtype<Boolean>(<!TYPE_MISMATCH!>b<!>)
     checkSubtype<Boolean>(<!TYPE_MISMATCH!>c<!>)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, operator, propertyDeclaration, stringLiteral,
+typeParameter, typeWithExtension */

@@ -26,3 +26,6 @@ actual typealias Anno = Jnno
 public @interface Jnno {
     Class<?> ka() default Integer[][][].class;
 }
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, enumDeclaration, enumEntry, expect,
+functionDeclaration, javaType, primaryConstructor, propertyDeclaration, starProjection, typeAliasDeclaration */

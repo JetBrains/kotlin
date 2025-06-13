@@ -7,3 +7,6 @@ fun foo() {
 }
 
 fun String.iterator(): Iterator<Int> = TODO()
+
+/* GENERATED_FIR_TAGS: forLoop, funWithExtensionReceiver, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

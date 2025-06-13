@@ -18,3 +18,6 @@ class Foo {
 }
 
 fun route(s: String): Any? = null
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, functionalType, nullableType,
+starProjection, typeConstraint, typeParameter */

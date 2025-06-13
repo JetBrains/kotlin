@@ -51,3 +51,6 @@ class E {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, stringLiteral, typeWithExtension */

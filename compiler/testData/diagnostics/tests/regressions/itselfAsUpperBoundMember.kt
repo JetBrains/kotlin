@@ -5,3 +5,5 @@ class My {
     fun <<!CYCLIC_GENERIC_UPPER_BOUND!>T: T?<!>> foo() {}
     val <<!CYCLIC_GENERIC_UPPER_BOUND!>T: T?<!>> prop: T
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, propertyDeclaration, typeConstraint, typeParameter */

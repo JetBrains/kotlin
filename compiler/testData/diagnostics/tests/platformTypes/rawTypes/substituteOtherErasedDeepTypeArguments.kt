@@ -30,3 +30,5 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(X<(I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>..I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>?), (kotlin.Any..kotlin.Any?), (I1<*, (I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>..I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>?), *>..I1<*, (I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>..I1<(kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?), (kotlin.Any..kotlin.Any?)>?), *>?)>..X<out (I1<*, *, *>..I1<*, *, *>?), *, out (I1<*, out (I1<*, *, *>..I1<*, *, *>?), *>..I1<*, out (I1<*, *, *>..I1<*, *, *>?), *>?)>?)")!>t<!>
     t.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>id<!> // error before
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaProperty, localProperty, propertyDeclaration */

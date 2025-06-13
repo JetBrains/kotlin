@@ -14,3 +14,5 @@ fun main(a: A, ml: MutableList<String>, l: List<String>) {
     a.foo(ml)
     a.foo(l)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

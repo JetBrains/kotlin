@@ -58,3 +58,5 @@ abstract class <!CANNOT_INFER_VISIBILITY!>CD1<!> : ClassWithDefaultVar(), Interf
 abstract class <!CANNOT_INFER_VISIBILITY!>CD2<!> : ClassWithDefaultVar(), InterfaceWithAbstractVar
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class <!CANNOT_INFER_VISIBILITY!>CD3<!><!> : ClassWithDefaultVar(), InterfaceWithDefaultVal
 abstract <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class <!CANNOT_INFER_VISIBILITY!>CD4<!><!> : ClassWithDefaultVar(), InterfaceWithDefaultVar
+
+/* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, interfaceDeclaration, propertyDeclaration, setter */

@@ -18,3 +18,6 @@ fun userInfo(name: String): Storage<User>.Info? {
     this@Logger.info("Retrieving info about $name")
     return this@Storage.info(name)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, inner, nullableType,
+stringLiteral, thisExpression, typeParameter */

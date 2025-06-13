@@ -15,3 +15,6 @@ fun foo(m: MyMap) {
     var x: String? = m.get(1.0)
     x = m[2.0]
 }
+
+/* GENERATED_FIR_TAGS: assignment, functionDeclaration, javaFunction, javaType, localProperty, nullableType,
+propertyDeclaration */

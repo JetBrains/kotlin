@@ -9,3 +9,5 @@ annotation class MyOptIn
 package vvv
 
 import MyOptIn // OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN
+
+/* GENERATED_FIR_TAGS: annotationDeclaration */

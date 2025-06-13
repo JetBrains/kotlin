@@ -4,3 +4,5 @@ fun test() {
 
     val l = Local()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localProperty, propertyDeclaration */

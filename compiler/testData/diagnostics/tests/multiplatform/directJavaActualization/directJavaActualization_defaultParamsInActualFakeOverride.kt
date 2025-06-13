@@ -18,3 +18,5 @@ expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!> {
 open class Base {
     fun foo(a: Int = 1) {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, expect, functionDeclaration, integerLiteral */

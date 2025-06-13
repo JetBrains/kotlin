@@ -37,3 +37,6 @@ fun quux(b: Boolean?): Int {
 class Java {
     public static boolean getValue() { return false; }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, integerLiteral, javaFunction,
+localProperty, nullableType, propertyDeclaration, smartcast, whenExpression, whenWithSubject */

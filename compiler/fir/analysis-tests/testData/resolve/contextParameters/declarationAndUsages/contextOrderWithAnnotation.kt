@@ -23,3 +23,6 @@ val qux : String
 context(a: String)
 val buz : String
     get() = ""
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionDeclarationWithContext, getter,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

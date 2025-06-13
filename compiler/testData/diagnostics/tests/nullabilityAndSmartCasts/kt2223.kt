@@ -8,3 +8,6 @@ fun foo() {
     if (x == null) return
     if (<!SENSELESS_COMPARISON!>x == null<!>) return
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

@@ -43,3 +43,6 @@ enum class G {
 
 val gh = G.H // companion property
 val gv = G.values() // static function
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration, getter,
+integerLiteral, nestedClass, objectDeclaration, propertyDeclaration, propertyWithExtensionReceiver, stringLiteral */

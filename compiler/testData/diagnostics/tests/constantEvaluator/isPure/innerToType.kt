@@ -12,3 +12,5 @@ package test
 
 // val prop4: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val prop4 = 1 + 1.toShort() + 1<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, propertyDeclaration, unaryExpression */

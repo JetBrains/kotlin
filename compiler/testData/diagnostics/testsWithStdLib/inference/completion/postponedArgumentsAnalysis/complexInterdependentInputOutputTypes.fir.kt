@@ -40,3 +40,6 @@ private fun <K, V : Any, M> containsNullable(
     { option, key -> option.withParameterObjectNullable(createGetParameterObject(plant, key)) },
     assertionCreator
 )
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, out, outProjection, typeConstraint, typeParameter, typeWithExtension */

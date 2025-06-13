@@ -22,3 +22,6 @@ class MyKotlinIndex : KotlinIndex() {
 fun main() {
     MyKotlinIndex().getIndexer().length
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, javaType, override, propertyDeclaration,
+stringLiteral */

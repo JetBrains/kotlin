@@ -54,3 +54,6 @@ fun testAnonimous() {
     anonymousConsumer(<!UNRESOLVED_REFERENCE!>superFunc<!>())
     anonymousConsumer(<!ARGUMENT_TYPE_MISMATCH!>lambdaProp<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, companionObject, const, enumDeclaration, enumEntry,
+functionDeclaration, lambdaLiteral, nestedClass, objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

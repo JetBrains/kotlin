@@ -12,3 +12,5 @@ fun swap(string: String, int: Int){}
 fun swap(int: Int, string: String){}
 
 val y = <!OVERLOAD_RESOLUTION_AMBIGUITY!>swap<!>(int = 42, string = "2")
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, propertyDeclaration, stringLiteral, vararg */

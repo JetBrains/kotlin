@@ -28,3 +28,6 @@ fun main(a: Base, b: Impl) {
     a.a()
     <!RETURN_VALUE_NOT_USED!>b.a()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, interfaceDeclaration,
+javaFunction, lambdaLiteral, nullableType, override, primaryConstructor, propertyDeclaration */

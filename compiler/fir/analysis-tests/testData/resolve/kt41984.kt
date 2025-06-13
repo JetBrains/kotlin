@@ -30,3 +30,6 @@ fun test_1(b: B<Int>, x: Int, inv: Inv<Int>) {
     b.<!NONE_APPLICABLE!>take<!>(null)
     b.<!OVERLOAD_RESOLUTION_AMBIGUITY!>takeInv<!>(inv)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, stringLiteral,
+typeParameter */

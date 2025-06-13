@@ -21,3 +21,5 @@ typealias UnusedANN2 = First<Int, A<Nothing?>>
 
 typealias Q<T> = Array<T?>
 typealias QN = <!TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS!>Q<Nothing><!>
+
+/* GENERATED_FIR_TAGS: nullableType, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -9,3 +9,5 @@ fun foo(a: String?) {
     }
     a<!UNSAFE_CALL!>.<!>length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, nullableType, smartcast, stringLiteral */

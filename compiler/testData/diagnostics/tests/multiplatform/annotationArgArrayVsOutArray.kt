@@ -24,3 +24,6 @@ annotation class B(val x: Array<out String>)
 
 @B(<!TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test3() {}
+
+/* GENERATED_FIR_TAGS: actual, annotationDeclaration, expect, functionDeclaration, outProjection, primaryConstructor,
+propertyDeclaration, stringLiteral */

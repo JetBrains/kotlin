@@ -8,3 +8,6 @@ class ToolchainPanel {
         object : Checker<MyState>() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, localClass, nullableType,
+primaryConstructor, propertyDeclaration, typeParameter */

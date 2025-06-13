@@ -22,3 +22,6 @@ fun test() {
     }
     id(<!UNRESOLVED_REFERENCE!>unresolved<!>) ?: id(<!UNRESOLVED_REFERENCE!>unresolved<!>)
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, elvisExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, tryExpression, typeParameter, whenExpression */

@@ -12,3 +12,6 @@ class MyClass {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, classReference, companionObject, objectDeclaration,
+primaryConstructor, propertyDeclaration, starProjection */

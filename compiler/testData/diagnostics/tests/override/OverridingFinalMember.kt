@@ -7,3 +7,5 @@ open class A {
 class B : A() {
     <!OVERRIDING_FINAL_MEMBER!>override<!> fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, override */

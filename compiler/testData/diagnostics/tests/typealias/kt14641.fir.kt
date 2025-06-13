@@ -10,3 +10,6 @@ fun f() {
     val a = A()
     a.<!UNRESOLVED_REFERENCE!>BAlias<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, localProperty, propertyDeclaration,
+typeAliasDeclaration */

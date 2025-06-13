@@ -14,3 +14,7 @@ fun test(c: Any) {
         <!DEBUG_INFO_SMARTCAST!>c<!>.foo().checkType { _<String>() }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, infix, interfaceDeclaration, intersectionType, isExpression, lambdaLiteral, nullableType, smartcast,
+typeParameter, typeWithExtension */

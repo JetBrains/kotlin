@@ -9,3 +9,6 @@ class A() {
         val y = <!UNRESOLVED_REFERENCE!>x<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, integerLiteral, objectDeclaration, primaryConstructor,
+propertyDeclaration */

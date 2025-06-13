@@ -43,3 +43,6 @@ fun testMissingContext() {
 }
 
 fun <T> accept(t: T) {}
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext,
+functionalType, integerLiteral, nullableType, typeParameter, typeWithContext, typeWithExtension */

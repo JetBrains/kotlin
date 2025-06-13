@@ -50,3 +50,7 @@ fun <T : CharSequence?> foo(x: T) {
         bar3(<!TYPE_MISMATCH!>y<!>)
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, dnnType, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, intersectionType, isExpression, localProperty, nullableType, propertyDeclaration, smartcast,
+stringLiteral, typeConstraint, typeParameter */

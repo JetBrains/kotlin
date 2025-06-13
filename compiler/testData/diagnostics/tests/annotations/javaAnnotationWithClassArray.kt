@@ -27,3 +27,5 @@ fun test() {
     Utils.foo(X::class.java)
     Utils.fooRaw(X::class.java)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, functionDeclaration, javaFunction, javaType */

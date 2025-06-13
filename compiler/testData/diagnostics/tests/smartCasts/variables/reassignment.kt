@@ -38,3 +38,6 @@ fun test2(a1: Any) {
         a3.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, isExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

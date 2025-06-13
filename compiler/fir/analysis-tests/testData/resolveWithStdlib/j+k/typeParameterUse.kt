@@ -19,3 +19,5 @@ fun foo(holder: U, box: Box<Int>): Int {
 
     return holder.getValue(box)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

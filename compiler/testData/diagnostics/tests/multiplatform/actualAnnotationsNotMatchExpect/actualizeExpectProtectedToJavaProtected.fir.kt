@@ -30,3 +30,6 @@ actual typealias Foo = FooImpl
 fun jvm(foo: Foo) {
     foo.foo()
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaFunction, javaType,
+typeAliasDeclaration */

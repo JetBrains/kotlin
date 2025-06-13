@@ -12,3 +12,6 @@ fun test() {
         a.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: disjunctionExpression, functionDeclaration, interfaceDeclaration, isExpression, localProperty,
+nullableType, propertyDeclaration, smartcast, whileLoop */

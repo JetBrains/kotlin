@@ -8,3 +8,5 @@ fun foo(): String? {
 
     return t
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, nullableType, propertyDeclaration */

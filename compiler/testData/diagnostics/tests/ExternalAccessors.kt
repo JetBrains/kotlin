@@ -19,3 +19,4 @@ class Bar {
         external set
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, propertyDeclaration */

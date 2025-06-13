@@ -157,3 +157,7 @@ class Test11 {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, classDeclaration, functionDeclaration, init,
+integerLiteral, lambdaLiteral, localClass, localProperty, nestedClass, nullableType, propertyDeclaration,
+propertyDelegate, secondaryConstructor, stringLiteral */

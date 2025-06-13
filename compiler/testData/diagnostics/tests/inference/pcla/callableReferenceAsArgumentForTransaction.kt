@@ -37,3 +37,7 @@ class A : Screen {
         }.screen
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, in, interfaceDeclaration, lambdaLiteral, nullableType, propertyDeclaration,
+propertyWithExtensionReceiver, stringLiteral, suspend, typeConstraint, typeParameter, typeWithExtension */

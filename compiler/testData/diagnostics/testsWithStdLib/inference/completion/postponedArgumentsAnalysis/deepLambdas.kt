@@ -13,3 +13,6 @@ fun test() {
     useList(listOf({ x: Color -> x.grayValue() }, Color.BLUE))
     useMap(mapOf("a" to { x: Color -> x.grayValue() }, "b" to Color.BLUE))
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration, lambdaLiteral,
+nullableType, stringLiteral */

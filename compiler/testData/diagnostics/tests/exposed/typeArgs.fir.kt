@@ -32,3 +32,7 @@ class Wrapper<T>(val it: T)
 fun <T: <!EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING!>Inter?<!>> public(a: T & Any) = Wrapper(a)
 
 fun <!EXPOSED_FUNCTION_RETURN_TYPE!>other<!>() = public(object : Inter {})
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, dnnType, functionDeclaration, integerLiteral,
+interfaceDeclaration, nullableType, outProjection, primaryConstructor, propertyDeclaration, starProjection,
+typeConstraint, typeParameter */

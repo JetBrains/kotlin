@@ -25,3 +25,7 @@ fun whenWithoutSubject(x: Number) {
     }
     checkSubtype<Int>(x)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, nullableType, smartcast, typeParameter, typeWithExtension, whenExpression,
+whenWithSubject */

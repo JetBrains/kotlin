@@ -16,3 +16,7 @@ fun foo(countExpr: Expression<Long>) {
     countExpr.<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>greater<!>("0")
     countExpr.greater<String, Nothing>("0")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, inProjection, intersectionType,
+nullableType, primaryConstructor, propertyDeclaration, starProjection, stringLiteral, thisExpression, typeConstraint,
+typeParameter */

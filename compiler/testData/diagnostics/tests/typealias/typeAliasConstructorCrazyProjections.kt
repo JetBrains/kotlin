@@ -14,3 +14,7 @@ fun <T> listOf(): List<T> = null!!
 val test1 = <!UNRESOLVED_REFERENCE!>BOutIn<!>(listOf(), null!!)
 
 val test2 = BInIn(listOf(), null!!)
+
+/* GENERATED_FIR_TAGS: capturedType, checkNotNullCall, classDeclaration, functionDeclaration, inProjection, nullableType,
+outProjection, primaryConstructor, propertyDeclaration, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter,
+typeConstraint, typeParameter */

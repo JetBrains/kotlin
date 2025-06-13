@@ -28,3 +28,5 @@ fun test() {
     for (x in platformJ) {}
 }
 
+/* GENERATED_FIR_TAGS: flexibleType, forLoop, functionDeclaration, javaProperty, localProperty, nullableType,
+propertyDeclaration */

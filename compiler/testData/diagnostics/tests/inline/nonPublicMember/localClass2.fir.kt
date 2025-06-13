@@ -12,3 +12,5 @@ public fun test() {
     }
 
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inline, localClass, localFunction */

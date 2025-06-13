@@ -41,3 +41,5 @@ fun test(some: Some) {
     some.<!UNRESOLVED_REFERENCE!>intValue<!>()
     some.<!UNRESOLVED_REFERENCE!>longValue<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType */

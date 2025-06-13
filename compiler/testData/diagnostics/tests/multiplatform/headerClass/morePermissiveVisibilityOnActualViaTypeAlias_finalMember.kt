@@ -21,3 +21,5 @@ public class Foo {
 // FILE: jvm.kt
 
 actual typealias Container = foo.Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, javaType, typeAliasDeclaration */

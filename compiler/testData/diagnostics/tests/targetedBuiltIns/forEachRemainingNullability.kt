@@ -41,3 +41,6 @@ fun foo(x: Iterator<String>, y: Iterator<String?>) {
     y.forEachRemaining { it -> it<!UNSAFE_CALL!>.<!>length }
     y.forEachRemaining { it -> it?.length }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, lambdaLiteral, nullableType, out, override,
+safeCall, samConversion, typeParameter */

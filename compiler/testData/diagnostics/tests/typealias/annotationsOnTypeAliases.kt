@@ -15,3 +15,5 @@ annotation class TypealiasTarget
 <!WRONG_ANNOTATION_TARGET!>@IrrelevantTarget<!>
 @TypealiasTarget
 typealias Test = String
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, typeAliasDeclaration */

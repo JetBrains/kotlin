@@ -27,3 +27,5 @@ import base2.MyInterface
 fun checkTypeAlias(m: MyInterface) {
     m.check("")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, stringLiteral, typeAliasDeclaration */

@@ -13,3 +13,6 @@ fun main() {
     K(0)
     JavaClass(0)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaType,
+primaryConstructor, typeConstraint, typeParameter */

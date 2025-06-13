@@ -10,3 +10,6 @@ fun fibIterative(n: Int): Int {
     }
     return current
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, comparisonExpression, forLoop, functionDeclaration, ifExpression,
+integerLiteral, localProperty, propertyDeclaration, rangeExpression */

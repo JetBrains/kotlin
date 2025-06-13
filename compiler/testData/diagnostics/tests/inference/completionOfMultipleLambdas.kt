@@ -30,3 +30,6 @@ fun test_2(x: Int) {
     val f1: () -> Int = select({ bar() }, ::bar) // TYPE_MISMATCH on lambda
     val f2 = select({ bar() }, ::bar) // Same
 }
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, interfaceDeclaration,
+intersectionType, lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */

@@ -18,3 +18,7 @@ fun f(x: @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>{
     result += 1
     result
 }<!>) Int) = x
+
+/* GENERATED_FIR_TAGS: additiveExpression, annotationDeclaration, assignment, classDeclaration, functionDeclaration,
+integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor, propertyDeclaration, typeConstraint,
+typeParameter */

@@ -23,3 +23,6 @@ class Test {
 }
 
 fun doSmth(s: String) = s
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral */

@@ -16,3 +16,6 @@ fun main(a: A) {
     val y: Inv<A> = <!CANNOT_INFER_PARAMETER_TYPE!>materializeInvOfAAndB<!>() // OI and NI: required B, found A
     val z: Out<A> = wrapAAndBToOut(<!ARGUMENT_TYPE_MISMATCH!>a<!>) // OI and NI: required B, found A
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, intersectionType, localProperty,
+nullableType, out, propertyDeclaration, typeConstraint, typeParameter */

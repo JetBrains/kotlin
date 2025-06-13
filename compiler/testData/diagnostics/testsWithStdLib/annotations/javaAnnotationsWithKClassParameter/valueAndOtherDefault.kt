@@ -12,3 +12,5 @@ public @interface A {
 
 @A(String::class, x = 2) class MyClass3
 @A(value = String::class, x = 4) class MyClass4
+
+/* GENERATED_FIR_TAGS: classDeclaration, classReference, integerLiteral, javaType */

@@ -38,3 +38,6 @@ fun test1() : Int {
 }
 
 fun doSmth() {}
+
+/* GENERATED_FIR_TAGS: assignment, break, comparisonExpression, continue, functionDeclaration, ifExpression,
+incrementDecrementExpression, integerLiteral, localProperty, propertyDeclaration, tryExpression, whileLoop */

@@ -16,3 +16,7 @@ class Version(val version: Int)
 class Sample {
     var version: Version by create(::Version)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate, setter,
+starProjection, typeParameter */

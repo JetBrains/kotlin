@@ -19,3 +19,6 @@ fun foo(arg: Boolean?): String {
         null -> "unknown"
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, nullableType, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

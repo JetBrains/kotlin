@@ -13,3 +13,7 @@ fun Q.foo() {
         is B -> x // unresolved
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, primaryConstructor, propertyDeclaration, sealed, smartcast, thisExpression,
+whenExpression, whenWithSubject */

@@ -8,3 +8,5 @@ var x: Int
     set(field) {
         y = field
     }
+
+/* GENERATED_FIR_TAGS: assignment, getter, integerLiteral, propertyDeclaration, setter */

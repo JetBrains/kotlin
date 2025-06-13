@@ -6,3 +6,5 @@ val i: Int = 10
         ::<!UNSUPPORTED!>field<!>
         return field
     }
+
+/* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

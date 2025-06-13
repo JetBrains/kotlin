@@ -42,3 +42,6 @@ fun main() {
 
     raw.erasedLists = arrayOf<List<String>>()
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, flexibleType, functionDeclaration, javaProperty, localProperty,
+nullableType, propertyDeclaration, starProjection, typeParameter */

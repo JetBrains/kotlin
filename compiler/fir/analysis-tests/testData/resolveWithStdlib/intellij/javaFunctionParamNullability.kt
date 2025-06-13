@@ -54,3 +54,7 @@ fun test2(manager: Manager) {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, equalityExpression, flexibleType, functionDeclaration, inProjection,
+integerLiteral, javaFunction, javaProperty, javaType, lambdaLiteral, nullableType, safeCall, samConversion,
+stringLiteral, typeParameter, whenExpression, whenWithSubject */

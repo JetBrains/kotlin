@@ -15,3 +15,7 @@ fun foo2(a: A, b: B): Boolean {
     checkSubtype<B>(<!DEBUG_INFO_SMARTCAST!>a<!>)
     return result
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, interfaceDeclaration, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter,
+typeWithExtension */

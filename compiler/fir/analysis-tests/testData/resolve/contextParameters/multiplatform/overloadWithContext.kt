@@ -63,3 +63,6 @@ actual class Test5 {
     val foo
         get() = { }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, functionDeclarationWithContext, getter,
+lambdaLiteral, propertyDeclaration, propertyDeclarationWithContext, stringLiteral */

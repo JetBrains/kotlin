@@ -11,3 +11,6 @@ class C {
         val b = 0
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, integerLiteral,
+propertyDeclaration */

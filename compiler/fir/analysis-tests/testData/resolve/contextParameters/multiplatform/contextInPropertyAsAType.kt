@@ -31,3 +31,6 @@ actual val <!EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE!>mismatchedContext<!>: conte
 actual val expectContextActualExtension: A.() -> Unit = { }
 
 actual val expectExtensionActualContext : context(A)() -> Unit = { }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionalType, lambdaLiteral, propertyDeclaration,
+typeWithContext, typeWithExtension */

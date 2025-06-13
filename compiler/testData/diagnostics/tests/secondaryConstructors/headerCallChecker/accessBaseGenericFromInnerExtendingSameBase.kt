@@ -12,3 +12,6 @@ class D: Base<Int>("") {
         constructor(x: Int) : super(foo1(1))
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inner, integerLiteral, nullableType, primaryConstructor,
+secondaryConstructor, stringLiteral, typeParameter */

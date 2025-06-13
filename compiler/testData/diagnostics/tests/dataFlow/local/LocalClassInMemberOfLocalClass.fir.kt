@@ -14,3 +14,5 @@ fun test(x: Any) {
     }
   }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, ifExpression, init, isExpression, localClass, smartcast */

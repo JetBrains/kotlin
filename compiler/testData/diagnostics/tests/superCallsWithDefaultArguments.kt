@@ -36,3 +36,6 @@ fun box(): String {
         else -> "OK"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, functionDeclaration, integerLiteral, interfaceDeclaration,
+localProperty, override, propertyDeclaration, stringLiteral, superExpression, whenExpression */

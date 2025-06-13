@@ -7,3 +7,6 @@ class A(val a: Int) {
     operator fun component2() {}
     operator fun component3() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, localProperty, operator,
+primaryConstructor, propertyDeclaration */

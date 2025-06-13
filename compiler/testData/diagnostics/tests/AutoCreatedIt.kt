@@ -31,3 +31,7 @@ infix fun String.on(predicate :  (s : URI) -> Boolean) : URI {
 class URI(val body : Any) {
     infix fun to(dest : String) {}
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, funWithExtensionReceiver,
+functionDeclaration, functionalType, infix, integerLiteral, lambdaLiteral, primaryConstructor, propertyDeclaration,
+stringLiteral, thisExpression */

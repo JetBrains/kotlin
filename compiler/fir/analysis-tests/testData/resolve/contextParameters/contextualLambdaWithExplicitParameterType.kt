@@ -14,3 +14,6 @@ fun <T> id(x: T) = x
 fun <T> select(vararg x: T) = x[0]
 
 val x1 = select(id { contextOf<Int>() }, context(c: Int) fun () = c)
+
+/* GENERATED_FIR_TAGS: anonymousFunction, capturedType, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, nullableType, outProjection, propertyDeclaration, typeParameter, typeWithContext, vararg */

@@ -44,3 +44,5 @@ class A
 
 // val prop16: 1
 <!DEBUG_INFO_CONSTANT_VALUE("1")!>val prop16: A? = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!><!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

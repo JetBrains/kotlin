@@ -10,3 +10,6 @@ fun Test.foo() {
     val number = 20
     this.number = number + 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, thisExpression */

@@ -10,3 +10,5 @@ fun foo(i: Int) {
 
     <!NONE_APPLICABLE!>5<!>(1, 2)
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral */

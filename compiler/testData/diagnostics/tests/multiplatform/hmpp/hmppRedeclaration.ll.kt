@@ -19,3 +19,5 @@ class B
 class B
 
 class C
+
+/* GENERATED_FIR_TAGS: classDeclaration */

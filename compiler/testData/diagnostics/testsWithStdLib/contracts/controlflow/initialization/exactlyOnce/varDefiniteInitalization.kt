@@ -42,3 +42,6 @@ fun notAnExpression() {
     myRun { if (true) x = 42 }
     x.inc()
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter */

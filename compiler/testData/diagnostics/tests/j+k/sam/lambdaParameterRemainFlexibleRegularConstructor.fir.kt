@@ -18,3 +18,6 @@ fun main() {
         <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x<!>.length // Should not be unsafe call
     }
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, lambdaLiteral, nullableType,
+samConversion */

@@ -17,3 +17,6 @@ fun Any.test_2(): Int = when (val x = this) {
     }
     else -> 0
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, isExpression, localProperty,
+propertyDeclaration, smartcast, starProjection, thisExpression, whenExpression, whenWithSubject */

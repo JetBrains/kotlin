@@ -57,3 +57,8 @@ val w: String by simpleDelegate(<!UNINITIALIZED_VARIABLE!>z<!>)
 val x: String by inPlaceDelegate { <!UNINITIALIZED_VARIABLE!>z<!> }
 val y: String by notInPlaceDelegate { z }
 val z: String = "VALUE"
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classReference, contractCallsEffect,
+contracts, flexibleType, functionDeclaration, functionalType, getter, inheritanceDelegation, inline, integerLiteral,
+lambdaLiteral, localProperty, nullableType, override, propertyDeclaration, propertyDelegate, stringLiteral,
+typeParameter */

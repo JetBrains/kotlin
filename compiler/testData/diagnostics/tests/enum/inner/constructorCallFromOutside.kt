@@ -6,3 +6,5 @@ fun main() {
 class Clazz {
     enum class InnerEnum { V1 }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, functionDeclaration, nestedClass */

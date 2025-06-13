@@ -11,3 +11,6 @@ class Foo<P1 : Boo<P2, P3, P4>, P2 : Boo<P1, P3, P4>, P3 : Boo<P1, P2, P4>, P4 :
 fun main() {
     val x = <!DEBUG_INFO_EXPRESSION_TYPE("(Foo<kotlin.Any, kotlin.Any, kotlin.Any, kotlin.Any>..Foo<*, *, *, *>?)")!>Boo.test1()<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, javaFunction, javaType, localProperty,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

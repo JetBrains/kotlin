@@ -37,3 +37,6 @@ fun test_3(x: A?, y: A?) {
         y.foo()
     }
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, interfaceDeclaration, nullableType,
+smartcast */

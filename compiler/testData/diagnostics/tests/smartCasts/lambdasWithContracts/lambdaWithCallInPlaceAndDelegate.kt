@@ -81,3 +81,7 @@ fun test6() {
         <!SMARTCAST_IMPOSSIBLE!>x<!>.length
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, contractCallsEffect, contracts, functionDeclaration, functionalType,
+isExpression, lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, propertyDelegate, setter,
+smartcast, starProjection, stringLiteral */

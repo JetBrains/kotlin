@@ -7,3 +7,5 @@ fun A.fn(b: Int): Nothing = TODO()
 fun A.run() {
     "".apply { fn(<!ARGUMENT_TYPE_MISMATCH!>""<!>) }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, stringLiteral */

@@ -9,3 +9,6 @@ fun foo(f: context(String) Int.() -> Unit) {
         1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>f<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, integerLiteral, lambdaLiteral, stringLiteral,
+typeWithContext, typeWithExtension */

@@ -78,3 +78,6 @@ val prop26 = 1.0.rem(0)
 
 // val prop27: Infinity.toDouble()
 val prop27 = <!DIVISION_BY_ZERO!>1.0.div(0)<!>
+
+/* GENERATED_FIR_TAGS: additiveExpression, integerLiteral, multiplicativeExpression, propertyDeclaration,
+unaryExpression */

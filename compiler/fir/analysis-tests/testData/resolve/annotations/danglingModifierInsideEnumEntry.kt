@@ -10,3 +10,6 @@ enum class MyEnumClass {
         @Anno(CONSTANT) @<!UNRESOLVED_REFERENCE!>UnresolvedAnno<!><!SYNTAX!><!>
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, enumDeclaration, enumEntry, integerLiteral, primaryConstructor,
+propertyDeclaration */

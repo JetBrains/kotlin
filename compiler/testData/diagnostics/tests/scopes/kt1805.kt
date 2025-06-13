@@ -19,3 +19,6 @@ fun test() {
     val s1 = SomeSubclass()
     s1.<!INVISIBLE_MEMBER!>privateField<!> // 3. Unresolved reference
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+thisExpression */

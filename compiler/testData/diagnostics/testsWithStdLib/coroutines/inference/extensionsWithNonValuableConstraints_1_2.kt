@@ -17,3 +17,6 @@ val test1 = generate {
     yield("foo")
     baseExtension()
 }
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,
+lambdaLiteral, nullableType, propertyDeclaration, stringLiteral, suspend, typeParameter, typeWithExtension */

@@ -24,3 +24,6 @@ import b.*
 fun test() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!><A> { }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+typeConstraint, typeParameter, typeWithExtension */

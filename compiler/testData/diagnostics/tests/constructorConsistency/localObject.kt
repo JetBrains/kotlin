@@ -19,3 +19,6 @@ class My {
 }
 
 fun bar(wise: Wise): Int = wise.x
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, functionDeclaration,
+integerLiteral, localProperty, override, propertyDeclaration, superExpression, thisExpression */

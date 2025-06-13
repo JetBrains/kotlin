@@ -56,3 +56,6 @@ fun annotatedFalseOrFalse(x: Any?) {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, nullableType, smartcast */

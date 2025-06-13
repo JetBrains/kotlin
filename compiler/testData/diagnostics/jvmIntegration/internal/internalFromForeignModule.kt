@@ -29,3 +29,6 @@ private fun test(i: <!INVISIBLE_REFERENCE!>InternalInterface<!>): <!INVISIBLE_RE
 
     return i
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, interfaceDeclaration, objectDeclaration,
+propertyDeclaration, stringLiteral, typeAliasDeclaration */

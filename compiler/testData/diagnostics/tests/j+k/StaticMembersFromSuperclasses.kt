@@ -16,3 +16,5 @@ public class Bbb extends Aaa {
 // FILE: b.kt
 
 fun foo() = Bbb.i
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaProperty */

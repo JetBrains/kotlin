@@ -21,3 +21,6 @@ fun test1(s: SubInt, sWrong: SubIntWrong) {
 fun <T> test2(x: T) where T : (Int, String) -> Int, T : (Double) -> Int {
     foo(<!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, functionalType, intersectionType,
+localProperty, propertyDeclaration, smartcast, stringLiteral, typeConstraint, typeParameter */

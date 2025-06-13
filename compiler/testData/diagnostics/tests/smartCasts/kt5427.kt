@@ -4,3 +4,6 @@ fun foo(p: String?): Int {
     val x = if (p != null) { <!DEBUG_INFO_SMARTCAST!>p<!> } else "a"
     return x.length
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral */

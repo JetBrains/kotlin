@@ -65,3 +65,7 @@ fun testAtLeastOnceFlow(x: Any?) {
 
     x.length
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, doWhileLoop, equalityExpression, functionDeclaration,
+ifExpression, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+tryExpression */

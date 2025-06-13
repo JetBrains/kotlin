@@ -20,3 +20,5 @@ fun test() {
   val c = CollectionTest()
   CollectionTest.add(ArrayList())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, localProperty, propertyDeclaration */

@@ -6,3 +6,6 @@ fun String?.repro(): Boolean {
         return false
     } == true
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, funWithExtensionReceiver, functionDeclaration, lambdaLiteral, nullableType,
+safeCall, thisExpression */

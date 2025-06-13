@@ -34,3 +34,6 @@ private typealias ImmutableMultimap<K, V> = ImmutableMap<K, ImmutableSet<V>>
 private fun <K, V> ImmutableMultimap<K, V>.put(key: K, value: V) {
     this[key].getOrElse(ImmutableLinkedHashSet.empty<V>())
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, funWithExtensionReceiver, functionDeclaration, javaFunction, javaType, nullableType,
+thisExpression, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeParameter */

@@ -77,3 +77,6 @@ fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: Any?<!>> nest(a: Int, b: T) wher
 fun <<!INCONSISTENT_TYPE_PARAMETER_BOUNDS, MISPLACED_TYPE_PARAMETER_CONSTRAINTS!><!CONFLICTING_UPPER_BOUNDS!>T<!>: <!FINAL_UPPER_BOUND!>Int<!><!>, <!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>K: Any?<!>> mest(a: T, b: K) where T : <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>String<!>, K: <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>Boolean<!> {
     a === b
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, equalityExpression, functionDeclaration,
+integerLiteral, interfaceDeclaration, nullableType, override, typeConstraint, typeParameter */

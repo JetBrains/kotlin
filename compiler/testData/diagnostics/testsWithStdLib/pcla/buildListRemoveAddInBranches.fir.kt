@@ -15,3 +15,5 @@ fun bar(arg: Boolean) = buildList {
         removeLast()
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, ifExpression, integerLiteral, lambdaLiteral */

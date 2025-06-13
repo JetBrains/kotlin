@@ -17,3 +17,6 @@ fun getCompInverted(): Comparator<Foo?> =
                     else -> compareBy({ it.a }, { it.b })
                 }
         )
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, nullableType, primaryConstructor,
+propertyDeclaration, starProjection, whenExpression */

@@ -10,3 +10,5 @@ internal abstract class Bar(protected val foo: Foo) {
     protected inline val inlineContext: String
         get() = foo.context as String
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, getter, primaryConstructor, propertyDeclaration */

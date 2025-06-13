@@ -14,3 +14,6 @@ val a4 : B = <!TYPE_MISMATCH!>A::class<!>
 
 val a5 : KClass<out List<String>> = listOfString::class
 val a6 : KClass<out Array<String>> = arrayOfString::class
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, classReference, outProjection, propertyDeclaration,
+starProjection */

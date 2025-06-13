@@ -28,3 +28,6 @@ fun test() {
         <!SMARTCAST_IMPOSSIBLE!>s<!>.onlyInSub
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, flexibleType, functionDeclaration, ifExpression, integerLiteral,
+isExpression, javaProperty, javaType, override, propertyDeclaration, smartcast, stringLiteral */

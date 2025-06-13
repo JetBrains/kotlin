@@ -17,3 +17,6 @@ fun main() {
         findByName("")
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, interfaceDeclaration, lambdaLiteral, nullableType, objectDeclaration, stringLiteral, typeParameter */

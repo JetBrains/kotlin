@@ -16,3 +16,6 @@ fun test() {
     val cst = select(O1, O2)
     <!DEBUG_INFO_EXPRESSION_TYPE("Rec<*> & I1")!>cst<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, localProperty, nullableType,
+objectDeclaration, propertyDeclaration, typeConstraint, typeParameter, vararg */

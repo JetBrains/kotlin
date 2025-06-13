@@ -7,3 +7,5 @@ interface C
 open class D
 
 interface E : <!INTERFACE_WITH_SUPERCLASS, SUPERTYPE_INITIALIZED_IN_INTERFACE!>A<!>(), C, <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_INITIALIZED_IN_INTERFACE!>D<!>()
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration */

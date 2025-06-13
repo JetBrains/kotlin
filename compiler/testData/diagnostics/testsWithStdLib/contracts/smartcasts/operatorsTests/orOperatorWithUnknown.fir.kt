@@ -59,3 +59,6 @@ fun annotatedFalseWithVariable(x: Any?, b: Boolean) {
         x.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contractConditionalEffect, contracts, disjunctionExpression, equalityExpression,
+functionDeclaration, ifExpression, integerLiteral, isExpression, lambdaLiteral, nullableType, smartcast */

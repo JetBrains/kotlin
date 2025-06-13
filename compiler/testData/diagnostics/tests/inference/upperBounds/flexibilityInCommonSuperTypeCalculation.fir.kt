@@ -271,3 +271,7 @@ fun case_14() {
     result_7
     result_8
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, dnnType, equalityExpression, flexibleType, functionDeclaration,
+ifExpression, integerLiteral, intersectionType, javaFunction, localProperty, nullableType, outProjection,
+primaryConstructor, propertyDeclaration, smartcast, stringLiteral, typeParameter, vararg */

@@ -48,3 +48,6 @@ fun test4() = entries
 
 context(Bar)
 fun Baz.test5() = w
+
+/* GENERATED_FIR_TAGS: classDeclaration, enumDeclaration, enumEntry, funWithExtensionReceiver, functionDeclaration,
+functionDeclarationWithContext, integerLiteral, primaryConstructor, propertyDeclaration */

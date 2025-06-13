@@ -9,3 +9,6 @@ fun test(a: Any?) {
     val c: Any? = a
     c<!UNSAFE_CALL!>.<!>hashCode()
 }
+
+/* GENERATED_FIR_TAGS: equalityExpression, functionDeclaration, ifExpression, localProperty, nullableType,
+propertyDeclaration, smartcast */

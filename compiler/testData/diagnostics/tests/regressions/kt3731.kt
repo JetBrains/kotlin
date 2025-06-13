@@ -17,3 +17,6 @@ class B {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, init, lambdaLiteral, nestedClass,
+thisExpression, typeWithExtension */

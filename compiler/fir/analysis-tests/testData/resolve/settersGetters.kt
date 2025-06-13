@@ -7,3 +7,5 @@ class SomeClass {
         }
 
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, integerLiteral, propertyDeclaration, setter */

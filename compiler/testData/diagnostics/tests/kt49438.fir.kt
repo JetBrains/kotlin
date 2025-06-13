@@ -6,3 +6,6 @@ val x3 = foo<<!UNRESOLVED_REFERENCE!>unresolved<!>.() -> Float> <!CANNOT_INFER_R
 val x4 = foo<(Array<<!UNRESOLVED_REFERENCE!>unresolved<!>>) -> Int> { it.size }
 
 fun <T> bar() = foo<(T) -> String> { it.toString() }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, lambdaLiteral, nullableType, propertyDeclaration,
+thisExpression, typeParameter, typeWithExtension */

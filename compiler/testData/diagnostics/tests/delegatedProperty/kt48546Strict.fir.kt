@@ -40,3 +40,6 @@ object DelegateTest2 {
         0
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, integerLiteral, lambdaLiteral, multiplicativeExpression,
+objectDeclaration, propertyDeclaration, propertyDelegate, stringLiteral */

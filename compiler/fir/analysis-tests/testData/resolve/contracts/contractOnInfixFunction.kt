@@ -27,3 +27,7 @@ fun test_2(b: Boolean?, x: Any) {
         b.not()
     }
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression,
+funWithExtensionReceiver, functionDeclaration, ifExpression, infix, isExpression, lambdaLiteral, nullableType, smartcast,
+thisExpression */

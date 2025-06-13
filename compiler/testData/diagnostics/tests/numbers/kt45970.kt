@@ -58,3 +58,5 @@ class Member {
     val h_1: Long = 1 + 2
     var h_2: Long = 1 + 2
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, propertyDeclaration */

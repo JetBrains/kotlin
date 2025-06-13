@@ -62,3 +62,6 @@ fun consumeF(vararg bases: BaseBuildee<TargetType>) {}
 fun BaseBuildee<TargetType>.consumeG() {}
 
 infix fun BaseBuildee<TargetType>.consumeH(base: BaseBuildee<TargetType>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+lambdaLiteral, localFunction, nullableType, thisExpression, typeParameter, typeWithExtension, vararg */

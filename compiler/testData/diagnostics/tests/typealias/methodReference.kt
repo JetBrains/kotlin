@@ -7,3 +7,6 @@ class C {
 typealias CA = C
 
 val cf = CA::foo
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, propertyDeclaration,
+typeAliasDeclaration */

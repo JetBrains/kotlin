@@ -266,3 +266,7 @@ class PropHolder {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>internalVarPropInline<!> = ""
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, getter, inline, inner, integerLiteral, javaType, nullableType, objectDeclaration, propertyDeclaration,
+reified, setter, stringLiteral, typeParameter */

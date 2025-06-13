@@ -17,3 +17,5 @@ public class Foo {
 fun main() {
     javaPackage.Foo.<!INVISIBLE_REFERENCE!>Bar<!>.<!INVISIBLE_MEMBER!>doSmth<!>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction */

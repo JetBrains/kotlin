@@ -9,3 +9,6 @@ fun <R> generate(g: suspend Controller.() -> R): R = TODO()
 val test1 = generate {
     3
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+nullableType, propertyDeclaration, suspend, typeParameter, typeWithExtension */

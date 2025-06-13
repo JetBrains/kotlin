@@ -33,3 +33,7 @@ private inline fun <reified D : FirCallableMemberDeclaration<D>, reified S : Fir
     if (originalSymbol.dispatchReceiverClassOrNull() == true && someCondition) return
     computeBaseSymbols(originalSymbol, basedSymbol, computeDirectOverridden)
 }
+
+/* GENERATED_FIR_TAGS: andExpression, equalityExpression, funWithExtensionReceiver, functionDeclaration, functionalType,
+ifExpression, inline, interfaceDeclaration, isExpression, nullableType, propertyDeclaration, reified, smartcast,
+starProjection, typeConstraint, typeParameter, typeWithExtension */

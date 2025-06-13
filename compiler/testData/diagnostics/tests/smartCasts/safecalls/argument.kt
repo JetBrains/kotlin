@@ -6,3 +6,6 @@ fun calc(x: List<String>?): Int {
     // x?. or x!! above should not provide smart cast here
     return x<!UNSAFE_CALL!>.<!>size
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, checkNotNullCall, functionDeclaration, integerLiteral, nullableType, safeCall,
+smartcast */

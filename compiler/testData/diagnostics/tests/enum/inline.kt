@@ -3,3 +3,5 @@
 enum class My {
     inline
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry */

@@ -32,3 +32,6 @@ fun testB(b: B) {
     call(B()::foo)
     call(B.Companion::foo)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, objectDeclaration, stringLiteral */

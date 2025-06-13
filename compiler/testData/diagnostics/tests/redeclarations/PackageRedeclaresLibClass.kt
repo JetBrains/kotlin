@@ -2,3 +2,5 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 package kotlin.collections.List
+
+/* GENERATED_FIR_TAGS:  */

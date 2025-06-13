@@ -9,3 +9,6 @@ fun test(l: MutableList<out Int>) {
     val b = foo(l)
     b checkType { _< MutableList<out Int> >() }
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, lambdaLiteral, localProperty, nullableType, outProjection, propertyDeclaration, typeParameter, typeWithExtension */

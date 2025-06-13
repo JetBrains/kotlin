@@ -20,3 +20,5 @@ expect class Foo
 // MODULE: main()()(common, intermediate)
 <!AMBIGUOUS_EXPECTS!>actual<!> fun foo() {}
 <!AMBIGUOUS_EXPECTS!>actual<!> class Foo
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, classReference, expect, functionDeclaration */

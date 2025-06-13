@@ -34,3 +34,6 @@ fun foo() {
     <!WRONG_MODIFIER_TARGET!>actual<!> var x = 42
     <!WRONG_MODIFIER_TARGET!>actual<!> class Bar
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, init, integerLiteral, localClass,
+localFunction, localProperty, nestedClass, primaryConstructor, propertyDeclaration, typeAliasDeclaration */

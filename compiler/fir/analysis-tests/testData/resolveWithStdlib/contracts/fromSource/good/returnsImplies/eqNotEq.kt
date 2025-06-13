@@ -32,3 +32,6 @@ fun test_2(x: String?) {
     trickyRequireNotNull(x)
     x.length
 }
+
+/* GENERATED_FIR_TAGS: classReference, contractConditionalEffect, contracts, equalityExpression, functionDeclaration,
+ifExpression, lambdaLiteral, nullableType, smartcast */

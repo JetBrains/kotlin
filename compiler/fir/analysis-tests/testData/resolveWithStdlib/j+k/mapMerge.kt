@@ -4,3 +4,6 @@
 fun foo(x: MutableMap<String, List<String>>) {
     x.merge("", listOf("")) { a, b -> a + b }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, functionDeclaration, inProjection, lambdaLiteral, nullableType, outProjection,
+samConversion, stringLiteral */

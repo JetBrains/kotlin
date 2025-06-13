@@ -11,3 +11,5 @@ class RedefinePropertyInFor() {
 
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, forLoop, functionDeclaration, integerLiteral, localProperty, primaryConstructor,
+propertyDeclaration, rangeExpression */

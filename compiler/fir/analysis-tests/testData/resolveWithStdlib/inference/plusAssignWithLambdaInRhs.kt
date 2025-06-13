@@ -18,3 +18,6 @@ fun <T> postpone(computation: () -> T): A<T> {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

@@ -8,3 +8,6 @@ fun test(array: Array<Array<out Int>>) {
 
     val f: Array<out Array<out Int>> = foo(<!ARGUMENT_TYPE_MISMATCH!>array<!>)
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localProperty, nullableType, outProjection, propertyDeclaration,
+typeParameter */

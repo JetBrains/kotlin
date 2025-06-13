@@ -15,3 +15,5 @@ public class B extends A {
 
 const val K1 = B.FOO
 const val K2 = A.FOO
+
+/* GENERATED_FIR_TAGS: const, javaProperty, propertyDeclaration */

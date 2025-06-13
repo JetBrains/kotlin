@@ -16,3 +16,6 @@ fun foo() {
             <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a1 == a2<!>
     ) val b = 1
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, comparisonExpression, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, primaryConstructor, propertyDeclaration, vararg */

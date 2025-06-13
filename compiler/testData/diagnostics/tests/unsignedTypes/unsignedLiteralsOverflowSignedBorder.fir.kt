@@ -24,3 +24,5 @@ fun test() {
 
 val s1: UByte = <!INITIALIZER_TYPE_MISMATCH!>256u<!>
 val s2 = <!INT_LITERAL_OUT_OF_RANGE!>18446744073709551616u<!>
+
+/* GENERATED_FIR_TAGS: const, functionDeclaration, propertyDeclaration, starProjection, unsignedLiteral */

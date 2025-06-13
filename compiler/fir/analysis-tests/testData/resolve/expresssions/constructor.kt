@@ -6,3 +6,5 @@ class C {
 
 fun foo() = C()
 fun bar() = foo().create()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration */

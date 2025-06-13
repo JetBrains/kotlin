@@ -43,3 +43,6 @@ open class Aside<S>(val s: S) {
 }
 
 class Diamond<D>(d: D) : Foo<D>, Aside<D>(d)
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, flexibleType, functionDeclaration, javaFunction,
+javaType, nullableType, override, primaryConstructor, propertyDeclaration, typeParameter */

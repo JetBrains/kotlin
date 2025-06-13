@@ -42,3 +42,5 @@ interface Test14 {
 }
 fun interface Test15 : Test14
 
+/* GENERATED_FIR_TAGS: funInterface, functionDeclaration, integerLiteral, interfaceDeclaration, multiplicativeExpression,
+nullableType, propertyDeclaration, suspend, typeParameter */

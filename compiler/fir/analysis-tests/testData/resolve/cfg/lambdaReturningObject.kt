@@ -13,3 +13,6 @@ fun <T> MyOut(init: () -> T): Out<T> = TODO()
 fun foo() {
     bar(MyOut { IrStarProjectionImpl })
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral, nullableType,
+objectDeclaration, out, typeParameter */

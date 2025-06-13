@@ -19,3 +19,6 @@ fun f(e: HappyEnum) {
         CASE2 -> throw UnsupportedOperationException() // unresolved references
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, smartcast, whenExpression,
+whenWithSubject */

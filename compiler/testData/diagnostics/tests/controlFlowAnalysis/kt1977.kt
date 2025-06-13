@@ -52,3 +52,6 @@ fun foo() {
 
 fun bar() {
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, tryExpression */

@@ -16,3 +16,6 @@ fun test(boxOwner: Owner<Box<Interface>>) {
         <!ARGUMENT_TYPE_MISMATCH!>boxOwner<!>.<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>unpack<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, funWithExtensionReceiver, functionDeclaration, functionalType,
+interfaceDeclaration, lambdaLiteral, nullableType, typeParameter */

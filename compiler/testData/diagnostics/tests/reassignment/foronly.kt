@@ -9,3 +9,6 @@ fun foo(k: Int): Int {
     }
     return <!UNINITIALIZED_VARIABLE!>i<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration,
+rangeExpression */

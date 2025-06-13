@@ -12,3 +12,5 @@ class Sub : Super<String>() {
         constructor(x: Int) : super() {}
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, inner, nullableType, secondaryConstructor, typeParameter */

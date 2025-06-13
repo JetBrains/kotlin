@@ -14,3 +14,5 @@ fun bar(x: String, y: String?) {
     x <!CAST_NEVER_SUCCEEDS!>as<!> Nothing?
     y as Nothing?
 }
+
+/* GENERATED_FIR_TAGS: asExpression, functionDeclaration, nullableType */

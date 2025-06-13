@@ -9,3 +9,5 @@ fun <T> foo(c: Inv<T>, v: T) {}
 fun <T> test(x: Inv<T>, v: T) {
     foo(x) { v }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, lambdaLiteral, nullableType, typeParameter */

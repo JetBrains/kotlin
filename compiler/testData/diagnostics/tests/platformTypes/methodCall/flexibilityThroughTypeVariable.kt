@@ -17,3 +17,5 @@ fun takeConvertor(c: Convertor<String, String>) {}
 fun main() {
     takeConvertor(Convertor { null })
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaType, lambdaLiteral */

@@ -10,3 +10,5 @@ final enum class Third {
 }
 // Now inspection
 final object Sixth
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration */

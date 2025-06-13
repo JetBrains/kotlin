@@ -14,3 +14,6 @@ val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T: <!UPPER_BOUND_IS_EXTE
 class A2<T> where T : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(Double)<!> (Int) -> Unit<!>
 
 interface B2<T, U : <!UPPER_BOUND_IS_EXTENSION_OR_CONTEXT_FUNCTION_TYPE!><!UNSUPPORTED_FEATURE!>context(T)<!> () -> Unit<!>>
+
+/* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, functionDeclaration, functionalType, interfaceDeclaration,
+nullableType, propertyDeclaration, typeConstraint, typeParameter, typeWithContext, typeWithExtension */

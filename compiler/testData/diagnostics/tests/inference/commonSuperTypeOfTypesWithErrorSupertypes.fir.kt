@@ -13,3 +13,6 @@ class Bar<B : <!CYCLIC_GENERIC_UPPER_BOUND!>B<!>> : Foo<B> {
         42
     )<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, interfaceDeclaration, nullableType,
+propertyDeclaration, typeConstraint, typeParameter, vararg */

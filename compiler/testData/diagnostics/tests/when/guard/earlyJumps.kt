@@ -22,3 +22,7 @@ fun earlyJumpInGuard(x: Any) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, break, continue, disjunctionExpression, elvisExpression, equalityExpression,
+forLoop, functionDeclaration, guardCondition, integerLiteral, isExpression, lambdaLiteral, localProperty,
+propertyDeclaration, rangeExpression, smartcast, stringLiteral, typeAliasDeclaration, whenExpression, whenWithSubject */

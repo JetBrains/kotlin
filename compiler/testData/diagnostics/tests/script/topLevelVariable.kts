@@ -20,3 +20,5 @@ fun foo() {
     val a: Int by Delegate()
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nullableType, operator,
+propertyDeclaration, propertyDelegate, starProjection */

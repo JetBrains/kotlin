@@ -19,3 +19,6 @@ fun A.baz() {
     }
     foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration, ifExpression,
+nullableType, smartcast, thisExpression */

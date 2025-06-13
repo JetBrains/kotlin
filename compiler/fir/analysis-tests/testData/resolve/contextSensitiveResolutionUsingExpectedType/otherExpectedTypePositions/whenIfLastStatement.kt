@@ -73,3 +73,7 @@ fun testIfElse(i: Int) {
         else ClassMemberAlias
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, equalityExpression, functionDeclaration, functionalType,
+ifExpression, integerLiteral, lambdaLiteral, localProperty, nestedClass, nullableType, objectDeclaration,
+propertyDeclaration, stringLiteral, typeParameter */

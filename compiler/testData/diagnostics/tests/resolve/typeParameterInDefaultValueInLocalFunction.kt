@@ -7,3 +7,5 @@ fun foo() {
 }
 
 fun <T> listOf(): List<T> = TODO()
+
+/* GENERATED_FIR_TAGS: functionDeclaration, localFunction, nullableType, typeParameter */

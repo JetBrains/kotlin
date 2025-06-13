@@ -14,3 +14,6 @@ interface Parameter
 class ChildParameter<R : Recursive<R>> : Parameter
 
 interface Recursive<R : Recursive<R>>
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, starProjection,
+typeConstraint, typeParameter */

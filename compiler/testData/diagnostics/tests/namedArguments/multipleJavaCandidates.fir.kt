@@ -14,3 +14,5 @@ fun test() {
     A(<!NAMED_ARGUMENTS_NOT_ALLOWED!>b<!> = "", <!NAMED_ARGUMENTS_NOT_ALLOWED!>c<!> = "")
     A(<!NAMED_ARGUMENTS_NOT_ALLOWED!>b<!> = "", "")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaFunction, javaType, stringLiteral */

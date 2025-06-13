@@ -5,3 +5,6 @@ fun main() {
         v += 1
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, forLoop, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration, rangeExpression */

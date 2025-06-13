@@ -18,3 +18,6 @@ class A {
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class ExperimentalTime
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, lambdaLiteral,
+localProperty, propertyDeclaration, stringLiteral */

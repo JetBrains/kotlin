@@ -43,3 +43,7 @@ fun baz(v: Options): String {
         is Options.B -> "B"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nestedClass, nullableType, objectDeclaration, operator, override, primaryConstructor,
+propertyDeclaration, sealed, smartcast, stringLiteral, whenExpression, whenWithSubject */

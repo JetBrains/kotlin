@@ -74,3 +74,6 @@ fun test_7(x: Any) {
     } while (true)
     x.foo()
 }
+
+/* GENERATED_FIR_TAGS: asExpression, break, doWhileLoop, functionDeclaration, ifExpression, interfaceDeclaration,
+smartcast, whileLoop */

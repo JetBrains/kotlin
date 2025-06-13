@@ -26,3 +26,6 @@ typealias DDD = C
 class CKt : QQQ, DDD {
     constructor(s: String) : super(s)
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, javaType, primaryConstructor, propertyDeclaration,
+secondaryConstructor, typeAliasDeclaration */

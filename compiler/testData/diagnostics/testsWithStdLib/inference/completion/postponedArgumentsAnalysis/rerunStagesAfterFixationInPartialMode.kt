@@ -26,3 +26,6 @@ class Foo<W>(y: Wrapper<List<W>>) {
         ArrayList<W>().foo(y.unwrap { it })
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, init, inline,
+lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

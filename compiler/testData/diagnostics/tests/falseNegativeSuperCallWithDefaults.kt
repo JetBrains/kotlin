@@ -22,3 +22,6 @@ class Final(f:Foo): FooFoo(f) {
         super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>test<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, inheritanceDelegation, integerLiteral,
+interfaceDeclaration, override, primaryConstructor, propertyDeclaration, superExpression */

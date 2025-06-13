@@ -109,3 +109,7 @@ fun main(b: Boolean, i: Int) {
         else L
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, functionalType, ifExpression,
+integerLiteral, lambdaLiteral, localProperty, nullableType, propertyDeclaration, typeParameter, whenExpression,
+whenWithSubject */

@@ -27,3 +27,6 @@ fun fun4(b: Boolean): MyEnum {
     if (b) return Option1
     return Option2
 }
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, functionDeclaration, getter, ifExpression,
+objectDeclaration, propertyDeclaration, stringLiteral */

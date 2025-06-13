@@ -44,3 +44,6 @@ fun main(suspend: WLambdaInvoke) {
 class WLambdaInvoke {
     operator fun invoke(l: () -> Unit) {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, callableReference, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, localProperty, nullableType, operator, propertyDeclaration, suspend */

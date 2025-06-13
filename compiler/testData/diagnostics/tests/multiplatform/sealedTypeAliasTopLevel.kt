@@ -15,3 +15,5 @@ actual typealias Presence = P
 sealed class P
 actual object Online : P()
 actual object Offline : P()
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, objectDeclaration, sealed, typeAliasDeclaration */

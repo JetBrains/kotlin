@@ -8,3 +8,6 @@ fun foo(a: A) {
     checkSubtype<Int>(a.component1())
     checkSubtype<String>(a.component2())
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,
+nullableType, primaryConstructor, propertyDeclaration, typeParameter, typeWithExtension */

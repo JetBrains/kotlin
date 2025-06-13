@@ -12,3 +12,5 @@ fun foo() = 2
 package c
 
 import a.foo
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral */

@@ -5,3 +5,5 @@ fun foo(map: MutableMap<Int, String>) {
         "Hello" + " world"
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, lambdaLiteral, stringLiteral */

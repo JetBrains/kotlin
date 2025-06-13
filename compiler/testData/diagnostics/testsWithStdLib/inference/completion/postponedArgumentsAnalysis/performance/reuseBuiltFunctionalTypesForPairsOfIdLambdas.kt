@@ -43,3 +43,6 @@ class A {
             to(id { a, b, c, d -> }, id { a, b, c, d -> }),
         )
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, interfaceDeclaration, lambdaLiteral,
+nullableType, out, propertyDeclaration, typeParameter, vararg */

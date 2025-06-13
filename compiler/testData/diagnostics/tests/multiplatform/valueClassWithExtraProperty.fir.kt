@@ -16,3 +16,6 @@ expect value class Value(val x: Int) {
 actual value class Value(val x: Int) {
     context(x: String)
     val <!ACTUAL_MISSING!>x<!>: Int get() = 1}
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, integerLiteral, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, value */

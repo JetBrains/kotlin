@@ -74,3 +74,6 @@ actual typealias E3 = B  // OK
 actual class Base: IBase() {
     actual override fun foo(a: String) { }
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, interfaceDeclaration, nestedClass,
+override, typeAliasDeclaration */

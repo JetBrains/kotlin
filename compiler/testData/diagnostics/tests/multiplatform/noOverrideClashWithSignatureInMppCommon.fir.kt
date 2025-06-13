@@ -38,3 +38,6 @@ fun foo(a: A, ka: B) {
 }
 
 fun box() = "OK"
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, javaFunction, javaType,
+primaryConstructor, stringLiteral */

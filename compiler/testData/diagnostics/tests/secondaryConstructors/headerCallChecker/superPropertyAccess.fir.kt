@@ -5,3 +5,6 @@ class A : B {
     constructor(x: Int, y: Int = <!INITIALIZER_TYPE_MISMATCH!>x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>super<!>.prop<!>) :
         super(<!ARGUMENT_TYPE_MISMATCH!>x + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>prop<!> + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.prop + <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>super<!>.prop<!>)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, primaryConstructor, propertyDeclaration,
+secondaryConstructor, thisExpression */

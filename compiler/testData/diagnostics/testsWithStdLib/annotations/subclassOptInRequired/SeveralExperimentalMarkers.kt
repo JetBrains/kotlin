@@ -11,3 +11,6 @@ annotation class ApiMarkerB
 open class OpenKlass
 
 class MyKlass() : <!OPT_IN_TO_INHERITANCE_ERROR!>OpenKlass<!>()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
+primaryConstructor */

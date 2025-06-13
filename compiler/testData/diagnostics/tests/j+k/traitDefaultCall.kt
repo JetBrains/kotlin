@@ -40,3 +40,6 @@ class A2 : KTrait2 {
         test()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+superExpression */

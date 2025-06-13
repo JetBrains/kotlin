@@ -15,3 +15,6 @@ fun test1(lambda: Lambda?): (Any?) -> Unit =
 
 fun test2(q: ((Any?) -> Unit)?, lambda: Lambda): (Any?) -> Unit =
     q ?: run { lambda::invalidate }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, elvisExpression, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, safeCall */

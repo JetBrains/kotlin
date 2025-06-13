@@ -26,3 +26,6 @@ abstract class My(val v: Int) {
         u = 3
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, multiplicativeExpression,
+primaryConstructor, propertyDeclaration, secondaryConstructor, setter */

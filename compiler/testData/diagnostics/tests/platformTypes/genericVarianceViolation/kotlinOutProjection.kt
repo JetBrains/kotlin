@@ -41,3 +41,5 @@ fun bar() : MutableList<out Number> {
 fun bar2() : MutableList<MutableList<out Number>> {
     TODO()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaType, outProjection */

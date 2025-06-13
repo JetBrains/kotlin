@@ -20,3 +20,6 @@ class Derived : Base() {
         else this.baz(super.bar(<!ARGUMENT_TYPE_MISMATCH!>y<!>))
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, localProperty, nullableType, propertyDeclaration, smartcast, superExpression, thisExpression */

@@ -20,3 +20,5 @@ actual typealias A2 = B2
 actual open class <!EXPECT_ACTUAL_INCOMPATIBLE_SUPERTYPES!>B2<!> {}
 
 actual typealias A3 = Any
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, primaryConstructor, typeAliasDeclaration */

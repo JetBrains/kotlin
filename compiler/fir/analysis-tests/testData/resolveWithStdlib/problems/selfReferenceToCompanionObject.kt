@@ -19,3 +19,6 @@ enum class Test(val x: String, val closure1: () -> String) {
 }
 
 fun box() = Host.Companion.fn()
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+functionalType, lambdaLiteral, objectDeclaration, primaryConstructor, propertyDeclaration, stringLiteral */

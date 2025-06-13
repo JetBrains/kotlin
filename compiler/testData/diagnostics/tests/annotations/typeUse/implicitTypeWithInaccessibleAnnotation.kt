@@ -14,3 +14,6 @@ object TopLevelObject {
 }
 
 fun implicitType2() = TopLevelObject.expectedType2()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, functionDeclaration, integerLiteral, objectDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

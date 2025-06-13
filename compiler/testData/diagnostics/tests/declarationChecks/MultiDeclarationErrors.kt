@@ -19,3 +19,6 @@ fun test(mc1: MyClass, mc2: MyClass2) {
 }
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, funWithExtensionReceiver, functionDeclaration,
+localProperty, nullableType, outProjection, propertyDeclaration, vararg */

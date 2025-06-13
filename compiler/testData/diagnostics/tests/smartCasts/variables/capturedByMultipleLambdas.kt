@@ -30,3 +30,6 @@ fun test() {
     )
     s = null
 }
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, functionDeclaration, functionalType, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

@@ -10,3 +10,5 @@ fun test_1() {
 fun test_2() {
     take(<!UNRESOLVED_REFERENCE!>suspend<!><!SYNTAX!><!> <!TOO_MANY_ARGUMENTS!>fun () {}<!>)
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, suspend */

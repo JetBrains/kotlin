@@ -19,3 +19,5 @@ fun main(a: A) {
     a.foo("1")
     a.foo("2", "3")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, stringLiteral, vararg */

@@ -49,3 +49,6 @@ fun javaClassTest(a: A2<*>, b: B2<*>, c: C2<*>, d: D2<*>) {
     c.foo()
     d.foo()
 }
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, functionDeclaration, javaType, localProperty,
+override, propertyDeclaration, starProjection, typeConstraint, typeParameter, vararg */

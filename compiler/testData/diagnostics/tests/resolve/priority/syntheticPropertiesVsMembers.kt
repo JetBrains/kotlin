@@ -36,3 +36,7 @@ fun test(a: A, b: B, c: C) {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaProperty, javaType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, typeParameter,
+typeWithExtension */

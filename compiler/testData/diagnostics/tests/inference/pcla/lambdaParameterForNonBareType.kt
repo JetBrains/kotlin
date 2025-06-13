@@ -26,3 +26,7 @@ fun main(a: A<String>, c: C) {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("CommonSupertype")!>x2<!>
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, interfaceDeclaration, isExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, suspend, thisExpression, typeParameter,
+typeWithExtension */

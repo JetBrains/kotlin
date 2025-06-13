@@ -4,3 +4,6 @@ data class A(val x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>> = <!CANNOT_INF
         A(x ?: this.x)
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, elvisExpression, functionDeclaration, nullableType, primaryConstructor,
+propertyDeclaration, thisExpression */

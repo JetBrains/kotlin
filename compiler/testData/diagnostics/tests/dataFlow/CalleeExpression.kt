@@ -6,3 +6,6 @@ fun test(e : Any) {
         (<!DEBUG_INFO_SMARTCAST!>e<!>.f)()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, ifExpression, isExpression,
+primaryConstructor, propertyDeclaration, smartcast */

@@ -14,3 +14,5 @@ val b /*: () -> A?*/ = l@ {
 
     return@l A()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, ifExpression, lambdaLiteral, nullableType, propertyDeclaration */

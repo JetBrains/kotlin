@@ -71,3 +71,6 @@ fun yield(yield: Int) {
 }
 
 fun yield(i: (Int) -> Unit) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localClass, localProperty, propertyDeclaration, starProjection, typeConstraint, typeParameter */

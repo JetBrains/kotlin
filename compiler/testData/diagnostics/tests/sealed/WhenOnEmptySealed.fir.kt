@@ -10,3 +10,4 @@ fun foo(s: Sealed): Int {
     }
 }
 
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, sealed, whenExpression, whenWithSubject */

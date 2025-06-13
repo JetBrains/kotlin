@@ -52,3 +52,6 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
     obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>.foo()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, enumDeclaration, enumEntry, functionDeclaration,
+integerLiteral, interfaceDeclaration, nestedClass, objectDeclaration, operator, primaryConstructor */

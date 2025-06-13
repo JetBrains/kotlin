@@ -15,3 +15,6 @@ class C : B<String>("") {
         a.foo("")
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
+stringLiteral, typeParameter */

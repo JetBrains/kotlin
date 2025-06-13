@@ -71,3 +71,6 @@ fun test_10() {
     } while (false && true)
     val y = 2
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, doWhileLoop, equalityExpression, functionDeclaration,
+integerLiteral, localProperty, propertyDeclaration, whileLoop */

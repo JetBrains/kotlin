@@ -26,3 +26,7 @@ fun myLaunch(
 ): String = TODO()
 
 fun myRun(action: () -> Unit): Unit = TODO()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, ifExpression, integerLiteral,
+interfaceDeclaration, lambdaLiteral, localProperty, nullableType, propertyDeclaration, suspend, typeParameter,
+typeWithExtension */

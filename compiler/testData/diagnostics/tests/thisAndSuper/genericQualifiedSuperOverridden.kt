@@ -20,3 +20,6 @@ class Test : IDerived<String>, IBase<String> {
         super<IDerived>.qux()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, nullableType, override,
+superExpression, typeParameter */

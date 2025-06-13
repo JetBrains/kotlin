@@ -22,3 +22,5 @@ public class JavaClass {
      */
     public void doSomething2(Runnable runnable) { runnable.run(); }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, javaFunction, javaType, lambdaLiteral, samConversion */

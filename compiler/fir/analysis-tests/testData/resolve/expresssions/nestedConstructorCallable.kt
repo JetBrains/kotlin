@@ -7,3 +7,6 @@ class A {
         val y = A::Nested
     }
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, functionDeclaration, localProperty, nestedClass,
+propertyDeclaration */

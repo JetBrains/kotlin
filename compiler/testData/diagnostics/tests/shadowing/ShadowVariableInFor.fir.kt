@@ -12,3 +12,5 @@ fun ff(): Int {
 
     return i
 }
+
+/* GENERATED_FIR_TAGS: forLoop, functionDeclaration, integerLiteral, localProperty, propertyDeclaration, rangeExpression */

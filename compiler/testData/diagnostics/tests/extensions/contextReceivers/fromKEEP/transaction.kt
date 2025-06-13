@@ -17,3 +17,6 @@ fun updateUserSession() {
     session.lastAccess = now()
     storeSession(session)
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, functionDeclarationWithContext,
+interfaceDeclaration, localProperty, nullableType, primaryConstructor, propertyDeclaration */

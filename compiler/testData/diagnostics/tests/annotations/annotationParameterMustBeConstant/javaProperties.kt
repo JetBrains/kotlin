@@ -25,3 +25,6 @@ annotation class Ann(vararg val i: Int)
         <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test().i7<!>
 )
 class A
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, javaFunction, javaProperty, javaType, primaryConstructor,
+propertyDeclaration, vararg */

@@ -34,3 +34,6 @@ class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Outer<!> <!ACTUAL_WITHOUT_EXPECT!>a
     <!WRONG_MODIFIER_TARGET!>actual<!> var x = 42
     <!WRONG_MODIFIER_TARGET!>actual<!> class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, init, integerLiteral, localClass,
+localFunction, localProperty, nestedClass, primaryConstructor, propertyDeclaration, typeAliasDeclaration */

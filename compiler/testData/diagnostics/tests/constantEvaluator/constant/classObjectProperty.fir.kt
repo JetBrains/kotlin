@@ -54,3 +54,7 @@ fun foo() {
 interface Foo {
     fun f()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousObjectExpression, classDeclaration, companionObject,
+functionDeclaration, integerLiteral, interfaceDeclaration, lambdaLiteral, localProperty, objectDeclaration, override,
+propertyDeclaration */

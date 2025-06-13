@@ -10,3 +10,6 @@ public abstract class Api<T> {
 fun <E> foo(a: Api<E>, e: E?) {
     e?.let { a.typeOf(<!DEBUG_INFO_SMARTCAST!>e<!>) }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, javaType, lambdaLiteral, nullableType, safeCall, smartcast,
+typeParameter */

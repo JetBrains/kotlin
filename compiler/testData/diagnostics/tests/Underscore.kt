@@ -60,3 +60,8 @@ object `____` {
 fun test() {
     <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>____<!>.Nested.method()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, anonymousFunction, classDeclaration, data, destructuringDeclaration,
+equalityExpression, functionDeclaration, functionalType, getter, ifExpression, integerLiteral, lambdaLiteral,
+localFunction, localProperty, nestedClass, nullableType, objectDeclaration, primaryConstructor, propertyDeclaration,
+setter, smartcast, stringLiteral, typeAliasDeclaration, typeParameter, unnamedLocalVariable */

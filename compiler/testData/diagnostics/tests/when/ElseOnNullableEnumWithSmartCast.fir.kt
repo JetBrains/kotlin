@@ -19,3 +19,6 @@ fun foo(e: E, something: Any?): Int {
         <!SENSELESS_NULL_IN_WHEN!>something<!> -> 3
     }
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, equalityExpression, functionDeclaration, ifExpression, integerLiteral,
+nullableType, smartcast, whenExpression, whenWithSubject */

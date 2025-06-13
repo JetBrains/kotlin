@@ -23,3 +23,5 @@ fun test_4(b1: Boolean, b2: Boolean, b3: Boolean) {
         1
     }
 }
+
+/* GENERATED_FIR_TAGS: andExpression, disjunctionExpression, functionDeclaration, ifExpression, integerLiteral */

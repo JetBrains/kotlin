@@ -12,3 +12,6 @@ class Foo(val a: Int, b: Int) {
 
     val map: Map<String, Int> = <!INITIALIZER_TYPE_MISMATCH!>mapOf(1 to "hello")<!>
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, getter, integerLiteral, primaryConstructor,
+propertyDeclaration, stringLiteral */

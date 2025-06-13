@@ -11,3 +11,6 @@ fun processEvent(event: SomeEvent<*>) {
 }
 
 fun <ER : EventResult, ED : EventData<ER>> processEventData(eventData: ED) {}
+
+/* GENERATED_FIR_TAGS: capturedType, classDeclaration, functionDeclaration, interfaceDeclaration, primaryConstructor,
+propertyDeclaration, starProjection, typeConstraint, typeParameter */

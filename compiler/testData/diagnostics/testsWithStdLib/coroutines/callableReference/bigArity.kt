@@ -18,3 +18,5 @@ suspend fun expectsLambdaWithBigArity(c: suspend <!UNSUPPORTED_FEATURE!>(Long, L
                                                   Long, Long, Long, Long, Long, Long, Long, Long, Long, String) -> String<!>): String {
     return c.invoke(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, "OK")
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, stringLiteral, suspend */

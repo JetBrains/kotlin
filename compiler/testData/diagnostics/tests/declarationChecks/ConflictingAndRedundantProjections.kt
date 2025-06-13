@@ -20,3 +20,6 @@ fun f8(p: Inv<out X>) {}
 fun f9(p: In<*>) {}
 fun f10(p: Out<*>) {}
 fun f11(p: Inv<*>) {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, in, inProjection, nullableType, out, outProjection,
+starProjection, typeParameter */

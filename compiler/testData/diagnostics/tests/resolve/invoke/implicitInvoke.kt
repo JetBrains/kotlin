@@ -33,3 +33,6 @@ fun test(c: () -> String, e: Int.() -> String) {
         (e)()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, operator, propertyDeclaration, typeWithExtension */

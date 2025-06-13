@@ -32,3 +32,8 @@ typealias BadArgsInTypeParameter<<!WRONG_ANNOTATION_TARGET!>@TypeAnnWithArg(arg 
 typealias BadArgsInRecursive = List<Map<List<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int>, @<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> String>>
 
 typealias BadArgsMultiple = Map<@<!NO_VALUE_FOR_PARAMETER!>TypeAnnWithArg<!> Int, @TypeAnnWithArg(arg = <!CONSTANT_EXPECTED_TYPE_MISMATCH!>123<!>) Int>
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, funWithExtensionReceiver, functionDeclaration, getter,
+integerLiteral, localProperty, nullableType, outProjection, primaryConstructor, propertyDeclaration,
+propertyWithExtensionReceiver, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint,
+typeParameter */

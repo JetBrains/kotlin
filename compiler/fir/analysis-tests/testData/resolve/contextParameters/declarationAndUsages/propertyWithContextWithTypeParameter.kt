@@ -37,3 +37,6 @@ fun usageContextProperty() {
         property4
     }
 }
+
+/* GENERATED_FIR_TAGS: dnnType, functionDeclaration, getter, inProjection, lambdaLiteral, nullableType, outProjection,
+propertyDeclaration, propertyDeclarationWithContext, stringLiteral, typeConstraint, typeParameter */

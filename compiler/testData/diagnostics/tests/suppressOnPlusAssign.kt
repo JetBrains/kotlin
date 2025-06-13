@@ -10,3 +10,6 @@ fun test(a: A) {
     @Suppress("UNCHECKED_CAST")
     result += (a.list as List<Int>).filter { it > 0 }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, comparisonExpression, functionDeclaration, integerLiteral,
+lambdaLiteral, localProperty, primaryConstructor, propertyDeclaration, starProjection, stringLiteral */

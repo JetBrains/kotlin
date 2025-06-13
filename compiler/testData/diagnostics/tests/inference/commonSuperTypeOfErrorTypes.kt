@@ -19,3 +19,5 @@ fun test() {
     )
 
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, nullableType, outProjection, typeParameter */

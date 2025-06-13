@@ -16,3 +16,6 @@ fun main() {
     val c = A.ENTRY
     c.s()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, javaFunction, javaProperty, javaType, localProperty,
+propertyDeclaration */

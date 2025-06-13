@@ -41,3 +41,6 @@ class E : D(), B {
 
 
 class F : D()
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaType, nullableType, override, starProjection,
+stringLiteral */

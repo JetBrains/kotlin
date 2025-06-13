@@ -55,3 +55,6 @@ fun test5(a: B) {
         <!UNSAFE_IMPLICIT_INVOKE_CALL!>a("")<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, equalityExpression, funWithExtensionReceiver, functionDeclaration,
+functionalType, ifExpression, nullableType, operator, primaryConstructor, propertyDeclaration, smartcast, stringLiteral */

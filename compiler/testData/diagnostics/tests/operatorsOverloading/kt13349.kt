@@ -7,3 +7,5 @@ object Foo {
 fun main() {
     Foo<Int>()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, nullableType, objectDeclaration, operator, typeParameter */

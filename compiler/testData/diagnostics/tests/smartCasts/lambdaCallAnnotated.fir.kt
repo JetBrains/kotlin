@@ -10,3 +10,6 @@ fun bar(): Int = @My {
     i = 42
     i
 }()
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, assignment, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, smartcast */

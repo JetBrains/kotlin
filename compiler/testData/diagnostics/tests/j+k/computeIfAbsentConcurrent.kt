@@ -23,3 +23,6 @@ public fun concurrentMap() {
     val map = ConcHashMap<String, String>()
     map.computeIfAbsent("") { "" } // here
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, inProjection, javaFunction, javaType, lambdaLiteral,
+localProperty, outProjection, propertyDeclaration, samConversion, stringLiteral */

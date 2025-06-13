@@ -54,3 +54,6 @@ fun usage() {
     DerivedFromAnnotatedWithOverride().a
     DerivedFromAnnotatedWithOverride().baz()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, getter, interfaceDeclaration, override,
+propertyDeclaration, stringLiteral */

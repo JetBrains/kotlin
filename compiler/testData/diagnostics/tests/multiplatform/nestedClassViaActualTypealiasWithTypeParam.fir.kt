@@ -33,3 +33,6 @@ actual fun <T, R> <!ACTUAL_WITHOUT_EXPECT!>withTypeParamIncorrect<!>(p: Foo.Inne
 
 actual fun star(p: Foo.Inner<*>) {}
 actual fun <!ACTUAL_WITHOUT_EXPECT!>starVsNonStar<!>(p: Foo.Inner<Any>) {}
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, nestedClass, nullableType, starProjection,
+typeAliasDeclaration, typeParameter */

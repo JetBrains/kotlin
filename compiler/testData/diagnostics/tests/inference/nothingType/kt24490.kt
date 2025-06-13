@@ -12,3 +12,6 @@ class Case1 {
         dontRun { val x = bar(bar { -> bar { -> 2} }) }
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

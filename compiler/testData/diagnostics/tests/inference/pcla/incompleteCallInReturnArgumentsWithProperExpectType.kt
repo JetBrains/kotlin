@@ -42,3 +42,7 @@ fun <S> select(a: S, b: S): S = a
 fun <M> makeOut(): Out<M>? = null
 
 fun <M> mat(): M = null!!
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, functionDeclaration, functionalType,
+lambdaLiteral, nullableType, out, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter,
+typeWithExtension */

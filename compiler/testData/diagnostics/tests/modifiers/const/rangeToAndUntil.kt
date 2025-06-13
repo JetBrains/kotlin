@@ -17,3 +17,5 @@ const val b = 2
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val rangeUntil4 = a.rangeUntil(b)
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val rangeUntil5 = 1..<b
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val rangeUntil6 = a..<b
+
+/* GENERATED_FIR_TAGS: const, integerLiteral, propertyDeclaration, rangeExpression */

@@ -14,3 +14,6 @@ fun test() {
         <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1)
     }
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, integerLiteral, lambdaLiteral,
+starProjection, stringLiteral */

@@ -34,3 +34,7 @@ fun test(inA: In<A>) {
 }
 
 fun use(vararg a: Any?) = a
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, in, infix,
+interfaceDeclaration, intersectionType, localProperty, nullableType, outProjection, propertyDeclaration, stringLiteral,
+typeConstraint, typeParameter, typeWithExtension, vararg */

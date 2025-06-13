@@ -15,3 +15,7 @@ fun <E> List<Ref<*>>.getElement(i: Int): Ref<E> = this[i] <!UNCHECKED_CAST!>as R
 fun test(list: List<Ref<*>>) {
     val data: String by list.getElement(0)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, classDeclaration, data, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nullableType, operator, primaryConstructor, propertyDeclaration,
+propertyDelegate, starProjection, thisExpression, typeParameter */

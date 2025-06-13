@@ -10,3 +10,6 @@ fun test12() {
 }
 
 fun todo(): Nothing = throw Exception()
+
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, integerLiteral, localFunction, nullableType,
+safeCall */

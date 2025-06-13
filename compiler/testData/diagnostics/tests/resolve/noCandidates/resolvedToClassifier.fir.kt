@@ -29,3 +29,6 @@ fun <T> bar() {
 }
 
 fun baz(a: Any) {}
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, classReference, functionDeclaration,
+interfaceDeclaration, localProperty, nullableType, objectDeclaration, propertyDeclaration, stringLiteral, typeParameter */

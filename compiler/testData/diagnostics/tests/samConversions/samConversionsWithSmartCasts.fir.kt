@@ -69,3 +69,6 @@ public class J {
 
     public static <T> T id(T x) { return x; }
 }
+
+/* GENERATED_FIR_TAGS: asExpression, callableReference, flexibleType, functionDeclaration, functionalType, ifExpression,
+intersectionType, isExpression, javaFunction, javaType, samConversion, smartcast */

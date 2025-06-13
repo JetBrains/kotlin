@@ -51,3 +51,6 @@ fun bar7() {
         b()
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, lambdaLiteral, localProperty,
+propertyDeclaration */

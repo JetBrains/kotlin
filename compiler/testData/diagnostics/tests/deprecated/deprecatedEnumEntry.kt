@@ -13,3 +13,5 @@ fun use() {
     A.<!DEPRECATION!>DeprecatedEntry<!>
     A.RegularEntry
 }
+
+/* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, functionDeclaration, stringLiteral */

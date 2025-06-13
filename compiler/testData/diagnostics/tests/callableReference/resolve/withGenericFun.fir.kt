@@ -10,3 +10,6 @@ fun foo(s: String) {}
 val x1 = apply(1, ::foo)
 val x2 = apply("hello", ::foo)
 val x3 = <!CANNOT_INFER_PARAMETER_TYPE!>apply<!>(true, ::<!NONE_APPLICABLE!>foo<!>)
+
+/* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, integerLiteral, nullableType,
+propertyDeclaration, stringLiteral, typeParameter */

@@ -48,3 +48,7 @@ fun testOverriden(a: Int) {
     val a: MyClass = myClassProp
     a !in MyClass.myClassProp..NestedInheritor
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, companionObject, funWithExtensionReceiver,
+functionDeclaration, integerLiteral, localProperty, nestedClass, nullableType, objectDeclaration, operator,
+propertyDeclaration, rangeExpression, stringLiteral, typeParameter */

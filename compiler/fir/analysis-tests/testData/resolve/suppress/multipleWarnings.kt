@@ -6,3 +6,5 @@ public class A {
     @Suppress("REDUNDANT_MODALITY_MODIFIER")
     public final fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, stringLiteral */

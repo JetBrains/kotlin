@@ -36,3 +36,5 @@ fun test6() {
     s.length
 }
 
+/* GENERATED_FIR_TAGS: checkNotNullCall, functionDeclaration, localProperty, nullableType, propertyDeclaration, safeCall,
+smartcast */

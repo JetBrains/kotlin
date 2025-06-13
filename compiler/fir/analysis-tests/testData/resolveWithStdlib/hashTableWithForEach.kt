@@ -24,3 +24,7 @@ abstract class SomeHashTable<K : Any, V : Any> : AbstractMutableMap<K, V>() {
         override fun setValue(newValue: V): V = throw UnsupportedOperationException()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, getter, ifExpression, inProjection,
+javaFunction, lambdaLiteral, nestedClass, nullableType, override, primaryConstructor, propertyDeclaration, samConversion,
+typeConstraint, typeParameter */

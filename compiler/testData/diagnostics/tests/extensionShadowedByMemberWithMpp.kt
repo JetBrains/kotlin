@@ -19,3 +19,6 @@ actual val Test.<!EXTENSION_SHADOWED_BY_MEMBER!>number<!> get() = this.number
 actual class Test
 
 actual val Test.number get() = 20
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, getter, integerLiteral, propertyDeclaration,
+propertyWithExtensionReceiver, thisExpression */

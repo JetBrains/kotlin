@@ -15,3 +15,6 @@ object Scope2 {
         <!FUNCTION_EXPECTED!>foo<!>()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, integerLiteral, localProperty, nestedClass,
+objectDeclaration, propertyDeclaration */

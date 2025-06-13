@@ -7,3 +7,6 @@ class Foo {
         bar += baz
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, lateinit, propertyDeclaration,
+secondaryConstructor */

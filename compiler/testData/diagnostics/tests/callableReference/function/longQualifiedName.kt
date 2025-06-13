@@ -18,3 +18,7 @@ fun main() {
 
     checkSubtype<KFunction1<a.b.c.D, Int>>(x)
 }
+
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, funWithExtensionReceiver, functionDeclaration,
+functionalType, infix, integerLiteral, localProperty, nullableType, propertyDeclaration, typeParameter,
+typeWithExtension */

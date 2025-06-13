@@ -33,3 +33,5 @@ actual interface ByteWriteChannel {
 
     actual fun f()
 }
+
+/* GENERATED_FIR_TAGS: actual, expect, functionDeclaration, interfaceDeclaration, propertyDeclaration */

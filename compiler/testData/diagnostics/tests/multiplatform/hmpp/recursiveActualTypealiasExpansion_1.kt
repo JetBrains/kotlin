@@ -17,3 +17,5 @@ actual typealias <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>B<!> = <!RECURSIVE_TYPE
 actual fun commonFun<!ACTUAL_WITHOUT_EXPECT!>(a: <!RECURSIVE_TYPEALIAS_EXPANSION!>A<!>)<!> {}
 
 fun test() { <!UNRESOLVED_REFERENCE!>A<!>(); <!UNRESOLVED_REFERENCE!>B<!>(); }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, typeAliasDeclaration */

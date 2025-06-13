@@ -17,3 +17,6 @@ fun bar2(): List<CharSequence>? {
         container.add("")
     } ?: listOf()
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, functionalType, interfaceDeclaration, lambdaLiteral,
+nullableType, stringLiteral, typeParameter */

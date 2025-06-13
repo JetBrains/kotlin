@@ -23,3 +23,5 @@ package kotlin.internal
 
 fun apiVersionIsAtLeast(epic: Int, major: Int, minor: Int): Boolean =
         false
+
+/* GENERATED_FIR_TAGS: additiveExpression, const, functionDeclaration, integerLiteral, propertyDeclaration */

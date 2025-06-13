@@ -13,3 +13,5 @@ expect class H {
 actual class H {
     actual fun foo() {}
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration */

@@ -9,3 +9,6 @@ fun A.bar() = baz("")
 val baz = foo()
 
 fun foo(): A.(String) -> Unit = TODO()
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType,
+propertyDeclaration, stringLiteral, typeWithExtension */

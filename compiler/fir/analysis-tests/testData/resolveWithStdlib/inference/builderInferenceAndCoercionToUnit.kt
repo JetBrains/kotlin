@@ -8,3 +8,6 @@ fun test(strings: List<String>) {
         }
     )
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, lambdaLiteral, localProperty, primaryConstructor,
+propertyDeclaration, typeConstraint, typeParameter */

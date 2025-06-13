@@ -37,3 +37,6 @@ class D: B() {
         val b: String = bar()
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, funWithExtensionReceiver, functionDeclaration, init,
+integerLiteral, localProperty, objectDeclaration, propertyDeclaration, stringLiteral */

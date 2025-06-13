@@ -39,3 +39,5 @@ open class C2Typealias {
 }
 
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>C2<!> = C2Typealias
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, propertyDeclaration, typeAliasDeclaration */

@@ -27,3 +27,7 @@ fun test(a: A) {
     if (a.d is String) <!SMARTCAST_IMPOSSIBLE!>a.d<!>.length
     if (a.e is String) <!SMARTCAST_IMPOSSIBLE!>a.e<!>.length
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, classDeclaration,
+functionDeclaration, getter, ifExpression, isExpression, lambdaLiteral, propertyDeclaration, propertyDelegate, smartcast,
+stringLiteral */

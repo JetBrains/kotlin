@@ -9,3 +9,5 @@ val label_fun = label@ fun () {
 val parenthesized_label_fun = (label@ fun () {
     return@label
 })
+
+/* GENERATED_FIR_TAGS: anonymousFunction, propertyDeclaration */

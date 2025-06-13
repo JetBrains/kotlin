@@ -33,3 +33,6 @@ class A(
         A(myType = if (false) null else fun(): Int { return c!! })
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, classDeclaration, flexibleType, functionalType, ifExpression,
+integerLiteral, javaFunction, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, propertyDelegate */

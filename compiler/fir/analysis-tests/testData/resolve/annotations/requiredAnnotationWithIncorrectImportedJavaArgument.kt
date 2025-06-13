@@ -10,3 +10,5 @@ import JavaTarget.ANNOTATION_CLASS
 
 @Target(<!ARGUMENT_TYPE_MISMATCH!>ANNOTATION_CLASS<!>)
 annotation class MyAnnotation
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, javaProperty, javaType */

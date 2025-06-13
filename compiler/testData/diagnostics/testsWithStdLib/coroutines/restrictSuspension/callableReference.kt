@@ -9,3 +9,6 @@ fun test() {
     }
     seq.toList()
 }
+
+/* GENERATED_FIR_TAGS: callableReference, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,
+lambdaLiteral, localProperty, propertyDeclaration, suspend, typeWithExtension */

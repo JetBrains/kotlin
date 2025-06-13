@@ -16,3 +16,6 @@ fun <K : C<Int>> main() {
     val foo = Foo<K>()
     Bar<B<String>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, interfaceDeclaration, intersectionType,
+localProperty, nullableType, out, propertyDeclaration, typeConstraint, typeParameter */

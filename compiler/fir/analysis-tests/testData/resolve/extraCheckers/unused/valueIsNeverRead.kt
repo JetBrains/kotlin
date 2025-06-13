@@ -5,3 +5,6 @@ fun foo() {
     a = 3
     <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> += 1
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, functionDeclaration, integerLiteral, localProperty,
+propertyDeclaration */

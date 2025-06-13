@@ -16,3 +16,6 @@ fun test2(a: Any?, b: Any?): String {
     if (a !is String?) return ""
     return a ?: b
 }
+
+/* GENERATED_FIR_TAGS: elvisExpression, functionDeclaration, ifExpression, interfaceDeclaration, isExpression,
+nullableType, propertyDeclaration, safeCall, smartcast, stringLiteral */

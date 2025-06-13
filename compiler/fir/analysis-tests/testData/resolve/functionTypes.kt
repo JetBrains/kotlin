@@ -15,3 +15,5 @@ interface KProperty<out R>
 
 interface KMutableProperty<R>
 
+/* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration, nullableType,
+out, typeParameter, typeWithExtension */

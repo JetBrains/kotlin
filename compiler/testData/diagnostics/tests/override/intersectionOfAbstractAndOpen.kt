@@ -54,3 +54,5 @@ public interface BasicIdentifiedElement extends BasicElement
 fun foo(t: VertLikeTable) {
     t.foo()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, javaType */

@@ -7,3 +7,5 @@ fun main() {
     foo()
     foo("!")
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, stringLiteral, vararg */

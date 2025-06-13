@@ -17,3 +17,5 @@ expect public val <!REDECLARATION, REDECLARATION{JVM}!>foo<!>: Int
 
 // MODULE: main()()(intermediate2)
 actual public val <!AMBIGUOUS_EXPECTS!>foo<!>: Int = 1
+
+/* GENERATED_FIR_TAGS: actual, classReference, expect, integerLiteral, propertyDeclaration */

@@ -12,3 +12,5 @@ class Other
 annotation class SinceKotlin {
     annotation class SinceKotlin
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, nestedClass */

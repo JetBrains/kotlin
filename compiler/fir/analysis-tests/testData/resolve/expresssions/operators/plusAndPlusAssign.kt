@@ -8,3 +8,5 @@ fun test() {
     var f = Foo()
     f <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> f
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, operator, propertyDeclaration */

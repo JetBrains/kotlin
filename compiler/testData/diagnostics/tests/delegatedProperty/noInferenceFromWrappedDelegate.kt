@@ -14,3 +14,6 @@ inline fun <M> remember(block: () -> M): M = block()
 val list by remember { State(listOf(0)) }
 val first = list.first()
 
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, inline,
+integerLiteral, lambdaLiteral, nullableType, operator, primaryConstructor, propertyDeclaration, propertyDelegate,
+starProjection, typeParameter */

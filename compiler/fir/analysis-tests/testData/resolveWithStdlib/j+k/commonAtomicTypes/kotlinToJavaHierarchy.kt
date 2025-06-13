@@ -31,3 +31,6 @@ fun usage(x: JavaClassWithFakeOverride) {
     val t1: AtomicInt = x.a
     val t2: AtomicInteger = <!INITIALIZER_TYPE_MISMATCH!>x.a<!>
 }
+
+/* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classDeclaration, classReference, functionDeclaration,
+integerLiteral, javaFunction, javaType, localProperty, propertyDeclaration */

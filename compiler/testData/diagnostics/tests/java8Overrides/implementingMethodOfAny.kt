@@ -8,3 +8,6 @@ interface IA {
         return 42;
     }<!>
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, operator, override,
+stringLiteral, superExpression */

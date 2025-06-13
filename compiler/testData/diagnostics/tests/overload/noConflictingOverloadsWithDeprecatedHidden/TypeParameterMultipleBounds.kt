@@ -16,3 +16,5 @@ interface Test2 {
     <!CONFLICTING_OVERLOADS!>@Deprecated("foo", level = DeprecationLevel.HIDDEN)
     fun <T> foo(t: T)<!> where T : I2, T : I1
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, stringLiteral, typeConstraint, typeParameter */

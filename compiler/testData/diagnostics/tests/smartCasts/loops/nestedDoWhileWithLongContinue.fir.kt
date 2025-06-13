@@ -13,3 +13,6 @@ public fun foo(p: String?, r: String?): Int {
     // Auto cast possible
     return p.length
 }
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, continue, doWhileLoop, equalityExpression, functionDeclaration, ifExpression,
+nullableType, smartcast */

@@ -98,3 +98,5 @@ open class Foo  {
         b33 = 1
     }
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, getter, init, integerLiteral, propertyDeclaration, setter */

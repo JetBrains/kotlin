@@ -35,3 +35,6 @@ fun foo(x1: Outer<Int>, x2: Outer<Int>.Inner) {
     x2.foo2().checkType { _<Double>() }
     x2.foo3().checkType { _<String>() }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
+infix, javaType, lambdaLiteral, nullableType, typeParameter, typeWithExtension */

@@ -19,3 +19,6 @@ class B {}
 // However, the cheking is simplified because it is time-consuming process.
 <!SUBTYPING_BETWEEN_CONTEXT_RECEIVERS!>context(Cov<T>, Cov<B>)<!>
 fun <T: <!FINAL_UPPER_BOUND!>A<!>> foo() {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionDeclarationWithContext, interfaceDeclaration,
+nullableType, out, typeConstraint, typeParameter */

@@ -15,3 +15,6 @@ fun <T> fail(t: T?) = if (t == null) bar(<!DEBUG_INFO_CONSTANT!>t<!>) else bar(<
 fun <F> fail1(t: F?, n: Nothing?) = select(bar1(<!DEBUG_INFO_CONSTANT!>n<!>), bar2(t!!))
 fun <F> fail2(t: F?, n: Nothing?) = if (t == null) bar1(<!DEBUG_INFO_CONSTANT!>t<!>) else bar2(<!DEBUG_INFO_SMARTCAST!>t<!>)
 fun <F> fail3(t: F?) = select(bar1(null), bar2(t?.let { it }))
+
+/* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, dnnType, equalityExpression, functionDeclaration,
+ifExpression, lambdaLiteral, nullableType, outProjection, safeCall, smartcast, typeParameter */

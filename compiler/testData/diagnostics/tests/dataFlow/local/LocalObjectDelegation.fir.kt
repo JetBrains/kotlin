@@ -14,3 +14,7 @@ fun foo(b: B?) : Int {
     }
     return o.foo()
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, inheritanceDelegation, integerLiteral, interfaceDeclaration, localProperty, nullableType, override,
+propertyDeclaration, smartcast */

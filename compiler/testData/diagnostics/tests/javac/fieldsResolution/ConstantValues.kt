@@ -45,3 +45,5 @@ val v5 = x.I2
 val v6 = x.D
 val v7 = x.NULL
 val v8 = x.VAL
+
+/* GENERATED_FIR_TAGS: flexibleType, javaProperty, propertyDeclaration */

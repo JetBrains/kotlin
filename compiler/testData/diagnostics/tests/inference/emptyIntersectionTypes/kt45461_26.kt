@@ -13,3 +13,6 @@ fun <K : L, L : N, N: <!FINAL_UPPER_BOUND!>Out<Int><!>> main() {
     val foo = Foo<K>()
     val x: Out<Float> = <!TYPE_MISMATCH!>Bar<Out<String>>().<!TYPE_MISMATCH!>takeFoo<!>(foo)<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, inProjection, intersectionType,
+localProperty, nullableType, out, propertyDeclaration, typeConstraint, typeParameter */

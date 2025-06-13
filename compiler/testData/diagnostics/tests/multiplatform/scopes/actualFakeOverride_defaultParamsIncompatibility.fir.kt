@@ -15,3 +15,5 @@ interface FooProvider {
 }
 
 actual class <!EXPECT_ACTUAL_INCOMPATIBLE_CLASS_SCOPE!>A<!> : FooProvider
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, integerLiteral, interfaceDeclaration */

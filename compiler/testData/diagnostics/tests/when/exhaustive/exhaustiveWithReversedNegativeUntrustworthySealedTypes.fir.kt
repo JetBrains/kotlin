@@ -37,3 +37,7 @@ fun bar(v: Variants): String {
         <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> "B?"
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, data, equalityExpression, functionDeclaration, ifExpression,
+interfaceDeclaration, isExpression, nestedClass, nullableType, objectDeclaration, operator, override, sealed, smartcast,
+stringLiteral, whenExpression, whenWithSubject */

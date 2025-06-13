@@ -36,3 +36,5 @@ fun main(j: J, j2: J2, a: A) {
     j2.baz()
     a.baz()
 }
+
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType */

@@ -8,3 +8,6 @@ annotation class Anno(val position: String)
 val foo get() = this@List
 
 const val prop = "str"
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, const, getter, primaryConstructor, propertyDeclaration,
+propertyDeclarationWithContext, stringLiteral, thisExpression */

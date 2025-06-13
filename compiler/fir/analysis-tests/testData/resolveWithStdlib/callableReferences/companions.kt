@@ -45,3 +45,5 @@ fun main() {
     foo3(KotlinClass2::bar)
 }
 
+/* GENERATED_FIR_TAGS: callableReference, classDeclaration, companionObject, flexibleType, functionDeclaration,
+functionalType, integerLiteral, javaCallableReference, javaType, objectDeclaration, override */

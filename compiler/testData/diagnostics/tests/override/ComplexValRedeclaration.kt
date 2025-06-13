@@ -10,3 +10,5 @@ abstract class MyAbstractClass<T> {
 abstract class MyLegalAbstractClass2<T>(t : T) : MyAbstractClass<Int>() {
     <!CONFLICTING_OVERLOADS!>val <R> pr : T<!> = t
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, nullableType, primaryConstructor, propertyDeclaration, typeParameter */

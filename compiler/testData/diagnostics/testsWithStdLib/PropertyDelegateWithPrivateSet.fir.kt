@@ -11,3 +11,5 @@ class My {
     var delegateWithBackingField: String by kotlin.properties.Delegates.notNull()
         <!ACCESSOR_FOR_DELEGATED_PROPERTY!>private set(arg) { <!UNRESOLVED_REFERENCE!>field<!> = arg }<!>
 }
+
+/* GENERATED_FIR_TAGS: assignment, classDeclaration, nullableType, propertyDeclaration, propertyDelegate, setter */

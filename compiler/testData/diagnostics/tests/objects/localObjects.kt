@@ -14,3 +14,6 @@ fun foo() {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object e<!> {}
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, lambdaLiteral, localClass,
+localProperty, nestedClass, objectDeclaration, propertyDeclaration */

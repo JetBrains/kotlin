@@ -32,3 +32,6 @@ actual class NoArgConstructor {
     <!ACTUAL_WITHOUT_EXPECT!>actual constructor(x: Int)<!>
     constructor(x: String)
 }
+
+/* GENERATED_FIR_TAGS: actual, classDeclaration, expect, functionDeclaration, primaryConstructor, secondaryConstructor,
+stringLiteral */

@@ -46,3 +46,6 @@ fun callJava(derived: Test.Derived, derivedRaw: Test.DerivedRaw, v: Test.I123) {
 fun callKotlin(derived: KDerived) {
     derived.foo<KI12>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, interfaceDeclaration, javaFunction, javaType,
+override, typeConstraint, typeParameter */

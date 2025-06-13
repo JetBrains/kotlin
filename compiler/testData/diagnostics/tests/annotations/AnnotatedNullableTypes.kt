@@ -9,3 +9,5 @@ annotation class TypeAnn
 
 val c: @TypeAnn String? = ""
 val d: (@TypeAnn String)? = ""
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, nullableType, propertyDeclaration, stringLiteral */

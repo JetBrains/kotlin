@@ -19,3 +19,6 @@ fun test() {
     var c1 = C1()
     c1.c <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, localProperty, operator,
+propertyDeclaration, stringLiteral, thisExpression */

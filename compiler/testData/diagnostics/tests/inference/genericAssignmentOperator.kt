@@ -9,3 +9,6 @@ operator fun Int.plusAssign(y: R<Int>) {}
 fun box() {
     1 += f()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, integerLiteral, nullableType,
+operator, typeParameter */

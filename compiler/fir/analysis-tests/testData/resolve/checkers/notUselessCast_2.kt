@@ -22,3 +22,6 @@ fun test_2(): Wrapper<Foo?> {
         .map { it.toFoo() }
         .swapWrappedValue { <!RETURN_TYPE_MISMATCH!>Wrapper(null)<!> }<!>
 }
+
+/* GENERATED_FIR_TAGS: asExpression, classDeclaration, data, funWithExtensionReceiver, functionDeclaration,
+functionalType, lambdaLiteral, nullableType, primaryConstructor, propertyDeclaration, stringLiteral, typeParameter */

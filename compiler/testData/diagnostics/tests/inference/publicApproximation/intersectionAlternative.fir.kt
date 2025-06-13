@@ -15,3 +15,6 @@ fun testIntersectionAlternative() = intersect(First, Second)
 fun test() {
     testIntersectionAlternative()
 }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, intersectionType, objectDeclaration, typeConstraint,
+typeParameter, vararg */

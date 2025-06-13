@@ -17,3 +17,6 @@ class A {
     operator fun component1() = 1
     operator fun component2() = ""
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, init, integerLiteral,
+localProperty, operator, propertyDeclaration, stringLiteral, unnamedLocalVariable */
