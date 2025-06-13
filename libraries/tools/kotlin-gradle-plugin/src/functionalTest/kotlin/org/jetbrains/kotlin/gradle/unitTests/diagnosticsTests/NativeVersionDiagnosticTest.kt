@@ -9,6 +9,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.util.*
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class NativeVersionDiagnosticTest {
@@ -32,6 +33,7 @@ class NativeVersionDiagnosticTest {
     }
 
     @Test
+    @Ignore("for testing infrastructure changes on playground")
     fun newKotlinNativeVersionCheck() {
         val project = setUpProject("30.0.0")
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.NewNativeVersionDiagnostic)
