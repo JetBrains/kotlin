@@ -15,9 +15,9 @@ fun f2(): T2<Any> = null!!
 fun f3(): T3<Int, T1> = null!!
 
 fun box(): String {
-    assertEquals("kotlin.String /* = test.T1 */", ::f1.returnType.toString())
-    assertEquals("kotlin.collections.List<kotlin.Any> /* = test.T2<kotlin.Any> */", ::f2.returnType.toString())
-    assertEquals("kotlin.collections.MutableMap<in kotlin.String /* = test.T1 */, kotlin.Int?> /* = test.T3<kotlin.Int, kotlin.String /* = test.T1 */> */", ::f3.returnType.toString())
+    assertEquals("test.T1 /* = kotlin.String */", ::f1.returnType.toString())
+    assertEquals("test.T2<kotlin.Any> /* = kotlin.collections.List<kotlin.Any> */", ::f2.returnType.toString())
+    assertEquals("test.T3<kotlin.Int, test.T1 /* = kotlin.String */> /* = kotlin.collections.MutableMap<in test.T1 /* = kotlin.String */, kotlin.Int?> */", ::f3.returnType.toString())
 
     return "OK"
 }

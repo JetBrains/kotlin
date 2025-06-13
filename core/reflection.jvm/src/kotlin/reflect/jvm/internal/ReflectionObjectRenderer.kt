@@ -119,6 +119,11 @@ internal object ReflectionObjectRenderer {
         }
 
         return buildString {
+            type.abbreviation?.let {
+                append(it)
+                append(" /* = ")
+            }
+
             when (val classifier = type.classifier) {
                 is KTypeParameter -> {
                     appendName(classifier.name)
@@ -145,9 +150,7 @@ internal object ReflectionObjectRenderer {
                 }
             }
 
-            type.abbreviation?.let {
-                append(" /* = ")
-                append(it)
+            if (type.abbreviation != null) {
                 append(" */")
             }
         }

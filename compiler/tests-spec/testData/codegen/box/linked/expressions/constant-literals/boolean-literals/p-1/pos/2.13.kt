@@ -74,7 +74,7 @@ fun box(): String? {
     if (!checkCallableTypeParametersWithUpperBounds(
             `true`<`false`>::f2,
             listOf(
-                Pair("T", listOf("org.jetbrains.`true`.`true`<org.jetbrains.`true`.`false`> /* = org.jetbrains.`true`.D<org.jetbrains.`true`.`false`> */"))
+                Pair("T", listOf("org.jetbrains.`true`.D<org.jetbrains.`true`.`false`> /* = org.jetbrains.`true`.`true`<org.jetbrains.`true`.`false`> */"))
             )
         )) return null
 
