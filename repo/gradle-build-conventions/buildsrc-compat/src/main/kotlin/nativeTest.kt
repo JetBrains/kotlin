@@ -3,12 +3,10 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.ClasspathNormalizer
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Sync
-import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
@@ -59,7 +57,7 @@ private open class NativeArgsProvider @Inject constructor(
     @Internal val requirePlatformLibs: Boolean = false,
 ) : CommandLineArgumentProvider {
     @Internal
-    val nativeHomeBuiltBy: List<String> = project.readFromGradle(TEST_TARGET)?.let {
+    protected val nativeHomeBuiltBy: List<String> = project.readFromGradle(TEST_TARGET)?.let {
         listOfNotNull(
             ":kotlin-native:${it}CrossDist",
             if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
@@ -69,16 +67,51 @@ private open class NativeArgsProvider @Inject constructor(
         if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
     )
 
+    @get:Internal
+    protected val customNativeHome: String? = project.readFromGradle(KOTLIN_NATIVE_HOME)
+
+    @get:Classpath
+    val customCompilerDependencies: ConfigurableFileCollection = objects.fileCollection()
+
+    @get:Classpath
+    val compilerPluginDependencies: ConfigurableFileCollection = objects.fileCollection()
+
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
+    val releasedCompilerDist: DirectoryProperty = objects.directoryProperty()
+
+    @get:Classpath
+    protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
+        if (customNativeHome != null) {
+            from(customNativeHome)
+        } else {
+            from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist")).builtBy(nativeHomeBuiltBy)
+        }
+    }
+
     @Classpath
-    val nativeHome: ConfigurableFileCollection = project.readFromGradle(KOTLIN_NATIVE_HOME)?.let {
-        objects.fileCollection().convention(it)
-    } ?: objects.fileCollection()
-        .convention(project.project(":kotlin-native").isolated.projectDirectory.dir("dist"))
-        .builtBy(nativeHomeBuiltBy)
+    protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
+        if (customNativeHome != null) {
+            from(File(customNativeHome, "konan/lib/kotlin-native-compiler-embeddable.jar"))
+        } else {
+            from(
+                project.configurations.detachedConfiguration(
+                    project.dependencies.project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"),
+                )
+            )
+        }
+        from(customCompilerDependencies)
+    }
 
     override fun asArguments(): Iterable<String> =
         listOfNotNull(
             "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.singleFile.absolutePath}",
+            "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
+            "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
+            if (releasedCompilerDist.isPresent) {
+                "-D${LATEST_RELEASED_COMPILER_PATH.fullName}=${releasedCompilerDist.asFile.get().absolutePath}"
+            } else null,
         )
 }
 
@@ -98,10 +131,6 @@ private class ComputedTestProperties(private val task: Test) {
     fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }) {
         val gradleValue = readFromGradle(property)
         computedProperties += ComputedTestProperty.Normal(property.fullName, gradleValue ?: defaultValue())
-
-        gradleValue ?: defaultValue()?.let {
-            task.inputs.files(it).withPropertyName(property.fullName).withNormalizer(ClasspathNormalizer::class.java)
-        }
     }
 
     fun Project.computeLazy(property: TestProperty, defaultLazyValue: () -> Lazy<String?>) {
@@ -153,9 +182,9 @@ fun Project.nativeTest(
     taskName: String,
     tag: String?,
     requirePlatformLibs: Boolean = false,
-    customCompilerDependencies: List<Configuration> = emptyList(),
-    customTestDependencies: List<Configuration> = emptyList(),
-    compilerPluginDependencies: List<Configuration> = emptyList(),
+    customCompilerDependencies: List<FileCollection> = emptyList(),
+    customTestDependencies: List<FileCollection> = emptyList(),
+    compilerPluginDependencies: List<FileCollection> = emptyList(),
     allowParallelExecution: Boolean = true,
     releasedCompilerDist: TaskProvider<Sync>? = null,
     maxMetaspaceSizeMb: Int = 512,
@@ -172,11 +201,6 @@ fun Project.nativeTest(
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         workingDir = rootDir
-        outputs.upToDateWhen {
-            // Don't treat any test task as up-to-date, no matter what.
-            // Note: this project should contain only test tasks, including ones that build binaries, and ones that run binaries.
-            false
-        }
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
@@ -191,7 +215,13 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs))
+        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
+            this.customCompilerDependencies.from(customCompilerDependencies)
+            this.compilerPluginDependencies.from(compilerPluginDependencies)
+            if (releasedCompilerDist != null) {
+                this.releasedCompilerDist.fileProvider(releasedCompilerDist.map { it.destinationDir })
+            }
+        })
 
         val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
         if (!kotlinBuildProperties.isTeamcityBuild
@@ -203,35 +233,8 @@ fun Project.nativeTest(
 
         // Compute test properties in advance. Make sure that the necessary dependencies are settled.
         // But do not resolve any configurations until the execution phase.
+        //TODO CUSTOM_KLIBS
         val computedTestProperties = ComputedTestProperties {
-            computeLazy(COMPILER_CLASSPATH) {
-                val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
-
-                val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
-                    configurations.detachedConfiguration(
-                        dependencies.project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"),
-                    ).also { dependsOn(it) }
-                else
-                    null
-
-                customCompilerDependencies.forEach(::dependsOn)
-
-                lazyClassPath {
-                    if (customNativeHome == null) {
-                        addAll(kotlinNativeCompilerEmbeddable!!.files)
-                    } else {
-                        this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
-                    }
-
-                    customCompilerDependencies.flatMapTo(this) { it.files }
-                }
-            }
-
-            computeLazy(COMPILER_PLUGINS) {
-                compilerPluginDependencies.forEach(::dependsOn)
-                lazyClassPath { compilerPluginDependencies.flatMapTo(this) { it.files } }
-            }
-
             computeLazy(CUSTOM_KLIBS) {
                 val testTarget = readFromGradle(TEST_TARGET) ?: HostManager.hostName
                 val xcTestEnabled = readFromGradle(XCTEST_FRAMEWORK)?.toBooleanStrictOrNull() ?: false
@@ -280,13 +283,6 @@ fun Project.nativeTest(
             compute(SHARED_TEST_EXECUTION)
             compute(EAGER_GROUP_CREATION)
             compute(XCTEST_FRAMEWORK)
-
-            computeLazy(LATEST_RELEASED_COMPILER_PATH) {
-                if (releasedCompilerDist != null) dependsOn(releasedCompilerDist)
-                lazy {
-                    releasedCompilerDist?.get()?.destinationDir?.absolutePath
-                }
-            }
 
             // Pass whether tests are running at TeamCity.
             computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }

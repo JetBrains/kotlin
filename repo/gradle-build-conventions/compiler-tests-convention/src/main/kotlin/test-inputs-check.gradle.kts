@@ -4,12 +4,12 @@ import java.util.HashSet
 import org.gradle.internal.os.OperatingSystem
 
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
-// Disable checks on windows until we fix KTI-2322
-if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
-    tasks.withType<Test>().names.forEach { taskName ->
-        tasks.named<Test>(taskName) {
-            val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
+tasks.withType<Test>().names.forEach { taskName ->
+    tasks.named<Test>(taskName) {
+        val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
 
+        // Disable checks on windows until we fix KTI-2322
+        if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
             val permissionsTemplateFile = rootProject.file("tests-permissions.template.policy")
             inputs.file(permissionsTemplateFile).withPathSensitivity(PathSensitivity.RELATIVE)
             val policyFileProvider: Provider<RegularFile> = layout.buildDirectory.file("permissions-for-$taskName.policy")
