@@ -57,6 +57,11 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
+
+fun KotlinCommonCompilerOptions.testCompilationOptions() {
+    freeCompilerArgs.add("-Xreturn-value-checker=check")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -578,6 +583,7 @@ kotlin {
                 commonOptIns.forEach { optIn(it) }
                 if (this@sourceSet.name.endsWith("Test")) {
                     commonTestOptIns.forEach { optIn(it) }
+                    compilerOptions.testCompilationOptions()
                 }
             }
         }
