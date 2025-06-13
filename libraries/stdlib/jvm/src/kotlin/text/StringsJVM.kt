@@ -316,6 +316,7 @@ public actual inline fun String.toCharArray(): CharArray = (this as java.lang.St
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,

@@ -294,6 +294,7 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("2.0")
+@IgnorableReturnValue
 public expect fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,
@@ -662,6 +663,7 @@ public expect fun Int.toString(radix: Int): String
 public expect fun Long.toString(radix: Int): String
 
 @PublishedApi
+@IgnorableReturnValue
 internal expect fun checkRadix(radix: Int): Int
 
 internal expect fun digitOf(char: Char, radix: Int): Int

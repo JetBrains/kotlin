@@ -33,7 +33,7 @@ internal class XorWowRandom internal constructor(
         checkInvariants()
 
         // some trivial seeds can produce several values with zeroes in upper bits, so we discard first 64
-        repeat(64) { nextInt() }
+        repeat(64) { val _ = nextInt() }
     }
 
     private fun checkInvariants() {

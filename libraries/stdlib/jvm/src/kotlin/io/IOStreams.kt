@@ -100,6 +100,7 @@ public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8)
  *
  * **Note** It is the caller's responsibility to close both of these resources.
  */
+@IgnorableReturnValue
 public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var bytesCopied: Long = 0
     val buffer = ByteArray(bufferSize)
@@ -121,7 +122,7 @@ public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFE
 @DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "1.5")
 public fun InputStream.readBytes(estimatedSize: Int = DEFAULT_BUFFER_SIZE): ByteArray {
     val buffer = ByteArrayOutputStream(maxOf(estimatedSize, this.available()))
-    copyTo(buffer)
+    val _ = copyTo(buffer)
     return buffer.toByteArray()
 }
 
@@ -133,7 +134,6 @@ public fun InputStream.readBytes(estimatedSize: Int = DEFAULT_BUFFER_SIZE): Byte
 @SinceKotlin("1.3")
 public fun InputStream.readBytes(): ByteArray {
     val buffer = ByteArrayOutputStream(maxOf(DEFAULT_BUFFER_SIZE, this.available()))
-    copyTo(buffer)
+    val _ = copyTo(buffer)
     return buffer.toByteArray()
 }
-

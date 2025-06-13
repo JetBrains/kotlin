@@ -83,7 +83,7 @@ public actual inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) ->
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    updateAndFetchAt(index, transform)
+    val _ = updateAndFetchAt(index, transform)
 }
 
 /**
@@ -168,7 +168,7 @@ public actual inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) 
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    updateAndFetchAt(index, transform)
+    val _ = updateAndFetchAt(index, transform)
 }
 
 /**
@@ -253,7 +253,7 @@ public actual inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) 
     contract {
         callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
     }
-    updateAndFetchAt(index, transform)
+    val _ = updateAndFetchAt(index, transform)
 }
 
 /**

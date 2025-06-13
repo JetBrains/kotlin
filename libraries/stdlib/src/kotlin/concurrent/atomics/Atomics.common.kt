@@ -103,7 +103,7 @@ public expect class AtomicInt public constructor(value: Int) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(delta) }
+public operator fun AtomicInt.plusAssign(delta: Int): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicInt].
@@ -112,7 +112,7 @@ public operator fun AtomicInt.plusAssign(delta: Int): Unit { this.addAndFetch(de
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicInt.minusAssign(delta: Int): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicInt.minusAssign(delta: Int): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicInt] by one and returns the old value.
@@ -321,7 +321,7 @@ public expect class AtomicLong public constructor(value: Long) {
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(delta) }
+public operator fun AtomicLong.plusAssign(delta: Long): Unit { val _ = this.addAndFetch(delta) }
 
 /**
  * Atomically subtracts the [given value][delta] from the current value of this [AtomicLong].
@@ -330,7 +330,7 @@ public operator fun AtomicLong.plusAssign(delta: Long): Unit { this.addAndFetch(
  */
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
-public operator fun AtomicLong.minusAssign(delta: Long): Unit { this.addAndFetch(-delta) }
+public operator fun AtomicLong.minusAssign(delta: Long): Unit { val _ = this.addAndFetch(-delta) }
 
 /**
  * Atomically increments the current value of this [AtomicLong] by one and returns the old value.
