@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -69,37 +70,50 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         return generateBridges(declaration)?.let { listOf(declaration) + it }
     }
 
+    private fun dfsForOverrides(currentFunction: IrSimpleFunction, afterChild: (IrSimpleFunction) -> Unit) {
+        for (overriddenSymbol in currentFunction.overriddenSymbols) {
+            dfsForOverrides(overriddenSymbol.owner, afterChild)
+        }
+        if (currentFunction.isDeclaration) {
+            afterChild(currentFunction)
+        }
+    }
+
+    private fun dfsForOverrides(functions: List<IrSimpleFunctionSymbol>, afterChild: (IrSimpleFunction) -> Unit) {
+        for (currentFunction in functions) {
+            dfsForOverrides(currentFunction.owner, afterChild)
+        }
+    }
+
     private fun generateBridges(function: IrSimpleFunction): List<IrDeclaration>? {
         // If it's an abstract function, no bridges are needed: when an implementation will appear in some concrete subclass, all necessary
         // bridges will be generated there
         if (function.modality == Modality.ABSTRACT) return null
 
-        val functionOverrides =
-            if (function.isDeclaration) function.overriddenSymbols
-            else function.overriddenSymbols.filter { it.owner.modality == Modality.ABSTRACT }
+        val (bridgesDfsRoots, implementedDfsRoots) =
+            if (function.isDeclaration) function.overriddenSymbols to emptyList()
+            else function.overriddenSymbols.partition { it.owner.modality == Modality.ABSTRACT }
 
         // If it's a concrete fake override and all of its super-functions are concrete, then every possible bridge is already generated
         // into some of the super-classes and will be inherited in this class
-        if (functionOverrides.isEmpty()) return null
+        if (bridgesDfsRoots.isEmpty()) return null
 
         val implementation = function.realOverrideTarget
         val implementationSignature = getFunctionSignature(implementation)
 
+        val implementedBridges = mutableSetOf<Any>()
+        dfsForOverrides(implementedDfsRoots) { override ->
+            implementedBridges.add(getFunctionSignature(override))
+        }
+
         val bridgesToGenerate = mutableMapOf<Any, IrSimpleFunction>()
-        fun collectBridges(currentFunction: IrSimpleFunction) {
-            for (overriddenSymbol in currentFunction.overriddenSymbols) {
-                collectBridges(overriddenSymbol.owner)
-            }
-            if (currentFunction.isDeclaration) {
-                val functionSignature = getFunctionSignature(currentFunction)
-                if (functionSignature != implementationSignature) {
-                    bridgesToGenerate.putIfAbsent(functionSignature, currentFunction)
-                }
+        dfsForOverrides(bridgesDfsRoots) { override ->
+            val functionSignature = getFunctionSignature(override)
+            if (functionSignature != implementationSignature && functionSignature !in implementedBridges) {
+                bridgesToGenerate.putIfAbsent(functionSignature, override)
             }
         }
-        for (override in functionOverrides) {
-            collectBridges(override.owner)
-        }
+
         if (bridgesToGenerate.isEmpty()) return null
 
         val (specialOverride: IrSimpleFunction?, specialOverrideInfo) =
