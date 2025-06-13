@@ -443,9 +443,8 @@ class IrDescriptorBasedFunctionFactory(
             descriptor.extensionReceiverParameter?.let {
                 newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
             }
-            newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap {
-                val kind = if (it.index < newFunction.contextReceiverParametersCount) IrParameterKind.Context else IrParameterKind.Regular
+            newFunction.parameters += descriptor.valueParameters.memoryOptimizedMap {
+                val kind = if (it.index < descriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
                 newFunction.createValueParameter(it, kind)
             }
             newFunction.correspondingPropertySymbol = property
