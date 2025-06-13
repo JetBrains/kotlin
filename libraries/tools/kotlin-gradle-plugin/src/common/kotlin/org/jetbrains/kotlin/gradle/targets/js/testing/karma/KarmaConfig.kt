@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+/**
+ * Serializable view of Karma config
+ */
 // https://karma-runner.github.io/4.0/config/configuration-file.html
 data class KarmaConfig(
     var singleRun: Boolean = true,
@@ -24,11 +27,16 @@ data class KarmaConfig(
     val proxies: MutableMap<String, String> = mutableMapOf(),
     var port: Int? = null,
 
+    /**
+     * List of additional files which are necessary to be copied to the output directory
+     *
+     * It is not a Karma property, but a property of a kotlin-web-helpers plugin for Karma
+     */
     internal val webpackCopy: MutableList<String> = mutableListOf(),
 )
 
 data class KarmaClient(
-    val args: MutableList<String> = mutableListOf()
+    val args: MutableList<String> = mutableListOf(),
 )
 
 data class CustomLauncher(var base: String) {
