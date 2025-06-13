@@ -579,7 +579,9 @@ class IrBuiltInsOverDescriptors(
         return unaryOperatorCache.getOrPut(key) {
             classifier.functions.single {
                 val function = it.owner
-                function.name == name && function.valueParameters.isEmpty()
+                function.name == name && function.parameters.none { parameter ->
+                    parameter.kind == IrParameterKind.Regular || parameter.kind == IrParameterKind.Context
+                }
             }
         }
     }
