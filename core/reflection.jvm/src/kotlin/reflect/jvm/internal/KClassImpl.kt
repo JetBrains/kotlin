@@ -236,6 +236,7 @@ internal class KClassImpl<T : Any>(
             jClass.isAnnotation -> ClassKind.ANNOTATION_CLASS
             jClass.isInterface -> ClassKind.INTERFACE
             jClass.isEnum -> ClassKind.ENUM_CLASS
+            jClass.superclass.isEnum -> ClassKind.ENUM_ENTRY
             else -> ClassKind.CLASS
         }
 
