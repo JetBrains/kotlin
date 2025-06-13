@@ -44,12 +44,6 @@ public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunner
   }
 
   @Test
-  @TestMetadata("containing_not_exported_classifiers")
-  public void testContaining_not_exported_classifiers() {
-    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/containing_not_exported_classifiers/");
-  }
-
-  @Test
   @TestMetadata("contextParameters")
   public void testContextParameters() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/contextParameters/");

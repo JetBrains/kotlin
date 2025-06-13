@@ -74,6 +74,10 @@ abstract class AbstractKotlinSirBridgeTest {
                             else -> error("Unsupported type: $type")
                         }
                     }
+
+                    override fun parameterizedTypeNamer(type: SirType): String {
+                        return kotlinFqName(type)
+                    }
                 })
                 val kotlinBridgePrinter = createKotlinBridgePrinter()
                 val cBridgePrinter = createCBridgePrinter()

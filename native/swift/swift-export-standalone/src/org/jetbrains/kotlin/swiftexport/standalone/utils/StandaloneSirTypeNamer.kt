@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.utils
 
+import com.intellij.util.applyIf
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -22,10 +26,14 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
     }
 
+    override fun parameterizedTypeNamer(type: SirType): String =
+        (type as? SirNominalType)?.typeDeclaration?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName() ?: kotlinFqName(type)
+
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
         it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
     }
 
+    @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirNominalType): String {
         return when (val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
@@ -53,9 +61,9 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
             SirSwiftModule.void -> "Void"
             SirSwiftModule.never -> "Nothing"
 
-            SirSwiftModule.array -> "kotlin.collections.List<${kotlinFqName(type.typeArguments.first())}>"
-            SirSwiftModule.set -> "kotlin.collections.Set<${kotlinFqName(type.typeArguments.first())}>"
-            SirSwiftModule.dictionary -> "kotlin.collections.Map<${kotlinFqName(type.typeArguments[0])}, ${kotlinFqName(type.typeArguments[1])}>"
+            SirSwiftModule.array -> "kotlin.collections.List<${parameterizedTypeNamer(type.typeArguments.first())}>"
+            SirSwiftModule.set -> "kotlin.collections.Set<${parameterizedTypeNamer(type.typeArguments.first())}>"
+            SirSwiftModule.dictionary -> "kotlin.collections.Map<${parameterizedTypeNamer(type.typeArguments[0])}, ${parameterizedTypeNamer(type.typeArguments[1])}>"
 
             SirSwiftModule.optional -> kotlinFqName(type.typeArguments.first()) + "?"
 
@@ -63,4 +71,24 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
                 ?: error("Unnameable declaration $declaration")
         }
     }
+
+    @OptIn(KaExperimentalApi::class)
+    private fun KaClassLikeSymbol.parametrisedTypeName(): String? {
+        val fqname = classId?.asFqNameString()
+            ?: return null
+        if (typeParameters.isEmpty())
+            return fqname
+
+        val typesRendered = typeParameters.map { it.upperBounds.firstOrNull() }
+            .map {
+                when (it?.symbol?.classId?.asFqNameString()) {
+                    fqname -> classId?.asFqNameString() + "<${typeParameters.joinToString { "*" }}>"
+                    else -> it?.symbol?.parametrisedTypeName()
+                }
+            }
+            .map { it ?: "kotlin.Any?" }
+
+        return "$fqname<${typesRendered.joinToString()}>"
+    }
+
 }

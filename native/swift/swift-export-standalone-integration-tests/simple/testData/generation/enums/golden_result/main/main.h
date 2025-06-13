@@ -17,4 +17,6 @@ NSString * Enum_print(void * self);
 
 void * Enum_valueOf__TypesOfArguments__Swift_String__(NSString * value);
 
+void * __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(void * e);
+
 NS_ASSUME_NONNULL_END
