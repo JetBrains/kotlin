@@ -649,6 +649,12 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
   }
 
   @Test
+  @TestMetadata("tryFinallyAndNonLocalReturn.kt")
+  public void testTryFinallyAndNonLocalReturn() {
+    runTest("compiler/testData/debug/stepping/tryFinallyAndNonLocalReturn.kt");
+  }
+
+  @Test
   @TestMetadata("variablesWithoutInitializer.kt")
   public void testVariablesWithoutInitializer() {
     runTest("compiler/testData/debug/stepping/variablesWithoutInitializer.kt");
