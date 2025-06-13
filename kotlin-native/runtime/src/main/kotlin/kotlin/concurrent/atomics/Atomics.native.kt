@@ -7,8 +7,10 @@ package kotlin.concurrent.atomics
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.concurrent.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
 import kotlin.native.internal.*
-import kotlin.reflect.KMutableProperty0
 
 /**
  * An [Int] value that may be updated atomically.
@@ -506,4 +508,303 @@ public class AtomicNativePtr(
      */
     @Suppress("DEPRECATION_ERROR")
     public override fun toString(): String = value.toString()
+}
+
+/**
+ *
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    fetchAndUpdate(transform)
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return old
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic integer value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return newValue
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    fetchAndUpdate(transform)
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return old
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic long value was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return newValue
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    fetchAndUpdate(transform)
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return old
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this atomic reference was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return newValue
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with the value obtained by calling the [transform] function on the current value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.update(transform: (NativePtr) -> NativePtr): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    fetchAndUpdate(transform)
+}
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.fetchAndUpdate(transform: (NativePtr) -> NativePtr): NativePtr {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return old
+    }
+}
+
+/**
+ * Atomically updates the value of this [AtomicNativePtr] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example, when this pointer was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi @ExperimentalForeignApi
+@InlineOnly
+public inline fun AtomicNativePtr.updateAndFetch(transform: (NativePtr) -> NativePtr): NativePtr {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    while (true) {
+        val old = load()
+        val newValue = transform(old)
+        if (compareAndSet(old, newValue)) return newValue
+    }
 }

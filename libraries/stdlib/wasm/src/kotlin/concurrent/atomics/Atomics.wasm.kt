@@ -5,6 +5,10 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
+
 /**
  * An [Int] value that may be updated atomically.
  *
@@ -335,4 +339,184 @@ public actual class AtomicReference<T> public actual constructor(private var val
      * Returns the string representation of the underlying object.
      */
     public actual override fun toString(): String = value.toString()
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.update(transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.fetchAndUpdate(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicInt] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicInt.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicInt.updateAndFetch(transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.update(transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.fetchAndUpdate(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicLong] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicLong.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun AtomicLong.updateAndFetch(transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.update
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.update(transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    store(transform(load()))
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the value replaced by the updated one.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.fetchAndUpdate
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.fetchAndUpdate(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val old = load()
+    store(transform(old))
+    return old
+}
+
+/**
+ * Atomically updates the value of this [AtomicReference] with the value obtained by calling the [transform] function on the current value
+ * and returns the new value.
+ *
+ * Wasm does not support multithreading, thus the implementation is trivial,
+ * and [transform] will only be invoked exactly once to compute the result.
+ *
+ * @sample samples.concurrent.atomics.AtomicReference.updateAndFetch
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public actual inline fun <T> AtomicReference<T>.updateAndFetch(transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    val newValue = transform(load())
+    store(newValue)
+    return newValue
 }

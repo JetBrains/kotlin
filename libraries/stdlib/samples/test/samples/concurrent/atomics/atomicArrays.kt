@@ -7,6 +7,8 @@ package samples.concurrent.atomics
 
 import kotlin.concurrent.atomics.*
 import samples.*
+import kotlin.concurrent.atomics.AtomicArray
+import kotlin.test.assertFailsWith
 
 @OptIn(ExperimentalAtomicApi::class)
 class AtomicIntArray {
@@ -134,6 +136,38 @@ class AtomicIntArray {
         assertPrints(a.decrementAndFetchAt(1), "1")
         assertPrints(a.loadAt(1), "1")
         assertPrints(a.toString(), "[1, 1, 3]")
+    }
+
+    @Sample
+    fun updateAt() {
+        val a = AtomicIntArray(intArrayOf(1, 2, 3))
+        a.updateAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = AtomicIntArray(intArrayOf(1, 2, 3))
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(updatedValue, "20")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = AtomicIntArray(intArrayOf(1, 2, 3))
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue * 10 }
+        assertPrints(oldValue, "2")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
     }
 }
 
@@ -265,6 +299,38 @@ class AtomicLongArray {
         assertPrints(a.loadAt(1), "1")
         assertPrints(a.toString(), "[1, 1, 3]")
     }
+
+    @Sample
+    fun updateAt() {
+        val a = AtomicLongArray(longArrayOf(1L, 2L, 3L))
+        a.updateAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = AtomicLongArray(longArrayOf(1L, 2L, 3L))
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(updatedValue, "20")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = AtomicLongArray(longArrayOf(1L, 2L, 3L))
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue * 10L }
+        assertPrints(oldValue, "2")
+        assertPrints(a.toString(), "[1, 20, 3]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
+    }
 }
 
 @OptIn(ExperimentalAtomicApi::class)
@@ -279,6 +345,20 @@ class AtomicArray {
     fun initCons() {
         val a = AtomicArray(3) { "a$it" }
         assertPrints(a.toString(), "[a0, a1, a2]")
+
+        // Size should be non-negative
+        assertFailsWith<RuntimeException> { AtomicArray(-1) { "$it" } }
+    }
+
+    @Sample
+    fun nullFactory() {
+        val array = atomicArrayOfNulls<String>(3)
+        assertPrints(array.toString(), "[null, null, null]")
+
+        assertPrints(atomicArrayOfNulls<String>(0).toString(), "[]")
+
+        // Size should be non-negative
+        assertFailsWith<RuntimeException> { atomicArrayOfNulls<String>(-1) }
     }
 
     @Sample
@@ -338,5 +418,37 @@ class AtomicArray {
         assertPrints(a.compareAndExchangeAt(index = 2, expectedValue = "aaa", newValue = "jjj"), "ccc")
         assertPrints(a.loadAt(2), "ccc")
         assertPrints(a.toString(), "[aaa, kkk, ccc]")
+    }
+
+    @Sample
+    fun updateAt() {
+        val a = AtomicArray(arrayOf("hello", "concurrent", "world"))
+        a.updateAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAt(10) { it } }
+    }
+
+    @Sample
+    fun updateAndFetchAt() {
+        val a = AtomicArray(arrayOf("hello", "concurrent", "world"))
+        val updatedValue = a.updateAndFetchAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(updatedValue, "CONCURRENT")
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.updateAndFetchAt(10) { it } }
+    }
+
+    @Sample
+    fun fetchAndUpdateAt() {
+        val a = AtomicArray(arrayOf("hello", "concurrent", "world"))
+        val oldValue = a.fetchAndUpdateAt(1) { currentValue -> currentValue.uppercase() }
+        assertPrints(oldValue, "concurrent")
+        assertPrints(a.toString(), "[hello, CONCURRENT, world]")
+
+        // The index is out of array bounds
+        assertFailsWith<IndexOutOfBoundsException> { a.fetchAndUpdateAt(10) { it } }
     }
 }

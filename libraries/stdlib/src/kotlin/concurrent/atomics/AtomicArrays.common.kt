@@ -8,6 +8,10 @@
 
 package kotlin.concurrent.atomics
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.internal.InlineOnly
+
 /**
  * An array of ints in which elements may be updated atomically.
  *
@@ -186,6 +190,95 @@ public fun AtomicIntArray.decrementAndFetchAt(index: Int): Int = this.addAndFetc
 @SinceKotlin("2.1")
 @ExperimentalAtomicApi
 public fun AtomicIntArray.fetchAndDecrementAt(index: Int): Int = this.fetchAndAddAt(index, -1)
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicIntArray.updateAt(index: Int, transform: (Int) -> Int): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.updateAndFetchAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicIntArray.updateAndFetchAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicIntArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when an integer value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicIntArray.fetchAndUpdateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: (Int) -> Int): Int {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
 
 /**
  * An array of longs in which elements may be updated atomically.
@@ -367,6 +460,94 @@ public fun AtomicLongArray.decrementAndFetchAt(index: Int): Long = this.addAndFe
 public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAndAddAt(index, -1)
 
 /**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLongArray.updateAt(index: Int, transform: (Long) -> Long): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.updateAndFetchAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLongArray.updateAndFetchAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a long value at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicLongArray.fetchAndUpdateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform: (Long) -> Long): Long {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+/**
  * A generic array of objects in which elements may be updated atomically.
  *
  * Platform-specific implementation details:
@@ -384,7 +565,10 @@ public fun AtomicLongArray.fetchAndDecrementAt(index: Int): Long = this.fetchAnd
 public expect class AtomicArray<T> {
 
     /**
-     * Creates a new [AtomicArray]<T> filled with elements of the given [array].
+     * Creates a new [AtomicArray] filled with elements of the given [array].
+     *
+     * @see atomicArrayOf
+     * @see atomicArrayOfNulls
      *
      * @sample samples.concurrent.atomics.AtomicArray.arrCons
      */
@@ -462,12 +646,16 @@ public expect class AtomicArray<T> {
 }
 
 /**
- * Creates a new [AtomicArray]<T> of the given [size], where each element is initialized by calling the given [init] function.
+ * Creates a new [AtomicArray] if the given type with the given [size],
+ * where each element is initialized by calling the given [init] function.
  *
  * The function [init] is called for each array element sequentially starting from the first one.
  * It should return the value for an array element given its index.
  *
  * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @see atomicArrayOf
+ * @see atomicArrayOfNulls
  *
  * @sample samples.concurrent.atomics.AtomicArray.initCons
  */
@@ -476,3 +664,104 @@ public expect class AtomicArray<T> {
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T> AtomicArray(size: Int, init: (Int) -> T): AtomicArray<T> =
     AtomicArray(Array(size) { init(it) })
+
+/**
+ * Returns a new [AtomicArray] of the given type with the given [size], initialized with null values.
+ *
+ * @throws RuntimeException if the specified [size] is negative.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.nullFactory
+ */
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@Suppress("NOTHING_TO_INLINE")
+public inline fun <reified T> atomicArrayOfNulls(size: Int): AtomicArray<T?> = AtomicArray(size) { null }
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.updateAt(index: Int, transform: (T) -> T): Unit {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicArray] at the given index using the [transform] function and returns
+ * the updated value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.updateAndFetchAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.updateAndFetchAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
+
+/**
+ * Atomically updates the element of this [AtomicLongArray] at the given index using the [transform] function and returns
+ * the old value of the element.
+ *
+ * [transform] may be invoked more than once to recompute a result.
+ * That may happen, for example,
+ * when a reference at the specified index was concurrently updated while [transform] was applied,
+ * or due to a spurious compare-and-set failure.
+ * The latter is implementation-specific, and it should not be relied upon.
+ *
+ * On platforms that do no support multi-threading (JS and Wasm), this operation has a trivial implementation
+ * and [transform] will be invoked exactly once.
+ *
+ * It's recommended to keep [transform] fast and free of side effects.
+ *
+ * @throws IndexOutOfBoundsException if the [index] is out of bounds of this array.
+ *
+ * @sample samples.concurrent.atomics.AtomicArray.fetchAndUpdateAt
+ */
+@Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
+@SinceKotlin("2.2")
+@ExperimentalAtomicApi
+@InlineOnly
+public expect inline fun <T> AtomicArray<T>.fetchAndUpdateAt(index: Int, transform: (T) -> T): T {
+    contract {
+        callsInPlace(transform, InvocationKind.AT_LEAST_ONCE)
+    }
+    error("Unreachable")
+}
