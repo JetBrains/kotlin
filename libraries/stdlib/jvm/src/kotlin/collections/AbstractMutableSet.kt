@@ -22,5 +22,6 @@ public actual abstract class AbstractMutableSet<E> protected actual constructor(
      *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      */
+    @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean
 }

@@ -33,6 +33,7 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
  * 
  * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)

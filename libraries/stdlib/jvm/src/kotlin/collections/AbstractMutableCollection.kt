@@ -23,5 +23,6 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      * @return `true` if the element has been added, `false` if the collection does not support duplicates
      * and the element is already contained in the collection.
      */
+    @IgnorableReturnValue
     actual abstract override fun add(element: E): Boolean
 }

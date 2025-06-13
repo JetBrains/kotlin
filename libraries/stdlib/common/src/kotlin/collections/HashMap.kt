@@ -55,8 +55,9 @@ public expect class HashMap<K, V> : MutableMap<K, V> {
     override operator fun get(key: K): V?
 
     // From MutableMap
-
+    @IgnorableReturnValue
     override fun put(key: K, value: V): V?
+    @IgnorableReturnValue
     override fun remove(key: K): V?
     override fun putAll(from: Map<out K, V>)
     override fun clear()

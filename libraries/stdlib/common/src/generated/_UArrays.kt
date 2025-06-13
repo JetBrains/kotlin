@@ -1987,6 +1987,7 @@ public inline fun UShortArray.filterIndexed(predicate: (index: Int, UShort) -> B
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(destination: C, predicate: (index: Int, UInt) -> Boolean): C {
@@ -2004,6 +2005,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterIndexedTo(des
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(destination: C, predicate: (index: Int, ULong) -> Boolean): C {
@@ -2021,6 +2023,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterIndexedTo(d
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(destination: C, predicate: (index: Int, UByte) -> Boolean): C {
@@ -2038,6 +2041,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterIndexedTo(d
  * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterIndexedTo(destination: C, predicate: (index: Int, UShort) -> Boolean): C {
@@ -2101,6 +2105,7 @@ public inline fun UShortArray.filterNot(predicate: (UShort) -> Boolean): List<US
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destination: C, predicate: (UInt) -> Boolean): C {
@@ -2114,6 +2119,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterNotTo(destina
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(destination: C, predicate: (ULong) -> Boolean): C {
@@ -2127,6 +2133,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterNotTo(desti
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(destination: C, predicate: (UByte) -> Boolean): C {
@@ -2140,6 +2147,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterNotTo(desti
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(destination: C, predicate: (UShort) -> Boolean): C {
@@ -2153,6 +2161,7 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterNotTo(des
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destination: C, predicate: (UInt) -> Boolean): C {
@@ -2166,6 +2175,7 @@ public inline fun <C : MutableCollection<in UInt>> UIntArray.filterTo(destinatio
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destination: C, predicate: (ULong) -> Boolean): C {
@@ -2179,6 +2189,7 @@ public inline fun <C : MutableCollection<in ULong>> ULongArray.filterTo(destinat
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destination: C, predicate: (UByte) -> Boolean): C {
@@ -2192,6 +2203,7 @@ public inline fun <C : MutableCollection<in UByte>> UByteArray.filterTo(destinat
  * @sample samples.collections.Collections.Filtering.filterTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <C : MutableCollection<in UShort>> UShortArray.filterTo(destination: C, predicate: (UShort) -> Boolean): C {
@@ -3476,6 +3488,7 @@ public fun UShortArray?.contentToString(): String {
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.copyInto(destination: UIntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UIntArray {
@@ -3500,6 +3513,7 @@ public inline fun UIntArray.copyInto(destination: UIntArray, destinationOffset: 
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.copyInto(destination: ULongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ULongArray {
@@ -3524,6 +3538,7 @@ public inline fun ULongArray.copyInto(destination: ULongArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.copyInto(destination: UByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UByteArray {
@@ -3548,6 +3563,7 @@ public inline fun UByteArray.copyInto(destination: UByteArray, destinationOffset
  * @return the [destination] array.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.copyInto(destination: UShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): UShortArray {
@@ -4690,6 +4706,7 @@ public inline fun <R> UShortArray.flatMapIndexed(transform: (index: Int, UShort)
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapIndexedTo(destination: C, transform: (index: Int, UInt) -> Iterable<R>): C {
@@ -4708,6 +4725,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapIndexedTo(de
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapIndexedTo(destination: C, transform: (index: Int, ULong) -> Iterable<R>): C {
@@ -4726,6 +4744,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapIndexedTo(d
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapIndexedTo(destination: C, transform: (index: Int, UByte) -> Iterable<R>): C {
@@ -4744,6 +4763,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapIndexedTo(d
 @SinceKotlin("1.4")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapIndexedTo(destination: C, transform: (index: Int, UShort) -> Iterable<R>): C {
@@ -4759,6 +4779,7 @@ public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapIndexedTo(
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destination: C, transform: (UInt) -> Iterable<R>): C {
@@ -4773,6 +4794,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destinati
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destination: C, transform: (ULong) -> Iterable<R>): C {
@@ -4787,6 +4809,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destinat
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destination: C, transform: (UByte) -> Iterable<R>): C {
@@ -4801,6 +4824,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destinat
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.flatMapTo(destination: C, transform: (UShort) -> Iterable<R>): C {
@@ -4944,6 +4968,7 @@ public inline fun <K, V> UShortArray.groupBy(keySelector: (UShort) -> K, valueTr
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UInt>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K): M {
@@ -4964,6 +4989,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UInt>>> UIntArray.groupBy
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<ULong>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K): M {
@@ -4984,6 +5010,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<ULong>>> ULongArray.group
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UByte>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K): M {
@@ -5004,6 +5031,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UByte>>> UByteArray.group
  * @sample samples.collections.Collections.Transformations.groupBy
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, M : MutableMap<in K, MutableList<UShort>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K): M {
@@ -5025,6 +5053,7 @@ public inline fun <K, M : MutableMap<in K, MutableList<UShort>>> UShortArray.gro
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UIntArray.groupByTo(destination: M, keySelector: (UInt) -> K, valueTransform: (UInt) -> V): M {
@@ -5046,6 +5075,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UIntArray.groupBy
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ULongArray.groupByTo(destination: M, keySelector: (ULong) -> K, valueTransform: (ULong) -> V): M {
@@ -5067,6 +5097,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> ULongArray.groupB
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UByteArray.groupByTo(destination: M, keySelector: (UByte) -> K, valueTransform: (UByte) -> V): M {
@@ -5088,6 +5119,7 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UByteArray.groupB
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> UShortArray.groupByTo(destination: M, keySelector: (UShort) -> K, valueTransform: (UShort) -> V): M {
@@ -5210,6 +5242,7 @@ public inline fun <R> UShortArray.mapIndexed(transform: (index: Int, UShort) -> 
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.mapIndexedTo(destination: C, transform: (index: Int, UInt) -> R): C {
@@ -5226,6 +5259,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.mapIndexedTo(destin
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.mapIndexedTo(destination: C, transform: (index: Int, ULong) -> R): C {
@@ -5242,6 +5276,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.mapIndexedTo(desti
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.mapIndexedTo(destination: C, transform: (index: Int, UByte) -> R): C {
@@ -5258,6 +5293,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.mapIndexedTo(desti
  * and returns the result of the transform applied to the element.
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.mapIndexedTo(destination: C, transform: (index: Int, UShort) -> R): C {
@@ -5272,6 +5308,7 @@ public inline fun <R, C : MutableCollection<in R>> UShortArray.mapIndexedTo(dest
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UIntArray.mapTo(destination: C, transform: (UInt) -> R): C {
@@ -5285,6 +5322,7 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.mapTo(destination: 
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> ULongArray.mapTo(destination: C, transform: (ULong) -> R): C {
@@ -5298,6 +5336,7 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.mapTo(destination:
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UByteArray.mapTo(destination: C, transform: (UByte) -> R): C {
@@ -5311,6 +5350,7 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.mapTo(destination:
  * and appends the results to the given [destination].
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R, C : MutableCollection<in R>> UShortArray.mapTo(destination: C, transform: (UShort) -> R): C {

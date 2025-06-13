@@ -112,6 +112,7 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
+@IgnorableReturnValue
 internal actual inline fun checkIndexOverflow(index: Int): Int {
     if (index < 0) {
         throwIndexOverflow()
@@ -122,11 +123,10 @@ internal actual inline fun checkIndexOverflow(index: Int): Int {
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
+@IgnorableReturnValue
 internal actual inline fun checkCountOverflow(count: Int): Int {
     if (count < 0) {
         throwCountOverflow()
     }
     return count
 }
-
-

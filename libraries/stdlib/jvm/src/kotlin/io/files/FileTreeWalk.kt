@@ -98,7 +98,7 @@ public class FileTreeWalk private constructor(
             val file = topState.step()
             if (file == null) {
                 // There is nothing more on the top of the stack, go back
-                state.pop()
+                val _ = state.pop()
                 return gotoNext()
             } else {
                 // Check that file/directory matches the filter

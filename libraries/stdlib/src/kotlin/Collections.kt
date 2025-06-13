@@ -128,6 +128,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.add
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     public fun add(element: E): Boolean
 
     /**
@@ -139,6 +140,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.remove
      * @sample samples.collections.Collections.Sets.remove
      */
+    @IgnorableReturnValue
     public fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -150,6 +152,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.addAll
      * @sample samples.collections.Collections.Sets.addAll
      */
+    @IgnorableReturnValue
     public fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -160,6 +163,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.removeAll
      * @sample samples.collections.Collections.Sets.removeAll
      */
+    @IgnorableReturnValue
     public fun removeAll(elements: Collection<E>): Boolean
 
     /**
@@ -169,6 +173,7 @@ public expect interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      *
      * @sample samples.collections.Collections.Collections.retainAll
      */
+    @IgnorableReturnValue
     public fun retainAll(elements: Collection<E>): Boolean
 
     /**
@@ -307,8 +312,10 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.add
      */
+    @IgnorableReturnValue
     override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -321,6 +328,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAll
      */
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -338,9 +346,13 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAllAt
      */
+    @IgnorableReturnValue
     public fun addAll(index: Int, elements: Collection<E>): Boolean
 
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
 
@@ -354,6 +366,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.set
      */
+    @IgnorableReturnValue
     public operator fun set(index: Int, element: E): E
 
     /**
@@ -380,6 +393,7 @@ public expect interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.removeAt
      */
+    @IgnorableReturnValue
     public fun removeAt(index: Int): E
 
     // List Iterators
@@ -476,14 +490,18 @@ public expect interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
-
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
 }
@@ -636,6 +654,7 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.put
      */
+    @IgnorableReturnValue
     public fun put(key: K, value: V): V?
 
     /**
@@ -645,6 +664,7 @@ public expect interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.remove
      */
+    @IgnorableReturnValue
     public fun remove(key: K): V?
 
     // Bulk Modification Operations

@@ -136,6 +136,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.add
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     public actual fun add(element: E): Boolean
 
     /**
@@ -147,6 +148,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.remove
      * @sample samples.collections.Collections.Sets.remove
      */
+    @IgnorableReturnValue
     public actual fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -158,6 +160,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.addAll
      * @sample samples.collections.Collections.Sets.addAll
      */
+    @IgnorableReturnValue
     public actual fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -168,6 +171,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.removeAll
      * @sample samples.collections.Collections.Sets.removeAll
      */
+    @IgnorableReturnValue
     public actual fun removeAll(elements: Collection<E>): Boolean
 
     /**
@@ -177,6 +181,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      *
      * @sample samples.collections.Collections.Collections.retainAll
      */
+    @IgnorableReturnValue
     public actual fun retainAll(elements: Collection<E>): Boolean
 
     /**
@@ -316,8 +321,10 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.add
      */
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -330,6 +337,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAll
      */
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -347,9 +355,12 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.addAllAt
      */
+    @IgnorableReturnValue
     public actual fun addAll(index: Int, elements: Collection<E>): Boolean
 
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
 
@@ -363,6 +374,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.set
      */
+    @IgnorableReturnValue
     public actual operator fun set(index: Int, element: E): E
 
     /**
@@ -389,6 +401,7 @@ public actual interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Lists.removeAt
      */
+    @IgnorableReturnValue
     public actual fun removeAt(index: Int): E
 
     // List Iterators
@@ -486,14 +499,19 @@ public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
 
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
 }
@@ -662,6 +680,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.put
      */
+    @IgnorableReturnValue
     public actual fun put(key: K, value: V): V?
 
     /**
@@ -671,6 +690,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.remove
      */
+    @IgnorableReturnValue
     public actual fun remove(key: K): V?
 
     /**
@@ -734,6 +754,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
          *
          * @return the previous value corresponding to the key.
          */
+        @IgnorableReturnValue
         public actual fun setValue(newValue: V): V
     }
 }

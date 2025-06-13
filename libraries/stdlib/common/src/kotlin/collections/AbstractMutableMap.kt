@@ -25,6 +25,7 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
+    @IgnorableReturnValue
     abstract override fun put(key: K, value: V): V?
 
     abstract override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
@@ -38,5 +39,6 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     override fun get(key: K): V?
     override fun isEmpty(): Boolean
     override fun putAll(from: Map<out K, V>)
+    @IgnorableReturnValue
     override fun remove(key: K): V?
 }

@@ -51,11 +51,17 @@ public expect abstract class AbstractMutableList<E> : MutableList<E> {
      *
      * @return `true` because the list is always modified as the result of this operation.
      */
+    @IgnorableReturnValue
     override fun add(element: E): Boolean
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun addAll(index: Int, elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear()
     override fun listIterator(): MutableListIterator<E>

@@ -58,7 +58,9 @@ public expect class LinkedHashMap<K, V> : MutableMap<K, V> {
 
     // From MutableMap
 
+    @IgnorableReturnValue
     override fun put(key: K, value: V): V?
+    @IgnorableReturnValue
     override fun remove(key: K): V?
     override fun putAll(from: Map<out K, V>)
     override fun clear()
