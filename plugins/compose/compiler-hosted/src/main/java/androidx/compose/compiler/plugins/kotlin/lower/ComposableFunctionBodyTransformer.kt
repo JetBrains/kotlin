@@ -384,6 +384,7 @@ class ComposableFunctionBodyTransformer(
     private val collectSourceInformation: Boolean,
     private val traceMarkersEnabled: Boolean,
     private val indyEnabled: Boolean,
+    private val targetRuntimeVersion: ComposeRuntimeVersion?,
     featureFlags: FeatureFlags,
 ) :
     AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -408,15 +409,6 @@ class ComposableFunctionBodyTransformer(
         composerIrClass.functions
             .first {
                 it.name.identifier == "skipToGroupEnd" && it.parameters.size == 1
-            }
-    }
-
-    // todo is this correct to be unused?
-    private val skipCurrentGroupFunction by guardedLazy {
-        composerIrClass
-            .functions
-            .first {
-                it.name.identifier == "skipCurrentGroup" && it.parameters.size == 1
             }
     }
 
@@ -593,11 +585,12 @@ class ComposableFunctionBodyTransformer(
             }
     }
 
-    private val sourceInformationCls by guardedLazy {
-        context.referenceClass(ComposeClassIds.SourceInformation)
-    }
+    private val emitParameterNames
+        get() = indyEnabled &&
+                targetRuntimeVersion.supportsFeature(ComposeRuntimeFeature.SourceInfoParameterNames) {
+                    context.referenceClass(ComposeClassIds.SourceInformation) != null
+                }
 
-    private val emitParameterNames get() = indyEnabled && sourceInformationCls != null
 
     private var currentScope: Scope = Scope.RootScope()
 
