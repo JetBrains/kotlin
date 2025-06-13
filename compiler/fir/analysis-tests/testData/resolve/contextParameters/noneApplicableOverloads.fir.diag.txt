@@ -1,0 +1,5 @@
+/noneApplicableOverloads.kt:(135,142): error: None of the following candidates is applicable:
+fun <T, R> context(with: T, block: context(T) () -> R): R
+fun <A, B, Result> context(a: A, b: B, block: context(A, B) () -> Result): Result
+fun <A, B, C, Result> context(a: A, b: B, c: C, block: context(A, B, C) () -> Result): Result
+... and 19 more 'context' overloads

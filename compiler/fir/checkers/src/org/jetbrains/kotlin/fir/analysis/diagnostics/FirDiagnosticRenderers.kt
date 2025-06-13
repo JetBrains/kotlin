@@ -90,10 +90,29 @@ object FirDiagnosticRenderers {
     }
 
     /**
+     * Maximum amount of symbols in lines before summarization.
+     */
+    private const val MAX_SYMBOLS_ON_NEXT_LINES_WITHOUT_SUMMARY = 10
+    private const val MAX_SYMBOLS_ON_GROUP_IN_SUMMARY = 3
+
+    /**
      * Adds a line break before the list, then prints one symbol per line.
      */
     val SYMBOLS_ON_NEXT_LINES = Renderer { symbols: Collection<FirBasedSymbol<*>> ->
-        symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
+        if (symbols.size <= MAX_SYMBOLS_ON_NEXT_LINES_WITHOUT_SUMMARY)
+            symbols.joinToString(separator = "\n", prefix = "\n", transform = SYMBOL::render)
+        else
+            summarizeSymbols(symbols).joinToString(separator = "\n", prefix = "\n")
+    }
+
+    fun summarizeSymbols(symbols: Collection<FirBasedSymbol<*>>): List<String> = buildList {
+        for ((_, group) in symbols.groupBy { DECLARATION_FQ_NAME.render(it) }) {
+            addAll(group.take(MAX_SYMBOLS_ON_GROUP_IN_SUMMARY).map { SYMBOL.render(it) })
+            val remaining = group.size - MAX_SYMBOLS_ON_GROUP_IN_SUMMARY
+            if (remaining > 0) {
+                add("... and $remaining more '${DECLARATION_NAME.render(group.first())}' overloads")
+            }
+        }
     }
 
     /**

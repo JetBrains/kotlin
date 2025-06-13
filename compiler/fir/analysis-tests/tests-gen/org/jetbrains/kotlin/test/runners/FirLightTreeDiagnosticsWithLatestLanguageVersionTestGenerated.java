@@ -2000,6 +2000,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
       }
 
       @Test
+      @TestMetadata("noneApplicableOverloads.kt")
+      public void testNoneApplicableOverloads() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/noneApplicableOverloads.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
