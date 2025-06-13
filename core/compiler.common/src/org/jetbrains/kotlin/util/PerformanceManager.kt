@@ -13,6 +13,7 @@ import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -294,24 +295,34 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     }
 
     fun dumpPerformanceReport(destFileNameOrPlaceholder: String) {
-        val lastSlashIndex = destFileNameOrPlaceholder.indexOfLast { it == '/' || it == '\\' }
-        val extensionDotIndex = destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
-        val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(
-            lastSlashIndex + 1, // It's ok if `lastSlashIndex` == -1
-            extensionDotIndex
-        )
-        val fullFileName = if (fileNameOrPlaceholder == "$") {
-            val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
-            // Generate a unique name to avoid files overwriting.
-            // Use the current date-time stamp with seconds precision (should be enough) as a part of the unique name.
-            val fileName = "${unitStats.name}_${LocalDateTime.now().format(dateTimeForFileNameFormatter)}"
-            val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
-            pathString + fileName + extension
+        val refinedFileName: String = if (File(destFileNameOrPlaceholder).isDirectory) {
+            Paths.get(destFileNameOrPlaceholder, generateFileName() + ".json").toString()
         } else {
-            destFileNameOrPlaceholder
+            val lastSlashIndex = destFileNameOrPlaceholder.indexOfLast { it == '/' || it == '\\' }
+            val extensionDotIndex =
+                destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
+            // It's ok if `lastSlashIndex` == -1
+            val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(lastSlashIndex + 1, extensionDotIndex)
+            if (fileNameOrPlaceholder == "$") {
+                val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
+                val fileName = generateFileName()
+                val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
+                pathString + fileName + extension
+            } else {
+                destFileNameOrPlaceholder
+            }
         }
-        val destinationFile = File(fullFileName)
+
+        val destinationFile = File(refinedFileName)
         destinationFile.writeBytes(createPerformanceReport(isJson = destinationFile.extension == "json").toByteArray())
+    }
+
+    /**
+     * Generate a unique name to avoid files overwriting.
+     * Use the current date-time stamp with seconds precision (should be enough) as a part of the unique name.
+     */
+    private fun generateFileName(): String {
+        return "${unitStats.name}_${LocalDateTime.now().format(dateTimeForFileNameFormatter)}"
     }
 
     fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
