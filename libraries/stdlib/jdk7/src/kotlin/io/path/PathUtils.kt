@@ -206,7 +206,6 @@ private object PathRelativizer {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
     val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
     return Files.copy(this, target, *options)
@@ -246,7 +245,6 @@ public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, vararg options: CopyOption): Path {
     return Files.copy(this, target, *options)
 }
@@ -456,7 +454,6 @@ public inline fun Path.deleteExisting() {
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
@@ -465,9 +462,6 @@ public inline fun Path.deleteIfExists(): Boolean =
  *
  * Note that the parent directory where this directory is going to be created must already exist.
  * If you need to create all non-existent parent directories, use [Path.createDirectories].
- *
- * @return the path of this directory if it has been created successfully.
- * The returned path can be converted [Path.toAbsolutePath][to absolute path] if it was relative.
  *
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  *
@@ -484,7 +478,6 @@ public inline fun Path.deleteIfExists(): Boolean =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectory(this, *attributes)
 
@@ -511,7 +504,6 @@ public inline fun Path.createDirectory(vararg attributes: FileAttribute<*>): Pat
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): Path =
     Files.createDirectories(this, *attributes)
 
@@ -858,7 +850,6 @@ public inline fun Path.readSymbolicLink(): Path =
 @SinceKotlin("1.5")
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-@IgnorableReturnValue
 public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
     Files.createFile(this, *attributes)
 

@@ -406,10 +406,10 @@ private fun SecureDirectoryStream<Path>.handleEntry(name: Path, parent: Path?, c
             // If something went wrong trying to delete the contents of the
             // directory, don't try to delete the directory as it will probably fail.
             if (preEnterTotalExceptions == collector.totalExceptions) {
-                val _ = tryIgnoreNoSuchFileException { this.deleteDirectory(name) }
+                tryIgnoreNoSuchFileException { this.deleteDirectory(name) }
             }
         } else {
-            val _ = tryIgnoreNoSuchFileException { this.deleteFile(name) } // deletes symlink itself, not its target
+            tryIgnoreNoSuchFileException { this.deleteFile(name) } // deletes symlink itself, not its target
         }
     }
 
