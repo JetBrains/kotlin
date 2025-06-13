@@ -279,7 +279,7 @@ class IrBuiltInsOverDescriptors(
                 valueParameter.parent = operator
                 typeParameter.parent = operator
 
-                operator.valueParameters += valueParameter
+                operator.parameters += valueParameter
                 operator.typeParameters += typeParameter
             }
         }.symbol
