@@ -2,6 +2,10 @@
 // ^^^ JVM has a similar but distinct behavior w.r.t. references to unreferencable callables
 // ^^^ JS should be fixed by KT-76093
 
+// PARTIAL_LINKAGE_MODE: ENABLE
+// PARTIAL_LINKAGE_LOG_LEVEL: ERROR
+// ^^^ When KT-77493 is fixed, this test would become a diagnostic test, and `PARTIAL_LINKAGE_` directives would not be needed
+
 // Synthetic accessors are generated only to allow "calling" a declaration, they are not quite sufficient to provide
 // reflection information (such as .name). So a request for it is supposed to fail at runtime with a PL linage error.
 // However, because of techical limitation, the original declaration (with a correct information) may still slip
