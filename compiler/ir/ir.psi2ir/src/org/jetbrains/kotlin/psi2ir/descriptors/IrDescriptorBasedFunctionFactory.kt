@@ -440,8 +440,8 @@ class IrDescriptorBasedFunctionFactory(
             descriptor.dispatchReceiverParameter?.let {
                 newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.DispatchReceiver)
             }
-            newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
-                newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
+            descriptor.extensionReceiverParameter?.let {
+                newFunction.parameters += newFunction.createValueParameter(it, IrParameterKind.ExtensionReceiver)
             }
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
             newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap {
