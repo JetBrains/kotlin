@@ -59,6 +59,15 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 }
 
+fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
+    freeCompilerArgs.add("-Xreturn-value-checker=full")
+}
+
+fun KotlinCommonCompilerOptions.allowReturnValueCheckerButNotReport() {
+    freeCompilerArgs.add("-Xreturn-value-checker=check")
+    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled,ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT:disabled")
+}
+
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
@@ -98,6 +107,7 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
             }
@@ -143,6 +153,7 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
                 defaultSourceSet {
@@ -260,6 +271,7 @@ kotlin {
                             diagnosticNamesArg,
                         )
                     )
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                 }
             }
         }
@@ -280,6 +292,7 @@ kotlin {
             val main by getting {
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                     compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME")
                 }
             }
