@@ -10,6 +10,8 @@ import org.bouncycastle.openpgp.PGPSignature
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -29,7 +31,6 @@ import java.net.URI
 import java.util.*
 import javax.inject.Inject
 
-// region <signing verification>
 @DisableCachingByDefault(because = "Result relies on a server call and has no outputs.")
 abstract class CheckSigningTask @Inject internal constructor(private val workerExecutor: WorkerExecutor) : DefaultTask(),
     UsesKotlinToolingDiagnostics {
@@ -102,7 +103,7 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
                 val connection = url.openConnection() as HttpURLConnection
                 try {
                     connection.inputStream.reader().use {
-                        println("Public key found on keyserver: '${connection.url.host}'")
+                        logger.quiet("Public key found on keyserver: '${connection.url.host}'")
                     }
                     return@any true
                 } catch (e: IOException) {
@@ -127,6 +128,10 @@ abstract class CheckSigningTask @Inject internal constructor(private val workerE
                 See https://kotl.in/sonatype-distributing-public-key for more details.
             """.trimIndent()
             }
+        }
+
+        private companion object {
+            private val logger: Logger = Logging.getLogger(CheckKeyservers::class.java)
         }
     }
 

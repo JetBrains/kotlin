@@ -26,6 +26,8 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPKeyPairGeneratorProvider
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -42,7 +44,6 @@ import java.io.FileOutputStream
 import java.util.Date
 import javax.inject.Inject
 
-// region <pgp helpers>
 @DisableCachingByDefault(because = "PGP keys are not supposed to be cached. This task is intended for CLI usage.")
 abstract class GeneratePgpKeys @Inject internal constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
     @get:Input
@@ -135,7 +136,6 @@ abstract class GeneratePgpKeys @Inject internal constructor(private val workerEx
                 publicKeys.encode(publicOut)
             }
 
-
             val exampleProperties = """
                 signing.keyId=$keyId
                 signing.password=<YOUR_PASSWORD>
@@ -144,7 +144,7 @@ abstract class GeneratePgpKeys @Inject internal constructor(private val workerEx
 
             dir.resolve("example_$keyId.properties").writeText(exampleProperties)
 
-            println(
+            logger.quiet(
                 """
                 Generated PGP keys and associated metadata in '${dir.absolutePath}'
                 Please move your generated key files to a secure location and do not share the secret key or your password with others.
@@ -216,6 +216,10 @@ ${exampleProperties.prependIndent("                ")}
 
             val secretKeys = gen.generateSecretKeyRing()
             return secretKeys
+        }
+
+        private companion object {
+            private val logger: Logger = Logging.getLogger(GenerateKeys::class.java)
         }
     }
 }
