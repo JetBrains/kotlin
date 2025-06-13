@@ -41,6 +41,7 @@ public interface ContractBuilder {
      *
      */
     // @sample samples.contracts.returnsContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returns(): Returns
 
     /**
@@ -54,6 +55,7 @@ public interface ContractBuilder {
     // @sample samples.contracts.returnsTrueContract
     // @sample samples.contracts.returnsFalseContract
     // @sample samples.contracts.returnsNullContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returns(value: Any?): Returns
 
     /**
@@ -63,6 +65,7 @@ public interface ContractBuilder {
      *
      */
     // @sample samples.contracts.returnsNotNullContract
+    @IgnorableReturnValue
     @ContractsDsl public fun returnsNotNull(): ReturnsNotNull
 
     /**
@@ -82,6 +85,7 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceExactlyOnceContract
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
+    @IgnorableReturnValue
     @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
 }
 

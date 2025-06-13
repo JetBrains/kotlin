@@ -946,7 +946,7 @@ public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> 
     val iterator = listIterator(size)
     while (iterator.hasPrevious()) {
         if (!predicate(iterator.previous())) {
-            iterator.next()
+            val _ = iterator.next()
             val expectedSize = size - iterator.nextIndex()
             if (expectedSize == 0) return emptyList()
             return ArrayList<T>(expectedSize).apply {
@@ -3590,8 +3590,11 @@ public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  * 
+ * @return the [buffer] argument with appended elements.
+ * 
  * @sample samples.collections.Collections.Transformations.joinTo
  */
+@IgnorableReturnValue
 public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
@@ -3790,4 +3793,3 @@ public fun Iterable<Double>.sum(): Double {
     }
     return sum
 }
-

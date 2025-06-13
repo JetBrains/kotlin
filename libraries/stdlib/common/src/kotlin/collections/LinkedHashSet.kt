@@ -58,10 +58,15 @@ public expect class LinkedHashSet<E> : MutableSet<E> {
     // From MutableSet
 
     override fun iterator(): MutableIterator<E>
+    @IgnorableReturnValue
     override fun add(element: E): Boolean
+    @IgnorableReturnValue
     override fun remove(element: E): Boolean
+    @IgnorableReturnValue
     override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear()
 }

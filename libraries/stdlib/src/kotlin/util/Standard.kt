@@ -105,6 +105,7 @@ public inline fun <T> T.also(block: (T) -> Unit): T {
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#let).
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <T, R> T.let(block: (T) -> R): R {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
