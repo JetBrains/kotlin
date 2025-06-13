@@ -76,6 +76,12 @@ public class FirIdeNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated extend
   }
 
   @Test
+  @TestMetadata("redundantSmartCast.kt")
+  public void testRedundantSmartCast() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/redundantSmartCast.kt");
+  }
+
+  @Test
   @TestMetadata("smartcastAsReceiver_stable.kt")
   public void testSmartcastAsReceiver_stable() {
     runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartcastAsReceiver_stable.kt");
