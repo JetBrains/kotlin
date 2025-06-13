@@ -336,8 +336,9 @@ class TryNextIT : KGPBaseTest() {
         ) {
             enableTryNext()
             build("build") {
-                assertOutputContains(
-                    """
+                if (HostManager.hostIsMac) {
+                    assertOutputContains(
+                        """
                             |##### 'kotlin.experimental.tryNext' results #####
                             |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
                             |:lib:compileKotlinIosArm64: $nextKotlinLanguageVersion language version
@@ -350,7 +351,18 @@ class TryNextIT : KGPBaseTest() {
                             |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
                             |##### 100% (9/9) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
                         """.trimMargin().normalizeLineEndings()
-                )
+                    )
+                } else {
+                    assertOutputContains(
+                        """
+                            |##### 'kotlin.experimental.tryNext' results #####
+                            |:lib:compileCommonMainKotlinMetadata: $nextKotlinLanguageVersion language version
+                            |:lib:compileKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |:lib:compileTestKotlinLinuxX64: $nextKotlinLanguageVersion language version
+                            |##### 100% (3/3) tasks have been compiled with Kotlin $nextKotlinLanguageVersion #####
+                        """.trimMargin().normalizeLineEndings()
+                    )
+                }
             }
         }
     }
