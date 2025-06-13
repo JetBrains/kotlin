@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithSource
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawReporter) : BaseDiagnosticsCollector() {
-    private val pendingDiagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
+    private val pendingDiagnosticsByFilePath: MutableMap<String, MutableList<KtDiagnostic>> = mutableMapOf()
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
         get() = _diagnosticsByFilePath.flatMap { it.value }
@@ -24,8 +24,16 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawRepor
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            pendingDiagnosticsByFilePath.getOrPut(context.containingFilePath) { mutableListOf() }.run {
-                add(diagnostic)
+            when (val filePath = context.containingFilePath) {
+                null -> {
+                    val diagnostics = _diagnosticsByFilePath.getOrPut(key = null) { mutableListOf() }
+                    diagnostics.add(diagnostic)
+                    updateHasErrors(diagnostic)
+                }
+                else -> {
+                    val pendingDiagnostics = pendingDiagnosticsByFilePath.getOrPut(filePath) { mutableListOf() }
+                    pendingDiagnostics.add(diagnostic)
+                }
             }
         }
     }
@@ -56,9 +64,7 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawRepor
                     diagnosticElement == element || commitEverything -> {
                         iterator.remove()
                         committedList += diagnostic
-                        if (!hasErrors && diagnostic.severity == Severity.ERROR) {
-                            hasErrors = true
-                        }
+                        updateHasErrors(diagnostic)
                     }
                 }
             }
@@ -66,5 +72,9 @@ class PendingDiagnosticsCollectorWithSuppress(override val rawReporter: RawRepor
                 pendingIterator.remove()
             }
         }
+    }
+
+    private fun updateHasErrors(diagnostic: KtDiagnostic) {
+        hasErrors = hasErrors || diagnostic.severity == Severity.ERROR
     }
 }
