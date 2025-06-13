@@ -506,6 +506,11 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "2.2",
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
+
+            // See allowReturnValueCheckerButNotReport() in libraries/stdlib/build.gradle.kts:
+            "-Xreturn-value-checker=check",
+            "-Xwarning-level=RETURN_VALUE_NOT_USED:disabled,ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT:disabled",
+
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:common,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
             "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
     ))
