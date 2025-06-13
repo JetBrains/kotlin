@@ -86,8 +86,10 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override operator fun get(key: K): V? = internalMap.get(key)
 
+    @IgnorableReturnValue
     actual override fun put(key: K, value: V): V? = internalMap.put(key, value)
 
+    @IgnorableReturnValue
     actual override fun remove(key: K): V? = internalMap.remove(key)
 
     actual override val size: Int get() = internalMap.size

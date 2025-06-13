@@ -31,7 +31,7 @@ internal fun <T> primitiveArrayConcat(vararg args: T): T {
     val a = args[0]
     val result = js("new a.constructor(size_local)").unsafeCast<Array<Any?>>()
     if (a.asDynamic().`$type$` != null) {
-        withType(a.asDynamic().`$type$`, result)
+        val _ = withType(a.asDynamic().`$type$`, result)
     }
 
     size_local = 0

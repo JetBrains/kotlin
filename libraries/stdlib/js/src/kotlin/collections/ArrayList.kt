@@ -67,6 +67,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     actual override val size: Int get() = array.size
     @Suppress("UNCHECKED_CAST")
     actual override fun get(index: Int): E = array[rangeCheck(index)] as E
+    @IgnorableReturnValue
     actual override fun set(index: Int, element: E): E {
         checkIsMutable()
         rangeCheck(index)
@@ -74,6 +75,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return array[index].apply { array[index] = element } as E
     }
 
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean {
         checkIsMutable()
         array.asDynamic().push(element)
@@ -93,6 +95,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return previous
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         if (elements.isEmpty()) return false
@@ -105,6 +108,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return true
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         checkIsMutable()
         insertionRangeCheck(index)
@@ -124,6 +128,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return true
     }
 
+    @IgnorableReturnValue
     actual override fun removeAt(index: Int): E {
         checkIsMutable()
         rangeCheck(index)
@@ -134,6 +139,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
             array.asDynamic().splice(index, 1)[0]
     }
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean {
         checkIsMutable()
         for (index in array.indices) {
@@ -189,10 +195,12 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         if (isReadOnly) throw UnsupportedOperationException()
     }
 
+    @IgnorableReturnValue
     private fun rangeCheck(index: Int) = index.apply {
         AbstractList.checkElementIndex(index, size)
     }
 
+    @IgnorableReturnValue
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
     }

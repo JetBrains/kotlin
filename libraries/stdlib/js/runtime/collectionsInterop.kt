@@ -65,7 +65,7 @@ private fun <E> createJsArrayViewWith(
     listIncreaseSize: (Int) -> Unit,
 ): dynamic {
     val arrayView = JsArray<E>()
-    JsObject.setPrototypeOf(arrayView, JsArrayView::class.js.asDynamic().prototype)
+    val _ = JsObject.setPrototypeOf(arrayView, JsArrayView::class.js.asDynamic().prototype)
 
     return js("""
        new Proxy(arrayView, {

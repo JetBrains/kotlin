@@ -243,5 +243,6 @@ internal fun <reified T : Any> createExternalThis(
 }
 
 @Suppress("UNUSED_PARAMETER")
+@IgnorableReturnValue
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?, enumerable: Boolean?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter, enumerable: enumerable })")
