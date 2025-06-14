@@ -11,22 +11,22 @@ internal inline fun internalInlineFunction(): KMutableProperty0<String>
             /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
         /* LOCAL declaration @1 */ local fun <set-privateVar>(p0: String)
             /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
+private inline fun privateInlineFunction(): KMutableProperty0<String>
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @2 */ local fun <get-privateVar>(): String
+            /* TARGET use-site */ <get-privateVar>()
+        /* LOCAL declaration @3 */ local fun <set-privateVar>(p0: String)
+            /* TARGET use-site */ <set-privateVar>(<set-?> = p0)
+internal inline fun transitiveInlineFunction(): KMutableProperty0<String>
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @4 */ local fun <get-privateVar>(): String
+            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
+        /* LOCAL declaration @5 */ local fun <set-privateVar>(p0: String)
+            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
 /* ACCESSOR declaration */ internal fun access$<get-privateVar>$tAKt(): String
     /* TARGET use-site */ <get-privateVar>()
 /* ACCESSOR declaration */ internal fun access$<set-privateVar>$tAKt(<set-?>: String)
     /* TARGET use-site */ <set-privateVar>(<set-?> = <set-?>)
-internal inline fun transitiveInlineFunction(): KMutableProperty0<String>
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @2 */ local fun <get-privateVar>(): String
-            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-        /* LOCAL declaration @3 */ local fun <set-privateVar>(p0: String)
-            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
-private inline fun privateInlineFunction(): KMutableProperty0<String>
-    /* RICH PROPERTY REFERENCE */
-        /* LOCAL declaration @4 */ local fun <get-privateVar>(): String
-            /* TARGET use-site */ <get-privateVar>()
-        /* LOCAL declaration @5 */ local fun <set-privateVar>(p0: String)
-            /* TARGET use-site */ <set-privateVar>(<set-?> = p0)
 
 
 /* MODULE name=<main> */
@@ -34,15 +34,13 @@ private inline fun privateInlineFunction(): KMutableProperty0<String>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp0: Any? =
-        /* RICH PROPERTY REFERENCE */
-            /* LOCAL declaration @0 */ local fun <get-privateVar>(): String
-                /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-            /* LOCAL declaration @1 */ local fun <set-privateVar>(p0: String)
-                /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
-    val tmp0: Any? =
-        /* RICH PROPERTY REFERENCE */
-            /* LOCAL declaration @2 */ local fun <get-privateVar>(): String
-                /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
-            /* LOCAL declaration @3 */ local fun <set-privateVar>(p0: String)
-                /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @0 */ local fun <get-privateVar>(): String
+            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
+        /* LOCAL declaration @1 */ local fun <set-privateVar>(p0: String)
+            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
+    /* RICH PROPERTY REFERENCE */
+        /* LOCAL declaration @2 */ local fun <get-privateVar>(): String
+            /* ACCESSOR use-site */ access$<get-privateVar>$tAKt()
+        /* LOCAL declaration @3 */ local fun <set-privateVar>(p0: String)
+            /* ACCESSOR use-site */ access$<set-privateVar>$tAKt(<set-?> = p0)
