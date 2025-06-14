@@ -1,6 +1,7 @@
+// ISSUE: KT-77102
 // LANGUAGE: +IrInlinerBeforeKlibSerialization
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// ^^^ KT-77102: Function 'CHECK_NOT_NULL' can not be called: Expression uses unlinked type parameter symbol '[ /updateStatus|{}updateStatus[0] <- Local[<BF>] ]:3:4:5' declared in file callableReferenceOfLocalKT77102.kt
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
+// ^^^ KT-77102: IrTypeParameterSymbolImpl is unbound. Signature: null
 
 inline fun <T> inlineGenericTestFunction(f: () -> T) = f()
 
