@@ -106,9 +106,6 @@ open class PsiRawFirBuilder(
     override val PsiElement.asText: String
         get() = text
 
-    override val PsiElement.unescapedValue: String
-        get() = (this as KtEscapeStringTemplateEntry).unescapedValue
-
     override fun PsiElement.getChildNodeByType(type: IElementType): PsiElement? {
         return children.firstOrNull { it.node.elementType == type }
     }
