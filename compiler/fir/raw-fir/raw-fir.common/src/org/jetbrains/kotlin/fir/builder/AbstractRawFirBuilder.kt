@@ -587,12 +587,16 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                             )
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                            sb.append(entry.unescapedValue)
                             val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
+                            val unescapedCharacter = characterWithDiagnostic.value
+                            if (unescapedCharacter != null) {
+                                sb.append(unescapedCharacter)
+                            }
+
                             arguments += buildConstOrErrorExpression(
                                 entry.toFirSourceElement(),
                                 ConstantValueKind.String,
-                                characterWithDiagnostic.value?.toString(),
+                                unescapedCharacter?.toString(),
                                 ConeSimpleDiagnostic(
                                     "Incorrect character: ${entry.asText}",
                                     characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
