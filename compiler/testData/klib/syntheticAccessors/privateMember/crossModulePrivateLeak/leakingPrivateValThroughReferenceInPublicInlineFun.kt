@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// The test should be unmuted for JS when KT-76093 issue is fixed.
 // MODULE: lib
 // FILE: A.kt
 class A constructor(val s: String) {

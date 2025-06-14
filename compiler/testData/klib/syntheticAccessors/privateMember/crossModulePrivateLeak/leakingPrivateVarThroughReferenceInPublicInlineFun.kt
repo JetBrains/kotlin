@@ -1,3 +1,5 @@
+// IGNORE _BACKEND: JS_IR
+// ^^^ KT-76093: kotlin.NotImplementedError: An operation is not implemented
 // MODULE: lib
 // FILE: A.kt
 class A {
