@@ -1,12 +1,3 @@
-fun foo(x: Int): String {
-    return when (x) {
-        101 -> "1"
-        102 -> "2"
-        103 -> "3"
-        else -> "else"
-    }
-}
-
 fun foo(p: Char): String {
     return when (p) {
         'a' -> "a"
@@ -21,5 +12,15 @@ fun foo(p: Char): String {
     }
 }
 
+fun box(): String {
+    return if (foo('a') == "a"
+        && foo('c') == "c"
+        && foo('h') == "h"
+        && foo('x') == "else"
+    ) "OK"
+    else "FAIL"
+}
+
+// CHECK_BYTECODE_TEXT
 // 0 LOOKUPSWITCH
-// 2 TABLESWITCH
+// 1 TABLESWITCH
