@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -48,13 +47,6 @@ abstract class AbstractLightTreeRawFirBuilder(
 
     override val LighterASTNode.asText: String
         get() = this.toString()
-
-    override val LighterASTNode.unescapedValue: String
-        get() {
-            val escape = this.asText
-            return escapedStringToCharacter(escape).value?.toString()
-                ?: escape.replace("\\", "").replace("u", "\\u")
-        }
 
     override fun LighterASTNode.getReferencedNameAsName(): Name {
         return this.asText.nameAsSafeName()

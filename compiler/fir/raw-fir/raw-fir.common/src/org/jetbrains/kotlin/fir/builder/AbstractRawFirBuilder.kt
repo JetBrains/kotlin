@@ -68,7 +68,6 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String
-    abstract val T.unescapedValue: String
     abstract fun T.getReferencedNameAsName(): Name
     abstract fun T.getLabelName(): String?
     abstract fun T.getExpressionInParentheses(): T?
