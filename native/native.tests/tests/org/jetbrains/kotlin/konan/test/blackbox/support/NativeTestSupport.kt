@@ -577,7 +577,7 @@ object NativeTestSupport {
 
         val mode = findPartialLinkageMode(enclosingTestClass)
             ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { findPartialLinkageMode(it) }
-            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode.
+            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode. TODO: KT-69941 Shouldn't default mode for tests be `DISABLED`?
 
         val config = when (mode) {
             UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
