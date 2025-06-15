@@ -370,7 +370,9 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     ) {
         val overriddenMemberSymbols = firTypeScope.getDirectOverriddenSafe(member)
         val hasOverrideKeyword = member.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-        val isOverride = member.resolvedStatus.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
+        val isDirectOverride = member.isOverride && (member.origin != FirDeclarationOrigin.Source || hasOverrideKeyword)
+        // resolvedStatus.isOverride may be true if a FirStatusTransformerExtension changed it later
+        val isOverride = isDirectOverride || member.resolvedStatus.isOverride
 
         if (!isOverride) {
             if (overriddenMemberSymbols.isEmpty() ||
