@@ -108,6 +108,12 @@ public class LLSandboxBackBoxTestGenerated extends AbstractLLSandboxBackBoxTest 
   }
 
   @Test
+  @TestMetadata("missingOverride.kt")
+  public void testMissingOverride() {
+    runTest("plugins/plugin-sandbox/testData/box/missingOverride.kt");
+  }
+
+  @Test
   @TestMetadata("mppDependencyWithActualTypealiasAnnotation.kt")
   public void testMppDependencyWithActualTypealiasAnnotation() {
     runTest("plugins/plugin-sandbox/testData/box/mppDependencyWithActualTypealiasAnnotation.kt");
