@@ -6,43 +6,44 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.artifacts.dsl.DependencyCollector
-import org.gradle.api.model.ObjectFactory
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinDependencies
-import org.jetbrains.kotlin.gradle.dsl.KotlinLevelDependenciesDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
-import javax.inject.Inject
 
-private val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.version("8.9")
+/**
+ * FIXME: Why was it 8.9?
+ *
+ * - [org.gradle.api.artifacts.dsl.Dependencies] is accessible since 7.6
+ * - [org.gradle.api.artifacts.dsl.DependencyCollector] is accessible since 8.6
+ * - [org.gradle.api.artifacts.Configuration.fromDependencyCollector] is accessible since 8.7
+ * [org.jetbrains.kotlin.gradle.dsl.KotlinDependencies] can't be instantiated
+ * with [org.gradle.api.artifacts.dsl.DependencyCollector] before 8.8
+ */
+internal const val MinSupportedGradleVersionWithDependencyCollectorsString = "8.8"
+internal val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)
 
-internal val KotlinMultiplatformExtension.dependencies: KotlinLevelDependenciesDslImpl by extrasStoredProperty {
+internal val KotlinMultiplatformExtension.dependencies: KotlinDependencies by extrasStoredProperty {
     if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
         throw KotlinTopLevelDependenciesNotAvailable(project.gradleVersion)
     }
-    project.objects.newInstance(KotlinLevelDependenciesDslImpl::class.java)
+    project.objects.newInstance(KotlinDependencies::class.java)
 }
 
-internal abstract class KotlinLevelDependenciesDslImpl @Inject internal constructor(
-    objectFactory: ObjectFactory
-) : KotlinLevelDependenciesDsl {
-    val testDependencies: KotlinDependencies = objectFactory.newInstance(KotlinDependencies::class.java)
+internal class KotlinTopLevelDependenciesNotAvailable(
+    currentGradleVersion: GradleVersion,
+): RuntimeException() {
+    private val currentGradleVersionString = currentGradleVersion.toString()
+    private val minimumSupportedGradleVersion = MinSupportedGradleVersionWithDependencyCollectors.toString()
 
-    override fun test(code: KotlinDependencies.() -> Unit) {
-        testDependencies.apply(code)
-    }
-}
-
-internal class KotlinTopLevelDependenciesNotAvailable(private val currentGradleVersion: GradleVersion): RuntimeException() {
     override val message: String
-        get() = "Kotlin top-level dependencies is not available in $currentGradleVersion. Min supported version is $MinSupportedGradleVersionWithDependencyCollectors. " +
-                "Please upgrade your Gradle or keep using source-set level dependencies block."
+        get() = "Kotlin top-level dependencies is not available in $currentGradleVersionString. Minimum supported version is $minimumSupportedGradleVersion. " +
+                "Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies"
 }
 
 internal val ConfigureKotlinTopLevelDependenciesDSL = KotlinProjectSetupAction {
@@ -57,13 +58,12 @@ internal val ConfigureKotlinTopLevelDependenciesDSL = KotlinProjectSetupAction {
         configuration.fromDependencyCollector(this)
     }
 
-    fun wireTopLevelDependencies(dependencies: KotlinDependencies, sourceSet: KotlinSourceSet) {
-        dependencies.api wireWith sourceSet.apiConfigurationName
-        dependencies.implementation wireWith sourceSet.implementationConfigurationName
-        dependencies.compileOnly wireWith sourceSet.compileOnlyConfigurationName
-        dependencies.runtimeOnly wireWith sourceSet.runtimeOnlyConfigurationName
-    }
+    topLevelDependencies.api wireWith commonMain.apiConfigurationName
+    topLevelDependencies.implementation wireWith commonMain.implementationConfigurationName
+    topLevelDependencies.compileOnly wireWith commonMain.compileOnlyConfigurationName
+    topLevelDependencies.runtimeOnly wireWith commonMain.runtimeOnlyConfigurationName
 
-    wireTopLevelDependencies(topLevelDependencies, commonMain)
-    wireTopLevelDependencies(topLevelDependencies.testDependencies, commonTest)
+    topLevelDependencies.testImplementation wireWith commonTest.implementationConfigurationName
+    topLevelDependencies.testCompileOnly wireWith commonTest.compileOnlyConfigurationName
+    topLevelDependencies.testRuntimeOnly wireWith commonTest.runtimeOnlyConfigurationName
 }

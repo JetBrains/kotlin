@@ -625,3 +625,22 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
+
+GradlePluginVariant.values().forEach {
+    when (it) {
+        GradlePluginVariant.GRADLE_MIN,
+        GradlePluginVariant.GRADLE_80,
+        GradlePluginVariant.GRADLE_81,
+        GradlePluginVariant.GRADLE_82,
+        GradlePluginVariant.GRADLE_85,
+        GradlePluginVariant.GRADLE_86 -> sourceSets.getByName(it.sourceSetName).kotlin.srcDir(
+            layout.projectDirectory.dir("src/main/KotlinDependenciesBackwardsDeployment")
+        )
+        /** See [org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString] */
+        GradlePluginVariant.GRADLE_88,
+        GradlePluginVariant.GRADLE_811,
+        GradlePluginVariant.GRADLE_813 -> {
+            // Use the source from common
+        }
+    }
+}

@@ -165,6 +165,37 @@ fun TestProject.publishJava(
     )
 }
 
+fun TestProject.publishJavaPlatform(
+    publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
+        group = "default_javaPlatform_${generateIdentifier()}"
+    ),
+    deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+): PublishedProject {
+    val repositoryIdentifier = "_JavaPlatformPublication_${generateIdentifier()}_"
+    buildScriptInjection {
+        if (project.hasProperty(repositoryIdentifier)) {
+            project.setupMavenPublication(repositoryIdentifier, publisherConfiguration)
+            val publishingExtension = project.extensions.getByType(PublishingExtension::class.java)
+
+            publishingExtension.publications.create("javaPlatform", MavenPublication::class.java) {
+                it.from(project.components.getByName("javaPlatform"))
+            }
+        }
+    }
+    return buildScriptReturn {
+        PublishedProject(
+            project.layout.projectDirectory.dir(publisherConfiguration.repoPath).asFile,
+            publisherConfiguration.group,
+            project.name,
+            publisherConfiguration.version,
+        )
+    }.buildAndReturn(
+        "publishAllPublicationsTo${repositoryIdentifier}Repository",
+        "-P${repositoryIdentifier}",
+        deriveBuildOptions = deriveBuildOptions,
+    )
+}
+
 fun TestProject.addPublishedProjectToRepositories(
     publishedProject: PublishedProject,
     configuration: MavenArtifactRepository.() -> Unit = {},

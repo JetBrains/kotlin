@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTopLevelDependenciesNotAvailable
+import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,22 +27,19 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
     }
 
     @Test
-    fun topLevelApiDependenciesVisibleInCommonSourceSets() {
+    fun topLevelDependenciesVisibleInCommonSourceSets() {
         val project = buildProjectWithMPP {
             defaultTargets()
             kotlin {
                 dependencies {
-                    api.add("test:api:1.0")
-                    implementation.add("test:implementation:1.0")
-                    compileOnly.add("test:compileOnly:1.0")
-                    runtimeOnly.add("test:runtimeOnly:1.0")
+                    api("test:api:1.0")
+                    implementation("test:implementation:1.0")
+                    compileOnly("test:compileOnly:1.0")
+                    runtimeOnly("test:runtimeOnly:1.0")
 
-                    test {
-                        api.add("test:test-api:1.0")
-                        implementation.add("test:test-implementation:1.0")
-                        compileOnly.add("test:test-compileOnly:1.0")
-                        runtimeOnly.add("test:test-runtimeOnly:1.0")
-                    }
+                    testImplementation("test:test-implementation:1.0")
+                    testCompileOnly("test:test-compileOnly:1.0")
+                    testRuntimeOnly("test:test-runtimeOnly:1.0")
                 }
 
                 sourceSets.commonMain.dependencies {
@@ -49,7 +50,6 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 }
 
                 sourceSets.commonTest.dependencies {
-                    api("test:commonTestApi:1.0")
                     implementation("test:commonTestImplementation:1.0")
                     compileOnly("test:commonTestCompileOnly:1.0")
                     runtimeOnly("test:commonTestRuntimeOnly:1.0")
@@ -91,11 +91,6 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
 
         val commonTest = project.multiplatformExtension.sourceSets.commonTest.get()
         assertDependencies(
-            commonTest.apiConfigurationName,
-            "test:test-api:1.0",
-            "test:commonTestApi:1.0"
-        )
-        assertDependencies(
             commonTest.implementationConfigurationName,
             "test:test-implementation:1.0",
             "test:commonTestImplementation:1.0"
@@ -118,19 +113,26 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
             project.defaultTargets()
             project.kotlin {
                 dependencies {
-                    api.add(mockedDependency("top-level-api", "1.0"))
-                    implementation.add(mockedDependency("top-level-implementation", "1.0"))
-                    compileOnly.add(mockedDependency("top-level-compileOnly", "1.0"))
-                    runtimeOnly.add(mockedDependency("top-level-runtimeOnly", "1.0"))
+                    api(mockedDependency("top-level-api", "1.0"))
+                    implementation(mockedDependency("top-level-implementation", "1.0"))
+                    compileOnly(mockedDependency("top-level-compileOnly", "1.0"))
+                    runtimeOnly(mockedDependency("top-level-runtimeOnly", "1.0"))
 
-                    test {
-                        api.add(mockedDependency("top-level-test-api", "1.0"))
-                        implementation.add(mockedDependency("top-level-test-implementation", "1.0"))
-                        compileOnly.add(mockedDependency("top-level-test-compileOnly", "1.0"))
-                        runtimeOnly.add(mockedDependency("top-level-test-runtimeOnly", "1.0"))
-                    }
+                    testImplementation(mockedDependency("top-level-test-implementation", "1.0"))
+                    testCompileOnly(mockedDependency("top-level-test-compileOnly", "1.0"))
+                    testRuntimeOnly(mockedDependency("top-level-test-runtimeOnly", "1.0"))
                 }
             }
         }
+    }
+
+    @Test
+    fun testKotlinTopLevelDependenciesNotAvailablePrinting() {
+        assertEquals(
+            "Kotlin top-level dependencies is not available in Gradle 7.6.3. Minimum supported version is Gradle 8.7. Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies",
+            KotlinTopLevelDependenciesNotAvailable(
+                GradleVersion.version("7.6.3"),
+            ).message
+        )
     }
 }
