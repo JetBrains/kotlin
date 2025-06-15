@@ -1,13 +1,8 @@
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.Action
 import org.gradle.api.artifacts.dsl.Dependencies
 import org.gradle.api.artifacts.dsl.DependencyCollector
+import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
 import org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies
 
 /**
@@ -15,8 +10,9 @@ import org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies
  *
  * @since 2.2.20
  */
+
 @KotlinTopLevelDependencies
-interface KotlinDependencies : Dependencies {
+interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     /**
      * Dependencies for the implementation scope.
      */
@@ -36,22 +32,19 @@ interface KotlinDependencies : Dependencies {
      * Dependencies for the runtimeOnly scope.
      */
     val runtimeOnly: DependencyCollector
-}
-
-/**
- * Represents Kotlin Top-Level dependencies block
- *
- * @since 2.2.20
- */
-@KotlinTopLevelDependencies
-interface KotlinLevelDependenciesDsl : KotlinDependencies {
-    /**
-     * Configures test dependencies.
-     */
-    fun test(code: Action<KotlinDependencies>) = test(code::execute)
 
     /**
-     * Configures test dependencies.
+     * Test dependencies for the implementation scope.
      */
-    fun test(code: KotlinDependencies.() -> Unit)
+    val testImplementation: DependencyCollector
+
+    /**
+     * Test dependencies for the compileOnly scope.
+     */
+    val testCompileOnly: DependencyCollector
+
+    /**
+     * Test dependencies for the runtimeOnly scope.
+     */
+    val testRuntimeOnly: DependencyCollector
 }

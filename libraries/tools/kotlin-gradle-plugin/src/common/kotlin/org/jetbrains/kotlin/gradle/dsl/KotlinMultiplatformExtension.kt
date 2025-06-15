@@ -110,15 +110,9 @@ internal constructor(
             configure
         )
 
-    fun dependencies(
-        configure: Action<KotlinLevelDependenciesDsl>
-    ) {
-        configure.execute(dependencies)
-    }
+    fun dependencies(configure: Action<KotlinDependencies>) = configure.execute(dependencies)
 
-    fun dependencies(configure: KotlinLevelDependenciesDsl.() -> Unit) {
-        configure(dependencies)
-    }
+    fun dependencies(configure: KotlinDependencies.() -> Unit) = configure(dependencies)
 
     @Deprecated(
         "Because only the IR compiler is left, it's no longer necessary to know about the compiler type in properties. Scheduled for removal in Kotlin 2.3.",

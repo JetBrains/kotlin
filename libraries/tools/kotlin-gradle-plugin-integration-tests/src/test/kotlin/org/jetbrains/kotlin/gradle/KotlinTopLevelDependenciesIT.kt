@@ -5,55 +5,188 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTopLevelDependenciesNotAvailable
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
+import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publishJavaPlatform
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
+import kotlin.io.path.writeText
 
 @MppGradlePluginTests
-@GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_9])
+@GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsString])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
-    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines in Kotlin Build Script")
+    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines")
     @GradleTest
-    fun testKotlinTopLevelDependenciesWithCoroutinesKotlin(gradleVersion: GradleVersion) {
-        project("kotlinTopLevelDependenciesSample", gradleVersion) {
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_9)) {
-                buildAndFail("assemble") {
-                    // TODO: Fixme, improve error message here
-                    assertOutputContains("Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:")
-                    assertOutputContains("public open fun NamedDomainObjectProvider<KotlinSourceSet>.invoke(configure: KotlinSourceSet.() -> Unit): Unit defined in org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension")
+    fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {
+        @Language("kotlin")
+        val dependenciesBlock = """
+            
+            kotlin {
+                @OptIn(org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies::class)
+                dependencies {
+                    implementation(platform("platform:platformDependency:1.0"))
+                    implementation(project(":projectDependency"))
+                    implementation(libs.atomicfu)
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 }
-                return@project
+            }
+        """.trimIndent()
+        testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock) {
+            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
+                buildAndFail("assemble") {
+                    assertOutputContains(
+                        "Script compilation error"
+                    )
+                    assertOutputContains(
+                        "api(\"org.jetbrains.kotlinx:kotlinx-coroutines-core\")"
+                    )
+                    assertOutputContains(
+                        "^ Using 'api: KotlinBackwardsDeploymentDependencyCollector' is an error. Kotlin top-level dependencies is not available in your Gradle version. Minimum supported version is 8.8."
+                    )
+                }
             } else {
-                testKotlinTopLevelDependenciesWithCoroutines()
+                testKotlinTopLevelDependenciesCompilationAndPublication()
             }
         }
     }
 
-    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines in Groovy Build Script")
+    @DisplayName("Test kotlin { dependencies {} } block evaluation in Groovy Build Script")
     @GradleTest
-    fun testKotlinTopLevelDependenciesWithCoroutinesGroovy(gradleVersion: GradleVersion) {
-        project("kotlinTopLevelDependenciesSampleGroovy", gradleVersion) {
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_9)) {
-                buildAndFail("assemble") {
-                    assertOutputContains("Kotlin top-level dependencies is not available in Gradle 7.6.3. Min supported version is Gradle 8.9")
+    fun testKotlinTopLevelDependenciesGroovy(gradleVersion: GradleVersion) {
+        @Language("groovy")
+        val dependenciesBlock = """
+            
+            kotlin {
+                dependencies {
+                    implementation(platform("platform:platformDependency:1.0"))
+                    implementation(project(":projectDependency"))
+                    implementation(libs.atomicfu)
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 }
-                return@project
+            }
+        """.trimIndent()
+        testKotlinDependenciesBlock("empty", gradleVersion, dependenciesBlock) {
+            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
+                catchBuildFailures<KotlinTopLevelDependenciesNotAvailable>()
+                    .buildAndReturn("assemble")
+                    .unwrap()
+                    .single()
             } else {
-                testKotlinTopLevelDependenciesWithCoroutines()
+                testKotlinTopLevelDependenciesCompilationAndPublication()
             }
         }
     }
 
-    private fun TestProject.testKotlinTopLevelDependenciesWithCoroutines() {
-        build("assemble")
+    private fun testKotlinDependenciesBlock(
+        template: String,
+        gradleVersion: GradleVersion,
+        consumerDependenciesBlock: String,
+        assertions: TestProject.() -> Unit
+    ) {
+        val targets: KotlinMultiplatformExtension.() -> Unit = {
+            jvm()
+            // FIXME: Return JS after KT-78318 is fixed
+            // js(IR) {
+            //    browser()
+            // }
+            linuxX64()
+        }
+        val projectDependency = project(template, gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    targets()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        class ProjectDependency
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
 
-        // Verify that the project is publishable
-        build("publish")
+        val platformDependency = project(template, gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "platformDependency"
+            }
+            plugins {
+                `java-platform`
+            }
+            buildScriptInjection {
+                project.dependencies {
+                    constraints.add("api", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                }
+            }
+        }.publishJavaPlatform(publisherConfiguration = PublisherConfiguration(group = "platform"))
 
-        // Verify that the published POM contains the kotlinx-coroutines dependency
-        val pomFile = projectPath.resolve("build/repo/test/kotlinTopLevelDependenciesSample/1.0/kotlinTopLevelDependenciesSample-1.0.pom")
+        project(template, gradleVersion) {
+            transferPluginRepositoriesIntoBuildScript()
+            transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints()
+            addPublishedProjectToRepositories(platformDependency)
+            include(projectDependency, "projectDependency")
+            val targetScript = if (buildGradle.exists()) buildGradle else buildGradleKts
+
+            @Language("toml")
+            val versionCatalog = """
+                [libraries]
+                atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version = "0.28.0" }
+            """.trimIndent()
+            projectPath.resolve("gradle/libs.versions.toml").writeText(versionCatalog)
+
+            targetScript.modify {
+                it.insertBlockToBuildScriptAfterPluginsAndImports(
+                    """
+                    plugins {
+                        id("org.jetbrains.kotlin.multiplatform")
+                    }
+                """.trimIndent()
+                )
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    val repos = project.repositories.filterIsInstance<MavenArtifactRepository>().map { it.url }
+                    println(repos)
+                    targets()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        fun main() {
+                          val a = kotlinx.coroutines.Dispatchers.Default
+                          val b = ProjectDependency()
+                          val c = kotlinx.atomicfu.AtomicInt::class
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            targetScript.appendText(consumerDependenciesBlock)
+
+            assertions()
+        }
+    }
+
+    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication() {
+        build(":assemble")
+
+        // Verify that the published jvm POM contains the kotlinx-coroutines dependency
+        val pomFile = publish().jvmMultiplatformComponent.pom.toPath()
         assertFileExists(pomFile)
+        assertFileContains(pomFile, "atomicfu")
         assertFileContains(pomFile, "kotlinx-coroutines-core")
+        assertFileContains(pomFile, "projectDependency")
     }
 }
