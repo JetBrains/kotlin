@@ -909,6 +909,17 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xallow-reified-type-in-catch",
+        description = "Allow 'catch' parameters to have reified types.",
+    )
+    @Enables(LanguageFeature.AllowReifiedTypeInCatchClause)
+    var allowReifiedTypeInCatch: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 
