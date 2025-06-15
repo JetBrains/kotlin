@@ -60,7 +60,13 @@ class NativeDeserializerFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): NativeDeserializedFromKlibBackendInput? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
+        configuration.setupPartialLinkageConfig(
+            PartialLinkageConfig(
+                // mode in test pipelines must be `DISABLE` by default, while in production the default is `DEFAULT`
+                configuration.get(KlibConfigurationKeys.PARTIAL_LINKAGE_MODE, PartialLinkageMode.DISABLE),
+                configuration.partialLinkageLogLevel
+            )
+        )
         val (moduleInfo, pluginContext) = loadIrFromKlib(module, configuration)
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -137,7 +143,7 @@ class NativeDeserializerFacade(
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageSupport = createPartialLinkageSupportForLinker(
-                partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
+                partialLinkageConfig = configuration.partialLinkageConfig,
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector
             ),

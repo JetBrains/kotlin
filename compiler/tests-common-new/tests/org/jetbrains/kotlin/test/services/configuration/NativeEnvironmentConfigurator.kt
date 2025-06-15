@@ -5,10 +5,18 @@
 
 package org.jetbrains.kotlin.test.services.configuration
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.PartialLinkageMode
+import org.jetbrains.kotlin.config.partialLinkageLogLevel
+import org.jetbrains.kotlin.config.partialLinkageMode
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_LOG_LEVEL
+import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.PARTIAL_LINKAGE_MODE
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -80,6 +88,19 @@ class NativeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(NativeEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
+
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (!module.targetPlatform(testServices).isNative()) return
+        val registeredDirectives = module.directives
+
+        registeredDirectives[PARTIAL_LINKAGE_MODE].lastOrNull()?.let {
+            configuration.partialLinkageMode = PartialLinkageMode.resolveMode(it) ?: error("Unsupported partial linkage mode: $it")
+        }
+
+        registeredDirectives[PARTIAL_LINKAGE_LOG_LEVEL].lastOrNull()?.let {
+            configuration.partialLinkageLogLevel = PartialLinkageLogLevel.resolveLogLevel(it) ?: error("Unsupported partial linkage log level: $it")
+        }
+    }
 }
 
 val TestServices.nativeEnvironmentConfigurator: NativeEnvironmentConfigurator
