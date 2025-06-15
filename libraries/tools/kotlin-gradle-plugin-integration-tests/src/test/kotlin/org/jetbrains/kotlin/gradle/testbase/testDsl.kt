@@ -95,7 +95,8 @@ fun KGPBaseTest.project(
         enableGradleDebug = enableGradleDebug,
         enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
         enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        environmentVariables = environmentVariables
+        environmentVariables = environmentVariables,
+        counter = KGPBaseTest.counter.get(),
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
@@ -426,6 +427,7 @@ fun String.wrapIntoBlock(s: String): String =
 open class GradleProject(
     val projectName: String,
     val projectPath: Path,
+    val counter: KGPBaseTest.Counter,
 ) {
     val buildGradle: Path get() = projectPath.resolve("build.gradle")
     val buildGradleKts: Path get() = projectPath.resolve("build.gradle.kts")
@@ -461,9 +463,8 @@ open class GradleProject(
         files: List<Path>,
     ): List<Path> = files.map { projectPath.relativize(it) }
 
-    private var counter = 0
     fun generateIdentifier(): String {
-        return counter.toString().also { counter += 1 }
+        return counter.counter++.toString()
     }
 
     fun markAsUsingInjections() {
@@ -506,8 +507,9 @@ class TestProject(
      */
     val kotlinDaemonDebugPort: Int? = null,
     val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
-) : GradleProject(projectName, projectPath) {
-    fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
+    counter: KGPBaseTest.Counter,
+) : GradleProject(projectName, projectPath, counter) {
+    fun subProject(name: String) = GradleProject(name, projectPath.resolve(name), counter)
 
     /**
      * Includes another project as a submodule in the current project.
