@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.BrokenMacosTestInterceptor
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.condition.OS
@@ -51,5 +52,16 @@ abstract class KGPBaseTest {
             val userHomeDir = System.getProperty("user.home")
             assertDirectoryDoesNotExist(Paths.get("$userHomeDir/.konan"))
         }
+    }
+
+    @BeforeEach
+    fun setUpNewCounter() {
+        counter.set(Counter())
+    }
+
+    class Counter(var counter: Int = 0)
+
+    companion object {
+        internal val counter = ThreadLocal.withInitial { Counter() }
     }
 }

@@ -56,6 +56,28 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testMultipleInjections(version: GradleVersion) {
+        project("empty", version) {
+            val subproject = project("empty", version)
+            include(subproject, "subproject")
+            subproject.buildScriptInjection {
+                println("subproject buildscript injection 1")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 2")
+            }
+            subProject("subproject").buildScriptInjection {
+                println("subproject buildscript injection 3")
+            }
+            build(":subproject:help") {
+                assertOutputContains("subproject buildscript injection 1")
+                assertOutputContains("subproject buildscript injection 2")
+                assertOutputContains("subproject buildscript injection 3")
+            }
+        }
+    }
+
+    @GradleTest
     fun consumeProjectDependencyViaSettingsInjection(version: GradleVersion) {
         // Use Groovy because it loads faster
         project("empty", version) {
