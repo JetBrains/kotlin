@@ -271,7 +271,7 @@ fun main() {
                 suiteTestClassName = "FirNativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
                     klibIrInliner(),
-                    provider<UseExtTestCaseGroupProvider>(),
+                    *klibSyntheticAccessors(),
                 )
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
