@@ -3,7 +3,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.artifacts.dsl.Dependencies
-import org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
 
 
@@ -18,7 +17,7 @@ private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level d
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.ERROR)
 interface KotlinBackwardsDeploymentDependencyCollector {
     operator fun invoke(p: Any) {
-        throw UnsupportedOperationException()
+        throw NotImplementedError()
     }
 }
 
@@ -27,7 +26,6 @@ interface KotlinBackwardsDeploymentDependencyCollector {
  * less than [MinSupportedGradleVersionWithDependencyCollectorsString]
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.ERROR)
-@KotlinTopLevelDependencies
 interface KotlinDependencies : Dependencies {
     /**
      * Dependencies for the implementation scope.
@@ -73,11 +71,11 @@ interface KotlinDependencies : Dependencies {
 
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.ERROR)
     fun platform(p: Any) {
-        throw UnsupportedOperationException()
+        throw NotImplementedError()
     }
 
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.ERROR)
     fun enforcedPlatform(p: Any) {
-        throw UnsupportedOperationException()
+        throw NotImplementedError()
     }
 }

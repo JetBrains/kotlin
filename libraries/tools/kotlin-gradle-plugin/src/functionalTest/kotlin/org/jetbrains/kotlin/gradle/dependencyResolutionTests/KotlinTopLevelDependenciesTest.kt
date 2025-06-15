@@ -129,7 +129,7 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
     @Test
     fun testKotlinTopLevelDependenciesNotAvailablePrinting() {
         assertEquals(
-            "Kotlin top-level dependencies is not available in Gradle 7.6.3. Minimum supported version is Gradle 8.7. Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies",
+            "Kotlin top-level dependencies is not available in Gradle 7.6.3. Minimum supported version is Gradle ${MinSupportedGradleVersionWithDependencyCollectorsString}. Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies",
             KotlinTopLevelDependenciesNotAvailable(
                 GradleVersion.version("7.6.3"),
             ).message
