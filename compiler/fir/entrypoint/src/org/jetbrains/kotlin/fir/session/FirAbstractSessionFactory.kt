@@ -354,6 +354,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
         // to prevent false positive resolution errors (see KT-57369 for an example).
 
         val providersFromDependencies = (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
+            .distinctBy { it.session } // In Native there could be two binary dependency module data due to interop libraries
             .sortedBy { it.session.kind }
             .map { it to it.session.structuredProviders }
 

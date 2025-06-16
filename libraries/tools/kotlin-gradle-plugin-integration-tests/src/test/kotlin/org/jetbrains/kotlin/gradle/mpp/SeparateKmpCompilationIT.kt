@@ -100,7 +100,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 ":compileKotlinJvm",
                 ":compileKotlinJs",
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
-                buildAction = ReturnFromBuildScriptAfterExecution.buildAndFail // currently the build fails due to KT-77716 and KT-78129
+                buildAction = ReturnFromBuildScriptAfterExecution.build
             )
             for ((targetName, particularCompileArgs) in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
@@ -133,14 +133,13 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             plugins {
                 kotlin("multiplatform")
             }
-            val isNativeDisabled = true // TODO: remove this condition after KT-77716
             val sourceSetNames = setOfNotNull(
                 "commonMain",
                 "jvmMain",
                 "jsMain",
-                "linuxArm64Main".takeUnless { isNativeDisabled },
-                "linuxX64Main".takeUnless { isNativeDisabled },
-                "nativeMain".takeUnless { isNativeDisabled },
+                "linuxArm64Main",
+                "linuxX64Main",
+                "nativeMain",
             )
             val repositoryPath = localRepository?.absolutePathString()
             val depGroup = if (localRepository != null) PUBLISHED_DEP_GROUP else null
@@ -150,16 +149,15 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     applyMultiplatform {
                         jvm()
                         js()
-                        if (!isNativeDisabled) {
-                            linuxArm64()
-                            linuxX64()
-                        }
+                        linuxArm64()
+                        linuxX64()
 
                         with(sourceSets) {
                             commonMain {
                                 dependencies {
                                     implementation(if (repositoryPath != null) "$depGroup:library:$depVersion" else project(":library"))
                                 }
+                                nativeMain.get() // force creating nativeMain, because it's usually created later
                                 compileSource(
                                     """
                                     |fun main() {
@@ -182,11 +180,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     project.applyMultiplatform {
                         jvm()
                         js()
-                        if (!isNativeDisabled) {
-                            linuxArm64()
-                            linuxX64()
-                        }
+                        linuxArm64()
+                        linuxX64()
                         with(sourceSets) {
+                            nativeMain.get() // force creating nativeMain, because it's usually created later
                             for (sourceSet in sourceSetNames.map { named(it) }) {
                                 sourceSet.get().compileStubSourceWithSourceSetName()
                             }
@@ -216,36 +213,62 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 val libraryTasks = setOf(
                     ":library:allMetadataJar",
                     ":library:checkKotlinGradlePluginConfigurationErrors",
+                    ":library:commonizeNativeDistribution",
                     ":library:compileCommonMainKotlinMetadata",
                     ":library:compileJvmMainJava",
                     ":library:compileKotlinJs",
                     ":library:compileKotlinJvm",
+                    ":library:compileKotlinLinuxArm64",
+                    ":library:compileKotlinLinuxX64",
+                    ":library:compileLinuxMainKotlinMetadata",
+                    ":library:compileNativeMainKotlinMetadata",
                     ":library:exportCommonSourceSetsMetadataLocationsForMetadataApiElements",
                     ":library:exportRootPublicationCoordinatesForMetadataApiElements",
                     ":library:generateProjectStructureMetadata",
                     ":library:generateSourceIn_commonMain_0",
                     ":library:generateSourceIn_jsMain_2",
                     ":library:generateSourceIn_jvmMain_1",
+                    ":library:generateSourceIn_linuxArm64Main_3",
+                    ":library:generateSourceIn_linuxX64Main_4",
+                    ":library:generateSourceIn_nativeMain_5",
                     ":library:jvmJar",
                     ":library:jvmMainClasses",
                     ":library:jvmProcessResources",
                     ":library:metadataCommonMainClasses",
                     ":library:metadataCommonMainProcessResources",
+                    ":library:metadataLinuxMainClasses",
+                    ":library:metadataLinuxMainProcessResources",
+                    ":library:metadataNativeMainClasses",
+                    ":library:metadataNativeMainProcessResources",
                     ":library:processJvmMainResources",
                     ":library:transformCommonMainDependenciesMetadata",
+                    ":library:transformLinuxMainDependenciesMetadata",
+                    ":library:transformNativeMainDependenciesMetadata",
                 )
                 val thisProjectTasks = setOf(
                     ":checkKotlinGradlePluginConfigurationErrors",
+                    ":commonizeNativeDistribution",
                     ":compileCommonMainKotlinMetadata",
                     ":compileKotlinJs",
                     ":compileKotlinJvm",
+                    ":compileKotlinLinuxArm64",
+                    ":compileKotlinLinuxX64",
                     ":generateProjectStructureMetadata",
                     ":generateSourceIn_commonMain_0",
                     ":jsProcessResources",
                     ":jvmProcessResources",
+                    ":linuxArm64ProcessResources",
+                    ":linuxX64ProcessResources",
                     ":metadataCommonMainProcessResources",
+                    ":metadataLinuxMainProcessResources",
+                    ":metadataNativeMainProcessResources",
                     ":processJvmMainResources",
                     ":transformCommonMainDependenciesMetadata",
+                    ":transformCommonTestDependenciesMetadata",
+                    ":transformLinuxMainDependenciesMetadata",
+                    ":transformLinuxTestDependenciesMetadata",
+                    ":transformNativeMainDependenciesMetadata",
+                    ":transformNativeTestDependenciesMetadata",
                 )
                 assertExactTasksInGraph(
                     if (localRepository != null) {
@@ -257,8 +280,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 val compileTasks = setOfNotNull(
                     ":compileKotlinJvm",
                     ":compileKotlinJs",
-                    ":compileKotlinLinuxArm64".takeUnless { isNativeDisabled },
-                    ":compileKotlinLinuxX64".takeUnless { isNativeDisabled },
+                    ":compileKotlinLinuxArm64",
+                    ":compileKotlinLinuxX64",
                 )
                 val specificSourceSets = sourceSetNames - "commonMain"
                 val outputPerTask = compileTasks.associateWith { getOutputForTask(it, logLevel = LogLevel.INFO) }
@@ -373,10 +396,10 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                         it.createCompilerArguments()
                     }
                 }
-            }.buildAndReturn( // currently the build fails due to KT-77716 and KT-78129
+            }.buildAndReturn(
                 ":compileKotlinLinuxArm64",
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
-                buildAction = ReturnFromBuildScriptAfterExecution.buildAndFail
+                buildAction = ReturnFromBuildScriptAfterExecution.build
             )
             val fragmentDependencies = compileArgs.fragmentDependencies
             assert(fragmentDependencies != null) { "Fragment dependencies are not set" }
