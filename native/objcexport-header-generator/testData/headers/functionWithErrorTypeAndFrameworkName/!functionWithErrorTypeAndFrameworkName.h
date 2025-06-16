@@ -27,6 +27,8 @@ __attribute__((swift_name("FooKt")))
 @end
 
 @interface ERROR : sharedBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -5,21 +5,27 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private val ErrorFile = IrFileImpl(
@@ -39,7 +45,9 @@ private val ErrorFile = IrFileImpl(
     },
     symbol = IrFileSymbolImpl(),
     packageFqName = FqName("<error-package>")
-)
+).apply {
+    module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+}
 
 val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     startOffset = UNDEFINED_OFFSET,
@@ -60,7 +68,7 @@ val IrErrorClassImpl: IrClass = IrFactoryImpl.createClass(
     addConstructor {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
-        visibility = DescriptorVisibilities.INTERNAL
+        visibility = DescriptorVisibilities.PUBLIC
         isPrimary = true
     }
 }

@@ -25,7 +25,7 @@ class ErrorClassDescriptor(name: Name) : ClassDescriptorImpl(
             .apply {
                 initialize(
                     emptyList(),
-                    DescriptorVisibilities.INTERNAL
+                    DescriptorVisibilities.PUBLIC
                 )
             }
         val memberScope = ErrorUtils.createErrorScope(ErrorScopeKind.SCOPE_FOR_ERROR_CLASS, errorConstructor.name.toString(), "")

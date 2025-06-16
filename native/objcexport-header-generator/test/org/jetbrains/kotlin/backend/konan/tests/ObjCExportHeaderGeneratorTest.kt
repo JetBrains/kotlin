@@ -159,12 +159,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
 
+    // Disabled because the public constructor for an error class is missing.
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithErrorType`() {
         doTest(headersTestDataDir.resolve("functionWithErrorType"))
     }
 
+    // Disabled because the public constructor for an error class is missing.
     @Test
+    @TodoAnalysisApi
     fun `test - functionWithErrorTypeAndFrameworkName`() {
         doTest(headersTestDataDir.resolve("functionWithErrorTypeAndFrameworkName"), Configuration(frameworkName = "shared"))
     }

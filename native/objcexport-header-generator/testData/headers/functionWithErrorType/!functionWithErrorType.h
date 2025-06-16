@@ -26,6 +26,8 @@ __attribute__((objc_subclassing_restricted))
 @end
 
 @interface ERROR : Base
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
 #pragma pop_macro("_Nullable_result")
