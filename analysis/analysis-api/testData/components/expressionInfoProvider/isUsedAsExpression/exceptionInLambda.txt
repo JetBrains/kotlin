@@ -1,0 +1,4 @@
+expression: CALL_EXPRESSION
+text: IllegalArgumentException("Text is empty!")
+isUsedAsExpression: true
+isUsedAsResultOfLambda: false

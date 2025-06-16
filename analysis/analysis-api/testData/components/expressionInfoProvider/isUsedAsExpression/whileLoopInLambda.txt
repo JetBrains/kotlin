@@ -1,0 +1,6 @@
+expression: WHILE
+text: while(true) {
+
+        }
+isUsedAsExpression: false
+isUsedAsResultOfLambda: false
