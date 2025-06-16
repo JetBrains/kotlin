@@ -8,9 +8,9 @@ value class B(val value: String)
 value class Z(val value: String)
 
 class A {
-    context(_: Z)
-    var B.f: String
-        get() = ""
+    context(_: Z, _: Boolean)
+    var B.f: Int
+        get() = 1
         set(value) {
 
         }
