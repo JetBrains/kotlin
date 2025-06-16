@@ -12,6 +12,7 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
         override fun toAbiVersionForManifest(): KotlinAbiVersion = KotlinAbiVersion(1, 201, 0)
     },
     ABI_LEVEL_2_2(2, 2),
+    ABI_LEVEL_2_3(2, 3),
     ;
 
     override fun toString() = "$major.$minor"
@@ -22,6 +23,6 @@ enum class KlibAbiCompatibilityLevel(val major: Int, val minor: Int) {
         major > other.major || major == other.major && minor >= other.minor
 
     companion object {
-        val LATEST_STABLE = ABI_LEVEL_2_2
+        val LATEST_STABLE = ABI_LEVEL_2_3
     }
 }

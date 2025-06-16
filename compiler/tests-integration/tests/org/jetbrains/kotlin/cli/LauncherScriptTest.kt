@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -199,10 +200,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testRunnerExpressionLanguageVersion20() {
+    fun testRunnerExpressionK2() {
         runProcess(
             "kotlin",
-            CommonCompilerArguments::languageVersion.cliArgument, "2.0", "-e",
+            CommonCompilerArguments::languageVersion.cliArgument, LanguageVersion.FIRST_NON_DEPRECATED.versionString, "-e",
             "println(args.joinToString())",
             "-a",
             "b",
@@ -551,7 +552,7 @@ println(42)
                 K2JVMCompilerArguments::destination.cliArgument,
                 tmpdir.absolutePath,
                 CommonCompilerArguments::languageVersion.cliArgument,
-                "2.0",
+                LanguageVersion.FIRST_NON_DEPRECATED.versionString,
                 file1kt.absolutePath
             )
         )
@@ -565,7 +566,7 @@ println(42)
             K2JVMCompilerArguments::destination.cliArgument,
             ".",
             CommonCompilerArguments::languageVersion.cliArgument,
-            "2.0",
+            LanguageVersion.FIRST_NON_DEPRECATED.versionString,
             file2kt.absolutePath,
             workDirectory = tmpdir,
             expectedStdout = "",
