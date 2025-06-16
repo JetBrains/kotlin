@@ -1071,6 +1071,30 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("jvmOverloadsReturnTypeDirective.kt")
+      public void testJvmOverloadsReturnTypeDirective() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeDirective.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmName.kt")
+      public void testJvmOverloadsReturnTypeJvmName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmName.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmNameDefaultName.kt")
+      public void testJvmOverloadsReturnTypeJvmNameDefaultName() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmNameDefaultName.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmOverloadsReturnTypeJvmNameDirective.kt")
+      public void testJvmOverloadsReturnTypeJvmNameDirective() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsReturnTypeJvmNameDirective.kt");
+      }
+
+      @Test
       @TestMetadata("jvmOverloadsValueParameter.kt")
       public void testJvmOverloadsValueParameter() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction/jvmOverloadsValueParameter.kt");
