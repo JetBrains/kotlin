@@ -148,7 +148,6 @@ internal class InlineFunctionDeserializer(
 
         if (packageFragment is IrExternalPackageFragment) {
             val symbolDeserializer = declarationDeserializer.symbolDeserializer
-            linker.inlineFunctionFilesTracker.add(packageFragment, fileDeserializationState.file)
             val outerClasses = (function.parent as? IrClass)?.getOuterClasses(takeOnlyInner = true) ?: emptyList()
             require((outerClasses.getOrNull(0)?.firstNonClassParent ?: function.parent) is IrPackageFragment) {
                 "Local inline functions are not supported: ${function.render()}"

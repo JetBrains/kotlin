@@ -182,18 +182,16 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    open fun getFileOf(declaration: IrDeclaration): IrFile = declaration.file
-
     override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
         if (idSignature.isPubliclyVisible) return null
-        val file = getFileOf(parent)
+        val file = parent.file
         val moduleDescriptor = file.moduleDescriptor
         return resolveModuleDeserializer(moduleDescriptor, null).referenceSimpleFunctionByLocalSignature(file, idSignature)
     }
 
     override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
         if (idSignature.isPubliclyVisible) return null
-        val file = getFileOf(parent)
+        val file = parent.file
         val moduleDescriptor = file.moduleDescriptor
         return resolveModuleDeserializer(moduleDescriptor, null).referencePropertyByLocalSignature(file, idSignature)
     }
