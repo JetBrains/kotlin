@@ -469,7 +469,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         .take(suspendFunType.arguments.size - 1)
         .mapIndexed { index, typeProjection -> createValueParameter(IrParameterKind.Regular, "p$index", typeProjection.type.toIrType()) }
 
-    val valueArgumentsCount = irAdapterFun.valueParameters.size
+    val valueArgumentsCount = irAdapterFun.parameters.size - 1
     val invokeDescriptor = funType.memberScope
         .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
         .find { it.valueParameters.size == valueArgumentsCount }
