@@ -380,7 +380,9 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             )
             val fragmentDependencies = compileArgs.fragmentDependencies
             assert(fragmentDependencies != null) { "Fragment dependencies are not set" }
-            val fragmentDependenciesPerFragment = fragmentDependencies!!.groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
+            val fragmentDependenciesPerFragment = fragmentDependencies!!
+                .map { it.replace('\\', '/') }
+                .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
             val nativeDependencies = fragmentDependenciesPerFragment.getValue("nativeMain")
             assert(nativeDependencies.count { "stdlib" in it } == 1 && nativeDependencies.any { "/klib/common/stdlib" in it }) {
                 "Exactly one K/N stdlib dependency is expected in nativeMain: $nativeDependencies"
