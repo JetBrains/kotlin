@@ -9,20 +9,35 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 internal object PublicTypeApproximator {
-    fun approximateTypeToPublicDenotable(
+    fun approximateTypeToSuperDenotable(
         type: ConeKotlinType,
         session: FirSession,
-        approximateLocalTypes: Boolean
+        approximateLocalTypes: Boolean,
+        shouldReturnLocalType: (TypeSystemInferenceExtensionContext, KotlinTypeMarker) -> Boolean,
     ): ConeKotlinType? {
         val approximator = session.typeApproximator
-        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration(approximateLocalTypes))
+        return approximator.approximateToSuperType(type, PublicApproximatorConfiguration(approximateLocalTypes, shouldReturnLocalType))
     }
 
-    internal class PublicApproximatorConfiguration(
-        override val approximateLocalTypes: Boolean
+    fun approximateTypeToSubDenotable(
+        type: ConeKotlinType,
+        session: FirSession,
+    ): ConeKotlinType? {
+        val approximator = session.typeApproximator
+        return approximator.approximateToSubType(type, PublicApproximatorConfiguration())
+    }
+
+    private class PublicApproximatorConfiguration(
+        override val approximateLocalTypes: Boolean = false,
+        private val shouldReturnLocalType: (TypeSystemInferenceExtensionContext, KotlinTypeMarker) -> Boolean = { _, _ -> false }
     ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+        override fun shouldReturnLocalType(ctx: TypeSystemInferenceExtensionContext, type: KotlinTypeMarker): Boolean =
+            shouldReturnLocalType.invoke(ctx, type)
+
         override val approximateAllFlexible: Boolean get() = true
         override val approximateErrorTypes: Boolean get() = false
         override val approximateDefinitelyNotNullTypes: Boolean get() = true

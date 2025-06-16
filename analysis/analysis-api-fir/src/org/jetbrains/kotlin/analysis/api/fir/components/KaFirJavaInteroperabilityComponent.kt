@@ -448,8 +448,12 @@ private fun ConeKotlinType.simplifyType(
 
         val needLocalTypeApproximation = needLocalTypeApproximation(visibilityForApproximation, isInlineFunction, session, useSitePosition)
         // TODO: can we approximate local types in type arguments *selectively* ?
-        currentType = PublicTypeApproximator.approximateTypeToPublicDenotable(currentType, session, needLocalTypeApproximation)
-            ?: currentType
+        currentType = PublicTypeApproximator.approximateTypeToSuperDenotable(
+            currentType,
+            session,
+            needLocalTypeApproximation,
+            shouldReturnLocalType = { _, _ -> false }
+        ) ?: currentType
 
     } while (oldType !== currentType)
     if (typeArguments.isNotEmpty()) {

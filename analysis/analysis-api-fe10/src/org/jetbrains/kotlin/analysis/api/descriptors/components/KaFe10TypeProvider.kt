@@ -62,16 +62,33 @@ internal class KaFe10TypeProvider(
 
     override val builtinTypes: KaBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KaFe10BuiltinTypes(analysisContext) }
 
+    @Deprecated(
+        "Use `approximateToSuperDenotable` instead",
+        replaceWith = ReplaceWith("this.approximateToSuperDenotable(approximateLocalTypes)")
+    )
     override fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
         return typeApproximator.approximateToSuperType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
             ?.toKtType(analysisContext)
     }
 
+    override fun KaType.approximateToSuperDenotable(allowLocalDenotableTypes: Boolean): KaType? {
+        require(this is KaFe10Type)
+        return typeApproximator.approximateToSuperType(
+            fe10Type,
+            PublicApproximatorConfiguration(
+                approximateLocalTypes = true,
+                shouldReturnLocalType = { _, _ -> allowLocalDenotableTypes })
+        )?.toKtType(analysisContext)
+    }
+
     override fun KaType.approximateToSubDenotable(): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
-        return typeApproximator.approximateToSubType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes = false))
-            ?.toKtType(analysisContext)
+        return typeApproximator.approximateToSubType(
+            fe10Type, PublicApproximatorConfiguration(
+                approximateLocalTypes = false
+            )
+        )?.toKtType(analysisContext)
     }
 
     override val KaType.enhancedType: KaType?
