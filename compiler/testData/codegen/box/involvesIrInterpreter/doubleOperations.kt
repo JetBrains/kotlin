@@ -78,7 +78,7 @@ const val unaryPlus2 = minusOneVal.<!EVALUATED("-1.0")!>unaryPlus()<!>
 const val unaryMinus1 = oneVal.<!EVALUATED("-1.0")!>unaryMinus()<!>
 const val unaryMinus2 = minusOneVal.<!EVALUATED("1.0")!>unaryMinus()<!>
 
-const val convert1 = oneVal.<!EVALUATED("")!>toChar()<!>
+const val convert1 = oneVal.toInt().<!EVALUATED("")!>toChar()<!>
 const val convert2 = oneVal.<!EVALUATED("1")!>toInt()<!>
 const val convert3 = oneVal.<!EVALUATED("1")!>toLong()<!>
 const val convert4 = oneVal.<!EVALUATED("1.0")!>toFloat()<!>
