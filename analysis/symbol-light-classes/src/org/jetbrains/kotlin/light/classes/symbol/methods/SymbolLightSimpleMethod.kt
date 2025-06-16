@@ -250,28 +250,30 @@ internal class SymbolLightSimpleMethod private constructor(
             ProgressManager.checkCanceled()
 
             if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
-            if (!functionSymbol.hasJvmNameAnnotation() && hasValueClassInSignature(
-                    functionSymbol,
-                    skipValueParametersCheck = true,
-                    skipReturnTypeCheck = isTopLevel,
-                )
-            ) return
+            val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
+
+            val hasJvmNameAnnotation by lazy(LazyThreadSafetyMode.NONE) {
+                functionSymbol.hasJvmNameAnnotation()
+            }
 
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
-                result = result,
-                skipValueClassParameters = true,
                 methodIndexBase = methodIndex,
-            ) { methodIndex, valueParameterPickMask ->
-                SymbolLightSimpleMethod(
-                    functionSymbol = functionSymbol,
-                    lightMemberOrigin = lightMemberOrigin,
-                    containingClass = containingClass,
-                    methodIndex = methodIndex,
-                    isTopLevel = isTopLevel,
-                    valueParameterPickMask = valueParameterPickMask,
-                    suppressStatic = suppressStatic,
-                )
+            ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
+                when {
+                    // Unmangled name -> regular method is needed
+                    !hasValueClassInParameterType && (isTopLevel || !hasValueClassInReturnType) || hasJvmNameAnnotation -> {
+                        result += SymbolLightSimpleMethod(
+                            functionSymbol = functionSymbol,
+                            lightMemberOrigin = lightMemberOrigin,
+                            containingClass = containingClass,
+                            methodIndex = methodIndex,
+                            isTopLevel = isTopLevel,
+                            valueParameterPickMask = valueParameterPickMask,
+                            suppressStatic = suppressStatic,
+                        )
+                    }
+                }
             }
         }
     }

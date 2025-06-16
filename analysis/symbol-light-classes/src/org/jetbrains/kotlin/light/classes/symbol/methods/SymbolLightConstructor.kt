@@ -118,15 +118,13 @@ internal class SymbolLightConstructor private constructor(
 
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
-                    result = result,
-                    skipValueClassParameters = false,
                     methodIndexBase = METHOD_INDEX_BASE,
-                ) { methodIndex, valueParameterPickMask ->
-                    SymbolLightConstructor(
+                ) { methodIndex, valueParameterPickMask, _ ->
+                    result += SymbolLightConstructor(
                         constructorSymbol = constructor,
                         containingClass = lightClass,
                         methodIndex = methodIndex,
-                        valueParameterPickMask = valueParameterPickMask
+                        valueParameterPickMask = valueParameterPickMask,
                     )
                 }
             }
