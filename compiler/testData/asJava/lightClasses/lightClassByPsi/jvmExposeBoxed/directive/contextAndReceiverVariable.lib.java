@@ -1,17 +1,15 @@
 public final class A /* A*/ {
   @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() B);//  getF(Z, B)
+  public final int getF(@org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() B);//  getF(Z, boolean, B)
 
   @kotlin.jvm.JvmExposeBoxed()
-  public final void setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() B, @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(Z, B, java.lang.String)
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getF-vo2-FlA(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  getF-vo2-FlA(java.lang.String, java.lang.String)
+  public final void setF(@org.jetbrains.annotations.NotNull() Z, boolean, @org.jetbrains.annotations.NotNull() B, int);//  setF(Z, boolean, B, int)
 
   public  A();//  .ctor()
 
-  public final void setF-75nD7FQ(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  setF-75nD7FQ(java.lang.String, java.lang.String, java.lang.String)
+  public final int getF-EVYOzKg(@org.jetbrains.annotations.NotNull() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() java.lang.String);//  getF-EVYOzKg(java.lang.String, boolean, java.lang.String)
+
+  public final void setF-vJ3jVlM(@org.jetbrains.annotations.NotNull() java.lang.String, boolean, @org.jetbrains.annotations.NotNull() java.lang.String, int);//  setF-vJ3jVlM(java.lang.String, boolean, java.lang.String, int)
 }
 
 @kotlin.jvm.JvmInline()
