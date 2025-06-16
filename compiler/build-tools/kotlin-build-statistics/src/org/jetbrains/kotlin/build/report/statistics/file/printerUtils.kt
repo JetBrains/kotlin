@@ -4,16 +4,8 @@
  */
 package org.jetbrains.kotlin.build.report.statistics.file
 
-import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.ValueType
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
-import org.jetbrains.kotlin.build.report.statistics.asString
-import org.jetbrains.kotlin.build.report.statistics.formatTime
-import org.jetbrains.kotlin.build.report.statistics.formatter
-import java.util.ArrayList
-import java.util.HashSet
 
 internal fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printBuildReport(
     data: ReadableFileReportData<B, P>,
@@ -114,6 +106,11 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>) {
             val timeMs = buildTimes[buildTime]
             if (timeMs != null) {
                 println("${buildTime.getReadableString()}: ${formatTime(timeMs)}")
+                if (buildTime is GradleBuildTime) {
+                    buildTime.lowerings?.forEach { (name, time) ->
+                        println("$name: ${formatTime(time)}")
+                    }
+                }
                 withIndent {
                     buildTime.children()?.forEach { printBuildTime(it) }
                 }

@@ -65,7 +65,11 @@ enum class JpsBuildTime(private val parent: JpsBuildTime? = null, private val re
 }
 
 @Suppress("Reformat")
-enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private val readableString: String) : BuildTime {
+enum class GradleBuildTime(
+    private val parent: GradleBuildTime? = null,
+    private val readableString: String,
+    var lowerings: List<Pair<String, Long>>? = null,
+) : BuildTime {
     // We use tabs to organize the hierarchy of metrics,
     // that's why the formatter is disabled.
     // @formatter:off
@@ -123,20 +127,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
                             CODE_ANALYSIS(COMPILER_PERFORMANCE, "Compiler code analysis"),
                             TRANSLATION_TO_IR(COMPILER_PERFORMANCE, "Compiler translation to IR"),
                             IR_PRE_LOWERING(COMPILER_PERFORMANCE, "Compiler IR pre-lowering"),
-                                UPGRADE_CALLABLE_REFERENCES(IR_PRE_LOWERING, "UpgradeCallableReferences"),
-                                JS_CODE_OUTLINING_LOWERING_ON_FIRST_STAGE(IR_PRE_LOWERING, "JsCodeOutliningLoweringOnFirstStage"),
-                                AVOID_LOCAL_FOS_IN_INLINE_FUNCTIONS_LOWERING(IR_PRE_LOWERING, "AvoidLocalFOsInInlineFunctionsLowering"),
-                                LATEINIT_LOWERING(IR_PRE_LOWERING, "LateinitLowering"),
-                                SHARED_VARIABLES_LOWERING(IR_PRE_LOWERING, "SharedVariablesLowering"),
-                                LOCAL_CLASSES_IN_INLINE_LAMBDAS_PHASE(IR_PRE_LOWERING, "LocalClassesInInlineLambdasPhase"),
-                                ARRAY_CONSTRUCTOR(IR_PRE_LOWERING, "ArrayConstructor"),
-                                INLINE_ONLY_PRIVATE_FUNCTIONS(IR_PRE_LOWERING, "InlineOnlyPrivateFunctions"),
-                                INLINE_DECLARATION_CHECKER_AFTER_INLINING_ONLY_PRIVATE_FUNCTIONS_PHASE(IR_PRE_LOWERING, "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase"),
-                                OUTER_THIS_IN_INLINE_FUNCTIONS_SPECIAL_ACCESSOR_LOWERING(IR_PRE_LOWERING, "OuterThisInInlineFunctionsSpecialAccessorLowering"),
-                                SYNTHETIC_ACCESSOR_GENERATION(IR_PRE_LOWERING, "SyntheticAccessorGeneration"),
-                                IR_VALIDATION_AFTER_INLINING_ONLY_PRIVATE_FUNCTIONS_PHASE(IR_PRE_LOWERING, "IrValidationAfterInliningOnlyPrivateFunctionsPhase"),
-                                INLINE_ALL_FUNCTIONS(IR_PRE_LOWERING, "InlineAllFunctions"),
-                                INLINE_FUNCTION_SERIALIZATION_PRE_PROCESSING(IR_PRE_LOWERING, "InlineFunctionSerializationPreProcessing"),
+                                IR_PRE_LOWERINGS(IR_PRE_LOWERING, ""),
                             IR_SERIALIZATION(COMPILER_PERFORMANCE, "Compiler IR Serialization"),
                             KLIB_WRITING(COMPILER_PERFORMANCE, "Compiler Klib writing"),
                             CODE_GENERATION(COMPILER_PERFORMANCE, "Compiler code generation"),
