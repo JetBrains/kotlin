@@ -21,6 +21,11 @@ public final class StringWrapper /* StringWrapper*/ {
 
 public static final class Companion /* StringWrapper.Companion*/ {
   @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String unwrap(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  unwrap(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
 

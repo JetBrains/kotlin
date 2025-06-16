@@ -1,4 +1,8 @@
 public final class Foo /* Foo*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper foo();//  foo()
+
   public  Foo();//  .ctor()
 }
 

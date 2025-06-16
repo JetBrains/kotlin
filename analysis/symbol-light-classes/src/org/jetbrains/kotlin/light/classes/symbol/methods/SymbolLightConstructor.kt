@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEALED_KEYWORD
-import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -38,12 +35,14 @@ internal class SymbolLightConstructor private constructor(
     constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
     valueParameterPickMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = methodIndex,
+    isJvmExposedBoxed = isJvmExposedBoxed,
     valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String? = containingClass.name
@@ -74,7 +73,9 @@ internal class SymbolLightConstructor private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = functionSymbolPointer,
-                )
+                ),
+                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
+                additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
             ),
         )
     }
@@ -85,7 +86,7 @@ internal class SymbolLightConstructor private constructor(
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
 
         else -> withFunctionSymbol { symbol ->
-            val visibility = if (hasValueClassInSignature(symbol, valueParameterPickMask = valueParameterPickMask)) {
+            val visibility = if (!isJvmExposedBoxed && hasValueClassInSignature(symbol, valueParameterPickMask = valueParameterPickMask)) {
                 PsiModifier.PRIVATE
             } else {
                 symbol.toPsiVisibilityForMember()
@@ -116,15 +117,30 @@ internal class SymbolLightConstructor private constructor(
 
                 if (isHiddenOrSynthetic(constructor)) continue
 
+                val exposeBoxedMode by lazy(LazyThreadSafetyMode.NONE) {
+                    jvmExposeBoxedMode(constructor)
+                }
+
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
-                ) { methodIndex, valueParameterPickMask, _ ->
+                ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
+                    if (hasValueClassInParameterType && exposeBoxedMode != JvmExposeBoxedMode.NONE) {
+                        result += SymbolLightConstructor(
+                            constructorSymbol = constructor,
+                            containingClass = lightClass,
+                            methodIndex = methodIndex,
+                            valueParameterPickMask = valueParameterPickMask,
+                            isJvmExposedBoxed = true,
+                        )
+                    }
+
                     result += SymbolLightConstructor(
                         constructorSymbol = constructor,
                         containingClass = lightClass,
                         methodIndex = methodIndex,
                         valueParameterPickMask = valueParameterPickMask,
+                        isJvmExposedBoxed = false,
                     )
                 }
             }

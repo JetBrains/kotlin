@@ -4,7 +4,18 @@ public final class MyDataClass /* one.MyDataClass*/ {
 
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() one.MyDataClass copy(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.MyValueClass);//  copy(@org.jetbrains.annotations.NotNull() one.MyValueClass)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() one.MyValueClass component1();//  component1()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() one.MyValueClass getValue();//  getValue()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  MyDataClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() one.MyValueClass);//  .ctor(@org.jetbrains.annotations.NotNull() one.MyValueClass)
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()

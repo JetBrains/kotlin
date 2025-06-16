@@ -3,6 +3,11 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Foo INSTANCE;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper foo();//  foo()
+
   private  Foo();//  .ctor()
 }
 

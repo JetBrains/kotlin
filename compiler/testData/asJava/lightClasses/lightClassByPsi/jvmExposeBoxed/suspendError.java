@@ -15,4 +15,7 @@ public final class StringWrapper /* StringWrapper*/ {
 }
 
 public final class SuspendErrorKt /* SuspendErrorKt*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.Nullable()
+  public static final @org.jetbrains.annotations.Nullable() java.lang.Object foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() java.lang.String>);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() java.lang.String>)
 }
