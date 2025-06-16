@@ -139,7 +139,7 @@ internal class KaFe10SymbolRelationProvider(
 
     private fun getFakeContainingKtModule(descriptor: DescriptorWithContainerSource): KaModule {
         val libraryPath = when (val containerSource = descriptor.containerSource) {
-            is JvmPackagePartSource -> containerSource.knownJvmBinaryClass?.containingLibrary?.let { Paths.get(it) }
+            is JvmPackagePartSource -> containerSource.knownJvmBinaryClass?.containingLibrary
             is KotlinJvmBinarySourceElement -> containerSource.binaryClass.containingLibraryPath
             else -> {
                 when (val containingDeclaration = descriptor.containingDeclaration) {
@@ -154,7 +154,7 @@ internal class KaFe10SymbolRelationProvider(
                     else -> null
                 }
             }
-        } ?: TODO(descriptor::class.java.name)
+        }?.let { Paths.get(it) } ?: TODO(descriptor::class.java.name)
         return object : KaLibraryModule, KaModuleBase() {
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KaLibrarySourceModule? = null

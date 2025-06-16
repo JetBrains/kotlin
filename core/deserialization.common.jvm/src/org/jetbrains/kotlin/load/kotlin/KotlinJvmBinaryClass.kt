@@ -23,7 +23,7 @@ interface KotlinJvmBinaryClass {
     val containingLibrary: String?
         get() = null
 
-    val containingLibraryPath: Path?
+    val containingLibraryPath: String?
         get() = null
 
     fun loadClassAnnotations(visitor: AnnotationVisitor, cachedContents: ByteArray?)

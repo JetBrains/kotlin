@@ -22,7 +22,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 interface LibraryContainerAwareVirtualFile {
-    fun getContainingLibraryPath(): Path
+    fun getContainingLibraryPath(): String
 }
 
 class VirtualFileKotlinClass private constructor(
@@ -39,9 +39,9 @@ class VirtualFileKotlinClass private constructor(
     override val containingLibrary: String?
         get() = file.path.split("!/").firstOrNull()
 
-    override val containingLibraryPath: Path?
+    override val containingLibraryPath: String?
         // we should return not the file itself, but the root - LibraryPathFilter later uses `startsWith`
-        get() = if (file is LibraryContainerAwareVirtualFile) file.getContainingLibraryPath() else containingLibrary?.let { Paths.get(it) }
+        get() = if (file is LibraryContainerAwareVirtualFile) file.getContainingLibraryPath() else containingLibrary
 
     override fun getFileContents(): ByteArray {
         try {
