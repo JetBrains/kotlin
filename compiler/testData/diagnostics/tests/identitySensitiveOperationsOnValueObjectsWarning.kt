@@ -90,5 +90,12 @@ fun testFlexibleTypes() {
     System.identityHashCode(Integer.valueOf(1))
 }
 
+fun testOtherEqOperations(p1: LocalDate, p2: LocalDate) {
+    p1 == p2
+    p1 != p2
+    p1 === p2
+    p1 !== p2
+}
+
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, functionDeclaration, integerLiteral, javaFunction, lambdaLiteral,
 localProperty, nullableType, override, primaryConstructor, propertyDeclaration, samConversion, value */
