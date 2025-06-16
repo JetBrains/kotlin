@@ -143,7 +143,7 @@ class IrBuiltInsOverDescriptors(
             operator.parent = operatorsPackageFragment
             operatorsPackageFragment.declarations += operator
 
-            operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
+            operator.parameters += valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
@@ -279,7 +279,7 @@ class IrBuiltInsOverDescriptors(
                 valueParameter.parent = operator
                 typeParameter.parent = operator
 
-                operator.valueParameters += valueParameter
+                operator.parameters += valueParameter
                 operator.typeParameters += typeParameter
             }
         }.symbol
@@ -560,7 +560,11 @@ class IrBuiltInsOverDescriptors(
         return binaryOperatorCache.getOrPut(key) {
             classifier.functions.single {
                 val function = it.owner
-                function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
+                function.name == name && function.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(null, rhsType)
+                )
             }
         }
     }
@@ -577,7 +581,7 @@ class IrBuiltInsOverDescriptors(
         return unaryOperatorCache.getOrPut(key) {
             classifier.functions.single {
                 val function = it.owner
-                function.name == name && function.valueParameters.isEmpty()
+                function.name == name && function.hasShape(dispatchReceiver = true)
             }
         }
     }
