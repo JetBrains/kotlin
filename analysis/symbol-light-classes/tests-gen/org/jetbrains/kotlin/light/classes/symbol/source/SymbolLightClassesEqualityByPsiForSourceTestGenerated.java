@@ -869,6 +869,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("methodReturnBoxedPrimitive.kt")
+      public void testMethodReturnBoxedPrimitive() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturnBoxedPrimitive.kt");
+      }
+
+      @Test
       @TestMetadata("methodReturnWithJvmName.kt")
       public void testMethodReturnWithJvmName() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/methodReturnWithJvmName.kt");
@@ -914,6 +920,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       @TestMetadata("uintReceiver.kt")
       public void testUintReceiver() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uintReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("variableBoxedPrimitive.kt")
+      public void testVariableBoxedPrimitive() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/variableBoxedPrimitive.kt");
       }
     }
 
