@@ -945,6 +945,12 @@ public class FirPsiJsBoxTestGenerated extends AbstractFirPsiJsBoxTest {
     }
 
     @Test
+    @TestMetadata("kt61183.kt")
+    public void testKt61183() {
+      runTest("js/js.translator/testData/box/coroutines/kt61183.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaWithValueClass.kt")
     public void testLambdaWithValueClass() {
       runTest("js/js.translator/testData/box/coroutines/lambdaWithValueClass.kt");
