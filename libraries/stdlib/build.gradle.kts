@@ -57,11 +57,15 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
+}
+
+fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
 }
 
-fun KotlinCommonCompilerOptions.testCompilationOptions() {
+fun KotlinCommonCompilerOptions.allowReturnValueCheckerButNotReport() {
     freeCompilerArgs.add("-Xreturn-value-checker=check")
+    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled,ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
@@ -102,7 +106,7 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationOptions()
+                        mainCompilationOptions() // is -Xreturn-value-checker required for metadata?
                     }
                 }
             }
@@ -148,6 +152,7 @@ kotlin {
                             )
                         )
                         mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
                 defaultSourceSet {
@@ -265,6 +270,7 @@ kotlin {
                             diagnosticNamesArg,
                         )
                     )
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                 }
             }
         }
@@ -285,6 +291,7 @@ kotlin {
             val main by getting {
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
+                    compilerOptions.allowReturnValueCheckerButNotReport()
                     compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME")
                 }
             }
@@ -583,7 +590,6 @@ kotlin {
                 commonOptIns.forEach { optIn(it) }
                 if (this@sourceSet.name.endsWith("Test")) {
                     commonTestOptIns.forEach { optIn(it) }
-                    compilerOptions.testCompilationOptions()
                 }
             }
         }
