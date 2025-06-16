@@ -12,7 +12,7 @@ data class PartialLinkageConfig(val mode: PartialLinkageMode, val logLevel: Part
     val isEnabled get() = mode.isEnabled
 
     companion object {
-        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
+        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
 
         val KEY = CompilerConfigurationKey.create<PartialLinkageConfig>("partial linkage configuration")
     }
