@@ -12,13 +12,21 @@ import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 
 class NativeVersionDiagnosticTest {
-    private fun setUpProject(nativeVersion: String): ProjectInternal {
-        val project = buildProjectWithJvm(
+    private fun setUpProject(
+        nativeVersion: String,
+        skipNativeTarget: Boolean = false,
+    ): ProjectInternal {
+        val project = buildProjectWithMPP(
             preApplyCode = {
                 project.extraProperties.set("kotlin.native.version", nativeVersion)
                 project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
             }
-        )
+        ) {
+            kotlin {
+                jvm()
+                if (!skipNativeTarget) linuxX64()
+            }
+        }
         project.evaluate()
         return project
     }
@@ -27,7 +35,6 @@ class NativeVersionDiagnosticTest {
     fun newKotlinNativeVersionCheck() {
         val project = setUpProject("30.0.0")
         project.assertContainsDiagnostic(KotlinToolingDiagnostics.NewNativeVersionDiagnostic)
-
     }
 
     @Test
@@ -39,6 +46,25 @@ class NativeVersionDiagnosticTest {
     @Test
     fun kotlinNativeVersionCheck() {
         val project = setUpProject(CURRENT)
+        project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
+    }
+
+    @Test
+    fun checkIsSkippedInProjectWithoutNativeTargets() {
+        val project = setUpProject("1.0.0", true)
+
+        project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
+    }
+
+    @Test
+    fun checkIsSkippedInJvmOnlyProject() {
+        val project = buildProjectWithJvm(
+            preApplyCode = {
+                project.extraProperties.set("kotlin.native.version", "1.0.0")
+                project.extraProperties.set("kotlin.native.distribution.downloadFromMaven", true)
+            }
+        )
+        project.evaluate()
         project.assertNoDiagnostics(filterDiagnosticIds = emptyList())
     }
 

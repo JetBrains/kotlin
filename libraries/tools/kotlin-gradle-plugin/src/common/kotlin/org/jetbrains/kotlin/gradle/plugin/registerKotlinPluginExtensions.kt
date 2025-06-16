@@ -183,11 +183,11 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, GradleDeprecatedPropertyChecker)
         register(project, OverriddenKotlinNativeHomeChecker)
         register(project, ComposePluginSuggestApplyChecker)
-        register(project, NativeVersionChecker)
         register(project, AndroidPublicationNotConfiguredChecker)
         register(project, KonanHomeConflictDeclarationChecker)
 
         if (isMultiplatform) {
+            register(project, NativeVersionChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
         }

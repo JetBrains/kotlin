@@ -5,16 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 internal object NativeVersionChecker : KotlinGradleProjectChecker {
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+        if (project.multiplatformExtension.targets.withType<KotlinNativeTarget>().isEmpty()) return
+
         val nativeVersion = project.nativeProperties.kotlinNativeVersion.map { KotlinToolingVersion(it) }.orNull
         val kotlinVersion = project.kotlinToolingVersion
         if (nativeVersion != null && nativeVersion > kotlinVersion) {
