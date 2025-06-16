@@ -49,9 +49,8 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 import java.io.File
-import java.nio.file.Paths
-import kotlin.io.path.isSymbolicLink
 
 object KotlinToJVMBytecodeCompiler {
     internal fun compileModules(
@@ -478,14 +477,7 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
 
     for (module in chunk) {
         for (classpathRoot in module.getClasspathRoots()) {
-            // The "official" way of `Paths.get(path).isSymbolicLink()` does not work on Windows
-            //   if the path starts with `/C:` - `sun.nio.fs.WindowsPathParser.normalize`
-            //   throws `InvalidPathException: Illegal char <:>`.
-            val path =
-                if (System.getProperty("os.name").contains("Windows") && classpathRoot.startsWith("/"))
-                    Paths.get(classpathRoot.removePrefix("/"))
-                else Paths.get(classpathRoot)
-            val file = if (path.isSymbolicLink()) path.toRealPath().toFile() else File(classpathRoot)
+            val file = resolveSymlinksGracefully(classpathRoot).toFile()
             if (isJava9Module) {
                 add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
             }
