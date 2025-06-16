@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import kotlin.math.max
 import kotlin.math.min
 
@@ -487,14 +488,13 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             hasExtensionReceiver = false,
         )
 
-        irAdapteeCall.dispatchReceiverViaCachedCalleeData = irGet(irAdapterFun.extensionReceiverParameter!!)
+        irAdapteeCall.arguments.assignFrom(irAdapterFun.parameters) {
+            irGet(it)
+        }
 
         this@createFunctionForSuspendConversion.context
             .callToSubstitutedDescriptorMap[irAdapteeCall] = invokeDescriptor
 
-        for (irAdapterParameter in irAdapterFun.valueParameters) {
-            irAdapteeCall.putValueArgument(irAdapterParameter.indexInOldValueParameters, irGet(irAdapterParameter))
-        }
         if (suspendFunType.arguments.last().type.isUnit()) {
             +irAdapteeCall
         } else {
