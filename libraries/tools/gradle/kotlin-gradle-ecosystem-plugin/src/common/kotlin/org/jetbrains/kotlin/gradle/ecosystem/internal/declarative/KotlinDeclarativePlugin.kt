@@ -19,7 +19,8 @@ internal abstract class KotlinDeclarativePlugin : Plugin<Settings> {
     }
 
     internal companion object {
-        internal val SUPPORTED_GRADLE_VERSION = GradleVersion.version("8.14")
+        internal val MIN_SUPPORTED_GRADLE_VERSION = GradleVersion.version("8.14")
+        internal val MAX_SUPPORTED_GRADLE_VERSION = GradleVersion.version("8.14.255")
         internal const val DCL_ENABLED_MESSAGE = "Applying declarative Gradle support"
     }
 }

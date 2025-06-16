@@ -27,7 +27,7 @@ class KotlinEcosystemPlugin : Plugin<Settings> {
     private fun Settings.applyDeclarativeGradleIfEnabled() {
         val dclStatus = providers.dclStatus.get()
         if (dclStatus == KotlinDclStatus.ENABLED) {
-            if (GradleVersion.current() == KotlinDeclarativePlugin.SUPPORTED_GRADLE_VERSION) {
+            if (GradleVersion.current() in KotlinDeclarativePlugin.MIN_SUPPORTED_GRADLE_VERSION..KotlinDeclarativePlugin.MAX_SUPPORTED_GRADLE_VERSION) {
                 settings.plugins.apply(KotlinDeclarativePlugin::class.java)
             } else {
                 logger.warn(buildDclUnsupportedMessage(GradleVersion.current()))
@@ -46,6 +46,6 @@ class KotlinEcosystemPlugin : Plugin<Settings> {
         internal fun buildDclUnsupportedMessage(
             currentGradleVersion: GradleVersion
         ) = "Support for Kotlin Declarative Gradle is only available with Gradle version " +
-                "${KotlinDeclarativePlugin.SUPPORTED_GRADLE_VERSION}. The current Gradle version is $currentGradleVersion."
+                "'${KotlinDeclarativePlugin.MIN_SUPPORTED_GRADLE_VERSION}.*'. The current Gradle version is $currentGradleVersion."
     }
 }
