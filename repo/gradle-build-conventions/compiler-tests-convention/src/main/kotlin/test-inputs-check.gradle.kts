@@ -21,7 +21,9 @@ tasks.withType<Test>().names.forEach { taskName ->
             val defineJDKEnvVariables: List<Int> = listOf(8, 11, 17, 21)
             inputs.property("javaVersion", javaVersion)
 
-            val nativeHome = project.providers.gradleProperty("kotlin.internal.native.test.nativeHome")
+            val nativeHome = project.providers.gradleProperty("kotlin.internal.native.test.nativeHome").orElse(
+                project.providers.gradleProperty("kn.nativeHome")
+            )
             val konanDataDir: String =
                 project.extra.has("konan.data.dir").let { if (it) project.extra["konan.data.dir"] else null } as String?
                     ?: System.getenv("KONAN_DATA_DIR")
@@ -135,7 +137,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "$konanDataDir", "read";"""
                                     )
                                     if (nativeHome.isPresent) {
-                                        konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write";""")
+                                        konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
                                     }
                                     if (testInputsCheck.useXcode.get()) {
                                         // Should we consider those files inputs? I need to think about the execute permission
