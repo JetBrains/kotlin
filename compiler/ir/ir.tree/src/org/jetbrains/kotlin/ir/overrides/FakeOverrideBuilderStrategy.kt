@@ -67,7 +67,7 @@ abstract class FakeOverrideBuilderStrategy(
      */
     open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember? {
         return runIf(isVisibleForOverrideInClass(member, clazz)) {
-            buildFakeOverrideMember(superType, member, clazz, unimplementedOverridesStrategy)
+            buildFakeOverrideMember(superType, member, clazz)
         }
     }
 
@@ -191,7 +191,6 @@ fun buildFakeOverrideMember(
     superType: IrType,
     member: IrOverridableMember,
     clazz: IrClass,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides,
 ): IrOverridableMember {
     require(superType is IrSimpleType) { "superType is $superType, expected IrSimpleType" }
     val classifier = superType.classifier
@@ -213,7 +212,7 @@ fun buildFakeOverrideMember(
         substitutionMap[tp.symbol] = ta.type
     }
 
-    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
+    return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz)
         .copy()
         .apply { makeExternal(clazz.isExternal) }
 }

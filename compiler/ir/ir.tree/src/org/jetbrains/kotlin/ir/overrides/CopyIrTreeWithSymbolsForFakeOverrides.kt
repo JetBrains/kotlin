@@ -24,7 +24,6 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private val overridableMember: IrOverridableMember,
     private val substitution: Map<IrTypeParameterSymbol, IrType>,
     private val parentClass: IrClass,
-    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     fun copy(): IrOverridableMember {
         val typeParameters = HashMap<IrTypeParameterSymbol, IrTypeParameterSymbol>()
@@ -35,7 +34,6 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
             typeParameters,
             FakeOverrideTypeRemapper(typeParameters, substitution),
             parentClass,
-            unimplementedOverridesStrategy
         )
 
         return when (overridableMember) {

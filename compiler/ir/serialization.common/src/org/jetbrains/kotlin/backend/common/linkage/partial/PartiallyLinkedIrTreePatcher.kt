@@ -299,7 +299,12 @@ internal class PartiallyLinkedIrTreePatcher(
             if (partialLinkageCase != null) {
                 if (declaration.isFakeOverride) {
                     declaration.isFakeOverride = false
-                    declaration.origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                    if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+                        declaration.origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                    }
+                }
+                if (declaration.modality == Modality.ABSTRACT) {
+                    declaration.modality = Modality.OPEN
                 }
 
                 // Note: Block body is missing for UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER and MISSING_DECLARATION.
