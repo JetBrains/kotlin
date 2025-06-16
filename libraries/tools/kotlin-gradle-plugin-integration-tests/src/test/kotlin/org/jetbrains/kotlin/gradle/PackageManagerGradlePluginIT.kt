@@ -14,18 +14,16 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.RESTORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.STORE_PACKAGE_LOCK_BASE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE_PACKAGE_LOCK_BASE_NAME
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -610,6 +608,48 @@ abstract class PackageManagerGradlePluginIT : KGPBaseTest() {
                 assertTasksUpToDate(":rootPackageJson")
                 assertTasksExecuted(":kotlinNpmInstall")
                 assertRootPackageJsonVersion("foo")
+            }
+        }
+    }
+
+    @DisplayName("Ensure that gradle offline mode passes --offline argument to npm executable")
+    @GradleTest
+    @JsGradlePluginTests
+    fun testOfflineFlag(gradleVersion: GradleVersion) {
+        project("js-only-npm", gradleVersion, enableOfflineMode = true) {
+            buildScriptInjection {
+                this.project.tasks.named("kotlinNpmInstall") {
+                    val projectDir = this.project.projectDir
+                    val buildDir = this.project.layout.buildDirectory
+
+                    it.doFirst {
+                        val npmCache = projectDir.resolve("npm-cache").also {
+                            it.mkdirs()
+                        }
+                        buildDir.file("js/.npmrc").get().asFile.writeText(
+                            """
+                                cache=${npmCache.absolutePath}
+                            """.trimIndent()
+                        )
+                        buildDir.file("js/.yarnrc").get().asFile.writeText(
+                            """
+                                cache-folder ${npmCache.absolutePath}
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            buildAndFail("kotlinNpmInstall") {
+                assertTasksFailed(":kotlinNpmInstall")
+            }
+
+            build("kotlinNpmInstall", "--rerun", enableOfflineMode = false) {
+                assertTasksExecuted(":kotlinNpmInstall")
+            }
+
+            build("kotlinNpmInstall", "--rerun") {
+                assertTasksExecuted(":kotlinNpmInstall")
             }
         }
     }
