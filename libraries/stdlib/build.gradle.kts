@@ -106,7 +106,8 @@ kotlin {
                                 diagnosticNamesArg,
                             )
                         )
-                        mainCompilationOptions() // is -Xreturn-value-checker required for metadata?
+                        mainCompilationOptions()
+                        addReturnValueCheckerInfo()
                     }
                 }
             }
