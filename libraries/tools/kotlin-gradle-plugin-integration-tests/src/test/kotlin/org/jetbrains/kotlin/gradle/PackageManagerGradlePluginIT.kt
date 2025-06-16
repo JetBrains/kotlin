@@ -63,6 +63,20 @@ class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
             }
         }
     }
+
+    @DisplayName("Ensure that gradle offline mode passes --offline argument to npm executable")
+    @GradleTest
+    @TestMetadata("kotlin-js-browser-project")
+    fun testOfflineFlag(gradleVersion: GradleVersion) {
+        // FIXME: add enableOfflineMode for build, buildAndFail tasks
+        project("simple-js-library", gradleVersion, enableOfflineMode = true) {
+            // First build with offline mode should fail, since we can't
+            // download dependencies without Internet access
+            buildAndFail("kotlinNpmInstall") {
+                assertTaskExecuted(":kotlinNpmInstall")
+            }
+        }
+    }
 }
 
 class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
