@@ -409,8 +409,14 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression() && contextParameterCount == 0)
+        if (areAllParameterTypesSpecified &&
+            !isExtensionFunction &&
+            !argument.isFunctionExpression() &&
+            contextParameterCount == 0 &&
+            parameterTypesInfo.functionTypeKind == FunctionTypeKind.Function
+        ) {
             return null
+        }
 
         val allParameterTypes =
             (parametersFromConstraints.orEmpty() + parametersFromDeclarations.map { parameters ->
