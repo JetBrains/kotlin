@@ -28,4 +28,15 @@ public interface CompilerExecutionStrategyConfiguration {
     public fun useDaemonStrategy(
         jvmArguments: List<String>,
     ): CompilerExecutionStrategyConfiguration
+
+    /**
+     * Marks the compilation to be run in Kotlin daemon launched as a separate process and shared across similar compilation requests.
+     * See Kotlin daemon documentation here: https://kotlinlang.org/docs/gradle-compilation-and-caches.html#the-kotlin-daemon-and-how-to-use-it-with-gradle
+     * @param jvmArguments a list of JVM startup arguments for the daemon
+     * @param shutdownDelayMilliseconds the time in milliseconds that the daemon process continues to live after all clients have disconnected
+     */
+    public fun useDaemonStrategy(
+        jvmArguments: List<String>,
+        shutdownDelayMilliseconds: Long,
+    ): CompilerExecutionStrategyConfiguration
 }

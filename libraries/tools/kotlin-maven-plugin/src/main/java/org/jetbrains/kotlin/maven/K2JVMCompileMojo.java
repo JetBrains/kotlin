@@ -96,6 +96,30 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.javaParameters")
     protected boolean javaParameters;
 
+    @Parameter(property = "kotlin.compiler.daemon", defaultValue = "true")
+    protected boolean useDaemon;
+
+    @Parameter(property = "kotlin.compiler.daemon.jvmArgs")
+    protected List<String> kotlinDaemonJvmArgs;
+
+    @Parameter(property = "kotlin.compiler.daemon.shutdownDelayMs")
+    protected Long daemonShutdownDelayMs;
+
+    private static final long SECOND = 1000;
+    private static final long MINUTE = 60 * SECOND;
+    /**
+     * The time the Kotlin daemon continues to live after the Maven build process finishes (without the Maven daemon)
+     */
+    private static final long DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY = 30 * MINUTE;
+    /**
+     * The time the Kotlin daemon continues to live after the Maven daemon shuts down
+     */
+    private static final long DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY = SECOND;
+    /**
+     * A system property used to detect we are inside the Maven Daemon.
+     */
+    private static final String MAVEN_DAEMON_PROPERTY_NAME = "mvnd.home";
+
     @NotNull
     private File getCachesDir() {
         return new File(incrementalCachesRoot, getSourceSetName());
@@ -248,7 +272,23 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             ProjectId projectId = ProjectId.Companion.RandomProjectUUID();
             CompilationService compilationService = getCompilationService();
             CompilerExecutionStrategyConfiguration strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration();
-            strategyConfig.useInProcessStrategy();
+            if (useDaemon) {
+                boolean inMavenDaemon = System.getProperty(MAVEN_DAEMON_PROPERTY_NAME) != null;
+                long usedDaemonShutdownDelay;
+                if (daemonShutdownDelayMs != null) {
+                    // respect explicitly specified value
+                    usedDaemonShutdownDelay = daemonShutdownDelayMs;
+                } else if (inMavenDaemon) {
+                    usedDaemonShutdownDelay = DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY;
+                } else {
+                    usedDaemonShutdownDelay = DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY;
+                }
+                getLog().debug("Using Kotlin compiler daemon with shutdown delay " + usedDaemonShutdownDelay + " ms" + (inMavenDaemon ? " (in Maven daemon)" : " (outside Maven daemon)"));
+                strategyConfig.useDaemonStrategy(kotlinDaemonJvmArgs, usedDaemonShutdownDelay);
+            } else {
+                getLog().debug("Using in-process Kotlin compiler");
+                strategyConfig.useInProcessStrategy();
+            }
 
             JvmCompilationConfiguration compileConfig = compilationService.makeJvmCompilationConfiguration();
 

@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import java.io.File
 
 internal sealed interface CompilerExecutionStrategy {
     data object InProcess : CompilerExecutionStrategy
 
-    data class Daemon(val jvmArguments: List<String>) : CompilerExecutionStrategy
+    data class Daemon(
+        val jvmArguments: List<String>,
+        val shutdownDelayMilliseconds: Long? = null,
+    ) : CompilerExecutionStrategy
 }
 
 internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStrategyConfiguration {
@@ -25,6 +27,14 @@ internal class CompilerExecutionStrategyConfigurationImpl : CompilerExecutionStr
 
     override fun useDaemonStrategy(jvmArguments: List<String>): CompilerExecutionStrategyConfiguration {
         selectedStrategy = CompilerExecutionStrategy.Daemon(jvmArguments)
+        return this
+    }
+
+    override fun useDaemonStrategy(
+        jvmArguments: List<String>,
+        shutdownDelayMilliseconds: Long,
+    ): CompilerExecutionStrategyConfiguration {
+        selectedStrategy = CompilerExecutionStrategy.Daemon(jvmArguments, shutdownDelayMilliseconds)
         return this
     }
 }
