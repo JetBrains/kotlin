@@ -8,6 +8,7 @@ plugins {
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
+val kotlinDataFrameGradlePluginClasspath by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -55,6 +56,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
+    kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
 }
 
 optInToExperimentalCompilerApi()
@@ -81,14 +83,16 @@ javadocJar()
 testsJar()
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath)
+    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath)
     workingDir = rootDir
     useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
+    val localKotlinDataFramePluginClasspath: FileCollection = kotlinDataFrameGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.test.script.classpath", scriptClasspath)
         systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+        systemProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath", localKotlinDataFramePluginClasspath.asPath)
     }
 }
 
