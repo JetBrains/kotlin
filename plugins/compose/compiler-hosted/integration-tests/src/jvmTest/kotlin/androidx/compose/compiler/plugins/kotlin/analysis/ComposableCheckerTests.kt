@@ -1747,4 +1747,29 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun testComposablePropertyReference() {
+        assumeTrue(useFir)
+        check(
+            """
+                import androidx.compose.runtime.Composable
+                
+                val prop: Int get() = 1
+                
+                val globalProp: Int
+                    @Composable get() = 1
+
+                class A {
+                    val bar: String @Composable get() = TODO()
+                }
+
+                @Composable fun Test(a: A) {
+                    <!COMPOSABLE_PROPERTY_REFERENCE!>a::bar<!>
+                    <!COMPOSABLE_PROPERTY_REFERENCE!>::globalProp<!>
+                    ::prop
+                }
+            """
+        )
+    }
 }

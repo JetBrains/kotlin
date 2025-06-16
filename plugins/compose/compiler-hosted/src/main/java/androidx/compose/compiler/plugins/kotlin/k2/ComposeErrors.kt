@@ -66,7 +66,9 @@ object ComposeErrors : KtDiagnosticsContainer() {
         SourceElementPositioningStrategies.DECLARATION_NAME
     )
 
-    val COMPOSABLE_FUNCTION_REFERENCE by error0<PsiElement>()
+    val COMPOSABLE_PROPERTY_REFERENCE by error0<PsiElement>(
+        ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
+    )
 
     val COMPOSABLE_PROPERTY_BACKING_FIELD by error0<PsiElement>(
         SourceElementPositioningStrategies.DECLARATION_NAME

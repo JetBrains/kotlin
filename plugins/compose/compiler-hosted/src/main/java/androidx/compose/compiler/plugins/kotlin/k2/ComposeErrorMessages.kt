@@ -79,8 +79,8 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            ComposeErrors.COMPOSABLE_FUNCTION_REFERENCE,
-            "Function References of @Composable functions are not currently supported"
+            ComposeErrors.COMPOSABLE_PROPERTY_REFERENCE,
+            "@Composable property references are not currently supported."
         )
 
         map.put(
