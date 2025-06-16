@@ -80,7 +80,7 @@ inline RUNTIME_NORETURN void TODOImpl(const char* location, const char* message)
 // TODO: Consider using `CURRENT_SOURCE_LOCATION` and stacktraces when `kotlin::compiler::runtimeAssertsMode()` is not `kIgnore`.
 #define RuntimeFail(format, ...) \
     do { \
-        ::kotlin::internal::RuntimeAssertFailedPanic(false, nullptr, format, ##__VA_ARGS__); \
+        ::kotlin::internal::RuntimeAssertFailedPanic(true, CURRENT_SOURCE_LOCATION, format, ##__VA_ARGS__); \
     } while (false)
 
 #endif // RUNTIME_ASSERT_H
