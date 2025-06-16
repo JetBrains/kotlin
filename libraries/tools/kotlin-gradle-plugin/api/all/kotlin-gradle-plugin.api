@@ -160,10 +160,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsD
 	public abstract fun invoke (Ljava/lang/Object;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector$DefaultImpls {
-	public static fun invoke (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;Ljava/lang/Object;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
 }
 
@@ -182,11 +178,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependenci
 	public abstract fun getTestCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
 	public abstract fun getTestImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
 	public abstract fun getTestRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies$DefaultImpls {
-	public static fun enforcedPlatform (Lorg/jetbrains/kotlin/gradle/dsl/KotlinDependencies;Ljava/lang/Object;)V
-	public static fun platform (Lorg/jetbrains/kotlin/gradle/dsl/KotlinDependencies;Ljava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {

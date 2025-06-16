@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDepen
 private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level dependencies is not available in your Gradle version. " +
         "Minimum supported version is Gradle $MinSupportedGradleVersionWithDependencyCollectorsString.\n" +
         "Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies"
-private const val RecompileAgainstNewerKotlinGradlePluginVersion = "Please recompile against Kotlin Gradle Plugin with Gradle ${MinSupportedGradleVersionWithDependencyCollectorsString} support: https://kotl.in/kmp-top-level-dependencies"
 
 /**
  * You will see this type if you are compiling against Kotlin Gradle Plugin
@@ -17,9 +16,7 @@ private const val RecompileAgainstNewerKotlinGradlePluginVersion = "Please recom
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinBackwardsDeploymentDependencyCollector {
-    operator fun invoke(p: Any) {
-        throw NotImplementedError(RecompileAgainstNewerKotlinGradlePluginVersion)
-    }
+    operator fun invoke(p: Any)
 }
 
 /**
@@ -71,12 +68,8 @@ interface KotlinDependencies : Dependencies {
     val testRuntimeOnly: KotlinBackwardsDeploymentDependencyCollector
 
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
-    fun platform(p: Any) {
-        throw NotImplementedError(RecompileAgainstNewerKotlinGradlePluginVersion)
-    }
+    fun platform(p: Any)
 
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
-    fun enforcedPlatform(p: Any) {
-        throw NotImplementedError(RecompileAgainstNewerKotlinGradlePluginVersion)
-    }
+    fun enforcedPlatform(p: Any)
 }
