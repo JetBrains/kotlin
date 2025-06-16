@@ -2685,6 +2685,18 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
         overrideRuntimeGlobal("Kotlin_latin1Strings", llvm.constInt32(if (context.config.latin1Strings) 1 else 0))
         overrideRuntimeGlobal("Kotlin_mmapTag", llvm.constUInt8(context.config.mmapTag))
+        // FIXME should be weak non-cached global
+        val miniDumpFile = context.config.miniDumpFile?.let {
+            val cstr = ConstArray(
+                    llvm.int8Type,
+                    stringAsBytes(it).map { llvm.constInt8(it) } + listOf(llvm.constInt8(0))
+            )
+            val global = llvm.staticData.placeGlobal("", cstr);
+            global.setUnnamedAddr(true)
+            global.setConstant(true)
+            global.pointer
+        } ?: constValue(llvm.kNullInt8Ptr)
+        overrideRuntimeGlobal("Kotlin_miniDumpFile", miniDumpFile)
     }
 
     //-------------------------------------------------------------------------//

@@ -394,6 +394,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
+    val miniDumpFile by lazy {
+        configuration.get(BinaryOptions.miniDumpFile)
+    }
+
     val swiftExport by lazy {
         configuration.get(BinaryOptions.swiftExport)?.let {
             if (it && !target.supportsObjcInterop()) {

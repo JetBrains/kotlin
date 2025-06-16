@@ -125,6 +125,7 @@ bitcode {
                     "-std=c++17",
                     "-DHAVE_MACH_O_NLIST_H",
                     "-DHAVE_CONFIG_H",
+                    "-DTARGET_OS_IPHONE",
             ))
 
             onlyIf { it.family == Family.OSX }

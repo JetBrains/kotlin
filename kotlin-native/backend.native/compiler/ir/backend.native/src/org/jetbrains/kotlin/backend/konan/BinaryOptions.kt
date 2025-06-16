@@ -107,6 +107,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val latin1Strings by booleanOption()
 
     val stackProtector by option<StackProtectorMode>()
+
+    val miniDumpFile by stringOption()
 }
 
 open class BinaryOption<T : Any>(
