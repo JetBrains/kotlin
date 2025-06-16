@@ -273,6 +273,13 @@ private fun Settings.applyBootstrapConfiguration(
 
                 substituteProjectsWithBootstrap()
             }
+
+            if (name == "kotlinKlibCommonizerClasspath" && path == ":kotlin-stdlib") {
+                resolutionStrategy.dependencySubstitution {
+                    substitute(module("org.jetbrains.kotlin:kotlin-stdlib"))
+                        .using(project(":dependencies:bootstrap:kotlin-stdlib-bootstrap"))
+                }
+            }
         }
 
         logBootstrapApplied(logMessage)
