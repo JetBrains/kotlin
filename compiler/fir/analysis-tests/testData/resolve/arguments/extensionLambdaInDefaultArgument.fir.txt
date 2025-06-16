@@ -1,5 +1,5 @@
 FILE: extensionLambdaInDefaultArgument.kt
-    public final fun test(f: R|kotlin/String.() -> kotlin/Int| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    public final fun test(f: R|kotlin/String.() -> kotlin/Int| = fun R|kotlin/String|.<anonymous>(): R|kotlin/Int| <inline=NoInline>  {
         ^ this@R|special/anonymous|.R|kotlin/String.length|
     }
     ): R|kotlin/Int| {

@@ -5,7 +5,7 @@ FILE: foo.kt
     @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun Foo(text: R|@R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|()  some/MyInlineableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
     }
     @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() public final fun FooReturn(): R|some/MyInlineableFunction0<kotlin/Unit>| {
-        ^FooReturn @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        ^FooReturn @R|org/jetbrains/kotlin/plugin/sandbox/MyInlineable|() fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 
