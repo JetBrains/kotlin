@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagWithFixedSymb
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
@@ -81,7 +80,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleDataColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBy
-import org.jetbrains.kotlinx.dataframe.plugin.utils.isInsideFirScript
 import kotlin.math.abs
 
 @OptIn(FirExtensionApiInternals::class)
@@ -123,7 +121,6 @@ class FunctionCallTransformer(
         if (noRefineAnnotation && !optIn) {
             return null
         }
-        if (exposesLocalType(callInfo)) return null
 
         val hash = run {
             val hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
@@ -136,14 +133,6 @@ class FunctionCallTransformer(
         }
 
         return transformers.firstNotNullOfOrNull { it.interceptOrNull(callInfo, symbol, hash) }
-    }
-
-    private fun exposesLocalType(callInfo: CallInfo): Boolean {
-        // in FirScript declarations are top-level by default
-        if (callInfo.isInsideFirScript()) return false
-
-        val property = callInfo.containingDeclarations.lastOrNull()?.symbol as? FirPropertySymbol
-        return (property != null && !property.resolvedStatus.effectiveVisibility.privateApi)
     }
 
     private fun hashToTwoCharString(hash: Int): String {
