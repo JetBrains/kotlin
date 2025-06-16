@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import jdk.tools.jlink.resources.plugins
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
