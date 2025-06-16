@@ -85,7 +85,11 @@
 /compiler/light-classes/ @JetBrains/kotlin-analysis-api
 /compiler/plugin-api/ @JetBrains/kotlin-frontend
 /compiler/preloader/ @JetBrains/kotlin-frontend
-/compiler/psi/ @JetBrains/kotlin-frontend
+/compiler/psi/parser/ @JetBrains/kotlin-frontend
+/compiler/psi/psi-api/ @JetBrains/kotlin-analysis-api
+/compiler/psi/psi-impl/ @JetBrains/kotlin-analysis-api
+/compiler/psi/psi-utils/ @JetBrains/kotlin-analysis-api
+/compiler/psi/psi-frontend-utils/ @JetBrains/kotlin-analysis-api
 /compiler/multiplatform-parsing/ @JetBrains/kotlin-frontend
 /compiler/resolution/ @JetBrains/kotlin-frontend
 /compiler/resolution.common/ @JetBrains/kotlin-frontend
