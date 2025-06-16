@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory
 import java.io.File
 
 internal fun File.ensureExistsAndIsEmptyDirectory(): File {
@@ -15,7 +15,7 @@ internal fun File.ensureExistsAndIsEmptyDirectory(): File {
     return this
 }
 
-fun getAbsoluteFile(localPath: String): File = File(getHomeDirectory()).resolve(localPath)
+fun getAbsoluteFile(localPath: String): File = ForTestCompileRuntime.transformTestDataPath(localPath).absoluteFile
 
 internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: File, generatedSourcesBaseDir: File): File {
     assertTrue(testDataFile.startsWith(testDataBaseDir)) {
