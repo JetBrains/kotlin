@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
+import jdk.tools.jlink.resources.plugins
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTopLevelDependenciesNotAvailable
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -27,14 +28,13 @@ import kotlin.io.path.writeText
 @GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsString])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
-    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines")
+    @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {
         @Language("kotlin")
         val dependenciesBlock = """
             
             kotlin {
-                @OptIn(org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies::class)
                 dependencies {
                     implementation(platform("platform:platformDependency:1.0"))
                     implementation(project(":projectDependency"))
@@ -43,26 +43,10 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                 }
             }
         """.trimIndent()
-        testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock) {
-            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
-                buildAndFail("assemble") {
-                    assertOutputContains(
-                        "Script compilation error"
-                    )
-                    assertOutputContains(
-                        "api(\"org.jetbrains.kotlinx:kotlinx-coroutines-core\")"
-                    )
-                    assertOutputContains(
-                        "^ Using 'api: KotlinBackwardsDeploymentDependencyCollector' is an error. Kotlin top-level dependencies is not available in your Gradle version. Minimum supported version is 8.8."
-                    )
-                }
-            } else {
-                testKotlinTopLevelDependenciesCompilationAndPublication()
-            }
-        }
+        testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock)
     }
 
-    @DisplayName("Test kotlin { dependencies {} } block evaluation in Groovy Build Script")
+    @DisplayName("Test Groovy build script evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesGroovy(gradleVersion: GradleVersion) {
         @Language("groovy")
@@ -77,23 +61,13 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                 }
             }
         """.trimIndent()
-        testKotlinDependenciesBlock("empty", gradleVersion, dependenciesBlock) {
-            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
-                catchBuildFailures<KotlinTopLevelDependenciesNotAvailable>()
-                    .buildAndReturn("assemble")
-                    .unwrap()
-                    .single()
-            } else {
-                testKotlinTopLevelDependenciesCompilationAndPublication()
-            }
-        }
+        testKotlinDependenciesBlock("empty", gradleVersion, dependenciesBlock)
     }
 
     private fun testKotlinDependenciesBlock(
         template: String,
         gradleVersion: GradleVersion,
         consumerDependenciesBlock: String,
-        assertions: TestProject.() -> Unit
     ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             jvm()
@@ -175,15 +149,27 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
             targetScript.appendText(consumerDependenciesBlock)
 
-            assertions()
+            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
+                buildAndFail(":assemble") {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
+                    // Make sure we went through the configuration phase
+                    assertTasksFailed(":checkKotlinGradlePluginConfigurationErrors")
+                }
+            } else {
+                testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion)
+            }
         }
     }
 
-    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication() {
+    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
         build(":assemble")
 
         // Verify that the published jvm POM contains the kotlinx-coroutines dependency
-        val pomFile = publish().jvmMultiplatformComponent.pom.toPath()
+        val pomFile = publish(
+            deriveBuildOptions = {
+                buildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(gradleVersion)
+            }
+        ).jvmMultiplatformComponent.pom.toPath()
         assertFileExists(pomFile)
         assertFileContains(pomFile, "atomicfu")
         assertFileContains(pomFile, "kotlinx-coroutines-core")

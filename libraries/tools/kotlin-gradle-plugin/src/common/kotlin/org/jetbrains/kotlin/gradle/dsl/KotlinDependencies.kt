@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.artifacts.dsl.Dependencies
 import org.gradle.api.artifacts.dsl.DependencyCollector
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
-import org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 /**
  * Dependency container for different scopes that Kotlin projects can have.
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies
  * @since 2.2.20
  */
 
-@KotlinTopLevelDependencies
+@ExperimentalKotlinGradlePluginApi
 interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
     /**
      * Dependencies for the implementation scope.

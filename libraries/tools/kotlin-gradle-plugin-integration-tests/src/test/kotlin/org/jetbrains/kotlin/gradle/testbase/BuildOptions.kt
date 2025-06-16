@@ -115,7 +115,7 @@ data class BuildOptions(
 
     enum class IsolatedProjectsMode {
 
-        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.MAX_SUPPORTED]; Disabled in other cases */
+        /** Enable Gradle Isolated Projects For [TestVersions.Gradle.G_8_5]; Disabled in other cases */
         AUTO,
 
         /** Always disable Isolated Projects */
@@ -450,6 +450,17 @@ fun BuildOptions.disableKmpIsolatedProjectSupport() = copy(kmpIsolatedProjectsSu
 
 fun BuildOptions.enableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.ENABLED)
 fun BuildOptions.disableIsolatedProjects() = copy(isolatedProjects = IsolatedProjectsMode.DISABLED)
+
+/**
+ * Before 8.12 Gradle fails IP CC serialization with "cannot access 'Project.group' functionality on another project"
+ */
+fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(
+    currentGradleVersion: GradleVersion,
+) = copy(
+    isolatedProjects =
+        if (currentGradleVersion > GradleVersion.version(TestVersions.Gradle.G_8_11)) isolatedProjects
+        else IsolatedProjectsMode.DISABLED
+)
 
 fun BuildOptions.suppressWarningFromAgpWithGradle813(
     currentGradleVersion: GradleVersion

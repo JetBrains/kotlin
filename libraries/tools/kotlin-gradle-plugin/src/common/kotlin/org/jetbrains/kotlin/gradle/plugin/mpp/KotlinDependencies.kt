@@ -28,28 +28,25 @@ import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 internal const val MinSupportedGradleVersionWithDependencyCollectorsString = "8.8"
 internal val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)
 
-internal val KotlinMultiplatformExtension.dependencies: KotlinDependencies by extrasStoredProperty {
-    if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
-        throw KotlinTopLevelDependenciesNotAvailable(project.gradleVersion)
-    }
-    project.objects.newInstance(KotlinDependencies::class.java)
+internal sealed class KotlinTopLevelDependenciesBlock {
+    class Dependencies(val block: KotlinDependencies) : KotlinTopLevelDependenciesBlock()
+    object UnavailableInCurrentGradleVersion : KotlinTopLevelDependenciesBlock()
 }
 
-internal class KotlinTopLevelDependenciesNotAvailable(
-    currentGradleVersion: GradleVersion,
-): RuntimeException() {
-    private val currentGradleVersionString = currentGradleVersion.toString()
-    private val minimumSupportedGradleVersion = MinSupportedGradleVersionWithDependencyCollectors.toString()
-
-    override val message: String
-        get() = "Kotlin top-level dependencies is not available in $currentGradleVersionString. Minimum supported version is $minimumSupportedGradleVersion. " +
-                "Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies"
+internal val KotlinMultiplatformExtension.dependencies: KotlinTopLevelDependenciesBlock by extrasStoredProperty {
+    if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
+        KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion
+    } else {
+        KotlinTopLevelDependenciesBlock.Dependencies(project.objects.newInstance(KotlinDependencies::class.java))
+    }
 }
 
 internal val ConfigureKotlinTopLevelDependenciesDSL = KotlinProjectSetupAction {
-    if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) return@KotlinProjectSetupAction
+    val topLevelDependencies = when (val dependencies = project.multiplatformExtension.dependencies) {
+        KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> return@KotlinProjectSetupAction
+        is KotlinTopLevelDependenciesBlock.Dependencies -> dependencies.block
+    }
 
-    val topLevelDependencies = project.multiplatformExtension.dependencies
     val commonMain = project.multiplatformExtension.sourceSets.commonMain.get()
     val commonTest = project.multiplatformExtension.sourceSets.commonTest.get()
 

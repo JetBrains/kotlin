@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTopLevelDependenciesNotAvailable
-import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -126,13 +123,4 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
         }
     }
 
-    @Test
-    fun testKotlinTopLevelDependenciesNotAvailablePrinting() {
-        assertEquals(
-            "Kotlin top-level dependencies is not available in Gradle 7.6.3. Minimum supported version is Gradle ${MinSupportedGradleVersionWithDependencyCollectorsString}. Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies",
-            KotlinTopLevelDependenciesNotAvailable(
-                GradleVersion.version("7.6.3"),
-            ).message
-        )
-    }
 }
