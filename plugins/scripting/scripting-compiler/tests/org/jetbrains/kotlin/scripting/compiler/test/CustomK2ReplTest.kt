@@ -22,6 +22,7 @@ import kotlin.script.experimental.dependencies.FileSystemDependenciesResolver
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -237,6 +238,42 @@ class CustomK2ReplTest {
                 )
                 compilerOptions(
                     "-Xplugin=$serializationPluginClasspath"
+                )
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
+    }
+
+    @Test
+    fun testDataFrame() {
+        if (!isK2) return
+        val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
+        val dataframe = runBlocking {
+            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
+        }.valueOrThrow()
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+                    import org.jetbrains.kotlinx.dataframe.api.*
+                    import org.jetbrains.kotlinx.dataframe.*
+
+                    val df = dataFrameOf("a" to columnOf(42))
+                    df.a[0]
+                """,
+            ),
+            sequenceOf(
+                42
+            ),
+            baseCompilationConfiguration.with {
+                // override to make sure that the classloader uses kotlin-reflect from dataframe.
+                // dependency in baseCompilationConfiguration causes "(Kotlin reflection is not available)"
+                set(ScriptCompilationConfiguration.dependencies, listOf(JvmDependency(dataframe)))
+                compilerOptions(
+                    "-Xplugin=$dataFramePluginClasspath"
                 )
             },
             baseEvaluationConfiguration.with {
