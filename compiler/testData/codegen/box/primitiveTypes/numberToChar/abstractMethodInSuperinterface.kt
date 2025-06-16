@@ -16,6 +16,6 @@ class MyNumber(val value: Int) : Number(), Some {
 }
 
 fun box(): String {
-    val x = MyNumber('*'.code).toChar()
+    val x = MyNumber('*'.code).toInt().toChar()
     return if (x == '*') "OK" else "Fail: $x"
 }

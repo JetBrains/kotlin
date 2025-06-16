@@ -2,7 +2,7 @@
 // WITH_STDLIB
 
 class MyNumber(val value: Int) : Number() {
-    override fun toChar(): Char = super.toChar()
+    override fun toChar(): Char = toInt().toChar()
     override fun toInt(): Int = value
 
     override fun toByte(): Byte = toInt().toByte()
@@ -13,6 +13,6 @@ class MyNumber(val value: Int) : Number() {
 }
 
 fun box(): String {
-    val x = MyNumber('*'.code).toChar()
+    val x = MyNumber('*'.code).toInt().toChar()
     return if (x == '*') "OK" else "Fail: $x"
 }
