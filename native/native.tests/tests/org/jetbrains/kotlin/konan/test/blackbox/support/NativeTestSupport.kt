@@ -497,7 +497,7 @@ object NativeTestSupport {
     }
 
     private fun computeTestRoots(enclosingTestClass: Class<*>): TestRoots {
-        fun TestMetadata.testRoot() = ForTestCompileRuntime.transformTestDataPath(value).absoluteFile
+        fun TestMetadata.testRoot() = getAbsoluteFile(localPath = value)
 
         val testRoots: Set<File> = when (val outermostTestMetadata = enclosingTestClass.getAnnotation(TestMetadata::class.java)) {
             null -> {
