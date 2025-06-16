@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.config.jvmDefaultMode
 import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmNameAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.copy
@@ -167,42 +166,75 @@ internal fun KaSession.createMethods(
     }
 }
 
+internal fun interface LightMethodCreator {
+    /**
+     * Creates a method representation based on the provided parameters.
+     *
+     * @param methodIndex The index of the method to be created.
+     * @param valueParameterPickMask An optional [BitSet] that specifies arguments to pick; can be null
+     * @param hasValueClassInParameterType Indicates whether the method has a value class in its parameters.
+     */
+    fun create(
+        methodIndex: Int,
+        valueParameterPickMask: BitSet?,
+        hasValueClassInParameterType: Boolean,
+    )
+}
+
+/** @see LightMethodCreator */
 internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     declaration: T,
-    result: MutableList<PsiMethod>,
-    skipValueClassParameters: Boolean,
     methodIndexBase: Int,
-    lightMethodCreator: (Int, BitSet?) -> PsiMethod,
+    lightMethodCreator: LightMethodCreator,
 ) {
-    var indexOfFirstParameterWithValueClass: Int? = null
-    if (skipValueClassParameters && !declaration.hasJvmNameAnnotation()) {
-        for ((index, parameter) in declaration.valueParameters.withIndex()) when {
-            !typeForValueClass(parameter.returnType) -> {}
-            !parameter.hasDefaultValue -> return // No method can be generated at all
-            indexOfFirstParameterWithValueClass == null -> indexOfFirstParameterWithValueClass = index
+    val hasJvmOverloadsAnnotation = declaration.hasJvmOverloadsAnnotation()
+    val hasValueClassInParameterType = hasValueClassInSignature(
+        declaration,
+        // value parameters would be checked separately for each overload
+        skipValueParametersCheck = hasJvmOverloadsAnnotation,
+
+        // return type processing is up to the call site
+        skipReturnTypeCheck = true,
+    )
+
+    val valueParameters = declaration.valueParameters
+    val parameterCount = valueParameters.size
+    val valueClassMask = if (hasValueClassInParameterType) {
+        // Optimization to avoid redundant iteration if the signature anyway has a value class
+        null
+    } else {
+        BitSet(parameterCount).apply {
+            valueParameters.forEachIndexed { index, valueParameter ->
+                if (typeForValueClass(valueParameter.returnType)) {
+                    set(index)
+                }
+            }
         }
     }
 
-    // No value classes in the signature -> the method can be generated as it is
-    // A declaration with @JvmName is also allowed as it replaces the mangling name
-    if (indexOfFirstParameterWithValueClass == null) {
-        result += lightMethodCreator.invoke(methodIndexBase, null)
-    }
+    // Default method with all arguments
+    lightMethodCreator.create(
+        methodIndex = methodIndexBase,
+        valueParameterPickMask = null,
+        hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.isEmpty == false,
+    )
 
-    if (!declaration.hasJvmOverloadsAnnotation()) return
+    if (!hasJvmOverloadsAnnotation) return
 
     var methodIndex = methodIndexBase
-    val parameterCount = declaration.valueParameters.size
     val pickMask = BitSet(parameterCount)
     pickMask.set(0, parameterCount)
 
-    for (i in parameterCount - 1 downTo 0) {
-        if (!declaration.valueParameters[i].hasDefaultValue) continue
-        pickMask.clear(i)
+    for (index in parameterCount - 1 downTo 0) {
+        val valueParameter = valueParameters[index]
+        if (!valueParameter.hasDefaultValue) continue
+        pickMask.clear(index)
 
-        if (indexOfFirstParameterWithValueClass == null || i <= indexOfFirstParameterWithValueClass) {
-            result += lightMethodCreator.invoke(methodIndex++, pickMask.copy())
-        }
+        lightMethodCreator.create(
+            methodIndex = methodIndex++,
+            valueParameterPickMask = pickMask.copy(),
+            hasValueClassInParameterType = hasValueClassInParameterType || valueClassMask?.intersects(pickMask) == true,
+        )
     }
 }
 
