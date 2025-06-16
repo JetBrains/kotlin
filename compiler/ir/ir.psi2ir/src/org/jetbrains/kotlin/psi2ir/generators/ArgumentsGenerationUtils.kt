@@ -415,7 +415,7 @@ private fun StatementGenerator.applySuspendConversionForValueArgumentIfRequired(
                 null, IrStatementOrigin.SUSPEND_CONVERSION
             )
             statements.add(irAdapterFunction)
-            statements.add(irAdapterRef.apply { extensionReceiver = expression })
+            statements.add(irAdapterRef.apply { arguments[0] = expression })
         }
 }
 
