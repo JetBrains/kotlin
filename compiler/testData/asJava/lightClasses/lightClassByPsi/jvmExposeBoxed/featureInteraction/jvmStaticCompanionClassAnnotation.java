@@ -1,5 +1,4 @@
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
-@kotlin.jvm.JvmExposeBoxed()
 public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() Foo.Companion Companion;

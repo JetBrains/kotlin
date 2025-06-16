@@ -15,7 +15,6 @@ public final class Foo /* Foo*/ {
   class Companion ...
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 public static final class Companion /* Foo.Companion*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()

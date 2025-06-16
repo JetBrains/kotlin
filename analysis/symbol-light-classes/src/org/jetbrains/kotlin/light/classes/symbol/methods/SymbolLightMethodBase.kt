@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
-import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmExposeBoxedNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 
 internal abstract class SymbolLightMethodBase(
@@ -133,4 +131,7 @@ internal abstract class SymbolLightMethodBase(
     abstract fun isOverride(): Boolean
 
     internal open fun suppressWildcards(): Boolean? = null
+
+    protected val jvmExposeBoxedAwareAnnotationFilter: AnnotationFilter
+        get() = if (isJvmExposedBoxed) ExcludeAnnotationFilter.JvmName else ExcludeAnnotationFilter.JvmExposeBoxed
 }

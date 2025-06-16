@@ -8,7 +8,6 @@ public final class GlobalVariableContextKt /* GlobalVariableContextKt*/ {
   public static final void setF(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  setF(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() java.lang.String)
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
