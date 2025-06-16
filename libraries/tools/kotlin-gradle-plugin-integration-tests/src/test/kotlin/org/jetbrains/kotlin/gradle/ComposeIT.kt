@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -198,16 +199,22 @@ class ComposeIT : KGPBaseTest() {
         agpVersion: String,
         providedJdk: JdkVersions.ProvidedJdk,
     ) {
+        var buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+            .suppressDeprecationWarningsOn(
+                "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
+            ) {
+                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
+            }
+        if (OS.WINDOWS.isCurrentOs) {
+            // CMP-8375 Compose Gradle Plugin is not compatible with Gradle isolated projects on Windows
+            buildOptions = buildOptions.disableIsolatedProjects()
+        }
+
         project(
             projectName = "JBComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
-                .suppressDeprecationWarningsOn(
-                    "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
-                ) {
-                    gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
-                }
+            buildOptions = buildOptions,
         ) {
             val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
             build(":composeApp:assembleDebug") {
