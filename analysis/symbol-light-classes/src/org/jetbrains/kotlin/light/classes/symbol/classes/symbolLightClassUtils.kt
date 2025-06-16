@@ -192,13 +192,16 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
     if (!declaration.hasJvmOverloadsAnnotation()) return
 
     var methodIndex = methodIndexBase
-    val skipMask = BitSet(declaration.valueParameters.size)
-    for (i in declaration.valueParameters.size - 1 downTo 0) {
+    val parameterCount = declaration.valueParameters.size
+    val pickMask = BitSet(parameterCount)
+    pickMask.set(0, parameterCount)
+
+    for (i in parameterCount - 1 downTo 0) {
         if (!declaration.valueParameters[i].hasDefaultValue) continue
-        skipMask.set(i)
+        pickMask.clear(i)
 
         if (indexOfFirstParameterWithValueClass == null || i <= indexOfFirstParameterWithValueClass) {
-            result += lightMethodCreator.invoke(methodIndex++, skipMask.copy())
+            result += lightMethodCreator.invoke(methodIndex++, pickMask.copy())
         }
     }
 }
@@ -457,14 +460,14 @@ internal fun KaSession.addPropertyBackingFields(
  * Whether the [callableSymbol] has a value class in its signature.
  *
  * @param skipValueParametersCheck whether to skip value parameter types of the callable symbol during the check
- * (effectively the same as [argumentsSkipMask] with bits for all arguments)
- * @param argumentsSkipMask a bit mask specifying which value arguments of the callable symbol should be skipped during the check
+ * (effectively the same as [valueParameterPickMask] with bits for all parameters)
+ * @param valueParameterPickMask a bit mask specifying which value parameters of the callable symbol should be picked during the check
  * @param skipReturnTypeCheck whether to skip the return type of the callable symbol during the check
  */
 internal fun KaSession.hasValueClassInSignature(
     callableSymbol: KaCallableSymbol,
     skipValueParametersCheck: Boolean = false,
-    argumentsSkipMask: BitSet? = null,
+    valueParameterPickMask: BitSet? = null,
     skipReturnTypeCheck: Boolean = false,
 ): Boolean {
     if (!skipReturnTypeCheck && hasValueClassInReturnType(callableSymbol)) {
@@ -475,7 +478,7 @@ internal fun KaSession.hasValueClassInSignature(
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
         return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
-            argumentsSkipMask?.get(index) != true && typeForValueClass(valueParameter.returnType)
+            valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
         }
     }
 

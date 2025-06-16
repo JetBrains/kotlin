@@ -38,13 +38,13 @@ internal class SymbolLightConstructor private constructor(
     constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    argumentsSkipMask: BitSet? = null,
+    valueParameterPickMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask,
+    valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String? = containingClass.name
 
@@ -85,7 +85,7 @@ internal class SymbolLightConstructor private constructor(
             GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
 
         else -> withFunctionSymbol { symbol ->
-            val visibility = if (hasValueClassInSignature(symbol, argumentsSkipMask = argumentsSkipMask)) {
+            val visibility = if (hasValueClassInSignature(symbol, valueParameterPickMask = valueParameterPickMask)) {
                 PsiModifier.PRIVATE
             } else {
                 symbol.toPsiVisibilityForMember()
@@ -121,12 +121,12 @@ internal class SymbolLightConstructor private constructor(
                     result = result,
                     skipValueClassParameters = false,
                     methodIndexBase = METHOD_INDEX_BASE,
-                ) { methodIndex, argumentSkipMask ->
+                ) { methodIndex, valueParameterPickMask ->
                     SymbolLightConstructor(
                         constructorSymbol = constructor,
                         containingClass = lightClass,
                         methodIndex = methodIndex,
-                        argumentsSkipMask = argumentSkipMask
+                        valueParameterPickMask = valueParameterPickMask
                     )
                 }
             }

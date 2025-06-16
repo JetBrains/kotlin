@@ -36,14 +36,14 @@ internal class SymbolLightSimpleMethod private constructor(
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
-    argumentsSkipMask: BitSet?,
+    valueParameterPickMask: BitSet?,
     private val suppressStatic: Boolean,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask,
+    valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
@@ -262,14 +262,14 @@ internal class SymbolLightSimpleMethod private constructor(
                 result = result,
                 skipValueClassParameters = true,
                 methodIndexBase = methodIndex,
-            ) { methodIndex, argumentSkipMask ->
+            ) { methodIndex, valueParameterPickMask ->
                 SymbolLightSimpleMethod(
                     functionSymbol = functionSymbol,
                     lightMemberOrigin = lightMemberOrigin,
                     containingClass = containingClass,
                     methodIndex = methodIndex,
                     isTopLevel = isTopLevel,
-                    argumentsSkipMask = argumentSkipMask,
+                    valueParameterPickMask = valueParameterPickMask,
                     suppressStatic = suppressStatic,
                 )
             }
