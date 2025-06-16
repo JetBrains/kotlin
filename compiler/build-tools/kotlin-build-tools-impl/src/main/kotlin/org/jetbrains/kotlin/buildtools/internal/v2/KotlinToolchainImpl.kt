@@ -25,12 +25,12 @@ class KotlinToolchainImpl(
     override val native: NativePlatformToolchain = NativePlatformToolchainImpl(),
     override val wasm: WasmPlatformToolchain = WasmPlatformToolchainImpl(),
 ) : KotlinToolchain {
-    override fun createExecutionPolicy(): ExecutionPolicy = ExecutionPolicyImpl()
+    override fun createInProcessExecutionPolicy(): ExecutionPolicy = InProcessExecutionPolicy
+
+    override fun createDaemonExecutionPolicy(daemonJvmArgs: List<String>): ExecutionPolicy = DaemonExecutionPolicy(daemonJvmArgs)
 
     override suspend fun <R> executeOperation(operation: BuildOperation<R>): R {
-        check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-        @Suppress("UNCHECKED_CAST")
-        return operation.execute()
+        return executeOperation(operation, logger = null)
     }
 
     override suspend fun <R> executeOperation(
@@ -39,7 +39,6 @@ class KotlinToolchainImpl(
         logger: KotlinLogger?,
     ): R {
         check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-        @Suppress("UNCHECKED_CAST")
         return operation.execute(executionMode, logger)
     }
 

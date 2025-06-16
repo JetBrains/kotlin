@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.v2.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
+import org.jetbrains.kotlin.buildtools.api.tests.v2.BaseTestV2
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -17,8 +18,8 @@ import kotlin.streams.asStream
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return sequenceOf(
-            named("in-process", ExecutionPolicy.ExecutionMode.IN_PROCESS),
-            named("within daemon", ExecutionPolicy.ExecutionMode.DAEMON),
+            named("in-process", BaseTestV2.kotlinToolchain.createInProcessExecutionPolicy()),
+            named("within daemon", BaseTestV2.kotlinToolchain.createDaemonExecutionPolicy()),
         ).map { Arguments.of(it) }.asStream()
     }
 }

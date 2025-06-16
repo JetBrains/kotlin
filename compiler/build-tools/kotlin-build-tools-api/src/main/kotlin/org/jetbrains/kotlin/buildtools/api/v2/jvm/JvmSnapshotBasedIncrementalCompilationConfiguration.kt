@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.api.v2.jvm
 
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.WithDefault
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.Mandatory
+import org.jetbrains.kotlin.buildtools.api.v2.internal.BaseOption
+
 import java.nio.file.Path
 
 public interface JvmIncrementalCompilationConfiguration
@@ -27,7 +27,7 @@ public class JvmSnapshotBasedIncrementalCompilationConfiguration(
 ) : JvmIncrementalCompilationConfiguration
 
 public interface JvmSnapshotBasedIncrementalCompilationOptions {
-    public interface Option<V>
+    public class Option<V>(id: String) : BaseOption<V>(id)
 
     public operator fun <V> get(key: Option<V>): V
 
@@ -35,42 +35,36 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
 
     public companion object {
 
-        private fun <V> mandatory(id: String): Option<V> =
-            object : Mandatory(id), Option<V> {}
-
-        private fun <V> optional(id: String, defaultValue: V): Option<V> =
-            object : WithDefault<V>(id, defaultValue), Option<V> {}
+        @JvmField
+        public val ROOT_PROJECT_DIR: Option<Path> = Option("ROOT_PROJECT_DIR")
 
         @JvmField
-        public val ROOT_PROJECT_DIR: Option<Path> = mandatory("ROOT_PROJECT_DIR")
-
-        @JvmField
-        public val MODULE_BUILD_DIR: Option<Path> = mandatory("MODULE_BUILD_DIR")
+        public val MODULE_BUILD_DIR: Option<Path> = Option("MODULE_BUILD_DIR")
 
         @JvmField
         public val PRECISE_JAVA_TRACKING: Option<Boolean> =
-            optional("PRECISE_JAVA_TRACKING", true)
+            Option("PRECISE_JAVA_TRACKING")
 
         @JvmField
-        public val BACKUP_CLASSES: Option<Boolean> = optional("BACKUP_CLASSES", false)
+        public val BACKUP_CLASSES: Option<Boolean> = Option("BACKUP_CLASSES")
 
         @JvmField
-        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = optional("KEEP_IC_CACHES_IN_MEMORY", false)
+        public val KEEP_IC_CACHES_IN_MEMORY: Option<Boolean> = Option("KEEP_IC_CACHES_IN_MEMORY")
 
         @JvmField
-        public val FORCE_RECOMPILATION: Option<Boolean> = optional("FORCE_RECOMPILATION", false)
+        public val FORCE_RECOMPILATION: Option<Boolean> = Option("FORCE_RECOMPILATION")
 
         @JvmField
-        public val RECOMPILATION_CLEANUP_DIRS: Option<Path> = mandatory("REBUILD_CLEANUP_DIRS")
+        public val RECOMPILATION_CLEANUP_DIRS: Option<Path> = Option("REBUILD_CLEANUP_DIRS")
 
         @JvmField
-        public val OUTPUT_DIRS: Option<Set<Path>?> = optional("OUTPUT_DIRS", null)
+        public val OUTPUT_DIRS: Option<Set<Path>?> = Option("OUTPUT_DIRS")
 
         @JvmField
         public val ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES: Option<Boolean> =
-            optional("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES", false)
+            Option("ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES")
 
         @JvmField
-        public val USE_FIR_RUNNER: Option<Boolean> = optional("USE_FIR_RUNNER", false)
+        public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
     }
 }

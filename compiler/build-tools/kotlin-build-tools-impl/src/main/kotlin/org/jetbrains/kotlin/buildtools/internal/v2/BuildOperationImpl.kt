@@ -7,17 +7,24 @@ package org.jetbrains.kotlin.buildtools.internal.v2
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Companion.METRICS_COLLECTOR
+import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Companion.PROJECT_ID
+import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Option
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option
-import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
+import org.jetbrains.kotlin.buildtools.internal.v2.OptionsDelegate
 
 abstract class BuildOperationImpl<R> : BuildOperation<R> {
     protected val optionsDelegate = OptionsDelegate()
 
-    override fun <V> get(key: BuildOperation.Option<V>): V = optionsDelegate[key as Option]
-    override fun <V> set(key: BuildOperation.Option<V>, value: V) {
-        optionsDelegate[key as Option] = value
+    init {
+        this[PROJECT_ID] = null
+        this[METRICS_COLLECTOR] = null
     }
 
-    abstract fun execute(executionPolicy: ExecutionPolicy? = null, logger: KotlinLogger? = null): R
+    override fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    override fun <V> set(key: Option<V>, value: V) {
+        optionsDelegate[key] = value
+    }
+
+    abstract fun execute(executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 }

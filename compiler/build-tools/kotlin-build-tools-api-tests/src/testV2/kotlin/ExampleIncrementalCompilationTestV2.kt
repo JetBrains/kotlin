@@ -27,8 +27,8 @@ class ExampleIncrementalCompilationTestV2 : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun testSingleModule(executionMode: ExecutionPolicy.ExecutionMode) = runTest {
-        project(executionMode.toExecutionPolicy()) {
+    fun testSingleModule(executionPolicy: ExecutionPolicy) = runTest {
+        project(executionPolicy) {
             val module1 = module("jvm-module-1")
 
             // this is not the scenario DSL, so the module is not built at this moment
@@ -50,8 +50,8 @@ class ExampleIncrementalCompilationTestV2 : BaseCompilationTest() {
     @DisplayName("Sample IC test with 2 modules and custom compilation options")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun testTwoModules(executionMode: ExecutionPolicy.ExecutionMode) = runTest {
-        project(executionMode.toExecutionPolicy()) {
+    fun testTwoModules(executionPolicy: ExecutionPolicy) = runTest {
+        project(executionPolicy) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 

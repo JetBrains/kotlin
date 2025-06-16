@@ -16,8 +16,8 @@ import org.junit.jupiter.api.DisplayName
 class ExampleNonIncrementalCompilationTestV2 : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
-    fun myTest(executionMode: ExecutionPolicy.ExecutionMode) = runTest {
-        project(executionMode.toExecutionPolicy()) {
+    fun myTest(executionPolicy: ExecutionPolicy) = runTest {
+        project(executionPolicy) {
             val module1 = module("jvm-module-1")
             module1.compile { module ->
                 assertOutputs(module1, setOf("FooKt.class", "Bar.class", "BazKt.class"))

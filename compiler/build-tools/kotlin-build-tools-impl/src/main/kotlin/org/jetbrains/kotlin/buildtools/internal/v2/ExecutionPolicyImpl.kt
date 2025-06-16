@@ -6,14 +6,8 @@
 package org.jetbrains.kotlin.buildtools.internal.v2
 
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.v2.internal.OptionsDelegate
+import org.jetbrains.kotlin.buildtools.internal.v2.OptionsDelegate
 
-class ExecutionPolicyImpl : ExecutionPolicy {
-    private val optionsDelegate = OptionsDelegate()
+object InProcessExecutionPolicy : ExecutionPolicy
 
-    override fun <V> get(key: ExecutionPolicy.Option<V>): V = optionsDelegate[key]
-
-    override fun <V> set(key: ExecutionPolicy.Option<V>, value: V) {
-        optionsDelegate[key] = value
-    }
-}
+class DaemonExecutionPolicy(val daemonJvmArgs: List<String>) : ExecutionPolicy

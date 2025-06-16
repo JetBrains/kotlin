@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Companion.PROJECT_I
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.LANGUAGE_VERSION
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.XUSE_FIR_IC
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy.Companion.DAEMON_JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
@@ -30,8 +29,13 @@ import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCom
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.Companion.LOOKUP_TRACKER
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.operations.JvmCompilationOperation.Companion.SOURCE_TO_OUTPUTS_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.v2.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.v2.DaemonExecutionPolicy
+import org.jetbrains.kotlin.buildtools.internal.v2.InProcessExecutionPolicy
 import org.jetbrains.kotlin.buildtools.internal.v2.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -66,6 +70,13 @@ class JvmCompilationOperationImpl(
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
 
+    init {
+        this[INCREMENTAL_COMPILATION] = null
+        this[LOOKUP_TRACKER] = null
+        this[SOURCE_TO_OUTPUTS_TRACKER] = null
+        this[KOTLINSCRIPT_EXTENSIONS] = null
+    }
+
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = optionsDelegate[key]
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         optionsDelegate[key] = value
@@ -77,16 +88,20 @@ class JvmCompilationOperationImpl(
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
     }
 
-    override fun execute(executionPolicy: ExecutionPolicy?, logger: KotlinLogger?): CompilationResult {
+    override fun execute(executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val loggerAdapter =
             logger?.let { KotlinLoggerMessageCollectorAdapter(it) } ?: KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger)
-        return if (executionPolicy == null || executionPolicy[ExecutionPolicy.EXECUTION_MODE] == ExecutionPolicy.ExecutionMode.IN_PROCESS) {
-            compileInProcess(loggerAdapter)
-        } else if (executionPolicy[ExecutionPolicy.EXECUTION_MODE] == ExecutionPolicy.ExecutionMode.DAEMON) {
-            compileWithDaemon(requireNotNull(get(PROJECT_ID)), executionPolicy, loggerAdapter)
-        } else {
-            CompilationResult.COMPILATION_ERROR.also {
-                loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy[ExecutionPolicy.EXECUTION_MODE]}")
+        return when (executionPolicy) {
+            InProcessExecutionPolicy -> {
+                compileInProcess(loggerAdapter)
+            }
+            is DaemonExecutionPolicy -> {
+                compileWithDaemon(requireNotNull(get(PROJECT_ID)), executionPolicy, loggerAdapter)
+            }
+            else -> {
+                CompilationResult.COMPILATION_ERROR.also {
+                    loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
+                }
             }
         }
     }
@@ -146,7 +161,7 @@ class JvmCompilationOperationImpl(
 
     private fun compileWithDaemon(
         projectId: ProjectId,
-        executionPolicy: ExecutionPolicy,
+        executionPolicy: DaemonExecutionPolicy,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
@@ -158,11 +173,7 @@ class JvmCompilationOperationImpl(
         val jvmOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
         ).also { opts ->
-            val daemonJvmArguments = try {
-                executionPolicy[DAEMON_JVM_ARGUMENTS]
-            } catch (_: Throwable) {
-                emptyList()
-            }
+            val daemonJvmArguments = executionPolicy.daemonJvmArgs
             if (daemonJvmArguments.isNotEmpty()) {
                 opts.jvmParams.addAll(
                     daemonJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)
@@ -229,7 +240,7 @@ class JvmCompilationOperationImpl(
         val compiler = K2JVMCompiler()
         val arguments = compilerArguments.toCompilerArguments()
         val kotlinFilenameExtensions =
-            DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
+            DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
         arguments.destination = destinationDirectory.absolutePathString()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)
         return when (aggregatedIcConfiguration) {

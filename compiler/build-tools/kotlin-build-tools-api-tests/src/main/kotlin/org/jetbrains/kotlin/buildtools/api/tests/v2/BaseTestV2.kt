@@ -4,8 +4,6 @@
  */
 package org.jetbrains.kotlin.buildtools.api.tests.v2
 
-import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy.Companion.EXECUTION_MODE
 import org.jetbrains.kotlin.buildtools.api.v2.KotlinToolchain
 
 abstract class BaseTestV2 {
@@ -14,11 +12,6 @@ abstract class BaseTestV2 {
             KotlinToolchain.loadImplementation(BaseTestV2::class.java.classLoader)
         }
 
-        fun ExecutionPolicy.ExecutionMode.toExecutionPolicy(): ExecutionPolicy {
-            val policy = kotlinToolchain.createExecutionPolicy()
-            policy[EXECUTION_MODE] = this
-            return policy
-        }
 //        private val _compilerVersion by lazy {
 //            try {
 //                compilationService.getCompilerVersion()

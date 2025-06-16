@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.WithDefault
+import org.jetbrains.kotlin.buildtools.api.v2.internal.BaseOption
 
 public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEntrySnapshot> {
-    public interface Option<V>
+    public class Option<V>(id: String) : BaseOption<V>(id)
 
     public operator fun <V> get(key: Option<V>): V
 
@@ -22,13 +22,10 @@ public interface JvmClasspathSnapshottingOperation : BuildOperation<ClasspathEnt
 
     public companion object {
 
-        private fun <V> optional(id: String, defaultValue: V): Option<V> =
-            object : WithDefault<V>(id, defaultValue), Option<V> {}
+        @JvmField
+        public val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY")
 
         @JvmField
-        public val GRANULARITY: Option<ClassSnapshotGranularity> = optional("GRANULARITY", ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
-
-        @JvmField
-        public val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = optional("PARSE_INLINED_LOCAL_CLASSES", true)
+        public val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES")
     }
 }

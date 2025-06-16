@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.buildtools.api.v2.jvm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.v2.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
-import org.jetbrains.kotlin.buildtools.api.v2.trackers.SourceToOutputsTracker
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.v2.JvmCompilerArguments
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.Mandatory
-import org.jetbrains.kotlin.buildtools.api.v2.internal.Option.WithDefault
+import org.jetbrains.kotlin.buildtools.api.v2.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.v2.trackers.CompilerLookupTracker
+import org.jetbrains.kotlin.buildtools.api.v2.trackers.SourceToOutputsTracker
 
 public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
-    public interface Option<V>
+    public class Option<V>(id: String) : BaseOption<V>(id)
 
     public operator fun <V> get(key: Option<V>): V
 
@@ -44,21 +43,18 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
     public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
 
     public companion object {
-        private fun <V> optional(id: String, defaultValue: V): Option<V> =
-            object : WithDefault<V>(id, defaultValue), Option<V> {}
-
 
         @JvmField
         public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> =
-            optional("INCREMENTAL_COMPILATION", null)
+            Option("INCREMENTAL_COMPILATION")
 
         @JvmField
-        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = optional("LOOKUP_TRACKER", null)
+        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
 
         @JvmField
-        public val SOURCE_TO_OUTPUTS_TRACKER: Option<SourceToOutputsTracker?> = optional("SOURCE_TO_OUTPUTS_TRACKER", null)
+        public val SOURCE_TO_OUTPUTS_TRACKER: Option<SourceToOutputsTracker?> = Option("SOURCE_TO_OUTPUTS_TRACKER")
 
         @JvmField
-        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = optional("KOTLINSCRIPT_EXTENSIONS", null)
+        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
     }
 }

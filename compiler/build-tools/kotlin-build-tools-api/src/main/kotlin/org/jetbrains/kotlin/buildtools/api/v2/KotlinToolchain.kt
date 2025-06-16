@@ -18,7 +18,8 @@ public interface KotlinToolchain {
     public val native: NativePlatformToolchain
     public val wasm: WasmPlatformToolchain
 
-    public fun createExecutionPolicy(): ExecutionPolicy
+    public fun createInProcessExecutionPolicy(): ExecutionPolicy
+    public fun createDaemonExecutionPolicy(daemonJvmArgs: List<String> = emptyList()): ExecutionPolicy
 
     // no @JvmOverloads on interfaces :(
     public suspend fun <R> executeOperation(
@@ -27,7 +28,7 @@ public interface KotlinToolchain {
 
     public suspend fun <R> executeOperation(
         operation: BuildOperation<R>,
-        executionMode: ExecutionPolicy = createExecutionPolicy(),
+        executionMode: ExecutionPolicy = createInProcessExecutionPolicy(),
         logger: KotlinLogger? = null,
     ): R
 

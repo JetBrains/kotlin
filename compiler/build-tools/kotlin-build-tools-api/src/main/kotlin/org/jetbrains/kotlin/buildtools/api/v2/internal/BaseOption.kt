@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.v2.internal
 
-
-public sealed class Option(public val id: String) {
+public abstract class BaseOption<V>(public val id: String) {
     override fun toString(): String = id
-
-    public open class Mandatory internal constructor(id: String) : Option(id)
-    public open class WithDefault<V> internal constructor(id: String, public val defaultValue: V) : Option(id)
 }
 
