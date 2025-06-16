@@ -223,39 +223,31 @@ abstract class AbstractTypeApproximator(
 
         var result: RigidTypeMarker? = null
 
-        if (isK2) {
-            // BFS for non-local/anonymous supertype:
-            // search for non-local supertypes in the super types of the given type,
-            // then it their respective super types, etc.
-            // Ignore `Any`.
-            // If no suitable type is found, return `Any`.
-            val visited = mutableSetOf<RigidTypeMarker>()
-            val queue = ArrayDeque<RigidTypeMarker>().apply { add(type) }
+        // BFS for non-local/anonymous supertype:
+        // search for non-local supertypes in the super types of the given type,
+        // then it their respective super types, etc.
+        // Ignore `Any`.
+        // If no suitable type is found, return `Any`.
+        val visited = mutableSetOf<RigidTypeMarker>()
+        val queue = ArrayDeque<RigidTypeMarker>().apply { add(type) }
 
-            while (queue.isNotEmpty()) {
-                val currentType = queue.removeFirst()
-                if (!visited.add(currentType)) continue
-                val currentConstructor = currentType.typeConstructor()
-                if (currentType.isAcceptable(conf, currentConstructor)) {
-                    result = currentType.withNullability(type.isMarkedNullable())
-                    break
-                }
-                currentConstructor.supertypes()
-                    .flatMap { AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, it.typeConstructor()) }
-                    .filterTo(queue) { !it.typeConstructor().isAnyConstructor() }
+        while (queue.isNotEmpty()) {
+            val currentType = queue.removeFirst()
+            if (!visited.add(currentType)) continue
+            val currentConstructor = currentType.typeConstructor()
+            if (currentType.isAcceptable(conf, currentConstructor)) {
+                result = currentType.withNullability(type.isMarkedNullable())
+                break
             }
-
-            if (result == null) {
-                result = ctx.anyType().withNullability(type.isMarkedNullable())
-            }
-        } else {
-            val superConstructor = constructor.supertypes().first().typeConstructor()
-            result = AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor)
-                .firstOrNull()
-                ?.withNullability(type.isMarkedNullable())
+            currentConstructor.supertypes()
+                .flatMap { AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, it.typeConstructor()) }
+                .filterTo(queue) { !it.typeConstructor().isAnyConstructor() }
         }
 
-        if (result == null) return null
+        if (result == null) {
+            result = ctx.anyType().withNullability(type.isMarkedNullable())
+        }
+
 
         /*
          * AbstractTypeChecker captures any projections in the super type by default, which may lead to the situation, when some local
@@ -270,11 +262,7 @@ abstract class AbstractTypeApproximator(
          * Here type of `privateFunc()` is _anonymous_<in Number>, and `findCorrespondingSupertypes` for it and `Invariant` as type
          *   constructor returns `Invariant<Captured(in Number)>`
          */
-        return if (ctx.isK2) {
-            (approximateTo(result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation, toSuper, depth) ?: result) as RigidTypeMarker?
-        } else {
-            result
-        }
+        return (approximateTo(result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation, toSuper, depth) ?: result) as? RigidTypeMarker
     }
 
     private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructorMarker): Boolean {

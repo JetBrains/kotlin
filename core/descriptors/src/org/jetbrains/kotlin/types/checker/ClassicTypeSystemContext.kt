@@ -56,12 +56,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return declarationDescriptor?.classId?.isLocal == true
+        return (declarationDescriptor as? ClassDescriptor)?.visibility?.name == "local" || declarationDescriptor?.classId?.isLocal == true
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return declarationDescriptor?.classId?.shortClassName == SpecialNames.ANONYMOUS
+        val declarationDescriptor = declarationDescriptor ?: return false
+        return declarationDescriptor.name == SpecialNames.NO_NAME_PROVIDED || declarationDescriptor.classId?.shortClassName == SpecialNames.ANONYMOUS
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
