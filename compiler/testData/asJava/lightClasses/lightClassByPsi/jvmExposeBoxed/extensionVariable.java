@@ -1,4 +1,3 @@
-@kotlin.jvm.JvmExposeBoxed()
 public final class A /* A*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
@@ -10,7 +9,6 @@ public final class A /* A*/ {
   public  A();//  .ctor()
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()

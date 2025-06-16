@@ -1,4 +1,3 @@
-@kotlin.jvm.JvmExposeBoxed()
 public final class A /* A*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()

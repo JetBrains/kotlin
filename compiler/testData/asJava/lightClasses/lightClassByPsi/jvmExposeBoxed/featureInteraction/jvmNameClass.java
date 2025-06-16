@@ -1,4 +1,3 @@
-@kotlin.jvm.JvmExposeBoxed()
 public final class Foo /* Foo*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "foo22")
   @kotlin.jvm.JvmName(name = "foo21")
@@ -12,7 +11,6 @@ public final class Foo /* Foo*/ {
   public  Foo();//  .ctor()
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()

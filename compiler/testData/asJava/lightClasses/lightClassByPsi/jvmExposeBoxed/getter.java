@@ -21,7 +21,6 @@ public final class StringWrapper /* StringWrapper*/ {
   public int hashCode();//  hashCode()
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class StringWrapper2 /* StringWrapper2*/ {
   @org.jetbrains.annotations.NotNull()

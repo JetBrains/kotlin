@@ -11,7 +11,6 @@ public final class Foo /* Foo*/ {
   public  Foo();//  .ctor()
 }
 
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()

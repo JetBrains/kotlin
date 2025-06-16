@@ -213,7 +213,8 @@ internal class SymbolLightAccessorMethod private constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
-                )
+                ),
+                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),
         )
     }
