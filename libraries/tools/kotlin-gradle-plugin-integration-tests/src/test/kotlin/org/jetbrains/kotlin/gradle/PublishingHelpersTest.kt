@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
@@ -255,7 +254,7 @@ class PublishingHelpersTest : KGPBaseTest() {
         routingSetup: Routing.() -> Unit,
         action: (Int) -> Unit,
     ) {
-        var server: ApplicationEngine? = null
+        var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
         try {
             server = embeddedServer(CIO, host = "localhost", port = 0) {
                 routing {
@@ -265,7 +264,7 @@ class PublishingHelpersTest : KGPBaseTest() {
                     routingSetup()
                 }
             }.start()
-            val port = runBlocking { server.resolvedConnectors().single().port }
+            val port = runBlocking { server.engine.resolvedConnectors().single().port }
             awaitInitialization(port)
             action(port)
         } finally {
