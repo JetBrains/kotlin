@@ -38,19 +38,23 @@ internal class SymbolLightSimpleMethod private constructor(
     private val isTopLevel: Boolean,
     valueParameterPickMask: BitSet?,
     private val suppressStatic: Boolean,
+    isJvmExposedBoxed: Boolean,
 ) : SymbolLightMethod<KaNamedFunctionSymbol>(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     valueParameterPickMask = valueParameterPickMask,
+    isJvmExposedBoxed = isJvmExposedBoxed,
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            computeJvmMethodName(
-                symbol = functionSymbol,
-                defaultName = functionSymbol.name.asString(),
-            )
+            val defaultName = functionSymbol.name.asString()
+            if (isJvmExposedBoxed) {
+                computeJvmExposeBoxedMethodName(functionSymbol, defaultName)
+            } else {
+                computeJvmMethodName(functionSymbol, defaultName)
+            }
         }
     }
 
@@ -150,6 +154,7 @@ internal class SymbolLightSimpleMethod private constructor(
                     ktModule = ktModule,
                     annotatedSymbolPointer = functionSymbolPointer,
                 ),
+                annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
@@ -172,6 +177,7 @@ internal class SymbolLightSimpleMethod private constructor(
                         }
                     },
                     MethodAdditionalAnnotationsProvider,
+                    JvmExposeBoxedAdditionalAnnotationsProvider,
                 ),
             )
         )
@@ -195,7 +201,8 @@ internal class SymbolLightSimpleMethod private constructor(
         if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
             return true
 
-        return returnType.isPrimitiveBacked &&
+        return isJvmExposedBoxed && typeForValueClass(returnType) ||
+                returnType.isPrimitiveBacked &&
                 functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
                     !overriddenSymbol.returnType.isPrimitiveBacked
                 }
@@ -250,29 +257,55 @@ internal class SymbolLightSimpleMethod private constructor(
             ProgressManager.checkCanceled()
 
             if (functionSymbol.name.isSpecial || functionSymbol.hasReifiedParameters || isHiddenOrSynthetic(functionSymbol)) return
+
+            val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
+            val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
             val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
-            val hasJvmNameAnnotation by lazy(LazyThreadSafetyMode.NONE) {
-                functionSymbol.hasJvmNameAnnotation()
-            }
-
+            val isSuspend = functionSymbol.isSuspend
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
                 methodIndexBase = methodIndex,
             ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                when {
-                    // Unmangled name -> regular method is needed
-                    !hasValueClassInParameterType && (isTopLevel || !hasValueClassInReturnType) || hasJvmNameAnnotation -> {
-                        result += SymbolLightSimpleMethod(
-                            functionSymbol = functionSymbol,
-                            lightMemberOrigin = lightMemberOrigin,
-                            containingClass = containingClass,
-                            methodIndex = methodIndex,
-                            isTopLevel = isTopLevel,
-                            valueParameterPickMask = valueParameterPickMask,
-                            suppressStatic = suppressStatic,
-                        )
-                    }
+                val hasMangledNameDueValueClassesInSignature = hasMangledNameDueValueClassesInSignature(
+                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    hasValueClassInReturnType = hasValueClassInReturnType,
+                    isTopLevel = isTopLevel,
+                )
+
+                val generationResult = methodGeneration(
+                    exposeBoxedMode = exposeBoxedMode,
+                    hasValueClassInParameterType = hasValueClassInParameterType,
+                    hasValueClassInReturnType = hasValueClassInReturnType,
+                    hasMangledNameDueValueClasses = hasMangledNameDueValueClassesInSignature,
+                    hasJvmNameAnnotation = hasJvmNameAnnotation,
+                    isSuspend = isSuspend,
+                )
+
+                if (generationResult.isBoxedMethodRequired) {
+                    result += SymbolLightSimpleMethod(
+                        functionSymbol = functionSymbol,
+                        lightMemberOrigin = lightMemberOrigin,
+                        containingClass = containingClass,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        valueParameterPickMask = valueParameterPickMask,
+                        suppressStatic = suppressStatic,
+                        isJvmExposedBoxed = true,
+                    )
+                }
+
+                if (generationResult.isRegularMethodRequired) {
+                    result += SymbolLightSimpleMethod(
+                        functionSymbol = functionSymbol,
+                        lightMemberOrigin = lightMemberOrigin,
+                        containingClass = containingClass,
+                        methodIndex = methodIndex,
+                        isTopLevel = isTopLevel,
+                        valueParameterPickMask = valueParameterPickMask,
+                        suppressStatic = suppressStatic,
+                        isJvmExposedBoxed = false,
+                    )
                 }
             }
         }

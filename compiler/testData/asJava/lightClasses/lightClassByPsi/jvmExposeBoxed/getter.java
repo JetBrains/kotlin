@@ -2,6 +2,9 @@
 public final class GetterKt /* GetterKt*/ {
   @kotlin.jvm.JvmExposeBoxed(jvmName = "create")
   @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper2 create();//  create()
+
+  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String createWrapper();//  createWrapper()
 }
 

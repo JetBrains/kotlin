@@ -43,17 +43,19 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     protected val valueParameterPickMask: BitSet?,
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
+    isJvmExposedBoxed: Boolean,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    isJvmExposedBoxed = false,
+    isJvmExposedBoxed = isJvmExposedBoxed,
 ) {
     internal constructor(
         functionSymbol: FType,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
         methodIndex: Int,
+        isJvmExposedBoxed: Boolean,
         valueParameterPickMask: BitSet? = null,
     ) : this(
         functionSymbolPointer = kotlin.run {
@@ -66,6 +68,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         valueParameterPickMask = valueParameterPickMask,
         functionDeclaration = functionSymbol.sourcePsiSafe(),
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
+        isJvmExposedBoxed = isJvmExposedBoxed,
     )
 
     protected inline fun <T> withFunctionSymbol(crossinline action: KaSession.(FType) -> T): T =
@@ -137,8 +140,10 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightMethod<*> ||
-            other.methodIndex != methodIndex ||
+        if (other == null ||
+            other::class != this::class ||
+            (other as SymbolLightMethod<*>).methodIndex != methodIndex ||
+            other.isJvmExposedBoxed != isJvmExposedBoxed ||
             other.ktModule != ktModule ||
             other.valueParameterPickMask != valueParameterPickMask
         ) return false
