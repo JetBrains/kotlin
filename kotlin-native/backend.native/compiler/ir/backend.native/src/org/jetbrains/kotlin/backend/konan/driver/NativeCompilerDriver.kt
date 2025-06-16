@@ -130,11 +130,17 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             }
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
-                val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                    engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
-                }
-                performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                // Child performance manager is needed since otherwise the phase ordering is broken
+                PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
+                    it?.notifyPhaseFinished(PhaseType.Initialization)
+
+                    val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                        engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
+                    }
+                    it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                        engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                    }
+                    performanceManager?.addOtherUnitStats(it?.unitStats)
                 }
                 // Don't overwrite the header klib with the full klib and stop compilation here.
                 // By providing the same path for both regular output and header klib we can skip emitting the full klib.
@@ -167,11 +173,17 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
         val headerKlibPath = config.headerKlibPath
         if (!headerKlibPath.isNullOrEmpty()) {
-            val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
-            }
-            performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
-                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+            // Child performance manager is needed since otherwise the phase ordering is broken
+            PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
+                it?.notifyPhaseFinished(PhaseType.Initialization)
+
+                val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
+                    engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
+                }
+                it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
+                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                }
+                performanceManager?.addOtherUnitStats(it?.unitStats)
             }
             // Don't overwrite the header klib with the full klib and stop compilation here.
             // By providing the same path for both regular output and header klib we can skip emitting the full klib.
