@@ -46,7 +46,7 @@ internal class KaFirExpressionInformationProvider(
     }
 
     override val KtExpression.isUsedAsExpression: Boolean
-        get() = withPsiValidityAssertion { isUsed(this, AdditionalInfoCollector()) }
+        get() = withPsiValidityAssertion { isUsed(this, null) }
 
     override val KtExpression.isUsedAsResultOfLambda: Boolean
         get() = withPsiValidityAssertion {
@@ -56,14 +56,7 @@ internal class KaFirExpressionInformationProvider(
         }
 
     private class AdditionalInfoCollector() {
-        private var backingIsUsedAsResultOfLambda: Boolean = false
-
-        fun setIsUsedAsResultOfLambda(value: Boolean) {
-            backingIsUsedAsResultOfLambda = value
-        }
-
-        val isUsedAsResultOfLambda
-            get() = backingIsUsedAsResultOfLambda
+        var isUsedAsResultOfLambda: Boolean = false
     }
 
     /**
@@ -81,7 +74,7 @@ internal class KaFirExpressionInformationProvider(
      */
     private fun isUsed(
         psiElement: PsiElement,
-        additionalElementUsageInfoContext: AdditionalInfoCollector
+        additionalElementUsageInfoContext: AdditionalInfoCollector?
     ): Boolean = when (psiElement) {
         /**
          * DECLARATIONS
@@ -146,7 +139,7 @@ internal class KaFirExpressionInformationProvider(
     private fun doesParentUseChild(
         parent: PsiElement,
         child: PsiElement,
-        additionalInfoCollector: AdditionalInfoCollector
+        additionalInfoCollector: AdditionalInfoCollector?
     ): Boolean = when (parent) {
         /**
          * NON-EXPRESSION PARENTS
@@ -250,7 +243,7 @@ internal class KaFirExpressionInformationProvider(
         // to be of the Unit type
         is KtFunctionLiteral ->
             (parent.bodyBlockExpression == child && !analysisSession.returnsUnit(parent)).also { value ->
-                additionalInfoCollector.setIsUsedAsResultOfLambda(value)
+                additionalInfoCollector?.isUsedAsResultOfLambda = value
             }
 
         /** See [doesNamedFunctionUseBody] */

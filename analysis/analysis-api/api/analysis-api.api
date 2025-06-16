@@ -229,7 +229,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaE
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaExpressionInformationProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun isUsedAsExpression (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
-	public abstract fun isUsedAsResultOfLambda (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaExpressionTypeProvider : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
