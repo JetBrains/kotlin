@@ -53816,6 +53816,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       public void testStarProjectedType() {
         runTest("compiler/testData/codegen/box/reflection/classes/starProjectedType.kt");
       }
+
+      @Test
+      @TestMetadata("toStringWasm.kt")
+      public void testToStringWasm() {
+        runTest("compiler/testData/codegen/box/reflection/classes/toStringWasm.kt");
+      }
     }
 
     @Nested

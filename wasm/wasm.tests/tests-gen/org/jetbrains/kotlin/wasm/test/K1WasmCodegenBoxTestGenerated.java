@@ -38327,6 +38327,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
       public void testQualifiedNameWithDollars() {
         runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameWithDollars.kt");
       }
+
+      @Test
+      @TestMetadata("toStringWasm.kt")
+      public void testToStringWasm() {
+        runTest("compiler/testData/codegen/box/reflection/classes/toStringWasm.kt");
+      }
     }
 
     @Nested
