@@ -42,6 +42,9 @@ class JsIrLinker(
         }
         symbol
     }) {
+    init {
+        require(partialLinkageSupport.isEnabled)
+    }
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,

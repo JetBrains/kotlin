@@ -48,6 +48,9 @@ class KonanIrLinker(
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
 
+    init {
+        require(partialLinkageSupport.isEnabled)
+    }
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
