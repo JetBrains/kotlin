@@ -40,7 +40,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    protected val argumentsSkipMask: BitSet?,
+    protected val valueParameterPickMask: BitSet?,
     protected val functionDeclaration: KtCallableDeclaration?,
     override val kotlinOrigin: KtDeclaration?,
 ) : SymbolLightMethodBase(
@@ -54,7 +54,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassBase,
         methodIndex: Int,
-        argumentsSkipMask: BitSet? = null,
+        valueParameterPickMask: BitSet? = null,
     ) : this(
         functionSymbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
@@ -63,7 +63,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         lightMemberOrigin = lightMemberOrigin,
         containingClass = containingClass,
         methodIndex = methodIndex,
-        argumentsSkipMask = argumentsSkipMask,
+        valueParameterPickMask = valueParameterPickMask,
         functionDeclaration = functionSymbol.sourcePsiSafe(),
         kotlinOrigin = functionSymbol.sourcePsiSafe() ?: lightMemberOrigin?.originalElement ?: functionSymbol.psiSafe<KtDeclaration>(),
     )
@@ -82,7 +82,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
 
             withFunctionSymbol { functionSymbol ->
                 functionSymbol.valueParameters.mapIndexed { index, parameter ->
-                    val needToSkip = argumentsSkipMask?.get(index) == true
+                    val needToSkip = valueParameterPickMask?.get(index) == false
                     if (!needToSkip) {
                         builder.addParameter(
                             SymbolLightValueParameter(
@@ -140,7 +140,7 @@ internal abstract class SymbolLightMethod<FType : KaFunctionSymbol> private cons
         if (other !is SymbolLightMethod<*> ||
             other.methodIndex != methodIndex ||
             other.ktModule != ktModule ||
-            other.argumentsSkipMask != argumentsSkipMask
+            other.valueParameterPickMask != valueParameterPickMask
         ) return false
 
         if (functionDeclaration != null || other.functionDeclaration != null) {
