@@ -125,8 +125,14 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         callBuilder.descriptor,
                         callBuilder.typeArguments
                     ).also { irCallableReference ->
-                        irCallableReference.dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.loadIfExists()
-                        irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
+                        var index = 0
+                        dispatchReceiverValue?.loadIfExists()?.let {
+                            irCallableReference.arguments[index] = it
+                            ++index
+                        }
+                        extensionReceiverValue?.loadIfExists()?.let {
+                            irCallableReference.arguments[index] = it
+                        }
                     }
                 }
             }
@@ -207,8 +213,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         ).also { irAdapterFun ->
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = null
-                irAdapterFun.dispatchReceiverParameter = null
-                irAdapterFun.extensionReceiverParameter = null
 
                 val fnType = functionParameter.type
 
@@ -223,7 +227,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         )
                     ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$fnType")
 
-                irAdapterFun.valueParameters = listOf(irFnParameter)
+                irAdapterFun.parameters = listOf(irFnParameter)
                 irAdapterFun.body =
                     IrBlockBodyBuilder(
                         context,
@@ -238,7 +242,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                                         checkNotNullSubstituted
                                     irCall.type = irFnType
                                     irCall.typeArguments[0] = irFnType
-                                    irCall.putValueArgument(0, irGet(irFnParameter))
+                                    irCall.arguments[0] = irGet(irFnParameter)
                                 },
                                 irSamType
                             )
@@ -319,7 +323,11 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             )
             IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                 statements.add(irAdapterFun)
-                statements.add(irAdapterRef.apply { extensionReceiver = receiver })
+                statements.add(irAdapterRef.apply {
+                    if (receiver != null) {
+                        arguments[0] = receiver
+                    }
+                })
             }
         }
     }
@@ -349,13 +357,16 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         if (hasBoundDispatchReceiver || hasBoundExtensionReceiver || isImportedFromObject) {
             // In case of a bound reference, the receiver (which can only be one) is passed in the extension receiver parameter.
             val receiverValue = IrGetValueImpl(
-                startOffset, endOffset, irAdapterFun.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                startOffset,
+                endOffset,
+                irAdapterFun.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }.symbol,
+                IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
             when {
                 hasBoundDispatchReceiver || isImportedFromObject ->
-                    irCall.dispatchReceiverViaCachedCalleeData = receiverValue
+                    irCall.arguments[0] = receiverValue
                 hasBoundExtensionReceiver ->
-                    irCall.extensionReceiver = receiverValue
+                    irCall.arguments[resolvedCall.contextReceivers.size] = receiverValue
             }
         }
 
@@ -379,22 +390,21 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         var shift = 0
         if (resolvedCall.dispatchReceiver is TransientReceiver) {
             // Unbound callable reference 'A::foo', receiver is passed as a first parameter
-            val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.dispatchReceiverViaCachedCalleeData =
+            val irAdaptedReceiverParameter = irAdapterFun.parameters[0]
+            irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
         } else if (resolvedCall.extensionReceiver is TransientReceiver) {
-            val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
-            irAdapteeCall.extensionReceiver =
+            val irAdaptedReceiverParameter = irAdapterFun.parameters[0]
+            irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
             shift = 1
         }
 
         for ((valueParameter, valueArgument) in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
-            irAdapteeCall.putValueArgument(
-                valueParameter.index,
+            val indexOffset = irAdapteeCall.arguments.size - irAdapteeCall.symbol.descriptor.valueParameters.size
+            irAdapteeCall.arguments[valueParameter.index + indexOffset] =
                 adaptResolvedValueArgument(startOffset, endOffset, valueArgument, irAdapterFun, substitutedValueParameter, shift)
-            )
         }
     }
 
@@ -445,7 +455,8 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 )
 
             is FakePositionalValueArgumentForCallableReference -> {
-                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index + shift]
+                val irAdapterParameter =
+                    irAdapterFun.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }[valueArgument.index + shift]
                 IrGetValueImpl(startOffset, endOffset, irAdapterParameter.type, irAdapterParameter.symbol)
             }
 
@@ -485,17 +496,19 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
 
-                irAdapterFun.dispatchReceiverParameter = null
-
                 val boundReceiverType = callBuilder.original.getBoundReceiverType()
                 if (boundReceiverType != null) {
-                    irAdapterFun.extensionReceiverParameter =
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), boundReceiverType, IrParameterKind.ExtensionReceiver)
-                } else {
-                    irAdapterFun.extensionReceiverParameter = null
+                    irAdapterFun.parameters +=
+                        createAdapterParameter(
+                            startOffset,
+                            endOffset,
+                            Name.identifier("receiver"),
+                            boundReceiverType,
+                            IrParameterKind.ExtensionReceiver
+                        )
                 }
 
-                irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
+                irAdapterFun.parameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
                     createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), ktExpectedParameterType, IrParameterKind.Regular)
                 }
             }
