@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.readLines
 import kotlin.io.path.writeText
@@ -21,7 +21,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmGetScriptingClass
-import kotlin.test.Test
 import kotlin.test.assertEquals
 
 val pathToExplainingFile: Path by lazy {
@@ -83,7 +82,7 @@ class ScriptingWithExplanationCompilerTest {
         val additionalClasspath = System.getProperty("kotlin.test.script.classpath")
         val powerAssertJar = File("dist/kotlinc/lib/power-assert-compiler-plugin.jar").absolutePath
         withTempDir { _ ->
-            captureOutErrRet {
+            val (out, err, ret) = captureOutErrRet {
                 CLICompiler.doMainNoExit(
                     K2JVMCompiler(),
                     arrayOf(
@@ -111,6 +110,11 @@ class ScriptingWithExplanationCompilerTest {
                     "result(38, 39) = 1",
                     "result(42, 43) = 6",
                     "result(38, 43) = 7",
+                    "(45, 60) = true",
+                    "(82, 83) = 1",
+                    "(78, 83) = 4",
+                    "(74, 83) = kotlin.Unit",
+                    "\$\$result(85, 87) = 42",
                 ), lines
             )
         }
