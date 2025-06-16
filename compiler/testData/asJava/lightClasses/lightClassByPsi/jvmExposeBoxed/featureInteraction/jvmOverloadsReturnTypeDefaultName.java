@@ -1,4 +1,22 @@
 public final class Baz /* Baz*/ {
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper foo();//  foo()
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
+
   public  Baz();//  .ctor()
 }
 

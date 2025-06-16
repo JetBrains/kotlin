@@ -33,6 +33,10 @@ public final class ValueClass /* pack.ValueClass*/ {
 public static final class Companion /* pack.ValueClass.Companion*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.Nullable() pack.ValueClass companionFunctionWithValueClassType();//  companionFunctionWithValueClassType()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.Nullable() pack.ValueClass getCompanionPropertyWithValueClassType();//  getCompanionPropertyWithValueClassType()
 
   private  Companion();//  .ctor()

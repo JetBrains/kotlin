@@ -1,4 +1,19 @@
 public final class Baz /* Baz*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel();//  memberLevel()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int);//  memberLevel(int)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int, int);//  memberLevel(int, int)
+
   public  Baz();//  .ctor()
 }
 

@@ -1,5 +1,9 @@
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
 public final class Foo /* Foo*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() StringWrapper foo();//  foo()
+
   public  Foo();//  .ctor()
 }
 

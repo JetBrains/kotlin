@@ -1,4 +1,8 @@
 public final class A /* A*/ {
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String f(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Z);//  f(@org.jetbrains.annotations.NotNull() Z, @org.jetbrains.annotations.NotNull() Z)
+
   public  A();//  .ctor()
 }
 

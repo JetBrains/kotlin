@@ -3,6 +3,17 @@ public final class JvmOverloadsValueParameterDefaultName2Kt /* JvmOverloadsValue
   @kotlin.jvm.JvmExposeBoxed()
   @kotlin.jvm.JvmOverloads()
   @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmExposeBoxed()
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() StringWrapper, @org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @kotlin.jvm.JvmOverloads()
+  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String foo();//  foo()
 }
 

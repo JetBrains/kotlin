@@ -2,6 +2,10 @@ public final class GlobalReturnKt /* GlobalReturnKt*/ {
   @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
   @kotlin.jvm.JvmExposeBoxed(jvmName = "bar")
   @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() StringWrapper bar();//  bar()
+
+  @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
+  @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String foo();//  foo()
 }
 

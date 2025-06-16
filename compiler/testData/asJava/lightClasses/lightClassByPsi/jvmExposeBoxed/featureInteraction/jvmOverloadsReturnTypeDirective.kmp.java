@@ -1,4 +1,9 @@
 public final class Baz /* Baz*/ {
+  @<error>()
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() IntWrapper memberLevel(int, int);//  memberLevel(int, int)
+
   public  Baz();//  .ctor()
 }
 
