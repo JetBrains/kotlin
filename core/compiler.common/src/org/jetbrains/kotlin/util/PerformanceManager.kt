@@ -207,9 +207,9 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         // Also NativeCompilerDriver creates header klib, and then continues pre-lowering of parent module.
         // Also there are some race conditions, preventing precise check of phase order.
         // So the commented check below deserves some tuning before re-enabling
-        // if (!targetPlatform.isJs()) {
-        //     assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
-        // }
+        if (!targetPlatform.isJs()) {
+            assert(newPhaseType >= currentPhaseType) { "The measurement for phase $newPhaseType must be performed before $currentPhaseType" }
+        }
 
         phaseStartTime = currentTime()
         currentPhaseType = newPhaseType
