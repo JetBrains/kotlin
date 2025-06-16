@@ -1,5 +1,4 @@
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
-@kotlin.jvm.JvmExposeBoxed()
 @kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()

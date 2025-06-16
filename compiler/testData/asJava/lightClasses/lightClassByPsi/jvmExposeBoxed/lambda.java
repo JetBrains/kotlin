@@ -3,7 +3,6 @@ public final class LambdaKt /* LambdaKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() TopLevelValueClass> lambda;
 
-  @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() kotlin.jvm.functions.Function0<@org.jetbrains.annotations.NotNull() TopLevelValueClass> getLambda();//  getLambda()
 }

@@ -3,12 +3,11 @@ public final class GlobalVariableKt /* GlobalVariableKt*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() StringWrapper getter();//  getter()
 
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "getter")
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()
-
   @kotlin.jvm.JvmExposeBoxed(jvmName = "setter")
   public static final void setter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  setter(@org.jetbrains.annotations.NotNull() StringWrapper)
+
+  @org.jetbrains.annotations.NotNull()
+  public static final @org.jetbrains.annotations.NotNull() java.lang.String getFoo();//  getFoo()
 }
 
 @kotlin.jvm.JvmInline()
