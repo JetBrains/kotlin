@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt.cli.test
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.BeforeEach
@@ -134,6 +135,7 @@ abstract class AbstractKaptToolIntegrationTest {
             val arg = it
                 .replace("%KOTLIN_STDLIB%", File("dist/kotlinc/lib/kotlin-stdlib.jar").absolutePath)
                 .replace("%KOTLIN_COMPILER%", File("dist/kotlinc/lib/kotlin-compiler.jar").absolutePath)
+                .replace("%LATEST_STABLE%", LanguageVersion.LATEST_STABLE.versionString)
             if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":") || arg.contains(";"))) {
                 "\"" + arg + "\""
             } else {

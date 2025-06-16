@@ -10,4 +10,4 @@ import org.gradle.api.provider.Provider
 internal val KotlinCommonCompilerOptions.usesK2: Provider<Boolean>
     get() = this.languageVersion
         .orElse(KotlinVersion.DEFAULT)
-        .map { version -> version >= KotlinVersion.KOTLIN_2_0 }
+        .map { version -> version >= @Suppress("DEPRECATION") KotlinVersion.KOTLIN_2_0 }

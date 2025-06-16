@@ -270,6 +270,7 @@ abstract class KotlinCompile @Inject constructor(
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
 
             if (useFirRunner.get()) {
+                @Suppress("DEPRECATION")
                 if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
                     reportDiagnostic(
                         KotlinToolingDiagnostics.IcFirMisconfigurationLV(

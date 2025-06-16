@@ -210,6 +210,12 @@
             "major": 2,
             "minor": 2,
             "patch": 20
+        },
+        {
+            "name": "2.3.0",
+            "major": 2,
+            "minor": 3,
+            "patch": 0
         }
     ],
     "types": {
@@ -311,7 +317,7 @@
                     "releaseVersionsMetadata": {
                         "introducedVersion": "1.9.0",
                         "stabilizedVersion": "2.0.0",
-                        "deprecatedVersion": null,
+                        "deprecatedVersion": "2.3.0",
                         "removedVersion": null
                     }
                 },
@@ -337,7 +343,7 @@
                     "name": "2.3",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.0",
-                        "stabilizedVersion": null,
+                        "stabilizedVersion": "2.3.0",
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
