@@ -65,3 +65,10 @@ fun testTypeParameters() {
     val t1: Map<Int, Any> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>WeakHashMap<!>()
     val t2: Map<Int, Any> = WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>_<!>, _>()
 }
+
+fun testOtherEqOperations(p1: LocalDate, p2: LocalDate) {
+    p1 == p2
+    p1 != p2
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p1<!> !== <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>p2<!>
+}

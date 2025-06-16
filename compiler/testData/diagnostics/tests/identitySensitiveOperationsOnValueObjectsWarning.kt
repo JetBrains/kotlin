@@ -65,3 +65,10 @@ fun testTypeParameters() {
     val t1: Map<Int, Any> = WeakHashMap()
     val t2: Map<Int, Any> = WeakHashMap<_, _>()
 }
+
+fun testOtherEqOperations(p1: LocalDate, p2: LocalDate) {
+    p1 == p2
+    p1 != p2
+    p1 === p2
+    p1 !== p2
+}
