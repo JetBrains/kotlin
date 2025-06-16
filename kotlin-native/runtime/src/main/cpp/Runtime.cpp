@@ -16,6 +16,7 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+#include "CrashHandler.hpp"
 #include <atomic>
 #include <cstdint>
 #include <cstdlib>
@@ -163,6 +164,7 @@ bool kotlin::initializeGlobalRuntimeIfNeeded() noexcept {
 
     konan::consoleInit();
     logging::OnRuntimeInit();
+    crashHandlerInit();
     initGlobalMemory();
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();

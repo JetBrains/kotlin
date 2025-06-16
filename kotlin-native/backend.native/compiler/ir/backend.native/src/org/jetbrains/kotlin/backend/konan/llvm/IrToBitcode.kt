@@ -2684,6 +2684,10 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_swiftExport", llvm.constInt32(if (context.config.swiftExport) 1 else 0))
         overrideRuntimeGlobal("Kotlin_latin1Strings", llvm.constInt32(if (context.config.latin1Strings) 1 else 0))
         overrideRuntimeGlobal("Kotlin_mmapTag", llvm.constUInt8(context.config.mmapTag))
+        val minidumpLocation = context.config.minidumpLocation?.let {
+            llvm.staticData.cStringLiteral(it)
+        } ?: constValue(llvm.kNullInt8Ptr)
+        overrideRuntimeGlobal("Kotlin_minidumpLocation", minidumpLocation)
     }
 
     //-------------------------------------------------------------------------//
