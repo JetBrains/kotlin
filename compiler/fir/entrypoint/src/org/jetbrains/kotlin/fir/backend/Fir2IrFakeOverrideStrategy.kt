@@ -119,14 +119,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         }
     }
 
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> computeCustomization(
-        overridableMember: T,
-        parent: IrClass,
-    ): IrUnimplementedOverridesStrategy.Customization {
-        return IrUnimplementedOverridesStrategy.Customization.NO
-    }
-
-    override fun <S : IrSymbol, T : IrOverridableDeclaration<S>> postProcessGeneratedFakeOverride(overridableMember: T, parent: IrClass) {
+    override fun postProcessGeneratedFakeOverride(overridableMember: IrOverridableDeclaration<*>, parent: IrClass) {
         val delegateInfo = delegatedClassesInfo[parent.symbol] ?: return
 
         val overridden = overridableMember.allOverridden()

@@ -248,26 +248,12 @@ class IrFakeOverrideBuilder(
     ) {
         val fromSuper = notOverridden.toMutableSet()
         while (fromSuper.isNotEmpty()) {
-            val notOverriddenFromSuper = filterOutCustomizedFakeOverrides(fromSuper)
-            val overridables = extractMembersOverridableInBothWays(
-                notOverriddenFromSuper.first(),
+            val overridableMembers = extractMembersOverridableInBothWays(
+                fromSuper.first(),
                 fromSuper
             )
-            createAndBindFakeOverride(overridables, current, addedFakeOverrides, compatibilityMode)
+            createAndBindFakeOverride(overridableMembers, current, addedFakeOverrides, compatibilityMode)
         }
-    }
-
-    /**
-     * If there is a mix of [IrOverridableMember]s with origin=[IrDeclarationOrigin.FAKE_OVERRIDE]s (true "fake overrides")
-     * and [IrOverridableMember]s that were customized with the help of [IrUnimplementedOverridesStrategy] (customized "fake overrides"),
-     * then leave only true ones. Rationale: They should point to non-abstract callable members in one of super classes, so
-     * effectively they are implemented in the current class.
-     */
-    private fun filterOutCustomizedFakeOverrides(overridableMembers: Collection<FakeOverride>): Collection<FakeOverride> {
-        if (overridableMembers.size < 2) return overridableMembers
-
-        val (trueFakeOverrides, customizedFakeOverrides) = overridableMembers.partition { it.override.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
-        return trueFakeOverrides.ifEmpty { customizedFakeOverrides }
     }
 
     private fun determineModalityForFakeOverride(
@@ -332,7 +318,7 @@ class IrFakeOverrideBuilder(
         addedFakeOverrides: MutableList<IrOverridableMember>,
         compatibilityMode: Boolean
     ) {
-        val onlyNonCustomizedOverridables = filterOutCustomizedFakeOverrides(overridables)
+        val onlyNonCustomizedOverridables = overridables
 
         val modality = determineModalityForFakeOverride(onlyNonCustomizedOverridables)
         val maxVisibilityMember = findMemberWithMaxVisibility(onlyNonCustomizedOverridables).override
