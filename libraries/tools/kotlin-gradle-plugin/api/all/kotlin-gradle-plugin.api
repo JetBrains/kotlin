@@ -6124,29 +6124,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/CInteropProcess : org/gr
 	public final fun setDestinationDir (Lorg/gradle/api/provider/Provider;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
-	public fun <init> ()V
-	public final fun execute ()V
-	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/tasks/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
-	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
-	public final fun execute ()V
-	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getExampleSignature ()Lorg/gradle/api/provider/Property;
-	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
-	public abstract fun getHasKeyPassword ()Lorg/gradle/api/provider/Property;
-	public abstract fun getKeyId ()Lorg/gradle/api/provider/Property;
-	public abstract fun getKeyringPath ()Lorg/gradle/api/file/RegularFileProperty;
-	public abstract fun getKeyservers ()Lorg/gradle/api/provider/ListProperty;
-	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
-	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
-	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
-	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
-}
-
 public class org/jetbrains/kotlin/gradle/tasks/CleanDataTask : org/gradle/api/DefaultTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/tasks/CleanDataTask$Companion;
 	public static final field NAME_SUFFIX Ljava/lang/String;
@@ -6255,16 +6232,6 @@ public final class org/jetbrains/kotlin/gradle/tasks/FrameworkLayout {
 	public final fun getRootDir ()Ljava/io/File;
 	public final fun isMacosFramework ()Z
 	public final fun mkdirs ()V
-}
-
-public abstract class org/jetbrains/kotlin/gradle/tasks/GeneratePgpKeys : org/gradle/api/DefaultTask {
-	public fun <init> (Lorg/gradle/workers/WorkerExecutor;)V
-	public final fun execute ()V
-	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
-	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/GradleCompileTaskProvider {
@@ -6475,16 +6442,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinTest : org/gradle/
 	public final fun setTargetName (Ljava/lang/String;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/tasks/LibraryPublishingHelperTasksKt$addPomValidationHelpers$1$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/tasks/LibraryPublishingHelperTasksKt$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final synthetic fun execute (Ljava/lang/Object;)V
-}
-
 public abstract class org/jetbrains/kotlin/gradle/tasks/PodspecTask : org/gradle/api/DefaultTask {
 	public fun <init> (Lorg/gradle/api/file/ProjectLayout;)V
 	public final fun generate ()V
@@ -6502,9 +6459,49 @@ public final class org/jetbrains/kotlin/gradle/tasks/TasksUtilsKt {
 	public static final fun throwExceptionIfCompilationFailed (Lorg/jetbrains/kotlin/cli/common/ExitCode;Lorg/jetbrains/kotlin/gradle/tasks/KotlinCompilerExecutionStrategy;)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/tasks/UploadPgpKeyTask : org/gradle/api/DefaultTask {
-	public fun <init> ()V
-	public final fun execute ()V
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckPomTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	protected final fun execute ()V
+	public abstract fun getPom ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/CheckSigningTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/plugin/diagnostics/UsesKotlinToolingDiagnostics {
+	protected final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getExampleSignature ()Lorg/gradle/api/provider/Property;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getHasKeyPassword ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyId ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyringPath ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getKeyservers ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getOfflineMode ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPublicationNamesWithSigning ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun getSignatoryExists ()Lorg/gradle/api/provider/Property;
+	public abstract fun getSignatoryKeyId ()Lorg/gradle/api/provider/Property;
+	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/GeneratePgpKeys : org/gradle/api/DefaultTask {
+	protected final fun execute ()V
+	public abstract fun getBouncyCastleClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getGradleHomePath ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKeyName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getPassword ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$addPomValidationHelpers$1$1$1$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/tasks/publishing/HelpersKt$inlined$sam$i$org_gradle_api_Action$0 : org/gradle/api/Action {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final synthetic fun execute (Ljava/lang/Object;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/tasks/publishing/UploadPgpKeyTask : org/gradle/api/DefaultTask {
+	protected final fun execute ()V
 	public abstract fun getKeyring ()Lorg/gradle/api/provider/Property;
 	public abstract fun getKeyserver ()Lorg/gradle/api/provider/Property;
 }
