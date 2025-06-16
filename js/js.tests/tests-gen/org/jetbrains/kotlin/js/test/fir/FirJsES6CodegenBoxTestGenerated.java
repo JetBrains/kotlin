@@ -27617,12 +27617,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
-      @TestMetadata("nonLocalReturn.kt")
-      public void testNonLocalReturn() {
-        runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/nonLocalReturn.kt");
-      }
-
-      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/codegen/box/js/inlinedReturnBreakContinue/simple.kt");
