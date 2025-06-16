@@ -138,12 +138,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     override val searchRoots: List<SearchRoot> by lazy {
         val searchRoots = mutableListOf<SearchRoot?>()
 
-        // Current working dir:
-        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
-
         // Current Kotlin/Native distribution:
         searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
         searchRoots += distPlatformHead?.let { SearchRoot(searchRootPath = it) }
+
+        // Current working dir:
+        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
 
         searchRoots.filterNotNull()
     }
