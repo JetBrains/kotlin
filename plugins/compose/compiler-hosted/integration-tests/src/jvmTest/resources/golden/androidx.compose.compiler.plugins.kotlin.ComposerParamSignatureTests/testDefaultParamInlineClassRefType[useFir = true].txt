@@ -65,10 +65,10 @@ public abstract class Test {
   public final synthetic PublishedExample-XUE1X6o(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
   protected final synthetic ProtectedExample-XUE1X6o(Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
   private final static PrivateExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static PublicExample_PLmOXgA%lambda%1(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static InternalExample_PLmOXgA%lambda%2(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static PublishedExample_PLmOXgA%lambda%3(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static ProtectedExample_PLmOXgA%lambda%4(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublicExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static InternalExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublishedExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static ProtectedExample_PLmOXgA%lambda%0(LTest;Ljava/lang/String;IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   static <clinit>()V
   public final static I %stable
 }
@@ -80,7 +80,7 @@ public final class TestKt {
   public final static synthetic Example-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
   public final static synthetic PublishedExample-phPabU0(Ljava/lang/String;ILandroidx/compose/runtime/Composer;II)V
   private final static Example_zy_tHAg%lambda%0(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static PrivateExample_zy_tHAg%lambda%1(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static InternalExample_zy_tHAg%lambda%2(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static PublishedExample_zy_tHAg%lambda%3(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PrivateExample_zy_tHAg%lambda%0(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static InternalExample_zy_tHAg%lambda%0(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static PublishedExample_zy_tHAg%lambda%0(Ljava/lang/String;IIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
 }

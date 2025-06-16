@@ -135,25 +135,25 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
 }
 
 @kotlin.Metadata
-public final class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1$1 {
-    enclosing method CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+public final class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1$1 {
+    enclosing method CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
-    synthetic final field this$0: CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1
-    inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1
-    inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1$1
-    public method <init>(p0: CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1, p1: kotlin.coroutines.Continuation): void
+    synthetic final field this$0: CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1
+    inner (anonymous) class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1
+    inner (anonymous) class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1$1
+    public method <init>(p0: CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1, p1: kotlin.coroutines.Continuation): void
     public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
-public final class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1 {
+public final class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1 {
     // source: 'crossinline.kt'
     enclosing method CrossinlineKt.filter(LSourceCrossinline;Lkotlin/jvm/functions/Function1;)LSourceCrossinline;
     synthetic final field $predicate$inlined: kotlin.jvm.functions.Function1
     synthetic final field $this_source$inlined: Sink
-    inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1
-    inner (anonymous) class CrossinlineKt$filter$lambda$3$$inlined$consumeEach$1$1
+    inner (anonymous) class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1
+    inner (anonymous) class CrossinlineKt$filter$lambda$0$$inlined$consumeEach$1$1
     public method <init>(p0: kotlin.jvm.functions.Function1, p1: Sink): void
     public method close(p0: java.lang.Throwable): void
     public method send$$forInline(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object

@@ -16,5 +16,5 @@ public final class TestKt {
   public final static Foo(Landroidx/compose/runtime/Composer;I)V
   public final static Bar(ILandroidx/compose/runtime/Composer;I)V
   private final static Foo%lambda%1(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static Bar%lambda%2(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Bar%lambda%0(IILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
 }

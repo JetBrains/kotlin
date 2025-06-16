@@ -8,7 +8,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method test2b(): java.lang.Runnable
     private final static method testRunnableSamCtor1$lambda$0(): kotlin.Unit
     public final @org.jetbrains.annotations.NotNull method testRunnableSamCtor1(): java.lang.Runnable
-    private final static method testRunnableSamCtor2$lambda$1(): kotlin.Unit
+    private final static method testRunnableSamCtor2$lambda$0(): kotlin.Unit
     public final @org.jetbrains.annotations.NotNull method testRunnableSamCtor2(): java.lang.Runnable
 }
 

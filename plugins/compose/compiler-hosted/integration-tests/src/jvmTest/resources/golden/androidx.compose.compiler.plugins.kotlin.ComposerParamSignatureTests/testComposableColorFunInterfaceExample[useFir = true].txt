@@ -80,8 +80,8 @@ public final class TestKt {
   public final static Button(LButtonColors;Landroidx/compose/runtime/Composer;I)V
   public final static Test(Landroidx/compose/runtime/Composer;I)V
   private final static Text_iJQMabo%lambda%0(Ljava/lang/String;JIILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static Button%lambda%1(LButtonColors;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-  private final static Test%lambda%2(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Button%lambda%0(LButtonColors;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+  private final static Test%lambda%0(ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit;
   final static INNERCLASS TestKt%Test%1 null null
   public final static INNERCLASS androidx/compose/ui/graphics/Color%Companion androidx/compose/ui/graphics/Color Companion
 }
