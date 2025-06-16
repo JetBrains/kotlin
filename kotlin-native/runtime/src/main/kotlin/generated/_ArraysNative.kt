@@ -2226,3 +2226,4 @@ public actual fun BooleanArray.toTypedArray(): Array<Boolean> {
 public actual fun CharArray.toTypedArray(): Array<Char> {
     return Array(size) { index -> this[index] }
 }
+
