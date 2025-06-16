@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.arguments.allowTestsOnlyLanguageFeatures
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeBlackBoxTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
@@ -38,7 +37,7 @@ abstract class AbstractNativeBlackBoxTest {
      */
     open fun runTest(@TestDataFile testDataFilePath: String) {
         allowTestsOnlyLanguageFeatures()
-        val absoluteTestFile = ForTestCompileRuntime.transformTestDataPath(testDataFilePath).absoluteFile
+        val absoluteTestFile = getAbsoluteFile(testDataFilePath)
         val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
         try {
             runTestCase(testCaseId)
