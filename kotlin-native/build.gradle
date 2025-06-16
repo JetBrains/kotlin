@@ -130,6 +130,15 @@ dependencies {
     implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:$bootstrapKotlinVersion:macos-x86_64@tar.gz")
     implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:$bootstrapKotlinVersion:linux-x86_64@tar.gz")
     implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:$bootstrapKotlinVersion:windows-x86_64@zip")
+    // TODO: version + implicitDependencies?
+    implicitDependencies(platform("io.qameta.allure:allure-bom:2.29.0"))
+    implicitDependencies("io.qameta.allure:allure-junit5:2.29.0")
+    implicitDependencies(platform("org.junit:junit-bom:5.11.3"))
+    // TODO: it shouldn't be here
+    implicitDependencies("org.junit.platform:junit-platform-launcher:1.11.3")
+    implicitDependencies("org.junit.vintage:junit-vintage-engine:5.11.3")
+    implicitDependencies("org.junit.jupiter:junit-jupiter-params:5.11.3")
+    implicitDependencies("org.junit.jupiter:junit-jupiter-engine:5.11.3")
 }
 
 apply plugin: GitClangFormatPlugin

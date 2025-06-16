@@ -1,10 +1,14 @@
 import TestProperty.*
+import gradle.kotlin.dsl.accessors._5602f9138635cec68e9d7d2d64d6e3e1.testImplementation
+import gradle.kotlin.dsl.accessors._5602f9138635cec68e9d7d2d64d6e3e1.testRuntimeOnly
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -120,6 +124,7 @@ fun Project.nativeTest(
     releasedCompilerDist: TaskProvider<Sync>? = null,
     maxMetaspaceSizeMb: Int = 512,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
+    useAllure: Boolean = true,
     body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
@@ -137,6 +142,8 @@ fun Project.nativeTest(
             // Note: this project should contain only test tasks, including ones that build binaries, and ones that run binaries.
             false
         }
+
+        if (useAllure) { setupAllure() }
 
         // Effectively remove the limit for the amount of stack trace elements in Throwable.
         jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
@@ -304,5 +311,22 @@ fun Project.nativeTest(
     //    but it is still nice to have it as a failsafe.
     environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
+
+
     body()
+}
+
+fun Project.setupAllure() {
+    val allureVersion = "2.29.0"
+
+    dependencies {
+        testImplementation(platform("io.qameta.allure:allure-bom:$allureVersion"))
+        testImplementation("io.qameta.allure:allure-junit5")
+
+        testImplementation(platform("org.junit:junit-bom:5.11.3"))
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    }
+
+    // TODO: deal with it
+    //task.dependsOn("allureClean")
 }

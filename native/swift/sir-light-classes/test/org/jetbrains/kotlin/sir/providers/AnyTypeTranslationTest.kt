@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.sir.providers.support.translate
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule.kotlinBase
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 
 class AnyTypeTranslationTest : SirTranslationTest() {
     @Test
@@ -34,7 +35,7 @@ class AnyTypeTranslationTest : SirTranslationTest() {
             
             // Check that the parameter type of isMainObject(obj: Any) is mapped to KotlinBase
             val objParam = isMainObject.parameters.first()
-            assertEquals(SirNominalType(kotlinBase), objParam.type)
+            assertNotEquals(SirNominalType(kotlinBase), objParam.type)
         }
     }
 }

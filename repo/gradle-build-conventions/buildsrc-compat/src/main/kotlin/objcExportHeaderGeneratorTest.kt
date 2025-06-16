@@ -86,6 +86,7 @@ fun Project.nativeTestWithExternalDependencies(
         taskName = taskName,
         tag = "$testTags|none()",
         requirePlatformLibs = requirePlatformLibs,
+        useAllure = false
     ) {
         /**
          * Setup klib dependencies that can be used in tests:
