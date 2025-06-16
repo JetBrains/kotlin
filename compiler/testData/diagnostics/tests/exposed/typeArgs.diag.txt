@@ -1,16 +1,16 @@
-/case1.kt:10:18: error: 'public' function exposes its 'internal' return type argument My
+/case1.kt:9:18: error: 'public' function exposes its 'internal' return type argument My
     abstract fun give(): List<My>
                  ^^^^
-/case1.kt:14:16: error: 'public' sub-interface exposes its 'internal' supertype argument My
+/case1.kt:13:16: error: 'public' sub-interface exposes its 'internal' supertype argument My
 interface His: List<My>
                ^^^^^^^^
-/case1.kt:17:19: error: 'public' generic exposes its 'internal' parameter bound type My
+/case1.kt:16:19: error: 'public' generic exposes its 'internal' parameter bound type My
 interface Generic<E: My>
                   ^^^^^
-/case1.kt:21:9: error: 'public' function exposes its 'internal' return type argument My
+/case1.kt:20:9: error: 'public' function exposes its 'internal' return type argument My
     fun foo(): Generic<*>
         ^^^
-/case2.kt:34:5: error: 'public' function exposes its 'local' return type argument <no name provided>
+/case2.kt:33:5: error: 'public' function exposes its 'local' return type argument <no name provided>
 fun other() = public(object : Inter {})
     ^^^^^
 
