@@ -5350,6 +5350,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/PodBuildT
 	public fun <init> (Lorg/gradle/api/provider/ProviderFactory;Lorg/gradle/api/file/ProjectLayout;Lorg/gradle/api/model/ObjectFactory;)V
 	public final fun buildDependencies ()V
 	public abstract fun getBuildSettingsFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun getXcodeBuildSettings ()Lorg/gradle/api/provider/MapProperty;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/PodGenTask : org/jetbrains/kotlin/gradle/targets/native/tasks/CocoapodsTask, org/jetbrains/kotlin/gradle/plugin/mpp/apple/UsesXcodeVersion {
