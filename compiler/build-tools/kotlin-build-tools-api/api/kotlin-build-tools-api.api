@@ -637,6 +637,36 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public abstract fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter$InProcess : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess, org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;)V
+	public fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter$WithDaemon : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon, org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/CompilationService;)V
+	public fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
+	public fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+	public fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/KotlinToolchainV1Adapter : org/jetbrains/kotlin/buildtools/api/KotlinToolchain {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/CompilationService;)V
+	public fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
+	public fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
+	public fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun finishBuild (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;)V
+	public fun getCompilerVersion ()Ljava/lang/String;
+	public fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
+	public fun getJvm ()Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmPlatformToolchain;
+	public fun getNative ()Lorg/jetbrains/kotlin/buildtools/api/knative/NativePlatformToolchain;
+	public fun getWasm ()Lorg/jetbrains/kotlin/buildtools/api/js/WasmPlatformToolchain;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain {
 }
 

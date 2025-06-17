@@ -242,7 +242,7 @@ internal object CompilationServiceImpl : CompilationService {
         check(languageVersion >= LanguageVersion.KOTLIN_2_0) {
             "FIR incremental compiler runner is only compatible with Kotlin Language Version 2.0"
         }
-        check(arguments.contains("-Xuse-fir-ic")) {
+        check(arguments.contains("-Xuse-fir-ic") || arguments.contains("-Xuse-fir-ic=true")) {
             "FIR incremental compiler runner requires '-Xuse-fir-ic' to be present in arguments"
         }
 

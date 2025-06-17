@@ -4,10 +4,10 @@
  */
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
@@ -22,8 +22,8 @@ import kotlin.io.path.walk
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    val compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+    val incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -35,10 +35,10 @@ internal object GlobalCompiledProjectsCache {
 
     fun getProjectFromCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
@@ -58,10 +58,10 @@ internal object GlobalCompiledProjectsCache {
 
     fun putProjectIntoCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(

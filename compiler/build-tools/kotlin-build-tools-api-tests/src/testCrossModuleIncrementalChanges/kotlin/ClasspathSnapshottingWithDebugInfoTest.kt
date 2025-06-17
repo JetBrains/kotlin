@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTestArgumentProvider.Companion.namedStrategyArguments
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
@@ -21,7 +23,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import java.util.stream.Stream
-import kotlin.streams.asStream
 
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
@@ -36,12 +37,28 @@ private class StrategyAgnosticSnapshotterTestArgumentProvider : ArgumentsProvide
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().flatMap { namedStrategyArg ->
             sequenceOf(
-                Arguments.of(namedStrategyArg, ClassSnapshotGranularity.CLASS_LEVEL, named("ignore inlined classes", false)),
-                Arguments.of(namedStrategyArg, ClassSnapshotGranularity.CLASS_LEVEL, named("use inlined classes", true)),
-                Arguments.of(namedStrategyArg, ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, named("ignore inlined classes", false)),
-                Arguments.of(namedStrategyArg, ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, named("use inlined classes", true)),
+                Arguments.of(
+                    namedStrategyArg,
+                    ClassSnapshotGranularity.CLASS_LEVEL,
+                    named("ignore inlined classes", false)
+                ),
+                Arguments.of(
+                    namedStrategyArg,
+                    ClassSnapshotGranularity.CLASS_LEVEL,
+                    named("use inlined classes", true)
+                ),
+                Arguments.of(
+                    namedStrategyArg,
+                    ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
+                    named("ignore inlined classes", false)
+                ),
+                Arguments.of(
+                    namedStrategyArg,
+                    ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
+                    named("use inlined classes", true)
+                ),
             )
-        }.asStream()
+        }.stream()
     }
 }
 
@@ -126,7 +143,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     fun testMainCase(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         granularity: ClassSnapshotGranularity,
-        snapshotInlinedClasses: Boolean
+        snapshotInlinedClasses: Boolean,
     ) {
         scenario(strategyConfig) {
             val lib = module("empty")
@@ -163,7 +180,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     fun testScenarioWithInlineFunUsageInLib(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         granularity: ClassSnapshotGranularity,
-        snapshotInlinedClasses: Boolean
+        snapshotInlinedClasses: Boolean,
     ) {
         scenario(strategyConfig) {
             val lib = module("empty")
@@ -200,7 +217,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     fun testScenarioWithInlineFunDeclarationInLib(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         granularity: ClassSnapshotGranularity,
-        snapshotInlinedClasses: Boolean
+        snapshotInlinedClasses: Boolean,
     ) {
         scenario(strategyConfig) {
             val lib = module("empty")
@@ -264,7 +281,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
     fun testScenarioWhereLocalClassIsAdded(
         strategyConfig: CompilerExecutionStrategyConfiguration,
         granularity: ClassSnapshotGranularity,
-        snapshotInlinedClasses: Boolean
+        snapshotInlinedClasses: Boolean,
     ) {
         scenario(strategyConfig) {
             val lib = module("empty")

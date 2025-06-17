@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain.Companion.loadImplementation
+import org.jetbrains.kotlin.buildtools.api.internal.compat.KotlinToolchainV1Adapter
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -114,6 +115,10 @@ public interface KotlinToolchain {
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
-            loadImplementation(KotlinToolchain::class, classLoader)
+            try {
+                loadImplementation(KotlinToolchain::class, classLoader)
+            } catch (_: IllegalStateException) {
+                KotlinToolchainV1Adapter(CompilationService.loadImplementation(classLoader))
+            }
     }
 }
