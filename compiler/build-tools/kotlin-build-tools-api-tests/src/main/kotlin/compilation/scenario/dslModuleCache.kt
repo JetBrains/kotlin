@@ -4,10 +4,9 @@
  */
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
@@ -22,8 +21,7 @@ import kotlin.io.path.walk
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    val icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -35,40 +33,36 @@ internal object GlobalCompiledProjectsCache {
 
     fun getProjectFromCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
-            compilationOptionsModifier,
-            incrementalCompilationOptionsModifier,
+            icOptionsConfigAction,
             icSourceTracking,
         )] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
         return if (icSourceTracking) {
-            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, icOptionsConfigAction)
         } else {
-            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, icOptionsConfigAction)
         }
     }
 
     fun putProjectIntoCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        icOptionsConfigAction: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit),
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(
             if (icSourceTracking) SourcesChanges.ToBeCalculated else SourcesChanges.Unknown,
             strategyConfig,
-            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
-            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) }
+            icOptionsConfigAction = icOptionsConfigAction
         )
         val initialOutputs = mutableSetOf<String>()
         for (file in module.outputDirectory.walk()) {
@@ -80,14 +74,13 @@ internal object GlobalCompiledProjectsCache {
         compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
-            compilationOptionsModifier,
-            incrementalCompilationOptionsModifier,
+            icOptionsConfigAction,
             icSourceTracking,
         )] = Pair(initialOutputs, moduleCacheDirectory)
         return if (icSourceTracking) {
-            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, icOptionsConfigAction)
         } else {
-            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, icOptionsConfigAction)
         }
     }
 }

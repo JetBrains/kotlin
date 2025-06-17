@@ -113,6 +113,11 @@ public interface KotlinToolchain {
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
-            loadImplementation(KotlinToolchain::class, classLoader)
+            try {
+                loadImplementation(KotlinToolchain::class, classLoader)
+            } catch (_: NoImplementationFoundException) {
+                classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainV1Adapter").constructors.first()
+                    .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchain
+            }
     }
 }

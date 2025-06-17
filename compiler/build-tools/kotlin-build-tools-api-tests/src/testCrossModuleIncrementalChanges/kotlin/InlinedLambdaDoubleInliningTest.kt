@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
