@@ -121,6 +121,7 @@
 /compiler/psi/psi-utils/ "Kotlin Analysis API"
 /compiler/psi/psi-frontend-utils/ "Kotlin Analysis API"
 /compiler/multiplatform-parsing/ "Kotlin Frontend"
+/compiler/stats-analyser/ "Kotlin Frontend"
 /compiler/resolution/ "Kotlin Frontend"
 /compiler/resolution.common/ "Kotlin Frontend"
 /compiler/resolution.common.jvm/ "Kotlin Frontend"

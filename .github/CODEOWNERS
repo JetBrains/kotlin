@@ -91,6 +91,7 @@
 /compiler/psi/psi-utils/ @JetBrains/kotlin-analysis-api
 /compiler/psi/psi-frontend-utils/ @JetBrains/kotlin-analysis-api
 /compiler/multiplatform-parsing/ @JetBrains/kotlin-frontend
+/compiler/stats-analyser/ @JetBrains/kotlin-frontend
 /compiler/resolution/ @JetBrains/kotlin-frontend
 /compiler/resolution.common/ @JetBrains/kotlin-frontend
 /compiler/resolution.common.jvm/ @JetBrains/kotlin-frontend
