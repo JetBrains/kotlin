@@ -21,9 +21,8 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.FeatureFlags
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices.DURABLE_FUNCTION_KEY
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.irTrace
+import androidx.compose.compiler.plugins.kotlin.analysis.durableFunctionKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -102,7 +101,7 @@ class DurableFunctionKeyTransformer(
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 run transform@{
-                    val functionKey = context.irTrace[DURABLE_FUNCTION_KEY, declaration] ?: return@transform
+                    val functionKey = declaration.durableFunctionKey ?: return@transform
                     if (!declaration.hasComposableAnnotation()) return@transform
                     if (declaration.hasAnnotation(ComposeClassIds.FunctionKeyMeta)) return@transform
                     declaration.annotations += irKeyMetaAnnotation(functionKey)
@@ -140,7 +139,7 @@ class DurableFunctionKeyTransformer(
             declaration.endOffset,
             !success,
         )
-        context.irTrace.record(DURABLE_FUNCTION_KEY, declaration, info)
+        declaration.durableFunctionKey = info
         return super.visitSimpleFunction(declaration)
     }
 }
