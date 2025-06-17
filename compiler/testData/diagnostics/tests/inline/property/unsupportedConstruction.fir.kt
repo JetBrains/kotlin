@@ -15,7 +15,7 @@ inline val z: Int
     }
 
     <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> local() {
-        fun localInner() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localInner() {}
     }
     return 1
 }
