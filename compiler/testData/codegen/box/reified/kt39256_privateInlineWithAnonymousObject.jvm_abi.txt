@@ -1,0 +1,25 @@
+MODULE main
+	CLASS Kt39256_privateInlineWithAnonymousObjectKt$f$1.class
+		CLASS METADATA
+			PROPERTY getUnused()Lkotlin/reflect/KClass;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/reflect/KClass<T#0>
+					K2
+						kotlin/reflect/KClass<T#0 & Any>
+	CLASS Kt39256_privateInlineWithAnonymousObjectKt$box$$inlined$f$1.class
+		CLASS METADATA
+			PROPERTY getUnused()Lkotlin/reflect/KClass;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/reflect/KClass<T#0>
+					K2
+						kotlin/reflect/KClass<T#0 & Any>
+	CLASS Kt39256_privateInlineWithAnonymousObjectKt$box$$inlined$f$2.class
+		CLASS METADATA
+			PROPERTY getUnused()Lkotlin/reflect/KClass;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/reflect/KClass<T#0>
+					K2
+						kotlin/reflect/KClass<T#0 & Any>
