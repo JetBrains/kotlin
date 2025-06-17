@@ -22,6 +22,8 @@
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:60:5: warning: Public-API inline function accesses a non Public-API interface. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70916.
 
+/privateTypesInsideInternalInlineFunctionWarning.kt:63:5: error: Local classes are not yet supported in inline functions.
+
 /privateTypesInsideInternalInlineFunctionWarning.kt:63:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70916.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:63:19: warning: 'private-in-file' type 'Generic<A>' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
@@ -89,6 +91,12 @@
 /privateTypesInsideInternalInlineFunctionWarning.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:84:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70916.
+
+/privateTypesInsideInternalInlineFunctionWarning.kt:97:9: error: Local classes are not yet supported in inline functions.
+
+/privateTypesInsideInternalInlineFunctionWarning.kt:115:17: error: Local classes are not yet supported in inline functions.
+
+/privateTypesInsideInternalInlineFunctionWarning.kt:143:13: error: Local classes are not yet supported in inline functions.
 
 /privateTypesInsideInternalInlineFunctionWarning.kt:143:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
