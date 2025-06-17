@@ -84,6 +84,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] kotlin.Any?
       VALUE_PARAMETER kind:Regular name:value index:2 type:@[FlexibleNullability] kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun put (key: @[FlexibleNullability] kotlin.Any?, value: @[FlexibleNullability] kotlin.Any?): kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:putAll visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -100,6 +102,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Any? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?): kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -276,6 +280,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Any? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Any?, @[FlexibleNullability] kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: @[FlexibleNullability] kotlin.Any?): kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]

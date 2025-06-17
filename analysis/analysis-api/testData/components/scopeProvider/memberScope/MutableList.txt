@@ -1,5 +1,8 @@
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.add
   compilerVisibility: Public
   contextParameters: []
@@ -178,7 +181,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.addAll
   compilerVisibility: Public
   contextParameters: []
@@ -258,7 +264,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.addAll
   compilerVisibility: Public
   contextParameters: []
@@ -543,7 +552,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.remove
   compilerVisibility: Public
   contextParameters: []
@@ -618,7 +630,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.removeAll
   compilerVisibility: Public
   contextParameters: []
@@ -698,7 +713,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.removeAt
   compilerVisibility: Public
   contextParameters: []
@@ -773,7 +791,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.retainAll
   compilerVisibility: Public
   contextParameters: []
@@ -853,7 +874,10 @@ KaNamedFunctionSymbol:
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
-  annotations: []
+  annotations: [
+    kotlin/IgnorableReturnValue()
+      psi: null
+  ]
   callableId: kotlin/collections/MutableList.set
   compilerVisibility: Public
   contextParameters: []

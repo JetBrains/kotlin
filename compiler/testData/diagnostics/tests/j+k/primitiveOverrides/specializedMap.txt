@@ -19,10 +19,10 @@ public abstract class AbstractSpecializedMap : kotlin.collections.MutableMap<kot
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract fun put(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Double): kotlin.Double
-    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
     public abstract fun remove(/*0*/ k: kotlin.Int): kotlin.Double
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Int!): kotlin.Double?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Int!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -49,3 +49,4 @@ public open class SpecializedMap : AbstractSpecializedMap {
     public open override /*1*/ fun remove(/*0*/ ok: kotlin.Int!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

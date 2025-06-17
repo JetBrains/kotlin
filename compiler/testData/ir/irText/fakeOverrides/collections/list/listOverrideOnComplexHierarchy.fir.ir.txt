@@ -1192,17 +1192,23 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun add (element: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun addAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:elements index:2 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun addAll (index: kotlin.Int, elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -1279,16 +1285,22 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun remove (element: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun removeAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:ABSTRACT returnType:kotlin.Any? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAt (index: kotlin.Int): kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -1310,12 +1322,16 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun retainAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
     FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT returnType:kotlin.Any? [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:element index:2 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun set (index: kotlin.Int, element: kotlin.Any?): kotlin.Any? declared in <root>.Java1
     FUN FAKE_OVERRIDE name:sort visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -1378,17 +1394,23 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:add visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun add (element: kotlin.Any?): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun addAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:elements index:2 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun addAll (index: kotlin.Int, elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -1458,16 +1480,22 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun remove (element: kotlin.Any?): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun removeAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:removeAt visibility:public modality:ABSTRACT returnType:kotlin.Any? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAt (index: kotlin.Int): kotlin.Any? declared in <root>.E
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -1489,12 +1517,16 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:@[RawType] kotlin.collections.Collection<kotlin.Any?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun retainAll (elements: @[RawType] kotlin.collections.Collection<kotlin.Any?>): kotlin.Boolean declared in <root>.E
     FUN FAKE_OVERRIDE name:set visibility:public modality:ABSTRACT returnType:kotlin.Any? [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.AbstractMutableList<kotlin.Any?>
       VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
       VALUE_PARAMETER kind:Regular name:element index:2 type:kotlin.Any?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun set (index: kotlin.Int, element: kotlin.Any?): kotlin.Any? declared in <root>.E
     FUN FAKE_OVERRIDE name:sort visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
@@ -1558,11 +1590,15 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun add (element: kotlin.Int): kotlin.Boolean declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun addAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
@@ -1615,11 +1651,15 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (element: kotlin.Int): kotlin.Boolean declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -1630,6 +1670,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun retainAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.KotlinInterface2
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Int?> [fake_override]
@@ -1678,11 +1720,15 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun add (element: kotlin.Int): kotlin.Boolean declared in <root>.G
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun addAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.G
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
@@ -1723,6 +1769,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.G
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -1733,6 +1781,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun retainAll (elements: kotlin.collections.Collection<kotlin.Int>): kotlin.Boolean declared in <root>.G
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Int?> [fake_override]
@@ -2159,11 +2209,15 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun add (element: E of kotlin.collections.MutableCollection): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:addAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableCollection>): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:clear visibility:public modality:ABSTRACT returnType:kotlin.Unit [fake_override]
@@ -2209,11 +2263,15 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.Int
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (element: E of kotlin.collections.MutableCollection): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:removeAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableCollection>): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
@@ -2224,6 +2282,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:retainAll visibility:public modality:ABSTRACT returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<kotlin.Int>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun retainAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableCollection>): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Int?> [fake_override]
