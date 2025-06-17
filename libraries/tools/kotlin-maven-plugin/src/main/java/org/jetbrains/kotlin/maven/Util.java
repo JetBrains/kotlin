@@ -16,11 +16,16 @@
 
 package org.jetbrains.kotlin.maven;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -45,5 +50,25 @@ public class Util {
         System.arraycopy(second, 0, result, first.length, second.length);
 
         return result;
+    }
+
+    @NotNull
+    public static String getMavenPluginVersion() throws MojoExecutionException {
+        ClassLoader classLoader = AnnotationProcessingManager.class.getClassLoader();
+        InputStream pomPropertiesIs = classLoader.getResourceAsStream(
+                "META-INF/maven/org.jetbrains.kotlin/kotlin-maven-plugin/pom.properties");
+        if (pomPropertiesIs == null) {
+            throw new MojoExecutionException("Can't resolve the version of kotlin-maven-plugin");
+        }
+
+        Properties properties = new Properties();
+        try {
+            properties.load(pomPropertiesIs);
+        }
+        catch (IOException e) {
+            throw new MojoExecutionException("Error while reading kotlin-maven-plugin/pom.properties", e);
+        }
+
+        return properties.getProperty("version");
     }
 }
