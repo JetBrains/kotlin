@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
+import org.jetbrains.kotlin.js.engine.ScriptExecutionException
+import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
@@ -32,6 +35,32 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         for (translationMode in supportedTranslationModes) {
             val outputDir = getOutputDir(translationMode)
             copy(from = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode), into = outputDir)
+        }
+    }
+
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        // Replace paths to the temporary directory with paths to the dump directory so that JS stack traces are navigatable in the IDE.
+        return failedAssertions.map {
+            val cause = it.cause as? ScriptExecutionException ?: return@map it
+            it.withReplacedCause(
+                ScriptExecutionException(cause.stdout, cause.stderr.replacePaths())
+            )
+        }
+    }
+
+    private fun String.replacePaths(): String = supportedTranslationModes.fold(this) { s, translationMode ->
+        testServices.moduleStructure.modules.fold(s) { s, module ->
+            val oldPath = JsEnvironmentConfigurator.getJsModuleArtifactPath(
+                testServices,
+                module.name,
+                translationMode
+            ) + module.kind.extension
+            val newPath =
+                getOutputDir(translationMode).absolutePath + File.separator + JsEnvironmentConfigurator.getJsModuleArtifactName(
+                    testServices,
+                    module.name
+                ) + module.kind.extension
+            s.replace(oldPath, newPath)
         }
     }
 
