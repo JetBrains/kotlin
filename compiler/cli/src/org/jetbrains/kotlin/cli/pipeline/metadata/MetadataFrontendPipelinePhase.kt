@@ -10,13 +10,12 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.isCommonSourceForLt
 import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
@@ -51,20 +49,6 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
     name = "MetadataFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
-    fun computeResolvedKlibs(paths: List<File>, messageCollector: MessageCollector): List<KotlinLibrary> {
-        val klibFiles = paths.filter { it.isDirectory || it.extension == "klib" }.map { it.absolutePath }
-        val logger = messageCollector.toLogger()
-
-        // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
-//        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
-        return klibFiles.map {
-            resolveSingleFileKlib(
-                org.jetbrains.kotlin.konan.file.File(it),
-                logger
-            )
-        }
-    }
-
     override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact {
         val (configuration, diagnosticsReporter, rootDisposable) = input
         val messageCollector = configuration.messageCollector
@@ -79,10 +63,10 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             dependsOnDependencies(refinedPaths.map { it.absolutePath })
         }
 
-        val resolvedLibraries = computeResolvedKlibs(
-            configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file },
-            messageCollector
-        )
+        val klibs: List<KotlinLibrary> = loadMetadataKlibs(
+            libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
+            configuration = configuration
+        ).all
 
         val perfManager = configuration.perfManager
         val environment = KotlinCoreEnvironment.createForProduction(
@@ -113,7 +97,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             )?.also { librariesScope -= it }
             val sessionsWithSources = prepareMetadataSessions(
                 ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars, librariesScope,
-                libraryList, resolvedLibraries, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
+                libraryList, klibs, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
                 createProviderAndScopeForIncrementalCompilation = { files ->
                     createContextForIncrementalCompilation(
                         configuration,
@@ -158,7 +142,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             }
             val sessionsWithSources = prepareMetadataSessions(
                 ktFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
-                librariesScope, libraryList, resolvedLibraries, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+                librariesScope, libraryList, klibs, isCommonSourceForPsi, fileBelongsToModuleForPsi,
                 createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
             )
 

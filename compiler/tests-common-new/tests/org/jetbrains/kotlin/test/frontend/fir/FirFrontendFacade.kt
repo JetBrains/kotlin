@@ -11,8 +11,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.getLogger
+import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
+import org.jetbrains.kotlin.cli.common.contentRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.AbstractFirMetadataSessionFactory.JarMetadataProviderComponents
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -59,7 +59,6 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
@@ -176,14 +175,10 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
                 if (isCommon) {
-                    val klibFiles = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS).orEmpty()
-                        .filterIsInstance<JvmClasspathRoot>()
-                        .filter { it.file.isDirectory || it.file.extension == "klib" }
-                        .map { it.file.absolutePath }
-
-                    val resolvedKLibs = klibFiles.map {
-                        resolveSingleFileKlib(KFile(it), configuration.getLogger())
-                    }
+                    val klibs: List<KotlinLibrary> = loadMetadataKlibs(
+                        libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
+                        configuration = configuration,
+                    ).all
 
                     val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(
                         mainModuleName = moduleName,
@@ -200,7 +195,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             projectFileSearchScope,
                             projectEnvironment,
                         ),
-                        resolvedKLibs = resolvedKLibs,
+                        resolvedKLibs = klibs,
                         languageVersionSettings = languageVersionSettings,
                     ).also(::registerExtraComponents)
                 } else {
