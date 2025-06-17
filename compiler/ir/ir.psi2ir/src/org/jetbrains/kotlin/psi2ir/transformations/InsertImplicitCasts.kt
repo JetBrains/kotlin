@@ -116,10 +116,19 @@ internal class InsertImplicitCasts(
     }
 
     private fun IrMemberAccessExpression<*>.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
-        dispatchReceiverViaCachedCalleeData = dispatchReceiverViaCachedCalleeData?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+        val callableDescriptor = symbol.descriptor as? CallableDescriptor ?: return
+        val hasDispatchReceiver = callableDescriptor.dispatchReceiverParameter != null
+        if (hasDispatchReceiver) {
+            arguments[0] = arguments[0]?.cast(getEffectiveDispatchReceiverType(substitutedDescriptor))
+        }
         val extensionReceiverType = substitutedDescriptor.extensionReceiverParameter?.type
         val originalExtensionReceiverType = substitutedDescriptor.original.extensionReceiverParameter?.type
-        extensionReceiver = extensionReceiver?.cast(extensionReceiverType, originalExtensionReceiverType)
+        val hasExtensionReceiver = callableDescriptor.extensionReceiverParameter != null
+        if (hasExtensionReceiver) {
+            val extensionReceiverIndex = callableDescriptor.contextReceiverParameters.size + if (hasDispatchReceiver) 1 else 0
+            arguments[extensionReceiverIndex] =
+                arguments[extensionReceiverIndex]?.cast(extensionReceiverType, originalExtensionReceiverType)
+        }
     }
 
     private fun getEffectiveDispatchReceiverType(descriptor: CallableDescriptor): KotlinType? =
@@ -144,8 +153,13 @@ internal class InsertImplicitCasts(
         return expression.transformPostfix {
             transformReceiverArguments(substitutedDescriptor)
             for (index in substitutedDescriptor.valueParameters.indices) {
-                val irIndex = index + substitutedDescriptor.contextReceiverParameters.size
-                val argument = getValueArgument(irIndex) ?: continue
+                val dispatchReceiverOffset =
+                    if ((expression.symbol.descriptor as? CallableDescriptor)?.dispatchReceiverParameter != null) 1 else 0
+                val extensionReceiverOffset =
+                    if ((expression.symbol.descriptor as? CallableDescriptor)?.extensionReceiverParameter != null) 1 else 0
+                val irIndex =
+                    index + substitutedDescriptor.contextReceiverParameters.size + dispatchReceiverOffset + extensionReceiverOffset
+                val argument = arguments[irIndex] ?: continue
                 val parameterType = substitutedDescriptor.valueParameters[index].type
                 val originalParameterType = substitutedDescriptor.original.valueParameters[index].type
 
@@ -157,7 +171,7 @@ internal class InsertImplicitCasts(
                     else
                         parameterType
 
-                putValueArgument(irIndex, argument.cast(expectedType, originalExpectedType = originalParameterType))
+                arguments[irIndex] = argument.cast(expectedType, originalExpectedType = originalParameterType)
             }
         }
     }
@@ -232,7 +246,7 @@ internal class InsertImplicitCasts(
     override fun visitFunction(declaration: IrFunction): IrStatement =
         typeTranslator.buildWithScope(declaration) {
             declaration.transformPostfix {
-                valueParameters.forEach {
+                parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.forEach {
                     it.defaultValue?.coerceInnerExpression(it.descriptor.type)
                 }
             }
@@ -467,7 +481,7 @@ internal class InsertImplicitCasts(
             hasDispatchReceiver = true,
             hasExtensionReceiver = false,
         ).also { irCall ->
-            irCall.dispatchReceiverViaCachedCalleeData = this
+            irCall.arguments[0] = this
         }
     }
 
@@ -493,7 +507,7 @@ internal class InsertImplicitCasts(
             hasDispatchReceiver = false,
             hasExtensionReceiver = true,
         ).also { irCall ->
-            irCall.extensionReceiver = this
+            irCall.arguments[0] = this
         }
     }
 
