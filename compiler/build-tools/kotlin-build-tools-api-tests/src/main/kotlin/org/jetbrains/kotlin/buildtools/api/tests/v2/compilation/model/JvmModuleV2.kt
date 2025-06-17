@@ -81,15 +81,6 @@ class JvmModuleV2(
         compilationOperation[BuildOperation.PROJECT_ID] = project.projectId
 
         return runBlocking { toolchain.executeOperation(compilationOperation, defaultExecutionPolicy, kotlinLogger) }
-//            project.projectId,
-//            executionPolicy,
-//            compilationConfig,
-//            sourcesDirectory.walk()
-//                .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
-//                .map { it.toFile() }
-//                .toList(),
-//            defaultCompilationArguments + additionalCompilationArguments,
-//        )
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {

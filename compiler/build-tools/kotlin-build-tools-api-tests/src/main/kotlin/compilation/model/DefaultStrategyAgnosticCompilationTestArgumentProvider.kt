@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import java.nio.file.Path
 import java.util.stream.Stream
-import kotlin.streams.asStream
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
@@ -68,7 +67,6 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
             val kotlinToolchain = try {
                 KotlinToolchain.loadImplementation(BaseCompilationTest::class.java.classLoader)
             } catch (_: IllegalStateException) {
-                println("No KotlinToolchain found")
                 null
             } ?: return@buildList
 

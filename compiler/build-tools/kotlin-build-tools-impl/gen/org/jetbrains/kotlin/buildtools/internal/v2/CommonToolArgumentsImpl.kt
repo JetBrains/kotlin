@@ -7,7 +7,9 @@ import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.api.v2.CommonToolArguments.Companion.NOWARN
 import org.jetbrains.kotlin.buildtools.api.v2.CommonToolArguments.Companion.VERBOSE
@@ -37,6 +39,18 @@ public open class CommonToolArgumentsImpl : V2CommonToolArguments {
     if ("NOWARN" in optionsMap) { arguments.suppressWarnings = get(NOWARN) }
     if ("WERROR" in optionsMap) { arguments.allWarningsAsErrors = get(WERROR) }
     if ("WEXTRA" in optionsMap) { arguments.extraWarnings = get(WEXTRA) }
+    return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  @OptIn(ExperimentalCompilerArgument::class)
+  public open fun toArgumentStrings(): List<String> {
+    val arguments = mutableListOf<String>()
+    if ("VERSION" in optionsMap) { arguments.add("-version=" + get(VERSION)) }
+    if ("VERBOSE" in optionsMap) { arguments.add("-verbose=" + get(VERBOSE)) }
+    if ("NOWARN" in optionsMap) { arguments.add("-nowarn=" + get(NOWARN)) }
+    if ("WERROR" in optionsMap) { arguments.add("-Werror=" + get(WERROR)) }
+    if ("WEXTRA" in optionsMap) { arguments.add("-Wextra=" + get(WEXTRA)) }
     return arguments
   }
 }

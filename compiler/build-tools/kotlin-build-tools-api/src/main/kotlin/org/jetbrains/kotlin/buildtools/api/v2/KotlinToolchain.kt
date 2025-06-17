@@ -3,10 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalBuildToolsApi::class)
+
 package org.jetbrains.kotlin.buildtools.api.v2
 
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.v2.internal.compat.KotlinToolchainV1Adapter
 import org.jetbrains.kotlin.buildtools.api.v2.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmPlatformToolchain
@@ -48,6 +50,10 @@ public interface KotlinToolchain {
     public companion object {
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
-            org.jetbrains.kotlin.buildtools.api.loadImplementation(KotlinToolchain::class, classLoader)
+            try {
+                org.jetbrains.kotlin.buildtools.api.loadImplementation(KotlinToolchain::class, classLoader)
+            } catch (_: IllegalStateException) {
+                KotlinToolchainV1Adapter(CompilationService.loadImplementation(classLoader))
+            }
     }
 }

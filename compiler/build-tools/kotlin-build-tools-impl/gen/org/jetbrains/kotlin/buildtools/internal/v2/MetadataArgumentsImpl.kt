@@ -7,7 +7,9 @@ import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.api.v2.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.v2.MetadataArguments
@@ -38,6 +40,19 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
     if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) }
     if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS) }
     if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS) }
+    return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  @OptIn(ExperimentalCompilerArgument::class)
+  override fun toArgumentStrings(): List<String> {
+    val arguments = mutableListOf<String>()
+    arguments.addAll(super.toArgumentStrings())
+    if ("D" in optionsMap) { arguments.add("-d=" + get(D)) }
+    if ("CLASSPATH" in optionsMap) { arguments.add("-classpath=" + get(CLASSPATH)) }
+    if ("MODULE_NAME" in optionsMap) { arguments.add("-module-name=" + get(MODULE_NAME)) }
+    if ("X_FRIEND_PATHS" in optionsMap) { arguments.add("-Xfriend-paths=" + get(X_FRIEND_PATHS)) }
+    if ("X_REFINES_PATHS" in optionsMap) { arguments.add("-Xrefines-paths=" + get(X_REFINES_PATHS)) }
     return arguments
   }
 }
