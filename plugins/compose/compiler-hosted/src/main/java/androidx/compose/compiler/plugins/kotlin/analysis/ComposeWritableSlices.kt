@@ -3,6 +3,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.lower.KeyInfo
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
@@ -12,10 +13,9 @@ var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = t
 var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
 var IrElement.isComposableSingleton: Boolean by irFlag(copyByDefault = true)
 var IrElement.isComposableSingletonClass: Boolean by irFlag(copyByDefault = true)
+var IrElement.durableFunctionKey: KeyInfo? by irAttribute(copyByDefault = true)
 
 object ComposeWritableSlices {
-    val DURABLE_FUNCTION_KEY: WritableSlice<IrElement, KeyInfo> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val HAS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =

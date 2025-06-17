@@ -1195,10 +1195,7 @@ abstract class AbstractComposeLowering(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrSimpleFunction.sourceKey(): Int {
-        val info = context.irTrace[
-            ComposeWritableSlices.DURABLE_FUNCTION_KEY,
-            this
-        ]
+        val info = this.durableFunctionKey
         if (info != null) {
             info.used = true
             return info.key
