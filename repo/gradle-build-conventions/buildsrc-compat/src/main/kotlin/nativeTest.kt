@@ -50,6 +50,7 @@ private enum class TestProperty(shortName: String) {
     EAGER_GROUP_CREATION("eagerGroupCreation"),
     XCTEST_FRAMEWORK("xctest"),
     TEAMCITY("teamcity"),
+    MINIDUMP_ANALYZER("minidumpAnalyzer"),
     ;
 
     val fullName = "kotlin.internal.native.test.$shortName"
@@ -220,6 +221,22 @@ private open class NativeArgsProvider @Inject constructor(
         }
     }
 
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE) // it doesn't matter at all how is this analyzer named, or where it's placed
+    @get:Optional
+    protected val minidumpAnalyzer: ConfigurableFileCollection = objects.fileCollection().apply {
+        if (HostManager.hostIsMac) {
+            val fileCollection = project.configurations.detachedConfiguration(
+                project.dependencies.project(":kotlin-native:tools:minidump-analyzer"),
+            ).also {
+                it.attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-executable"))
+                }
+            }
+            from(fileCollection)
+        }
+    }
+
     override fun asArguments(): Iterable<String> {
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
@@ -244,6 +261,7 @@ private open class NativeArgsProvider @Inject constructor(
             eagerGroupCreation.orNull?.let { "-D${EAGER_GROUP_CREATION.fullName}=$it" },
             xctestFramework.orNull?.let { "-D${XCTEST_FRAMEWORK.fullName}=$it" },
             "-D${CUSTOM_KLIBS.fullName}=${customKlibs.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { customKlibs.isNotEmpty() },
+            if (minidumpAnalyzer.isEmpty) null else "-D${MINIDUMP_ANALYZER.fullName}=${minidumpAnalyzer.singleFile.absolutePath}",
         )
     }
 }
