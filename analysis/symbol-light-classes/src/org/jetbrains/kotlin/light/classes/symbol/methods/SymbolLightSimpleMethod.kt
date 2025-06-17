@@ -245,6 +245,9 @@ internal class SymbolLightSimpleMethod private constructor(
     override fun getReturnType(): PsiType = _returnedType
 
     companion object {
+        /**
+         * @param suppressValueClass whether suppress the [containingClass] check for [SymbolLightClassForValueClass] instance
+         */
         internal fun KaSession.createSimpleMethods(
             containingClass: SymbolLightClassBase,
             result: MutableList<PsiMethod>,
@@ -253,6 +256,7 @@ internal class SymbolLightSimpleMethod private constructor(
             methodIndex: Int,
             isTopLevel: Boolean,
             suppressStatic: Boolean = false,
+            suppressValueClass: Boolean = false,
         ) {
             ProgressManager.checkCanceled()
 
@@ -261,6 +265,11 @@ internal class SymbolLightSimpleMethod private constructor(
             val hasJvmNameAnnotation = functionSymbol.hasJvmNameAnnotation()
             val exposeBoxedMode = jvmExposeBoxedMode(functionSymbol)
             val hasReturnValueClass = hasValueClassInReturnType(functionSymbol)
+
+            val isNonMaterializableValueClassFunction = !suppressValueClass &&
+                    containingClass is SymbolLightClassForValueClass &&
+                    // Overrides are materialized by default
+                    !functionSymbol.isOverride
 
             createMethodsJvmOverloadsAware(
                 declaration = functionSymbol,
@@ -276,7 +285,7 @@ internal class SymbolLightSimpleMethod private constructor(
                     exposeBoxedMode = exposeBoxedMode,
                     hasNonReturnValueClass = hasNonReturnValueClass,
                     hasReturnValueClass = hasReturnValueClass,
-                    hasMangledNameDueValueClasses = hasMangledNameDueValueClassesInSignature,
+                    isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassFunction,
                     hasJvmNameAnnotation = hasJvmNameAnnotation,
                 )
 

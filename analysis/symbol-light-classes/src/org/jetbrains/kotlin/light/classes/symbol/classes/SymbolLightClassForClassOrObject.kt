@@ -138,6 +138,8 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             addMethodsFromCompanionIfNeeded(result, classSymbol)
 
             addMethodsFromDataClass(result, classSymbol)
+            generateMethodsFromAny(classSymbol, result)
+
             addDelegatesToInterfaceMethods(result, classSymbol)
 
             result
@@ -161,7 +163,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             .filterIsInstance<KaNamedFunctionSymbol>()
 
         createMethods(this@SymbolLightClassForClassOrObject, componentAndCopyFunctions, result)
-        generateMethodsFromAny(classSymbol, result)
     }
 
     private fun KaSession.createMethodFromAny(functionSymbol: KaNamedFunctionSymbol, result: MutableList<PsiMethod>) {
@@ -174,10 +175,13 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             lightMemberOrigin,
             METHOD_INDEX_BASE,
             isTopLevel = false,
+            suppressValueClass = true,
         )
     }
 
-    protected fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
+    private fun KaSession.generateMethodsFromAny(classSymbol: KaNamedClassSymbol, result: MutableList<PsiMethod>) {
+        if (!classSymbol.isData && !classSymbol.isInline) return
+
         // Compiler will generate 'equals/hashCode/toString' for data/value class if they are not final.
         // We want to mimic that.
         val generatedFunctionsFromAny = classSymbol.memberScope
@@ -193,7 +197,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it, result) }
     }
 
-    protected fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
+    private fun KaSession.addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>, classSymbol: KaNamedClassSymbol) {
         fun createDelegateMethod(functionSymbol: KaNamedFunctionSymbol) {
             val kotlinOrigin = functionSymbol.psiSafe<KtDeclaration>() ?: classOrObjectDeclaration
             val lightMemberOrigin = kotlinOrigin?.let { LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.DELEGATION) }
@@ -204,6 +208,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                 lightMemberOrigin = lightMemberOrigin,
                 methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
                 isTopLevel = false,
+                suppressValueClass = true,
             )
         }
 

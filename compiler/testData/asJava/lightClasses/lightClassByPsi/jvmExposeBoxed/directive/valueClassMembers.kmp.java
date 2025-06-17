@@ -15,6 +15,19 @@ public final class ValueClass /* pack.ValueClass*/ {
 
   private static final int companionProperty = 0 /* initializer type: int */;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  @org.jetbrains.annotations.NotNull()
+  public final @org.jetbrains.annotations.NotNull() pack.ValueClass getPropertyWithValueClassType();//  getPropertyWithValueClassType()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final int getProperty();//  getProperty()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void funWithSelfParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() pack.ValueClass);//  funWithSelfParameter(@org.jetbrains.annotations.NotNull() pack.ValueClass)
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public final void funWithoutParameters();//  funWithoutParameters()
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

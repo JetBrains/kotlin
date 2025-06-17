@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.PsiField
 import com.intellij.psi.PsiManager
-import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject {
@@ -57,62 +51,6 @@ internal class SymbolLightClassForValueClass : SymbolLightClassForClassOrObject 
         manager = manager,
     )
 
-    override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
-
-    override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassSymbol { classSymbol ->
-            val result = mutableListOf<PsiMethod>()
-
-            // Value classes have overridden methods
-            val applicableDeclarations = classSymbol.declaredMemberScope
-                .callables
-                .filter {
-                    (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
-                }
-
-            createMethods(this@SymbolLightClassForValueClass, applicableDeclarations, result)
-            generateMethodsFromAny(classSymbol, result)
-
-            val propertySymbol = propertySymbol(classSymbol)
-
-            // Only public properties have accessors for value classes
-            if (propertySymbol != null && propertySymbol.visibility == KaSymbolVisibility.PUBLIC) {
-                // (inline or) value class primary constructor must have only final read-only (val) property parameter
-                // Even though the property parameter is mutable (for some reasons, e.g., testing or not checked yet),
-                // we can enforce immutability here.
-                createPropertyAccessors(this@SymbolLightClassForValueClass, result, propertySymbol, isTopLevel = false, isMutable = false)
-            }
-
-            addDelegatesToInterfaceMethods(result, classSymbol)
-
-            result
-        }
-    }
-
-    override fun getOwnFields(): List<PsiField> = cachedValue {
-        withClassSymbol { classSymbol ->
-            buildList {
-                val nameGenerator = SymbolLightField.FieldNameGenerator()
-                addCompanionObjectFieldIfNeeded(this, classSymbol)
-
-                addFieldsFromCompanionIfNeeded(this, classSymbol, nameGenerator)
-
-                propertySymbol(classSymbol)?.let {
-                    createAndAddField(this@SymbolLightClassForValueClass, it, nameGenerator, isStatic = false, result = this)
-                }
-            }
-        }
-    }
-
     override fun copy(): SymbolLightClassForValueClass =
         SymbolLightClassForValueClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
-}
-
-private fun KaSession.propertySymbol(classSymbol: KaNamedClassSymbol): KaKotlinPropertySymbol? {
-    return classSymbol.declaredMemberScope
-        .constructors
-        .singleOrNull { it.isPrimary }
-        ?.valueParameters
-        ?.singleOrNull()
-        ?.generatedPrimaryConstructorProperty
 }

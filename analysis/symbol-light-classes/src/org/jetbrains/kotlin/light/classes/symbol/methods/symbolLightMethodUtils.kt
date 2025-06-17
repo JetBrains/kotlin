@@ -73,14 +73,14 @@ internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val 
  * @param exposeBoxedMode The [JvmExposeBoxedMode] for the method.
  * @param hasNonReturnValueClass Whether any of the method's parameters contain a value class.
  * @param hasReturnValueClass Whether the method's return type is a value class.
- * @param hasMangledNameDueValueClasses Whether the method's name is mangled due to value classes.
+ * @param isAffectedByValueClass Whether the method's name is mangled due to value classes, or the method is declared inside a value class and not materialized.
  * @param hasJvmNameAnnotation Whether the method has a [JvmName] annotation.
  */
 internal fun methodGeneration(
     exposeBoxedMode: JvmExposeBoxedMode,
     hasNonReturnValueClass: Boolean,
     hasReturnValueClass: Boolean,
-    hasMangledNameDueValueClasses: Boolean,
+    isAffectedByValueClass: Boolean,
     hasJvmNameAnnotation: Boolean,
 ): MethodGenerationResult {
     var isBoxedAccessorRequired = false
@@ -91,7 +91,7 @@ internal fun methodGeneration(
         isBoxedAccessorRequired = true
     }
 
-    if (hasMangledNameDueValueClasses) {
+    if (isAffectedByValueClass) {
         // JvmName -> unmangled method can be generated
         isRegularAccessorRequired = hasJvmNameAnnotation
 
