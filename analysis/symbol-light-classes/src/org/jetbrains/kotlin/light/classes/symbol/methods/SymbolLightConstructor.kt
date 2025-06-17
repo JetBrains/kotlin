@@ -106,6 +106,10 @@ internal class SymbolLightConstructor private constructor(
             declarations: Sequence<KaConstructorSymbol>,
             result: MutableList<PsiMethod>,
         ) {
+            if (lightClass is SymbolLightClassForValueClass) {
+                return // TODO: support them
+            }
+
             val constructors = declarations.toList()
             if (constructors.isEmpty()) {
                 result.add(lightClass.defaultConstructor())
