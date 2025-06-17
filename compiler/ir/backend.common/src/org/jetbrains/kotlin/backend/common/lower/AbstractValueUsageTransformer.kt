@@ -73,10 +73,6 @@ abstract class AbstractValueUsageTransformer(
     protected open fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression = element
 
 
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
-        TODO()
-    }
-
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
 
