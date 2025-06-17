@@ -197,10 +197,10 @@ fun createLibraryListForJvm(
     val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
         dependencies(contentRoots.mapNotNull { if (it is JvmClasspathRoot) it.file.absolutePath else null })
         dependencies(contentRoots.mapNotNull { if (it is VirtualJvmClasspathRoot && !it.isFriend) it.file.toNioPath().toAbsolutePath().toString() else null })
-        friendDependencies(contentRoots.mapNotNull { if (it is VirtualJvmClasspathRoot && it.isFriend) it.file.toNioPath().toAbsolutePath().toString() else null })
 
         dependencies(configuration.jvmModularRoots.map { it.absolutePath })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+        friendDependencies(contentRoots.mapNotNull { if (it is VirtualJvmClasspathRoot && it.isFriend) it.file.toNioPath().toAbsolutePath().toString() else null })
         friendDependencies(friendPaths)
     }
     return libraryList
