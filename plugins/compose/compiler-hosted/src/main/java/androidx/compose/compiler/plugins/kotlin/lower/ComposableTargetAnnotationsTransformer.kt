@@ -19,9 +19,9 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.hasTransformedLambda
+import androidx.compose.compiler.plugins.kotlin.analysis.isTransformedLambda
 import androidx.compose.compiler.plugins.kotlin.inference.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality
@@ -402,12 +402,9 @@ class ComposableTargetAnnotationsTransformer(
             is IrGetField -> symbol.owner.initializer?.findTransformedLambda()
             is IrBody -> statements.firstNotNullOfOrNull { it.findTransformedLambda() }
             is IrReturn -> value.findTransformedLambda()
-            is IrFunctionExpression -> if (isTransformedLambda()) this else null
+            is IrFunctionExpression -> if (isTransformedLambda) this else null
             else -> null
         }
-
-    private fun IrFunctionExpression.isTransformedLambda() =
-        context.irTrace[ComposeWritableSlices.IS_TRANSFORMED_LAMBDA, this] == true
 
     internal fun IrElement.transformedLambda(): IrFunctionExpression =
         findTransformedLambda() ?: error("Could not find the lambda for ${dump()}")
