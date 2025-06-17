@@ -20,8 +20,6 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.analysis.hasTransformedLambda
-import androidx.compose.compiler.plugins.kotlin.analysis.isTransformedLambda
 import androidx.compose.compiler.plugins.kotlin.inference.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.Modality

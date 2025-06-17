@@ -19,12 +19,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
-import androidx.compose.compiler.plugins.kotlin.analysis.isStaticFunctionExpression
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.analysis.hasTransformedLambda
-import androidx.compose.compiler.plugins.kotlin.analysis.isComposableSingleton
-import androidx.compose.compiler.plugins.kotlin.analysis.isComposableSingletonClass
-import androidx.compose.compiler.plugins.kotlin.analysis.isTransformedLambda
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
