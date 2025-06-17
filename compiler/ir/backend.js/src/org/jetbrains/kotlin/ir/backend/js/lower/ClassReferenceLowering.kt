@@ -252,6 +252,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
             upperBounds,
             variance,
             typeParameter.isReified.toIrConst(context.irBuiltIns.booleanType),
+            typeParameter.parent.kotlinFqName.asString().toIrConst(context.irBuiltIns.stringType),
         ).also {
             visitedTypeParams.remove(typeParameter)
         }
