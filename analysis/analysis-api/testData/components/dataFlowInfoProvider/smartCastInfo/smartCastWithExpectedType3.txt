@@ -1,0 +1,3 @@
+expression: arg
+isStable: true
+smartCastType: kotlin.Any
