@@ -602,7 +602,7 @@ abstract class CompileServiceImplBase(
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"))
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"), includeJavaSources = false)
 
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
@@ -642,11 +642,11 @@ abstract class CompileServiceImplBase(
         reporter: RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     ): ExitCode {
         reporter.startMeasureGc()
-        val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
+        val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
 
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinExtensions)
+        val allSourceFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinJvmExtensions, includeJavaSources = true)
 
         val workingDir = incrementalCompilationOptions.workingDir
 
@@ -661,7 +661,7 @@ abstract class CompileServiceImplBase(
             IncrementalFirJvmCompilerRunner(
                 workingDir,
                 reporter,
-                kotlinSourceFilesExtensions = allKotlinExtensions,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
                 outputDirs = incrementalCompilationOptions.outputFiles,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
@@ -674,7 +674,7 @@ abstract class CompileServiceImplBase(
                 reporter,
                 outputDirs = incrementalCompilationOptions.outputFiles,
                 classpathChanges = incrementalCompilationOptions.classpathChanges,
-                kotlinSourceFilesExtensions = allKotlinExtensions,
+                kotlinSourceFilesExtensions = allKotlinJvmExtensions,
                 icFeatures = incrementalCompilationOptions.icFeatures.copy(
                     usePreciseJavaTracking = verifiedPreciseJavaTracking
                 ),
@@ -682,7 +682,7 @@ abstract class CompileServiceImplBase(
         }
         return try {
             compiler.compile(
-                allKotlinFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
+                allSourceFiles, k2jvmArgs, compilerMessageCollector, incrementalCompilationOptions.sourceChanges.toChangedFiles(),
                 fileLocations = if (rootProjectDir != null && buildDir != null) {
                     FileLocations(rootProjectDir, buildDir)
                 } else null

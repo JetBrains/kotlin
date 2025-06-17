@@ -101,15 +101,27 @@ internal object CompilationServiceImpl : CompilationService {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
+        val kotlinFilenameExtensions =
+            (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
+        val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
+        if (unknownSources.isNotEmpty()) {
+            compilationConfig.logger.warn("Sources with unknown extensions were passed, they will be skipped: ${unknownSources.joinToString()}")
+        }
         return when (val selectedStrategy = strategyConfig.selectedStrategy) {
-            is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, compilationConfig, sources, arguments)
+            is CompilerExecutionStrategy.InProcess -> compileInProcess(
+                loggerAdapter,
+                compilationConfig,
+                kotlinFilenameExtensions,
+                filteredSources,
+                arguments,
+            )
             is CompilerExecutionStrategy.Daemon -> compileWithinDaemon(
                 projectId,
                 loggerAdapter,
                 selectedStrategy,
                 compilationConfig,
-                sources,
-                arguments
+                filteredSources,
+                arguments,
             )
         }
     }
@@ -143,6 +155,7 @@ internal object CompilationServiceImpl : CompilationService {
     private fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         compilationConfiguration: JvmCompilationConfigurationImpl,
+        kotlinFilenameExtensions: Set<String>,
         sources: List<File>,
         arguments: List<String>,
     ): CompilationResult {
@@ -154,12 +167,15 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
-        val kotlinFilenameExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions) + sources
+                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
+                    parsedArguments,
+                    kotlinFilenameExtensions,
+                    includeJavaSources = true
+                ) + sources
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
@@ -203,7 +219,7 @@ internal object CompilationServiceImpl : CompilationService {
                 ).asCompilationResult
             }
             null -> { // no IC configuration -> non-incremental compilation
-                parsedArguments.freeArgs += sources.filter { it.isKotlinFile(kotlinFilenameExtensions) }.map { it.absolutePath }
+                parsedArguments.freeArgs += sources.map { it.absolutePath }
                 compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
             }
             else -> error(
@@ -283,24 +299,9 @@ internal object CompilationServiceImpl : CompilationService {
             checkJvmFirRequirements(arguments)
         }
 
-        /* TODO: fix together with KT-62759
-         * To avoid parsing sources from freeArgs and filtering them in the daemon,
-         * work around the issue by removing .java files in non-incremental mode.
-         * Preferably, this should be done in the daemon.
-         * In incremental mode, incremental compiler filters them out, but should be aware of them for tracking changes.
-         * Kotlin compiler itself knows about the .java sources via -Xjava-source-roots
-         */
-        val effectiveSources = if (isIncrementalCompilation) {
-            sources
-        } else {
-            val kotlinFilenameExtensions =
-                (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
-            sources.filter { it.isKotlinFile(kotlinFilenameExtensions) }
-        }
-
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toTypedArray() + effectiveSources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
+            arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults(

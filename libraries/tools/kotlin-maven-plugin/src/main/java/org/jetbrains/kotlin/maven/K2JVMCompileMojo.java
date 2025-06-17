@@ -220,8 +220,6 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
             arguments.setScriptTemplates(scriptTemplates.toArray(new String[0]));
         }
-
-        arguments.setJavaSourceRoots(sourceRoots.stream().map(File::getAbsolutePath).toArray(String[]::new));
     }
 
     private boolean isJava9Module(@NotNull List<File> sourceRoots) {
