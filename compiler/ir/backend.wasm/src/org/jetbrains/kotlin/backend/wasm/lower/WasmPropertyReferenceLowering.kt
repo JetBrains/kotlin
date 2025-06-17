@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.AbstractPropertyReferenceLowering
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 internal class PropertyReferencesConstructorsSet(
     val local: IrConstructorSymbol,
@@ -56,7 +53,6 @@ class WasmPropertyReferenceLowering(context: WasmBackendContext) : AbstractPrope
     override fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
         typeArguments: List<IrType>,
-        name: String?,
         getterReference: IrRichFunctionReference,
         setterReference: IrRichFunctionReference?,
     ): IrExpression {
@@ -67,15 +63,8 @@ class WasmPropertyReferenceLowering(context: WasmBackendContext) : AbstractPrope
         }.byReceiversCount[typeArguments.size - 1]
 
         return irCall(constructor, reference.type, typeArguments).apply {
-            arguments[0] = name?.let(::irString) ?: irNull()
-            arguments[1] = reference.reflectionTargetLinkageError?.let {
-                this@WasmPropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
-                    doNotLog = false,
-                    it,
-                    reference,
-                    PLFile.determineFileFor(reference.getterFunction),
-                )
-            }?.let(::irString) ?: irNull()
+            arguments[0] = propertyReferenceNameExpression(reference)
+            arguments[1] = propertyReferenceLinkageErrorExpression(reference)
             arguments[2] = getterReference
             setterReference?.let { arguments[3] = it }
         }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.reflectionTargetLinkageError
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.File as PLFile
 
 internal class PropertyReferencesConstructorsSet(
         val local: IrConstructorSymbol,
@@ -52,7 +50,6 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
     override fun IrBuilderWithScope.createKProperty(
             reference: IrRichPropertyReference,
             typeArguments: List<IrType>,
-            name: String?,
             getterReference: IrRichFunctionReference,
             setterReference: IrRichFunctionReference?,
     ): IrExpression {
@@ -62,15 +59,8 @@ internal class PropertyReferenceLowering(generationState: NativeGenerationState)
             immutableSymbols
         }.byRecieversCount[typeArguments.size - 1]
         return irCall(constructor, reference.type, typeArguments).apply {
-            arguments[0] = name?.let(::irString) ?: irNull()
-            arguments[1] = reference.reflectionTargetLinkageError?.let {
-                this@PropertyReferenceLowering.context.partialLinkageSupport.prepareLinkageError(
-                        doNotLog = true,
-                        it,
-                        reference,
-                        PLFile.determineFileFor(reference.getterFunction),
-                )
-            }?.let(::irString) ?: irNull()
+            arguments[0] = propertyReferenceNameExpression(reference)
+            arguments[1] = propertyReferenceLinkageErrorExpression(reference)
             arguments[2] = getterReference
             setterReference?.let { arguments[3] = it }
         }
