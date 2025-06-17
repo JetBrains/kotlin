@@ -1033,4 +1033,5 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':native:kotlin-test-native-xctest'
     include ':native:cli-native'
     include ':native:native.tests:cli-tests'
+    include ':kotlin-native:tools:minidump-analyzer'
 }
