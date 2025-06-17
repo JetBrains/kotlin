@@ -411,6 +411,8 @@ class KotlinKarma internal constructor(
         if (debug) {
             config.singleRun = false
             config.autoWatch = true
+
+            config.browsers.clear()
         }
 
         if (platformType != KotlinPlatformType.wasm) {
@@ -432,7 +434,7 @@ class KotlinKarma internal constructor(
             }
         }
 
-        if (config.browsers.isEmpty()) {
+        if (config.browsers.isEmpty() && !debug) {
             error("No browsers configured for $task")
         }
 
