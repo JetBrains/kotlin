@@ -149,10 +149,10 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
     hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
-    // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
-    // This should be removed after bootstrapping and recompiling stdlib in FULL mode
+    // TODO KT-71195 : FunctionN seems to be a synthetic class, even recompiling stdlib in FULL mode
+    //  does not make it checked. Need to investigate another approach.
     if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
-    callableId.ifMappedTypeCollection { return it }
+    callableId.ifTypealiasedJvmCollection { return it }
 
 
     // TBD: Do we want to report them unconditionally? Or only in FULL mode?
@@ -162,27 +162,16 @@ private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     return resolvedStatus.hasMustUseReturnValue
 }
 
-// TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,
-// this list should contain only typealiased Java types (HashSet, StringBuilder, etc.)
-private inline fun CallableId.ifMappedTypeCollection(nonIgnorableCollectionMethod: (Boolean) -> Unit) {
+private inline fun CallableId.ifTypealiasedJvmCollection(nonIgnorableCollectionMethod: (Boolean) -> Unit) {
     val packageName = packageName.asString()
     if (packageName != "kotlin.collections" && packageName != "java.util") return
     val className = className?.asString() ?: return
-    if (className !in setOf(
-            "Collection",
-            "MutableCollection",
-            "List",
-            "MutableList",
+    if (className !in setOf( // libraries/stdlib/jvm/src/kotlin/collections/TypeAliases.kt
             "ArrayList",
-            "Set",
-            "MutableSet",
             "HashSet",
             "LinkedHashSet",
-            "Map",
-            "MutableMap",
             "HashMap",
             "LinkedHashMap",
-            "ArrayDeque"
         )
     ) return
     nonIgnorableCollectionMethod(

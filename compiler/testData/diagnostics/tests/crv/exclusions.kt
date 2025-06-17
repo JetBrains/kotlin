@@ -17,6 +17,16 @@ fun nullable(m: MutableList<String>?) {
     m?.isEmpty()
 }
 
+fun lhs(s: LinkedHashSet<String>) {
+    s.add("x")
+    s.isEmpty()
+}
+
+fun javaType(m: java.util.ArrayList<String>) {
+    m.add("x")
+    m.isEmpty()
+}
+
 fun exlusionPropagation(cond: Boolean, m: MutableList<String>) {
     if (cond) m.add("x") else throw IllegalStateException()
     if (cond) stringF() else throw IllegalStateException()
