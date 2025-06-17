@@ -18,8 +18,6 @@ class OptionsDelegate {
     operator fun <V> get(key: BaseOption<V>): V {
         return if (key !in optionsMap) {
             error("$key not present in options")
-        } else {
-            optionsMap[key] as V
-        }
+        } else optionsMap[key] as V
     }
 }

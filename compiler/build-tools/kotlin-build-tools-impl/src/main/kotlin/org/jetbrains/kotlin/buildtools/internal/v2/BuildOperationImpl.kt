@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Companion.METRICS_C
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Companion.PROJECT_ID
 import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation.Option
 import org.jetbrains.kotlin.buildtools.api.v2.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.internal.v2.OptionsDelegate
 
 abstract class BuildOperationImpl<R> : BuildOperation<R> {
     protected val optionsDelegate = OptionsDelegate()

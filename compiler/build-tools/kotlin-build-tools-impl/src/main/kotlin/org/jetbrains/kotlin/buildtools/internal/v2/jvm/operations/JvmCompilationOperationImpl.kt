@@ -106,8 +106,8 @@ class JvmCompilationOperationImpl(
         }
     }
 
-    private fun JvmCompilerArgumentsImpl.toDaemonCompilationOptions(logger: KotlinLogger): CompilationOptions {
-        val ktsExtensionsAsArray = get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS)
+    private fun toDaemonCompilationOptions(logger: KotlinLogger): CompilationOptions {
+        val ktsExtensionsAsArray = get(KOTLINSCRIPT_EXTENSIONS)
         val reportCategories = arrayOf(
             ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
         ) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
@@ -183,7 +183,7 @@ class JvmCompilationOperationImpl(
         val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
             compilerId, clientIsAliveFile, sessionIsAliveFlagFile, loggerAdapter, false, daemonJVMOptions = jvmOptions
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
-        val daemonCompileOptions = compilerArguments.toDaemonCompilationOptions(loggerAdapter.kotlinLogger)
+        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger)
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
         if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
             checkJvmFirRequirements(compilerArguments)
@@ -198,7 +198,7 @@ class JvmCompilationOperationImpl(
             kotlinSources
         } else {
             val kotlinFilenameExtensions =
-                DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
+                DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
             kotlinSources.filter { it.toFile().isKotlinFile(kotlinFilenameExtensions) }
         }
         val arguments = compilerArguments.toCompilerArguments()
