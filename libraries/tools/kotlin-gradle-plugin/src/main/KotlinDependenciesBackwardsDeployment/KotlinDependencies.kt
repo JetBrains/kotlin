@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDepen
 
 private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level dependencies is not available in your Gradle version. " +
         "Minimum supported version is Gradle $MinSupportedGradleVersionWithDependencyCollectorsString.\n" +
-        "Please upgrade your Gradle version or keep using source-set level dependencies block: https://kotl.in/kmp-top-level-dependencies"
+        "Please upgrade your Gradle version or keep using source set dependencies block: https://kotl.in/kmp-top-level-dependencies"
 
 /**
  * You will see this type if you are compiling against Kotlin Gradle Plugin
