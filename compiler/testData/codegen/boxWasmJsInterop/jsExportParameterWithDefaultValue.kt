@@ -1,5 +1,4 @@
 // TARGET_BACKEND: WASM
-// IGNORE_BACKEND: WASM
 // ISSUE: KT-69570
 // MODULE: main
 // FILE: externals.kt
