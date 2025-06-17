@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+import org.jetbrains.kotlin.fir.resolve.castToClassType
+import org.jetbrains.kotlin.fir.resolve.castToSimpleType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
@@ -1092,5 +1094,5 @@ inline fun outerType(
 
     return containingSymbol.constructType(
         fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
-    )
+    ).castToClassType()
 }

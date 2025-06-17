@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.CEClassifierType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
+import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.ClassId
 
@@ -84,7 +87,13 @@ fun ConeClassLikeType.toSymbol(session: FirSession): FirClassLikeSymbol<*>? {
 }
 
 fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
-    return (this.lowerBoundIfFlexible() as? ConeLookupTagBasedType)?.lookupTag?.toSymbol(session)
+    return when (val lb = this.lowerBoundIfFlexible()) {
+        is ConeLookupTagBasedType -> lb.lookupTag.toSymbol(session)
+        is ConeErrorUnionType if lb.valueType.isNothing && lb.errorType is CEClassifierType -> {
+            (lb.errorType as CEClassifierType).lookupTag.toSymbol(session)
+        }
+        else -> null
+    }
 }
 
 fun ConeKotlinType.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {

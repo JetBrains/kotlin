@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -65,7 +66,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
                     coneType = classSymbol.defaultType()
                 }
 
-                dispatchReceiverType = classSymbol.defaultType()
+                dispatchReceiverType = classSymbol.defaultTypeExpectValue()
                 name = withName
                 symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, withName))
                 val visibility = withInfo.visibility.toVisibility()

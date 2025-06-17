@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -69,7 +70,7 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 containingClassSymbol = classSymbol
                 moduleData = field.moduleData
                 returnTypeRef = field.returnTypeRef
-                dispatchReceiverType = classSymbol.defaultType()
+                dispatchReceiverType = classSymbol.defaultTypeExpectValue()
                 name = getterName
                 symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, getterName))
                 val visibility = getterInfo.visibility.toVisibility()

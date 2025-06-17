@@ -171,7 +171,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val containingClass = this.containingClass ?: errorWithAttachment("Constructor outside of class") {
                 withPsiEntry("constructor", constructor, baseSession.llFirModuleData.ktModule)
             }
-            val selfType = classOrObject.toDelegatedSelfType(typeParameters, containingClass.symbol)
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, containingClass.symbol, containingClass.status)
             val allSuperTypeCallEntries = classOrObject.superTypeListEntries.filterIsInstance<KtSuperTypeCallEntry>()
             val superTypeCallEntry = allSuperTypeCallEntries.lastOrNull()
             return ConstructorConversionParams(superTypeCallEntry, selfType, typeParameters, allSuperTypeCallEntries)
@@ -244,7 +244,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 }
             val typeParameters = mutableListOf<FirTypeParameterRef>()
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-            val selfType = classOrObject.toDelegatedSelfType(typeParameters, owner.symbol)
+            val selfType = classOrObject.toDelegatedSelfType(typeParameters, owner.symbol, owner.status)
             return enumEntry.toFirEnumEntry(selfType, ownerClassHasDefaultConstructor)
         }
 
@@ -325,7 +325,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     private fun PsiElement.toDelegatedSelfType(firClass: FirRegularClass): FirResolvedTypeRef =
-        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+        toDelegatedSelfType(firClass.typeParameters, firClass.symbol, firClass.status)
 
     private data class ConstructorConversionParams(
         val superTypeCallEntry: KtSuperTypeCallEntry?,

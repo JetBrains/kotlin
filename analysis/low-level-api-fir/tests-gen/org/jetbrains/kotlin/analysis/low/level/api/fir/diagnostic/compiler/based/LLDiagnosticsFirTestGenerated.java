@@ -6075,6 +6075,22 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/rich-errors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Rich_errors {
+      @Test
+      public void testAllFilesPresentInRich_errors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/rich-errors"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("subtyping.kt")
+      public void testSubtyping() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/subtyping.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConstructors")
     @TestDataPath("$PROJECT_ROOT")
     public class SamConstructors {

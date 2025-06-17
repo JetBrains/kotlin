@@ -850,7 +850,7 @@ open class PsiRawFirBuilder(
                     } else null
                     annotations += parameterAnnotations.filterConstructorPropertyRelevantAnnotations(isMutable)
 
-                    dispatchReceiverType = currentDispatchReceiverType()
+                    dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
                 }.apply {
                     if (firParameter.isVararg) {
                         isFromVararg = true
@@ -1028,7 +1028,7 @@ open class PsiRawFirBuilder(
 
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
-                dispatchReceiverType = currentDispatchReceiverType()
+                dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
             }
         }
 
@@ -1240,13 +1240,13 @@ open class PsiRawFirBuilder(
                 }
 
                 return builder.build().apply {
-                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
                 }
             }
         }
 
         private fun KtClassOrObject.obtainDispatchReceiverForConstructor(): ConeClassLikeType? =
-            if (hasInnerModifier()) dispatchReceiverForInnerClassConstructor() else null
+            if (hasInnerModifier()) dispatchReceiverForInnerClassConstructor()?.expectNonErrorClassSoft else null
 
         override fun visitKtFile(file: KtFile, data: FirElement?): FirElement {
             context.packageFqName = when (mode) {
@@ -1646,7 +1646,7 @@ open class PsiRawFirBuilder(
 
                                         for (danglingModifier in ktEnumEntry.body?.danglingModifierLists.orEmpty()) {
                                             declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                                containingClassAttr = currentDispatchReceiverType()?.lookupTagOfDispatchReceiver
                                             }
                                         }
                                     }
@@ -1655,7 +1655,7 @@ open class PsiRawFirBuilder(
                         }
                     }
                 }.apply {
-                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
                 }
             }
         }
@@ -1760,7 +1760,7 @@ open class PsiRawFirBuilder(
                             classOrObject.extractAnnotationsTo(this)
                             context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
 
-                            val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
+                            val delegatedSelfType = classOrObject.toDelegatedSelfType(this, status)
                             registerSelfType(delegatedSelfType)
 
                             val (delegatedSuperType, extractedDelegatedFieldsMap) = classOrObject.extractSuperTypeListEntriesTo(
@@ -1799,7 +1799,7 @@ open class PsiRawFirBuilder(
                             for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                                 addDeclaration(
                                     buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                        containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                        containingClassAttr = currentDispatchReceiverType()?.lookupTagOfDispatchReceiver
                                     }
                                 )
                             }
@@ -1875,7 +1875,7 @@ open class PsiRawFirBuilder(
                         symbol = FirAnonymousObjectSymbol(context.packageFqName)
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                        val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
+                        val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this, status)
                         registerSelfType(delegatedSelfType)
                         objectDeclaration.extractAnnotationsTo(this)
                         val (delegatedSuperType, extractedDelegatedFieldsMap) = objectDeclaration.extractSuperTypeListEntriesTo(
@@ -1900,7 +1900,7 @@ open class PsiRawFirBuilder(
 
                         for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
                             declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier).apply {
-                                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                                containingClassAttr = currentDispatchReceiverType()?.lookupTagOfDispatchReceiver
                             }
                         }
                     }.also {
@@ -2005,7 +2005,7 @@ open class PsiRawFirBuilder(
                         name = function.nameAsSafeName
                         labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                         symbol = functionSymbol as FirNamedFunctionSymbol
-                        dispatchReceiverType = runIf(!isLocalFunction) { currentDispatchReceiverType() }
+                        dispatchReceiverType = runIf(!isLocalFunction) { currentDispatchReceiverType()?.expectNonErrorClassSoft }
                         status = FirDeclarationStatusImpl(
                             if (isLocalFunction) Visibilities.Local else function.getVisibility(),
                             function.modality,
@@ -2242,7 +2242,7 @@ open class PsiRawFirBuilder(
                     this@PsiRawFirBuilder.context.firFunctionTargets.removeLast()
                 }
             }.also {
-                it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+                it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
                 bindFunctionTarget(target, it)
             }
         }
@@ -2375,7 +2375,7 @@ open class PsiRawFirBuilder(
                     } else {
                         isLocal = forceLocal
                         symbol = propertySymbol
-                        dispatchReceiverType = currentDispatchReceiverType()
+                        dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
                         extractTypeParametersTo(this, symbol)
                         withCapturedTypeParameters(true, propertySource, this.typeParameters) {
                             backingField = this@toFirProperty.fieldDeclaration.toFirBackingField(

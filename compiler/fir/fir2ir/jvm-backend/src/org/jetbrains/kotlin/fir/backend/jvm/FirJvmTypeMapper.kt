@@ -161,7 +161,7 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             val argumentsSubList = typeArguments.toList().subList(index, toIndex)
             return PossiblyInnerConeType(
                 classifier, argumentsSubList,
-                buildPossiblyInnerType(firClass.defaultType().parentClassOrNull(), toIndex)
+                buildPossiblyInnerType(firClass.defaultTypeExpectValue().parentClassOrNull(), toIndex)
             )
         }
 
@@ -258,7 +258,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
             is ConeClassLikeLookupTag -> {
                 val symbol = toClassSymbol(session)
                     ?: return ConeErrorType(ConeUnresolvedSymbolError(classId))
-                symbol.fir.defaultType()
+                symbol.fir.defaultTypeExpectValue()
             }
             else -> error("Unsupported type constructor: $this")
         }

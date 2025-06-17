@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCal
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -57,7 +58,7 @@ public class ConstructorBuildingContext(
             if (owner.isInner) {
                 val parentSymbol = owner.getContainingClassLookupTag()?.toClassSymbol(session)
                     ?: error("Symbol for parent of $owner not found")
-                dispatchReceiverType = parentSymbol.defaultType()
+                dispatchReceiverType = parentSymbol.defaultTypeExpectValue()
             }
             this@ConstructorBuildingContext.valueParameters.mapTo(valueParameters) { generateValueParameter(it, symbol, typeParameters) }
             if (owner is FirRegularClassSymbol) {

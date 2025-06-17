@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -279,7 +280,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
             }
 
             returnTypeRef = replacedJsPlainObjectType
-            dispatchReceiverType = parent.defaultType().withNullability(true, session.typeContext)
+            dispatchReceiverType = parent.defaultTypeExpectValue().withNullability(true, session.typeContext)
 
             annotateWith(JsStandardClassIds.Annotations.JsNoDispatchReceiver)
 

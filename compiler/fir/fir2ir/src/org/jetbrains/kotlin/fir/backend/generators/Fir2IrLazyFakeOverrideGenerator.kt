@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyField
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -258,7 +259,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 FirNamedFunctionSymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
                 firFunction,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
+                newDispatchReceiverType = containingClass.defaultTypeExpectValue(),
                 origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
                 isExpect = containingClass.isExpect || firFunction.isExpect
             )
@@ -284,7 +285,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 FirPropertySymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
                 firProperty,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
+                newDispatchReceiverType = containingClass.defaultTypeExpectValue(),
                 origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
                 isExpect = containingClass.isExpect || firProperty.isExpect
             )
@@ -309,7 +310,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
                 session,
                 firField,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
-                newDispatchReceiverType = containingClass.defaultType(),
+                newDispatchReceiverType = containingClass.defaultTypeExpectValue(),
                 origin = FirDeclarationOrigin.SubstitutionOverride.DeclarationSite,
             )
         }

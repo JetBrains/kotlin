@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -63,7 +64,7 @@ private fun ConeRigidType.valueClassRepresentationTypeMarkersList(session: FirSe
 
 fun FirNamedFunctionSymbol.isTypedEqualsInValueClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toRegularClassSymbol(session)?.run {
-        val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
+        val valueClassStarProjection = this@run.defaultTypeExpectValue().replaceArgumentsWithStarProjections()
         with(this@isTypedEqualsInValueClass) {
             contextParameterSymbols.isEmpty() && receiverParameterSymbol == null
                     && name == OperatorNameConventions.EQUALS

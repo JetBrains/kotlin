@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.isRealOwnerOf
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -70,7 +71,7 @@ class JvmMappedScope(
     private val overrideChecker = FirStandardOverrideChecker(session)
 
     private val substitutor = createMappingSubstitutor(firJavaClass, firKotlinClass, session)
-    private val kotlinDispatchReceiverType = firKotlinClass.defaultType()
+    private val kotlinDispatchReceiverType = firKotlinClass.defaultTypeExpectValue()
 
     private val declaredScopeOfMutableVersion = JavaToKotlinClassMap.readOnlyToMutable(firKotlinClass.classId)?.let {
         session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirClassSymbol
@@ -202,7 +203,7 @@ class JvmMappedScope(
                     ?: ConeErrorType(ConeSimpleDiagnostic("No type parameter found on '${firKotlinClass.classKind}'"))
             }
             this.name = name
-            dispatchReceiverType = firKotlinClass.defaultType()
+            dispatchReceiverType = firKotlinClass.defaultTypeExpectValue()
             symbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, name))
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {

@@ -112,6 +112,7 @@ open class ConeTypeRenderer(
 
             is ConeErrorUnionType -> {
                 render(type)
+                return
             }
 
             is ConeSimpleKotlinType -> {
@@ -265,7 +266,20 @@ open class ConeTypeRenderer(
 
     protected open fun render(type: ConeErrorUnionType) {
         this.render(type.valueType)
-        builder.append(" | ")
-        builder.append("`${type.errorType}`")
+        this.render(type.errorType)
+    }
+
+    protected open fun render(type: CEType) {
+        when (type) {
+            is CELookupTagBasedType -> {
+                builder.append(" | ")
+                renderConstructor(type.lookupTag)
+            }
+            is CETypeVariable -> {
+                builder.append(" | ")
+                renderConstructor(type.typeConstructor)
+            }
+            is CEUnionType -> type.types.forEach { render(it) }
+        }
     }
 }

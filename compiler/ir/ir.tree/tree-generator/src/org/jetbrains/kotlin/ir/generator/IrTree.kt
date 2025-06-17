@@ -296,6 +296,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isCompanion", boolean)
         +field("isInner", boolean)
         +field("isData", boolean)
+        +field("isError", boolean)
         +field("isValue", boolean)
         +field("isExpect", boolean)
         +field("isFun", boolean)

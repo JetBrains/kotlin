@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.javaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -523,7 +524,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     returnTypeRef: FirTypeRef,
     visibility: Visibility,
     modality: Modality,
-    dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
+    dispatchReceiverType: ConeSimpleKotlinType? = this.defaultTypeExpectValue(),
     isStatic: Boolean = false,
 ): FirJavaMethod {
     return buildJavaMethod {
@@ -578,7 +579,7 @@ fun FirClassSymbol<*>.createDefaultJavaConstructor(
         returnTypeRef = buildResolvedTypeRef {
             coneType = outerClassSymbol.defaultType()
         }
-        dispatchReceiverType = if (isInner) outerClassSymbol.defaultType() else null
+        dispatchReceiverType = if (isInner) outerClassSymbol.defaultTypeExpectValue() else null
         typeParameters += outerClassSymbol.typeParameterSymbols.map { buildConstructedClassTypeParameterRef { symbol = it } }
     }
 }

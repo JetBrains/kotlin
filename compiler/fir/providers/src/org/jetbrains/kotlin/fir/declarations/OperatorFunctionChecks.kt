@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
@@ -114,7 +115,7 @@ object OperatorFunctionChecks {
                         append("must override 'equals()' in Any")
                         if (customEqualsSupported && containingClassSymbol.isInlineOrValue) {
                             val expectedParameterTypeRendered =
-                                containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
+                                containingClassSymbol.defaultTypeExpectValue().replaceArgumentsWithStarProjections().renderReadable()
                             append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
                         }
                     }

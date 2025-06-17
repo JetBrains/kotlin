@@ -228,7 +228,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 symbol = FirConstructorSymbol(classId)
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
-                dispatchReceiverType = firReplStateSymbol.constructType()
+                dispatchReceiverType = firReplStateSymbol.constructType().castToSimpleType()
             }
             buildRegularClass {
                 moduleData = session.moduleData

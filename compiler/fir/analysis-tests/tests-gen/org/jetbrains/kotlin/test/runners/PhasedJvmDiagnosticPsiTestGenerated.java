@@ -56608,6 +56608,17 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/rich-errors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Rich_errors {
+      @Test
+      @TestMetadata("subtyping.kt")
+      public void testSubtyping() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/subtyping.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/samConstructors")
     @TestDataPath("$PROJECT_ROOT")
     public class SamConstructors {

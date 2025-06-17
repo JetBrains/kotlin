@@ -14,12 +14,22 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
     AbstractTypeApproximator(inferenceContext, languageVersionSettings) {
     fun approximateToSuperType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         if (type.fastPathSkipApproximation(conf)) return null
-        return super.approximateToSuperType(type, conf) as ConeKotlinType?
+        return if (type is ConeErrorUnionType) {
+            // TODO: RE: MID: approximation for error type?
+            (super.approximateToSuperType(type.valueType, conf) as ConeValueType?)?.let { type.copy(valueType = it) }
+        } else {
+            super.approximateToSuperType(type, conf) as ConeKotlinType?
+        }
     }
 
     fun approximateToSubType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         if (type.fastPathSkipApproximation(conf)) return null
-        return super.approximateToSubType(type, conf) as ConeKotlinType?
+        return if (type is ConeErrorUnionType) {
+            // TODO: RE: MID: approximation for error type?
+            (super.approximateToSubType(type.valueType, conf) as ConeValueType?)?.let { type.copy(valueType = it) }
+        } else {
+            super.approximateToSubType(type, conf) as ConeKotlinType?
+        }
     }
 
     private fun ConeKotlinType.fastPathSkipApproximation(conf: TypeApproximatorConfiguration): Boolean {

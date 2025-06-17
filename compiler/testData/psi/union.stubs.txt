@@ -1,0 +1,45 @@
+A.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=/A, fqName=A, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=A, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+
+
+B.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=/B, fqName=B, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=B, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+
+
+C.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    OBJECT_DECLARATION[classId=/C, fqName=C, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=C, superNames=[]]
+      MODIFIER_LIST[public]
+      CLASS_BODY
+
+
+UnionKt.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    PROPERTY[fqName=tmp1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=tmp1]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Nothing]
+    PROPERTY[fqName=tmp2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=tmp2]
+      MODIFIER_LIST[public]
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=Nothing]

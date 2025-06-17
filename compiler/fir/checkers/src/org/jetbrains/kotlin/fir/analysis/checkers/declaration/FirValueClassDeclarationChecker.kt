@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -277,7 +278,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 reporter.reportOn(
                     equalsFromAnyOverriding.source,
                     FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
-                    declaration.defaultType().replaceArgumentsWithStarProjections()
+                    declaration.defaultTypeExpectValue().replaceArgumentsWithStarProjections()
                 )
             }
         }

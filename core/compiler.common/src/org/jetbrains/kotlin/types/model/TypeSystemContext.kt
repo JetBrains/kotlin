@@ -17,13 +17,17 @@ interface KotlinTypeMarker
 interface TypeArgumentMarker
 interface TypeConstructorMarker
 interface TypeParameterMarker
+interface ErrorTypeMarker
 
 interface RigidTypeMarker : KotlinTypeMarker
 interface FlexibleTypeMarker : KotlinTypeMarker
 interface DynamicTypeMarker : FlexibleTypeMarker
 
-interface DefinitelyNotNullTypeMarker : RigidTypeMarker
-interface SimpleTypeMarker : RigidTypeMarker
+interface ValueTypeMarker : RigidTypeMarker
+interface ErrorUnionTypeMarker : RigidTypeMarker
+
+interface DefinitelyNotNullTypeMarker : ValueTypeMarker
+interface SimpleTypeMarker : ValueTypeMarker
 
 interface CapturedTypeMarker : SimpleTypeMarker
 interface StubTypeMarker : SimpleTypeMarker
@@ -398,6 +402,14 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isError(): Boolean
     fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
+
+    fun RigidTypeMarker.isErrorUnion(): Boolean
+    fun RigidTypeMarker.isValueType(): Boolean
+
+    fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker
+    fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker
+
+    fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
     fun DynamicTypeMarker.asDynamicType(): DynamicTypeMarker = this

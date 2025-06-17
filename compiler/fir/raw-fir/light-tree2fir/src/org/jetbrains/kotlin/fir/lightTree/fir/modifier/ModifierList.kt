@@ -77,6 +77,8 @@ open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasSuspend(): Boolean = hasFlag(ModifierFlag.FUNCTION_SUSPEND)
 
+    fun hasError(): Boolean = hasFlag(ModifierFlag.CLASS_ERROR)
+
     fun isConst(): Boolean = hasFlag(ModifierFlag.PROPERTY_CONST)
 
     fun hasModality(modality: Modality): Boolean {

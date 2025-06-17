@@ -89,6 +89,7 @@ open class DeepCopyIrTreeWithSymbols(
             isCompanion = declaration.isCompanion
             isInner = declaration.isInner
             isData = declaration.isData
+            isError = declaration.isError
             isValue = declaration.isValue
             isExpect = declaration.isExpect
             isFun = declaration.isFun

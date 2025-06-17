@@ -192,7 +192,7 @@ fun FirExpression.generateContainsOperation(
     argument: FirExpression,
     inverted: Boolean,
     baseSource: KtSourceElement?,
-    operationReferenceSource: KtSourceElement?
+    operationReferenceSource: KtSourceElement?,
 ): FirFunctionCall {
     val resultReferenceSource = if (inverted)
         operationReferenceSource?.fakeElement(KtFakeSourceElementKind.DesugaredInvertedContains)
@@ -248,7 +248,7 @@ private fun FirExpression.createConventionCall(
     operationReferenceSource: KtSourceElement?,
     baseSource: KtSourceElement?,
     argument: FirExpression,
-    conventionName: Name
+    conventionName: Name,
 ): FirFunctionCall {
     return buildFunctionCall {
         source = baseSource
@@ -314,7 +314,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     lazyDelegateExpression: FirLazyExpression? = null,
     lazyBodyForGeneratedAccessors: FirLazyBlock? = null,
     bindFunction: (target: FirFunctionTarget, function: FirFunction) -> Unit = FirFunctionTarget::bind,
-    explicitDeclarationSource: KtSourceElement? = null
+    explicitDeclarationSource: KtSourceElement? = null,
 ) {
     if (delegateBuilder == null) return
     val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
@@ -696,12 +696,30 @@ fun KtSourceElement.asReceiverParameter(
 }
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {
-    containingClassForStaticMemberAttr = currentDispatchReceiverType(context)?.lookupTag ?: return
+    containingClassForStaticMemberAttr = currentDispatchReceiverType(context)?.lookupTagOfDispatchReceiver ?: return
 }
 
-fun <T> currentDispatchReceiverType(context: Context<T>): ConeClassLikeType? {
+fun <T> currentDispatchReceiverType(context: Context<T>): ConeRigidType? {
     return context.dispatchReceiverTypesStack.lastOrNull()
 }
+
+val ConeRigidType.lookupTagOfDispatchReceiver: ConeClassLikeLookupTag
+    get() = when (this) {
+        is ConeClassLikeType -> lookupTag
+        is ConeErrorUnionType -> {
+            check(valueType.isNothing)
+            check(errorType is CEClassifierType)
+            (errorType as CEClassifierType).lookupTag
+        }
+        else -> error("Unexpected receiver type: $this")
+    }
+
+// these function is intended to easily find added cast places (as they should be removed/adjusted later)
+val ConeRigidType.expectNonErrorClassSoft: ConeClassLikeType
+    get() = when (this) {
+        is ConeClassLikeType -> this
+        else -> error("Unexpected receiver type: $this")
+    }
 
 val CharSequence.isUnderscore: Boolean
     get() = all { it == '_' }
@@ -763,7 +781,7 @@ fun shouldGenerateDelegatedSuperCall(
     isAnySuperCall: Boolean,
     isExpectClass: Boolean,
     isEnumEntry: Boolean,
-    hasExplicitDelegatedCalls: Boolean
+    hasExplicitDelegatedCalls: Boolean,
 ): Boolean {
     if (isAnySuperCall) {
         return false

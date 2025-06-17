@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
@@ -66,7 +67,7 @@ class FirClassAnySynthesizedMemberScope(
 
     private val baseModuleData = klass.moduleData
 
-    private val dispatchReceiverType = klass.defaultType()
+    private val dispatchReceiverType = klass.defaultTypeExpectValue()
 
     private val synthesizedCache = session.synthesizedStorage.synthesizedCacheByScope.getValue(lookupTag, null)
 

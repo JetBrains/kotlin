@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -111,7 +112,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             }
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = implicitType
-            dispatchReceiverType = irFunction.parent.toFirClass()?.defaultType()
+            dispatchReceiverType = irFunction.parent.toFirClass()?.defaultTypeExpectValue()
             // contextReceivers
             // valueParameters
             name = irFunction.name

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.resolve.castToSimpleType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -34,7 +35,7 @@ class FirTypeIntersectionScopeContext(
     val session: FirSession,
     private val overrideChecker: FirOverrideChecker,
     val scopes: List<FirTypeScope>,
-    private val dispatchReceiverType: ConeSimpleKotlinType,
+    private val dispatchReceiverType: ConeRigidType,
     private val forClassUseSiteScope: Boolean,
 ) {
     private val overrideService = session.overrideService
@@ -358,7 +359,7 @@ class FirTypeIntersectionScopeContext(
             isExpect = isReceiverClassExpect || keyFir.isExpect,
             newModality = newModality,
             newVisibility = newVisibility,
-            newDispatchReceiverType = dispatchReceiverType,
+            newDispatchReceiverType = dispatchReceiverType.castToSimpleType(),
             deferredReturnTypeCalculation = deferredReturnTypeCalculation,
             newReturnType = if (!forClassUseSiteScope && deferredReturnTypeCalculation == null) intersectReturnTypes(mostSpecific) else null,
             newSource = dispatchReceiverType.toSymbol(session)?.source,
@@ -397,7 +398,7 @@ class FirTypeIntersectionScopeContext(
                 isExpect = isReceiverClassExpect || fir.isExpect,
                 newModality = newModality,
                 newVisibility = newVisibility,
-                newDispatchReceiverType = dispatchReceiverType,
+                newDispatchReceiverType = dispatchReceiverType.castToSimpleType(),
                 deferredReturnTypeCalculation = deferredReturnTypeCalculation,
                 // If any of the properties are vars and the types are not equal, these declarations are conflicting
                 // anyway and their uses should result in an overload resolution error.
@@ -427,7 +428,7 @@ class FirTypeIntersectionScopeContext(
                 isExpect = isReceiverClassExpect || fir.isExpect,
                 newModality = newModality,
                 newVisibility = newVisibility,
-                newDispatchReceiverType = dispatchReceiverType,
+                newDispatchReceiverType = dispatchReceiverType.castToSimpleType(),
                 deferredReturnTypeCalculation = deferredReturnTypeCalculation,
                 // If any of the properties are vars and the types are not equal, these declarations are conflicting
                 // anyway and their uses should result in an overload resolution error.

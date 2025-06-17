@@ -52,12 +52,12 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
  */
 sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
 
-sealed class ConeValueType : ConeRigidType()
+sealed class ConeValueType : ConeRigidType(), ValueTypeMarker
 
 data class ConeErrorUnionType(
     val valueType: ConeValueType,
     val errorType: CEType
-) : ConeRigidType() {
+) : ConeRigidType(), ErrorUnionTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
     override val attributes: ConeAttributes
@@ -78,7 +78,7 @@ data class ConeErrorUnionType(
 // Error types starts with CE prefix to prevent clashes and verbosity
 // Not a namespace because one if them is in another module [CETypeParameterType]
 
-sealed class CEType
+sealed class CEType : ErrorTypeMarker
 
 abstract class CELookupTagBasedType : CEType() {
     abstract val lookupTag: ConeClassifierLookupTag

@@ -60,6 +60,7 @@ open class IrFactory(
         isCompanion: Boolean = false,
         isInner: Boolean = false,
         isData: Boolean = false,
+        isError: Boolean = false,
         isValue: Boolean = false,
         isExpect: Boolean = false,
         isFun: Boolean = false,
@@ -81,6 +82,7 @@ open class IrFactory(
             this.isCompanion = isCompanion
             this.isInner = isInner
             this.isData = isData
+            this.isError = isError
             this.isExternal = isExternal
             this.isValue = isValue
             this.isExpect = isExpect

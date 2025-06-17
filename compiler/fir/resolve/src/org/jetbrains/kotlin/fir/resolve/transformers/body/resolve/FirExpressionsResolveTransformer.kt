@@ -1560,7 +1560,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val reference = delegatedConstructorCall.calleeReference
         val constructorType: ConeClassLikeType? = when (reference) {
-            is FirThisReference -> containingClass.defaultType()
+            is FirThisReference -> containingClass.defaultTypeExpectValue()
             is FirSuperReference -> reference.superTypeRef
                 .coneTypeSafe<ConeClassLikeType>()
                 ?.takeIf { it !is ConeErrorType }

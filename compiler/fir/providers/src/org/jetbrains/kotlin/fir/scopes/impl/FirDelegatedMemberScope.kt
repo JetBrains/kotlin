@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -39,7 +40,7 @@ class FirDelegatedMemberScope(
     private val declaredMemberScope: FirContainingNamesAwareScope,
     private val delegateFields: List<FirField>,
 ) : FirContainingNamesAwareScope() {
-    private val dispatchReceiverType = containingClass.defaultType()
+    private val dispatchReceiverType = containingClass.defaultTypeExpectValue()
     private val overrideChecker = session.firOverrideChecker
     private val delegatedMembersFilter = session.delegatedMembersFilter
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGener
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
@@ -78,7 +79,7 @@ public class PropertyBuildingContext(
             val resolvedStatus = generateStatus()
             status = resolvedStatus
 
-            dispatchReceiverType = owner?.defaultType()
+            dispatchReceiverType = owner?.defaultTypeExpectValue()
 
             this@PropertyBuildingContext.typeParameters.mapTo(typeParameters) {
                 generateTypeParameter(it, symbol)

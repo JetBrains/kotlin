@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -86,7 +87,7 @@ class JavaClassUseSiteMemberScope(
     JavaOverrideChecker(session, klass, superTypeScopes, considerReturnTypeKinds = true),
     overrideCheckerForIntersection = null,
     superTypeScopes,
-    klass.defaultType(),
+    klass.defaultTypeExpectValue(),
     declaredMemberScope
 ) {
     private val typeParameterStack get() = klass.javaTypeParameterStack
@@ -120,7 +121,7 @@ class JavaClassUseSiteMemberScope(
             }
 
             deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
-            dispatchReceiverType = klass.defaultType()
+            dispatchReceiverType = klass.defaultTypeExpectValue()
         }.symbol
     }
 
@@ -646,7 +647,7 @@ class JavaClassUseSiteMemberScope(
             val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(original) {
                 this.name = name
                 symbol = newSymbol
-                dispatchReceiverType = klass.defaultType()
+                dispatchReceiverType = klass.defaultTypeExpectValue()
             }.apply {
                 initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
                 isHiddenToOvercomeSignatureClash = true
@@ -693,7 +694,7 @@ class JavaClassUseSiteMemberScope(
             val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(relevantFunctionFromSupertypes.fir) {
                 this.name = name
                 symbol = newSymbol
-                dispatchReceiverType = klass.defaultType()
+                dispatchReceiverType = klass.defaultTypeExpectValue()
             }.apply {
                 isHiddenToOvercomeSignatureClash = true
             }
@@ -801,7 +802,7 @@ class JavaClassUseSiteMemberScope(
                 buildJavaMethodCopy(original) {
                     name = naturalName
                     symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
+                    dispatchReceiverType = klass.defaultTypeExpectValue()
 
                     status = if (OperatorConventions.isConventionName(naturalName)) {
                         original.status.copy(isOperator = true)
@@ -813,7 +814,7 @@ class JavaClassUseSiteMemberScope(
                 buildSimpleFunctionCopy(original) {
                     name = naturalName
                     symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
+                    dispatchReceiverType = klass.defaultTypeExpectValue()
                     origin?.let { this.origin = it }
                 }
             }.apply {

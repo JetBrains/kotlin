@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGener
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
@@ -65,7 +66,7 @@ public class SimpleFunctionBuildingContext(
 
             status = generateStatus()
 
-            dispatchReceiverType = owner?.defaultType()
+            dispatchReceiverType = owner?.defaultTypeExpectValue()
 
             this@SimpleFunctionBuildingContext.typeParameters.mapTo(typeParameters) {
                 generateTypeParameter(it, symbol)

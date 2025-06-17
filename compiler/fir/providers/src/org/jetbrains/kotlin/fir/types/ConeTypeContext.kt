@@ -619,4 +619,40 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is ConeTypeVariableType
     }
+
+    override fun RigidTypeMarker.isErrorUnion(): Boolean {
+        return this is ConeErrorUnionType
+    }
+
+    override fun RigidTypeMarker.isValueType(): Boolean {
+        return this is ConeValueType
+    }
+
+    override fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker {
+        return (this as ConeErrorUnionType).valueType
+    }
+
+    override fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker {
+        return (this as ConeErrorUnionType).errorType
+    }
+
+    override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
+        // TODO: RE: MID: for better and faster subtyping we should initially store them in some kind of sets
+        val subT = this as CEType
+        val superT = other as CEType
+
+        fun <T : MutableCollection<CEType>> collectAtomics(type: CEType, col: T): T {
+            when (type) {
+                is CELookupTagBasedType -> col.add(type)
+                is CETypeVariable -> col.add(type)
+                is CEUnionType -> type.types.forEach { collectAtomics(it, col) }
+            }
+            return col
+        }
+
+        val subList = collectAtomics(subT, mutableListOf())
+        val superSet = collectAtomics(superT, mutableSetOf())
+
+        return subList.all { it in superSet }
+    }
 }

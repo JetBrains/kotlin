@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -85,7 +86,7 @@ class SetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     session.builtinTypes.unitType
                 }
 
-                dispatchReceiverType = classSymbol.defaultType()
+                dispatchReceiverType = classSymbol.defaultTypeExpectValue()
                 name = setterName
                 symbol = FirNamedFunctionSymbol(CallableId(classSymbol.classId, setterName))
                 val visibility = setterInfo.visibility.toVisibility()

@@ -234,6 +234,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
+        val lookupTag = symbol.toLookupTag()
+        if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
+            @OptIn(LookupTagInternals::class)
+            lookupTag.bindSymbolToLookupTag(session, symbol)
+        }
+
         return symbol.constructType(
             resultingArguments,
             typeRef.isMarkedNullable,
@@ -242,13 +248,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 shouldExpandTypeAliases = true,
                 allowExtensionFunctionType = (symbol.toLookupTag() as? ConeClassLikeLookupTag)?.isSomeFunctionType(session) == true,
             )
-        ).also {
-            val lookupTag = it.lookupTag
-            if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
-                @OptIn(LookupTagInternals::class)
-                lookupTag.bindSymbolToLookupTag(session, symbol)
-            }
-        }
+        )
     }
 
     private fun isPossibleBareType(areBareTypesAllowed: Boolean, allTypeArguments: List<ConeTypeProjection>): Boolean =
@@ -409,6 +409,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
+                val resolvedTypeFir = resolvedTypeSymbol?.fir
+                if (resolvedTypeFir is FirMemberDeclaration && resolvedTypeFir.status.isError) {
+                    check(resolvedExpandedType is ConeErrorUnionType)
+                }
                 FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
@@ -426,6 +430,34 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 } else {
                     FirTypeResolutionResult(ConeErrorType(ConeForbiddenIntersection), diagnostic = null)
                 }
+            }
+            is FirUnionTypeRef -> {
+                val valueType: ConeValueType
+                val errorTypes = buildList {
+                    when (val leftType = typeRef.leftType.coneType) {
+                        is ConeValueType -> {
+                            valueType = leftType
+                        }
+                        is ConeErrorUnionType -> {
+                            check(leftType.valueType.isNothing)
+                            valueType = StandardTypes.Nothing
+                            add(leftType.errorType)
+                        }
+                        else -> error("unexpected")
+                    }
+                    typeRef.rightTypes.forEach {
+                        val type = it.coneType
+                        check(type is ConeErrorUnionType && type.valueType.isNothing)
+                        check(type.errorType !is CEUnionType)
+                        add(type.errorType)
+                    }
+                }
+                val type = when (errorTypes.size) {
+                    0 -> error("is this possible?")
+                    1 -> ConeErrorUnionType(valueType, errorTypes.single())
+                    else -> ConeErrorUnionType(valueType, CEUnionType(errorTypes))
+                }
+                FirTypeResolutionResult(type, diagnostic = null)
             }
             else -> error(typeRef.render())
         }.also {

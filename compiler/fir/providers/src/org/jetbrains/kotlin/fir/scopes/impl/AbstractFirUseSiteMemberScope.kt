@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +24,7 @@ abstract class AbstractFirUseSiteMemberScope(
     // null means "use overrideCheckerForBaseClass"
     overrideCheckerForIntersection: FirOverrideChecker?,
     protected val superTypeScopes: List<FirTypeScope>,
-    dispatchReceiverType: ConeSimpleKotlinType,
+    dispatchReceiverType: ConeRigidType,
     protected val declaredMemberScope: FirContainingNamesAwareScope
 ) : AbstractFirOverrideScope(session, overrideCheckerForBaseClass) {
     protected val supertypeScopeContext: FirTypeIntersectionScopeContext = FirTypeIntersectionScopeContext(

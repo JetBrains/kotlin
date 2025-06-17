@@ -43,6 +43,10 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
         return transformUnresolvedTypeRef(userTypeRef, data)
     }
 
+    override fun transformUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): FirTypeRef {
+        return transformUnresolvedTypeRef(unionTypeRef, data)
+    }
+
     override fun transformIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {
         return transformTypeRef(intersectionTypeRef, data)
     }

@@ -52,6 +52,26 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeParameterMarker.isReified(): Boolean
 
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
+
+    override fun RigidTypeMarker.isErrorUnion(): Boolean {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun RigidTypeMarker.isValueType(): Boolean {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
+        error("unexpected for non-cone type system")
+    }
 }
 
 interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {

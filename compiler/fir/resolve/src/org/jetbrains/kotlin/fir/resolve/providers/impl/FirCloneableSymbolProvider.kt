@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.resolve.castToSimpleType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -70,7 +71,7 @@ class FirCloneableSymbolProvider(
 
             name = StandardClassIds.Callables.clone.callableName
             symbol = FirNamedFunctionSymbol(StandardClassIds.Callables.clone)
-            dispatchReceiverType = this@buildRegularClass.symbol.constructType()
+            dispatchReceiverType = this@buildRegularClass.symbol.constructType(status = status).castToSimpleType()
         }
 
         this.scopeProvider = scopeProvider

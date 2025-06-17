@@ -1219,6 +1219,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("union.kt")
+  public void testUnion() {
+    runTest("compiler/testData/psi/union.kt");
+  }
+
+  @Test
   @TestMetadata("UnsignedLiteral.kt")
   public void testUnsignedLiteral() {
     runTest("compiler/testData/psi/UnsignedLiteral.kt");

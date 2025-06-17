@@ -1172,6 +1172,17 @@ class FirElementSerializer private constructor(
             is ConeCapturedType -> {
                 throw IllegalStateException("Captured types should not persist up to the serializer: ${type.renderForDebugging()}")
             }
+            is ConeErrorUnionType -> {
+                // TODO: RE: HIGH?: serialize
+                return typeOrTypealiasProto(
+                    type.valueType,
+                    toSuper,
+                    correspondingTypeRef,
+                    isDefinitelyNotNullType,
+                    isAbbreviation,
+                    abbreviationOnly
+                )
+            }
             else -> {
                 throw AssertionError("Should not be here: ${type::class.java}")
             }

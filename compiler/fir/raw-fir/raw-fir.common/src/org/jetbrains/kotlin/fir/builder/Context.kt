@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -56,7 +57,12 @@ class Context<T> {
     val capturedTypeParameters: MutableList<StatusFirTypeParameterSymbolList> = mutableListOf()
     val arraySetArgument: MutableMap<T, FirExpression> = mutableMapOf()
 
-    val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = mutableListOf()
+    // TODO: RE: HIGH: There should be some redesign to handle functions (and other content) inside error objects
+    // Currently not doing it as it looks dangerous to change ConeClassLikeType to ConeRigidType as a type of dispatch receiver
+    // Probably we should introduce new interface to commonize these two cases (while it is complex as second one is conditional)
+    // this place is a good starting point for this task
+    val dispatchReceiverTypesStack: MutableList<ConeRigidType /* ConeClassLikeType | ConeErrorUnionType(Nothing, CEClassifierType)*/> =
+        mutableListOf()
     var containerIsExpect: Boolean = false
 
     var containingScriptSymbol: FirScriptSymbol? = null

@@ -314,15 +314,72 @@ object AbstractTypeChecker {
             )
         }
 
-        checkSubtypeForSpecialCases(state, preparedSubType.lowerBoundIfFlexible(), preparedSuperType.upperBoundIfFlexible())?.let {
-            state.addSubtypeConstraint(preparedSubType, preparedSuperType, isFromNullabilityConstraint)
+        val preparedSubTypeLb = preparedSubType.lowerBoundIfFlexible()
+        val preparedSuperTypeUb = preparedSuperType.upperBoundIfFlexible()
+
+        return when {
+            preparedSubTypeLb is ValueTypeMarker && preparedSuperTypeUb is ValueTypeMarker -> {
+                completeIsSubTypeOfValues(
+                    state,
+                    preparedSubTypeLb,
+                    preparedSuperTypeUb,
+                    preparedSubType,
+                    preparedSuperType,
+                    isFromNullabilityConstraint
+                )
+            }
+            preparedSubTypeLb is ValueTypeMarker && preparedSuperTypeUb is ErrorUnionTypeMarker -> {
+                completeIsSubTypeOfValues(
+                    state,
+                    preparedSubTypeLb,
+                    preparedSuperTypeUb.valueType(),
+                    preparedSubType,
+                    preparedSuperType,
+                    isFromNullabilityConstraint
+                )
+            }
+            preparedSubTypeLb is ErrorUnionTypeMarker && preparedSuperTypeUb is ValueTypeMarker -> {
+                false
+            }
+            preparedSubTypeLb is ErrorUnionTypeMarker && preparedSuperTypeUb is ErrorUnionTypeMarker -> {
+                completeIsSubTypeOfValues(
+                    state,
+                    preparedSubTypeLb.valueType(),
+                    preparedSuperTypeUb.valueType(),
+                    preparedSubType,
+                    preparedSuperType,
+                    isFromNullabilityConstraint
+                ) && completeIsSubTypeOfErrors(state, preparedSubTypeLb.errorType(), preparedSuperTypeUb.errorType())
+            }
+            else -> error("boom")
+        }
+    }
+
+    private fun completeIsSubTypeOfValues(
+        state: TypeCheckerState,
+        subType: ValueTypeMarker,
+        superType: ValueTypeMarker,
+        subTypeFlexible: KotlinTypeMarker,
+        superTypeFlexible: KotlinTypeMarker,
+        isFromNullabilityConstraint: Boolean,
+    ): Boolean = with(state.typeSystemContext) {
+        checkSubtypeForSpecialCases(state, subType, superType)?.let {
+            state.addSubtypeConstraint(subType, superType, isFromNullabilityConstraint)
             return it
         }
 
-        // we should add constraints with flexible types, otherwise we never get flexible type as answer in constraint system
-        state.addSubtypeConstraint(preparedSubType, preparedSuperType, isFromNullabilityConstraint)?.let { return it }
+        state.addSubtypeConstraint(subTypeFlexible, superTypeFlexible, isFromNullabilityConstraint)?.let { return it }
 
-        return isSubtypeOfForSingleClassifierType(state, preparedSubType.lowerBoundIfFlexible(), preparedSuperType.upperBoundIfFlexible())
+        isSubtypeOfForSingleClassifierType(state, subType, superType)
+    }
+
+    private fun completeIsSubTypeOfErrors(
+        state: TypeCheckerState,
+        subType: ErrorTypeMarker,
+        superType: ErrorTypeMarker,
+    ): Boolean = with(state.typeSystemContext) {
+        // TODO: RE: call addSubtypeConstraint
+        subType.isSubtypeOf(superType)
     }
 
     private fun checkSubtypeForIntegerLiteralType(
@@ -391,8 +448,8 @@ object AbstractTypeChecker {
 
     private fun isSubtypeOfForSingleClassifierType(
         state: TypeCheckerState,
-        subType: RigidTypeMarker,
-        superType: RigidTypeMarker
+        subType: ValueTypeMarker,
+        superType: ValueTypeMarker
     ): Boolean = with(state.typeSystemContext) {
         if (RUN_SLOW_ASSERTIONS) {
             assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || state.isAllowedTypeVariable(subType)) {
@@ -563,8 +620,8 @@ object AbstractTypeChecker {
 
     private fun checkSubtypeForSpecialCases(
         state: TypeCheckerState,
-        subType: RigidTypeMarker,
-        superType: RigidTypeMarker
+        subType: ValueTypeMarker,
+        superType: ValueTypeMarker
     ): Boolean? = with(state.typeSystemContext) {
         if (subType.isError() || superType.isError()) {
             if (state.isErrorTypeEqualsToAnything) return true

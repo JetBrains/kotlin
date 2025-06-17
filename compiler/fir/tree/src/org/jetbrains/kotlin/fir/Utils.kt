@@ -84,6 +84,13 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement): R {
             leftType = typeRef.leftType
             rightType = typeRef.rightType
         }
+        is FirUnionTypeRef -> buildUnionTypeRef {
+            source = newSource
+            customRenderer = typeRef.customRenderer
+            isMarkedNullable = typeRef.isMarkedNullable
+            leftType = typeRef.leftType
+            rightTypes += typeRef.rightTypes
+        }
         else -> TODO("Not implemented for ${typeRef::class}")
     } as R
 }

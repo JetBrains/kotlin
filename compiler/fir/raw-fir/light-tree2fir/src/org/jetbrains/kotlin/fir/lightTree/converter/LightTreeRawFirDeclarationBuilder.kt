@@ -520,6 +520,7 @@ class LightTreeRawFirDeclarationBuilder(
                     isValue = calculatedModifiers.isValueClass()
                     isFun = calculatedModifiers.isFunctionalInterface()
                     isExternal = calculatedModifiers.hasExternal()
+                    isError = calculatedModifiers.hasError()
                 }
 
 
@@ -550,7 +551,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                         context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
 
-                        val selfType = classNode.toDelegatedSelfType(this)
+                        val selfType = classNode.toDelegatedSelfType(this, status)
                         registerSelfType(selfType)
 
                         val delegationSpecifiers = superTypeList?.let { convertDelegationSpecifiers(it) }
@@ -627,7 +628,7 @@ class LightTreeRawFirDeclarationBuilder(
                                         baseModuleData,
                                         callableIdForName(it.firValueParameter.name),
                                         classIsExpect,
-                                        currentDispatchReceiverType(),
+                                        currentDispatchReceiverType()?.expectNonErrorClassSoft,
                                         context
                                     )
                                 }
@@ -723,7 +724,7 @@ class LightTreeRawFirDeclarationBuilder(
                     symbol = FirAnonymousObjectSymbol(context.packageFqName)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
+                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this, status)
                     registerSelfType(delegatedSelfType)
 
                     var modifiers: ModifierList? = null
@@ -898,7 +899,7 @@ class LightTreeRawFirDeclarationBuilder(
                 }
             }
         }.also {
-            it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+            it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
         }
     }
 
@@ -961,7 +962,7 @@ class LightTreeRawFirDeclarationBuilder(
     ) {
         for (node in modifierLists) {
             firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node).apply {
-                containingClassAttr = currentDispatchReceiverType()?.lookupTag
+                containingClassAttr = currentDispatchReceiverType()?.lookupTagOfDispatchReceiver
             }
         }
     }
@@ -1118,7 +1119,7 @@ class LightTreeRawFirDeclarationBuilder(
 
             return PrimaryConstructor(
                 builder.build().apply {
-                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+                    containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
                 },
                 valueParameters,
             )
@@ -1249,14 +1250,14 @@ class LightTreeRawFirDeclarationBuilder(
                 this.contextParameters.addContextParameters(classWrapper.modifiers.contextLists, constructorSymbol)
                 this.contextParameters.addContextParameters(modifiers?.contextLists, constructorSymbol)
             }.also {
-                it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
+                it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTagOfDispatchReceiver
                 target.bind(it)
             }
         }
     }
 
     private fun ClassWrapper.obtainDispatchReceiverForConstructor(): ConeClassLikeType? =
-        if (isInner()) dispatchReceiverForInnerClassConstructor() else null
+        if (isInner()) dispatchReceiverForInnerClassConstructor()?.expectNonErrorClassSoft else null
 
     /**
      * see PsiRawFirBuilder.Visitor.convert(KtConstructorDelegationCall, FirTypeRef, Boolean)
@@ -1482,7 +1483,7 @@ class LightTreeRawFirDeclarationBuilder(
                 } else {
                     this.isLocal = false
 
-                    dispatchReceiverType = currentDispatchReceiverType()
+                    dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
                     withCapturedTypeParameters(true, propertySource, firTypeParameters) {
                         typeParameters += firTypeParameters
 
@@ -2017,7 +2018,7 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     symbol = functionSymbol as FirNamedFunctionSymbol
-                    dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType() }
+                    dispatchReceiverType = runIf(!isLocal) { currentDispatchReceiverType()?.expectNonErrorClassSoft }
                 }
             }
 
@@ -2229,7 +2230,7 @@ class LightTreeRawFirDeclarationBuilder(
 
                 isVar = false
                 status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
-                dispatchReceiverType = currentDispatchReceiverType()
+                dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
             }.symbol
         )
         return firTypeRef
@@ -2412,6 +2413,7 @@ class LightTreeRawFirDeclarationBuilder(
             source = typeRefSource
             isMarkedNullable = isNullable
             leftType = children[0]
+            customRenderer = false
             // flattening
             when (val rt = children[1]) {
                 is FirUnionTypeRef -> {

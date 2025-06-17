@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
@@ -149,20 +150,54 @@ private fun ConeClassLikeType.classScope(
     return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag, requiredMembersPhase)
 }
 
-fun FirClassLikeSymbol<*>.defaultType(): ConeClassLikeType = fir.defaultType()
+fun FirClassLikeSymbol<*>.defaultType(): ConeRigidType = fir.defaultType()
 
-fun FirClassLikeDeclaration.defaultType(): ConeClassLikeType =
-    ConeClassLikeTypeImpl(
-        symbol.toLookupTag(),
-        typeParameters.map {
-            ConeTypeParameterTypeImpl(
-                it.symbol.toLookupTag(),
-                isMarkedNullable = false
-            )
-        }.toTypedArray(),
-        isMarkedNullable = false
-    )
+fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
+    if (status.isError) {
+        ConeErrorUnionType(
+            StandardTypes.Nothing,
+            CEClassifierType(symbol.toLookupTag())
+        )
+    } else {
+        ConeClassLikeTypeImpl(
+            symbol.toLookupTag(),
+            typeParameters.map {
+                ConeTypeParameterTypeImpl(
+                    it.symbol.toLookupTag(),
+                    isMarkedNullable = false
+                )
+            }.toTypedArray(),
+            isMarkedNullable = false
+        )
+    }
 
+fun FirClassLikeSymbol<*>.defaultTypeExpectValue(): ConeClassLikeType = fir.defaultTypeExpectValue()
+
+fun FirClassLikeDeclaration.defaultTypeExpectValue(): ConeClassLikeType =
+    if (status.isError) {
+        error("Error type happened, time for refactoring")
+    } else {
+        ConeClassLikeTypeImpl(
+            symbol.toLookupTag(),
+            typeParameters.map {
+                ConeTypeParameterTypeImpl(
+                    it.symbol.toLookupTag(),
+                    isMarkedNullable = false
+                )
+            }.toTypedArray(),
+            isMarkedNullable = false
+        )
+    }
+
+// TODO: RE: This cast actually removes receiver if it is error type
+fun ConeRigidType.castToSimpleType(): ConeSimpleKotlinType? =
+    this as? ConeSimpleKotlinType
+
+// TODO: RE: This cast disables inner content for error classes
+fun ConeRigidType.castToClassType(): ConeClassLikeType =
+    this as ConeClassLikeType
+
+// TODO: RE: it's a dangerous place where we are not able ro resolve if the classId is of error or value class
 fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
     ConeClassLikeTypeImpl(
         this.toLookupTag(),

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.defaultTypeExpectValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -232,7 +233,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
 
         val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
         val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
-        val dispatchReceiver = firJavaClass.defaultType()
+        val dispatchReceiver = firJavaClass.defaultTypeExpectValue()
 
         for (javaField in javaClass.fields) {
             declarations += convertJavaFieldToFir(

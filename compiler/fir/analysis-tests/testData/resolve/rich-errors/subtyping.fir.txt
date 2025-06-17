@@ -1,0 +1,45 @@
+FILE: subtyping.kt
+    public final object E1 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object E2 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object E3 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val v1: R|kotlin/Nothing | E1| = Q|E1|
+        public get(): R|kotlin/Nothing | E1|
+    public final val v2: R|kotlin/Nothing | E1| = Q|E1|
+        public get(): R|kotlin/Nothing | E1|
+    public final val v3: R|kotlin/Int | E1| = Q|E1|
+        public get(): R|kotlin/Int | E1|
+    public final val v4: R|kotlin/Int | E1| = Int(10)
+        public get(): R|kotlin/Int | E1|
+    public final val v5: R|kotlin/Int | E1| = String(10)
+        public get(): R|kotlin/Int | E1|
+    public final val v6: R|kotlin/Int| = String(10)
+        public get(): R|kotlin/Int|
+    public final val v7: R|kotlin/Nothing | E1| = Q|E2|
+        public get(): R|kotlin/Nothing | E1|
+    public final val v8: R|kotlin/Nothing | E2| = Q|E1|
+        public get(): R|kotlin/Nothing | E2|
+    public final val v9: R|kotlin/Int | E1| = Q|E2|
+        public get(): R|kotlin/Int | E1|
+    public final val v10: R|kotlin/Any? | E1| = Q|E2|
+        public get(): R|kotlin/Any? | E1|
+    public final val v11: R|kotlin/Nothing | E1 | E2| = Q|E1|
+        public get(): R|kotlin/Nothing | E1 | E2|
+    public final val v12: R|kotlin/Nothing | E1 | E2| = Q|E2|
+        public get(): R|kotlin/Nothing | E1 | E2|
+    public final val v13: R|kotlin/Nothing | E1 | E2| = Q|E3|
+        public get(): R|kotlin/Nothing | E1 | E2|

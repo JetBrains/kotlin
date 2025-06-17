@@ -140,7 +140,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     }
 
     fun registerSelfType(selfType: FirResolvedTypeRef) {
-        context.dispatchReceiverTypesStack.add(selfType.coneType as ConeClassLikeType)
+        context.dispatchReceiverTypesStack.add(selfType.coneType as ConeRigidType)
     }
 
     protected inline fun <T> withCapturedTypeParameters(
@@ -248,12 +248,12 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
             else -> CallableId(context.packageFqName, context.className, name)
         }
 
-    fun currentDispatchReceiverType(): ConeClassLikeType? = currentDispatchReceiverType(context)
+    fun currentDispatchReceiverType(): ConeRigidType? = currentDispatchReceiverType(context)
 
     /**
      * @return second from the end dispatch receiver. For the inner class constructor, it would be the outer class.
      */
-    protected fun dispatchReceiverForInnerClassConstructor(): ConeClassLikeType? {
+    protected fun dispatchReceiverForInnerClassConstructor(): ConeRigidType? {
         val dispatchReceivers = context.dispatchReceiverTypesStack
         return dispatchReceivers.getOrNull(dispatchReceivers.lastIndex - 1)
     }
@@ -330,20 +330,30 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
-    fun T.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
-        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
+    fun T.toDelegatedSelfType(firClass: FirRegularClassBuilder, status: FirDeclarationStatus): FirResolvedTypeRef =
+        toDelegatedSelfType(firClass.typeParameters, firClass.symbol, status)
 
-    fun T.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
-        toDelegatedSelfType(firObject.typeParameters, firObject.symbol)
+    fun T.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder, status: FirDeclarationStatus): FirResolvedTypeRef =
+        toDelegatedSelfType(firObject.typeParameters, firObject.symbol, status)
 
-    protected fun T.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
-        return buildResolvedTypeRef {
-            source = this@toDelegatedSelfType.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
-            coneType = ConeClassLikeTypeImpl(
+    protected fun T.toDelegatedSelfType(
+        typeParameters: List<FirTypeParameterRef>,
+        symbol: FirClassLikeSymbol<*>,
+        status: FirDeclarationStatus,
+    ): FirResolvedTypeRef {
+        val type = if (status.isError) {
+            check(typeParameters.isEmpty())
+            ConeErrorUnionType(StandardTypes.Nothing, CEClassifierType(symbol.toLookupTag()))
+        } else {
+            ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
+        }
+        return buildResolvedTypeRef {
+            source = this@toDelegatedSelfType.toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
+            coneType = type
         }
     }
 
@@ -1127,7 +1137,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         isOperator = true
                     }
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
-                    dispatchReceiverType = currentDispatchReceiverType()
+                    dispatchReceiverType = currentDispatchReceiverType()?.expectNonErrorClassSoft
                     // Refer to FIR backend ClassMemberGenerator for body generation.
                 }.also {
                     firProperty.componentFunctionSymbol = it.symbol
@@ -1141,7 +1151,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                 classBuilder.createDataClassCopyFunction(
                     ClassId(packageFqName, classFqName, isLocal = false),
                     source,
-                    currentDispatchReceiverType(),
+                    currentDispatchReceiverType()?.expectNonErrorClassSoft,
                     zippedParameters,
                     isFromLibrary = false,
                     firPrimaryConstructor,
@@ -1157,7 +1167,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         if (isLocal) {
             val currentDispatchReceiverType = currentDispatchReceiverType()
             if (currentDispatchReceiverType != null) {
-                containingClassForLocalAttr = currentDispatchReceiverType.lookupTag
+                containingClassForLocalAttr = currentDispatchReceiverType.lookupTagOfDispatchReceiver
             }
         }
     }
