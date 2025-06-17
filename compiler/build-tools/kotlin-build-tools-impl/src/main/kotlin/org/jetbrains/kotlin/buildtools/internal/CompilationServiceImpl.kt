@@ -154,12 +154,14 @@ internal object CompilationServiceImpl : CompilationService {
         validateArguments(parsedArguments.errors)?.let {
             throw CompilerArgumentsParseException(it)
         }
-        val kotlinFilenameExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
+                val kotlinFilenameExtensions =
+                    (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
+
                 @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions) + sources
+                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions, true) + sources
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
@@ -203,7 +205,7 @@ internal object CompilationServiceImpl : CompilationService {
                 ).asCompilationResult
             }
             null -> { // no IC configuration -> non-incremental compilation
-                parsedArguments.freeArgs += sources.filter { it.isKotlinFile(kotlinFilenameExtensions) }.map { it.absolutePath }
+                parsedArguments.freeArgs += sources.map { it.absolutePath }
                 compiler.exec(loggerAdapter, Services.EMPTY, parsedArguments).asCompilationResult
             }
             else -> error(
@@ -283,24 +285,9 @@ internal object CompilationServiceImpl : CompilationService {
             checkJvmFirRequirements(arguments)
         }
 
-        /* TODO: fix together with KT-62759
-         * To avoid parsing sources from freeArgs and filtering them in the daemon,
-         * work around the issue by removing .java files in non-incremental mode.
-         * Preferably, this should be done in the daemon.
-         * In incremental mode, incremental compiler filters them out, but should be aware of them for tracking changes.
-         * Kotlin compiler itself knows about the .java sources via -Xjava-source-roots
-         */
-        val effectiveSources = if (isIncrementalCompilation) {
-            sources
-        } else {
-            val kotlinFilenameExtensions =
-                (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
-            sources.filter { it.isKotlinFile(kotlinFilenameExtensions) }
-        }
-
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toTypedArray() + effectiveSources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
+            arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
             DaemonCompilationResults(
