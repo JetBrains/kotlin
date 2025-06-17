@@ -5,12 +5,15 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 
 /**
  * @since 2.3.0
  */
 public interface CommonToolArguments {
+  public fun toArgumentStrings(): List<String>
+
   /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *

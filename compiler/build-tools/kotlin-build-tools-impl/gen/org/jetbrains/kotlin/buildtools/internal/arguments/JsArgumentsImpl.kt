@@ -10,7 +10,9 @@ import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -132,12 +134,58 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     return arguments
   }
 
-  /**
-   * Base class for [JsArguments] options.
-   *
-   * @see get
-   * @see set    
-   */
+  @Suppress("DEPRECATION")
+  @OptIn(ExperimentalCompilerArgument::class)
+  override fun toArgumentStrings(): List<String> {
+    val arguments = mutableListOf<String>()
+    arguments.addAll(super.toArgumentStrings())
+    if ("IR_OUTPUT_DIR" in optionsMap) { arguments.add("-ir-output-dir=" + get(IR_OUTPUT_DIR)) }
+    if ("IR_OUTPUT_NAME" in optionsMap) { arguments.add("-ir-output-name=" + get(IR_OUTPUT_NAME)) }
+    if ("LIBRARIES" in optionsMap) { arguments.add("-libraries=" + get(LIBRARIES)) }
+    if ("SOURCE_MAP" in optionsMap) { arguments.add("-source-map=" + get(SOURCE_MAP)) }
+    if ("SOURCE_MAP_PREFIX" in optionsMap) { arguments.add("-source-map-prefix=" + get(SOURCE_MAP_PREFIX)) }
+    if ("SOURCE_MAP_BASE_DIRS" in optionsMap) { arguments.add("-source-map-base-dirs=" + get(SOURCE_MAP_BASE_DIRS)) }
+    if ("SOURCE_MAP_EMBED_SOURCES" in optionsMap) { arguments.add("-source-map-embed-sources=" + get(SOURCE_MAP_EMBED_SOURCES)) }
+    if ("SOURCE_MAP_NAMES_POLICY" in optionsMap) { arguments.add("-source-map-names-policy=" + get(SOURCE_MAP_NAMES_POLICY)) }
+    if ("TARGET" in optionsMap) { arguments.add("-target=" + get(TARGET)) }
+    if ("X_IR_KEEP" in optionsMap) { arguments.add("-Xir-keep=" + get(X_IR_KEEP)) }
+    if ("MODULE_KIND" in optionsMap) { arguments.add("-module-kind=" + get(MODULE_KIND)) }
+    if ("MAIN" in optionsMap) { arguments.add("-main=" + get(MAIN)) }
+    if ("X_IR_PRODUCE_KLIB_DIR" in optionsMap) { arguments.add("-Xir-produce-klib-dir=" + get(X_IR_PRODUCE_KLIB_DIR)) }
+    if ("X_IR_PRODUCE_KLIB_FILE" in optionsMap) { arguments.add("-Xir-produce-klib-file=" + get(X_IR_PRODUCE_KLIB_FILE)) }
+    if ("X_IR_PRODUCE_JS" in optionsMap) { arguments.add("-Xir-produce-js=" + get(X_IR_PRODUCE_JS)) }
+    if ("X_IR_DCE" in optionsMap) { arguments.add("-Xir-dce=" + get(X_IR_DCE)) }
+    if ("X_IR_DCE_RUNTIME_DIAGNOSTIC" in optionsMap) { arguments.add("-Xir-dce-runtime-diagnostic=" + get(X_IR_DCE_RUNTIME_DIAGNOSTIC)) }
+    if ("X_IR_DCE_PRINT_REACHABILITY_INFO" in optionsMap) { arguments.add("-Xir-dce-print-reachability-info=" + get(X_IR_DCE_PRINT_REACHABILITY_INFO)) }
+    if ("X_IR_PROPERTY_LAZY_INITIALIZATION" in optionsMap) { arguments.add("-Xir-property-lazy-initialization=" + get(X_IR_PROPERTY_LAZY_INITIALIZATION)) }
+    if ("X_IR_MINIMIZED_MEMBER_NAMES" in optionsMap) { arguments.add("-Xir-minimized-member-names=" + get(X_IR_MINIMIZED_MEMBER_NAMES)) }
+    if ("X_IR_MODULE_NAME" in optionsMap) { arguments.add("-Xir-module-name=" + get(X_IR_MODULE_NAME)) }
+    if ("X_IR_SAFE_EXTERNAL_BOOLEAN" in optionsMap) { arguments.add("-Xir-safe-external-boolean=" + get(X_IR_SAFE_EXTERNAL_BOOLEAN)) }
+    if ("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC" in optionsMap) { arguments.add("-Xir-safe-external-boolean-diagnostic=" + get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)) }
+    if ("X_IR_PER_MODULE" in optionsMap) { arguments.add("-Xir-per-module=" + get(X_IR_PER_MODULE)) }
+    if ("X_IR_PER_MODULE_OUTPUT_NAME" in optionsMap) { arguments.add("-Xir-per-module-output-name=" + get(X_IR_PER_MODULE_OUTPUT_NAME)) }
+    if ("X_IR_PER_FILE" in optionsMap) { arguments.add("-Xir-per-file=" + get(X_IR_PER_FILE)) }
+    if ("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS" in optionsMap) { arguments.add("-Xir-generate-inline-anonymous-functions=" + get(X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS)) }
+    if ("X_INCLUDE" in optionsMap) { arguments.add("-Xinclude=" + get(X_INCLUDE)) }
+    if ("X_CACHE_DIRECTORY" in optionsMap) { arguments.add("-Xcache-directory=" + get(X_CACHE_DIRECTORY)) }
+    if ("X_IR_BUILD_CACHE" in optionsMap) { arguments.add("-Xir-build-cache=" + get(X_IR_BUILD_CACHE)) }
+    if ("X_GENERATE_DTS" in optionsMap) { arguments.add("-Xgenerate-dts=" + get(X_GENERATE_DTS)) }
+    if ("X_GENERATE_POLYFILLS" in optionsMap) { arguments.add("-Xgenerate-polyfills=" + get(X_GENERATE_POLYFILLS)) }
+    if ("X_STRICT_IMPLICIT_EXPORT_TYPES" in optionsMap) { arguments.add("-Xstrict-implicit-export-types=" + get(X_STRICT_IMPLICIT_EXPORT_TYPES)) }
+    if ("X_ES_CLASSES" in optionsMap) { arguments.add("-Xes-classes=" + get(X_ES_CLASSES)) }
+    if ("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION" in optionsMap) { arguments.add("-Xplatform-arguments-in-main-function=" + get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)) }
+    if ("X_ES_GENERATORS" in optionsMap) { arguments.add("-Xes-generators=" + get(X_ES_GENERATORS)) }
+    if ("X_ES_ARROW_FUNCTIONS" in optionsMap) { arguments.add("-Xes-arrow-functions=" + get(X_ES_ARROW_FUNCTIONS)) }
+    if ("X_ES_LONG_AS_BIGINT" in optionsMap) { arguments.add("-Xes-long-as-bigint=" + get(X_ES_LONG_AS_BIGINT)) }
+    if ("X_TYPED_ARRAYS" in optionsMap) { arguments.add("-Xtyped-arrays=" + get(X_TYPED_ARRAYS)) }
+    if ("X_FRIEND_MODULES_DISABLED" in optionsMap) { arguments.add("-Xfriend-modules-disabled=" + get(X_FRIEND_MODULES_DISABLED)) }
+    if ("X_FRIEND_MODULES" in optionsMap) { arguments.add("-Xfriend-modules=" + get(X_FRIEND_MODULES)) }
+    if ("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS" in optionsMap) { arguments.add("-Xenable-extension-functions-in-externals=" + get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)) }
+    if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.add("-Xfake-override-validator=" + get(X_FAKE_OVERRIDE_VALIDATOR)) }
+    if ("X_OPTIMIZE_GENERATED_JS" in optionsMap) { arguments.add("-Xoptimize-generated-js=" + get(X_OPTIMIZE_GENERATED_JS)) }
+    return arguments
+  }
+
   public class JsArgument<V>(
     public val id: String,
   )

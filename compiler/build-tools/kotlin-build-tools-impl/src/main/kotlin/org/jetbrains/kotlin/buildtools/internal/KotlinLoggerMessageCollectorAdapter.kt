@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
 internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: KotlinLogger) : MessageCollector {
     override fun clear() {}

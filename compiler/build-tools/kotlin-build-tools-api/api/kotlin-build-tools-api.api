@@ -637,6 +637,26 @@ public abstract class org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public abstract fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter$InProcess : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess, org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;)V
+	public fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter$WithDaemon : org/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon, org/jetbrains/kotlin/buildtools/api/internal/compat/ExecutionPolicyV1Adapter {
+	public fun <init> (Lorg/jetbrains/kotlin/buildtools/api/CompilationService;)V
+	public fun get (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;)Ljava/lang/Object;
+	public fun getStrategyConfiguration ()Lorg/jetbrains/kotlin/buildtools/api/CompilerExecutionStrategyConfiguration;
+	public fun set (Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/internal/compat/KotlinToolchainV1AdapterKt {
+	public static final fun asKotlinToolchain (Lorg/jetbrains/kotlin/buildtools/api/CompilationService;)Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain {
 }
 
