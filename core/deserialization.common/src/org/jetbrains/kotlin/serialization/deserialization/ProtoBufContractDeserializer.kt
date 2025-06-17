@@ -32,7 +32,6 @@ abstract class ProtoBufContractDeserializer<Type, Diagnostic, Owner> {
                     val callable = extractVariable(argument, owner) ?: return null
                     KtHoldsInEffectDeclaration(condition, callable)
                 }
-                ProtoBuf.Effect.EffectConditionKind.UNRECOGNIZED -> null
             }
         }
         return loadSimpleEffect(proto, owner)

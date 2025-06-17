@@ -27866,11 +27866,6 @@ public final class ProtoBuf {
     boolean hasConditionKind();
     /**
      * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-     * @return The enum numeric value on the wire for conditionKind.
-     */
-    int getConditionKindValue();
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
      * @return The conditionKind.
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind getConditionKind();
@@ -28136,7 +28131,6 @@ public final class ProtoBuf {
        * <code>HOLDSIN_CONDITION = 2;</code>
        */
       HOLDSIN_CONDITION(2),
-      UNRECOGNIZED(-1),
       ;
 
       /**
@@ -28168,10 +28162,6 @@ public final class ProtoBuf {
 
       @java.lang.Override
       public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
         return value;
       }
 
@@ -28482,27 +28472,12 @@ public final class ProtoBuf {
     }
     /**
      * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-     * @return The enum numeric value on the wire for conditionKind.
-     */
-    @java.lang.Override
-    public int getConditionKindValue() {
-      return conditionKind_;
-    }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
      * @return The conditionKind.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind getConditionKind() {
       org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind result = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind.forNumber(conditionKind_);
-      return result == null ? org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind.UNRECOGNIZED : result;
-    }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-     * @param value The enum numeric value on the wire for conditionKind to set.
-     */
-    private void setConditionKindValue(int value) {
-      bitField0_ |= 0x00000008;  conditionKind_ = value;
+      return result == null ? org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION : result;
     }
     /**
      * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
@@ -28878,24 +28853,6 @@ public final class ProtoBuf {
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-       * @return The enum numeric value on the wire for conditionKind.
-       */
-      @java.lang.Override
-      public int getConditionKindValue() {
-        return instance.getConditionKindValue();
-      }
-      /**
-       * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-       * @param value The conditionKind to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConditionKindValue(int value) {
-        copyOnWrite();
-        instance.setConditionKindValue(value);
-        return this;
-      }
-      /**
-       * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
        * @return The conditionKind.
        */
       @java.lang.Override
@@ -28948,10 +28905,11 @@ public final class ProtoBuf {
               "kind_",
               org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.internalGetVerifier(),
               "conditionKind_",
+              org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectConditionKind.internalGetVerifier(),
             };
             java.lang.String info =
                 "\u0004\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0001\u0002\u0001\u180c\u0000\u0002" +
-                "\u041b\u0003\u1409\u0001\u0004\u180c\u0002\u0005\u100c\u0003";
+                "\u041b\u0003\u1409\u0001\u0004\u180c\u0002\u0005\u180c\u0003";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
