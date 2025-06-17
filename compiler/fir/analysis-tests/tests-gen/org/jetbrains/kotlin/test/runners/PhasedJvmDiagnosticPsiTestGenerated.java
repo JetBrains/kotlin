@@ -54498,6 +54498,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("unresolvedCodeInsideSuperInitializer.kt")
+      public void testUnresolvedCodeInsideSuperInitializer() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/unresolvedCodeInsideSuperInitializer.kt");
+      }
+
+      @Test
+      @TestMetadata("unresolvedCodeInsideSuperInitializer2.kt")
+      public void testUnresolvedCodeInsideSuperInitializer2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/unresolvedCodeInsideSuperInitializer2.kt");
+      }
+
+      @Test
       @TestMetadata("unusedAnonymLambdaParam.kt")
       public void testUnusedAnonymLambdaParam() {
         runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/unusedAnonymLambdaParam.kt");
