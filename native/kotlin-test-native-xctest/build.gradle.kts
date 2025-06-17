@@ -138,15 +138,15 @@ kotlin {
 
 // region Artifact collection for consumers
 
-val kotlinTestNativeXCTest by configurations.creating {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-    }
-}
-
 nativeTargets.forEach { target ->
     val targetName = target.konanTarget.name
+    val kotlinTestNativeXCTest = configurations.create("kotlinTestNativeXCTest$targetName") {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+            attribute(KotlinNativeTarget.konanTargetAttribute, targetName)
+        }
+    }
     val mainCompilation = target.compilations.getByName("main")
     val outputKlibTask = mainCompilation.compileTaskProvider
 
