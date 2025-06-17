@@ -1518,7 +1518,7 @@ internal object KotlinToolingDiagnostics {
         ) = build {
             title("Kotlin Top Level Dependencies Used With Incompatible Gradle Version")
                 .description("Kotlin top-level dependencies is not available in $currentGradleVersion. Minimum supported version is $minimumSupportedGradleVersion.")
-                .solution("Please upgrade your Gradle version or keep using source-set level dependencies block")
+                .solution("Please upgrade your Gradle version or keep using source set dependencies block (https://kotl.in/source-set-dependencies)")
                 .documentationLink(URI("https://kotl.in/kmp-top-level-dependencies"))
         }
     }
