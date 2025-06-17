@@ -176,6 +176,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsExportParameterWithDefaultValue.kt")
+  public void testJsExportParameterWithDefaultValue() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExportParameterWithDefaultValue.kt");
+  }
+
+  @Test
   @TestMetadata("jsModule.kt")
   public void testJsModule() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
