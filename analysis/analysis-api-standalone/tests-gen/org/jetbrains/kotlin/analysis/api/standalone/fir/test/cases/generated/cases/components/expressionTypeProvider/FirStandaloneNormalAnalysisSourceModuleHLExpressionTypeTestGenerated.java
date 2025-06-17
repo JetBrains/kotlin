@@ -53,6 +53,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("anonymousTypeWithProjection.kt")
+  public void testAnonymousTypeWithProjection() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/anonymousTypeWithProjection.kt");
+  }
+
+  @Test
   @TestMetadata("approximatedCapturedFlexible.kt")
   public void testApproximatedCapturedFlexible() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedCapturedFlexible.kt");
