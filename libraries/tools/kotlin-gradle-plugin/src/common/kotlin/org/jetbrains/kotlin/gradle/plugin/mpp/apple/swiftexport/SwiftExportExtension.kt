@@ -6,24 +6,22 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Action
-import org.gradle.api.Named
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
-import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.moduleVersionIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
-import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.namedDomainObjectSet
 import javax.inject.Inject
 
@@ -39,15 +37,11 @@ interface SwiftExportedModuleMetadata {
     /**
      * Configure name of the swift export module from this project.
      */
-    @get:Input
-    @get:Optional
     val moduleName: Property<String>
 
     /**
      * Configure package collapsing rule.
      */
-    @get:Input
-    @get:Optional
     val flattenPackage: Property<String>
 }
 
@@ -61,30 +55,12 @@ interface SwiftExportAdvancedConfiguration {
     /**
      * Configure SwiftExportConfig.settings parameters
      */
-    @get:Input
-    @get:Optional
     val settings: MapProperty<String, String>
 
     /**
      * Specifies additional compiler arguments to be passed to the compiler.
      */
-    @get:Input
-    @get:Optional
     val freeCompilerArgs: ListProperty<String>
-}
-
-/**
- * Represents metadata for a specific version of a Swift exported module.
- *
- * This API is experimental and may change in future versions.
- */
-@ExperimentalSwiftExportDsl
-interface SwiftExportedModuleVersionMetadata : SwiftExportedModuleMetadata {
-    /**
-     * Module version identifier
-     */
-    @get:Internal
-    val moduleVersion: ModuleVersionIdentifier
 }
 
 internal fun ObjectFactory.SwiftExportExtension(dependencies: DependencyHandler): SwiftExportExtension =
@@ -123,7 +99,6 @@ abstract class SwiftExportExtension @Inject constructor(
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
 ) : SwiftExportedModuleMetadata {
-
     /**
      * Configure Link task.
      */
@@ -165,43 +140,18 @@ abstract class SwiftExportExtension @Inject constructor(
      */
     @ExperimentalSwiftExportDsl
     fun export(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
-        val dependencyProvider: Provider<Dependency> = when (dependency) {
-            is Provider<*> -> dependency.map { dep ->
-                when (dep) {
-                    is Dependency -> dep
-                    else -> dependencyHandler.create(dep)
-                }
+        when (dependency) {
+            is Provider<*> -> {
+                addDependencyToExportConfiguration(dependency.map { dep ->
+                    if (dep is Dependency) dep else dependencyHandler.create(dep)
+                })
+                addDependencyToExportedModules(dependency, configure)
             }
-            else -> providerFactory.provider { dependencyHandler.create(dependency) }
+            else -> {
+                addDependencyToExportConfiguration(providerFactory.provider { dependencyHandler.create(dependency) })
+                addDependencyToExportedModules(providerFactory.provider { dependency }, configure)
+            }
         }
-
-        forAllSwiftExportBinaries {
-            val swiftExportCompilation = target.compilations.getByName(SwiftExportConstants.SWIFT_EXPORT_COMPILATION)
-            val compileDependencyConfiguration = swiftExportCompilation.internal.configurations.compileDependencyConfiguration
-            val exportedSwiftExportApiConfigurationName = target.exportedSwiftExportApiConfigurationName(buildType)
-
-            dependencyHandler.addProvider(exportedSwiftExportApiConfigurationName, dependencyProvider)
-            dependencyHandler.addProvider(
-                compileDependencyConfiguration.name,
-                dependencyProvider
-            )
-
-            project.configurations.getByName(exportedSwiftExportApiConfigurationName).shouldResolveConsistentlyWith(
-                compileDependencyConfiguration
-            )
-        }
-
-        val dependencyId = dependencyProvider.map { dep ->
-            val moduleGroup = dep.group
-            val moduleName = dep.name
-            val moduleVersion = dep.version
-
-            getCoordinatesFromGroupNameAndVersion(moduleGroup, moduleName, moduleVersion)
-        }
-
-        addToExportedModules(
-            objectFactory.ModuleExport(dependencyId, configure)
-        )
     }
 
     /**
@@ -215,14 +165,14 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Returns a list of exported modules.
      */
-    internal val exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>> = providerFactory.provider {
+    internal val exportedModules: Provider<Set<SwiftExportedDependency>> = providerFactory.provider {
         _exportedModules
     }
 
     /**
      * Advanced configuration settings.
      */
-    internal val advancedConfiguration = objectFactory.newInstance(SwiftExportAdvancedConfiguration::class.java)
+    internal val advancedConfiguration: SwiftExportAdvancedConfiguration = DefaultSwiftExportAdvancedConfiguration(objectFactory)
 
     private val _swiftExportBinaries = objectFactory.domainObjectSet<AbstractNativeLibrary>()
 
@@ -230,14 +180,39 @@ abstract class SwiftExportExtension @Inject constructor(
         _swiftExportBinaries.add(binary)
     }
 
-    private val _exportedModules = objectFactory.namedDomainObjectSet<ModuleExport>()
+    private val _exportedModules = objectFactory.namedDomainObjectSet<SwiftExportedDependency>()
 
-    private fun addToExportedModules(module: ModuleExport) {
-        check(_exportedModules.findByName(module.name) == null) {
-            "Project already has Export module with name ${module.name}"
+    private fun addDependencyToExportedModules(dependency: Provider<*>, configure: SwiftExportedModuleMetadata.() -> Unit) {
+        val dependencyId = dependency.map { dep ->
+            when (dep) {
+                is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
+                is ProjectDependency -> SwiftExportedDependency.Project(objectFactory, dep.path)
+                is Dependency -> SwiftExportedDependency.External(objectFactory, dep.moduleVersionIdentifier)
+                else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dep).moduleVersionIdentifier)
+            }.also {
+                it.configure()
+            }
         }
 
-        _exportedModules.add(module)
+        _exportedModules.addLater(dependencyId)
+    }
+
+    private fun addDependencyToExportConfiguration(dependency: Provider<Dependency>) {
+        forAllSwiftExportBinaries {
+            val swiftExportCompilation = target.compilations.getByName(SwiftExportConstants.SWIFT_EXPORT_COMPILATION)
+            val compileDependencyConfiguration = swiftExportCompilation.internal.configurations.compileDependencyConfiguration
+            val exportedSwiftExportApiConfigurationName = target.exportedSwiftExportApiConfigurationName(buildType)
+
+            dependencyHandler.addProvider(exportedSwiftExportApiConfigurationName, dependency)
+            dependencyHandler.addProvider(
+                compileDependencyConfiguration.name,
+                dependency
+            )
+
+            project.configurations.getByName(exportedSwiftExportApiConfigurationName).shouldResolveConsistentlyWith(
+                compileDependencyConfiguration
+            )
+        }
     }
 
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
@@ -245,23 +220,7 @@ abstract class SwiftExportExtension @Inject constructor(
     }
 }
 
-private abstract class ModuleExport @Inject constructor(
-    moduleVersionProvider: Provider<ModuleVersionIdentifier>,
-) : SwiftExportedModuleVersionMetadata, Named {
-    @get:Internal
-    override val moduleVersion: ModuleVersionIdentifier by moduleVersionProvider
-
-    @Internal
-    override fun getName(): String = moduleVersion.let {
-        "${it.group}:${it.name}:${it.version}"
-    }
-}
-
-private fun ObjectFactory.ModuleExport(
-    dependencyId: Provider<ModuleVersionIdentifier>,
-    configure: SwiftExportedModuleMetadata.() -> Unit = {},
-): ModuleExport {
-    return newInstance(ModuleExport::class.java, dependencyId).also {
-        it.configure()
-    }
+private class DefaultSwiftExportAdvancedConfiguration(objectFactory: ObjectFactory) : SwiftExportAdvancedConfiguration {
+    override val settings: MapProperty<String, String> = objectFactory.mapProperty(String::class.java, String::class.java)
+    override val freeCompilerArgs: ListProperty<String> = objectFactory.listProperty(String::class.java)
 }

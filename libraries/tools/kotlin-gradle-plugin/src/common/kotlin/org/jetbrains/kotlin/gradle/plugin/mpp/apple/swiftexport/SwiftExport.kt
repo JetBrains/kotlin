@@ -126,7 +126,7 @@ private fun Project.registerSwiftExportRun(
     exportConfiguration: Configuration,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
-    exportedModules: Provider<Set<SwiftExportedModuleVersionMetadata>>,
+    exportedModules: Provider<Set<SwiftExportedDependency>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(

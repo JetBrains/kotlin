@@ -1732,10 +1732,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swi
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleVersionMetadata : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
-	public abstract fun getModuleVersion ()Lorg/gradle/api/artifacts/ModuleVersionIdentifier;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/compilationImpl/KotlinCompilationConfigurationsContainer {
 	public abstract fun getApiConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public abstract fun getCompileDependencyConfiguration ()Lorg/gradle/api/artifacts/Configuration;
