@@ -1,111 +1,111 @@
-KotlinComposableProvider.kt:KotlinComposableProviderMerger
-KotlinComposableProvider.kt:KotlinCompositeProvider:providers
-KotlinCompositeProviderFactory.kt:KotlinCompositeProviderFactory:create(List<P>)
-KotlinCompositeProviderFactory.kt:KotlinCompositeProviderFactory:createFlattened(List<P>)
-KotlinCompositeProviderFactory.kt:KotlinCompositeProviderFactory:flatten(List<P>)
-KotlinMessageBusProvider.kt:Companion:getInstance(Project)
-KotlinMessageBusProvider.kt:KotlinMessageBusProvider:getMessageBus()
-KotlinPlatformSettings.kt:Companion:getInstance(Project)
-declarations/KotlinAnnotationsResolver.kt:Companion:getInstance(Project)
-declarations/KotlinAnnotationsResolver.kt:KotlinAnnotationsResolverFactory
-declarations/KotlinAnnotationsResolver.kt:createAnnotationResolver(GlobalSearchScope)
-declarations/KotlinCompositeDeclarationProvider.kt:Companion:create(List<KotlinDeclarationProvider>)
-declarations/KotlinCompositeDeclarationProvider.kt:Companion:factory
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:findFilesForFacade(FqName)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:findFilesForFacadeByPackage(FqName)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:findFilesForScript(FqName)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getAllClassesByClassId(ClassId)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getAllTypeAliasesByClassId(ClassId)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getTopLevelCallableFiles(CallableId)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getTopLevelCallableNamesInPackage(FqName)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getTopLevelFunctions(CallableId)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getTopLevelKotlinClassLikeDeclarationNamesInPackage(FqName)
-declarations/KotlinDeclarationProvider.kt:KotlinDeclarationProvider:getTopLevelProperties(CallableId)
-declarations/KotlinDeclarationProviderFactory.kt:Companion:getInstance(Project)
-declarations/KotlinDeclarationProviderFactory.kt:Companion:getInstance(Project)
-declarations/KotlinDeclarationProviderFactory.kt:KotlinDeclarationProviderFactory:createDeclarationProvider(GlobalSearchScope, KaModule?)
-declarations/KotlinDeclarationProviderFactory.kt:mergeDeclarationProviders(List<KotlinDeclarationProvider>)
-declarations/KotlinDirectInheritorsProvider.kt:Companion:getInstance(Project)
-declarations/KotlinDirectInheritorsProvider.kt:KotlinDirectInheritorsProvider
-declarations/KotlinEmptyDeclarationProvider.kt:KotlinEmptyDeclarationProvider
-declarations/KotlinFileBasedDeclarationProvider.kt:KotlinFileBasedDeclarationProvider
-declarations/KotlinForeignValueProviderService.kt:Companion:getInstance()
-declarations/KotlinForeignValueProviderService.kt:KotlinForeignValueProviderService
-declarations/KotlinForeignValueProviderService.kt:KotlinForeignValueProviderService:getForeignValues(KtCodeFragment)
-declarations/KotlinForwardDeclarationProviderFactory.kt:Companion:getInstance(Project)
-java/KotlinJavaModuleAccessibilityChecker.kt:Companion:getInstance(Project)
-java/KotlinJavaModuleAnnotationsProvider.kt:Companion:getInstance(Project)
-lifetime/KaLifetimeTracker.kt:Companion:getInstance(Project)
-lifetime/KotlinAlwaysAccessibleLifetimeToken.kt:KotlinAlwaysAccessibleLifetimeToken
-lifetime/KotlinAlwaysAccessibleLifetimeToken.kt:KotlinAlwaysAccessibleLifetimeTokenFactory
-lifetime/KotlinLifetimeTokenFactory.kt:Companion:getInstance(Project)
-lifetime/KotlinLifetimeTokenFactory.kt:KotlinLifetimeTokenFactory
-lifetime/KotlinLifetimeTokenFactory.kt:KotlinLifetimeTokenFactory:identifier
-lifetime/KotlinReadActionConfinementLifetimeToken.kt:KotlinReadActionConfinementLifetimeToken
-lifetime/KotlinReadActionConfinementLifetimeToken.kt:KotlinReadActionConfinementLifetimeTokenFactory
-modification/KaSourceModificationService.kt:Companion:getInstance(Project)
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:CODE_FRAGMENT_CONTEXT_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:GLOBAL_MODULE_STATE_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:GLOBAL_SOURCE_MODULE_STATE_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:MODULE_OUT_OF_BLOCK_MODIFICATION
-modification/KotlinModificationEvent.kt:KotlinModificationEventKind:MODULE_STATE_MODIFICATION
-modification/KotlinModificationEvent.kt:isGlobalLevel
-modification/KotlinModificationEvent.kt:isModuleLevel
-modification/KotlinModificationTrackerFactory.kt:Companion:getInstance(Project)
-packages/KotlinCompositePackageProvider.kt:Companion:create(List<KotlinPackageProvider>)
-packages/KotlinCompositePackageProvider.kt:Companion:factory
-packages/KotlinEmptyPackageProvider.kt:KotlinEmptyPackageProvider
-packages/KotlinForwardDeclarationsPackageProviderFactory.kt:Companion:getInstance(Project)
-packages/KotlinPackagePartProviderFactory.kt:Companion:getInstance(Project)
-packages/KotlinPackagePartProviderFactory.kt:KotlinPackagePartProviderFactory
-packages/KotlinPackageProviderBase.kt:abstract KotlinPackageProviderBase
-packages/KotlinPackageProviderFactory.kt:Companion:getInstance(Project)
-packages/KotlinPackageProviderFactory.kt:Companion:getInstance(Project)
-packages/KotlinPackageProviderFactory.kt:KotlinPackageProviderFactory:createPackageProvider(GlobalSearchScope)
-packages/KotlinPackageProviderFactory.kt:createPackageProvider(GlobalSearchScope)
-packages/KotlinPackageProviderFactory.kt:mergePackageProviders(List<KotlinPackageProvider>)
-permissions/KaAnalysisPermissionChecker.kt:Companion:getInstance(Project)
-permissions/KaAnalysisPermissionChecker.kt:KaAnalysisPermissionChecker:getRejectionReason()
-permissions/KaAnalysisPermissionChecker.kt:KaAnalysisPermissionChecker:isAnalysisAllowed()
-permissions/KotlinAnalysisPermissionOptions.kt:Companion:getInstance()
-permissions/KotlinDefaultAnalysisPermissionOptions.kt:KotlinDefaultAnalysisPermissionOptions
-projectStructure/KaContentScopeProvider.kt:Companion:getInstance(Project)
-projectStructure/KaGlobalSearchScopeMerger.kt:Companion:getInstance(Project)
-projectStructure/KaModuleBase.kt:abstract KaModuleBase
-projectStructure/KaResolutionScope.kt:Companion:forModule(KaModule)
-projectStructure/KaResolutionScopeProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinActualDeclarationProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinAnchorModuleProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinAnchorModuleProvider.kt:KotlinAnchorModuleProvider:getAnchorModule(KaLibraryModule)
-projectStructure/KotlinCompilerPluginsProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinCompilerPluginsProvider.kt:KotlinCompilerPluginsProvider:enum CompilerPluginType
-projectStructure/KotlinContentScopeRefiner.kt:Companion:EP_NAME
-projectStructure/KotlinContentScopeRefiner.kt:Companion:getRefiners(Project)
-projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:EP_NAME
-projectStructure/KotlinGlobalSearchScopeMergeStrategy.kt:Companion:getMergeStrategies(Project)
-projectStructure/KotlinModuleDependentsProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinModuleDependentsProviderBase.kt:abstract KotlinModuleDependentsProviderBase
-projectStructure/KotlinModuleOutputProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinProjectStructureProvider.kt:Companion:getInstance(Project)
-projectStructure/KotlinProjectStructureProvider.kt:Companion:getModule(Project, PsiElement, KaModule?)
-projectStructure/KotlinProjectStructureProvider.kt:KotlinProjectStructureProvider:getImplementingModules(KaModule)
-projectStructure/KotlinProjectStructureProviderBase.kt:@OptIn(KaExperimentalApi::class) @Deprecated("Use 'explicitModule' instead.") forcedSpecialModule
-projectStructure/KotlinProjectStructureProviderBase.kt:abstract KotlinProjectStructureProviderBase
-projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) areCompilerPluginsSupported()
-projectStructure/utils.kt:@OptIn(KaExperimentalApi::class) asDebugString(Int)
-resolution/KaResolutionActivityTracker.kt:Companion:getInstance()
-restrictedAnalysis/KotlinRestrictedAnalysisService.kt:Companion:getInstance(Project)
-statistics/KaStatisticsService.kt:Companion:areStatisticsEnabled
-statistics/KaStatisticsService.kt:Companion:getInstance(Project)
-statistics/KotlinOpenTelemetryProvider.kt:Companion:getInstance(Project)
-statistics/KotlinOpenTelemetryProvider.kt:KotlinOpenTelemetryProvider:openTelemetry
-utils/SublistMerger.kt:SublistMerger:finish()
-utils/SublistMerger.kt:SublistMerger:inline merge((List<R>) -> A?)
-utils/SublistMerger.kt:SublistMerger:remainingElements
-utils/SublistMerger.kt:inline mergeOnly((List<R>) -> A?)
-utils/SublistMerger.kt:mergeInto(MutableList<A>, SublistMerger<A>.() -> Unit)
-utils/SublistMerger.kt:mergeWith(SublistMerger<A>.() -> Unit)
-utils/utils.kt:const KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME
-utils/utils.kt:inline forEachNonKotlinPsiElementFinder(Project, (PsiElementFinder) -> Unit)
+org.jetbrains.kotlin.analysis.api.platform.KotlinComposableProviderMerger
+org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProvider.providers
+org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory.create(List<P>)
+org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory.createFlattened(List<P>)
+org.jetbrains.kotlin.analysis.api.platform.KotlinCompositeProviderFactory.flatten(List<P>)
+org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.KotlinMessageBusProvider.getMessageBus()
+org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinAnnotationsResolverFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider.Companion.create(List<KotlinDeclarationProvider>)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinCompositeDeclarationProvider.Companion.factory
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.findFilesForFacade(FqName)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.findFilesForFacadeByPackage(FqName)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.findFilesForScript(FqName)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getAllClassesByClassId(ClassId)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getAllTypeAliasesByClassId(ClassId)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelCallableFiles(CallableId)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelCallableNamesInPackage(FqName)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelFunctions(CallableId)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(FqName)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider.getTopLevelProperties(CallableId)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderFactory.createDeclarationProvider(GlobalSearchScope, KaModule?)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProviderMerger.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinEmptyDeclarationProvider
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinFileBasedDeclarationProvider
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService.Companion.getInstance()
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForeignValueProviderService.getForeignValues(KtCodeFragment)
+org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinForwardDeclarationProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationResolver(GlobalSearchScope)
+org.jetbrains.kotlin.analysis.api.platform.declarations.mergeDeclarationProviders(List<KotlinDeclarationProvider>)
+org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KaLifetimeTracker.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeToken
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinAlwaysAccessibleLifetimeTokenFactory
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFactory.identifier
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeToken
+org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinReadActionConfinementLifetimeTokenFactory
+org.jetbrains.kotlin.analysis.api.platform.modification.KaSourceModificationService.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.CODE_FRAGMENT_CONTEXT_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_MODULE_STATE_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_SCRIPT_MODULE_STATE_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.MODULE_OUT_OF_BLOCK_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationEventKind.MODULE_STATE_MODIFICATION
+org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTrackerFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.modification.isGlobalLevel
+org.jetbrains.kotlin.analysis.api.platform.modification.isModuleLevel
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider.Companion.create(List<KotlinPackageProvider>)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinCompositePackageProvider.Companion.factory
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinEmptyPackageProvider
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinForwardDeclarationsPackageProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackagePartProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderBase
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderFactory.createPackageProvider(GlobalSearchScope)
+org.jetbrains.kotlin.analysis.api.platform.packages.KotlinPackageProviderMerger.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.packages.createPackageProvider(GlobalSearchScope)
+org.jetbrains.kotlin.analysis.api.platform.packages.mergePackageProviders(List<KotlinPackageProvider>)
+org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker.getRejectionReason()
+org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker.isAnalysisAllowed()
+org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinAnalysisPermissionOptions.Companion.getInstance()
+org.jetbrains.kotlin.analysis.api.platform.permissions.KotlinDefaultAnalysisPermissionOptions
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModuleBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScope.Companion.forModule(KaModule)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinActualDeclarationProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinAnchorModuleProvider.getAnchorModule(KaLibraryModule)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider.CompilerPluginType
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner.Companion.EP_NAME
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner.Companion.getRefiners(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy.Companion.EP_NAME
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinGlobalSearchScopeMergeStrategy.Companion.getMergeStrategies(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProviderBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleOutputProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.Companion.getModule(Project, PsiElement, KaModule?)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider.getImplementingModules(KaModule)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported()
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString(Int)
+org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule
+org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracker.Companion.getInstance()
+org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService.Companion.areStatisticsEnabled
+org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinOpenTelemetryProvider.Companion.getInstance(Project)
+org.jetbrains.kotlin.analysis.api.platform.statistics.KotlinOpenTelemetryProvider.openTelemetry
+org.jetbrains.kotlin.analysis.api.platform.utils.KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME
+org.jetbrains.kotlin.analysis.api.platform.utils.SublistMerger.finish()
+org.jetbrains.kotlin.analysis.api.platform.utils.SublistMerger.merge((List<R>) -> A?)
+org.jetbrains.kotlin.analysis.api.platform.utils.SublistMerger.remainingElements
+org.jetbrains.kotlin.analysis.api.platform.utils.forEachNonKotlinPsiElementFinder(Project, (PsiElementFinder) -> Unit)
+org.jetbrains.kotlin.analysis.api.platform.utils.mergeInto(MutableList<A>, SublistMerger<A>.() -> Unit)
+org.jetbrains.kotlin.analysis.api.platform.utils.mergeOnly((List<R>) -> A?)
+org.jetbrains.kotlin.analysis.api.platform.utils.mergeWith(SublistMerger<A>.() -> Unit)

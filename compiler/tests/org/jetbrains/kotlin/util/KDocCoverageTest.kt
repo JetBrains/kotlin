@@ -31,8 +31,7 @@ import java.io.File
  *
  * The test iterates through all the source directories [sourceDirectories] and
  * for each directory [DocumentationLocations.sourcePaths] builds a separate resulting file
- * containing all the undocumented public declarations along with
- * file paths, names of containing classes, annotations, keywords and signatures.
+ * containing all the undocumented public declarations along with fully qualified names and parameter types.
  *
  * Then the test compares the contents of the resulting file
  * and the master file [DocumentationLocations.outputFilePath]
@@ -67,16 +66,10 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
                             val psiFile = createPsiFile(file.path, psiManager, fileSystem) ?: continue
                             when (psiFile) {
                                 is KtFile if psiFile.packageFqName !in ignoredPackages -> addAll(
-                                    getUndocumentedDeclarationsByFile(
-                                        psiFile,
-                                        relativePath
-                                    )
+                                    getUndocumentedDeclarationsByFile(psiFile)
                                 )
                                 is PsiJavaFile if psiFile.packageName !in ignoredPackages.map { it.toString() } -> addAll(
-                                    getUndocumentedDeclarationsByFile(
-                                        psiFile,
-                                        relativePath
-                                    )
+                                    getUndocumentedDeclarationsByFile(psiFile)
                                 )
                             }
                         } catch (e: Exception) {
@@ -95,54 +88,43 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
         }
     }
 
-    private fun getUndocumentedDeclarationsByFile(file: KtFile, relativePathFromRoot: String): List<String> =
+    private fun getUndocumentedDeclarationsByFile(file: KtFile): List<String> =
         file.collectPublicDeclarations()
             .filter { it.shouldBeRendered() }
-            .map {
-                "$relativePathFromRoot:${it.containingClassOrObject?.name?.plus(":") ?: ""}${it.getSignature()}"
-            }
+            .map { renderDeclaration(it) }
 
-    private fun getUndocumentedDeclarationsByFile(file: PsiJavaFile, relativePathFromRoot: String): List<String> =
+    private fun getUndocumentedDeclarationsByFile(file: PsiJavaFile): List<String> =
         file.collectPublicDeclarations()
             .filter { it.shouldBeRendered() }
-            .map {
-                "$relativePathFromRoot:${(it as? PsiMember)?.containingClass?.name?.plus(":") ?: ""}${it.getSignature()}"
+            .map { renderDeclaration(it) }
+
+    private fun renderDeclaration(element: PsiElement): String =
+        element.getQualifiedName()?.let { fqn ->
+            val parameterList = when (element) {
+                is KtDeclaration -> getKtParameterList(element)
+                else -> getParameterList(element)
             }
+            fqn + parameterList
+        } ?: "RENDERING ERROR"
 
-    private fun KtDeclaration.getSignature(): String {
-        val modifierList =
-            this.childrenOfType<KtModifierList>()
-                .singleOrNull()
-                ?.allChildren
-                ?.filter { it !is PsiWhiteSpace && it.text !in nonRenderedModifiers }
-                ?.joinToString(" ") { it.text }.orEmpty().let {
-                    if (it.isNotEmpty()) "$it " else ""
-                }
-
-        val parameterList =
-            this.childrenOfType<KtParameterList>().singleOrNull()
-                ?.allChildren
-                ?.filterIsInstance<KtParameter>()?.joinToString(", ") {
-                    it.typeReference?.typeElement?.text ?: ""
-                }?.let {
-                    "($it)"
-                } ?: ""
-
-        return "$modifierList$name$parameterList"
+    private fun PsiElement.getQualifiedName(): String? {
+        return when (this) {
+            is KtConstructor<*> -> this.containingClassOrObject?.getQualifiedName().let { classFqName ->
+                "$classFqName:constructor"
+            }
+            is KtNamedDeclaration -> this.fqName?.asString()
+            is PsiQualifiedNamedElement -> this.qualifiedName
+            is PsiJvmMember -> this.containingClass?.qualifiedName?.let { classFqName ->
+                val isConstructor = (this as? PsiMethod)?.isConstructor == true
+                classFqName + ":" + if (isConstructor) "constructor" else (this.name ?: "")
+            }
+            else -> null
+        }
     }
 
-    private fun PsiElement.getSignature(): String {
-        val modifierList =
-            this.childrenOfType<PsiModifierList>()
-                .singleOrNull()
-                ?.allChildren
-                ?.filter { it !is PsiWhiteSpace && it.text !in nonRenderedModifiers }
-                ?.joinToString(" ") { it.text }.orEmpty().let {
-                    if (it.isNotEmpty()) "$it " else ""
-                }
-
+    private fun getParameterList(element: PsiElement): String {
         val parameterList =
-            this.childrenOfType<PsiParameterList>().singleOrNull()
+            element.childrenOfType<PsiParameterList>().singleOrNull()
                 ?.allChildren
                 ?.filterIsInstance<PsiParameter>()?.joinToString(", ") {
                     it.type.presentableText
@@ -150,7 +132,20 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
                     "($it)"
                 } ?: ""
 
-        return "$modifierList${(this as? PsiNamedElement)?.name ?: ""}$parameterList"
+        return parameterList
+    }
+
+    private fun getKtParameterList(declaration: KtDeclaration): String {
+        val parameterList =
+            declaration.childrenOfType<KtParameterList>().singleOrNull()
+                ?.allChildren
+                ?.filterIsInstance<KtParameter>()?.joinToString(", ") {
+                    it.typeReference?.typeElement?.text ?: ""
+                }?.let {
+                    "($it)"
+                } ?: ""
+
+        return parameterList
     }
 
     private fun KtFile.collectPublicDeclarations(): List<KtDeclaration> = buildList {
@@ -208,10 +203,6 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
     protected open val ignoredFunctionNames: List<String> = listOf()
 
     protected open val ignoredPackages: List<FqName> = listOf()
-
-    protected open val nonRenderedModifiers: List<String> = listOf(
-        "public"
-    )
 
     data class DocumentationLocations(
         val sourcePaths: List<String>,
