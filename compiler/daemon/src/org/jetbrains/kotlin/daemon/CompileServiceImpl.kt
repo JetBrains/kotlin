@@ -96,6 +96,7 @@ abstract class CompileServiceImplBase(
     val compilerId: CompilerId,
     val port: Int,
     val timer: Timer,
+    val onShutdown: () -> Unit,
 ) : CompileService {
     protected val log by lazy { Logger.getLogger("compiler") }
 
@@ -274,6 +275,9 @@ abstract class CompileServiceImplBase(
             System.err.println("Exception in timer thread: " + e.message)
             e.printStackTrace(System.err)
             log.log(Level.SEVERE, "Exception in timer thread", e)
+            if (e is LinkageError) {
+                onShutdown()
+            }
         }
     }
 
@@ -707,8 +711,8 @@ class CompileServiceImpl(
     val daemonJVMOptions: DaemonJVMOptions,
     port: Int,
     timer: Timer,
-    val onShutdown: () -> Unit,
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer) {
+    onShutdown: () -> Unit,
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
