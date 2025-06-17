@@ -12,7 +12,9 @@ import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
@@ -220,12 +222,101 @@ internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgum
     return arguments
   }
 
-  /**
-   * Base class for [NativeArguments] options.
-   *
-   * @see get
-   * @see set    
-   */
+  @Suppress("DEPRECATION")
+  @OptIn(ExperimentalCompilerArgument::class)
+  override fun toArgumentStrings(): List<String> {
+    val arguments = mutableListOf<String>()
+    arguments.addAll(super.toArgumentStrings())
+    if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.add("-enable-assertions=" + get(ENABLE_ASSERTIONS)) }
+    if ("G" in optionsMap) { arguments.add("-g=" + get(G)) }
+    if ("GENERATE_TEST_RUNNER" in optionsMap) { arguments.add("-generate-test-runner=" + get(GENERATE_TEST_RUNNER)) }
+    if ("GENERATE_WORKER_TEST_RUNNER" in optionsMap) { arguments.add("-generate-worker-test-runner=" + get(GENERATE_WORKER_TEST_RUNNER)) }
+    if ("GENERATE_NO_EXIT_TEST_RUNNER" in optionsMap) { arguments.add("-generate-no-exit-test-runner=" + get(GENERATE_NO_EXIT_TEST_RUNNER)) }
+    if ("INCLUDE_BINARY" in optionsMap) { arguments.add("-include-binary=" + get(INCLUDE_BINARY)) }
+    if ("LIBRARY" in optionsMap) { arguments.add("-library=" + get(LIBRARY)) }
+    if ("LIBRARY_VERSION" in optionsMap) { arguments.add("-library-version=" + get(LIBRARY_VERSION)) }
+    if ("LIST_TARGETS" in optionsMap) { arguments.add("-list-targets=" + get(LIST_TARGETS)) }
+    if ("MANIFEST" in optionsMap) { arguments.add("-manifest=" + get(MANIFEST)) }
+    if ("MEMORY_MODEL" in optionsMap) { arguments.add("-memory-model=" + get(MEMORY_MODEL)) }
+    if ("MODULE_NAME" in optionsMap) { arguments.add("-module-name=" + get(MODULE_NAME)) }
+    if ("NATIVE_LIBRARY" in optionsMap) { arguments.add("-native-library=" + get(NATIVE_LIBRARY)) }
+    if ("NO_DEFAULT_LIBS" in optionsMap) { arguments.add("-no-default-libs=" + get(NO_DEFAULT_LIBS)) }
+    if ("NO_ENDORSED_LIBS" in optionsMap) { arguments.add("-no-endorsed-libs=" + get(NO_ENDORSED_LIBS)) }
+    if ("NOMAIN" in optionsMap) { arguments.add("-nomain=" + get(NOMAIN)) }
+    if ("NOPACK" in optionsMap) { arguments.add("-nopack=" + get(NOPACK)) }
+    if ("LINKER_OPTIONS" in optionsMap) { arguments.add("-linker-options=" + get(LINKER_OPTIONS)) }
+    if ("LINKER_OPTION" in optionsMap) { arguments.add("-linker-option=" + get(LINKER_OPTION)) }
+    if ("NOSTDLIB" in optionsMap) { arguments.add("-nostdlib=" + get(NOSTDLIB)) }
+    if ("OPT" in optionsMap) { arguments.add("-opt=" + get(OPT)) }
+    if ("OUTPUT" in optionsMap) { arguments.add("-output=" + get(OUTPUT)) }
+    if ("ENTRY" in optionsMap) { arguments.add("-entry=" + get(ENTRY)) }
+    if ("PRODUCE" in optionsMap) { arguments.add("-produce=" + get(PRODUCE)) }
+    if ("TARGET" in optionsMap) { arguments.add("-target=" + get(TARGET)) }
+    if ("X_BUNDLE_ID" in optionsMap) { arguments.add("-Xbundle-id=" + get(X_BUNDLE_ID)) }
+    if ("X_CACHE_DIRECTORY" in optionsMap) { arguments.add("-Xcache-directory=" + get(X_CACHE_DIRECTORY)) }
+    if ("X_CACHED_LIBRARY" in optionsMap) { arguments.add("-Xcached-library=" + get(X_CACHED_LIBRARY)) }
+    if ("X_AUTO_CACHE_FROM" in optionsMap) { arguments.add("-Xauto-cache-from=" + get(X_AUTO_CACHE_FROM)) }
+    if ("X_AUTO_CACHE_DIR" in optionsMap) { arguments.add("-Xauto-cache-dir=" + get(X_AUTO_CACHE_DIR)) }
+    if ("X_IC_CACHE_DIR" in optionsMap) { arguments.add("-Xic-cache-dir=" + get(X_IC_CACHE_DIR)) }
+    if ("X_CHECK_DEPENDENCIES" in optionsMap) { arguments.add("-Xcheck-dependencies=" + get(X_CHECK_DEPENDENCIES)) }
+    if ("X_EMIT_LAZY_OBJC_HEADER" in optionsMap) { arguments.add("-Xemit-lazy-objc-header=" + get(X_EMIT_LAZY_OBJC_HEADER)) }
+    if ("X_EXPORT_LIBRARY" in optionsMap) { arguments.add("-Xexport-library=" + get(X_EXPORT_LIBRARY)) }
+    if ("X_EXTERNAL_DEPENDENCIES" in optionsMap) { arguments.add("-Xexternal-dependencies=" + get(X_EXTERNAL_DEPENDENCIES)) }
+    if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.add("-Xfake-override-validator=" + get(X_FAKE_OVERRIDE_VALIDATOR)) }
+    if ("X_FRAMEWORK_IMPORT_HEADER" in optionsMap) { arguments.add("-Xframework-import-header=" + get(X_FRAMEWORK_IMPORT_HEADER)) }
+    if ("X_ADD_LIGHT_DEBUG" in optionsMap) { arguments.add("-Xadd-light-debug=" + get(X_ADD_LIGHT_DEBUG)) }
+    if ("X_G0" in optionsMap) { arguments.add("-Xg0=" + get(X_G0)) }
+    if ("X_G_GENERATE_DEBUG_TRAMPOLINE" in optionsMap) { arguments.add("-Xg-generate-debug-trampoline=" + get(X_G_GENERATE_DEBUG_TRAMPOLINE)) }
+    if ("X_ADD_CACHE" in optionsMap) { arguments.add("-Xadd-cache=" + get(X_ADD_CACHE)) }
+    if ("X_FILE_TO_CACHE" in optionsMap) { arguments.add("-Xfile-to-cache=" + get(X_FILE_TO_CACHE)) }
+    if ("X_MAKE_PER_FILE_CACHE" in optionsMap) { arguments.add("-Xmake-per-file-cache=" + get(X_MAKE_PER_FILE_CACHE)) }
+    if ("X_BACKEND_THREADS" in optionsMap) { arguments.add("-Xbackend-threads=" + get(X_BACKEND_THREADS).toString()) }
+    if ("X_EXPORT_KDOC" in optionsMap) { arguments.add("-Xexport-kdoc=" + get(X_EXPORT_KDOC)) }
+    if ("X_PRINT_BITCODE" in optionsMap) { arguments.add("-Xprint-bitcode=" + get(X_PRINT_BITCODE)) }
+    if ("X_CHECK_STATE_AT_EXTERNAL_CALLS" in optionsMap) { arguments.add("-Xcheck-state-at-external-calls=" + get(X_CHECK_STATE_AT_EXTERNAL_CALLS)) }
+    if ("X_PRINT_IR" in optionsMap) { arguments.add("-Xprint-ir=" + get(X_PRINT_IR)) }
+    if ("X_PRINT_FILES" in optionsMap) { arguments.add("-Xprint-files=" + get(X_PRINT_FILES)) }
+    if ("X_PURGE_USER_LIBS" in optionsMap) { arguments.add("-Xpurge-user-libs=" + get(X_PURGE_USER_LIBS)) }
+    if ("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO" in optionsMap) { arguments.add("-Xwrite-dependencies-of-produced-klib-to=" + get(X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)) }
+    if ("X_RUNTIME" in optionsMap) { arguments.add("-Xruntime=" + get(X_RUNTIME)) }
+    if ("X_INCLUDE" in optionsMap) { arguments.add("-Xinclude=" + get(X_INCLUDE)) }
+    if ("X_SHORT_MODULE_NAME" in optionsMap) { arguments.add("-Xshort-module-name=" + get(X_SHORT_MODULE_NAME)) }
+    if ("X_STATIC_FRAMEWORK" in optionsMap) { arguments.add("-Xstatic-framework=" + get(X_STATIC_FRAMEWORK)) }
+    if ("X_TEMPORARY_FILES_DIR" in optionsMap) { arguments.add("-Xtemporary-files-dir=" + get(X_TEMPORARY_FILES_DIR)) }
+    if ("X_SAVE_LLVM_IR_AFTER" in optionsMap) { arguments.add("-Xsave-llvm-ir-after=" + get(X_SAVE_LLVM_IR_AFTER)) }
+    if ("X_VERIFY_BITCODE" in optionsMap) { arguments.add("-Xverify-bitcode=" + get(X_VERIFY_BITCODE)) }
+    if ("X_VERIFY_COMPILER" in optionsMap) { arguments.add("-Xverify-compiler=" + get(X_VERIFY_COMPILER)) }
+    if ("FRIEND_MODULES" in optionsMap) { arguments.add("-friend-modules=" + get(FRIEND_MODULES)) }
+    if ("X_REFINES_PATHS" in optionsMap) { arguments.add("-Xrefines-paths=" + get(X_REFINES_PATHS)) }
+    if ("X_DEBUG_INFO_VERSION" in optionsMap) { arguments.add("-Xdebug-info-version=" + get(X_DEBUG_INFO_VERSION).toString()) }
+    if ("X_NO_OBJC_GENERICS" in optionsMap) { arguments.add("-Xno-objc-generics=" + get(X_NO_OBJC_GENERICS)) }
+    if ("X_OVERRIDE_CLANG_OPTIONS" in optionsMap) { arguments.add("-Xoverride-clang-options=" + get(X_OVERRIDE_CLANG_OPTIONS)) }
+    if ("X_ALLOCATOR" in optionsMap) { arguments.add("-Xallocator=" + get(X_ALLOCATOR)) }
+    if ("X_HEADER_KLIB_PATH" in optionsMap) { arguments.add("-Xheader-klib-path=" + get(X_HEADER_KLIB_PATH)) }
+    if ("X_DEBUG_PREFIX_MAP" in optionsMap) { arguments.add("-Xdebug-prefix-map=" + get(X_DEBUG_PREFIX_MAP)) }
+    if ("X_PRE_LINK_CACHES" in optionsMap) { arguments.add("-Xpre-link-caches=" + get(X_PRE_LINK_CACHES)) }
+    if ("X_OVERRIDE_KONAN_PROPERTIES" in optionsMap) { arguments.add("-Xoverride-konan-properties=" + get(X_OVERRIDE_KONAN_PROPERTIES)) }
+    if ("X_DESTROY_RUNTIME_MODE" in optionsMap) { arguments.add("-Xdestroy-runtime-mode=" + get(X_DESTROY_RUNTIME_MODE)) }
+    if ("X_GC" in optionsMap) { arguments.add("-Xgc=" + get(X_GC)) }
+    if ("X_IR_PROPERTY_LAZY_INITIALIZATION" in optionsMap) { arguments.add("-Xir-property-lazy-initialization=" + get(X_IR_PROPERTY_LAZY_INITIALIZATION)) }
+    if ("X_WORKER_EXCEPTION_HANDLING" in optionsMap) { arguments.add("-Xworker-exception-handling=" + get(X_WORKER_EXCEPTION_HANDLING)) }
+    if ("X_LLVM_VARIANT" in optionsMap) { arguments.add("-Xllvm-variant=" + get(X_LLVM_VARIANT)) }
+    if ("X_BINARY" in optionsMap) { arguments.add("-Xbinary=" + get(X_BINARY)) }
+    if ("X_RUNTIME_LOGS" in optionsMap) { arguments.add("-Xruntime-logs=" + get(X_RUNTIME_LOGS)) }
+    if ("X_DUMP_TESTS_TO" in optionsMap) { arguments.add("-Xdump-tests-to=" + get(X_DUMP_TESTS_TO)) }
+    if ("X_LAZY_IR_FOR_CACHES" in optionsMap) { arguments.add("-Xlazy-ir-for-caches=" + get(X_LAZY_IR_FOR_CACHES)) }
+    if ("X_OMIT_FRAMEWORK_BINARY" in optionsMap) { arguments.add("-Xomit-framework-binary=" + get(X_OMIT_FRAMEWORK_BINARY)) }
+    if ("X_COMPILE_FROM_BITCODE" in optionsMap) { arguments.add("-Xcompile-from-bitcode=" + get(X_COMPILE_FROM_BITCODE)) }
+    if ("X_READ_DEPENDENCIES_FROM" in optionsMap) { arguments.add("-Xread-dependencies-from=" + get(X_READ_DEPENDENCIES_FROM)) }
+    if ("X_WRITE_DEPENDENCIES_TO" in optionsMap) { arguments.add("-Xwrite-dependencies-to=" + get(X_WRITE_DEPENDENCIES_TO)) }
+    if ("X_SAVE_LLVM_IR_DIRECTORY" in optionsMap) { arguments.add("-Xsave-llvm-ir-directory=" + get(X_SAVE_LLVM_IR_DIRECTORY)) }
+    if ("X_KONAN_DATA_DIR" in optionsMap) { arguments.add("-Xkonan-data-dir=" + get(X_KONAN_DATA_DIR)) }
+    if ("X_LLVM_MODULE_PASSES" in optionsMap) { arguments.add("-Xllvm-module-passes=" + get(X_LLVM_MODULE_PASSES)) }
+    if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.add("-Xllvm-lto-passes=" + get(X_LLVM_LTO_PASSES)) }
+    if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.add("-Xmanifest-native-targets=" + get(X_MANIFEST_NATIVE_TARGETS)) }
+    return arguments
+  }
+
   public class NativeArgument<V>(
     public val id: String,
   )

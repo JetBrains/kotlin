@@ -51,5 +51,5 @@ inline fun <reified T : Annotation> FunSpec.Builder.annotation(
 ): FunSpec.Builder = annotation(T::class.asTypeName(), annotationSpec)
 
 
-inline fun FunSpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit): FunSpec.Builder =
+inline fun FunSpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit = {}): FunSpec.Builder =
     addAnnotation(AnnotationSpec.builder(typeName).apply(annotationSpec).build())

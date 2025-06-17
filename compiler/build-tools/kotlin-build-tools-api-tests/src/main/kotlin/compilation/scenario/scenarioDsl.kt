@@ -6,25 +6,26 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.CompilationOutcome
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.*
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.deleteExisting
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 internal abstract class BaseScenarioModule(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
-    private val strategyConfig: CompilerExecutionStrategyConfiguration,
-    private val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    private val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    private val strategyConfig: ExecutionPolicy,
+    private val compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+    private val incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -92,9 +93,9 @@ internal abstract class BaseScenarioModule(
 internal class ExternallyTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
-    strategyConfig: CompilerExecutionStrategyConfiguration,
-    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    strategyConfig: ExecutionPolicy,
+    compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
 ) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
@@ -152,29 +153,29 @@ internal class ExternallyTrackedScenarioModuleImpl(
 internal class AutoTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
-    strategyConfig: CompilerExecutionStrategyConfiguration,
-    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    strategyConfig: ExecutionPolicy,
+    compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
 ) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
 
 private class ScenarioDsl(
     private val project: Project,
-    private val strategyConfig: CompilerExecutionStrategyConfiguration,
+    private val strategyConfig: ExecutionPolicy,
 ) : Scenario {
     @Synchronized
     override fun module(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        additionalCompilationArguments: List<String>,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        compilationOperationConfig: (JvmCompilationOperation) -> Unit,
+        compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
+            project.module(moduleName, transformedDependencies, snapshotConfig, compilationOperationConfig)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
             ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
     }
@@ -184,18 +185,23 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        additionalCompilationArguments: List<String>,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        compilationOperationConfig: (JvmCompilationOperation) -> Unit,
+        compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
+            project.module(moduleName, transformedDependencies, snapshotConfig, compilationOperationConfig)
         return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
             ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
     }
 }
 
-fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(strategyConfig, workingDirectory), strategyConfig))
+fun BaseCompilationTest.scenario(kotlinToolchain: KotlinToolchain, strategyConfig: ExecutionPolicy, action: Scenario.() -> Unit) {
+    action(ScenarioDsl(Project(kotlinToolchain, strategyConfig, workingDirectory), strategyConfig))
 }
+
+fun BaseCompilationTest.scenario(executionStrategy: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
+    action(ScenarioDsl(Project(executionStrategy.first, executionStrategy.second, workingDirectory), executionStrategy.second))
+}
+

@@ -11,7 +11,9 @@ import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
+import kotlin.collections.List
 import kotlin.collections.MutableMap
+import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
@@ -62,12 +64,22 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
     return arguments
   }
 
-  /**
-   * Base class for [CommonKlibBasedArguments] options.
-   *
-   * @see get
-   * @see set    
-   */
+  @Suppress("DEPRECATION")
+  @OptIn(ExperimentalCompilerArgument::class)
+  override fun toArgumentStrings(): List<String> {
+    val arguments = mutableListOf<String>()
+    arguments.addAll(super.toArgumentStrings())
+    if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.add("-Xklib-relative-path-base=" + get(X_KLIB_RELATIVE_PATH_BASE)) }
+    if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.add("-Xklib-normalize-absolute-path=" + get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)) }
+    if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.add("-Xklib-enable-signature-clash-checks=" + get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)) }
+    if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.add("-Xpartial-linkage=" + get(X_PARTIAL_LINKAGE)) }
+    if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.add("-Xpartial-linkage-loglevel=" + get(X_PARTIAL_LINKAGE_LOGLEVEL)) }
+    if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.add("-Xklib-duplicated-unique-name-strategy=" + get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)) }
+    if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.add("-Xklib-ir-inliner=" + get(X_KLIB_IR_INLINER)) }
+    if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.add("-Xklib-abi-version=" + get(X_KLIB_ABI_VERSION)) }
+    return arguments
+  }
+
   public class CommonKlibBasedArgument<V>(
     public val id: String,
   )

@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.buildtools.api.tests
 
 import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 abstract class BaseTest {
@@ -24,3 +26,5 @@ abstract class BaseTest {
         }
     }
 }
+
+typealias CompilerExecutionStrategyConfiguration = Pair<KotlinToolchain, ExecutionPolicy>
