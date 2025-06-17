@@ -7,4 +7,5 @@ Another one representation is JSON-based that is bundled into a published jar as
 
 ### JSON schema changelog
 
+- `2`: Add StringPathType and StringArrayPathType
 - `1`: Initial schema

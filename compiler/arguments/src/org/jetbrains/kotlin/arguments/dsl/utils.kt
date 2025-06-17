@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
 val BooleanType.Companion.defaultFalse: BooleanType
@@ -34,8 +36,14 @@ val BooleanType.Companion.defaultNull: BooleanType
 val StringType.Companion.defaultNull: StringType
     get() = StringType()
 
+val StringPathType.Companion.defaultNull: StringPathType
+    get() = StringPathType()
+
 val StringArrayType.Companion.defaultNull: StringArrayType
     get() = StringArrayType()
+
+val StringPathArrayType.Companion.defaultNull: StringPathArrayType
+    get() = StringPathArrayType()
 
 val IntType.Companion.defaultOne: IntType
     get() = IntType(
