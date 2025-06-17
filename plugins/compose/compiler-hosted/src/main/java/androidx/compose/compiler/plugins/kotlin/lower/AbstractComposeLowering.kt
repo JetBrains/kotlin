@@ -238,7 +238,7 @@ abstract class AbstractComposeLowering(
     }
 
     fun IrCall.isComposableSingletonGetter(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true
+        return this.isComposableSingleton
     }
 
     fun IrClass.isComposableSingletonClass(): Boolean {
@@ -1181,7 +1181,7 @@ abstract class AbstractComposeLowering(
                     // thus it is static.
                     return true
                 }
-                if (context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true) {
+                if (this.isComposableSingleton) {
                     return true
                 }
 
