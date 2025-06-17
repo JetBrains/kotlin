@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.addIfNotNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 internal abstract class PropertyLValueBase(
     protected val context: GeneratorContext,
@@ -160,11 +162,12 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
-                dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
+                val values = buildList {
+                    addIfNotNull(dispatchReceiverValue)
+                    addAll(contextReceiverValues)
+                    addIfNotNull(extensionReceiverValue)
                 }
+                arguments.assignFrom(values) { it.load() }
             }
         }
 
@@ -190,12 +193,12 @@ internal class AccessorPropertyLValue(
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
-                dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.load()
-                extensionReceiver = extensionReceiverValue?.load()
-                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
-                    putValueArgument(i, contextReceiverValue.load())
-                }
-                putValueArgument(contextReceiverValues.size, irExpression)
+                val values = buildList {
+                    addIfNotNull(dispatchReceiverValue)
+                    addAll(contextReceiverValues)
+                    addIfNotNull(extensionReceiverValue)
+                }.map { it.load() }
+                arguments.assignFrom(values + irExpression)
             }
         }
 
