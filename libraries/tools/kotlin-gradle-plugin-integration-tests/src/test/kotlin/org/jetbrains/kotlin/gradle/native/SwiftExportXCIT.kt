@@ -30,7 +30,12 @@ class SwiftExportXCIT : KGPBaseTest() {
                 boot()
             }
 
-            project("empty", gradleVersion) {
+            project(
+                "empty",
+                gradleVersion,
+                // KT-78385 Swift Export is not compatible with Gradle isolated projects
+                buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            ) {
                 embedDirectoryFromTestData("simpleSwiftExport")
                 plugins {
                     kotlin("multiplatform")
