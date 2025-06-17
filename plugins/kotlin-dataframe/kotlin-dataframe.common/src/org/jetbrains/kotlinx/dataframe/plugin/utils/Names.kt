@@ -31,6 +31,11 @@ object Names {
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
             Name.identifier("DataColumn")
         )
+    val VALUE_COLUMN_CLASS_ID: ClassId
+        get() = ClassId(
+            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe.columns")),
+            Name.identifier("ValueColumn")
+        )
     val BASE_COLUMN_CLASS_ID: ClassId
         get() = ClassId(
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "columns")),
