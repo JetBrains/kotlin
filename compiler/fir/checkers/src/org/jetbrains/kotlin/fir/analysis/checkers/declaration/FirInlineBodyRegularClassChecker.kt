@@ -3,23 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
-object FirInlineBodySimpleFunctionChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirInlineBodyRegularClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirSimpleFunction) {
+    override fun check(declaration: FirRegularClass) {
         val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
 
-        if (context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction.symbol) {
-            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local functions")
+        if (!declaration.classKind.isSingleton && context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction.symbol) {
+            reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes")
         }
     }
 }

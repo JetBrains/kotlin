@@ -3,8 +3,8 @@
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 
 inline fun inlineFun() {
-    fun localFun() {}
-    class LocalClass {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
+    <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> LocalClass {}
 
     run {
         fun localFun2() {}
