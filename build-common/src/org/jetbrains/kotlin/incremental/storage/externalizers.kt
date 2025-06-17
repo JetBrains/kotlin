@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.hash.EqualityPolicy
 import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.DataOutputStream
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.inline.InlineFunction
@@ -35,19 +34,11 @@ class DefaultEqualityPolicy<T> : EqualityPolicy<T> {
     override fun isEqual(value1: T, value2: T): Boolean = (value1 == value2)
 }
 
-// used by bazel
-interface DataExternalizerProvider<T> {
-    fun getDataExternalizer(): DataExternalizer<T>
-}
-
-fun <T> DataExternalizer<T>.toDescriptor(): KeyDescriptor<T> {
-    val dataExternalizer = this
-    return object : KeyDescriptor<T>,
-        DataExternalizer<T> by dataExternalizer,
-        EqualityPolicy<T> by DefaultEqualityPolicy(), DataExternalizerProvider<T> {
-        override fun getDataExternalizer(): DataExternalizer<T> = dataExternalizer
+fun <T> DataExternalizer<T>.toDescriptor(): KeyDescriptor<T> =
+    object : KeyDescriptor<T>,
+        DataExternalizer<T> by this,
+        EqualityPolicy<T> by DefaultEqualityPolicy<T>() {
     }
-}
 
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
