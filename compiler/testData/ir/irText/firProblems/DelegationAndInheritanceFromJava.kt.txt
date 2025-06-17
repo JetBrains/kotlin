@@ -6,10 +6,12 @@ class Impl : A, B {
 
   }
 
+  @IgnorableReturnValue
   override fun add(element: @FlexibleNullability String?): Boolean {
     return <this>.#$$delegate_0.add(element = element)
   }
 
+  @IgnorableReturnValue
   override fun addAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#$$delegate_0.addAll(elements = elements)
   }
@@ -34,14 +36,17 @@ class Impl : A, B {
     return <this>.#$$delegate_0.iterator()
   }
 
+  @IgnorableReturnValue
   override fun remove(element: @FlexibleNullability String?): Boolean {
     return <this>.#$$delegate_0.remove(element = element)
   }
 
+  @IgnorableReturnValue
   override fun removeAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#$$delegate_0.removeAll(elements = elements)
   }
 
+  @IgnorableReturnValue
   override fun retainAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#$$delegate_0.retainAll(elements = elements)
   }

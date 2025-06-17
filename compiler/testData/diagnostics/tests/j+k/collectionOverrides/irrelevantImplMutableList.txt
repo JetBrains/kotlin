@@ -21,10 +21,10 @@ public open class A : AImpl, kotlin.collections.MutableList<kotlin.String!> {
     public open override /*2*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
     public open override /*2*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
-    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
-    public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*2*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*2*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
+    @kotlin.IgnorableReturnValue public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     public open override /*2*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -81,13 +81,14 @@ public final class X : A {
     public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
-    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
+    @kotlin.IgnorableReturnValue public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
     public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

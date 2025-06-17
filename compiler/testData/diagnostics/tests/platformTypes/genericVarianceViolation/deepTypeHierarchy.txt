@@ -14,10 +14,10 @@ public open class A {
 
 public interface MyList1</*0*/ T> : kotlin.collections.MutableList<T> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: T): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: T): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
@@ -30,21 +30,21 @@ public interface MyList1</*0*/ T> : kotlin.collections.MutableList<T> {
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: T): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<T>
     public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<T>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: T): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): T
-    public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: T): T
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: T): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): T
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: T): T
     public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<T>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface MyList2</*0*/ A, /*1*/ B> : MyList1<B> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: B): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: B): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: B): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: B): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
@@ -57,21 +57,21 @@ public interface MyList2</*0*/ A, /*1*/ B> : MyList1<B> {
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: B): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<B>
     public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<B>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: B): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): B
-    public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: B): B
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: B): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): B
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: B): B
     public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<B>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface MyList3</*0*/ A2, /*1*/ B> : MyList2<kotlin.Any, B> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: B): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ element: B): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: B): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: B): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
@@ -84,11 +84,12 @@ public interface MyList3</*0*/ A2, /*1*/ B> : MyList2<kotlin.Any, B> {
     public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: B): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<B>
     public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.MutableListIterator<B>
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: B): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): B
-    public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: B): B
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ element: B): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): B
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<B>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: B): B
     public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.MutableList<B>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

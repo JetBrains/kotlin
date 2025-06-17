@@ -20,7 +20,7 @@ fun returnsString(): String {
 fun main() {
     <!RETURN_VALUE_NOT_USED!>stringF().myLet { it }<!>
     <!RETURN_VALUE_NOT_USED!>stringF().myLet { 2 }<!>
-    <!RETURN_VALUE_NOT_USED!>stringF().let { 2 }<!>
+    stringF().let { 2 }
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, funWithExtensionReceiver, functionDeclaration, functionalType,

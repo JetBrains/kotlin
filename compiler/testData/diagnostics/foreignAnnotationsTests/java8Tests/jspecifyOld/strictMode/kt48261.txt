@@ -37,7 +37,7 @@ public fun go(/*0*/ myList: MyList<kotlin.String>, /*1*/ string: kotlin.String):
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun add(/*0*/ element: E): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: E): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun clear(): kotlin.Unit
     @java.lang.Override public open override /*2*/ fun contains(/*0*/ @javax.annotation.CheckForNull element: E!): kotlin.Boolean
@@ -55,11 +55,11 @@ public fun go(/*0*/ myList: MyList<kotlin.String>, /*1*/ string: kotlin.String):
     public open override /*2*/ /*fake_override*/ fun parallelStream(): java.util.stream.Stream<E>
     public open override /*2*/ /*fake_override*/ fun remove(/*0*/ element: E!): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<E!>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): E
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): E
     public open override /*2*/ /*fake_override*/ fun removeIf(/*0*/ p0: java.util.function.Predicate<in E>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.UnaryOperator<E>): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<E!>): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
     public open override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun sort(/*0*/ p0: java.util.Comparator<in E!>!): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun spliterator(): java.util.Spliterator<E>
     public open override /*2*/ /*fake_override*/ fun stream(): java.util.stream.Stream<E>
@@ -73,3 +73,4 @@ public fun go(/*0*/ myList: MyList<kotlin.String>, /*1*/ string: kotlin.String):
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
 }
+

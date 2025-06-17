@@ -8,9 +8,9 @@ public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Objec
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<TK;>;> method getKeys(): java.util.Set
     public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
     public @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
-    public @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
     public <(Ljava/util/Map<+TK;+TV;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
-    public @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public <null> method <init>(): void
     public <null> method clear(): void
     public <null> method containsKey(p0: java.lang.Object): boolean
@@ -32,9 +32,9 @@ public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;L
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<TK;>;> method getKeys(): java.util.Set
     public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
     public @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method get(p0: java.lang.Object): java.lang.Object
-    public @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.Nullable <(Ljava/lang/Object;)TV;> method remove(p0: java.lang.Object): java.lang.Object
     public <(Ljava/util/Map<+TK;+TV;>;)V> method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
-    public @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public @kotlin.IgnorableReturnValue @org.jetbrains.annotations.Nullable <(TK;TV;)TV;> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public <null> method <init>(): void
     public <null> method clear(): void
     public <null> method containsKey(p0: java.lang.Object): boolean
