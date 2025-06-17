@@ -3,14 +3,11 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.lower.KeyInfo
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 object ComposeWritableSlices {
-    val IS_SYNTHETIC_COMPOSABLE_CALL: WritableSlice<IrFunctionAccessExpression, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_STATIC_FUNCTION_EXPRESSION: WritableSlice<IrExpression, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_STATIC_EXPRESSION: WritableSlice<IrExpression, Boolean> =
