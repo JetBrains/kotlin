@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.js.engine.ScriptExecutionException
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -28,7 +29,7 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
         try {
             V8JsTestChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
         } catch (e: RuntimeException) {
-            testServices.assertions.assertTrue(e is IllegalStateException)
+            testServices.assertions.assertTrue(e is ScriptExecutionException)
             val message = e.message!!
 
             testServices.assertions.assertTrue("'kotlin_lib'" in message) {

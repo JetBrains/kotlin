@@ -56,7 +56,7 @@ abstract class ProcessBasedScriptEngine(
                 err.append(s)
             }
 
-            error("ERROR:\n$err\nOUTPUT:\n$out")
+            throw ScriptExecutionException(out.toString(), err.toString())
         }
 
         return out.removeSuffix(END_MARKER).removeSuffix(LINE_SEPARATOR).toString()
@@ -103,4 +103,9 @@ abstract class ProcessBasedScriptEngine(
             process = it
         }
     }
+}
+
+class ScriptExecutionException(val stdout: String, val stderr: String) : RuntimeException() {
+    override val message: String
+        get() = "ERROR:\n$stderr\nOUTPUT:\n$stdout"
 }
