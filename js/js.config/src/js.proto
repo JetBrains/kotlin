@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+edition = "2023";
+
 package org.jetbrains.kotlin.metadata.js;
 
 // Whenever you change this proto in an incompatible way, don't forget to bump JsMetadataVersion
@@ -21,22 +23,22 @@ package org.jetbrains.kotlin.metadata.js;
 import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JsProtoBuf";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 message Header {
   /*
     preRelease
   */
-  optional int32 flags = 1;
+  int32 flags = 1;
 
   // (patch << 16) + (minor << 8) + major
-  optional int32 js_code_binary_version = 2 [default = 1];
+  int32 js_code_binary_version = 2 [default = 1];
 
-  optional string package_fq_name = 3;
+  string package_fq_name = 3;
 
-  optional StringTable strings = 4;
+  StringTable strings = 4;
 
-  optional QualifiedNameTable qualified_names = 5;
+  QualifiedNameTable qualified_names = 5;
 
   // Annotations on the whole module
   repeated Annotation annotation = 6;
@@ -44,7 +46,7 @@ message Header {
 
 message File {
   // If absent, id is the index of the file in the Files.file list
-  optional int32 id = 1;
+  int32 id = 1;
 
   repeated Annotation annotation = 2;
 }
@@ -54,12 +56,12 @@ message Files {
 }
 
 extend Package {
-  optional int32 package_fq_name = 131;
+  int32 package_fq_name = 131;
 }
 
 extend Class {
   repeated Annotation class_annotation = 130;
-  optional int32 class_containing_file_id = 135;
+  int32 class_containing_file_id = 135;
 }
 
 extend Constructor {
@@ -68,15 +70,15 @@ extend Constructor {
 
 extend Function {
   repeated Annotation function_annotation = 130;
-  optional int32 function_containing_file_id = 135;
+  int32 function_containing_file_id = 135;
 }
 
 extend Property {
   repeated Annotation property_annotation = 130;
   repeated Annotation property_getter_annotation = 132;
   repeated Annotation property_setter_annotation = 133;
-  optional Annotation.Argument.Value compile_time_value = 131;
-  optional int32 property_containing_file_id = 135;
+  Annotation.Argument.Value compile_time_value = 131;
+  int32 property_containing_file_id = 135;
 }
 
 extend EnumEntry {
@@ -96,23 +98,24 @@ extend TypeParameter {
 }
 
 extend PackageFragment {
-  optional Files package_fragment_files = 130;
+  Files package_fragment_files = 130;
 }
 
 message Classes {
   // id in StringTable
-  repeated int32 class_name = 1 [packed = true];
+  repeated int32 class_name = 1;
 }
 
 message Library {
   enum Kind {
+    option features.enum_type = CLOSED;
     PLAIN = 1;
     AMD = 2;
     COMMON_JS = 3;
     UMD = 4;
   }
 
-  optional Kind kind = 1 [default = PLAIN];
+  Kind kind = 1 [default = PLAIN];
 
   repeated PackageFragment package_fragment = 2;
 

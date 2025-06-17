@@ -1,11 +1,13 @@
+edition = "2023";
+
 package org.jetbrains.kotlin.metadata;
 
 import "core/metadata/src/metadata.proto";
 import "core/metadata/src/ext_options.proto";
 
 option java_outer_classname = "SerializationPluginMetadataExtensions";
-option optimize_for = LITE_RUNTIME;
+option features.utf8_validation = NONE;
 
 extend org.jetbrains.kotlin.metadata.Class {
-  repeated int32 properties_names_in_program_order = 18000;
+  repeated int32 properties_names_in_program_order = 18000 [features.repeated_field_encoding = EXPANDED];
 }
