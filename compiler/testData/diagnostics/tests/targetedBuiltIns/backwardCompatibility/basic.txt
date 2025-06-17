@@ -29,9 +29,9 @@ public abstract class Test2 : kotlin.collections.MutableMap<kotlin.String, kotli
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
     public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String, kotlin.String>): kotlin.Unit
-    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.String?
+    @kotlin.IgnorableReturnValue public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.String?
     public final fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -58,3 +58,4 @@ public abstract class Test3 : java.util.AbstractMap<kotlin.String, kotlin.String
     public final fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

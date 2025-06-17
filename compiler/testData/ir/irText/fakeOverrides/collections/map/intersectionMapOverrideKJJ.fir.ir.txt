@@ -113,6 +113,8 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] kotlin.Boolean?
       VALUE_PARAMETER kind:Regular name:value index:2 type:@[FlexibleNullability] kotlin.Boolean?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun put (key: @[FlexibleNullability] K of java.util.SortedMap?, value: @[FlexibleNullability] V of java.util.SortedMap?): V of java.util.SortedMap? declared in java.util.SortedMap
         public open fun put (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] V of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
@@ -132,6 +134,8 @@ FILE fqName:<root> fileName:/1.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<@[FlexibleNullability] kotlin.Boolean?, @[FlexibleNullability] kotlin.Boolean?>
       VALUE_PARAMETER kind:Regular name:key index:1 type:@[FlexibleNullability] kotlin.Boolean?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (key: @[FlexibleNullability] K of java.util.SortedMap?): V of java.util.SortedMap? declared in java.util.SortedMap
         public open fun remove (p0: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap

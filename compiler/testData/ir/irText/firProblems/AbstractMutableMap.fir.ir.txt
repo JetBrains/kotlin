@@ -98,6 +98,8 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:V of <root>.MyMap? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableMap<K of <root>.MyMap, V of <root>.MyMap>
       VALUE_PARAMETER kind:Regular name:key index:1 type:K of <root>.MyMap
+      annotations:
+        IgnorableReturnValue
       overridden:
         public open fun remove (key: K of kotlin.collections.AbstractMutableMap): V of kotlin.collections.AbstractMutableMap? declared in kotlin.collections.AbstractMutableMap
     FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]

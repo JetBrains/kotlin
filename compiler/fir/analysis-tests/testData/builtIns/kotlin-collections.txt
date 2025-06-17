@@ -172,15 +172,15 @@ public abstract interface Map<K, out V> : R|kotlin/Any| {
 public abstract interface MutableCollection<E> : R|kotlin/collections/Collection<E>|, R|kotlin/collections/MutableIterable<E>| {
     public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<E>|
 
-    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun add(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun remove(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
     public abstract fun clear(): R|kotlin/Unit|
 
@@ -197,25 +197,25 @@ public abstract interface MutableIterator<out T> : R|kotlin/collections/Iterator
 }
 
 public abstract interface MutableList<E> : R|kotlin/collections/List<E>|, R|kotlin/collections/MutableCollection<E>| {
-    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun add(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun remove(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun addAll(index: R|kotlin/Int|, elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun addAll(index: R|kotlin/Int|, elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
     public abstract fun clear(): R|kotlin/Unit|
 
-    public abstract operator fun set(index: R|kotlin/Int|, element: R|E|): R|E|
+    @R|kotlin/IgnorableReturnValue|() public abstract operator fun set(index: R|kotlin/Int|, element: R|E|): R|E|
 
     public abstract fun add(index: R|kotlin/Int|, element: R|E|): R|kotlin/Unit|
 
-    public abstract fun removeAt(index: R|kotlin/Int|): R|E|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun removeAt(index: R|kotlin/Int|): R|E|
 
     public abstract fun listIterator(): R|kotlin/collections/MutableListIterator<E>|
 
@@ -239,9 +239,9 @@ public abstract interface MutableListIterator<T> : R|kotlin/collections/ListIter
 }
 
 public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
-    public abstract fun put(key: R|K|, value: R|V|): R|V?|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun put(key: R|K|, value: R|V|): R|V?|
 
-    public abstract fun remove(key: R|K|): R|V?|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun remove(key: R|K|): R|V?|
 
     @R|kotlin/SinceKotlin|(version = String(1.1)) @R|kotlin/internal/PlatformDependent|() public open fun remove(key: R|K|, value: R|V|): R|kotlin/Boolean|
 
@@ -259,7 +259,7 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
         public get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
 
     public abstract interface MutableEntry<K, V> : R|kotlin/collections/Map.Entry<K, V>| {
-        public abstract fun setValue(newValue: R|V|): R|V|
+        @R|kotlin/IgnorableReturnValue|() public abstract fun setValue(newValue: R|V|): R|V|
 
     }
 
@@ -268,15 +268,15 @@ public abstract interface MutableMap<K, V> : R|kotlin/collections/Map<K, V>| {
 public abstract interface MutableSet<E> : R|kotlin/collections/Set<E>|, R|kotlin/collections/MutableCollection<E>| {
     public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<E>|
 
-    public abstract fun add(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun add(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun remove(element: R|E|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun remove(element: R|E|): R|kotlin/Boolean|
 
-    public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun addAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun removeAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
-    public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
+    @R|kotlin/IgnorableReturnValue|() public abstract fun retainAll(elements: R|kotlin/collections/Collection<E>|): R|kotlin/Boolean|
 
     public abstract fun clear(): R|kotlin/Unit|
 

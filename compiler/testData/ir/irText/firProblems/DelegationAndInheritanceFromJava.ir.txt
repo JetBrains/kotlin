@@ -12,6 +12,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:add visibility:public modality:OPEN returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
       VALUE_PARAMETER kind:Regular name:element index:1 type:@[FlexibleNullability] kotlin.String?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
         public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B
@@ -24,6 +26,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:addAll visibility:public modality:OPEN returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
         public abstract fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
@@ -89,6 +93,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:remove visibility:public modality:OPEN returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
       VALUE_PARAMETER kind:Regular name:element index:1 type:@[FlexibleNullability] kotlin.String?
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
         public abstract fun remove (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.B
@@ -101,6 +107,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:removeAll visibility:public modality:OPEN returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
         public abstract fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B
@@ -113,6 +121,8 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
     FUN DELEGATED_MEMBER name:retainAll visibility:public modality:OPEN returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Impl
       VALUE_PARAMETER kind:Regular name:elements index:1 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>
+      annotations:
+        IgnorableReturnValue
       overridden:
         public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.A
         public abstract fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?>): kotlin.Boolean declared in <root>.Foo.B

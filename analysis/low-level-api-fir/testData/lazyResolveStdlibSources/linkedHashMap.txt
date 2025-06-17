@@ -20,9 +20,9 @@ FILE: [ResolvedTo(RAW_FIR)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -61,9 +61,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -102,9 +102,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -143,9 +143,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -184,9 +184,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -225,9 +225,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -266,9 +266,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -307,9 +307,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -348,9 +348,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -389,9 +389,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -430,9 +430,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -471,9 +471,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
 
-        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+        @IgnorableReturnValue[Unresolved]() public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
 
         public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
 
@@ -512,9 +512,9 @@ FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
 
         public open expect override operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] key: R|K|): R|V?|
 
-        public open expect override [ResolvedTo(STATUS)] fun put([ResolvedTo(STATUS)] key: R|K|, [ResolvedTo(STATUS)] value: R|V|): R|V?|
+        @R|kotlin/IgnorableReturnValue|[Types]() public open expect override [ResolvedTo(STATUS)] fun put([ResolvedTo(STATUS)] key: R|K|, [ResolvedTo(STATUS)] value: R|V|): R|V?|
 
-        public open expect override [ResolvedTo(STATUS)] fun remove([ResolvedTo(STATUS)] key: R|K|): R|V?|
+        @R|kotlin/IgnorableReturnValue|[Types]() public open expect override [ResolvedTo(STATUS)] fun remove([ResolvedTo(STATUS)] key: R|K|): R|V?|
 
         public open expect override [ResolvedTo(STATUS)] fun putAll([ResolvedTo(STATUS)] from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
 
@@ -553,9 +553,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] LinkedHashMap.kt
 
         public open expect override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|V?|
 
-        public open expect override [ResolvedTo(BODY_RESOLVE)] fun put([ResolvedTo(BODY_RESOLVE)] key: R|K|, [ResolvedTo(BODY_RESOLVE)] value: R|V|): R|V?|
+        @R|kotlin/IgnorableReturnValue|[Types]() public open expect override [ResolvedTo(BODY_RESOLVE)] fun put([ResolvedTo(BODY_RESOLVE)] key: R|K|, [ResolvedTo(BODY_RESOLVE)] value: R|V|): R|V?|
 
-        public open expect override [ResolvedTo(BODY_RESOLVE)] fun remove([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|V?|
+        @R|kotlin/IgnorableReturnValue|[Types]() public open expect override [ResolvedTo(BODY_RESOLVE)] fun remove([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|V?|
 
         public open expect override [ResolvedTo(BODY_RESOLVE)] fun putAll([ResolvedTo(BODY_RESOLVE)] from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
 
