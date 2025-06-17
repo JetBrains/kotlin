@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function

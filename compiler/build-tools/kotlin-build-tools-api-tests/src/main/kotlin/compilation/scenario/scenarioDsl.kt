@@ -22,9 +22,9 @@ import kotlin.io.path.writeText
 internal abstract class BaseScenarioModule(
     internal val module: Module,
     internal val outputs: MutableSet<String>,
-    private val strategyConfig: CompilerExecutionStrategyConfiguration,
-    private val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    private val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+//    private val projectSpec: ProjectSpec,
+//    private val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
+//    private val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -69,10 +69,9 @@ internal abstract class BaseScenarioModule(
     ) {
         module.compileIncrementally(
             getSourcesChanges(),
-            strategyConfig,
             forceOutput,
-            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
-            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
+//            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
+//            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) },
             assertions = {
                 assertions(this, module, this@BaseScenarioModule)
             })
@@ -92,10 +91,8 @@ internal abstract class BaseScenarioModule(
 internal class ExternallyTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
-    strategyConfig: CompilerExecutionStrategyConfiguration,
-    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
-) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
+    projectSpec: ProjectSpec,
+) : BaseScenarioModule(module, outputs) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
     override fun replaceFileWithVersion(fileName: String, version: String) {
@@ -152,31 +149,26 @@ internal class ExternallyTrackedScenarioModuleImpl(
 internal class AutoTrackedScenarioModuleImpl(
     module: Module,
     outputs: MutableSet<String>,
-    strategyConfig: CompilerExecutionStrategyConfiguration,
-    compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
-) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
+
+) : BaseScenarioModule(module, outputs) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
 
 private class ScenarioDsl(
     private val project: Project,
-    private val strategyConfig: CompilerExecutionStrategyConfiguration,
 ) : Scenario {
     @Synchronized
     override fun module(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        additionalCompilationArguments: List<String>,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        overrides: Module.Overrides
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, false)
+            project.module(moduleName, transformedDependencies, snapshotConfig, overrides)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, project.projectSpec, snapshotConfig, false)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, project.projectSpec, snapshotConfig, false)
     }
 
     @Synchronized
@@ -184,18 +176,16 @@ private class ScenarioDsl(
         moduleName: String,
         dependencies: List<ScenarioModule>,
         snapshotConfig: SnapshotConfig,
-        additionalCompilationArguments: List<String>,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+        overrides: Module.Overrides
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
-            project.module(moduleName, transformedDependencies, snapshotConfig, additionalCompilationArguments)
-        return GlobalCompiledProjectsCache.getProjectFromCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
-            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, strategyConfig, snapshotConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier, true)
+            project.module(moduleName, transformedDependencies, snapshotConfig, overrides)
+        return GlobalCompiledProjectsCache.getProjectFromCache(module, project.projectSpec, snapshotConfig, true)
+            ?: GlobalCompiledProjectsCache.putProjectIntoCache(module, project.projectSpec, snapshotConfig, true)
     }
 }
 
-fun BaseCompilationTest.scenario(strategyConfig: CompilerExecutionStrategyConfiguration, action: Scenario.() -> Unit) {
-    action(ScenarioDsl(Project(strategyConfig, workingDirectory), strategyConfig))
+fun BaseCompilationTest.scenario(projectSpec: ProjectSpec, action: Scenario.() -> Unit) {
+    action(ScenarioDsl(Project(projectSpec, workingDirectory)))
 }

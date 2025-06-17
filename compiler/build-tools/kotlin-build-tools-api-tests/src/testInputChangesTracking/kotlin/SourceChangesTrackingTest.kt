@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
@@ -19,8 +20,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Intra-module IC tracks source changes in consecutive builds")
     @TestMetadata("jvm-module-1")
-    fun testConsequentBuilds(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testConsequentBuilds(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val module1 = trackedModule("jvm-module-1")
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.compile { module, scenarioModule ->

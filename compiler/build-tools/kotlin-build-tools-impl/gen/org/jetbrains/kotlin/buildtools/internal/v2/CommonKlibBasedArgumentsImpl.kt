@@ -3,6 +3,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -30,6 +31,8 @@ public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
   override operator fun <V> `set`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  public operator fun contains(key: CommonKlibBasedArguments.CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {

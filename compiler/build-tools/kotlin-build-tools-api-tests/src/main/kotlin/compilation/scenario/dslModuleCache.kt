@@ -4,12 +4,10 @@
  */
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import java.nio.file.Files
 import java.nio.file.Path
@@ -22,8 +20,7 @@ import kotlin.io.path.walk
 private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
-    val compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-    val incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
+    val projectSpec: ProjectSpec,
     val icSourceTracking: Boolean,
 )
 
@@ -35,40 +32,32 @@ internal object GlobalCompiledProjectsCache {
 
     fun getProjectFromCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        projectSpec: ProjectSpec,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
-            compilationOptionsModifier,
-            incrementalCompilationOptionsModifier,
+            projectSpec,
             icSourceTracking,
         )] ?: return null
         cachedBuildDirPath.copyToRecursively(module.buildDirectory, followLinks = false, overwrite = true)
         return if (icSourceTracking) {
-            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            AutoTrackedScenarioModuleImpl(module, initialOutputs)
         } else {
-            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, projectSpec)
         }
     }
 
     fun putProjectIntoCache(
         module: Module,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        projectSpec: ProjectSpec,
         snapshotConfig: SnapshotConfig,
-        compilationOptionsModifier: ((JvmCompilationConfiguration) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((IncrementalJvmCompilationConfiguration<*>) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(
             if (icSourceTracking) SourcesChanges.ToBeCalculated else SourcesChanges.Unknown,
-            strategyConfig,
-            compilationConfigAction = { compilationOptionsModifier?.invoke(it) },
-            incrementalCompilationConfigAction = { incrementalCompilationOptionsModifier?.invoke(it) }
         )
         val initialOutputs = mutableSetOf<String>()
         for (file in module.outputDirectory.walk()) {
@@ -80,14 +69,13 @@ internal object GlobalCompiledProjectsCache {
         compiledProjectsCache[GlobalCompiledProjectsCacheKey(
             module.scenarioDslCacheKey,
             snapshotConfig,
-            compilationOptionsModifier,
-            incrementalCompilationOptionsModifier,
+            projectSpec,
             icSourceTracking,
         )] = Pair(initialOutputs, moduleCacheDirectory)
         return if (icSourceTracking) {
-            AutoTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            AutoTrackedScenarioModuleImpl(module, initialOutputs)
         } else {
-            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier)
+            ExternallyTrackedScenarioModuleImpl(module, initialOutputs, projectSpec)
         }
     }
 }

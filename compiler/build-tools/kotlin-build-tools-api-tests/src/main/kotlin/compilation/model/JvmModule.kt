@@ -6,30 +6,32 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.*
-import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
 class JvmModule(
+    private val compilationService: CompilationService,
     project: Project,
     moduleName: String,
     moduleDirectory: Path,
     dependencies: List<Dependency>,
-    defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
+    private val defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
     private val snapshotConfig: SnapshotConfig,
-    additionalCompilationArguments: List<String> = emptyList(),
-) : AbstractModule(
+    overrides: Module.Overrides,
+) : AbstractModule<(JvmCompilationConfiguration) -> Unit>(
     project,
     moduleName,
     moduleDirectory,
     dependencies,
-    defaultStrategyConfig,
-    additionalCompilationArguments,
+    overrides
 ) {
     private val stdlibLocation: Path =
         KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath() // compile against the provided stdlib
@@ -43,13 +45,13 @@ class JvmModule(
     private val compileClasspath: String
         get() = dependencyFiles.joinToString(File.pathSeparator)
 
+
     override fun compileImpl(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        compilationConfigAction: ((JvmCompilationConfiguration) -> Unit)?,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult {
-        val compilationConfig = BaseTest.compilationService.makeJvmCompilationConfiguration()
-        compilationConfigAction(compilationConfig)
+        val compilationConfig = compilationService.makeJvmCompilationConfiguration()
+        compilationConfigAction?.let { it(compilationConfig) }
         compilationConfig.useLogger(kotlinLogger)
         val defaultCompilationArguments = listOf(
             "-no-reflect",
@@ -57,22 +59,26 @@ class JvmModule(
             "-d", outputDirectory.absolutePathString(),
             "-cp", compileClasspath,
             "-module-name", moduleName,
-        )
+        ) + buildList {
+            overrides.useFirIc?.let { add("-Xuse-fir-ic") }
+            overrides.languageVersion?.let { add("-language-version=${it.stringValue}") }
+
+        }
         val allowedExtensions = compilationConfig.kotlinScriptFilenameExtensions + setOf("kt", "kts")
-        return BaseTest.compilationService.compileJvm(
+        return compilationService.compileJvm(
             project.projectId,
-            strategyConfig,
+            defaultStrategyConfig,
             compilationConfig,
             sourcesDirectory.walk()
                 .filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                 .map { it.toFile() }
                 .toList(),
-            defaultCompilationArguments + additionalCompilationArguments,
+            defaultCompilationArguments,
         )
     }
 
     private fun generateClasspathSnapshot(dependency: Dependency): Path {
-        val snapshot = BaseTest.compilationService.calculateClasspathSnapshot(
+        val snapshot = compilationService.calculateClasspathSnapshot(
             dependency.location.toFile(),
             snapshotConfig.granularity,
             snapshotConfig.useInlineLambdaSnapshotting,
@@ -90,14 +96,11 @@ class JvmModule(
 
     override fun compileIncrementally(
         sourcesChanges: SourcesChanges,
-        strategyConfig: CompilerExecutionStrategyConfiguration,
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
-        incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit,
-        assertions: CompilationOutcome.(module: Module) -> Unit,
+        assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
-        return compile(strategyConfig, forceOutput, { compilationConfig ->
+        return compile(forceOutput, { compilationConfig ->
             val snapshots = dependencies.map {
                 generateClasspathSnapshot(it).toFile()
             }
@@ -115,7 +118,8 @@ class JvmModule(
                 options.forceNonIncrementalMode()
             }
 
-            incrementalCompilationConfigAction(options)
+            overrides.keepIncrementalCompilationCachesInMemory?.let { options.keepIncrementalCompilationCachesInMemory(it) }
+            overrides.useFirRunner?.let { options.useFirRunner(it) }
 
             compilationConfig.useIncrementalCompilation(
                 icCachesDir.toFile(),
@@ -123,19 +127,13 @@ class JvmModule(
                 params,
                 options,
             )
-            compilationConfigAction(compilationConfig)
+//            compilationConfigAction(compilationConfig)
         }, assertions)
     }
 
     override fun prepareExecutionProcessBuilder(
-        mainClassFqn: String
+        mainClassFqn: String,
     ): ProcessBuilder {
-        if (additionalCompilationArguments.contains("-cp")) {
-            throw UnsupportedOperationException(
-                "additional classpath support isn't implemented for JvmModule.executeCompiledClass"
-            )
-        }
-
         val executionClasspath = "$compileClasspath${File.pathSeparator}${outputDirectory}"
 
         val builder = ProcessBuilder(

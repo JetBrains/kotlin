@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.project
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
@@ -24,8 +24,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with a single module")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+    fun testSingleModule(projectSpec: ProjectSpec) {
+        project(projectSpec) {
             val module1 = module("jvm-module-1")
 
             // this is not the scenario DSL, so the module is not built at this moment
@@ -47,8 +47,8 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample IC test with 2 modules and custom compilation options")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun testTwoModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig) {
+    fun testTwoModules(projectSpec: ProjectSpec) {
+        project(projectSpec) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 
@@ -61,11 +61,10 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             val barKt = module1.sourcesDirectory.resolve("bar.kt")
             barKt.writeText(barKt.readText().replace("bar()", "bar(i: Int = 1)"))
 
+            module1.overrides.keepIncrementalCompilationCachesInMemory = false
+
             module1.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()),
-                incrementalCompilationConfigAction = {
-                    it.keepIncrementalCompilationCachesInMemory(false)
-                },
             )
 
             module2.compileIncrementally(

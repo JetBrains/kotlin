@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
@@ -23,8 +24,8 @@ class AnonymousInheritorTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an anonymous object - no-inline version")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
-    fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testAnonymousObjectBaseTypeChangeWithOverloads(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",

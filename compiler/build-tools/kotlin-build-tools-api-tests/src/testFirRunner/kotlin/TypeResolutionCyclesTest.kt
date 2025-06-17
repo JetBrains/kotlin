@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncremental
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
@@ -21,14 +23,11 @@ class TypeResolutionCyclesTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Potential first-round errors: cyclic dependency created")
     @TestMetadata("empty")
-    fun testCyclicDependencyCreated(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testCyclicDependencyCreated(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val module = module(
                 "empty",
-                additionalCompilationArguments = listOf("-Xuse-fir-ic"),
-                incrementalCompilationOptionsModifier = { incrementalOptions ->
-                    (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-                }
+                overrides = Module.Overrides(useFirRunner = true, useFirIc = true),
             )
 
             module.createFile(

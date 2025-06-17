@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguratio
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
@@ -21,8 +22,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When inlined lambda's body changes, its call site is recompiled")
     @TestMetadata("ic-scenarios/inline-local-class/lambda-body-change/lib")
-    fun testMainCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testMainCase(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/lambda-body-change/app",
@@ -48,8 +49,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Single-module version of inlined lambda changes")
     @TestMetadata("ic-scenarios/inline-local-class/single-module/app")
-    fun testSingleModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testSingleModule(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val app = module("ic-scenarios/inline-local-class/single-module/app")
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -65,8 +66,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in local class inside inlined local class")
     @TestMetadata("ic-scenarios/inline-local-class/local-in-local/lib")
-    fun testLocalClassInLocal(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testLocalClassInLocal(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/local-in-local/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-in-local/app",
@@ -86,7 +87,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Catch bad implementation: if lambda is used multiple times, handle its changes (hierarchical version)")
     @TestMetadata("ic-scenarios/inline-local-class/local-uses-local-deduplication/lib")
-    fun testInlinedClassDeduplication(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testInlinedClassDeduplication(projectSpec: ProjectSpec) {
         /**
          * This is basically a "bad implementation catcher" test: if we use xor for multihashing, we *must* deduplicate all classes
          * mixed into the inline function's hash. Otherwise this happens:
@@ -94,7 +95,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
          * A xor A = 0L //for any A
          * fun uses classes (A, B); B uses A; if brokenhash(A,B,A)==brokenhash(B), then any change to A won't be caught be the snapshotter
          */
-        scenario(strategyConfig) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication/app",
@@ -114,9 +115,9 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Catch bad implementation: if lambda is used multiple times, handle its changes (flat version)")
     @TestMetadata("ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/lib")
-    fun testInlinedClassDeduplicationV2(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun testInlinedClassDeduplicationV2(projectSpec: ProjectSpec) {
         // same as [testInlinedClassDeduplication]
-        scenario(strategyConfig) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/app",
@@ -136,8 +137,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in inlined named class")
     @TestMetadata("ic-scenarios/inline-local-class/local-named/lib")
-    fun testLocalNamedClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testLocalNamedClass(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/local-named/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-named/app",
@@ -155,8 +156,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in unused code should not trigger recompilation of call site")
     @TestMetadata("ic-scenarios/inline-local-class/no-recompile/lib")
-    fun testNoRecompilationNeeded(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testNoRecompilationNeeded(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/no-recompile/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/no-recompile/app",
@@ -176,8 +177,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in lambda inside inline function B affect call site of inline function A that calls B")
     @TestMetadata("ic-scenarios/inline-local-class/nested-inline/lib")
-    fun testNestedInlineFunctions(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testNestedInlineFunctions(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/nested-inline/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline/app",
@@ -200,8 +201,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in anonymous object inside inline function B affect call site of inline function A that calls B - happy version")
     @TestMetadata("ic-scenarios/inline-local-class/nested-inline-as-anonymous-object/lib")
-    fun testNestedInlineTrulyAnonymousObject(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testNestedInlineTrulyAnonymousObject(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/nested-inline-as-anonymous-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline-as-anonymous-object/app",
@@ -221,8 +222,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in anonymous object inside inline function B affect call site of inline function A that calls B")
     @TestMetadata("ic-scenarios/inline-local-class/nested-inline-as-typed-object/lib")
-    fun testNestedInlineAnonymousObject(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testNestedInlineAnonymousObject(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/nested-inline-as-typed-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline-as-typed-object/app",
@@ -242,8 +243,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in lambda inside inline property getter trigger recompilation")
     @TestMetadata("ic-scenarios/inline-local-class/inline-property/lib")
-    fun testInlineProperty(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testInlineProperty(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/inline-property/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-property/app",
@@ -263,8 +264,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in multiple unused lambdas should not trigger recompilation")
     @TestMetadata("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
-    fun testMultipleUnusedLambdas(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testMultipleUnusedLambdas(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/no-recompile-lambdas/app",
@@ -284,8 +285,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Basic interaction with crossinline")
     @TestMetadata("ic-scenarios/inline-local-class/inline-crossinline/lib")
-    fun testCrossInlineLambdaChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testCrossInlineLambdaChange(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/inline-crossinline/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-crossinline/app",
@@ -305,8 +306,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an anonymous object - basic")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object/lib")
-    fun testAnonymousObjectBaseTypeChange(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testAnonymousObjectBaseTypeChange(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object/app",
@@ -327,8 +328,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Recompilation of call site affected by an anonymous object - slightly evil")
     @TestMetadata("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
-    fun testAnonymousObjectBaseTypeChangeWithOverloads(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testAnonymousObjectBaseTypeChangeWithOverloads(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
@@ -348,8 +349,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Changes in inline function inside named inner class")
     @TestMetadata("ic-scenarios/inline-named-inner/lib")
-    fun testNamedInnerClassWithInlineFunction(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testNamedInnerClassWithInlineFunction(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/inline-named-inner/lib")
             val app = module(
                 "ic-scenarios/inline-named-inner/app",

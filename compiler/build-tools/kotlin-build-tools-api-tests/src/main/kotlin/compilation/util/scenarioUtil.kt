@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.util
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.Scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.ScenarioModule
-
 
 fun Scenario.moduleWithoutInlineSnapshotting(
     moduleName: String,
@@ -23,11 +23,11 @@ fun Scenario.moduleWithoutInlineSnapshotting(
 
 fun Scenario.moduleWithFir(
     moduleName: String,
-    additionalCompilerArguments: List<String> = emptyList()
+    overrides: Module.Overrides = Module.Overrides()
 ) = module(
     moduleName = moduleName,
-    additionalCompilationArguments = additionalCompilerArguments + listOf("-Xuse-fir-ic"),
-    incrementalCompilationOptionsModifier = { incrementalOptions ->
-        (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-    }
+    overrides = overrides.copy(
+        useFirIc = true,
+        useFirRunner = true
+    )
 )
