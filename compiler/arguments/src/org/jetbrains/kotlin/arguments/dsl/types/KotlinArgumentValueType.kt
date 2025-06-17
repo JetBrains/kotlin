@@ -101,7 +101,21 @@ class StringType(
 }
 
 /**
- * A value which accepts [String] type.
+ * A value which accepts [String] type that represents a path on the filesystem.
+ */
+@Serializable
+class StringPathType(
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true),
+    override val defaultValue: ReleaseDependent<String?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<String> {
+    override fun stringRepresentation(value: String?): String? {
+        if (value == null) return null
+        return "\"$value\""
+    }
+}
+
+/**
+ * A value which accepts [Int] type.
  */
 @Serializable
 class IntType(
@@ -118,6 +132,18 @@ class IntType(
  */
 @Serializable
 class StringArrayType(
+    override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
+) : KotlinArgumentValueType<Array<String>> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)
+
+    override fun stringRepresentation(value: Array<String>?): String {
+        if (value == null) return "null"
+        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { "\"$it\""}
+    }
+}
+
+@Serializable
+class StringPathArrayType(
     override val defaultValue: ReleaseDependent<Array<String>?> = ReleaseDependent(null),
 ) : KotlinArgumentValueType<Array<String>> {
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(true)

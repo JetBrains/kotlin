@@ -1,0 +1,86 @@
+package org.jetbrains.kotlin.buildtools.api.v2
+
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.String
+import kotlin.Suppress
+import kotlin.jvm.JvmField
+
+public interface CommonKlibBasedArguments : CommonCompilerArguments {
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V
+
+  public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V)
+
+  public class CommonKlibBasedArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    /**
+     * Provide a base path to compute the source's relative paths in klib (default is empty).
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<Array<String>?> =
+        CommonKlibBasedArgument("XKLIB_RELATIVE_PATH_BASE")
+
+    /**
+     * Normalize absolute paths in klibs.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("XKLIB_NORMALIZE_ABSOLUTE_PATH")
+
+    /**
+     * Enable signature uniqueness checks.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("XKLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
+
+    /**
+     * Use partial linkage mode.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XPARTIAL_LINKAGE: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("XPARTIAL_LINKAGE")
+
+    /**
+     * Define the compile-time log level for partial linkage.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XPARTIAL_LINKAGE_LOGLEVEL: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("XPARTIAL_LINKAGE_LOGLEVEL")
+
+    /**
+     * Klib dependencies usage strategy when multiple KLIBs has same `unique_name` property value.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("XKLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
+
+    /**
+     * Enable experimental support to invoke IR Inliner before Klib serialization.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_IR_INLINER: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("XKLIB_IR_INLINER")
+
+    /**
+     * Specify the custom ABI version to be written in KLIB. This option is intended only for tests.
+     * Warning: This option does not affect KLIB ABI. Neither allows it making a KLIB backward-compatible with older ABI versions.
+     * The only observable effect is that a custom ABI version is written to KLIB manifest file.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val XKLIB_ABI_VERSION: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("XKLIB_ABI_VERSION")
+  }
+}

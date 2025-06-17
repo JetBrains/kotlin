@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
+import org.jetbrains.kotlin.arguments.dsl.types.StringPathArrayType
 import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
@@ -333,16 +334,14 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 }
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
-    val name = argument.compilerName ?: argument.name
-        .removePrefix("X").removePrefix("X")
-        .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
-        .replaceFirstChar(Char::lowercaseChar)
+    val name = calculateName(argument)
     val type = when (val type = argument.valueType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
             false -> "Boolean"
         }
         is StringArrayType -> "Array<String>?"
+        is StringPathArrayType -> "Array<String>?"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
@@ -351,6 +350,11 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     println("var $name: $type = ${argument.defaultValueInArgs}")
     generateSetter(type, argument)
 }
+
+fun calculateName(argument: KotlinCompilerArgument): String = argument.compilerName ?: argument.name
+    .removePrefix("X").removePrefix("X")
+    .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
+    .replaceFirstChar(Char::lowercaseChar)
 
 private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerArgument?) {
     withIndent {
