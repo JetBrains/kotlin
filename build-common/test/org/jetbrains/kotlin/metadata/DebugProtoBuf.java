@@ -44086,11 +44086,6 @@ public final class DebugProtoBuf {
     boolean hasConditionKind();
     /**
      * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-     * @return The enum numeric value on the wire for conditionKind.
-     */
-    int getConditionKindValue();
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
      * @return The conditionKind.
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind();
@@ -44428,7 +44423,6 @@ public final class DebugProtoBuf {
        * <code>HOLDSIN_CONDITION = 2;</code>
        */
       HOLDSIN_CONDITION(2),
-      UNRECOGNIZED(-1),
       ;
 
       static {
@@ -44468,10 +44462,6 @@ public final class DebugProtoBuf {
 
 
       public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
         return value;
       }
 
@@ -44512,10 +44502,6 @@ public final class DebugProtoBuf {
 
       public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalStateException(
-              "Can't get the descriptor of an unrecognized enum value.");
-        }
         return getDescriptor().getValues().get(ordinal());
       }
       public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
@@ -44534,9 +44520,6 @@ public final class DebugProtoBuf {
         if (desc.getType() != getDescriptor()) {
           throw new java.lang.IllegalArgumentException(
             "EnumValueDescriptor is not for this type.");
-        }
-        if (desc.getIndex() == -1) {
-          return UNRECOGNIZED;
         }
         return VALUES[desc.getIndex()];
       }
@@ -44680,18 +44663,11 @@ public final class DebugProtoBuf {
     }
     /**
      * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-     * @return The enum numeric value on the wire for conditionKind.
-     */
-    @java.lang.Override public int getConditionKindValue() {
-      return conditionKind_;
-    }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
      * @return The conditionKind.
      */
     @java.lang.Override public org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind() {
       org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind result = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.forNumber(conditionKind_);
-      return result == null ? org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.UNRECOGNIZED : result;
+      return result == null ? org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -45181,8 +45157,15 @@ public final class DebugProtoBuf {
                 break;
               } // case 32
               case 40: {
-                conditionKind_ = input.readEnum();
-                bitField0_ |= 0x00000010;
+                int tmpRaw = input.readEnum();
+                org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind tmpValue =
+                    org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.forNumber(tmpRaw);
+                if (tmpValue == null) {
+                  mergeUnknownVarintField(5, tmpRaw);
+                } else {
+                  conditionKind_ = tmpRaw;
+                  bitField0_ |= 0x00000010;
+                }
                 break;
               } // case 40
               default: {
@@ -45702,30 +45685,12 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-       * @return The enum numeric value on the wire for conditionKind.
-       */
-      @java.lang.Override public int getConditionKindValue() {
-        return conditionKind_;
-      }
-      /**
-       * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
-       * @param value The enum numeric value on the wire for conditionKind to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConditionKindValue(int value) {
-        conditionKind_ = value;
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
        * @return The conditionKind.
        */
       @java.lang.Override
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind getConditionKind() {
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind result = org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.forNumber(conditionKind_);
-        return result == null ? org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.UNRECOGNIZED : result;
+        return result == null ? org.jetbrains.kotlin.metadata.DebugProtoBuf.Effect.EffectConditionKind.CONCLUSION_CONDITION : result;
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.Effect.EffectConditionKind condition_kind = 5;</code>
@@ -49113,7 +49078,7 @@ public final class DebugProtoBuf {
       "tadata.Package\0223\n\005class\030\004 \003(\0132$.org.jetb" +
       "rains.kotlin.metadata.Class*\005\010d\020\310\001\"A\n\010Co" +
       "ntract\0225\n\006effect\030\001 \003(\0132%.org.jetbrains.k" +
-      "otlin.metadata.Effect\"\204\005\n\006Effect\022E\n\013effe" +
+      "otlin.metadata.Effect\"\212\005\n\006Effect\022E\n\013effe" +
       "ct_type\030\001 \001(\01620.org.jetbrains.kotlin.met" +
       "adata.Effect.EffectType\022N\n\033effect_constr" +
       "uctor_argument\030\002 \003(\0132).org.jetbrains.kot" +
@@ -49127,29 +49092,29 @@ public final class DebugProtoBuf {
       "URNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_NO" +
       "T_NULL\020\002\032\004:\002\020\002\"M\n\016InvocationKind\022\020\n\014AT_M" +
       "OST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST" +
-      "_ONCE\020\002\032\004:\002\020\002\"]\n\023EffectConditionKind\022\030\n\024" +
+      "_ONCE\020\002\032\004:\002\020\002\"c\n\023EffectConditionKind\022\030\n\024" +
       "CONCLUSION_CONDITION\020\000\022\025\n\021RETURNS_CONDIT" +
-      "ION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\"\253\003\n\nExpress" +
-      "ion\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_parameter" +
-      "_reference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(\016" +
-      "27.org.jetbrains.kotlin.metadata.Express" +
-      "ion.ConstantValue\022=\n\020is_instance_type\030\004 " +
-      "\001(\0132#.org.jetbrains.kotlin.metadata.Type" +
-      "\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014a" +
-      "nd_argument\030\006 \003(\0132).org.jetbrains.kotlin" +
-      ".metadata.Expression\022>\n\013or_argument\030\007 \003(" +
-      "\0132).org.jetbrains.kotlin.metadata.Expres" +
-      "sion\"4\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE" +
-      "\020\001\022\010\n\004NULL\020\002\032\004:\002\020\002\"G\n\022CompilerPluginData" +
-      "\022\034\n\tplugin_id\030\001 \001(\005B\t\252\001\002\010\003\230\265\030\001\022\023\n\004data\030\002" +
-      " \001(\014B\005\252\001\002\010\003*?\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OP" +
-      "EN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003\032\004:\002\020\002*h\n\n" +
-      "Visibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n" +
-      "\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_T" +
-      "HIS\020\004\022\t\n\005LOCAL\020\005\032\004:\002\020\002*W\n\nMemberKind\022\017\n\013" +
-      "DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELE" +
-      "GATION\020\002\022\017\n\013SYNTHESIZED\020\003\032\004:\002\020\002B\024B\rDebug" +
-      "ProtoBuf\222\003\002 \003b\010editionsp\350\007"
+      "ION\020\001\022\025\n\021HOLDSIN_CONDITION\020\002\032\004:\002\020\002\"\253\003\n\nE" +
+      "xpression\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_par" +
+      "ameter_reference\030\002 \001(\005\022O\n\016constant_value" +
+      "\030\003 \001(\01627.org.jetbrains.kotlin.metadata.E" +
+      "xpression.ConstantValue\022=\n\020is_instance_t" +
+      "ype\030\004 \001(\0132#.org.jetbrains.kotlin.metadat" +
+      "a.Type\022!\n\023is_instance_type_id\030\005 \001(\005B\004\240\265\030" +
+      "\001\022?\n\014and_argument\030\006 \003(\0132).org.jetbrains." +
+      "kotlin.metadata.Expression\022>\n\013or_argumen" +
+      "t\030\007 \003(\0132).org.jetbrains.kotlin.metadata." +
+      "Expression\"4\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n" +
+      "\005FALSE\020\001\022\010\n\004NULL\020\002\032\004:\002\020\002\"G\n\022CompilerPlug" +
+      "inData\022\034\n\tplugin_id\030\001 \001(\005B\t\252\001\002\010\003\230\265\030\001\022\023\n\004" +
+      "data\030\002 \001(\014B\005\252\001\002\010\003*?\n\010Modality\022\t\n\005FINAL\020\000" +
+      "\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003\032\004:\002" +
+      "\020\002*h\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVAT" +
+      "E\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVAT" +
+      "E_TO_THIS\020\004\022\t\n\005LOCAL\020\005\032\004:\002\020\002*W\n\nMemberKi" +
+      "nd\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016" +
+      "\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003\032\004:\002\020\002B\024B" +
+      "\rDebugProtoBuf\222\003\002 \003b\010editionsp\350\007"
     };
     descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

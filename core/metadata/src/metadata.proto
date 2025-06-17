@@ -605,6 +605,7 @@ message Effect {
   InvocationKind kind = 4;
 
   enum EffectConditionKind {
+    option features.enum_type = CLOSED;
     CONCLUSION_CONDITION = 0; // also default
     RETURNS_CONDITION = 1; // "implies returns" condition. If condition_kind set to it, then then whole message is clause of form
                            // 'Expression -> ReturnsEffect', where 'ReturnsEffect' is given by other fields
