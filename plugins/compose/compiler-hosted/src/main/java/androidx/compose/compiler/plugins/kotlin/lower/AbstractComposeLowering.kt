@@ -242,10 +242,6 @@ abstract class AbstractComposeLowering(
         return this.isComposableSingleton
     }
 
-    fun IrClass.isComposableSingletonClass(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS, this] == true
-    }
-
     fun Stability.irStableExpression(
         resolve: (IrTypeParameter) -> IrExpression? = { null },
         reportUnknownStability: (IrClass) -> Unit = { },

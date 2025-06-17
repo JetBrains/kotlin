@@ -20,6 +20,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.*
+import androidx.compose.compiler.plugins.kotlin.analysis.isComposableSingletonClass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -611,7 +612,7 @@ class ComposableFunctionBodyTransformer(
             ?: error("Expected a FunctionScope but none exist. \n${printScopeStack()}")
 
     override fun visitClass(declaration: IrClass): IrStatement {
-        if (declaration.isComposableSingletonClass()) {
+        if (declaration.isComposableSingletonClass) {
             return declaration
         }
         return inScope(Scope.ClassScope(declaration.name)) {

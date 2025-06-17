@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
 var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
 var IrElement.isComposableSingleton: Boolean by irFlag(copyByDefault = true)
+var IrElement.isComposableSingletonClass: Boolean by irFlag(copyByDefault = true)
 
 object ComposeWritableSlices {
-    val IS_COMPOSABLE_SINGLETON_CLASS: WritableSlice<IrElement, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val DURABLE_FUNCTION_KEY: WritableSlice<IrElement, KeyInfo> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val HAS_TRANSFORMED_LAMBDA: WritableSlice<IrElement, Boolean> =
