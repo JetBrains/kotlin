@@ -515,11 +515,17 @@ internal class SymbolLightAccessorMethod private constructor(
                 isTopLevel = context.isTopLevel,
             )
 
+            val isNonMaterializableValueClassProperty = context.destinationLightClass is SymbolLightClassForValueClass &&
+                    // Constructor properties are materialized by default
+                    !property.isFromPrimaryConstructor &&
+                    // Overrides are materialized by default
+                    !property.isOverride
+
             val generationResult = methodGeneration(
                 exposeBoxedMode = exposeBoxedMode,
                 hasValueClassInParameterType = hasValueClassInParameterType,
                 hasValueClassInReturnType = hasValueClassInReturnType,
-                hasMangledNameDueValueClasses = hasMangledNameDueValueClassesInSignature,
+                isAffectedByValueClass = hasMangledNameDueValueClassesInSignature || isNonMaterializableValueClassProperty,
                 hasJvmNameAnnotation = hasJvmNameAnnotation,
                 isSuspend = false,
             )
@@ -598,6 +604,15 @@ internal class SymbolLightAccessorMethod private constructor(
             isHiddenByDeprecation(property) -> false
             isHiddenOrSynthetic(accessorSymbol, siteTarget) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
+            // Value classes have special logic
+            context.destinationLightClass is SymbolLightClassForValueClass -> when {
+                // Overrides are generated for value classes
+                property.isOverride -> true
+
+                // Only public properties from the constructor can be exposed as regular accessors
+                else -> !property.isFromPrimaryConstructor || property.visibility == KaSymbolVisibility.PUBLIC
+            }
+
             else -> true
         }
     }
