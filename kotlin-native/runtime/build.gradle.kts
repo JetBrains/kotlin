@@ -26,11 +26,24 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
-tasks.register<GitDownloadTask>("downloadBreakpad") {
+val downloadBreakpad = tasks.register<GitDownloadTask>("downloadBreakpad") {
     description = "Retrieves Breakpad sources"
     repository.set(URI.create("https://github.com/google/breakpad.git"))
     revision.set("v2024.02.16")
     outputDirectory.set(layout.projectDirectory.dir("breakpad"))
+}
+
+val breakpadSources by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("sources-directory"))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+artifacts {
+    add(breakpadSources.name, downloadBreakpad.flatMap { it.outputDirectory })
 }
 
 googletest {

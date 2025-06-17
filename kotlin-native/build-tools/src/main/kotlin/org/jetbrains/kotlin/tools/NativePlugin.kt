@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.tools
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
@@ -108,15 +107,14 @@ open class SourceSet(
     val initialSourceSet: SourceSet? = null,
     val rule: Pair<String, String>? = null
 ) {
-    var collection = sourceSets.project.objects.fileCollection() as FileCollection
+    val collection = sourceSets.project.objects.fileCollection()
+
     fun file(path: String) {
-        collection = collection.plus(sourceSets.project.files("${initialDirectory.absolutePath}/$path"))
+        collection.from(sourceSets.project.files("${initialDirectory.absolutePath}/$path"))
     }
 
     fun dir(path: String) {
-        sourceSets.project.fileTree("${initialDirectory.absolutePath}/$path").files.forEach {
-            collection = collection.plus(sourceSets.project.files(it))
-        }
+        collection.from(sourceSets.project.fileTree("${initialDirectory.absolutePath}/$path").files)
     }
 
     fun transform(suffixes: Pair<String, String>): SourceSet {
@@ -132,7 +130,8 @@ open class SourceSet(
     fun implicitTasks(): Array<TaskProvider<*>> {
         rule ?: return emptyArray()
         initialSourceSet?.implicitTasks()
-        return initialSourceSet!!.collection
+        val collection = initialSourceSet!!.collection
+        return collection
             .filter { !it.isDirectory() }
             .filter { it.name.endsWith(rule.first) }
             .map { it.relativeTo(initialSourceSet.initialDirectory) }
@@ -146,6 +145,7 @@ open class SourceSet(
                     val toolConfiguration = ToolPatternImpl(sourceSets.extension, it.second.path, it.first.path)
                     sourceSets.extension.toolPatterns[rule]!!.invoke(toolConfiguration)
                     toolConfiguration.configure(this, initialSourceSet.rule != null)
+                    dependsOn(collection)
                 }
             }.toTypedArray()
     }
