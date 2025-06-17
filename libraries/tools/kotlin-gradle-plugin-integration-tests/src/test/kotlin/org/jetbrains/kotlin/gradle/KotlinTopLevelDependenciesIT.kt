@@ -35,51 +35,18 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {
-        @Language("kotlin")
-        val dependenciesBlock = """
-            
-            kotlin {
-                dependencies {
-                    implementation(platform("platform:platformDependency:1.0"))
-                    implementation(project(":projectDependency"))
-                    implementation(libs.atomicfu) {
-                        version {
-                            strictly("0.28.0")
-                        }
-                    }
-                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-                }
-            }
-        """.trimIndent()
-        testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock)
+        testKotlinDependenciesBlock("emptyKts", gradleVersion)
     }
 
     @DisplayName("Test Groovy build script evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesGroovy(gradleVersion: GradleVersion) {
-        @Language("groovy")
-        val dependenciesBlock = """
-            
-            kotlin {
-                dependencies {
-                    implementation(platform("platform:platformDependency:1.0"))
-                    implementation(project(":projectDependency"))
-                    implementation(libs.atomicfu) {
-                        version {
-                            strictly("0.28.0")
-                        }
-                    }
-                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-                }
-            }
-        """.trimIndent()
-        testKotlinDependenciesBlock("empty", gradleVersion, dependenciesBlock)
+        testKotlinDependenciesBlock("empty", gradleVersion)
     }
 
     private fun testKotlinDependenciesBlock(
         template: String,
         gradleVersion: GradleVersion,
-        consumerDependenciesBlock: String,
     ) {
         val targets: KotlinMultiplatformExtension.() -> Unit = {
             jvm()
@@ -157,8 +124,34 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                         }
                         """.trimIndent()
                     )
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        fun test() {
+                          val a = kotlin.test.Test::class
+                        }
+                        """.trimIndent()
+                    )
                 }
             }
+
+            // The dependencies block is the same in kts and Groovy
+            @Language("kotlin")
+            val consumerDependenciesBlock = """
+                
+                kotlin {
+                    dependencies {
+                        implementation(platform("platform:platformDependency:1.0"))
+                        implementation(project(":projectDependency"))
+                        implementation(libs.atomicfu) {
+                            version {
+                                strictly("0.28.0")
+                            }
+                        }
+                        api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                        testImplementation(kotlin("test"))
+                    }
+                }
+            """.trimIndent()
 
             targetScript.appendText(consumerDependenciesBlock)
 
@@ -175,7 +168,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     }
 
     private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
-        build(":assemble") {
+        build(":assemble", ":compileTestKotlinJvm") {
             assertNoDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
         }
 
