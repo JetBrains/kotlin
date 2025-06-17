@@ -1,0 +1,3 @@
+expression: b
+isStable: null
+smartCastType: null

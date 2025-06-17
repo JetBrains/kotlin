@@ -88,6 +88,24 @@ public class FirIdeNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated extend
   }
 
   @Test
+  @TestMetadata("smartCastWithExpectedType.kt")
+  public void testSmartCastWithExpectedType() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartCastWithExpectedType.kt");
+  }
+
+  @Test
+  @TestMetadata("smartCastWithExpectedType2.kt")
+  public void testSmartCastWithExpectedType2() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartCastWithExpectedType2.kt");
+  }
+
+  @Test
+  @TestMetadata("smartCastWithExpectedType3.kt")
+  public void testSmartCastWithExpectedType3() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartCastWithExpectedType3.kt");
+  }
+
+  @Test
   @TestMetadata("smartcastAsReceiver_stable.kt")
   public void testSmartcastAsReceiver_stable() {
     runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartcastAsReceiver_stable.kt");
