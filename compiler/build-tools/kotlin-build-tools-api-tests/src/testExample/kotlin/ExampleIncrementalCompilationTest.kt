@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -63,9 +64,9 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
 
             module1.compileIncrementally(
                 SourcesChanges.Known(modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()),
-                incrementalCompilationConfigAction = {
-                    it.keepIncrementalCompilationCachesInMemory(false)
-                },
+                icOptionsConfigAction = {
+                    it[KEEP_IC_CACHES_IN_MEMORY] = false
+                }
             )
 
             module2.compileIncrementally(
