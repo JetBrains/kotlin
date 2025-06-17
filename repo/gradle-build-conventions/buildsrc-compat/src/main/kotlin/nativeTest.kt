@@ -2,10 +2,12 @@ import TestProperty.*
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -36,7 +38,8 @@ private enum class TestProperty(shortName: String) {
     EAGER_GROUP_CREATION("eagerGroupCreation"),
     XCTEST_FRAMEWORK("xctest"),
     TEAMCITY("teamcity"),
-    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
+    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath"),
+    MINIDUMP_ANALYZER("minidumpAnalyzer");
 
     val fullName = "kotlin.internal.native.test.$shortName"
 
@@ -190,6 +193,22 @@ fun Project.nativeTest(
                     }
 
                     customCompilerDependencies.flatMapTo(this) { it.files }
+                }
+            }
+
+            computeLazy(MINIDUMP_ANALYZER) {
+                if (HostManager.hostIsMac) {
+                    val fileCollection = configurations.detachedConfiguration(
+                        dependencies.project(":kotlin-native:tools:minidump-analyzer"),
+                    ).also {
+                        it.attributes {
+                            attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-executable"))
+                        }
+                        dependsOn(it)
+                    }
+                    lazyClassPath { fileCollection.singleFile }
+                } else {
+                    lazy { null }
                 }
             }
 
