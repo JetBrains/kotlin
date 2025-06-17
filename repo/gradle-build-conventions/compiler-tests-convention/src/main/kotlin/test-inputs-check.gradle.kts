@@ -134,7 +134,8 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "some/non/existent/path/early-access-registry.txt", "read";""", // com.intellij.openapi.util.registry.EarlyAccessRegistryManager
 
                                         """permission java.io.FilePermission "$konanDataDir/-", "read,write,delete,execute";""",
-                                        """permission java.io.FilePermission "$konanDataDir", "read";"""
+                                        """permission java.io.FilePermission "$konanDataDir", "read";""",
+                                        """permission java.io.FilePermission "/bin/sh", "execute";""",
                                     )
                                     if (nativeHome.isPresent) {
                                         konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
