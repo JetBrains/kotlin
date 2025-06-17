@@ -2,15 +2,22 @@ import TestProperty.*
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -54,27 +61,79 @@ private enum class TestProperty(shortName: String) {
 private open class NativeArgsProvider @Inject constructor(
     project: Project,
     objects: ObjectFactory,
+    providers: ProviderFactory,
     @Internal val requirePlatformLibs: Boolean = false,
 ) : CommandLineArgumentProvider {
-    @Internal
-    protected val nativeHomeBuiltBy: List<String> = project.readFromGradle(TEST_TARGET)?.let {
-        listOfNotNull(
-            ":kotlin-native:${it}CrossDist",
-            if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
-        )
-    } ?: listOfNotNull(
-        ":kotlin-native:dist",
-        if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
-    )
+    @get:Input
+    @get:Optional
+    protected val testTarget = providers.testProperty(TEST_TARGET)
+
+    @get:Input
+    @get:Optional
+    protected val testMode = providers.testProperty(TEST_MODE)
+
+    @get:Input
+    @get:Optional
+    protected val compileOnly = providers.testProperty(COMPILE_ONLY)
+
+    @get:Input
+    @get:Optional
+    protected val optimizationMode = providers.testProperty(OPTIMIZATION_MODE)
+
+    @get:Input
+    @get:Optional
+    protected val useThreadStateChecker = providers.testProperty(USE_THREAD_STATE_CHECKER)
+
+    @get:Input
+    @get:Optional
+    protected val gcType = providers.testProperty(GC_TYPE)
+
+    @get:Input
+    @get:Optional
+    protected val gcScheduler = providers.testProperty(GC_SCHEDULER)
+
+    @get:Input
+    @get:Optional
+    protected val allocator = providers.testProperty(ALLOCATOR)
+
+    @get:Input
+    @get:Optional
+    protected val cacheMode = providers.testProperty(CACHE_MODE)
+
+    @get:Input
+    @get:Optional
+    protected val executionTimeout = providers.testProperty(EXECUTION_TIMEOUT)
+
+    @get:Input
+    @get:Optional
+    protected val sanitizer = providers.testProperty(SANITIZER)
+
+    @get:Input
+    @get:Optional
+    protected val sharedTestExecution = providers.testProperty(SHARED_TEST_EXECUTION)
+
+    @get:Input
+    @get:Optional
+    protected val eagerGroupCreation = providers.testProperty(EAGER_GROUP_CREATION)
+
+    @get:Input
+    @get:Optional
+    protected val xctestFramework = providers.testProperty(XCTEST_FRAMEWORK)
+
+    @get:Input
+    protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
 
     @get:Internal
-    protected val customNativeHome: String? = project.readFromGradle(KOTLIN_NATIVE_HOME)
+    protected val customNativeHome: Provider<String?> = providers.testProperty(KOTLIN_NATIVE_HOME)
 
     @get:Classpath
     val customCompilerDependencies: ConfigurableFileCollection = objects.fileCollection()
 
     @get:Classpath
     val compilerPluginDependencies: ConfigurableFileCollection = objects.fileCollection()
+
+    @get:Classpath
+    val customTestDependencies: ConfigurableFileCollection = objects.fileCollection()
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -83,17 +142,29 @@ private open class NativeArgsProvider @Inject constructor(
 
     @get:Classpath
     protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (customNativeHome != null) {
+        if (customNativeHome.isPresent) {
             from(customNativeHome)
         } else {
-            from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist")).builtBy(nativeHomeBuiltBy)
+            val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
+                listOfNotNull(
+                    ":kotlin-native:${it}CrossDist",
+                    if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
+                )
+            }.orElse(
+                listOfNotNull(
+                    ":kotlin-native:dist",
+                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
+                )
+            )
+
+            from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist")).builtBy(nativeHomeBuiltBy.get())
         }
     }
 
     @Classpath
     protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (customNativeHome != null) {
-            from(File(customNativeHome, "konan/lib/kotlin-native-compiler-embeddable.jar"))
+        if (customNativeHome.isPresent) {
+            from(customNativeHome.map { File(it, "konan/lib/kotlin-native-compiler-embeddable.jar") })
         } else {
             from(
                 project.configurations.detachedConfiguration(
@@ -104,68 +175,58 @@ private open class NativeArgsProvider @Inject constructor(
         from(customCompilerDependencies)
     }
 
-    override fun asArguments(): Iterable<String> =
-        listOfNotNull(
+    @get:Classpath
+    val xcTestConfiguration: ConfigurableFileCollection = objects.fileCollection().apply {
+        val xcTestEnabled = providers.testProperty(XCTEST_FRAMEWORK).map { it == "true" }.orElse(false)
+        val testTargetWithDefault = testTarget.orElse(HostManager.hostName)
+        val isAppleTarget: Provider<Boolean> =
+            testTargetWithDefault.map { KonanTarget.predefinedTargets[it]?.family?.isAppleFamily ?: false }.orElse(false)
+        if (xcTestEnabled.get() && isAppleTarget.get()) {
+            from(project.configurations.create("kotlinTestNativeXCTest") {
+                isTransitive = false
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                    attribute(KotlinNativeTarget.konanTargetAttribute, testTargetWithDefault.get())
+                }
+                dependencies.add(project.dependencies.project(path = ":native:kotlin-test-native-xctest"))
+            })
+        }
+    }
+
+    @get:Input
+    protected val forceStandalone = providers.testProperty(FORCE_STANDALONE).orElse("STANDALONE")
+
+    override fun asArguments(): Iterable<String> {
+        val customKlibs = customTestDependencies.files + xcTestConfiguration.files
+        return listOfNotNull(
             "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.singleFile.absolutePath}",
             "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
-            if (releasedCompilerDist.isPresent) {
-                "-D${LATEST_RELEASED_COMPILER_PATH.fullName}=${releasedCompilerDist.asFile.get().absolutePath}"
-            } else null,
+            "-D${TEST_KIND.fullName}=${forceStandalone.get()}",
+            "-D${TEAMCITY.fullName}=$teamcity",
+            releasedCompilerDist.orNull?.let { "-D${LATEST_RELEASED_COMPILER_PATH.fullName}=${it.asFile.absolutePath}" },
+            testTarget.orNull?.let { "-D${TEST_TARGET.fullName}=$it" },
+            testMode.orNull?.let { "-D${TEST_MODE.fullName}=$it" },
+            compileOnly.orNull?.let { "-D${COMPILE_ONLY.fullName}=$it" },
+            optimizationMode.orNull?.let { "-D${OPTIMIZATION_MODE.fullName}=$it" },
+            useThreadStateChecker.orNull?.let { "-D${USE_THREAD_STATE_CHECKER.fullName}=$it" },
+            gcType.orNull?.let { "-D${GC_TYPE.fullName}=$it" },
+            gcScheduler.orNull?.let { "-D${GC_SCHEDULER.fullName}=$it" },
+            allocator.orNull?.let { "-D${ALLOCATOR.fullName}=$it" },
+            cacheMode.orNull?.let { "-D${CACHE_MODE.fullName}=$it" },
+            executionTimeout.orNull?.let { "-D${EXECUTION_TIMEOUT.fullName}=$it" },
+            sanitizer.orNull?.let { "-D${SANITIZER.fullName}=$it" },
+            sharedTestExecution.orNull?.let { "-D${SHARED_TEST_EXECUTION.fullName}=$it" },
+            eagerGroupCreation.orNull?.let { "-D${EAGER_GROUP_CREATION.fullName}=$it" },
+            xctestFramework.orNull?.let { "-D${XCTEST_FRAMEWORK.fullName}=$it" },
+            "-D${CUSTOM_KLIBS.fullName}=${customKlibs.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { customKlibs.isNotEmpty() },
         )
-}
-
-private sealed class ComputedTestProperty {
-    abstract val name: String
-    abstract val value: String?
-
-    class Normal(override val name: String, override val value: String?) : ComputedTestProperty()
-    class Lazy(override val name: String, private val lazyValue: kotlin.Lazy<String?>) : ComputedTestProperty() {
-        override val value get() = lazyValue.value
     }
 }
 
-private class ComputedTestProperties(private val task: Test) {
-    private val computedProperties = arrayListOf<ComputedTestProperty>()
-
-    fun Project.compute(property: TestProperty, defaultValue: () -> String? = { null }) {
-        val gradleValue = readFromGradle(property)
-        computedProperties += ComputedTestProperty.Normal(property.fullName, gradleValue ?: defaultValue())
-    }
-
-    fun Project.computeLazy(property: TestProperty, defaultLazyValue: () -> Lazy<String?>) {
-        val gradleValue = readFromGradle(property)
-        computedProperties += if (gradleValue != null)
-            ComputedTestProperty.Normal(property.fullName, gradleValue)
-        else
-            ComputedTestProperty.Lazy(property.fullName, defaultLazyValue())
-    }
-
-    // Do not attempt to read the property from Gradle. Instead, set it based on the lambda return value.
-    fun computePrivate(property: TestProperty, value: () -> String) {
-        computedProperties += ComputedTestProperty.Normal(property.fullName, value())
-    }
-
-    fun lazyClassPath(builder: MutableList<File>.() -> Unit): Lazy<String?> = lazy(LazyThreadSafetyMode.NONE) {
-        buildList(builder).takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }
-    }
-
-    fun resolveAndApplyToTask() {
-        computedProperties.forEach { computedProperty ->
-            task.systemProperty(computedProperty.name, computedProperty.value ?: return@forEach)
-        }
-    }
-}
-
-private fun Project.readFromGradle(property: TestProperty): String? {
-    val value = findProperty(property.fullName)
-        ?: findProperty(property.shortName)
-        ?: return null
-    return value.toString()
-}
-
-private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit): ComputedTestProperties =
-    ComputedTestProperties(this).apply { init() }
+private fun ProviderFactory.testProperty(property: TestProperty) =
+    gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
 
 /**
  * @param taskName Name of Gradle task.
@@ -214,6 +275,7 @@ fun Project.nativeTest(
         jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
             this.customCompilerDependencies.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
+            this.customTestDependencies.from(customTestDependencies)
             if (releasedCompilerDist != null) {
                 this.releasedCompilerDist.fileProvider(releasedCompilerDist.map { it.destinationDir })
             }
@@ -225,63 +287,6 @@ fun Project.nativeTest(
         ) {
             logger.info("$path JIT C2 compiler has been disabled")
             jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
-        }
-
-        // Compute test properties in advance. Make sure that the necessary dependencies are settled.
-        // But do not resolve any configurations until the execution phase.
-        //TODO CUSTOM_KLIBS
-        val computedTestProperties = ComputedTestProperties {
-            computeLazy(CUSTOM_KLIBS) {
-                val testTarget = readFromGradle(TEST_TARGET) ?: HostManager.hostName
-                val xcTestEnabled = readFromGradle(XCTEST_FRAMEWORK)?.toBooleanStrictOrNull() ?: false
-
-                val isAppleTarget = KonanTarget.predefinedTargets[testTarget]?.family?.isAppleFamily ?: false
-
-                val xcTestConfiguration = if (xcTestEnabled && isAppleTarget) {
-                    configurations.detachedConfiguration(
-                        dependencies.project(path = ":native:kotlin-test-native-xctest", configuration = "kotlinTestNativeXCTest")
-                    ).apply {
-                        isTransitive = false
-                    }
-                } else null
-
-                val xcTestTargetDependencies = xcTestConfiguration?.run {
-                    dependsOn(this)
-
-                    // Resolve artifacts and filter them by target
-                    resolvedConfiguration
-                        .resolvedArtifacts
-                        .filter { it.classifier == testTarget }
-                }
-                customTestDependencies.forEach(::dependsOn)
-                lazyClassPath {
-                    customTestDependencies.flatMapTo(this) { it.files }
-                    xcTestTargetDependencies?.mapTo(this) { it.file }
-                }
-            }
-
-            compute(TEST_KIND) {
-                readFromGradle(FORCE_STANDALONE)?.let { "STANDALONE" }
-            }
-
-            // Pass Gradle properties as JVM properties so test process can read them.
-            compute(TEST_TARGET)
-            compute(TEST_MODE)
-            compute(COMPILE_ONLY)
-            compute(OPTIMIZATION_MODE)
-            compute(USE_THREAD_STATE_CHECKER)
-            compute(GC_TYPE)
-            compute(GC_SCHEDULER)
-            compute(ALLOCATOR)
-            compute(CACHE_MODE)
-            compute(EXECUTION_TIMEOUT)
-            compute(SANITIZER)
-            compute(SHARED_TEST_EXECUTION)
-            compute(EAGER_GROUP_CREATION)
-            compute(XCTEST_FRAMEWORK)
-
-            // Pass whether tests are running at TeamCity.
-            computePrivate(TEAMCITY) { kotlinBuildProperties.isTeamcityBuild.toString() }
         }
 
         // Pass the current Gradle task name so test can use it in logging.
@@ -305,10 +310,6 @@ fun Project.nativeTest(
                     }
                 }
             )
-
-            // Compute lazy properties and apply them all as JVM process properties.
-            // This forces to resolve the necessary configurations.
-            computedTestProperties.resolveAndApplyToTask()
         }
     } else
         doFirst {
