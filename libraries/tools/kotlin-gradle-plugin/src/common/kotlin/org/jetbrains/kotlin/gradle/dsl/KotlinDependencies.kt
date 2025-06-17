@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.dsl.Dependencies
 import org.gradle.api.artifacts.dsl.DependencyCollector
 import org.gradle.api.plugins.jvm.PlatformDependencyModifiers
@@ -73,4 +75,20 @@ interface KotlinDependencies : Dependencies, PlatformDependencyModifiers {
      * @see runtimeOnly
      */
     val testRuntimeOnly: DependencyCollector
+
+    /**
+     * Convenience for generating "org.jetbrains.kotlin:kotlin-${module}" dependency
+     */
+    fun kotlin(module: String): Dependency
+
+    /**
+     * Convenience for generating "org.jetbrains.kotlin:kotlin-${module}:${version}" dependency
+     */
+    fun kotlin(module: String, version: String?): Dependency
+}
+
+internal abstract class KotlinDependenciesImpl : KotlinDependencies {
+    override fun kotlin(module: String) = kotlin(module, null)
+    override fun kotlin(module: String, version: String?): Dependency = project.dependencyFactory
+        .create("org.jetbrains.kotlin", "kotlin-$module", version)
 }

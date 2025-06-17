@@ -46,6 +46,9 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                     testImplementation("test:test-implementation:1.0")
                     testCompileOnly("test:test-compileOnly:1.0")
                     testRuntimeOnly("test:test-runtimeOnly:1.0")
+
+                    implementation(kotlin("gradle-plugin", "2.0.0"))
+                    testImplementation(kotlin("test"))
                 }
 
                 sourceSets.commonMain.dependencies {
@@ -82,6 +85,7 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
         assertDependencies(
             commonMain.implementationConfigurationName,
             "test:implementation:1.0",
+            "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.0",
             "test:commonMainImplementation:1.0",
         )
         assertDependencies(
@@ -99,7 +103,8 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
         assertDependencies(
             commonTest.implementationConfigurationName,
             "test:test-implementation:1.0",
-            "test:commonTestImplementation:1.0"
+            "org.jetbrains.kotlin:kotlin-test:",
+            "test:commonTestImplementation:1.0",
         )
         assertDependencies(
             commonTest.compileOnlyConfigurationName,

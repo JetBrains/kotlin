@@ -2,6 +2,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.Dependencies
 
 /**
@@ -75,4 +76,10 @@ interface KotlinDependencies : Dependencies {
 
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     fun enforcedPlatform(p: Any)
+
+    @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
+    fun kotlin(module: String): Dependency
+
+    @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
+    fun kotlin(module: String, version: String?): Dependency
 }

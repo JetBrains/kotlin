@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.artifacts.dsl.DependencyCollector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinDependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinDependenciesImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -36,7 +37,7 @@ internal val KotlinMultiplatformExtension.dependencies: KotlinTopLevelDependenci
     if (project.gradleVersion < MinSupportedGradleVersionWithDependencyCollectors) {
         KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion
     } else {
-        KotlinTopLevelDependenciesBlock.Dependencies(project.objects.newInstance(KotlinDependencies::class.java))
+        KotlinTopLevelDependenciesBlock.Dependencies(project.objects.newInstance(KotlinDependenciesImpl::class.java))
     }
 }
 

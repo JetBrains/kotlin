@@ -54,6 +54,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                         }
                     }
                     api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+                    testImplementation(kotlin("test"))
                 }
             }
         """.trimIndent()
@@ -76,6 +77,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                         }
                     }
                     api 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+                    testImplementation(kotlin("test"))
                 }
             }
         """.trimIndent()
@@ -162,6 +164,13 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                         }
                         """.trimIndent()
                     )
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        fun test() {
+                          val a = kotlin.test.Test::class
+                        }
+                        """.trimIndent()
+                    )
                 }
             }
 
@@ -180,7 +189,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     }
 
     private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
-        build(":assemble") {
+        build(":assemble", ":compileTestKotlinJvm") {
             assertNoDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
         }
 
