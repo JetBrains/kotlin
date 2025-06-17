@@ -40,6 +40,7 @@ internal fun createKTypeParameter(
     upperBounds: Array<KType>,
     variance: String,
     isReified: Boolean,
+    container: String,
 ): KTypeParameter {
     val kVariance = when (variance) {
         "in" -> KVariance.IN
@@ -47,7 +48,7 @@ internal fun createKTypeParameter(
         else -> KVariance.INVARIANT
     }
 
-    return KTypeParameterImpl(name, upperBounds.unsafeCast<List<KType>>(), kVariance, isReified)
+    return KTypeParameterImpl(name, upperBounds.unsafeCast<List<KType>>(), kVariance, isReified, container)
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =

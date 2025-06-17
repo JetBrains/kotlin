@@ -30,7 +30,7 @@ internal fun createKTypeParameter(
         else -> KVariance.INVARIANT
     }
 
-    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified)
+    return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified, "")
 }
 
 internal fun getStarKTypeProjection(): KTypeProjection =

@@ -11,7 +11,8 @@ internal data class KTypeParameterImpl(
     override val name: String,
     override val upperBounds: List<KType>,
     override val variance: KVariance,
-    override val isReified: Boolean
+    override val isReified: Boolean,
+    private val container: String,
 ) : KTypeParameter {
     override fun toString(): String = name
 }
