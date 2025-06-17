@@ -20,6 +20,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.*
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.isStaticFunctionExpression
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -1175,11 +1176,7 @@ class ComposerLambdaMemoization(
         if (mark) {
             // Mark it so the ComposableCallTransformer will insert the correct code around this
             // call
-            context.irTrace.record(
-                ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION,
-                this,
-                true
-            )
+            this.isStaticFunctionExpression = true
         }
         return this
     }

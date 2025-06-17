@@ -975,7 +975,7 @@ abstract class AbstractComposeLowering(
 
             is IrFunctionExpression,
             is IrTypeOperatorCall ->
-                context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
+                this.isStaticFunctionExpression
 
             is IrGetField ->
                 // K2 sometimes produces `IrGetField` for reads from constant properties
