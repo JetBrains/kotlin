@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.testbase.ReturnFromBuildScriptAfterExecution.Companion.buildWithAssertions
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.appendText
@@ -222,7 +221,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
             kotlinJvm.target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider.map {
                 (it as KotlinCompile).createCompilerArguments(KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.default)
             }
-        }.buildAndReturn(":compileKotlin", buildAction = buildWithAssertions(buildOutputAssertions))
+        }.buildAndReturn(":compileKotlin", buildAction = BuildActions.buildWithAssertions(buildOutputAssertions))
 
         assertEquals(expectedJvmDefaultStable, jvmArgs.jvmDefaultStable)
         assertEquals(expectedJvmDefaultDeprecated, jvmArgs.jvmDefault)
