@@ -22,9 +22,9 @@ import kotlin.reflect.full.isSubclassOf
 class BtaApiGenerator(val genDir: Path) : BtaGenerator {
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): TypeName {
         val className = level.name.capitalizeAsciiOnly()
-        FileSpec.Companion.builder(API_PACKAGE, className).apply {
+        FileSpec.builder(API_PACKAGE, className).apply {
             addType(
-                TypeSpec.Companion.interfaceBuilder(className).apply {
+                TypeSpec.interfaceBuilder(className).apply {
                     addKdoc(KDOC_SINCE_2_3_0)
                     if (level.name in experimentalLevelNames) {
                         addAnnotation(ANNOTATION_EXPERIMENTAL)
@@ -33,7 +33,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                     val argument = generateArgumentType(className)
                     val argumentTypeName = ClassName(API_PACKAGE, className, argument)
                     generateGetPutFunctions(argumentTypeName)
-                    addType(TypeSpec.Companion.companionObjectBuilder().apply {
+                    addType(TypeSpec.companionObjectBuilder().apply {
                         generateOptions(level.filterOutDroppedArguments(), argumentTypeName, skipXX)
                     }.build())
                 }.build()
@@ -103,16 +103,16 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
         nameAccessor: KProperty1<Any, String>,
     ): TypeSpec.Builder {
         val className = ClassName("$API_PACKAGE.enums", sourceEnum.first()::class.simpleName!!)
-        return TypeSpec.Companion.enumBuilder(className).apply {
+        return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
             }
             addKdoc(KDOC_SINCE_2_3_0)
-            primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("stringValue", String::class).build())
+            primaryConstructor(FunSpec.constructorBuilder().addParameter("stringValue", String::class).build())
             sourceEnum.forEach {
                 addEnumConstant(
                     it.name.uppercase(),
-                    TypeSpec.Companion.anonymousClassBuilder()
+                    TypeSpec.anonymousClassBuilder()
                         .addSuperclassConstructorParameter("%S", nameAccessor.get(it))
                         .build()
                 )
@@ -122,33 +122,17 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
 
     fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
         val className = ClassName("$API_PACKAGE.enums", sourceEnum.simpleName!!)
-        FileSpec.Companion.builder(className).apply {
+        FileSpec.builder(className).apply {
             addType(typeSpec)
         }.build().writeTo(genDir)
     }
 
 
-    fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
-        require(argumentsClassName.endsWith("Arguments"))
-        val argumentTypeName = argumentsClassName.removeSuffix("s")
-        val typeSpec =
-            TypeSpec.Companion.classBuilder(argumentTypeName).apply {
-                addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
-                addTypeVariable(TypeVariableName.Companion("V"))
-                property<String>("id") {
-                    initializer("id")
-                }
-                primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("id", String::class).build())
-            }.build()
-        addType(typeSpec)
-        return argumentTypeName
-    }
-
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.ABSTRACT)
-            val typeParameter = TypeVariableName.Companion("V")
+            val typeParameter = TypeVariableName("V")
             returns(typeParameter)
             addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
@@ -157,11 +141,27 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
         function("set") {
             addKdoc(KDOC_OPTIONS_SET)
             addModifiers(KModifier.ABSTRACT)
-            val typeParameter = TypeVariableName.Companion("V")
+            val typeParameter = TypeVariableName("V")
             addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
         }
     }
+}
+
+fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
+    require(argumentsClassName.endsWith("Arguments"))
+    val argumentTypeName = argumentsClassName.removeSuffix("s")
+    val typeSpec =
+        TypeSpec.classBuilder(argumentTypeName).apply {
+            addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
+            addTypeVariable(TypeVariableName("V"))
+            property<String>("id") {
+                initializer("id")
+            }
+            primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
+        }.build()
+    addType(typeSpec)
+    return argumentTypeName
 }

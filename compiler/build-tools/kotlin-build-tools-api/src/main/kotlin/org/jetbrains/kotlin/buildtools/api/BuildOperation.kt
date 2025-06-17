@@ -46,6 +46,7 @@ public interface BuildOperation<R> {
 
     public companion object {
 
+        // TODO: opt-in that marks it as requiring explicit cleanup by `finishBuild`
         /**
          * Marks build operation as scoped to a project build. Allows tools to avoid dropping some caches.
          *
