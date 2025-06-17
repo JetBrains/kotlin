@@ -60,6 +60,7 @@ abstract class SchemaConstructor : AbstractSchemaModificationInterpreter() {
                 Names.FRAME_COLUMN_CLASS_ID -> Names.DF_CLASS_ID.createConeType(session, arrayOf(resolvedType.typeArguments[0]))
                 Names.DATA_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
                 Names.BASE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
+                Names.VALUE_COLUMN_CLASS_ID -> resolvedType.typeArguments[0] as? ConeKotlinType
                 else -> null
             }
             if (name == null || type == null) return PluginDataFrameSchema(emptyList())
