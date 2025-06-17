@@ -655,15 +655,27 @@ abstract class IncrementalCompilerRunner<
 fun extractKotlinSourcesFromFreeCompilerArguments(
     compilerArguments: CommonCompilerArguments,
     kotlinFilenameExtensions: Set<String>,
+    includeJavaSources: Boolean, // Java files should be passed too to the incremental JVM compiler so that it could track changes in Java sources
 ): List<File> {
-    val dotExtensions = kotlinFilenameExtensions.map { ".$it" }
+    val kotlinDotExtensions = kotlinFilenameExtensions.map { ".$it" }
     val freeArgs = arrayListOf<String>()
     val allKotlinFiles = arrayListOf<File>()
     for (arg in compilerArguments.freeArgs) {
         val file = File(arg)
-        if (file.isFile && dotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+        if (!file.isFile) {
+            freeArgs.add(arg)
+            continue
+        }
+
+        if (kotlinDotExtensions.any { ext -> file.path.endsWith(ext, ignoreCase = true) }) {
+            // a kotlin source file
             allKotlinFiles.add(file)
+        } else if (includeJavaSources && file.path.endsWith(".java", ignoreCase = true)) {
+            // a java source file
+            allKotlinFiles.add(file)
+            freeArgs.add(arg)
         } else {
+            // an unknown file
             freeArgs.add(arg)
         }
     }
