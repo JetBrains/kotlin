@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 class BtaImplGenerator() : BtaGenerator {
 
@@ -27,15 +28,15 @@ class BtaImplGenerator() : BtaGenerator {
 
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): GeneratorOutputs {
         val apiClassName = level.name.capitalizeAsciiOnly()
-        val className = apiClassName + "Impl"
+        val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
-        val mainFile = FileSpec.Companion.builder(IMPL_PACKAGE, className).apply {
+        val mainFile = FileSpec.Companion.builder(IMPL_PACKAGE, implClassName).apply {
             addAnnotation(
                 AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
             addType(
-                TypeSpec.Companion.classBuilder(className).apply {
+                TypeSpec.Companion.classBuilder(implClassName).apply {
                     parentClass?.let { superclass(it) }
                     addSuperinterface(ClassName(API_PACKAGE, level.name.capitalizeAsciiOnly()))
                     if (level.nestedLevels.isNotEmpty()) {
@@ -62,8 +63,11 @@ class BtaImplGenerator() : BtaGenerator {
 
                     val argument = generateArgumentType(apiClassName)
                     val argumentTypeName = ClassName(API_PACKAGE, apiClassName, argument)
-                    generateGetPutFunctions(argumentTypeName)
-                    generateOptions(level.filterOutDroppedArguments(), apiClassName, converterFun, skipXX)
+                    val argumentImplTypeName = ClassName(IMPL_PACKAGE, implClassName, argument)
+                    generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
+                    addType(TypeSpec.companionObjectBuilder().apply {
+                        generateOptions(level.filterOutDroppedArguments(), apiClassName, argumentImplTypeName, converterFun, skipXX)
+                    }.build())
                     converterFun.addStatement("return arguments")
                     addFunction(converterFun.build())
                 }.build()
@@ -71,12 +75,13 @@ class BtaImplGenerator() : BtaGenerator {
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
-        return GeneratorOutputs(ClassName(IMPL_PACKAGE, className), outputs)
+        return GeneratorOutputs(ClassName(IMPL_PACKAGE, implClassName), outputs)
     }
 
-    private fun generateOptions(
+    private fun TypeSpec.Builder.generateOptions(
         arguments: Collection<KotlinCompilerArgument>,
         apiClassName: String,
+        argumentTypeName: ClassName,
         converterFun: FunSpec.Builder,
         skipXX: Boolean,
     ) {
@@ -88,13 +93,26 @@ class BtaImplGenerator() : BtaGenerator {
                 return@forEach
             }
 
-            val clazz = argument.valueType::class
+            // generate impl mirror of arguments
+            val type = argument.valueType::class
                 .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-                .arguments.first().type!!.classifier as KClass<*>
+                .arguments.first().type!!
+            val argumentTypeParameter = when (val classifier = type.classifier) {
+                is KClass<*> if classifier.isSubclassOf(Enum::class) && classifier in enumNameAccessors -> {
+                    ClassName("$API_PACKAGE.enums", classifier.simpleName!!)
+                }
+                else -> {
+                    type.asTypeName()
+                }
+            }.copy(nullable = argument.valueType.isNullable.current)
+            property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
+                initializer("%T(%S)", argumentTypeName, name)
+            }
 
+            // add argument to the converter function
             val member = MemberName(ClassName(API_PACKAGE, apiClassName, "Companion"), name)
             when {
-                clazz in enumNameAccessors -> converterFun.addStatement(
+                type.classifier in enumNameAccessors -> converterFun.addStatement(
                     "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
                     name,
                     argument.calculateName(),
@@ -116,13 +134,7 @@ class BtaImplGenerator() : BtaGenerator {
         }
     }
 
-    fun generateArgumentType(argumentsClassName: String): String {
-        require(argumentsClassName.endsWith("Arguments"))
-        val argumentTypeName = argumentsClassName.removeSuffix("s")
-        return argumentTypeName
-    }
-
-    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
+    fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
         val mapProperty = property(
             "optionsMap",
             ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
@@ -131,10 +143,11 @@ class BtaImplGenerator() : BtaGenerator {
             initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
         }
         function("get") {
-            val typeParameter = TypeVariableName.Companion("V")
+            val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
                 addMember("%S", "UNCHECKED_CAST")
             }
+            annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
             returns(typeParameter)
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
@@ -142,12 +155,40 @@ class BtaImplGenerator() : BtaGenerator {
             addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
         function("set") {
-            val typeParameter = TypeVariableName.Companion("V")
+            annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
+            val typeParameter = TypeVariableName("V")
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
             addStatement("%N[key.id] = %N", mapProperty, "value")
+        }
+
+        function("get") {
+            val typeParameter = TypeVariableName("V")
+            annotation<Suppress> {
+                addMember("%S", "UNCHECKED_CAST")
+            }
+            returns(typeParameter)
+            addModifiers(KModifier.OPERATOR)
+            addTypeVariable(typeParameter)
+            addParameter("key", implParameter.parameterizedBy(typeParameter))
+            addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
+        }
+        function("set") {
+            val typeParameter = TypeVariableName("V")
+            addModifiers(KModifier.OPERATOR)
+            addTypeVariable(typeParameter)
+            addParameter("key", implParameter.parameterizedBy(typeParameter))
+            addParameter("value", typeParameter)
+            addStatement("%N[key.id] = %N", mapProperty, "value")
+        }
+
+        function("contains") {
+            addModifiers(KModifier.OPERATOR)
+            returns(BOOLEAN)
+            addParameter("key", implParameter.parameterizedBy(STAR))
+            addStatement("return key.id in optionsMap")
         }
     }
 }

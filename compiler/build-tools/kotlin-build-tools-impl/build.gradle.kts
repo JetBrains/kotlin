@@ -16,6 +16,8 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
     compileOnly(intellijCore())
     compileOnly(project(":kotlin-scripting-compiler"))
+    compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+
     runtimeOnly(project(":kotlin-compiler-embeddable"))
     runtimeOnly(project(":kotlin-compiler-runner"))
     runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
