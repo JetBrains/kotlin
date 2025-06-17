@@ -95,7 +95,8 @@ where advanced options include:
   -Xnew-inference            Enable the new experimental generic type inference algorithm.
   -Xinline-classes           Enable experimental inline classes.
   -Xreport-perf              Report detailed performance statistics.
-  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in text or json format (it's detected by the file's extension).
+                             Also, it supports the placeholder `$` and directory for generating file names based on the module being compiled and the current date-time stamp.
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
                              They should be a subset of sources passed as free arguments.

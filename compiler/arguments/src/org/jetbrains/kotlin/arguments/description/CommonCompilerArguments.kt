@@ -288,7 +288,8 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
 
     compilerArgument {
         name = "Xdump-perf"
-        description = "Dump detailed performance statistics to the specified file.".asReleaseDependent()
+        description =
+            $$"Dump detailed performance statistics to the specified file in text or json format (it's detected by the file's extension).\nAlso, it supports the placeholder `$` and directory for generating file names based on the module being compiled and the current date-time stamp.".asReleaseDependent()
         valueDescription = "<path>".asReleaseDependent()
         valueType = StringType.defaultNull
 
