@@ -3845,6 +3845,138 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("exhaustiveWithNegativeBooleans.kt")
+        public void testExhaustiveWithNegativeBooleans() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeBooleans.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeBounds.kt")
+        public void testExhaustiveWithNegativeBounds() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeContextParameters.kt")
+        public void testExhaustiveWithNegativeContextParameters() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeContextParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeContextSensitiveResolution.kt")
+        public void testExhaustiveWithNegativeContextSensitiveResolution() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeContextSensitiveResolution.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeContract.kt")
+        public void testExhaustiveWithNegativeContract() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeContract.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeContractDifferentInvocationKinds.kt")
+        public void testExhaustiveWithNegativeContractDifferentInvocationKinds() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeContractDifferentInvocationKinds.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeDataClasses.kt")
+        public void testExhaustiveWithNegativeDataClasses() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeDataClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeDeepSealedHierarchy.kt")
+        public void testExhaustiveWithNegativeDeepSealedHierarchy() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeDeepSealedHierarchy.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeEnums.kt")
+        public void testExhaustiveWithNegativeEnums() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeEnums.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeEnums_Disabled.kt")
+        public void testExhaustiveWithNegativeEnums_Disabled() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeEnums_Disabled.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeEqualsOverride.kt")
+        public void testExhaustiveWithNegativeEqualsOverride() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeEqualsOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeGuards.kt")
+        public void testExhaustiveWithNegativeGuards() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeGuards.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeMutableVar.kt")
+        public void testExhaustiveWithNegativeMutableVar() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeMutableVar.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeNullable.kt")
+        public void testExhaustiveWithNegativeNullable() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeNullable.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeSealedDataObjects.kt")
+        public void testExhaustiveWithNegativeSealedDataObjects() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeSealedDataObjects.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeSealedTypes.kt")
+        public void testExhaustiveWithNegativeSealedTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeSealedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeUntrustworthySealedTypes.kt")
+        public void testExhaustiveWithNegativeUntrustworthySealedTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeUntrustworthySealedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeUntrustworthySealedTypesFromAnotherModule.kt")
+        public void testExhaustiveWithNegativeUntrustworthySealedTypesFromAnotherModule() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeUntrustworthySealedTypesFromAnotherModule.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeValueClasses.kt")
+        public void testExhaustiveWithNegativeValueClasses() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithNegativeValueClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithReversedNegativeUntrustworthySealedTypes.kt")
+        public void testExhaustiveWithReversedNegativeUntrustworthySealedTypes() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithReversedNegativeUntrustworthySealedTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithUnstableNegativeInformation.kt")
+        public void testExhaustiveWithUnstableNegativeInformation() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithUnstableNegativeInformation.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithUntrustworthyExpectAny.kt")
+        public void testExhaustiveWithUntrustworthyExpectAny() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/exhaustiveWithUntrustworthyExpectAny.kt");
+        }
+
+        @Test
         @TestMetadata("missingBooleanBranch.kt")
         public void testMissingBooleanBranch() {
           runTest("compiler/fir/analysis-tests/testData/resolve/exhaustiveness/negative/missingBooleanBranch.kt");

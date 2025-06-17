@@ -44268,6 +44268,34 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/when/exhaustiveness")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Exhaustiveness {
+        @Test
+        public void testAllFilesPresentInExhaustiveness() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeBoolean.kt")
+        public void testExhaustiveWithNegativeBoolean() {
+          runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeBoolean.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeEnum.kt")
+        public void testExhaustiveWithNegativeEnum() {
+          runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeEnum.kt");
+        }
+
+        @Test
+        @TestMetadata("exhaustiveWithNegativeSealed.kt")
+        public void testExhaustiveWithNegativeSealed() {
+          runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeSealed.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/when/guard")
       @TestDataPath("$PROJECT_ROOT")
       public class Guard {
