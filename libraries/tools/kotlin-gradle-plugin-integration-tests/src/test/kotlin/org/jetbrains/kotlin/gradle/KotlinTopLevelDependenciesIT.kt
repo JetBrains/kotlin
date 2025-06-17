@@ -32,6 +32,45 @@ import kotlin.test.assertEquals
 @GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsString])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
+    @DisplayName("Top-level dependencies block FUS events")
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testFusCollection(gradleVersion: GradleVersion) {
+        val fusEventName = "KMP_TOP_LEVEL_DEPENDENCIES_BLOCK"
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                }
+            }
+            assertEquals(
+                emptyList(),
+                collectFusEvents(
+                    "assemble",
+                    buildAction = BuildActions.build
+                ).filter { it.startsWith(fusEventName) },
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.dependencies {  }
+            }
+            val action = if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)) {
+                BuildActions.buildAndFail
+            } else {
+                BuildActions.build
+            }
+            assertEquals(
+                listOf("${fusEventName}=true"),
+                collectFusEvents(
+                    "assemble",
+                    buildAction = action
+                ).filter { it.startsWith(fusEventName) },
+            )
+        }
+    }
+
     @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest
     fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {

@@ -297,14 +297,12 @@ class GradleBuildScriptBuildscriptInjectionContext(
     val project: Project,
 )
 
-typealias BuildAction = TestProject.(buildArguments: Array<String>, buildOptions: BuildOptions) -> Unit
-
 class ReturnFromBuildScriptAfterExecution<T>(
     val returnContainingGradleProject: TestProject,
     val serializedReturnPath: File,
     val injectionLoadProperty: String,
     val defaultEvaluationTask: String = "tasks",
-    val defaultBuildAction: BuildAction = build,
+    val defaultBuildAction: BuildAction = BuildActions.build,
 ) {
     /**
      * Return values to the test by serializing the return after the execution. The benefit of serializing after execution is that we can
@@ -338,35 +336,6 @@ class ReturnFromBuildScriptAfterExecution<T>(
         ObjectInputStream(serializedReturnPath.inputStream()).use {
             @Suppress("UNCHECKED_CAST")
             return it.readObject() as T
-        }
-    }
-
-    companion object {
-        val build: BuildAction = { args, options ->
-            build(
-                buildArguments = args,
-                buildOptions = options,
-                forwardBuildOutput = false,
-            )
-        }
-
-        fun buildWithAssertions(
-            buildAssertions: BuildResult.() -> Unit = {},
-        ): BuildAction = { args, options ->
-            build(
-                buildArguments = args,
-                buildOptions = options,
-                forwardBuildOutput = false,
-                assertions = buildAssertions,
-            )
-        }
-
-        val buildAndFail: BuildAction = { args, options ->
-            buildAndFail(
-                buildArguments = args,
-                buildOptions = options,
-                forwardBuildOutput = false,
-            )
         }
     }
 }
@@ -461,7 +430,7 @@ internal inline fun <reified T : Exception> TestProject.catchBuildFailures(): Re
                 this,
                 serializedReturnPath,
                 injectionIdentifier,
-                defaultBuildAction = ReturnFromBuildScriptAfterExecution.buildAndFail,
+                defaultBuildAction = BuildActions.buildAndFail,
             )
         }
     )
