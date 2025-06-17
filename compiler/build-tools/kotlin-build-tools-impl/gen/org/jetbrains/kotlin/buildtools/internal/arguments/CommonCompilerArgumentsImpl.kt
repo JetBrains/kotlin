@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
+import kotlin.Array
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableMapOf
+import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
@@ -75,6 +78,9 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_WHEN_GUARDS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion._XDATA_FLOW_BASED_EXHAUSTIVENESS
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 
@@ -83,11 +89,22 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>): V = optionsMap[key.id] as V
 
+  @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
+
+  public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonCompilerArguments): CommonCompilerArguments {
@@ -156,5 +173,198 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT) }
     if ("X_NAME_BASED_DESTRUCTURING" in optionsMap) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING) }
     return arguments
+  }
+
+  /**
+   * Base class for [ArgumentsCommonCompilerArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
+  public class CommonCompilerArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    public val LANGUAGE_VERSION: CommonCompilerArgument<KotlinVersion?> =
+        CommonCompilerArgument("LANGUAGE_VERSION")
+
+    public val API_VERSION: CommonCompilerArgument<KotlinVersion?> =
+        CommonCompilerArgument("API_VERSION")
+
+    public val KOTLIN_HOME: CommonCompilerArgument<String?> = CommonCompilerArgument("KOTLIN_HOME")
+
+    public val PROGRESSIVE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("PROGRESSIVE")
+
+    public val OPT_IN: CommonCompilerArgument<Array<String>?> = CommonCompilerArgument("OPT_IN")
+
+    public val X_NO_INLINE: CommonCompilerArgument<Boolean> = CommonCompilerArgument("X_NO_INLINE")
+
+    public val X_SKIP_METADATA_VERSION_CHECK: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_SKIP_METADATA_VERSION_CHECK")
+
+    public val X_SKIP_PRERELEASE_CHECK: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_SKIP_PRERELEASE_CHECK")
+
+    public val X_REPORT_OUTPUT_FILES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_REPORT_OUTPUT_FILES")
+
+    public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_NEW_INFERENCE")
+
+    public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_INLINE_CLASSES")
+
+    public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_REPORT_PERF")
+
+    public val X_DUMP_PERF: CommonCompilerArgument<String?> = CommonCompilerArgument("X_DUMP_PERF")
+
+    public val X_METADATA_VERSION: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_METADATA_VERSION")
+
+    public val X_LIST_PHASES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_LIST_PHASES")
+
+    public val X_DISABLE_PHASES: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_DISABLE_PHASES")
+
+    public val X_VERBOSE_PHASES: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_VERBOSE_PHASES")
+
+    public val X_PHASES_TO_DUMP_BEFORE: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_DUMP_BEFORE")
+
+    public val X_PHASES_TO_DUMP_AFTER: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_DUMP_AFTER")
+
+    public val X_PHASES_TO_DUMP: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_DUMP")
+
+    public val X_DUMP_DIRECTORY: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_DUMP_DIRECTORY")
+
+    public val X_DUMP_FQNAME: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_DUMP_FQNAME")
+
+    public val X_PHASES_TO_VALIDATE_BEFORE: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE_BEFORE")
+
+    public val X_PHASES_TO_VALIDATE_AFTER: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE_AFTER")
+
+    public val X_PHASES_TO_VALIDATE: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_PHASES_TO_VALIDATE")
+
+    public val X_VERIFY_IR: CommonCompilerArgument<String?> = CommonCompilerArgument("X_VERIFY_IR")
+
+    public val X_VERIFY_IR_VISIBILITY: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_VERIFY_IR_VISIBILITY")
+
+    public val X_PROFILE_PHASES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_PROFILE_PHASES")
+
+    public val X_CHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS")
+
+    public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS")
+
+    public val X_USE_FIR_IC: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_USE_FIR_IC")
+
+    public val X_USE_FIR_LT: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_USE_FIR_LT")
+
+    public val X_METADATA_KLIB: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_METADATA_KLIB")
+
+    public val X_DISABLE_DEFAULT_SCRIPTING_PLUGIN: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN")
+
+    public val X_EXPLICIT_API: CommonCompilerArgument<ExplicitApiMode> =
+        CommonCompilerArgument("X_EXPLICIT_API")
+
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
+        CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
+
+    public val X_SUPPRESS_VERSION_WARNINGS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_SUPPRESS_VERSION_WARNINGS")
+
+    public val X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR:
+        CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR")
+
+    public val X_EXPECT_ACTUAL_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EXPECT_ACTUAL_CLASSES")
+
+    public val X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY")
+
+    public val X_UNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE")
+
+    public val X_CONTEXT_RECEIVERS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CONTEXT_RECEIVERS")
+
+    public val X_CONTEXT_PARAMETERS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CONTEXT_PARAMETERS")
+
+    public val X_CONTEXT_SENSITIVE_RESOLUTION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_CONTEXT_SENSITIVE_RESOLUTION")
+
+    public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE")
+
+    public val _XDATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("_XDATA_FLOW_BASED_EXHAUSTIVENESS")
+
+    public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION")
+
+    public val X_RENDER_INTERNAL_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES")
+
+    public val X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
+
+    public val X_REPORT_ALL_WARNINGS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_REPORT_ALL_WARNINGS")
+
+    public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")
+
+    public val X_DONT_WARN_ON_ERROR_SUPPRESSION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DONT_WARN_ON_ERROR_SUPPRESSION")
+
+    public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_WHEN_GUARDS")
+
+    public val X_NESTED_TYPE_ALIASES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_NESTED_TYPE_ALIASES")
+
+    public val X_SUPPRESS_WARNING: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_SUPPRESS_WARNING")
+
+    public val X_WARNING_LEVEL: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_WARNING_LEVEL")
+
+    public val X_ANNOTATION_DEFAULT_TARGET: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_ANNOTATION_DEFAULT_TARGET")
+
+    public val X_ANNOTATION_TARGET_ALL: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ANNOTATION_TARGET_ALL")
+
+    public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH")
+
+    public val X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS")
+
+    public val X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS")
+
+    public val X_ALLOW_HOLDSIN_CONTRACT: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT")
   }
 }

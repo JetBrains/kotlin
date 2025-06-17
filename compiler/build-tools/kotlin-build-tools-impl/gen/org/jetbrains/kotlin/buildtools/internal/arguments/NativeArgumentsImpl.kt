@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableMapOf
+import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.ENABLE_ASSERTIONS
@@ -106,11 +110,22 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: NativeArguments.NativeArgument<V>): V = optionsMap[key.id] as V
 
+  @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: NativeArguments.NativeArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: NativeArgument<V>): V = optionsMap[key.id] as V
+
+  public operator fun <V> `set`(key: NativeArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: NativeArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2NativeCompilerArguments = K2NativeCompilerArguments()): K2NativeCompilerArguments {
@@ -203,5 +218,221 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
     if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES) }
     if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) }
     return arguments
+  }
+
+  /**
+   * Base class for [NativeArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
+  public class NativeArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    public val ENABLE_ASSERTIONS: NativeArgument<Boolean> = NativeArgument("ENABLE_ASSERTIONS")
+
+    public val G: NativeArgument<Boolean> = NativeArgument("G")
+
+    public val GENERATE_TEST_RUNNER: NativeArgument<Boolean> =
+        NativeArgument("GENERATE_TEST_RUNNER")
+
+    public val GENERATE_WORKER_TEST_RUNNER: NativeArgument<Boolean> =
+        NativeArgument("GENERATE_WORKER_TEST_RUNNER")
+
+    public val GENERATE_NO_EXIT_TEST_RUNNER: NativeArgument<Boolean> =
+        NativeArgument("GENERATE_NO_EXIT_TEST_RUNNER")
+
+    public val INCLUDE_BINARY: NativeArgument<Array<String>?> = NativeArgument("INCLUDE_BINARY")
+
+    public val LIBRARY: NativeArgument<Array<String>?> = NativeArgument("LIBRARY")
+
+    public val LIBRARY_VERSION: NativeArgument<String?> = NativeArgument("LIBRARY_VERSION")
+
+    public val LIST_TARGETS: NativeArgument<Boolean> = NativeArgument("LIST_TARGETS")
+
+    public val MANIFEST: NativeArgument<String?> = NativeArgument("MANIFEST")
+
+    public val MEMORY_MODEL: NativeArgument<String?> = NativeArgument("MEMORY_MODEL")
+
+    public val MODULE_NAME: NativeArgument<String?> = NativeArgument("MODULE_NAME")
+
+    public val NATIVE_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("NATIVE_LIBRARY")
+
+    public val NO_DEFAULT_LIBS: NativeArgument<Boolean> = NativeArgument("NO_DEFAULT_LIBS")
+
+    public val NO_ENDORSED_LIBS: NativeArgument<Boolean> = NativeArgument("NO_ENDORSED_LIBS")
+
+    public val NOMAIN: NativeArgument<Boolean> = NativeArgument("NOMAIN")
+
+    public val NOPACK: NativeArgument<Boolean> = NativeArgument("NOPACK")
+
+    public val LINKER_OPTIONS: NativeArgument<Array<String>?> = NativeArgument("LINKER_OPTIONS")
+
+    public val LINKER_OPTION: NativeArgument<Array<String>?> = NativeArgument("LINKER_OPTION")
+
+    public val NOSTDLIB: NativeArgument<Boolean> = NativeArgument("NOSTDLIB")
+
+    public val OPT: NativeArgument<Boolean> = NativeArgument("OPT")
+
+    public val OUTPUT: NativeArgument<String?> = NativeArgument("OUTPUT")
+
+    public val ENTRY: NativeArgument<String?> = NativeArgument("ENTRY")
+
+    public val PRODUCE: NativeArgument<String?> = NativeArgument("PRODUCE")
+
+    public val TARGET: NativeArgument<String?> = NativeArgument("TARGET")
+
+    public val X_BUNDLE_ID: NativeArgument<String?> = NativeArgument("X_BUNDLE_ID")
+
+    public val X_CACHE_DIRECTORY: NativeArgument<Array<String>?> =
+        NativeArgument("X_CACHE_DIRECTORY")
+
+    public val X_CACHED_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("X_CACHED_LIBRARY")
+
+    public val X_AUTO_CACHE_FROM: NativeArgument<Array<String>?> =
+        NativeArgument("X_AUTO_CACHE_FROM")
+
+    public val X_AUTO_CACHE_DIR: NativeArgument<String?> = NativeArgument("X_AUTO_CACHE_DIR")
+
+    public val X_IC_CACHE_DIR: NativeArgument<String?> = NativeArgument("X_IC_CACHE_DIR")
+
+    public val X_CHECK_DEPENDENCIES: NativeArgument<Boolean> =
+        NativeArgument("X_CHECK_DEPENDENCIES")
+
+    public val X_EMIT_LAZY_OBJC_HEADER: NativeArgument<String?> =
+        NativeArgument("X_EMIT_LAZY_OBJC_HEADER")
+
+    public val X_EXPORT_LIBRARY: NativeArgument<Array<String>?> = NativeArgument("X_EXPORT_LIBRARY")
+
+    public val X_EXTERNAL_DEPENDENCIES: NativeArgument<String?> =
+        NativeArgument("X_EXTERNAL_DEPENDENCIES")
+
+    public val X_FAKE_OVERRIDE_VALIDATOR: NativeArgument<Boolean> =
+        NativeArgument("X_FAKE_OVERRIDE_VALIDATOR")
+
+    public val X_FRAMEWORK_IMPORT_HEADER: NativeArgument<Array<String>?> =
+        NativeArgument("X_FRAMEWORK_IMPORT_HEADER")
+
+    public val X_ADD_LIGHT_DEBUG: NativeArgument<String?> = NativeArgument("X_ADD_LIGHT_DEBUG")
+
+    public val X_G0: NativeArgument<Boolean> = NativeArgument("X_G0")
+
+    public val X_G_GENERATE_DEBUG_TRAMPOLINE: NativeArgument<String?> =
+        NativeArgument("X_G_GENERATE_DEBUG_TRAMPOLINE")
+
+    public val X_ADD_CACHE: NativeArgument<String?> = NativeArgument("X_ADD_CACHE")
+
+    public val X_FILE_TO_CACHE: NativeArgument<Array<String>?> = NativeArgument("X_FILE_TO_CACHE")
+
+    public val X_MAKE_PER_FILE_CACHE: NativeArgument<Boolean> =
+        NativeArgument("X_MAKE_PER_FILE_CACHE")
+
+    public val X_BACKEND_THREADS: NativeArgument<Int> = NativeArgument("X_BACKEND_THREADS")
+
+    public val X_EXPORT_KDOC: NativeArgument<Boolean> = NativeArgument("X_EXPORT_KDOC")
+
+    public val X_PRINT_BITCODE: NativeArgument<Boolean> = NativeArgument("X_PRINT_BITCODE")
+
+    public val X_CHECK_STATE_AT_EXTERNAL_CALLS: NativeArgument<Boolean> =
+        NativeArgument("X_CHECK_STATE_AT_EXTERNAL_CALLS")
+
+    public val X_PRINT_IR: NativeArgument<Boolean> = NativeArgument("X_PRINT_IR")
+
+    public val X_PRINT_FILES: NativeArgument<Boolean> = NativeArgument("X_PRINT_FILES")
+
+    public val X_PURGE_USER_LIBS: NativeArgument<Boolean> = NativeArgument("X_PURGE_USER_LIBS")
+
+    public val X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO: NativeArgument<String?> =
+        NativeArgument("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO")
+
+    public val X_RUNTIME: NativeArgument<String?> = NativeArgument("X_RUNTIME")
+
+    public val X_INCLUDE: NativeArgument<Array<String>?> = NativeArgument("X_INCLUDE")
+
+    public val X_SHORT_MODULE_NAME: NativeArgument<String?> = NativeArgument("X_SHORT_MODULE_NAME")
+
+    public val X_STATIC_FRAMEWORK: NativeArgument<Boolean> = NativeArgument("X_STATIC_FRAMEWORK")
+
+    public val X_TEMPORARY_FILES_DIR: NativeArgument<String?> =
+        NativeArgument("X_TEMPORARY_FILES_DIR")
+
+    public val X_SAVE_LLVM_IR_AFTER: NativeArgument<Array<String>?> =
+        NativeArgument("X_SAVE_LLVM_IR_AFTER")
+
+    public val X_VERIFY_BITCODE: NativeArgument<Boolean> = NativeArgument("X_VERIFY_BITCODE")
+
+    public val X_VERIFY_COMPILER: NativeArgument<String?> = NativeArgument("X_VERIFY_COMPILER")
+
+    public val FRIEND_MODULES: NativeArgument<String?> = NativeArgument("FRIEND_MODULES")
+
+    public val X_REFINES_PATHS: NativeArgument<Array<String>?> = NativeArgument("X_REFINES_PATHS")
+
+    public val X_DEBUG_INFO_VERSION: NativeArgument<Int> = NativeArgument("X_DEBUG_INFO_VERSION")
+
+    public val X_NO_OBJC_GENERICS: NativeArgument<Boolean> = NativeArgument("X_NO_OBJC_GENERICS")
+
+    public val X_OVERRIDE_CLANG_OPTIONS: NativeArgument<Array<String>?> =
+        NativeArgument("X_OVERRIDE_CLANG_OPTIONS")
+
+    public val X_ALLOCATOR: NativeArgument<String?> = NativeArgument("X_ALLOCATOR")
+
+    public val X_HEADER_KLIB_PATH: NativeArgument<String?> = NativeArgument("X_HEADER_KLIB_PATH")
+
+    public val X_DEBUG_PREFIX_MAP: NativeArgument<Array<String>?> =
+        NativeArgument("X_DEBUG_PREFIX_MAP")
+
+    public val X_PRE_LINK_CACHES: NativeArgument<String?> = NativeArgument("X_PRE_LINK_CACHES")
+
+    public val X_OVERRIDE_KONAN_PROPERTIES: NativeArgument<Array<String>?> =
+        NativeArgument("X_OVERRIDE_KONAN_PROPERTIES")
+
+    public val X_DESTROY_RUNTIME_MODE: NativeArgument<String?> =
+        NativeArgument("X_DESTROY_RUNTIME_MODE")
+
+    public val X_GC: NativeArgument<String?> = NativeArgument("X_GC")
+
+    public val X_IR_PROPERTY_LAZY_INITIALIZATION: NativeArgument<String?> =
+        NativeArgument("X_IR_PROPERTY_LAZY_INITIALIZATION")
+
+    public val X_WORKER_EXCEPTION_HANDLING: NativeArgument<String?> =
+        NativeArgument("X_WORKER_EXCEPTION_HANDLING")
+
+    public val X_LLVM_VARIANT: NativeArgument<String?> = NativeArgument("X_LLVM_VARIANT")
+
+    public val X_BINARY: NativeArgument<Array<String>?> = NativeArgument("X_BINARY")
+
+    public val X_RUNTIME_LOGS: NativeArgument<String?> = NativeArgument("X_RUNTIME_LOGS")
+
+    public val X_DUMP_TESTS_TO: NativeArgument<String?> = NativeArgument("X_DUMP_TESTS_TO")
+
+    public val X_LAZY_IR_FOR_CACHES: NativeArgument<String?> =
+        NativeArgument("X_LAZY_IR_FOR_CACHES")
+
+    public val X_OMIT_FRAMEWORK_BINARY: NativeArgument<Boolean> =
+        NativeArgument("X_OMIT_FRAMEWORK_BINARY")
+
+    public val X_COMPILE_FROM_BITCODE: NativeArgument<String?> =
+        NativeArgument("X_COMPILE_FROM_BITCODE")
+
+    public val X_READ_DEPENDENCIES_FROM: NativeArgument<String?> =
+        NativeArgument("X_READ_DEPENDENCIES_FROM")
+
+    public val X_WRITE_DEPENDENCIES_TO: NativeArgument<String?> =
+        NativeArgument("X_WRITE_DEPENDENCIES_TO")
+
+    public val X_SAVE_LLVM_IR_DIRECTORY: NativeArgument<String?> =
+        NativeArgument("X_SAVE_LLVM_IR_DIRECTORY")
+
+    public val X_KONAN_DATA_DIR: NativeArgument<String?> = NativeArgument("X_KONAN_DATA_DIR")
+
+    public val X_LLVM_MODULE_PASSES: NativeArgument<String?> =
+        NativeArgument("X_LLVM_MODULE_PASSES")
+
+    public val X_LLVM_LTO_PASSES: NativeArgument<String?> = NativeArgument("X_LLVM_LTO_PASSES")
+
+    public val X_MANIFEST_NATIVE_TARGETS: NativeArgument<Array<String>?> =
+        NativeArgument("X_MANIFEST_NATIVE_TARGETS")
   }
 }

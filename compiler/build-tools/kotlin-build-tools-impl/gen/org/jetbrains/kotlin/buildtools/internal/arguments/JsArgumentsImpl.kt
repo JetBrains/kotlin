@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableMapOf
+import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.IR_OUTPUT_DIR
@@ -63,11 +65,22 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: JsArguments.JsArgument<V>): V = optionsMap[key.id] as V
 
+  @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: JsArguments.JsArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
+
+  public operator fun <V> `set`(key: JsArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
@@ -117,5 +130,121 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR) }
     if ("X_OPTIMIZE_GENERATED_JS" in optionsMap) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS) }
     return arguments
+  }
+
+  /**
+   * Base class for [JsArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
+  public class JsArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT")
+
+    public val IR_OUTPUT_DIR: JsArgument<String?> = JsArgument("IR_OUTPUT_DIR")
+
+    public val IR_OUTPUT_NAME: JsArgument<String?> = JsArgument("IR_OUTPUT_NAME")
+
+    public val LIBRARIES: JsArgument<String?> = JsArgument("LIBRARIES")
+
+    public val SOURCE_MAP: JsArgument<Boolean> = JsArgument("SOURCE_MAP")
+
+    public val SOURCE_MAP_PREFIX: JsArgument<String?> = JsArgument("SOURCE_MAP_PREFIX")
+
+    public val SOURCE_MAP_BASE_DIRS: JsArgument<String?> = JsArgument("SOURCE_MAP_BASE_DIRS")
+
+    public val SOURCE_MAP_EMBED_SOURCES: JsArgument<String?> =
+        JsArgument("SOURCE_MAP_EMBED_SOURCES")
+
+    public val SOURCE_MAP_NAMES_POLICY: JsArgument<String?> = JsArgument("SOURCE_MAP_NAMES_POLICY")
+
+    public val TARGET: JsArgument<String?> = JsArgument("TARGET")
+
+    public val X_IR_KEEP: JsArgument<String?> = JsArgument("X_IR_KEEP")
+
+    public val MODULE_KIND: JsArgument<String?> = JsArgument("MODULE_KIND")
+
+    public val MAIN: JsArgument<String?> = JsArgument("MAIN")
+
+    public val X_IR_PRODUCE_KLIB_DIR: JsArgument<Boolean> = JsArgument("X_IR_PRODUCE_KLIB_DIR")
+
+    public val X_IR_PRODUCE_KLIB_FILE: JsArgument<Boolean> = JsArgument("X_IR_PRODUCE_KLIB_FILE")
+
+    public val X_IR_PRODUCE_JS: JsArgument<Boolean> = JsArgument("X_IR_PRODUCE_JS")
+
+    public val X_IR_DCE: JsArgument<Boolean> = JsArgument("X_IR_DCE")
+
+    public val X_IR_DCE_RUNTIME_DIAGNOSTIC: JsArgument<String?> =
+        JsArgument("X_IR_DCE_RUNTIME_DIAGNOSTIC")
+
+    public val X_IR_DCE_PRINT_REACHABILITY_INFO: JsArgument<Boolean> =
+        JsArgument("X_IR_DCE_PRINT_REACHABILITY_INFO")
+
+    public val X_IR_PROPERTY_LAZY_INITIALIZATION: JsArgument<Boolean> =
+        JsArgument("X_IR_PROPERTY_LAZY_INITIALIZATION")
+
+    public val X_IR_MINIMIZED_MEMBER_NAMES: JsArgument<Boolean> =
+        JsArgument("X_IR_MINIMIZED_MEMBER_NAMES")
+
+    public val X_IR_MODULE_NAME: JsArgument<String?> = JsArgument("X_IR_MODULE_NAME")
+
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN: JsArgument<Boolean> =
+        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN")
+
+    public val X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC: JsArgument<String?> =
+        JsArgument("X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC")
+
+    public val X_IR_PER_MODULE: JsArgument<Boolean> = JsArgument("X_IR_PER_MODULE")
+
+    public val X_IR_PER_MODULE_OUTPUT_NAME: JsArgument<String?> =
+        JsArgument("X_IR_PER_MODULE_OUTPUT_NAME")
+
+    public val X_IR_PER_FILE: JsArgument<Boolean> = JsArgument("X_IR_PER_FILE")
+
+    public val X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS: JsArgument<Boolean> =
+        JsArgument("X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS")
+
+    public val X_INCLUDE: JsArgument<String?> = JsArgument("X_INCLUDE")
+
+    public val X_CACHE_DIRECTORY: JsArgument<String?> = JsArgument("X_CACHE_DIRECTORY")
+
+    public val X_IR_BUILD_CACHE: JsArgument<Boolean> = JsArgument("X_IR_BUILD_CACHE")
+
+    public val X_GENERATE_DTS: JsArgument<Boolean> = JsArgument("X_GENERATE_DTS")
+
+    public val X_GENERATE_POLYFILLS: JsArgument<Boolean> = JsArgument("X_GENERATE_POLYFILLS")
+
+    public val X_STRICT_IMPLICIT_EXPORT_TYPES: JsArgument<Boolean> =
+        JsArgument("X_STRICT_IMPLICIT_EXPORT_TYPES")
+
+    public val X_ES_CLASSES: JsArgument<Boolean?> = JsArgument("X_ES_CLASSES")
+
+    public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
+        JsArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
+
+    public val X_ES_GENERATORS: JsArgument<Boolean?> = JsArgument("X_ES_GENERATORS")
+
+    public val X_ES_ARROW_FUNCTIONS: JsArgument<Boolean?> = JsArgument("X_ES_ARROW_FUNCTIONS")
+
+    public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
+
+    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
+
+    public val X_FRIEND_MODULES_DISABLED: JsArgument<Boolean> =
+        JsArgument("X_FRIEND_MODULES_DISABLED")
+
+    public val X_FRIEND_MODULES: JsArgument<String?> = JsArgument("X_FRIEND_MODULES")
+
+    public val X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS: JsArgument<Boolean> =
+        JsArgument("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS")
+
+    public val X_FAKE_OVERRIDE_VALIDATOR: JsArgument<Boolean> =
+        JsArgument("X_FAKE_OVERRIDE_VALIDATOR")
+
+    public val X_OPTIMIZE_GENERATED_JS: JsArgument<Boolean> = JsArgument("X_OPTIMIZE_GENERATED_JS")
   }
 }

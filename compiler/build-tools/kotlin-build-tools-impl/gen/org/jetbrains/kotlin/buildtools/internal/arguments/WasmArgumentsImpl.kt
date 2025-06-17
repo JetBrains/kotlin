@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableMapOf
+import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE
@@ -37,11 +39,22 @@ public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgume
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: WasmArguments.WasmArgument<V>): V = optionsMap[key.id] as V
 
+  @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: WasmArguments.WasmArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: WasmArgument<V>): V = optionsMap[key.id] as V
+
+  public operator fun <V> `set`(key: WasmArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: WasmArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2WasmCompilerArguments): K2WasmCompilerArguments {
@@ -65,5 +78,62 @@ public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgume
     if ("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" in optionsMap) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE) }
     if ("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" in optionsMap) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE) }
     return arguments
+  }
+
+  /**
+   * Base class for [WasmArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
+  public class WasmArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    public val X_WASM: WasmArgument<Boolean> = WasmArgument("X_WASM")
+
+    public val X_WASM_TARGET: WasmArgument<String?> = WasmArgument("X_WASM_TARGET")
+
+    public val X_WASM_DEBUG_INFO: WasmArgument<Boolean> = WasmArgument("X_WASM_DEBUG_INFO")
+
+    public val X_WASM_DEBUG_FRIENDLY: WasmArgument<Boolean> = WasmArgument("X_WASM_DEBUG_FRIENDLY")
+
+    public val X_WASM_GENERATE_WAT: WasmArgument<Boolean> = WasmArgument("X_WASM_GENERATE_WAT")
+
+    public val X_WASM_KCLASS_FQN: WasmArgument<Boolean> = WasmArgument("X_WASM_KCLASS_FQN")
+
+    public val X_WASM_ENABLE_ARRAY_RANGE_CHECKS: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
+
+    public val X_WASM_ENABLE_ASSERTS: WasmArgument<Boolean> = WasmArgument("X_WASM_ENABLE_ASSERTS")
+
+    public val X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
+
+    public val X_WASM_USE_NEW_EXCEPTION_PROPOSAL: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
+
+    public val X_WASM_NO_JSTAG: WasmArgument<Boolean> = WasmArgument("X_WASM_NO_JSTAG")
+
+    public val X_WASM_DEBUGGER_CUSTOM_FORMATTERS: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_DEBUGGER_CUSTOM_FORMATTERS")
+
+    public val X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES")
+
+    public val X_WASM_PRESERVE_IC_ORDER: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_PRESERVE_IC_ORDER")
+
+    public val X_WASM_IC_CACHE_READONLY: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_IC_CACHE_READONLY")
+
+    public val X_WASM_GENERATE_DWARF: WasmArgument<Boolean> = WasmArgument("X_WASM_GENERATE_DWARF")
+
+    public val X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE: WasmArgument<String?> =
+        WasmArgument("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE")
+
+    public val X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE: WasmArgument<String?> =
+        WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
   }
 }

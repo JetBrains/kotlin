@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import kotlin.Any
+import kotlin.Array
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableMapOf
+import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
@@ -28,11 +31,22 @@ public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
   override operator fun <V> `get`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
 
+  @UseFromImplModuleRestricted
   override operator fun <V> `set`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
+
+  public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
@@ -46,5 +60,41 @@ public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
     if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER) }
     if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION) }
     return arguments
+  }
+
+  /**
+   * Base class for [CommonKlibBasedArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
+  public class CommonKlibBasedArgument<V>(
+    public val id: String,
+  )
+
+  public companion object {
+    public val X_KLIB_RELATIVE_PATH_BASE: CommonKlibBasedArgument<Array<String>?> =
+        CommonKlibBasedArgument("X_KLIB_RELATIVE_PATH_BASE")
+
+    public val X_KLIB_NORMALIZE_ABSOLUTE_PATH: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("X_KLIB_NORMALIZE_ABSOLUTE_PATH")
+
+    public val X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS")
+
+    public val X_PARTIAL_LINKAGE: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("X_PARTIAL_LINKAGE")
+
+    public val X_PARTIAL_LINKAGE_LOGLEVEL: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("X_PARTIAL_LINKAGE_LOGLEVEL")
+
+    public val X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY")
+
+    public val X_KLIB_IR_INLINER: CommonKlibBasedArgument<Boolean> =
+        CommonKlibBasedArgument("X_KLIB_IR_INLINER")
+
+    public val X_KLIB_ABI_VERSION: CommonKlibBasedArgument<String?> =
+        CommonKlibBasedArgument("X_KLIB_ABI_VERSION")
   }
 }
