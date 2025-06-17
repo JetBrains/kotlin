@@ -12,14 +12,30 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import java.io.File
 
 /**
  * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
  */
 class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+    private val supportedTranslationModes = listOf(
+        TranslationMode.FULL_DEV,
+        TranslationMode.FULL_PROD_MINIMIZED_NAMES,
+        TranslationMode.PER_MODULE_DEV,
+        TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
+        TranslationMode.PER_FILE_DEV,
+        TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES,
+    )
 
     override fun check(failedAssertions: List<WrappedException>) {
+        for (translationMode in supportedTranslationModes) {
+            val outputDir = getOutputDir(translationMode)
+            copy(from = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode), into = outputDir)
+        }
+    }
+
+    private fun getOutputDir(translationMode: TranslationMode): File {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val allDirectives = testServices.moduleStructure.allDirectives
 
@@ -27,32 +43,21 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         val pathToRootOutputDir = allDirectives[JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR].first()
         val testGroupOutputDirPrefix = allDirectives[JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX].first()
 
-        val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForPerModuleCompilation = File(pathToRootOutputDir + "out-per-module/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForPerModuleMinification = File(pathToRootOutputDir + "out-per-module-min/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForPerFileCompilation = File(pathToRootOutputDir + "out-per-file/" + testGroupOutputDirPrefix)
-        val testGroupOutputDirForPerFileMinification = File(pathToRootOutputDir + "out-per-file-min/" + testGroupOutputDirPrefix)
+        val prefix = when (translationMode) {
+            TranslationMode.FULL_DEV -> "out"
+            TranslationMode.FULL_PROD -> unreachableBranch(translationMode)
+            TranslationMode.FULL_PROD_MINIMIZED_NAMES -> "out-min"
+            TranslationMode.PER_MODULE_DEV -> "out-per-module"
+            TranslationMode.PER_MODULE_PROD -> unreachableBranch(translationMode)
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES -> "out-per-module-min"
+            TranslationMode.PER_FILE_DEV -> "out-per-file"
+            TranslationMode.PER_FILE_PROD -> unreachableBranch(translationMode)
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES -> "out-per-file-min"
+        }
 
-        val outputDir = getOutputDir(originalFile, testGroupOutputDirForCompilation, stopFile)
-        val dceOutputDir = getOutputDir(originalFile, testGroupOutputDirForMinification, stopFile)
-        val perModuleOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleCompilation, stopFile)
-        val perModuleDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleMinification, stopFile)
-        val perFileOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileCompilation, stopFile)
-        val perFileDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileMinification, stopFile)
-        val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
+        val testGroupOutputDir = File("$pathToRootOutputDir$prefix/$testGroupOutputDirPrefix")
 
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES), dceOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DEV), perModuleOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES), perModuleDceOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_DEV), perFileOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES), perFileDceOutputDir)
-        copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
-    }
-
-    private fun getOutputDir(file: File, testGroupOutputDir: File, stopFile: File): File {
-        return generateSequence(file.parentFile) { it.parentFile }
+        return generateSequence(originalFile.parentFile) { it.parentFile }
             .takeWhile { it != stopFile }
             .map { it.name }
             .toList().asReversed()

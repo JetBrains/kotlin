@@ -52,8 +52,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin"
         )
 
-        private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
-
         fun getJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL_DEV): String {
             return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsModuleArtifactName(testServices, moduleName)
         }
@@ -73,11 +71,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         fun getJsArtifactsRecompiledOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL_DEV): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(outputDirByMode[translationMode]!! + "-recompiled")
         }
-
-        fun getMinificationJsArtifactsOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(MINIFICATION_OUTPUT_DIR_NAME)
-        }
-
 
         fun getMainModule(testServices: TestServices): TestModule {
             val modules = testServices.moduleStructure.modules
