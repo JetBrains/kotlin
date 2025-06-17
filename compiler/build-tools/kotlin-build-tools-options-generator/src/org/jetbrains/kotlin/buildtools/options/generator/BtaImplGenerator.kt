@@ -119,7 +119,7 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
             initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
         }
         function("get") {
-            val typeParameter = TypeVariableName.Companion("V")
+            val typeParameter = TypeVariableName("V")
             annotation<Suppress> {
                 addMember("%S", "UNCHECKED_CAST")
             }
@@ -130,12 +130,19 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
             addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
         function("set") {
-            val typeParameter = TypeVariableName.Companion("V")
+            val typeParameter = TypeVariableName("V")
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
             addStatement("%N[key.id] = %N", mapProperty, "value")
+        }
+
+        function("contains") {
+            addModifiers(KModifier.OPERATOR)
+            returns(BOOLEAN)
+            addParameter("key", parameter.parameterizedBy(STAR))
+            addStatement("return key.id in optionsMap")
         }
     }
 }

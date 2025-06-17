@@ -1,0 +1,58 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.api.v2.jvm.operations
+
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.v2.BuildOperation
+import org.jetbrains.kotlin.buildtools.api.v2.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.v2.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.v2.trackers.CompilerLookupTracker
+
+@ExperimentalBuildToolsApi
+public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
+    public class Option<V>(id: String) : BaseOption<V>(id)
+
+    public operator fun <V> get(key: Option<V>): V
+
+    public operator fun <V> set(key: Option<V>, value: V)
+
+    public val compilerArguments: JvmCompilerArguments
+
+    /**
+     * Creates an options set for snapshot-based incremental compilation (IC) in JVM projects.
+     * May be used to observe the defaults, adjust them, and configure incremental compilation as follows:
+     * ```
+     * val icOptions = compilation.makeSnapshotBasedIcOptions()
+     *
+     * icOptions[JvmIncrementalCompilationOptions.BACKUP_CLASSES] = true
+     *
+     * compilation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = JvmIncrementalCompilationConfiguration(
+     *     workingDirectory = Paths.get("build/kotlin"),
+     *     sourcesChanges = SourcesChanges.ToBeCalculated,
+     *     dependenciesSnapshotFiles = snapshots,
+     *     options = icOptions,
+     * )
+     * ```
+     * @see org.jetbrains.kotlin.buildtools.api.v2.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+     */
+    public fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions
+
+    public companion object {
+
+        @JvmField
+        public val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> =
+            Option("INCREMENTAL_COMPILATION")
+
+        @JvmField
+        public val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
+
+        @JvmField
+        public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+    }
+}

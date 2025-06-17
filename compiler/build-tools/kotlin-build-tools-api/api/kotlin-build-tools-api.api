@@ -166,6 +166,20 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/JvmCompi
 	public abstract fun useLogger (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmCompilationConfiguration;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Companion;
+	public static final field METRICS_COLLECTOR Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Option;
+	public static final field PROJECT_ID Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/BuildOperation$Option : org/jetbrains/kotlin/buildtools/api/v2/internal/BaseOption {
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments : org/jetbrains/kotlin/buildtools/api/v2/CommonToolArguments {
 	public static final field API_VERSION Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$Companion;
@@ -283,10 +297,10 @@ public final class org/jetbrains/kotlin/buildtools/api/v2/CommonToolArguments$Co
 public final class org/jetbrains/kotlin/buildtools/api/v2/CommonToolArguments$Companion {
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/v2/ExperimentalCompilerArgument : java/lang/annotation/Annotation {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy {
 }
 
-public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/v2/InternalCompilerArgument : java/lang/annotation/Annotation {
+public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/v2/ExperimentalCompilerArgument : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/JsArguments : org/jetbrains/kotlin/buildtools/api/v2/WasmArguments {
@@ -432,6 +446,27 @@ public final class org/jetbrains/kotlin/buildtools/api/v2/JvmCompilerArguments$C
 public final class org/jetbrains/kotlin/buildtools/api/v2/JvmCompilerArguments$JvmCompilerArgument {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getId ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain$Companion;
+	public abstract fun createDaemonExecutionPolicy (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy;
+	public static synthetic fun createDaemonExecutionPolicy$default (Lorg/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy;
+	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy;
+	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun executeOperation$default (Lorg/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain;Lorg/jetbrains/kotlin/buildtools/api/v2/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/v2/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun finishBuild (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;)V
+	public abstract fun getCompilerVersion ()Ljava/lang/String;
+	public abstract fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/v2/js/JsPlatformToolchain;
+	public abstract fun getJvm ()Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmPlatformToolchain;
+	public abstract fun getNative ()Lorg/jetbrains/kotlin/buildtools/api/v2/native/NativePlatformToolchain;
+	public abstract fun getWasm ()Lorg/jetbrains/kotlin/buildtools/api/v2/js/WasmPlatformToolchain;
+	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain$Companion {
+	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/v2/KotlinToolchain;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/MetadataArguments : org/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments {
@@ -647,5 +682,148 @@ public final class org/jetbrains/kotlin/buildtools/api/v2/enums/ReturnValueCheck
 	public final fun getStringValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/v2/enums/ReturnValueCheckerMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/v2/enums/ReturnValueCheckerMode;
+}
+
+public abstract class org/jetbrains/kotlin/buildtools/api/v2/internal/BaseOption {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getId ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/JsPlatformToolchain {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/WasmPlatformToolchain {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/operations/JsBinaryLinkingOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/operations/JsKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/operations/WasmBinaryLinkingOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/js/operations/WasmKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmIncrementalCompilationConfiguration {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmPlatformToolchain {
+	public abstract fun createClasspathSnapshottingOperation (Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation;
+	public abstract fun createJvmCompilationOperation (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration : org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmIncrementalCompilationConfiguration {
+	public fun <init> (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions;)V
+	public final fun getDependenciesSnapshotFiles ()Ljava/util/List;
+	public final fun getOptions ()Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions;
+	public final fun getShrunkClasspathSnapshot ()Ljava/nio/file/Path;
+	public final fun getSourcesChanges ()Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;
+	public final fun getWorkingDirectory ()Ljava/nio/file/Path;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions {
+	public static final field ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field BACKUP_CLASSES Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Companion;
+	public static final field FORCE_RECOMPILATION Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field KEEP_IC_CACHES_IN_MEMORY Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field MODULE_BUILD_DIR Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field OUTPUT_DIRS Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field PRECISE_JAVA_TRACKING Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field RECOMPILATION_CLEANUP_DIRS Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field ROOT_PROJECT_DIR Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public static final field USE_FIR_RUNNER Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option : org/jetbrains/kotlin/buildtools/api/v2/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Companion;
+	public static final field GRANULARITY Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Option;
+	public static final field PARSE_INLINED_LOCAL_CLASSES Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmClasspathSnapshottingOperation$Option : org/jetbrains/kotlin/buildtools/api/v2/internal/BaseOption {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Companion;
+	public static final field INCREMENTAL_COMPILATION Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;
+	public static final field KOTLINSCRIPT_EXTENSIONS Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;
+	public static final field LOOKUP_TRACKER Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;
+	public static final field SOURCE_TO_OUTPUTS_TRACKER Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;
+	public abstract fun createSnapshotBasedIcOptions ()Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/JvmSnapshotBasedIncrementalCompilationOptions;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/v2/JvmCompilerArguments;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/jvm/operations/JvmCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/v2/internal/BaseOption {
+	public fun <init> (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/native/NativePlatformToolchain {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/native/operations/NativeBinaryLinkingOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/native/operations/NativeKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/v2/BuildOperation {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector {
+	public abstract fun collectMetric (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;J)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType : java/lang/Enum {
+	public static final field BYTES Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static final field MILLISECONDS Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static final field NANOSECONDS Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static final field NUMBER Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static final field TIME Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/BuildMetricsCollector$ValueType;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker {
+	public abstract fun clear ()V
+	public abstract fun getRequiresPosition ()Z
+	public abstract fun recordLookup (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$Position;Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$Position {
+	public fun <init> (II)V
+	public final fun getColumn ()I
+	public final fun getLine ()I
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind : java/lang/Enum {
+	public static final field CLASSIFIER Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind;
+	public static final field PACKAGE Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/v2/trackers/CompilerLookupTracker$ScopeKind;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/trackers/SourceToOutputsTracker {
+	public abstract fun recordMapping (Ljava/nio/file/Path;Ljava/util/List;)V
 }
 

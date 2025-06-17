@@ -7,6 +7,3 @@ package org.jetbrains.kotlin.buildtools.api.v2
 
 @RequiresOptIn("This compiler argument is experimental and might change in future releases.")
 public annotation class ExperimentalCompilerArgument
-
-@RequiresOptIn("This compiler argument is internal and should not be accessed.")
-public annotation class InternalCompilerArgument
