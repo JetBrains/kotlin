@@ -1065,6 +1065,9 @@ fun FirElement.requireFeatureSupport(
     source.requireFeatureSupport(feature, positioningStrategy)
 }
 
+inline fun List<FirBasedSymbol<*>>.anyImmediateEnclosingFunction(predicate: (FirBasedSymbol<*>) -> Boolean): Boolean =
+    asReversed().takeWhile { it is FirFunctionSymbol }.any(predicate)
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun reportAtomicToPrimitiveProblematicAccess(
     type: ConeKotlinType,

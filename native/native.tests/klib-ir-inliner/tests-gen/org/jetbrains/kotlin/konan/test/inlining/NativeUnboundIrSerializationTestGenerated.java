@@ -42926,12 +42926,6 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
       }
 
       @Test
-      @TestMetadata("fakeOverrideLocalGenericBase.kt")
-      public void testFakeOverrideLocalGenericBase() {
-        runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideLocalGenericBase.kt");
-      }
-
-      @Test
       @TestMetadata("fakeOverrideMultiModule.kt")
       public void testFakeOverrideMultiModule() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/fakeOverrideMultiModule.kt");
