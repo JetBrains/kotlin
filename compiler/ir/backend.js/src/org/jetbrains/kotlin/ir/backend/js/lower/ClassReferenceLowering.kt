@@ -175,7 +175,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
     }
 
     private fun createDynamicType(): IrExpression {
-        return buildCall(reflectionSymbols.createDynamicKType!!)
+        return buildCall(reflectionSymbols.createDynamicKType)
     }
 
     private fun createSimpleKType(type: IrSimpleType, visitedTypeParams: MutableSet<IrTypeParameter>): IrExpression {
@@ -196,7 +196,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
 
         val isMarkedNullable = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, type.isMarkedNullable())
         return buildCall(
-            reflectionSymbols.createKType!!,
+            reflectionSymbols.createKType,
             kClassifier,
             arguments,
             isMarkedNullable
@@ -205,13 +205,13 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
 
     private fun createKTypeProjection(tp: IrTypeArgument, visitedTypeParams: MutableSet<IrTypeParameter>): IrExpression {
         if (tp !is IrTypeProjection) {
-            return buildCall(reflectionSymbols.getStarKTypeProjection!!)
+            return buildCall(reflectionSymbols.getStarKTypeProjection)
         }
 
         val factoryName = when (tp.variance) {
-            Variance.INVARIANT -> reflectionSymbols.createInvariantKTypeProjection!!
-            Variance.IN_VARIANCE -> reflectionSymbols.createContravariantKTypeProjection!!
-            Variance.OUT_VARIANCE -> reflectionSymbols.createCovariantKTypeProjection!!
+            Variance.INVARIANT -> reflectionSymbols.createInvariantKTypeProjection
+            Variance.IN_VARIANCE -> reflectionSymbols.createContravariantKTypeProjection
+            Variance.OUT_VARIANCE -> reflectionSymbols.createCovariantKTypeProjection
         }
 
         val kType = createKType(tp.type, visitedTypeParams)
@@ -247,7 +247,7 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         }
 
         return buildCall(
-            reflectionSymbols.createKTypeParameter!!,
+            reflectionSymbols.createKTypeParameter,
             name,
             upperBounds,
             variance,
