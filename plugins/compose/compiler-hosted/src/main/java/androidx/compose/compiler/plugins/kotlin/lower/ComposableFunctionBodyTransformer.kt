@@ -2945,7 +2945,7 @@ class ComposableFunctionBodyTransformer(
             property?.transformChildrenVoid()
         }
 
-        if (expression is IrCall && (expression.isComposableCall() || expression.isSyntheticComposableCall())) {
+        if (expression is IrCall && expression.isComposableCall()) {
             return visitComposableCall(expression)
         }
 
@@ -4013,7 +4013,7 @@ class ComposableFunctionBodyTransformer(
             val inComposableCall: Boolean
                 get() = (parent as? CallScope)?.expression?.let { call ->
                     with(transformer) {
-                        call is IrCall && (call.isComposableCall() || call.isSyntheticComposableCall())
+                        call is IrCall && call.isComposableCall()
                     }
                 } == true
 

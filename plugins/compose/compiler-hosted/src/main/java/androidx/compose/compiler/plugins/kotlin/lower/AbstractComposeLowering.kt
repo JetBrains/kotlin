@@ -226,10 +226,6 @@ abstract class AbstractComposeLowering(
         return symbol.owner.hasComposableAnnotation() || isComposableLambdaInvoke()
     }
 
-    fun IrCall.isSyntheticComposableCall(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL, this] == true
-    }
-
     fun IrCall.isComposableLambdaInvoke(): Boolean {
         if (!isInvoke()) return false
         // [ComposerParamTransformer] replaces composable function types of the form
