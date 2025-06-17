@@ -61,6 +61,22 @@ fun testHoldsInsAreIndependent2(foo: String?) {
     }
 }
 
+fun testRunIfNotWithLaterAssignment1() {
+    var s: String? = null
+    runIfNot(s == null) {
+        s<!UNSAFE_CALL!>.<!>length
+        s = null
+    }
+}
+
+fun testRunIfNotWithLaterAssignment2() {
+    var s: String? = null
+    runIfNot(s == null) {
+        s = ""
+        s.length
+    }
+}
+
 inline fun <R> runIfElse(condition: Boolean, ifTrue: () -> R, ifFalse: () -> R, unrelated: () -> Unit): R? {
     contract {
         condition holdsIn ifTrue
@@ -102,3 +118,39 @@ fun testRunIfElse2(foo: String?) {
         }
     )
 }
+
+fun testRunIfElseWithUnrelatedAssignmentAfter(foo: String?) {
+    var foo: String? = ""
+    runIfElse(
+        foo == null,
+        ifTrue = {
+            foo<!UNSAFE_CALL!>.<!>length
+        },
+        ifFalse = {
+            <!SMARTCAST_IMPOSSIBLE!>foo<!>.length
+        },
+        unrelated = {
+            foo = null
+        }
+    )
+}
+
+fun testRunIfElseWithUnrelatedAssignmentBefore(foo: String?) {
+    var foo: String? = ""
+    runIfElse(
+        foo == null,
+        unrelated = {
+            foo = null
+        },
+        ifTrue = {
+            foo<!UNSAFE_CALL!>.<!>length
+        },
+        ifFalse = {
+            <!SMARTCAST_IMPOSSIBLE!>foo<!>.length
+        }
+    )
+}
+
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, functionDeclaration,
+functionalType, ifExpression, inline, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
+smartcast, stringLiteral, typeParameter */
