@@ -63,7 +63,12 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single")
     @GradleTest
     fun testPodImportSingle(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion,
+            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -78,7 +83,12 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import single noPodspec")
     @GradleTest
     fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion,
+            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
 
             buildGradleKts.addCocoapodsBlock("noPodspec()")
 
@@ -95,7 +105,12 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Pod import multiple")
     @GradleTest
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsMultipleKtPods, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsMultipleKtPods,
+            gradleVersion,
+            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
                 podImportAsserts(buildGradleKts)
@@ -718,7 +733,12 @@ class CocoaPodsIT : KGPBaseTest() {
         val subprojectPodImportTask = ":$subProjectName$podImportTaskName"
         val subprojectPodspecTask = ":$subProjectName$podspecTaskName"
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
-        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            cocoapodsSingleKtPod,
+            gradleVersion,
+            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))

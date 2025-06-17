@@ -265,7 +265,12 @@ class CustomK2MacOSTests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Universal metadata compilation with constant expressions (KT-63835)")
     fun universalMetadataCompilationWithConstantExpressions(gradleVersion: GradleVersion) {
-        project("k2-universal-metadata-compilation-with-constant-expressions", gradleVersion) {
+        project(
+            "k2-universal-metadata-compilation-with-constant-expressions",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+        ) {
             build("assemble") {
                 assertTasksExecuted(":assemble")
                 assertTasksExecuted(":compileIosMainKotlinMetadata")
