@@ -803,6 +803,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       }
 
       @Test
+      @TestMetadata("dataClassWithValueClass.kt")
+      public void testDataClassWithValueClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/dataClassWithValueClass.kt");
+      }
+
+      @Test
       @TestMetadata("extensionVariable.kt")
       public void testExtensionVariable() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/extensionVariable.kt");
@@ -932,6 +938,60 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       @TestMetadata("uintReceiver.kt")
       public void testUintReceiver() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/uintReceiver.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassInsideDefaultImpl.kt")
+      public void testValueClassInsideDefaultImpl() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassInsideDefaultImpl.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassMembers.kt")
+      public void testValueClassMembers() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassMembers.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithConstructorOverride.kt")
+      public void testValueClassWithConstructorOverride() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithConstructorOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithDelegatedSuperInterface.kt")
+      public void testValueClassWithDelegatedSuperInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithDelegatedSuperInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithInternalParam.kt")
+      public void testValueClassWithInternalParam() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithInternalParam.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithPrivateParam.kt")
+      public void testValueClassWithPrivateParam() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithPrivateParam.kt");
+      }
+
+      @Test
+      @TestMetadata("valueClassWithSuperInterface.kt")
+      public void testValueClassWithSuperInterface() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/valueClassWithSuperInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("varargAndValueClass.kt")
+      public void testVarargAndValueClass() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/varargAndValueClass.kt");
+      }
+
+      @Test
+      @TestMetadata("variable.kt")
+      public void testVariable() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/variable.kt");
       }
 
       @Test
