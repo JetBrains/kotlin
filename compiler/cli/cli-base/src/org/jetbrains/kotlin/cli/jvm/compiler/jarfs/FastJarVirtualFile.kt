@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.load.kotlin.LibraryContainerAwareVirtualFile
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.nio.file.Path
 
 internal class FastJarVirtualFile(
     private val handler: FastJarHandler,
