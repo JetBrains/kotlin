@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException
 
 private class CompilationOutcomeImpl(
     rawLogLines: Map<LogLevel, Collection<String>>,
-    override val actualResult: CompilationResult
+    override val actualResult: CompilationResult,
 ) : CompilationOutcome {
     private val _logLines by lazy {
         rawLogLines.mapValues { (_, lines) -> lines.toList() }
@@ -52,7 +52,7 @@ private class CompilationOutcomeImpl(
 data class AbstractModuleCacheKey(
     val moduleName: String,
     val dependencies: List<DependencyScenarioDslCacheKey>,
-    val additionalCompilationArguments: List<String>,
+    val compilationArguments: (JvmCompilationOperation) -> Unit,
 ) : DependencyScenarioDslCacheKey
 
 abstract class AbstractModule(
@@ -60,8 +60,8 @@ abstract class AbstractModule(
     final override val moduleName: String,
     val moduleDirectory: Path,
     val dependencies: List<Dependency>,
-    override val defaultStrategyConfig: CompilerExecutionStrategyConfiguration,
-    final override val additionalCompilationArguments: List<String> = emptyList(),
+    override val defaultStrategyConfig: ExecutionPolicy,
+    final override val compilationOperationConfig: (JvmCompilationOperation) -> Unit,
 ) : Module {
     override val sourcesDirectory: Path
         get() = moduleDirectory.resolve("src")
@@ -81,12 +81,13 @@ abstract class AbstractModule(
     override val icCachesDir: Path
         get() = icWorkingDir.resolve("caches")
 
-    override val scenarioDslCacheKey = AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, additionalCompilationArguments)
+    override val scenarioDslCacheKey =
+        AbstractModuleCacheKey(moduleName, dependencies.map { it.scenarioDslCacheKey }, compilationOperationConfig)
 
     override fun compile(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
+        strategyConfig: ExecutionPolicy,
         forceOutput: LogLevel?,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        compilationConfigAction: (JvmCompilationOperation) -> Unit,
         assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
         val kotlinLogger = TestKotlinLogger()
@@ -113,8 +114,8 @@ abstract class AbstractModule(
     }
 
     protected abstract fun compileImpl(
-        strategyConfig: CompilerExecutionStrategyConfiguration,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit,
+        strategyConfig: ExecutionPolicy,
+        compilationConfigAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult
 
@@ -153,7 +154,7 @@ abstract class AbstractModule(
     }
 
     protected abstract fun prepareExecutionProcessBuilder(
-        mainClassFqn: String
+        mainClassFqn: String,
     ): ProcessBuilder
 
     override fun toString() = moduleName

@@ -8,11 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain

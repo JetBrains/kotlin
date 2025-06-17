@@ -3,17 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.*
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.*
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertRemovedOutputs
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithFir
-import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.test.TestMetadata
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
-import java.util.UUID
+import java.util.*
 
 
 @DisplayName("Single module IC scenarios for FIR runner")
@@ -64,7 +73,9 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 // Throws on initial compilation
                 moduleWithFir(
                     moduleName = "jvm-module-1",
-                    additionalCompilerArguments = listOf("-language-version=1.9")
+                    compilationOperationConfig = {
+                        it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V1_9
+                    },
                 )
             }
         }
@@ -81,9 +92,9 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
                 // Throws on initial compilation
                 module(
                     moduleName = "jvm-module-1",
-                    incrementalCompilationOptionsModifier = { incrementalOptions ->
-                        (incrementalOptions as ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration).useFirRunner(true)
-                    }
+                    compilationOperationConfig = {
+                        (it[INCREMENTAL_COMPILATION] as? JvmSnapshotBasedIncrementalCompilationConfiguration)?.options[USE_FIR_RUNNER] = true
+                    },
                 )
             }
         }

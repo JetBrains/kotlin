@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
+import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
@@ -56,15 +57,36 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                         returns(compilerArgumentsClass)
                     }
 
+                    val toArgumentStringsFun = FunSpec.Companion.builder("toArgumentStrings").apply {
+                        annotation<Suppress> {
+                            addMember("%S", "DEPRECATION")
+                        }
+                        addAnnotation(
+                            AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
+                                .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
+                        )
+                        addStatement("val arguments = %M<String>()", MemberName("kotlin.collections", "mutableListOf"))
+                        if (parentClass != null) {
+                            addModifiers(KModifier.OVERRIDE)
+                            addStatement("arguments.addAll(super.toArgumentStrings())")
+                        } else {
+                            addModifiers(KModifier.OPEN)
+                        }
+                        returns(listTypeNameOf<String>())
+                    }
+
                     val argument = generateArgumentType(apiClassName)
                     val argumentTypeName = ClassName(API_PACKAGE, apiClassName, argument)
                     val argumentImplTypeName = ClassName(IMPL_PACKAGE, implClassName, argument)
                     generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), apiClassName, argumentImplTypeName, converterFun, skipXX)
-                    }.build())
+                        generateOptions(level.filterOutDroppedArguments(), apiClassName, argumentImplTypeName, converterFun, toArgumentStringsFun, skipXX)
+}.build())
                     converterFun.addStatement("return arguments")
                     addFunction(converterFun.build())
+
+                    toArgumentStringsFun.addStatement("return arguments")
+                    addFunction(toArgumentStringsFun.build())
                 }.build()
             )
         }.build().writeTo(genDir)
@@ -76,6 +98,7 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
         apiClassName: String,
         argumentTypeName: ClassName,
         converterFun: FunSpec.Builder,
+        toArgumentStringsFun: FunSpec.Builder,
         skipXX: Boolean,
     ) {
         arguments.forEach { argument ->
@@ -101,24 +124,49 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
             // add argument to the converter function
             val member = MemberName(ClassName(API_PACKAGE, apiClassName, "Companion"), name)
             when {
-                type.classifier in enumNameAccessors -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
-                argument.valueType is IntType -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
-                else -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M) }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
+                type.classifier in enumNameAccessors -> {
+                    converterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                }
+                argument.valueType is IntType -> {
+                    converterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString()) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                }
+                else -> {
+                    converterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M) }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ dependencies {
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
     compileOnly(libs.junit.jupiter.params)
+    implementation(libs.kotlinx.coroutines.test)
 }
 
 kotlin {
