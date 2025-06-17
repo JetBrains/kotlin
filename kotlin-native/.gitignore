@@ -69,6 +69,9 @@ compile_commands.json
 # googletest framework used by runtime tests
 runtime/googletest/
 
+# breakpad library
+runtime/breakpad
+
 # Toolchain builder artifacts
 tools/toolchain_builder/artifacts
 

@@ -7,14 +7,11 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.testing.native.GitDownloadTask
+import java.net.URI
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
 val kotlinVersion: String by rootProject.extra
@@ -27,6 +24,13 @@ plugins {
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
+}
+
+tasks.register<GitDownloadTask>("downloadBreakpad") {
+    description = "Retrieves Breakpad sources"
+    repository.set(URI.create("https://github.com/google/breakpad.git"))
+    revision.set("v2024.02.16")
+    outputDirectory.set(layout.projectDirectory.dir("breakpad"))
 }
 
 googletest {
