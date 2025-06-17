@@ -353,6 +353,7 @@
 /libraries/tools/kotlinp/ @JetBrains/kotlin-jvm @JetBrains/kotlin-common-backend
 /libraries/tools/kotlinp/jvm/ @JetBrains/kotlin-jvm
 /libraries/tools/kotlinp/klib/ @JetBrains/kotlin-common-backend
+/libraries/tools/stats-analyser/ @JetBrains/kotlin-frontend
 /libraries/tools/maven-archetypes/ @JetBrains/kotlin-build-tools
 /libraries/tools/mutability-annotations-compat/ @JetBrains/kotlin-libraries
 /libraries/tools/script-runtime/ @JetBrains/kotlin-frontend

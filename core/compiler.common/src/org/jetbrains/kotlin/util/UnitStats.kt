@@ -59,7 +59,21 @@ data class UnitStats(
 
     @property:DeprecatedMeasurementForBackCompatibility
     val extendedStats: List<String>? = null,
-)
+) {
+    fun getTotalTime(): Time {
+        return Time.ZERO +
+                initStats +
+                analysisStats +
+                translationToIrStats +
+                irPreLoweringStats +
+                irSerializationStats +
+                klibWritingStats +
+                irLoweringStats +
+                backendStats +
+                findJavaClassStats?.time +
+                findKotlinClassStats?.time
+    }
+}
 
 enum class CompilerType {
     K1,
@@ -69,7 +83,8 @@ enum class CompilerType {
     val isK2: Boolean
         get() = this == K2 || this == K1andK2
 
-    operator fun plus(other: CompilerType): CompilerType {
+    operator fun plus(other: CompilerType?): CompilerType {
+        if (other == null) return this
         return when (this) {
             K1 -> if (other.isK2) K1andK2 else K1
             K2 -> if (other == K1 || other == K1andK2) K1andK2 else K2
@@ -107,14 +122,34 @@ data class Time(val nanos: Long, val userNanos: Long, val cpuNanos: Long) {
     val millis: Long
         get() = TimeUnit.NANOSECONDS.toMillis(nanos)
 
-    operator fun plus(other: Time): Time {
+    operator fun plus(other: Time?): Time {
+        if (other == null) return this
         return Time(nanos + other.nanos, userNanos + other.userNanos, cpuNanos + other.cpuNanos)
     }
 
-    operator fun minus(other: Time): Time {
+    operator fun minus(other: Time?): Time {
+        if (other == null) return this
         return Time(nanos - other.nanos, userNanos - other.userNanos, cpuNanos - other.cpuNanos)
     }
+
+    operator fun unaryMinus(): Time {
+        return Time(-nanos, -userNanos, -cpuNanos)
+    }
+
+    operator fun div(other: Time): TimeRatio {
+        return TimeRatio(
+            nanos.toDouble() / other.nanos,
+            userNanos.toDouble() / other.userNanos,
+            cpuNanos.toDouble() / other.cpuNanos,
+        )
+    }
 }
+
+data class TimeRatio(
+    val nanos: Double,
+    val userNanos: Double,
+    val cpuNanos: Double,
+)
 
 enum class PhaseSideType {
     FindJavaClass,
@@ -129,12 +164,17 @@ data class SideStats(
         val EMPTY = SideStats(0, Time.ZERO)
     }
 
-    operator fun plus(other: SideStats): SideStats {
+    operator fun plus(other: SideStats?): SideStats {
+        if (other == null) return this
         return SideStats(count + other.count, time + other.time)
     }
 }
 
-data class GarbageCollectionStats(val kind: String, val millis: Long, val count: Long)
+data class GarbageCollectionStats(val kind: String, val millis: Long, val count: Long) {
+    companion object {
+        val EMPTY = GarbageCollectionStats("", 0, 0)
+    }
+}
 
 fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Initialization, initStats)
@@ -152,23 +192,28 @@ fun UnitStats.forEachPhaseSideMeasurement(action: (PhaseSideType, SideStats?) ->
     action(PhaseSideType.BinaryClassFromKotlinFile, findKotlinClassStats)
 }
 
+val phaseTypeName = mapOf(
+    PhaseType.Initialization to "INIT",
+    PhaseType.Analysis to "ANALYZE",
+    PhaseType.TranslationToIr to "TRANSLATION to IR",
+    PhaseType.IrPreLowering to "IR PRE-LOWERING",
+    PhaseType.IrSerialization to "IR SERIALIZATION",
+    PhaseType.KlibWriting to "KLIB WRITING",
+    PhaseType.IrLowering to "IR LOWERING",
+    PhaseType.Backend to "BACKEND",
+)
+
+val phaseSideTypeName = mapOf(
+    PhaseSideType.FindJavaClass to "Find Java class",
+    PhaseSideType.BinaryClassFromKotlinFile to "Binary class from Kotlin file"
+)
+
 fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
     forEachPhaseMeasurement { phaseType, time ->
         if (time == null) return@forEachPhaseMeasurement
 
-        val name = when (phaseType) {
-            PhaseType.Initialization -> "INIT"
-            PhaseType.Analysis -> "ANALYZE"
-            PhaseType.TranslationToIr -> "TRANSLATION to IR"
-            PhaseType.IrPreLowering -> "IR PRE-LOWERING"
-            PhaseType.IrSerialization -> "IR SERIALIZATION"
-            PhaseType.KlibWriting -> "KLIB WRITING"
-            PhaseType.IrLowering -> "IR LOWERING"
-            PhaseType.Backend -> "BACKEND"
-        }
-
         action(
-            "%20s%8s ms".format(name, time.millis) +
+            "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
                     if (phaseType != PhaseType.Initialization && linesCount != 0) {
                         "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
                     } else {
@@ -180,10 +225,7 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
     forEachPhaseSideMeasurement { phaseSideType, sideStats ->
         if (sideStats == null) return@forEachPhaseSideMeasurement
 
-        val description = when (phaseSideType) {
-            PhaseSideType.BinaryClassFromKotlinFile -> "Binary class from Kotlin file"
-            PhaseSideType.FindJavaClass -> "Find Java class"
-        }
+        val description = phaseSideTypeName.getValue(phaseSideType)
 
         action("$description performed ${sideStats.count} times, total time ${sideStats.time.millis} ms")
     }
@@ -200,7 +242,7 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
     extendedStats?.forEach { action(it) }
 }
 
-private val nanosInSecond = TimeUnit.SECONDS.toNanos(1)
+val nanosInSecond = TimeUnit.SECONDS.toNanos(1)
 
 fun UnitStats.getLinesPerSecond(time: Time): Double {
     return linesCount.toDouble() / time.nanos * nanosInSecond // Assume `nanos` is never zero because it's unlikely possible to measure such a small time
