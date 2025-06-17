@@ -3306,7 +3306,7 @@ class ComposableFunctionBodyTransformer(
                 stabilityInferencer.stabilityOf(expr.type).knownStable() &&
                 inputArgMetas.all { it.isStatic }
             ) {
-                context.irTrace.record(ComposeWritableSlices.IS_STATIC_EXPRESSION, expr, true)
+                expr.isStaticExpression = true
             }
         }
     }

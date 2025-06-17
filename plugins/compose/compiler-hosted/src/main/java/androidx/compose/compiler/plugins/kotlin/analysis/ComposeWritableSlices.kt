@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 var IrExpression.isStaticFunctionExpression: Boolean by irFlag(copyByDefault = true)
+var IrExpression.isStaticExpression: Boolean by irFlag(copyByDefault = true)
 
 object ComposeWritableSlices {
-    val IS_STATIC_EXPRESSION: WritableSlice<IrExpression, Boolean> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_SINGLETON: WritableSlice<IrElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IS_COMPOSABLE_SINGLETON_CLASS: WritableSlice<IrElement, Boolean> =

@@ -984,7 +984,7 @@ abstract class AbstractComposeLowering(
             is IrBlock -> {
                 // Check the slice in case the block was generated as expression
                 // (e.g. inlined intrinsic remember call)
-                context.irTrace[ComposeWritableSlices.IS_STATIC_EXPRESSION, this] ?: false
+                this.isStaticExpression
             }
             else -> false
         }
