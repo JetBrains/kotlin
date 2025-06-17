@@ -25,6 +25,10 @@ import java.io.File
 @NativeGradlePluginTests
 class ApplePrivacyManifestIT : KGPBaseTest() {
 
+    override val defaultBuildOptions: BuildOptions
+        // KT-78403 Privacy Manifest Gradle Plugin is not compatible with Gradle isolated projects
+        get() = super.defaultBuildOptions.disableIsolatedProjects()
+
     @GradleTest
     fun `embedAndSign integration - with macOS bundling`(
         gradleVersion: GradleVersion,
