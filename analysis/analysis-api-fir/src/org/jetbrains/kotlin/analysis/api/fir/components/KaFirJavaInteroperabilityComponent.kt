@@ -192,7 +192,14 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
             KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
-            KaTypeMappingMode.VALUE_PARAMETER -> jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+            KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
+                val mappingMode = jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
+                if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
+                    mappingMode.wrapInlineClassesMode()
+                } else {
+                    mappingMode
+                }
+            }
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!
