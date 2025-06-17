@@ -47,6 +47,12 @@ asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false)
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() java.lang.Object
 
+asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=false):
+  PsiType: @org.jetbrains.annotations.NotNull() .InlineClass
+
+asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=true):
+  PsiType: @org.jetbrains.annotations.NotNull() .InlineClass
+
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() java.lang.Object
 
@@ -94,3 +100,10 @@ asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() java.lang.Object
+
+asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=false):
+  PsiType: @org.jetbrains.annotations.NotNull() .InlineClass
+
+asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=true):
+  PsiType: @org.jetbrains.annotations.NotNull() .InlineClass
+

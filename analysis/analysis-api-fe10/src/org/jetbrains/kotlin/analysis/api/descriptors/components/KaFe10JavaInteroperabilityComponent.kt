@@ -94,8 +94,14 @@ internal class KaFe10JavaInteroperabilityComponent(
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
             KaTypeMappingMode.RETURN_TYPE ->
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
-            KaTypeMappingMode.VALUE_PARAMETER ->
-                typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+            KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
+                val mappingMode = typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
+                if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
+                    mappingMode.wrapInlineClassesMode()
+                } else {
+                    mappingMode
+                }
+            }
         }.let { typeMappingMode ->
             // Otherwise, i.e., if we won't skip type with no type arguments, flag overriding might bother a case like:
             // @JvmSuppressWildcards(false) Long -> java.lang.Long, not long, even though it should be no-op!

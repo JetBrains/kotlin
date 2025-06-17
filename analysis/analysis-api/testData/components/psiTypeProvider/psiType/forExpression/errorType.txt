@@ -47,6 +47,12 @@ asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false)
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=true):
   PsiType: null
 
+asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=false):
+  PsiType: null
+
+asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=true):
+  PsiType: null
+
 asPsiType(allowErrorTypes=true, mode=DEFAULT, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() UNRESOLVED<java.lang.Void>
 
@@ -93,5 +99,11 @@ asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() UNRESOLVED<java.lang.Void>
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=true):
+  PsiType: @org.jetbrains.annotations.NotNull() UNRESOLVED<java.lang.Void>
+
+asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=false):
+  PsiType: @org.jetbrains.annotations.NotNull() UNRESOLVED<java.lang.Void>
+
+asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER_BOXED, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() UNRESOLVED<java.lang.Void>
 

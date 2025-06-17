@@ -1330,6 +1330,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode : j
 	public static final field SUPER_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field VALUE_PARAMETER Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
+	public static final field VALUE_PARAMETER_BOXED Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
