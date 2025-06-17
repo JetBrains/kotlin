@@ -182,6 +182,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         )
 
         newFun.parameters.forEachIndexed { index, newParameter ->
+            newParameter.defaultValue = null
             val adapter = valueParametersAdapters[index]
             if (adapter != null) {
                 newParameter.type = adapter.fromType
