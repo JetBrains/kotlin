@@ -20,5 +20,12 @@ public final class StringWrapper /* StringWrapper*/ {
 }
 
 public static final class Companion /* StringWrapper.Companion*/ {
+  @kotlin.jvm.JvmStatic()
+  public final void regularStaticFunction();//  regularStaticFunction()
+
   private  Companion();//  .ctor()
+
+  public final int getRegularStaticVariable();//  getRegularStaticVariable()
+
+  public final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
 }

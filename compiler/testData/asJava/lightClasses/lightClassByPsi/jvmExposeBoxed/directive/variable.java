@@ -1,10 +1,7 @@
-@<error>()
+@kotlin.jvm.JvmInline()
 public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
-
-  @org.jetbrains.annotations.NotNull()
-  public static final @org.jetbrains.annotations.NotNull() StringWrapper.Companion Companion;
 
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
@@ -15,17 +12,4 @@ public final class StringWrapper /* StringWrapper*/ {
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public int hashCode();//  hashCode()
-
-  class Companion ...
-}
-
-public static final class Companion /* StringWrapper.Companion*/ {
-  @<error>()
-  public final void regularStaticFunction();//  regularStaticFunction()
-
-  private  Companion();//  .ctor()
-
-  public final int getRegularStaticVariable();//  getRegularStaticVariable()
-
-  public final void setRegularStaticVariable(int);//  setRegularStaticVariable(int)
 }
