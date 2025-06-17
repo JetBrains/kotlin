@@ -97,6 +97,12 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("localClassesInInlineFunctionsNative.kt")
+  public void testLocalClassesInInlineFunctionsNative() {
+    runTest("compiler/testData/diagnostics/nativeTests/localClassesInInlineFunctionsNative.kt");
+  }
+
+  @Test
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");
@@ -226,6 +232,12 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
   @TestMetadata("topLevelSingleton.kt")
   public void testTopLevelSingleton() {
     runTest("compiler/testData/diagnostics/nativeTests/topLevelSingleton.kt");
+  }
+
+  @Test
+  @TestMetadata("unsupportedInInlineNative.kt")
+  public void testUnsupportedInInlineNative() {
+    runTest("compiler/testData/diagnostics/nativeTests/unsupportedInInlineNative.kt");
   }
 
   @Nested
