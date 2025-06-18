@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.*
 
 object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
@@ -47,7 +48,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
             // account for them.
             val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalTypeInfo, r.originalTypeInfo)
                     && isCaseMissedByAdditionalK1IncompatibleEnumsCheck(l.originalType, r.originalType, context.session)
-            val replicateK1Behavior = !context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
+            val replicateK1Behavior = !LanguageFeature.ReportErrorsForComparisonOperators.isEnabled()
 
             return reporter.reportInapplicabilityDiagnostic(
                 expression, it, expression.operation, forceWarning = isCaseMissedByK1 && replicateK1Behavior,
@@ -142,7 +143,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
         val areBothPrimitives = l.isNotNullPrimitive && r.isNotNullPrimitive
         val areSameTypes = l.type.classId == r.type.classId
-        val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
+        val shouldProperlyReportError = LanguageFeature.ReportErrorsForComparisonOperators.isEnabled()
 
         // In this case K1 reports nothing
         val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && areRelated(l, r)
@@ -184,7 +185,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker(MppCheck
         // K2 reports the same as K1
         val areIntersectionsInvolved = l.type is ConeIntersectionType || r.type is ConeIntersectionType
 
-        val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
+        val shouldProperlyReportError = LanguageFeature.ReportErrorsForComparisonOperators.isEnabled()
         val shouldRelaxDiagnostic = (bothNullableEnums || areIntersectionsInvolved) && !shouldProperlyReportError
 
         return when {

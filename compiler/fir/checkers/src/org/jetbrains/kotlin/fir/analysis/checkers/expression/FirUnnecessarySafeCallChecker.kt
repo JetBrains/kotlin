@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.canBeNull
@@ -26,7 +27,7 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
         source: KtSourceElement?,
     ) {
         if (!receiverType.canBeNull(context.session)) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType)
             }
         }

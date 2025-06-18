@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -40,8 +41,8 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             reporter.reportOn(source, FirErrors.MULTIPLE_CONTEXT_LISTS)
         }
 
-        val contextReceiversEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
-        val contextParametersEnabled = context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)
+        val contextReceiversEnabled = LanguageFeature.ContextReceivers.isEnabled()
+        val contextParametersEnabled = LanguageFeature.ContextParameters.isEnabled()
 
         val errorMessage = when (declaration) {
             // Stuff that was never supported

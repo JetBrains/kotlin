@@ -35,7 +35,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) {
             if ((declaration.isExpect || declaration.isActual) && containsExpectOrActualModifier(declaration) &&
                 declaration.source?.kind?.shouldSkipErrorTypeReporting == false
             ) {
@@ -81,7 +81,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         if (declaration is FirProperty) {
             checkExpectPropertyAccessorsModifiers(declaration)
         }
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+        if (LanguageFeature.MultiplatformRestrictions.isEnabled() &&
             declaration is FirFunction && declaration.isTailRec
         ) {
             reporter.reportOn(declaration.source, FirErrors.EXPECTED_TAILREC_FUNCTION)
@@ -116,7 +116,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun checkExpectDeclarationHasNoExternalModifier(
         declaration: FirMemberDeclaration,
     ) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions) &&
+        if (LanguageFeature.MultiplatformRestrictions.isEnabled() &&
             declaration.isExternal
         ) {
             reporter.reportOn(declaration.source, FirErrors.EXPECTED_EXTERNAL_DECLARATION)

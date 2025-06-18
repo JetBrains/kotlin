@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirContextParamete
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.forEachChildOfType
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.contextParameterTypes
@@ -47,7 +48,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
             reporter.reportOn(it, FirErrors.NAMED_CONTEXT_PARAMETER_IN_FUNCTION_TYPE)
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+        if (LanguageFeature.ContextReceivers.isEnabled()) {
             if (checkSubTypes(typeRef.coneType.contextParameterTypes(context.session))) {
                 reporter.reportOn(
                     source,
