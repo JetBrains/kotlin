@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin
+package org.jetbrains.kotlin.stats
 
-import org.jebrains.kotlin.ModulesReportsData
-import org.jebrains.kotlin.StatsCalculator
 import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.GarbageCollectionStats
 import org.jetbrains.kotlin.util.PlatformType

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jebrains.kotlin
+package org.jetbrains.kotlin.stats
 
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.util.UnitStats
@@ -46,8 +46,7 @@ fun extractJsonReportFiles(fileOrDirectoryPath: String): Array<File>? {
 
 @Suppress("UNCHECKED_CAST")
 fun deserializeJsonReports(jsonFiles: Array<File>, analyzedModuleName: String?): ReportsData {
-    val gsonBuilder = GsonBuilder()
-        .create()
+    val gsonBuilder = GsonBuilder().create()
 
     val reportsData = if (analyzedModuleName != null) {
         sortedSetOf(Comparator<UnitStats> { o1, o2 -> o1.timeStampMs.compareTo(o2.timeStampMs) })

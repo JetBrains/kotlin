@@ -39,7 +39,7 @@ It prints the latest timestamps over all reports in the title.
 
 In this mode the tool collects all reports for the provided module name.
 It's useful when you want to test performance on a single module but with different compiler or user-code optimizations.
-For instance, when you are trying to figure out if replacing star imports with explicit ones affects performance.
+For instance, when you are trying to figure out, if replacing star imports with explicit ones affects performance.
 To run the tool in timestamp mode, put the module name that you want to analyze as a second argument:
 
 ```
@@ -71,4 +71,4 @@ If necessary, the tool can be extended by implementing the following features:
 * Different output formats (HTML, JSON)
 * Sending reports to a remote server (integrating with FUS)
 * Support for more extended build system reports (JPS, Gradle) that include, for example, info about Java compilation
-* One tool to analyze them all: integrate the functionality of `modularized-tests` module into with this tool
+* One tool to analyze them all: integrate the functionality of **modularized-tests** module into with this tool
