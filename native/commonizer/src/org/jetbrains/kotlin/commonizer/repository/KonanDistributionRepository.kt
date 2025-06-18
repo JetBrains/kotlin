@@ -22,7 +22,7 @@ internal class KonanDistributionRepository(
                     .takeIf { it.isDirectory }
                     ?.listFiles()
                     .orEmpty().toList()
-                    .map { libraryLoader(it) }
+                    .map { libraryLoader.loadLibrary(it) }
                     .toSet()
             }
         }

@@ -17,7 +17,7 @@ internal class StdlibRepository(
 ) : Repository {
 
     private val stdlib by lazy {
-        libraryLoader(konanDistribution.stdlib)
+        libraryLoader.loadLibrary(konanDistribution.stdlib)
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
