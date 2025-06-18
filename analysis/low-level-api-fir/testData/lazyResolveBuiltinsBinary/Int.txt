@@ -3010,6 +3010,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Function<[ResolvedTo(BODY_RESOLVE)] out R> : R|kotlin/Any| {
     }
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/MustBeDocumented|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class IgnorableReturnValue : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IgnorableReturnValue] constructor(): R|kotlin/IgnorableReturnValue| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Int] constructor(): R|kotlin/Int| {
             super<R|kotlin/Number|>()
@@ -3485,6 +3491,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/LongIterator| {
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class MustUseReturnValue : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MustUseReturnValue] constructor(): R|kotlin/MustUseReturnValue| {
+            super<R|kotlin/Any|>()
         }
 
     }
