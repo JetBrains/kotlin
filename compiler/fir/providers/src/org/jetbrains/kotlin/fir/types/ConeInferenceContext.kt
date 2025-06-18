@@ -328,9 +328,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         require(constructorProjection is ConeTypeProjection)
         @Suppress("UNCHECKED_CAST")
         return ConeCapturedType(
-            captureStatus,
-            lowerType,
-            constructor = ConeCapturedTypeConstructor(constructorProjection, constructorSupertypes as List<ConeKotlinType>)
+            constructor = ConeCapturedTypeConstructor(
+                constructorProjection,
+                lowerType, captureStatus,
+                constructorSupertypes as List<ConeKotlinType>
+            )
         )
     }
 
@@ -466,7 +468,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is ConeCapturedType)
-        return this.captureStatus
+        return this.constructor.captureStatus
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false

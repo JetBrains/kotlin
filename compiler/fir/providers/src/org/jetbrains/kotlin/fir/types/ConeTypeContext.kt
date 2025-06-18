@@ -150,7 +150,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {
         require(this is ConeCapturedType)
-        return this.captureStatus
+        return this.constructor.captureStatus
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = false
@@ -182,8 +182,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is ConeCapturedType)
-        if (!this.isMarkedNullable) return this.lowerType
-        return this.lowerType?.makeNullable()
+        if (!this.isMarkedNullable) return this.constructor.lowerType
+        return this.constructor.lowerType?.makeNullable()
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {

@@ -180,29 +180,17 @@ sealed interface ConeTypeConstructorMarker : TypeConstructorMarker
 
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
+    val lowerType: ConeKotlinType?,
+    val captureStatus: CaptureStatus,
     var supertypes: List<ConeKotlinType>? = null,
     val typeParameterMarker: TypeParameterMarker? = null
 ) : CapturedTypeConstructorMarker, ConeTypeConstructorMarker
 
 data class ConeCapturedType(
-    val captureStatus: CaptureStatus,
-    val lowerType: ConeKotlinType?,
     val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
-
-    constructor(
-        captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
-        typeParameterMarker: TypeParameterMarker
-    ) : this(
-        captureStatus,
-        lowerType,
-        constructor = ConeCapturedTypeConstructor(
-            projection,
-            typeParameterMarker = typeParameterMarker
-        )
-    )
 
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
@@ -213,9 +201,7 @@ data class ConeCapturedType(
 
         other as ConeCapturedType
 
-        if (lowerType != other.lowerType) return false
         if (constructor != other.constructor) return false
-        if (captureStatus != other.captureStatus) return false
         if (isMarkedNullable != other.isMarkedNullable) return false
 
         return true
@@ -223,9 +209,7 @@ data class ConeCapturedType(
 
     override fun hashCode(): Int {
         var result = 7
-        result = 31 * result + (lowerType?.hashCode() ?: 0)
         result = 31 * result + constructor.hashCode()
-        result = 31 * result + captureStatus.hashCode()
         result = 31 * result + isMarkedNullable.hashCode()
         return result
     }
