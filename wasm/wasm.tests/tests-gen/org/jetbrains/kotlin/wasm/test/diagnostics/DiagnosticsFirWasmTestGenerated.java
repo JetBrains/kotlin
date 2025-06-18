@@ -24,6 +24,18 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
+  @Test
+  @TestMetadata("qualifiedNameIsAllowed.kt")
+  public void testQualifiedNameIsAllowed() {
+    runTest("compiler/testData/diagnostics/wasmTests/qualifiedNameIsAllowed.kt");
+  }
+
+  @Test
+  @TestMetadata("qualifiedNameIsProhibited.kt")
+  public void testQualifiedNameIsProhibited() {
+    runTest("compiler/testData/diagnostics/wasmTests/qualifiedNameIsProhibited.kt");
+  }
+
   @Nested
   @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop")
   @TestDataPath("$PROJECT_ROOT")
