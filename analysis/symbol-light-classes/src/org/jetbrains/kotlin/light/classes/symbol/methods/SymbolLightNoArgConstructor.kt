@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmExposeBoxedAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -24,12 +25,13 @@ internal class SymbolLightNoArgConstructor(
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
+    isJvmExposedBoxed: Boolean,
     private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    isJvmExposedBoxed = false,
+    isJvmExposedBoxed = isJvmExposedBoxed,
 ) {
     override fun getName(): String = containingClass.name ?: ""
 
@@ -48,17 +50,18 @@ internal class SymbolLightNoArgConstructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(visibility),
-            annotationsBox =
-                if (functionSymbolPointer == null) {
-                    EmptyAnnotationsBox
-                } else {
-                    GranularAnnotationsBox(
-                        annotationsProvider = SymbolAnnotationsProvider(
-                            ktModule = ktModule,
-                            annotatedSymbolPointer = functionSymbolPointer,
-                        )
-                    )
-                }
+            annotationsBox = if (functionSymbolPointer == null) {
+                EmptyAnnotationsBox
+            } else {
+                GranularAnnotationsBox(
+                    annotationsProvider = SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = functionSymbolPointer,
+                    ),
+                    annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
+                    additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
+                )
+            }
         )
     }
 
@@ -73,7 +76,9 @@ internal class SymbolLightNoArgConstructor(
     override fun getReturnType(): PsiType? = null
 
     override fun equals(other: Any?): Boolean =
-        this === other || other is SymbolLightNoArgConstructor && containingClass == other.containingClass
+        this === other || other is SymbolLightNoArgConstructor &&
+                isJvmExposedBoxed == other.isJvmExposedBoxed &&
+                containingClass == other.containingClass
 
     override fun hashCode(): Int = containingClass.hashCode()
 

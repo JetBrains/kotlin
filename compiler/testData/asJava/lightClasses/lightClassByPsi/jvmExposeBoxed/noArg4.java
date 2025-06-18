@@ -17,8 +17,6 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
   private final int property;
 
   private  RegularClassWithValueConstructor(int);//  .ctor(int)
-
-  public  RegularClassWithValueConstructor();//  .ctor()
 }
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
