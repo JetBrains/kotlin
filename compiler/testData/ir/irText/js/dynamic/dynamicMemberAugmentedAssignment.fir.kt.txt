@@ -1,9 +1,9 @@
 fun testAugmentedMemberAssignment(d: dynamic) {
-  d.m += "+="
-  d.m -= "-="
-  d.m *= "*="
-  d.m /= "/="
-  d.m %= "%="
+  d.m += "+=" /*~> Unit */
+  d.m -= "-=" /*~> Unit */
+  d.m *= "*=" /*~> Unit */
+  d.m /= "/=" /*~> Unit */
+  d.m %= "%=" /*~> Unit */
 }
 
 fun testSafeAugmentedMemberAssignment(d: dynamic) {
