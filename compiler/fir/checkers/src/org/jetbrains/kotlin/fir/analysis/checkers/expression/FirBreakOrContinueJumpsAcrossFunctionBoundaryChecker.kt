@@ -15,13 +15,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBreakOrContinueJ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirLoopJump) {
         val targetElement = expression.target.labeledElement.block
         val path = context.containingElements.dropWhile { it != targetElement }
-        val inlineLambdasSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.BreakContinueInInlineLambdas)
+        val inlineLambdasSupported = LanguageFeature.BreakContinueInInlineLambdas.isEnabled()
 
         val notTransparentDeclarationKinds = path.mapNotNull {
             when (it) {

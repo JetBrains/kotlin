@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -179,7 +179,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+            if (LanguageFeature.ValueClasses.isEnabled()) {
                 checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation)
             }
             return
@@ -187,7 +187,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
 
         val targetDescription = actualTargets.defaultTargets.firstOrNull()?.description ?: "unidentified target"
         if (declaration is FirBackingField && actualTargets === AnnotationTargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION &&
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters)
+            !LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters.isEnabled()
         ) {
             reporter.reportOn(
                 annotation.source,
@@ -231,7 +231,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     annotated,
                     annotation,
                     target,
-                    when (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteGetTargetAnnotations)) {
+                    when (LanguageFeature.ProhibitUseSiteGetTargetAnnotations.isEnabled()) {
                         true -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
                         false -> FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
                     }
@@ -289,7 +289,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 )
             }
             ALL -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationAllUseSiteTarget)) {
+                if (LanguageFeature.AnnotationAllUseSiteTarget.isEnabled()) {
                     when (annotated) {
                         is FirValueParameter -> {
                             if (annotated.correspondingProperty == null) {
@@ -427,9 +427,9 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkPossibleMigrationToPropertyOrField(parameter: FirValueParameter) {
         val session = context.session
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AnnotationDefaultTargetMigrationWarning) ||
+        if (!LanguageFeature.AnnotationDefaultTargetMigrationWarning.isEnabled() ||
             // With this feature ON, the migration warning isn't needed
-            session.languageVersionSettings.supportsFeature(LanguageFeature.PropertyParamAnnotationDefaultTargetMode)
+            LanguageFeature.PropertyParamAnnotationDefaultTargetMode.isEnabled()
         ) return
         val correspondingProperty = parameter.correspondingProperty ?: return
 

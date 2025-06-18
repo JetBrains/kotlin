@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -23,8 +24,8 @@ import org.jetbrains.kotlin.fir.types.hasContextParameters
 object FirContextParameterInCalledSignatureChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) ||
-            context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        if (LanguageFeature.ContextParameters.isEnabled() ||
+            LanguageFeature.ContextReceivers.isEnabled()
         ) {
             return
         }

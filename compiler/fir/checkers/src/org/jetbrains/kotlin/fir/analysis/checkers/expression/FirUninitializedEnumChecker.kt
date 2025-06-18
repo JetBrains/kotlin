@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -77,7 +78,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker(MppChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         // If the feature for proper analysis is enabled, FirEnumEntryInitializationChecker will report all errors
-        if (context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
+        if (ProperUninitializedEnumEntryAccessAnalysis.isEnabled()) return
         val source = expression.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -114,7 +115,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         declaration: FirFunction,
     ) {
         val erasedCastChecker =
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowCheckForErasedTypesInContracts)) null
+            if (LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()) null
             else ErasedCastChecker(declaration, context)
         // Any statements that [ConeEffectExtractor] cannot extract effects will be in `unresolvedEffects`.
         for (unresolvedEffect in contractDescription.unresolvedEffects) {
@@ -150,7 +151,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         when {
             declaration is FirPropertyAccessor || declaration is FirAnonymousFunction -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnPropertyAccessors)) {
+                if (LanguageFeature.AllowContractsOnPropertyAccessors.isEnabled()) {
                     if (declaration is FirAnonymousFunction) contractNotAllowed("Contracts are not allowed for anonymous functions.")
                 } else {
                     contractNotAllowed("Contracts are only allowed for functions.")
@@ -160,7 +161,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 contractNotAllowed("Contracts are not allowed for open or override functions.")
             }
             declaration.isOperator -> {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsOnSomeOperators)) {
+                if (LanguageFeature.AllowContractsOnSomeOperators.isEnabled()) {
                     if (declaration.isContractOnOperatorForbidden())
                         contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
                 } else {

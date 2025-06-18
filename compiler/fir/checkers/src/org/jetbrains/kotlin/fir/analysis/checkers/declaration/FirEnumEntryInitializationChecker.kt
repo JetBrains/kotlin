@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableAssignmentNode
@@ -34,7 +35,7 @@ object FirEnumEntryInitializationChecker : FirRegularClassChecker(MppCheckerKind
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         if (!declaration.isEnumClass) return
-        if (!context.languageVersionSettings.supportsFeature(ProperUninitializedEnumEntryAccessAnalysis)) return
+        if (!ProperUninitializedEnumEntryAccessAnalysis.isEnabled()) return
         val enumEntries = declaration.collectEnumEntries(context.session)
         if (enumEntries.isEmpty()) return
         val enumEntrySymbols = enumEntries.mapTo(mutableSetOf()) { it.symbol }

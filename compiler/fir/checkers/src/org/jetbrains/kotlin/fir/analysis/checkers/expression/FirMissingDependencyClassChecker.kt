@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -42,7 +43,7 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
                 val partOfErroneousOuterCall =
                     it is ConeErrorType && containingElements.any {
                         it is FirFunctionCall && it.calleeReference is FirResolvedErrorReference
-                    } && !context.session.languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent)
+                    } && !ForbidUsingExpressionTypesWithInaccessibleContent.isEnabled()
                 considerType(
                     type = it,
                     missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression

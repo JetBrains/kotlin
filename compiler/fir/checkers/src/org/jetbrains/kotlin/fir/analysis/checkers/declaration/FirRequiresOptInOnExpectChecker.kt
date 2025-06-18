@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.resolve.calls.mpp.isIllegalRequiresOptInAnnotation
 
 object FirRequiresOptInOnExpectChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
+        if (LanguageFeature.MultiPlatformProjects.isEnabled() &&
             declaration is FirRegularClass &&
             declaration.isExpect &&
             with(context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)) {

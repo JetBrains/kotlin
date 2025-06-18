@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNu
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
@@ -30,8 +31,8 @@ internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChec
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration !is FirMemberDeclaration) return
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
+        if (!LanguageFeature.MultiPlatformProjects.isEnabled()) return
+        if (!LanguageFeature.MultiplatformRestrictions.isEnabled()) return
         if (!declaration.isActual) return
 
         val actualSymbol = declaration.symbol

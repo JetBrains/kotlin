@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
@@ -68,6 +69,6 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
 
     context(context: CheckerContext)
     private fun isProhibitedNothing(coneType: ConeKotlinType): Boolean {
-        return context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNothingAsCatchParameter) && coneType.isNothing
+        return LanguageFeature.ProhibitNothingAsCatchParameter.isEnabled() && coneType.isNothing
     }
 }

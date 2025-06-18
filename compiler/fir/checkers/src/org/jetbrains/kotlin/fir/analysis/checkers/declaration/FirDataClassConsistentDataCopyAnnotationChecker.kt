@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -47,7 +48,7 @@ object FirDataClassConsistentDataCopyAnnotationChecker : FirClassChecker(MppChec
                     primaryConstructorVisibility == Visibilities.Public
                 }
                 val isConstructorVisibilityRespected =
-                    context.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility)
+                    LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled()
 
                 if (consistentCopy != null && (isPrimaryConstructorVisibilityPublic || isConstructorVisibilityRespected)) {
                     reporter.reportOn(

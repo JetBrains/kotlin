@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolutionResultOverridesOtherToPreserveCompatibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 object FirCustomEnumEntriesMigrationAccessChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.PrioritizedEnumEntries)) return
+        if (LanguageFeature.PrioritizedEnumEntries.isEnabled()) return
         val referencedSymbol = expression.calleeReference.toResolvedPropertySymbol() ?: return
         if (referencedSymbol.name != StandardNames.ENUM_ENTRIES) return
         if (expression.nonFatalDiagnostics.none { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }) return

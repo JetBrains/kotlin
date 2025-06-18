@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
@@ -183,7 +184,7 @@ internal fun checkPropertyInitializer(
                     initializationError = true
                 } else if (!isCorrectlyInitialized && reachable) {
                     val isOpenValDeferredInitDeprecationWarning =
-                        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                        !LanguageFeature.ProhibitOpenValDeferredInitialization.isEnabled() &&
                                 propertySymbol.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN &&
                                 propertySymbol.isVal &&
                                 isDefinitelyAssigned
@@ -215,7 +216,7 @@ internal fun checkPropertyInitializer(
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY)
                 }
                 // TODO, KT-59807: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                     if (
                         backingFieldRequired &&
                         !inInterface &&
@@ -253,7 +254,7 @@ private fun reportMustBeInitialized(
         error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
     val isMissedMustBeInitializedDeprecationWarning =
-        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
+        !LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor.isEnabled() &&
                 containingClass != null &&
                 containingClass.primaryConstructorIfAny(context.session) == null &&
                 isDefinitelyAssigned

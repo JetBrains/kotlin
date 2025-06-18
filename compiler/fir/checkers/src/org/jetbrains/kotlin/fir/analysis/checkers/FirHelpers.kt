@@ -1052,7 +1052,7 @@ fun KtSourceElement?.requireFeatureSupport(
     feature: LanguageFeature,
     positioningStrategy: SourceElementPositioningStrategy? = null,
 ) {
-    if (!context.languageVersionSettings.supportsFeature(feature)) {
+    if (!feature.isEnabled()) {
         reporter.reportOn(this, FirErrors.UNSUPPORTED_FEATURE, feature to context.languageVersionSettings, positioningStrategy)
     }
 }

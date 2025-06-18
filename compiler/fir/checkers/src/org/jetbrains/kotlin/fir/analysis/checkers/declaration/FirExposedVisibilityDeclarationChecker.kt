@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromSealedClass
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -89,7 +90,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         fun getDiagnosticByFeature(
             feature: LanguageFeature
         ): KtDiagnosticFactory4<EffectiveVisibility, FirClassLikeSymbol<*>, RelationToType, EffectiveVisibility> {
-            val reportProperError = context.languageVersionSettings.supportsFeature(feature)
+            val reportProperError = feature.isEnabled()
             return when {
                 reportProperError || declaration is FirRegularClass -> FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
                 else -> FirErrors.EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -117,7 +118,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                 actualTargets.none { it in set } ||
                         (modifierToken == DATA_KEYWORD
                                 && actualTargets.contains(KotlinTarget.STANDALONE_OBJECT)
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.DataObjects))
+                                && !LanguageFeature.DataObjects.isEnabled())
             } else {
                 actualTargets.any { it in set }
             }

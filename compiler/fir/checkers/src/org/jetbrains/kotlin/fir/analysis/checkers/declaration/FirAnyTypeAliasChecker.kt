@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -48,7 +49,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
 
         checkTypeRefForUnderscore(expandedTypeRef)
 
-        val allowNullableNothing = context.languageVersionSettings.supportsFeature(LanguageFeature.NullableNothingInReifiedPosition)
+        val allowNullableNothing = LanguageFeature.NullableNothingInReifiedPosition.isEnabled()
         if (fullyExpandedType.isMalformedExpandedType(allowNullableNothing)) {
             reporter.reportOn(
                 declaration.expandedTypeRef.source,
