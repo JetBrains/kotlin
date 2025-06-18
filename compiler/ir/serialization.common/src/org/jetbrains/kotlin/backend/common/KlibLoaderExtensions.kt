@@ -77,16 +77,15 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
  * Report any problems with loading KLIBs stored in [KlibLoaderResult] to compiler's [MessageCollector].
  */
 fun KlibLoaderResult.reportLoadingProblemsIfAny(
-    configuration: CompilerConfiguration,
+    messageCollector: MessageCollector,
     allAsErrors: Boolean = false
 ) {
     if (!hasProblems) return
 
-    val messageCollector = configuration.messageCollector
     problematicLibraries.forEach { problematicLibrary ->
         messageCollector.report(
             severity = if (allAsErrors) CompilerMessageSeverity.ERROR else problematicLibrary.problemCase.computeSeverity(),
-            message = problematicLibrary.computeMessageText()
+            message = problematicLibrary.computeMessageText(),
         )
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -39,7 +40,7 @@ fun loadNativeKlibsInTestPipeline(
         platformChecker(KlibPlatformChecker.Native(nativeTarget.name))
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
     }.load()
-        .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }
+        .apply { reportLoadingProblemsIfAny(configuration.messageCollector, allAsErrors = true) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
