@@ -110,4 +110,16 @@ public class FirStandaloneNormalAnalysisSourceModuleHLSmartCastInfoTestGenerated
   public void testSmartcast_unstable() {
     runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/smartcast_unstable.kt");
   }
+
+  @Test
+  @TestMetadata("unnecessarySmartCastFunction.kt")
+  public void testUnnecessarySmartCastFunction() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/unnecessarySmartCastFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("unnecessarySmartCastProperty.kt")
+  public void testUnnecessarySmartCastProperty() {
+    runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/smartCastInfo/unnecessarySmartCastProperty.kt");
+  }
 }
