@@ -534,7 +534,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = checkNotNullSubstituted
             typeArguments[0] = expressionIrType
-            putValueArgument(0, irArgument)
+            arguments[0] = irArgument
         }
     }
 
