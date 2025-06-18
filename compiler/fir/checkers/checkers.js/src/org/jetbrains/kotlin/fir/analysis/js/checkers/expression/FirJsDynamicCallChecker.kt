@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
@@ -119,7 +120,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerK
     private fun checkIdentifier(
         namedReference: FirResolvedNamedReference,
     ) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping)) {
+        if (LanguageFeature.JsAllowInvalidCharsIdentifiersEscaping.isEnabled()) {
             return
         }
         val name = namedReference.name.identifierOrNullIfSpecial ?: return
