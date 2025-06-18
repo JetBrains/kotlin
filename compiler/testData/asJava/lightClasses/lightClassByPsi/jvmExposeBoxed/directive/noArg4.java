@@ -20,11 +20,12 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
   public final @org.jetbrains.annotations.NotNull() IntWrapper getProperty();//  getProperty()
 
   @kotlin.jvm.JvmExposeBoxed()
+  public  RegularClassWithValueConstructor();//  .ctor()
+
+  @kotlin.jvm.JvmExposeBoxed()
   public  RegularClassWithValueConstructor(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(@org.jetbrains.annotations.NotNull() IntWrapper)
 
   private  RegularClassWithValueConstructor(int);//  .ctor(int)
-
-  public  RegularClassWithValueConstructor();//  .ctor()
 }
 
 public final class RegularClassWithValueConstructorAndAnnotation /* RegularClassWithValueConstructorAndAnnotation*/ {
@@ -35,9 +36,10 @@ public final class RegularClassWithValueConstructorAndAnnotation /* RegularClass
   public final @org.jetbrains.annotations.NotNull() IntWrapper getProperty();//  getProperty()
 
   @kotlin.jvm.JvmExposeBoxed()
+  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
+
+  @kotlin.jvm.JvmExposeBoxed()
   public  RegularClassWithValueConstructorAndAnnotation(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(@org.jetbrains.annotations.NotNull() IntWrapper)
 
   private  RegularClassWithValueConstructorAndAnnotation(int);//  .ctor(int)
-
-  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
 }

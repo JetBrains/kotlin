@@ -150,14 +150,21 @@ internal class SymbolLightConstructor private constructor(
             }
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
-                result.add(
-                    lightClass.noArgConstructor(
-                        primaryConstructor.compilerVisibility.externalDisplayName,
-                        primaryConstructor.sourcePsiSafe(),
-                        METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
-                        primaryConstructor.createPointer(),
-                    )
-                )
+                when {
+                    !hasValueClassInSignature(primaryConstructor) -> {
+                        result += lightClass.noArgConstructor(
+                            primaryConstructor = primaryConstructor,
+                            isJvmExposedBoxed = false,
+                        )
+                    }
+
+                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE -> {
+                        result += lightClass.noArgConstructor(
+                            primaryConstructor = primaryConstructor,
+                            isJvmExposedBoxed = true,
+                        )
+                    }
+                }
             }
         }
 
@@ -189,26 +196,40 @@ internal class SymbolLightConstructor private constructor(
                 visibility,
                 classOrObject,
                 METHOD_INDEX_FOR_DEFAULT_CTOR,
+                isJvmExposedBoxed = false,
                 functionSymbolPointer = null,
             )
         }
 
         private fun SymbolLightClassBase.noArgConstructor(
+            primaryConstructor: KaConstructorSymbol,
+            isJvmExposedBoxed: Boolean,
+        ): KtLightMethod = noArgConstructor(
+            visibility = primaryConstructor.compilerVisibility.externalDisplayName,
+            declaration = primaryConstructor.sourcePsiSafe(),
+            methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
+            isJvmExposedBoxed = isJvmExposedBoxed,
+            functionSymbolPointer = primaryConstructor.createPointer(),
+        )
+
+        private fun SymbolLightClassBase.noArgConstructor(
             visibility: String,
             declaration: KtDeclaration?,
             methodIndex: Int,
+            isJvmExposedBoxed: Boolean,
             functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
         ): KtLightMethod = SymbolLightNoArgConstructor(
-            declaration?.let {
+            lightMemberOrigin = declaration?.let {
                 LightMemberOriginForDeclaration(
                     originalElement = it,
                     originKind = JvmDeclarationOriginKind.OTHER,
                 )
             },
-            this,
-            visibility,
-            methodIndex,
-            functionSymbolPointer,
+            containingClass = this,
+            visibility = visibility,
+            methodIndex = methodIndex,
+            isJvmExposedBoxed = isJvmExposedBoxed,
+            functionSymbolPointer = functionSymbolPointer,
         )
     }
 }
