@@ -65,7 +65,7 @@ internal object CheckCallableReferenceExpectedType : ResolutionStage() {
         )
 
         if (callableReferenceAdaptation != null) {
-            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) {
+            if (!LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()) {
                 sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
             }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
@@ -299,7 +299,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         val lastStatementInBlock = (data as? ResolutionMode.WithExpectedType)?.lastStatementInBlock == true
 
         val isObsoleteCompilerMode =
-            !session.languageVersionSettings.supportsFeature(LanguageFeature.ElvisInferenceImprovementsIn21)
+            !LanguageFeature.ElvisInferenceImprovementsIn21.isEnabled()
         return when {
             lastStatementInBlock && expectedType?.isUnitOrFlexibleUnit == true ->
                 when {

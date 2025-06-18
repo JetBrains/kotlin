@@ -215,8 +215,8 @@ object CheckContextArguments : ResolutionStage() {
             ?: candidate.obtainRegularContextParametersOrNull()
             ?: return
 
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters) &&
-            !context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)
+        if (!LanguageFeature.ContextParameters.isEnabled() &&
+            !LanguageFeature.ContextReceivers.isEnabled()
         ) {
             sink.reportDiagnostic(UnsupportedContextualDeclarationCall)
             return
@@ -253,7 +253,7 @@ object CheckContextArguments : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     private fun Candidate.mapContextArgumentsOrNull(contextSymbols: List<FirValueParameterSymbol>): List<ConeResolutionAtom>? {
         val implicitsGroupedByScope: List<List<FirExpression>> =
-            if (callInfo.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (LanguageFeature.ContextParameters.isEnabled()) {
                 // With context parameters enabled, implicits are grouped by containing symbol,
                 // meaning that extension receivers and context parameters from the same declaration are in one group.
                 // See KT-74081.
@@ -751,7 +751,7 @@ internal object DiscriminateSyntheticAndForbiddenProperties : ResolutionStage() 
             sink.reportDiagnostic(ResolvedWithSynthetic)
         }
         if (symbol is FirEnumEntrySymbol && symbol.name == StandardNames.ENUM_ENTRIES &&
-            context.session.languageVersionSettings.supportsFeature(LanguageFeature.ForbidEnumEntryNamedEntries)
+            LanguageFeature.ForbidEnumEntryNamedEntries.isEnabled()
         ) {
             sink.reportDiagnostic(ResolvedWithLowPriority)
         }
@@ -966,7 +966,7 @@ internal object ConstraintSystemForks : ResolutionStage() {
         if (candidate.system.hasContradiction) return
 
         if (candidate.system.areThereContradictionsInForks()) {
-            check(!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ConsiderForkPointsWhenCheckingContradictions)) {
+            check(!LanguageFeature.ConsiderForkPointsWhenCheckingContradictions.isEnabled()) {
                 "This part should only work for obsolete language-version settings"
             }
             // resolving constraints would lead to regular errors reported
@@ -992,7 +992,7 @@ internal object TypeParameterAsCallable : ResolutionStage() {
 internal object CheckLambdaAgainstTypeVariableContradiction : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
-        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.CheckLambdaAgainstTypeVariableContradictionInResolution)) return
+        if (!LanguageFeature.CheckLambdaAgainstTypeVariableContradictionInResolution.isEnabled()) return
 
         val csBuilder = candidate.csBuilder
 
