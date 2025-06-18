@@ -29,11 +29,13 @@ HIGH:
   import kotlin.Float
   import kotlin.FloatArray
   import kotlin.Function
+  import kotlin.IgnorableReturnValue
   import kotlin.Int
   import kotlin.IntArray
   import kotlin.Level
   import kotlin.Long
   import kotlin.LongArray
+  import kotlin.MustUseReturnValue
   import kotlin.Nothing
   import kotlin.Number
   import kotlin.OptIn

@@ -453,6 +453,10 @@ public final class FloatArray : kotlin.Any, kotlin.Cloneable, java.io.Serializab
 public interface Function</*0*/ out R> {
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION}) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "2.2") public final annotation class IgnorableReturnValue : kotlin.Annotation {
+    /*primary*/ public constructor IgnorableReturnValue()
+}
+
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int>, java.io.Serializable {
     /*primary*/ private constructor Int()
     @kotlin.internal.IntrinsicConstEvaluation public final infix fun and(/*0*/ other: kotlin.Int): kotlin.Int
@@ -629,6 +633,10 @@ public final class LongArray : kotlin.Any, kotlin.Cloneable, java.io.Serializabl
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Long
     public final operator fun iterator(): kotlin.collections.LongIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE, AnnotationTarget.CLASS}) @kotlin.SinceKotlin(version = "2.2") public final annotation class MustUseReturnValue : kotlin.Annotation {
+    /*primary*/ public constructor MustUseReturnValue()
 }
 
 public final class Nothing {
