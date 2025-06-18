@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
@@ -47,12 +47,10 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
-import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.toKlibMetadataVersion
 import java.io.File
-import java.io.IOException
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
 
@@ -159,11 +157,7 @@ object KlibTestUtil {
     }
 
     fun deserializeKlibToCommonModule(klibFile: File): ModuleDescriptorImpl {
-        val library = resolveSingleFileKlib(
-            libraryFile = KFile(klibFile.path),
-            logger = DummyLogger,
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
+        val library = KlibLoader { libraryPaths(klibFile.path) }.load().librariesStdlibFirst.single()
 
         val metadataFactories = KlibMetadataFactories({ DefaultBuiltIns.Instance }, NullFlexibleTypeDeserializer)
 
@@ -182,7 +176,6 @@ object KlibTestUtil {
 
 /**
  * Creates a dependency container that includes common stdlib, if the passed file path points to a metadata KLIB in the supported format.
- * Note that [resolveSingleFileKlib] is sensitive to the library layout and to the file extension.
  * In the case of a custom klib layout or file extension other than .klib, the library won't be resolved even if it contains .knm files.
  * For the current kotlin-stdlib-common.jar it will always return null, the purpose of the function is to simplify future migration.
  * It's been checked that the dependency container for a library with the supported layout is functional.
@@ -193,13 +186,10 @@ private fun createDependencyContainerForStdlibIfKlib(
     environment: KotlinCoreEnvironment,
     projectContext: ProjectContext,
 ): CommonDependenciesContainerImpl? {
-    val stdlibKlib = resolveSingleFileKlib(KFile(stdlibFilePath), strategy = ToolingSingleFileKlibResolveStrategy).also {
-        try {
-            it.moduleName // trigger an exception in case of unsupported file/layout
-        } catch (e: IOException) {
-            return null
-        }
-    }
+    val stdlibKlib = loadMetadataKlibs(
+        libraryPaths = listOf(stdlibFilePath.toString()),
+        configuration = environment.configuration,
+    ).all.singleOrNull() ?: return null
 
     val stdlibModuleDescriptor = createAndInitializeKlibBasedStdlibCommonDescriptor(stdlibKlib, environment, projectContext)
     return CommonDependenciesContainerImpl(listOf(stdlibModuleDescriptor))
