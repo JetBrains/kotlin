@@ -490,10 +490,14 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
 
                 val boundReceiverType = callBuilder.original.getBoundReceiverType()
                 if (boundReceiverType != null) {
-                    irAdapterFun.extensionReceiverParameter =
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), boundReceiverType, IrParameterKind.ExtensionReceiver)
-                } else {
-                    irAdapterFun.extensionReceiverParameter = null
+                    irAdapterFun.parameters +=
+                        createAdapterParameter(
+                            startOffset,
+                            endOffset,
+                            Name.identifier("receiver"),
+                            boundReceiverType,
+                            IrParameterKind.ExtensionReceiver
+                        )
                 }
 
                 irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
