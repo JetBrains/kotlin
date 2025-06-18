@@ -1655,6 +1655,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val actualType: KaType
     }
 
+    interface IllegalTypeArgumentForVarargParameterError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = IllegalTypeArgumentForVarargParameterError::class
+    }
+
+    interface IllegalTypeArgumentForVarargParameterWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = IllegalTypeArgumentForVarargParameterWarning::class
+    }
+
     interface OverloadResolutionAmbiguity : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverloadResolutionAmbiguity::class
         val candidates: List<KaSymbol>
