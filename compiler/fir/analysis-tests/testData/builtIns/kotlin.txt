@@ -761,6 +761,11 @@ public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 public abstract interface Function<out R> : R|kotlin/Any| {
 }
 
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.FUNCTION)) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class IgnorableReturnValue : R|kotlin/Annotation| {
+    public constructor(): R|kotlin/IgnorableReturnValue|
+
+}
+
 public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|java/io/Serializable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
@@ -1094,6 +1099,11 @@ public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray|
 
     public final override fun clone(): R|kotlin/LongArray|
+
+}
+
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(kotlin/annotation/AnnotationTarget.FILE, kotlin/annotation/AnnotationTarget.CLASS)) @R|kotlin/SinceKotlin|(version = String(2.2)) public final annotation class MustUseReturnValue : R|kotlin/Annotation| {
+    public constructor(): R|kotlin/MustUseReturnValue|
 
 }
 
