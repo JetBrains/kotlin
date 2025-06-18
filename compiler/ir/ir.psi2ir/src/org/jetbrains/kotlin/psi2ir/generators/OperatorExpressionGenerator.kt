@@ -260,7 +260,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiverViaCachedCalleeData = irContainsCall
+                    arguments[0] = irContainsCall
                 }
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
