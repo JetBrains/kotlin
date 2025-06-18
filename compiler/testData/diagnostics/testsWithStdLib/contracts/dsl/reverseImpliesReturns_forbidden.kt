@@ -56,3 +56,7 @@ fun decodeConst(): String? {
     }<!>
     return "hello"
 }
+
+/* GENERATED_FIR_TAGS: andExpression, contracts, disjunctionExpression, enumDeclaration, enumEntry, equalityExpression,
+functionDeclaration, ifExpression, isExpression, lambdaLiteral, nullableType, smartcast, stringLiteral, whenExpression,
+whenWithSubject */

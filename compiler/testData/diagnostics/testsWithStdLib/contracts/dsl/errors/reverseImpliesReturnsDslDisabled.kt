@@ -18,3 +18,5 @@ fun test() {
     decode(x)<!UNSAFE_CALL!>.<!>length
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, contracts, equalityExpression, functionDeclaration, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

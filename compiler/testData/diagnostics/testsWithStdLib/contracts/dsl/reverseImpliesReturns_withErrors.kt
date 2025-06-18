@@ -75,3 +75,7 @@ fun decodeB1(input: Boolean): String? {
     }
     TODO()
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, contracts, equalityExpression, functionDeclaration, ifExpression,
+integerLiteral, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral,
+whenExpression, whenWithSubject */
