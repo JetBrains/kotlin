@@ -3,6 +3,9 @@ public final class StringWrapper /* StringWrapper*/ {
   @org.jetbrains.annotations.Nullable()
   private final @org.jetbrains.annotations.Nullable() java.lang.String s;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  StringWrapper(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  .ctor(@org.jetbrains.annotations.Nullable() java.lang.String)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

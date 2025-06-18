@@ -106,30 +106,24 @@ internal class SymbolLightConstructor private constructor(
             declarations: Sequence<KaConstructorSymbol>,
             result: MutableList<PsiMethod>,
         ) {
-            if (lightClass is SymbolLightClassForValueClass) {
-                return // TODO: support them
-            }
-
             val constructors = declarations.toList()
             if (constructors.isEmpty()) {
                 result.add(lightClass.defaultConstructor())
                 return
             }
 
+            val destinationClassIsValueClass = lightClass is SymbolLightClassForValueClass
             for (constructor in constructors) {
                 ProgressManager.checkCanceled()
 
                 if (isHiddenOrSynthetic(constructor)) continue
 
-                val exposeBoxedMode by lazy(LazyThreadSafetyMode.NONE) {
-                    jvmExposeBoxedMode(constructor)
-                }
-
+                val exposeBoxedMode = jvmExposeBoxedMode(constructor)
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (hasValueClassInParameterType && exposeBoxedMode != JvmExposeBoxedMode.NONE) {
+                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE && (hasValueClassInParameterType || destinationClassIsValueClass)) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -139,19 +133,22 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    result += SymbolLightConstructor(
-                        constructorSymbol = constructor,
-                        containingClass = lightClass,
-                        methodIndex = methodIndex,
-                        valueParameterPickMask = valueParameterPickMask,
-                        isJvmExposedBoxed = false,
-                    )
+                    if (!destinationClassIsValueClass) {
+                        result += SymbolLightConstructor(
+                            constructorSymbol = constructor,
+                            containingClass = lightClass,
+                            methodIndex = methodIndex,
+                            valueParameterPickMask = valueParameterPickMask,
+                            isJvmExposedBoxed = false,
+                        )
+                    }
                 }
             }
+
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
                 when {
-                    !hasValueClassInSignature(primaryConstructor) -> {
+                    !destinationClassIsValueClass && !hasValueClassInSignature(primaryConstructor) -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = false,
