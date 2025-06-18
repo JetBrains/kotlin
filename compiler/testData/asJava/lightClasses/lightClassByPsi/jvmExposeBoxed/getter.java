@@ -33,6 +33,9 @@ public final class StringWrapper2 /* StringWrapper2*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() StringWrapper getS1();//  getS1()
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  StringWrapper2(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() StringWrapper);//  .ctor(@org.jetbrains.annotations.NotNull() StringWrapper)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

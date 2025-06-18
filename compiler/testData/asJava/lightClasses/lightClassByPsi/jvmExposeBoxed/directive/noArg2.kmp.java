@@ -3,6 +3,12 @@ public final class Z /* Z*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.Object value;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  Z();//  .ctor()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  Z(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.Object);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.Object)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
