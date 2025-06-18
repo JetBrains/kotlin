@@ -298,7 +298,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasDispatchReceiver = true,
                     hasExtensionReceiver = false,
                 ).apply {
-                    dispatchReceiverViaCachedCalleeData = irIdentityEquals
+                    arguments[0] = irIdentityEquals
                 }
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
