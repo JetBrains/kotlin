@@ -18,3 +18,5 @@ fun test() {
     decode(x).length
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, contracts, equalityExpression, functionDeclaration, ifExpression,
+lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral */

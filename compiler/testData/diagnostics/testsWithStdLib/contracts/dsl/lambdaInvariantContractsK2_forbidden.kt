@@ -12,3 +12,5 @@ inline fun <R> runIfB(condition: Boolean, block: () -> R): R? {
     return if (condition) block() else null
 }
 
+/* GENERATED_FIR_TAGS: contracts, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+lambdaLiteral, nullableType, typeParameter */
