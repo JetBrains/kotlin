@@ -386,7 +386,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             irAdapteeCall.arguments[0] =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
         } else if (resolvedCall.extensionReceiver is TransientReceiver) {
-            val irAdaptedReceiverParameter = irAdapterFun.valueParameters[0]
+            val irAdaptedReceiverParameter = irAdapterFun.parameters[0]
             irAdapteeCall.extensionReceiver =
                 IrGetValueImpl(startOffset, endOffset, irAdaptedReceiverParameter.type, irAdaptedReceiverParameter.symbol)
             shift = 1
