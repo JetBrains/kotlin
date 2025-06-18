@@ -145,8 +145,8 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
 
         // TODO: KtElements
 
-        irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            declareParameter(it, null, irFunction, IrParameterKind.DispatchReceiver)
+        functionDescriptor.dispatchReceiverParameter?.let {
+            irFunction.parameters += declareParameter(it, null, irFunction, IrParameterKind.DispatchReceiver)
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
