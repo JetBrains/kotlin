@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.jvmDefaultMode
-import org.jetbrains.kotlin.lexer.KtTokens.INLINE_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.VALUE_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
@@ -60,12 +58,12 @@ internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktMod
     else -> createLightClassNoCache(classOrObject, ktModule)
 }
 
-internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule: KaModule): SymbolLightClassBase = when {
-    ktClassOrObject.hasModifier(INLINE_KEYWORD) || ktClassOrObject.hasModifier(VALUE_KEYWORD) ->
-        SymbolLightClassForValueClass(ktClassOrObject, ktModule)
-
-    ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
-    ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
+internal fun createLightClassNoCache(
+    ktClassOrObject: KtClassOrObject,
+    ktModule: KaModule,
+): SymbolLightClassBase = when (ktClassOrObject) {
+    is KtClass if ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
+    is KtClass if ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
 }
 
@@ -96,19 +94,11 @@ internal fun createLightClassNoCache(
         manager = manager,
     )
 
-    else -> if (classSymbol.isInline) {
-        SymbolLightClassForValueClass(
-            ktModule = ktModule,
-            classSymbol = classSymbol,
-            manager = manager,
-        )
-    } else {
-        SymbolLightClassForClassOrObject(
-            ktModule = ktModule,
-            classSymbol = classSymbol,
-            manager = manager,
-        )
-    }
+    else -> SymbolLightClassForClassOrObject(
+        ktModule = ktModule,
+        classSymbol = classSymbol,
+        manager = manager,
+    )
 }
 
 private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
@@ -560,3 +550,6 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
     @Suppress("UNCHECKED_CAST")
     symbol.createPointer() as KaSymbolPointer<T>
 }
+
+internal inline val SymbolLightClassBase.isValueClass: Boolean
+    get() = this is SymbolLightClassForClassOrObject && isValueClass
