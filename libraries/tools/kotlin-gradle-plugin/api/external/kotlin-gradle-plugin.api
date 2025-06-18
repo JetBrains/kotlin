@@ -1328,3 +1328,52 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/Source
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig {
+	public fun <init> ()V
+	public fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;)V
+	public synthetic fun <init> (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Z
+	public final fun component12 ()Z
+	public final fun component13 ()Ljava/util/List;
+	public final fun component14 ()Ljava/util/Map;
+	public final fun component15 ()Ljava/util/Map;
+	public final fun component16 ()Ljava/lang/Integer;
+	public final fun component2 ()Z
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;
+	public final fun component7 ()Ljava/util/List;
+	public final fun component8 ()Ljava/util/Map;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;ZZLjava/lang/String;Ljava/util/List;Ljava/util/List;Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;ZZLjava/util/List;Ljava/util/Map;Ljava/util/Map;Ljava/lang/Integer;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAutoWatch ()Z
+	public final fun getBasePath ()Ljava/lang/String;
+	public final fun getBrowsers ()Ljava/util/List;
+	public final fun getClient ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaClient;
+	public final fun getCustomContextFile ()Ljava/lang/String;
+	public final fun getCustomDebugFile ()Ljava/lang/String;
+	public final fun getCustomLaunchers ()Ljava/util/Map;
+	public final fun getFailOnEmptyTestSuite ()Z
+	public final fun getFailOnFailingTestSuite ()Z
+	public final fun getFiles ()Ljava/util/List;
+	public final fun getFrameworks ()Ljava/util/List;
+	public final fun getPort ()Ljava/lang/Integer;
+	public final fun getPreprocessors ()Ljava/util/Map;
+	public final fun getProxies ()Ljava/util/Map;
+	public final fun getReporters ()Ljava/util/List;
+	public final fun getSingleRun ()Z
+	public fun hashCode ()I
+	public final fun setAutoWatch (Z)V
+	public final fun setBasePath (Ljava/lang/String;)V
+	public final fun setCustomContextFile (Ljava/lang/String;)V
+	public final fun setCustomDebugFile (Ljava/lang/String;)V
+	public final fun setPort (Ljava/lang/Integer;)V
+	public final fun setSingleRun (Z)V
+	public fun toString ()Ljava/lang/String;
+}
+

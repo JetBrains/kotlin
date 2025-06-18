@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+
 /**
  * Serializable view of Karma config
  */
 // https://karma-runner.github.io/4.0/config/configuration-file.html
+@ExternalKotlinTargetApi
 data class KarmaConfig(
     var singleRun: Boolean = true,
     var autoWatch: Boolean = false,
@@ -25,6 +28,15 @@ data class KarmaConfig(
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
     val proxies: MutableMap<String, String> = mutableMapOf(),
+
+    /**
+     * The port where the web server will be listening.
+     *
+     * If the defined port is already in use, karma will automatically increase its value in steps of 1 until a free port is found.
+     *
+     * The port should only be set by IntelliJ via an init script.
+     */
+    @property:ExternalKotlinTargetApi
     var port: Int? = null,
 
     /**
