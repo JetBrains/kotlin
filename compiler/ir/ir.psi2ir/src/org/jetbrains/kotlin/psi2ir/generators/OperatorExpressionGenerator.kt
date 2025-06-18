@@ -348,7 +348,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
                     hasExtensionReceiver = false,
                     origin = IrStatementOrigin.EXCLEQ,
                 ).apply {
-                    dispatchReceiverViaCachedCalleeData = irEquals
+                    arguments[0] = irEquals
                 }
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
