@@ -526,7 +526,13 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
             null
         }
 
-        ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
+        ConeCapturedType(
+            constructor = ConeCapturedTypeConstructor(
+                argument, lowerType, status,
+                supertypes = null, // will be initialized below
+                typeConstructor.getParameter(index)
+            )
+        )
     }
 
     val substitution = (0 until argumentsCount).associate { index ->
@@ -670,27 +676,29 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
  * otherwise the star projection in `CapturedType(out Foo<*>)` is not properly captured.
  *
  * The method is a version of [org.jetbrains.kotlin.fir.resolve.substitution.substitute] specifically for capturing
- * that doesn't have the issue of KT-64024 where nothing is done when neither [ConeCapturedType.lowerType]
+ * that doesn't have the issue of KT-64024 where nothing is done when neither [ConeCapturedTypeConstructor.lowerType]
  * nor [ConeCapturedTypeConstructor.projection] need capturing.
  */
 private fun ConeTypeContext.captureCapturedType(type: ConeCapturedType): ConeCapturedType? {
-    val capturedProjection = type.constructor.projection.type
+    val constructor = type.constructor
+    val capturedProjection = constructor.projection.type
         ?.let { captureFromExpressionInternal(it) }
-        ?.let { wrapProjection(type.constructor.projection, it) }
-    val capturedSuperTypes = type.constructor.supertypes?.map { captureFromExpressionInternal(it) ?: it }
-    val capturedLowerType = type.lowerType?.let { captureFromExpressionInternal(it) }
+        ?.let { wrapProjection(constructor.projection, it) }
+    val capturedSuperTypes = constructor.supertypes?.map { captureFromExpressionInternal(it) ?: it }
+    val capturedLowerType = constructor.lowerType?.let { captureFromExpressionInternal(it) }
 
-    if (capturedProjection == null && capturedLowerType == null && capturedSuperTypes == type.constructor.supertypes) {
+    if (capturedProjection == null && capturedLowerType == null && capturedSuperTypes == constructor.supertypes) {
         return null
     }
 
     return type.copy(
         constructor = ConeCapturedTypeConstructor(
-            projection = capturedProjection ?: type.constructor.projection,
+            projection = capturedProjection ?: constructor.projection,
             supertypes = capturedSuperTypes,
-            typeParameterMarker = type.constructor.typeParameterMarker
+            lowerType = capturedLowerType ?: constructor.lowerType,
+            captureStatus = constructor.captureStatus,
+            typeParameterMarker = constructor.typeParameterMarker
         ),
-        lowerType = capturedLowerType ?: type.lowerType,
     )
 }
 

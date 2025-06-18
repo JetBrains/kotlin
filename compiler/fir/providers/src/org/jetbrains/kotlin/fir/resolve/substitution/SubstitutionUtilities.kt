@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.types.*
  * For capturing of captured types see [org.jetbrains.kotlin.fir.types.captureCapturedType] which doesn't have the issue of KT-64024.
  */
 inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): ConeCapturedType? {
-    val innerType = this.lowerType ?: this.constructor.projection.type
+    val innerType = this.constructor.lowerType ?: this.constructor.projection.type
     // TODO(KT-64024): This early return looks suspicious.
     //  In fact, if the inner type wasn't substituted we will ignore potential substitution in
     //  super types
@@ -34,10 +34,11 @@ inline fun ConeCapturedType.substitute(f: (ConeKotlinType) -> ConeKotlinType?): 
     return copy(
         constructor = ConeCapturedTypeConstructor(
             wrapProjection(constructor.projection, substitutedInnerType),
+            if (constructor.lowerType != null) substitutedInnerType else null,
+            constructor.captureStatus,
             substitutedSuperTypes,
             typeParameterMarker = constructor.typeParameterMarker
         ),
-        lowerType = if (lowerType != null) substitutedInnerType else null,
     )
 }
 

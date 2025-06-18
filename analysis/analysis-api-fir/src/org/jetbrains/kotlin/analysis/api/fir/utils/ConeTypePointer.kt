@@ -118,8 +118,8 @@ private class ConeCapturedTypePointer(
     coneType: ConeCapturedType,
     builder: KaSymbolByFirBuilder,
 ) : ConeTypePointer<ConeCapturedType> {
-    private val captureStatus = coneType.captureStatus
-    private val lowerTypePointer = coneType.lowerType?.createPointer(builder)
+    private val captureStatus = coneType.constructor.captureStatus
+    private val lowerTypePointer = coneType.constructor.lowerType?.createPointer(builder)
     private val isMarkedNullable = coneType.isMarkedNullable
     private val coneProjectionPointer = ConeTypeProjectionPointer(coneType.constructor.projection, builder)
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder) }
@@ -148,13 +148,12 @@ private class ConeCapturedTypePointer(
 
         val typeConstructor = ConeCapturedTypeConstructor(
             constructorProjection,
+            lowerType, captureStatus,
             constructorSupertypes,
             constructorTypeParameterMarker
         )
 
         return ConeCapturedType(
-            captureStatus,
-            lowerType,
             isMarkedNullable,
             typeConstructor,
         )
