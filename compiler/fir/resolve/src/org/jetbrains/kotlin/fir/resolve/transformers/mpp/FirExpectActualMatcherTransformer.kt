@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
@@ -23,7 +20,7 @@ class FirExpectActualMatcherProcessor(
     session: FirSession,
     scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
-    private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+    private val enabled = LanguageFeature.MultiPlatformProjects.isEnabled()
 
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)
 

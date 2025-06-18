@@ -365,7 +365,7 @@ internal class ScopeBasedTowerLevel(
 ) : TowerLevel(), SessionHolder {
     override val session: FirSession get() = bodyResolveComponents.session
 
-    private val scope = if (session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+    private val scope = if (LanguageFeature.MultiPlatformProjects.isEnabled()) {
         FirActualizingScope(givenScope)
     } else {
         givenScope

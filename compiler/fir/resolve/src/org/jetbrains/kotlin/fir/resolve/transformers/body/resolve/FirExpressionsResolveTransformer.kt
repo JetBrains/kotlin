@@ -248,7 +248,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
     ): FirExpression? {
         if (originalExpression !is FirPropertyAccessExpression) return null
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return null
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return null
 
         val expectedType =
             (data as? ResolutionMode.WithExpectedType)?.hintForContextSensitiveResolution ?: data.expectedType ?: return null
@@ -1176,7 +1176,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
      * If context-sensitive resolution is necessary and successful, conversionTypeRef will be replaced with an updated result
      */
     private fun FirTypeOperatorCall.resolveConversionTypeRefInContextSensitiveModeIfNecessary() {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ContextSensitiveResolutionUsingExpectedType)) return
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
 
         // If the type is resolved correctly, we don't need to re-run the resolution
         val errorTypeRef = conversionTypeRef as? FirErrorTypeRef ?: return

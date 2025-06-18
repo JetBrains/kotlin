@@ -1331,7 +1331,7 @@ abstract class FirDataFlowAnalyzer(
                 // Case 3:
                 //   val b = x?.foo // if `foo` is mutable, then initializer is real, but unstable
                 //   if (b != null) { /* x != null, but re-reading x.foo could produce null */ }
-                val translateAll = components.session.languageVersionSettings.supportsFeature(LanguageFeature.DfaBooleanVariables)
+                val translateAll = LanguageFeature.DfaBooleanVariables.isEnabled()
                 logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable) {
                     it.takeIf { translateAll || it.condition.operation == Operation.EqNull || it.condition.operation == Operation.NotEqNull }
                 }
@@ -1371,7 +1371,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun BooleanOperatorExitNode.mergeBooleanLogicOperatorFlow() = mergeIncomingFlow { path, flow ->
         val inferMoreImplications =
-            components.session.languageVersionSettings.supportsFeature(LanguageFeature.InferMoreImplicationsFromBooleanExpressions)
+            LanguageFeature.InferMoreImplicationsFromBooleanExpressions.isEnabled()
 
         // The saturating value is one that, when returned by any argument, also has to be returned by the entire expression:
         // `true` for `||` and `false` for `&&`.

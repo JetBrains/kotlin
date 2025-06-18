@@ -249,6 +249,6 @@ private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCa
 
 context(context: ResolutionContext)
 private fun CheckerSink.markCandidateForCompatibilityResolve() {
-    if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
+    if (LanguageFeature.DisableCompatibilityModeForNewInference.isEnabled()) return
     reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
 }

@@ -168,7 +168,7 @@ class FirCallCompleter(
         if (storage.notFixedTypeVariables.isEmpty()) return
 
         // We unmuted assertion only since 2.1, together with a fix for KT-69040
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21)) return
+        if (!LanguageFeature.PCLAEnhancementsIn21.isEnabled()) return
 
         val notFixedTypeVariablesBasedOnTypeParameters = storage.notFixedTypeVariables.filter {
             it.value.typeVariable is ConeTypeParameterBasedTypeVariable
@@ -489,7 +489,7 @@ class FirCallCompleter(
                     when {
                         expectedReturnType == null ->
                             rawAtom
-                        !session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21) ->
+                        !LanguageFeature.PCLAEnhancementsIn21.isEnabled() ->
                             rawAtom
                         // Generally, this branch should be removed, and we should use ConeSimpleLeafResolutionAtom here, too.
                         // (see the comment under the "else").
@@ -543,7 +543,7 @@ class FirCallCompleter(
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
                                 .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
                             valueParameterKind =
-                                if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                                if (LanguageFeature.ContextParameters.isEnabled()) {
                                     FirValueParameterKind.ContextParameter
                                 } else {
                                     FirValueParameterKind.LegacyContextReceiver

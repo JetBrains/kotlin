@@ -1221,7 +1221,7 @@ open class FirDeclarationsResolveTransformer(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         expectedTypeData: ResolutionMode.WithExpectedType?,
     ): FirStatement = when {
-        session.languageVersionSettings.supportsFeature(LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument) ->
+        LanguageFeature.ResolveTopLevelLambdasAsSyntheticCallArgument.isEnabled() ->
             components.syntheticCallGenerator.resolveAnonymousFunctionExpressionWithSyntheticOuterCall(
                 anonymousFunctionExpression, expectedTypeData, resolutionContext
             )
@@ -1287,7 +1287,7 @@ open class FirDeclarationsResolveTransformer(
                         symbol = FirValueParameterSymbol(name)
                         returnTypeRef = receiverType
                             .toFirResolvedTypeRef(lambda.source?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))
-                        valueParameterKind = if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                        valueParameterKind = if (LanguageFeature.ContextParameters.isEnabled()) {
                             FirValueParameterKind.ContextParameter
                         } else {
                             FirValueParameterKind.LegacyContextReceiver
