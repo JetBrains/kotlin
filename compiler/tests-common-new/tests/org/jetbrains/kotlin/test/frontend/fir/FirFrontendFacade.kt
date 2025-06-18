@@ -176,8 +176,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
 
                 if (isCommon) {
                     val klibs: List<KotlinLibrary> = loadMetadataKlibs(
-                        libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
                         configuration = configuration,
+                        libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
                     ).all
 
                     val sharedLibrarySession = FirMetadataSessionFactory.createSharedLibrarySession(

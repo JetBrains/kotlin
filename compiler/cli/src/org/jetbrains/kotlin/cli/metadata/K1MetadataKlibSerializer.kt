@@ -76,8 +76,8 @@ private class KlibMetadataDependencyContainer(
 ) : CommonDependenciesContainer {
 
     private val kotlinLibraries: List<KotlinLibrary> = loadMetadataKlibs(
-        libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
-        configuration = configuration
+        configuration = configuration,
+        libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path }
     ).all
 
     private val friendPaths = configuration.get(K2MetadataConfigurationKeys.FRIEND_PATHS).orEmpty().toSet()

@@ -557,8 +557,8 @@ object SessionConstructionUtils {
                 }
 
                 val klibs: List<KotlinLibrary> = loadMetadataKlibs(
-                    libraryPaths = libPaths.toList(),
-                    configuration = configuration
+                    configuration = configuration,
+                    libraryPaths = libPaths.toList()
                 ).all
 
                 DependencyListForCliModule.build(moduleName) {

@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 /**
  * This is the entry point to load metadata-only KLIBs.
  *
- * @param libraryPaths Paths of libraries to load.
  * @param configuration The current compiler configuration.
+ * @param libraryPaths Paths of libraries to load.
  */
-fun loadMetadataKlibs(libraryPaths: List<String>, configuration: CompilerConfiguration): LoadedKlibs {
+fun loadMetadataKlibs(configuration: CompilerConfiguration, libraryPaths: List<String>): LoadedKlibs {
     val result = KlibLoader {
         libraryPaths(libraryPaths)
         // IMPORTANT: Do not set any ABI version requirements - metadata libraries are not supposed to have any ABI.
