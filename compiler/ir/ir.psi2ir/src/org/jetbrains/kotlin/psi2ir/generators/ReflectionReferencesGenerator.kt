@@ -356,7 +356,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             )
             when {
                 hasBoundDispatchReceiver || isImportedFromObject ->
-                    irCall.dispatchReceiverViaCachedCalleeData = receiverValue
+                    irCall.arguments[0] = receiverValue
                 hasBoundExtensionReceiver ->
                     irCall.extensionReceiver = receiverValue
             }
