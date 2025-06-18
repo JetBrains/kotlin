@@ -249,6 +249,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAGATES_TO_MANY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_BRANCH_CONDITION_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE
@@ -1293,6 +1294,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED,
             "Ignorability-related annotations are experimental and cannot be used with -Xreturn-value-checker in disabled state."
+        )
+        map.put(
+            DSL_MARKER_PROPAGATES_TO_MANY,
+            """
+            '@DslMarker' annotation propagates to more than one receiver or context parameter. This often means that none of them can be used.
+            Move the '@DslMarker' annotation to the receiver or context parameter whose scope must be limited.
+            """.trimIndent()
         )
 
         // OptIn

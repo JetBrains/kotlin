@@ -381,8 +381,6 @@ object TypeVariablesInExplicitReceivers : ResolutionStage() {
  * /compiler/testData/diagnostics/tests/resolve/dslMarker for the test files.
  */
 object CheckDslScopeViolation : ResolutionStage() {
-    private val dslMarkerClassId = ClassId.fromString("kotlin/DslMarker")
-
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
         fun check(atom: ConeResolutionAtom) {
@@ -557,7 +555,7 @@ object CheckDslScopeViolation : ResolutionStage() {
             val annotationClass =
                 annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toClassSymbol(context.session)
                     ?: continue
-            if (annotationClass.hasAnnotation(dslMarkerClassId, context.session)) {
+            if (annotationClass.hasAnnotation(StandardClassIds.Annotations.DslMarker, context.session)) {
                 add(annotationClass.classId)
             }
         }

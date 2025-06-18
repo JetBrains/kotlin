@@ -36,5 +36,6 @@ object CommonTypeCheckers : TypeCheckers() {
     override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = setOf(
         FirUnsupportedDefaultValueInFunctionTypeParameterChecker,
         FirUnsupportedModifiersInFunctionTypeParameterChecker,
+        FirDslMarkerPropagationChecker,
     )
 }
