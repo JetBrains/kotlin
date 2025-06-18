@@ -149,18 +149,22 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             irFunction.parameters += declareParameter(it, null, irFunction, IrParameterKind.DispatchReceiver)
         }
 
-        irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            declareParameter(it, null, irFunction, IrParameterKind.ExtensionReceiver)
-        }
-
         // Declare all the value parameters up first.
-        irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
+        val (contextParameters, regularParameters) = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             val kind = if (valueParameterDescriptor.index < functionDescriptor.contextReceiverParameters.size) IrParameterKind.Context else IrParameterKind.Regular
             declareParameter(valueParameterDescriptor, ktParameter, irFunction, kind).also {
                 it.defaultValue = irFunction.defaultArgumentFactory(it)
             }
+        }.partition {
+            it.kind == IrParameterKind.Context
         }
+
+        irFunction.parameters += contextParameters
+        functionDescriptor.extensionReceiverParameter?.let {
+            irFunction.parameters += declareParameter(it, null, irFunction, IrParameterKind.ExtensionReceiver)
+        }
+        irFunction.parameters += regularParameters
     }
 
     fun generateConstructor(
