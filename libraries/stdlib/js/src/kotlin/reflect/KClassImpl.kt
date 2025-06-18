@@ -82,3 +82,20 @@ internal class ErrorKClass : KClass<Nothing> {
 
     override fun hashCode(): Int = 0
 }
+
+internal class InterfaceKClass(private val interfaceId: Int) : KClass<Nothing> {
+    override val simpleName: String?
+        get() = interfaceIdToNameMap[interfaceId].unsafeCast<String?>()
+
+    override val qualifiedName: String
+        get() = throw UnsupportedOperationException("InterfaceKClass doesn't support qualifiedName")
+
+    override fun isInstance(value: Any?): Boolean =
+        value?.let { isInterfaceImpl(it, interfaceId) } ?: false
+
+    override fun equals(other: Any?): Boolean = interfaceId == (other as? InterfaceKClass)?.interfaceId
+
+    override fun hashCode(): Int = interfaceId
+
+    override fun toString(): String = "class $simpleName"
+}

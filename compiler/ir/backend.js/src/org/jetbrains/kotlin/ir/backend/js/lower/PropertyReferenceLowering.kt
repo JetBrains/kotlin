@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.lower.AbstractPropertyReferenceLowering
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -21,7 +20,6 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
 
     private val referenceBuilderSymbol = context.kpropertyBuilder
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
-    private val jsClassSymbol = context.intrinsics.jsClass
 
     override fun IrBuilderWithScope.createKProperty(
         reference: IrRichPropertyReference,
@@ -31,16 +29,16 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
     ): IrExpression {
         // 0 - name
         // 1 - paramCount
-        // 2 - type
-        // 3 - getter
-        // 4 - setter
+        // 2 - getter
+        // 3 - setter
+        // 4 - type
 
         return irCall(referenceBuilderSymbol).apply {
             arguments[0] = propertyReferenceNameExpression(reference)
             arguments[1] = irInt(typeArguments.size - 1)
-            arguments[2] = reference.getJsTypeConstructor()
-            arguments[3] = getterReference
-            arguments[4] = setterReference ?: irNull()
+            arguments[2] = getterReference
+            arguments[3] = setterReference ?: irNull()
+            arguments[4] = reference.interfaceMask()
             arguments[5] = propertyReferenceLinkageErrorExpression(reference, this@PropertyReferenceLowering.context::getVoid)
         }
     }
@@ -53,12 +51,12 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
     ): IrExpression {
         return irCall(localDelegateBuilderSymbol, reference.type).apply {
             // 0 - name
-            // 1 - type
-            // 2 - isMutable
+            // 1 - isMutable
+            // 2 - type
 
             arguments[0] = irString(propertyName)
-            arguments[1] = reference.getJsTypeConstructor()
-            arguments[2] = irBoolean(reference.setterFunction != null)
+            arguments[1] = irBoolean(reference.setterFunction != null)
+            arguments[2] = reference.interfaceMask()
         }
     }
 
@@ -66,12 +64,6 @@ class PropertyReferenceLowering(context: JsIrBackendContext) : AbstractPropertyR
         return context.symbols.functionN(arity)
     }
 
-    private fun IrExpression.getJsTypeConstructor(): IrExpression {
-        val irCall = IrCallImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, jsClassSymbol.owner.returnType, jsClassSymbol,
-            typeArgumentsCount = 1,
-        )
-        irCall.typeArguments[0] = type
-        return irCall
-    }
+    private fun IrExpression.interfaceMask(): IrExpression =
+        JsIrBuilder.buildCall(context.intrinsics.jsInterfaceMaskForPropertyRefIntrinsic, typeArguments = listOf(type))
 }

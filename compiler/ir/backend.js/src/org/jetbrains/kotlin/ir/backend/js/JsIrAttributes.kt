@@ -89,3 +89,8 @@ var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false
  * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
  */
 internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyByDefault = false)
+
+internal var IrClass.interfaceId: Int? by irAttribute(copyByDefault = false)
+
+internal var IrClass.interfaceUsedAsTypeOperand: Boolean by irFlag(copyByDefault = false)
+internal var IrClass.interfaceUsedInReflection: Boolean by irFlag(copyByDefault = false)

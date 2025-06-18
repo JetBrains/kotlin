@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.interfaceUsedInReflection
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -17,7 +19,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 
 internal class JsUsefulDeclarationProcessor(
@@ -57,7 +61,7 @@ internal class JsUsefulDeclarationProcessor(
 
                 context.intrinsics.jsClass -> {
                     val ref = expression.typeArguments[0]!!.classifierOrFail.owner as IrDeclaration
-                    ref.enqueue(data, "intrinsic: jsClass")
+                    ref.enqueue(data, "intrinsic: ${expression.symbol.owner.name}")
                     referencedJsClasses += ref
                     // When class reference provided as parameter to external function
                     // It can be instantiated by external JS script
@@ -73,6 +77,33 @@ internal class JsUsefulDeclarationProcessor(
                             .forEach {
                                 it.enqueue(data, "intrinsic: jsClass (constructor)")
                             }
+                    }
+                    true
+                }
+
+                context.intrinsics.jsIsInterfaceIntrinsicSymbol -> {
+                    val ref = expression.typeArguments[0]!!.classifierOrFail.owner as IrDeclaration
+                    ref.enqueue(data, "intrinsic: ${expression.symbol.owner.name}")
+                    if (context.supportsInterfaceMetadataStripping) {
+                        context.intrinsics.isInterfaceImplSymbol.owner
+                    } else {
+                        context.intrinsics.isInterfaceSymbol.owner
+                    }.enqueue(data, "intrinsic:  ${expression.symbol.owner.name}")
+                    true
+                }
+
+                context.intrinsics.jsInterfaceIdIntrinsic -> {
+                    val ref = expression.typeArguments[0]!!.classifierOrFail.owner as IrDeclaration
+                    ref.enqueue(data, "intrinsic: ${expression.symbol.owner.name}")
+                    true
+                }
+
+                context.intrinsics.jsInterfaceMaskForPropertyRefIntrinsic -> {
+                    val ref = expression.typeArguments[0]!!.classifierOrFail.owner as IrDeclaration
+                    ref.enqueue(data, "intrinsic: ${expression.symbol.owner.name}")
+                    if (!context.supportsInterfaceMetadataStripping) {
+                        context.intrinsics.getInterfaceMaskForPropertyRefSymbol.owner
+                            .enqueue(data, "intrinsic: ${expression.symbol.owner.name}")
                     }
                     true
                 }
@@ -177,26 +208,27 @@ internal class JsUsefulDeclarationProcessor(
 
         if (!irClass.containsMetadata()) return
 
-        when {
-            irClass.isObject -> {
-                context.intrinsics.initMetadataForCompanionSymbol.owner.enqueue(irClass, "object metadata")
-                context.intrinsics.initMetadataForObjectSymbol.owner.enqueue(irClass, "companion object metadata")
-            }
-
-            irClass.isInterface -> {
-                context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
-                context.intrinsics.initMetadataForInterfaceSymbol.owner.enqueue(irClass, "interface metadata")
-            }
-
-            else -> {
-                context.intrinsics.initMetadataForClassSymbol.owner.enqueue(irClass, "class metadata")
-                context.intrinsics.initMetadataForLambdaSymbol.owner.enqueue(irClass, "lambda metadata")
-                context.intrinsics.initMetadataForCoroutineSymbol.owner.enqueue(irClass, "coroutine metadata")
-                context.intrinsics.initMetadataForFunctionReferenceSymbol.owner.enqueue(irClass, "function reference metadata")
-            }
+        val metadataKinds = when {
+            irClass.isObject -> listOf(RuntimeMetadataKind.COMPANION_OBJECT, RuntimeMetadataKind.OBJECT)
+            irClass.isInterface -> listOf(RuntimeMetadataKind.INTERFACE)
+            else -> listOf(
+                RuntimeMetadataKind.CLASS,
+                RuntimeMetadataKind.LAMBDA,
+                RuntimeMetadataKind.COROUTINE,
+                RuntimeMetadataKind.FUNCTION_REFERENCE,
+            )
         }
 
-        context.intrinsics.initMetadataForSymbol.owner.enqueue(irClass, "metadata")
+        for (metadataKind in metadataKinds) {
+            context.intrinsics
+                .getInitMetadataSymbol(metadataKind, withStaticInterfaceMask = context.supportsInterfaceMetadataStripping)
+                ?.owner
+                ?.enqueue(irClass, "$metadataKind metadata")
+        }
+
+        if (irClass.interfaceUsedInReflection && context.supportsInterfaceMetadataStripping) {
+            context.intrinsics.initMetadataForInterfaceIdSymbol.owner.enqueue(irClass, "interface reflection data")
+        }
 
         if (irClass.containsInterfaceDefaultImplementation()) {
             context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")

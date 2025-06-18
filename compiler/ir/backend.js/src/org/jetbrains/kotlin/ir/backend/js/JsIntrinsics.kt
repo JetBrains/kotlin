@@ -116,19 +116,41 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
 
     // RTTI:
-    val implementSymbol = getInternalFunction("implement")
-    val initMetadataForSymbol = getInternalFunction("initMetadataFor")
-    val initMetadataForClassSymbol = getInternalFunction("initMetadataForClass")
-    val initMetadataForObjectSymbol = getInternalFunction("initMetadataForObject")
-    val initMetadataForInterfaceSymbol = getInternalFunction("initMetadataForInterface")
-    val initMetadataForLambdaSymbol = getInternalFunction("initMetadataForLambda")
-    val initMetadataForCoroutineSymbol = getInternalFunction("initMetadataForCoroutine")
-    val initMetadataForFunctionReferenceSymbol = getInternalFunction("initMetadataForFunctionReference")
-    val initMetadataForCompanionSymbol = getInternalFunction("initMetadataForCompanion")
+    enum class RuntimeMetadataKind(val namePart: String) {
+        CLASS("Class"),
+        OBJECT("Object"),
+        INTERFACE("Interface"),
+        LAMBDA("Lambda"),
+        COROUTINE("Coroutine"),
+        FUNCTION_REFERENCE("FunctionReference"),
+        COMPANION_OBJECT("Companion")
+    }
+
+    private val initMetadataSymbols: Map<Pair<RuntimeMetadataKind, Boolean>, IrSimpleFunctionSymbol> = buildMap {
+        for (kind in RuntimeMetadataKind.entries) {
+            if (kind == RuntimeMetadataKind.INTERFACE) {
+                put(kind to false, getInternalFunction("initMetadataFor${kind.namePart}"))
+            } else {
+                put(kind to true, getInternalFunction("initMetadataFor${kind.namePart}WithStaticInterfaceMask"))
+                put(kind to false, getInternalFunction("initMetadataFor${kind.namePart}WithDynamicInterfaceMask"))
+            }
+        }
+    }
+
+    fun getInitMetadataSymbol(kind: RuntimeMetadataKind, withStaticInterfaceMask: Boolean): IrSimpleFunctionSymbol? =
+        initMetadataSymbols[kind to withStaticInterfaceMask]
+
+    val initMetadataForInterfaceIdSymbol = getInternalFunction("initMetadataForInterfaceId")
+    val getInterfaceMaskForPropertyRefSymbol = getInternalFunction("getInterfaceMaskForPropertyRef")
+
     val makeAssociatedObjectMapES5 = getInternalInRootPackage("makeAssociatedObjectMapES5")!!
     val getAssociatedObjectId = getInternalInRootPackage("getAssociatedObjectId")!!
     val nextAssociatedObjectId = getInternalFunction("nextAssociatedObjectId")
 
+    val jsIsInterfaceIntrinsicSymbol = getInternalFunction("jsIsInterfaceIntrinsic")
+    val jsInterfaceIdIntrinsic = getInternalFunction("jsInterfaceIdIntrinsic")
+    val jsInterfaceMaskForPropertyRefIntrinsic = getInternalFunction("jsInterfaceMaskForPropertyRefIntrinsic")
+    val isInterfaceImplSymbol = getInternalFunction("isInterfaceImpl")
     val isInterfaceSymbol = getInternalFunction("isInterface")
     val isArraySymbol = getInternalFunction("isArray")
     //    val isCharSymbol = getInternalFunction("isChar")
@@ -298,6 +320,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
         override val createContravariantKTypeProjection: IrSimpleFunctionSymbol =
             getInternalReflectionFunction("createContravariantKTypeProjection")
         override val getKClass: IrSimpleFunctionSymbol = getInternalReflectionFunction("getKClass")
+        override val getKClassForInterfaceId: IrSimpleFunctionSymbol = getInternalReflectionFunction("getKClassForInterfaceId")
         override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalReflectionFunction("getKClassFromExpression")
         override val kTypeClass: IrClassSymbol =
             symbolFinder.findClass(StandardClassIds.KType.shortClassName, StandardClassIds.KType.packageFqName)!!

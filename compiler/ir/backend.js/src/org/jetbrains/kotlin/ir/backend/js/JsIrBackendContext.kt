@@ -222,11 +222,11 @@ class JsIrBackendContext(
         throwableConstructors.single { it.owner.parameters.size == 2 }
     }
 
-    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let {
+    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef2")).single().let {
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
     }
     val klocalDelegateBuilder =
-        getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let {
+        getFunctions(FqName("kotlin.js.getLocalDelegateReference2")).single().let {
             symbolTable.descriptorExtension.referenceSimpleFunction(it)
         }
     val throwLinkageErrorInCallableNameSymbol = getFunctions(FqName("kotlin.js.throwLinkageErrorInCallableName")).single().let {
@@ -332,6 +332,27 @@ class JsIrBackendContext(
         irBuiltIns,
         configuration.messageCollector
     )
+
+    internal val supportsInterfaceMetadataStripping: Boolean
+        // Interfaces don't exist at runtime when compiling non-incrementally, they are replaced with numeric IDs.
+        // For is-checks and casts, we use the $imask$ property in the class metadata that contains the bit mask of
+        // the implemented interfaces' IDs.
+        get() = !incrementalCacheEnabled
+
+    private var nextInterfaceId = 0
+
+    internal fun getInterfaceId(iface: IrClass): Int {
+        if (!supportsInterfaceMetadataStripping) {
+            compilationException("Interface metadata stripping is not supported", iface)
+        }
+        if (!iface.isInterface) {
+            compilationException("Type is not an interface", iface)
+        }
+        iface.interfaceId?.let { return it }
+        return nextInterfaceId++.also {
+            iface.interfaceId = it
+        }
+    }
 
     internal var nextAssociatedObjectKey = 0
 }

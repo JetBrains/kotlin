@@ -7,7 +7,9 @@ package kotlin.js
 
 internal typealias BitMask = IntArray
 
-private fun bitMaskWith(activeBit: Int): BitMask {
+// The logic in this function must be kept in sync with
+// `org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.bitMaskWith` in the compiler.
+internal fun bitMaskWith(activeBit: Int): BitMask {
     val numberIndex = activeBit shr 5
     val intArray = IntArray(numberIndex + 1)
     val positionInNumber = activeBit and 31
@@ -24,6 +26,8 @@ internal fun BitMask.isBitSet(possibleActiveBit: Int): Boolean {
     return get(numberIndex) and numberWithSettledBit != 0
 }
 
+// The logic in this function must be kept in sync with
+// `org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.compositeBitMask` in the compiler.
 private fun compositeBitMask(capacity: Int, masks: Array<BitMask>): BitMask {
     return IntArray(capacity) { i ->
         var result = 0
@@ -36,6 +40,13 @@ private fun compositeBitMask(capacity: Int, masks: Array<BitMask>): BitMask {
     }
 }
 
+internal fun Array<Int>.toBitMask(): BitMask {
+    @Suppress("UnusedVariable") val arr = this
+    return js("new Int32Array(arr)").unsafeCast<BitMask>()
+}
+
+// The logic in this function must be kept in sync with
+// `org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.interfacesBitMask` in the compiler.
 internal fun implement(interfaces: Array<dynamic>): BitMask {
     var maxSize = 1
     val masks = js("[]")

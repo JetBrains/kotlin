@@ -1,6 +1,3 @@
-package foo
-
-
 interface IA
 interface IB : IA // B
 interface IC : IA, IB // B, C
