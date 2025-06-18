@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.ClassReferenceLowering
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.types.IrType
 
-class WasmClassReferenceLowering(context: WasmBackendContext) : ClassReferenceLowering(context) {
+class WasmClassReferenceLowering(context: WasmBackendContext) : ClassReferenceLowering<WasmBackendContext>(context) {
     override fun callGetKClass(
         returnType: IrType,
         typeArgument: IrType
