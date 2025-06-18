@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.argument
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
@@ -88,7 +88,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             if (type.isJavaValueBasedClassAndWarningsEnabled(context.session)) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, type)
             }
-            if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives) &&
+            if (!LanguageFeature.DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives.isEnabled() &&
                 type.isFlexiblePrimitive()
             ) {
                 reporter.reportOn(argument.source, IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)

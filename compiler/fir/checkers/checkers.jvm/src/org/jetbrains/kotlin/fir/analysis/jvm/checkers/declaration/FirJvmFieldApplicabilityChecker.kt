@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidFieldAnnotationsOnAnnotationParameters
+import org.jetbrains.kotlin.config.LanguageFeature.ForbidJvmAnnotationsOnAnnotationParameters
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -21,13 +22,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.needsMultiFieldValueClassFlattening
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
-import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -69,13 +66,12 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             else -> return
         }
 
-        val languageVersionSettings = context.session.languageVersionSettings
         val factory = when {
             problem == ANNOTATION -> {
                 when {
-                    !languageVersionSettings.supportsFeature(ForbidJvmAnnotationsOnAnnotationParameters) ->
+                    !ForbidJvmAnnotationsOnAnnotationParameters.isEnabled() ->
                         FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
-                    languageVersionSettings.supportsFeature(ForbidFieldAnnotationsOnAnnotationParameters) ->
+                    ForbidFieldAnnotationsOnAnnotationParameters.isEnabled() ->
                         return
                     else ->
                         FirJvmErrors.INAPPLICABLE_JVM_FIELD
