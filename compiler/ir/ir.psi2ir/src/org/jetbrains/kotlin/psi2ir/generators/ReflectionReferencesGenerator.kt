@@ -445,7 +445,8 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 )
 
             is FakePositionalValueArgumentForCallableReference -> {
-                val irAdapterParameter = irAdapterFun.valueParameters[valueArgument.index + shift]
+                val irAdapterParameter =
+                    irAdapterFun.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }[valueArgument.index + shift]
                 IrGetValueImpl(startOffset, endOffset, irAdapterParameter.type, irAdapterParameter.symbol)
             }
 
