@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.cli.common.messages
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.util.Logger
 
 /**
@@ -36,8 +36,5 @@ private class CompilerLoggerAdapter(
     private fun CompilerMessageSeverity.orError(): CompilerMessageSeverity = if (treatWarningsAsErrors) ERROR else this
 }
 
-fun MessageCollector.toLogger(treatWarningsAsErrors: Boolean = false): Logger =
-    CompilerLoggerAdapter(this, treatWarningsAsErrors)
-
 fun CompilerConfiguration.getLogger(treatWarningsAsErrors: Boolean = false): Logger =
-    getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY).toLogger(treatWarningsAsErrors)
+    CompilerLoggerAdapter(messageCollector, treatWarningsAsErrors)

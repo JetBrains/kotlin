@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
 import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
-import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -216,13 +215,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(givenPath: String) = resolve(RequiredUnresolvedLibrary(givenPath))
 
-    private val File.klib
-        get() = File(this, "klib")
-
-    // The libraries from the default root are linked automatically.
-    val defaultRoots: List<File>
-        get() = listOfNotNull(distHead, distPlatformHead).filter { it.exists }
-
     private fun getDefaultLibrariesFromDir(directory: File, prefix: String = "org.jetbrains.kotlin") =
         if (directory.exists) {
             directory.listFiles
@@ -314,55 +306,6 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
 
         return true
     }
-}
-
-class SingleKlibComponentResolver(
-    klibFile: String,
-    logger: Logger,
-    knownIrProviders: List<String>
-) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    directLibs = listOf(klibFile),
-    distributionKlib = null,
-    skipCurrentDir = false,
-    logger,
-    knownIrProviders = knownIrProviders
-) {
-    override fun libraryComponentBuilder(file: File, /* ignored */ isDefault: Boolean) =
-        KlibLoader { libraryPaths(file.path) }.load().librariesStdlibFirst
-}
-
-/**
- * Resolves KLIB libraries by:
- * - expanding the given library path to the real path that may or may not contain ".klib" extension
- * - searching among user-supplied libraries by "unique_name" that matches the given library name
- * - filtering out library components that have different ABI version than the ABI version of the current compiler
- * - filtering out libraries with non-default ir_provider.
- *
- * If no match found, fails with [Logger#fatal].
- *
- * Typical usage scenario: compiler.
- */
-object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
-    override fun resolve(libraryFile: File, logger: Logger) =
-        SingleKlibComponentResolver(
-            libraryFile.absolutePath, logger, emptyList()
-        ).resolve(libraryFile.absolutePath)
-}
-
-/**
- * Similar to [CompilerSingleFileKlibResolveStrategy], but doesn't filter out
- * libraries with [knownIrProviders].
- */
-// TODO: It looks like a hack because it is.
-//  The reason this strategy exists is that we shouldn't skip Native metadata-based interop libraries
-//  when generating compiler caches.
-class CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
-    private val knownIrProviders: List<String>
-) : SingleFileKlibResolveStrategy {
-    override fun resolve(libraryFile: File, logger: Logger) =
-        SingleKlibComponentResolver(
-            libraryFile.absolutePath, logger, knownIrProviders
-        ).resolve(libraryFile.absolutePath)
 }
 
 /**
