@@ -207,8 +207,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         ).also { irAdapterFun ->
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = null
-                irAdapterFun.dispatchReceiverParameter = null
-                irAdapterFun.extensionReceiverParameter = null
 
                 val fnType = functionParameter.type
 
