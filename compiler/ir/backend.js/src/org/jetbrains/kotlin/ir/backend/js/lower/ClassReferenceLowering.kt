@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
-class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering(context) {
-    private val getClassData = context.intrinsics.jsClass
+class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowering<JsIrBackendContext>(context) {
     private val primitiveClassesObject = context.intrinsics.primitiveClassesObject
 
     private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
@@ -131,13 +130,13 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
 
     private fun callGetClassByType(type: IrType) =
         JsIrBuilder.buildCall(
-            getClassData,
+            context.intrinsics.jsClass,
             typeArguments = listOf(type),
             origin = JsStatementOrigins.CLASS_REFERENCE
         )
 }
 
-abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+abstract class ClassReferenceLowering<Context : JsCommonBackendContext>(val context: Context) : BodyLoweringPass {
 
     protected val reflectionSymbols get() = context.reflectionSymbols
 
