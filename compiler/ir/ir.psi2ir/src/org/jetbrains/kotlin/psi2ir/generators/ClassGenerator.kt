@@ -473,7 +473,7 @@ internal class ClassGenerator(
         ktClassOrObject: KtPureClassOrObject
     ) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
-            irPrimaryConstructor.valueParameters.forEach {
+            irPrimaryConstructor.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }.forEach {
                 context.symbolTable.descriptorExtension.introduceValueParameter(it)
             }
 
