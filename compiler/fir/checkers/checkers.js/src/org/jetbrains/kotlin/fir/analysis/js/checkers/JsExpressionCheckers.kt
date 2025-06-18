@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsCodeConstantArgumentChecker
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsQualifierChecker
+import org.jetbrains.kotlin.fir.analysis.web.common.checkers.expression.FirJsReflectionAPICallChecker
 
 object JsExpressionCheckers : ExpressionCheckers() {
     override val annotationCallCheckers: Set<FirAnnotationCallChecker>
