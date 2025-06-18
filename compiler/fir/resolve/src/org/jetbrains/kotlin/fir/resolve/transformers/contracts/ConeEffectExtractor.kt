@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -31,10 +32,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ConeEffectExtractor(
-    private val session: FirSession,
+    override val session: FirSession,
     private val owner: FirContractDescriptionOwner,
     private val valueAndContextParameters: List<FirValueParameter>
-) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>() {
+) : FirDefaultVisitor<ConeContractDescriptionElement, Nothing?>(), SessionHolder {
     companion object {
         private val BOOLEAN_AND = FirContractsDslNames.id("kotlin", "Boolean", "and")
         private val BOOLEAN_OR = FirContractsDslNames.id("kotlin", "Boolean", "or")
@@ -238,7 +239,7 @@ class ConeEffectExtractor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConeContractDescriptionElement {
         val arg = typeOperatorCall.argument.asContractValueExpression()
-        val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(session)
+        val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType()
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
         val diagnostic = type.toTypeParameterSymbol(session)?.let { typeParameterSymbol ->
             val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()

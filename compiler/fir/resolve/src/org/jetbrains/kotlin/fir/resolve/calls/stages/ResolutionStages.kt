@@ -553,7 +553,7 @@ object CheckDslScopeViolation : ResolutionStage() {
     private fun MutableSet<ClassId>.collectDslMarkerAnnotations(annotations: Collection<FirAnnotation>) {
         for (annotation in annotations) {
             val annotationClass =
-                annotation.annotationTypeRef.coneType.fullyExpandedType(context.session).toClassSymbol(context.session)
+                annotation.annotationTypeRef.coneType.fullyExpandedType().toClassSymbol(context.session)
                     ?: continue
             if (annotationClass.hasAnnotation(StandardClassIds.Annotations.DslMarker, context.session)) {
                 add(annotationClass.classId)
@@ -642,7 +642,7 @@ internal object MapArguments : ResolutionStage() {
     private fun Candidate.getExpectedContextParameterTypesForInvoke(function: FirFunction): List<ConeKotlinType>? {
         if (!callInfo.isImplicitInvoke) return null
 
-        val dispatchReceiverType = dispatchReceiver?.expression?.resolvedType?.fullyExpandedType(callInfo.session)
+        val dispatchReceiverType = dispatchReceiver?.expression?.resolvedType?.fullyExpandedType()
         val contextExpectedTypes = dispatchReceiverType?.contextParameterTypes(context.session)
         // If it's non-empty => `function` is strictly a [FunctionN.invoke]
         if (contextExpectedTypes.isNullOrEmpty()) return null

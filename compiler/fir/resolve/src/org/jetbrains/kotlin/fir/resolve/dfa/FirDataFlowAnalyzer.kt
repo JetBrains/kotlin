@@ -158,7 +158,7 @@ class DataFlowAnalyzerContextSnapshot(
 abstract class FirDataFlowAnalyzer(
     protected val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     private val context: DataFlowAnalyzerContext,
-) {
+) : SessionHolder {
     companion object {
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -187,7 +187,7 @@ abstract class FirDataFlowAnalyzer(
                             return when (this) {
                                 is ConeClassLikeType -> {
                                     val symbol =
-                                        fullyExpandedType(components.session).lookupTag.toSymbol(components.session) ?: return false
+                                        fullyExpandedType().lookupTag.toSymbol(components.session) ?: return false
                                     val declaration = symbol.fir as? FirRegularClass ?: return true
                                     visibilityChecker.isClassLikeVisible(
                                         declaration,
@@ -206,6 +206,9 @@ abstract class FirDataFlowAnalyzer(
                     }
             }
     }
+
+    override val session: FirSession
+        get() = components.session
 
     protected abstract val logicSystem: LogicSystem
     protected abstract val receiverStack: ImplicitValueStorage
