@@ -246,7 +246,7 @@ internal class SymbolLightSimpleMethod private constructor(
 
     companion object {
         /**
-         * @param suppressValueClass whether suppress the [containingClass] check for [SymbolLightClassForValueClass] instance
+         * @param suppressValueClass whether suppress the [containingClass] check for [isValueClass]
          */
         internal fun KaSession.createSimpleMethods(
             containingClass: SymbolLightClassBase,
@@ -267,7 +267,7 @@ internal class SymbolLightSimpleMethod private constructor(
             val hasValueClassInReturnType = hasValueClassInReturnType(functionSymbol)
 
             val isNonMaterializableValueClassFunction = !suppressValueClass &&
-                    containingClass is SymbolLightClassForValueClass &&
+                    containingClass.isValueClass &&
                     // Overrides are materialized by default
                     !functionSymbol.isOverride
 

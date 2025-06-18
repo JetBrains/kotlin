@@ -112,7 +112,7 @@ internal class SymbolLightConstructor private constructor(
                 return
             }
 
-            val destinationClassIsValueClass = lightClass is SymbolLightClassForValueClass
+            val destinationClassIsValueClass = lightClass.isValueClass
             for (constructor in constructors) {
                 ProgressManager.checkCanceled()
 

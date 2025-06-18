@@ -515,7 +515,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 isTopLevel = context.isTopLevel,
             )
 
-            val isNonMaterializableValueClassProperty = context.destinationLightClass is SymbolLightClassForValueClass &&
+            val isNonMaterializableValueClassProperty = context.destinationLightClass.isValueClass &&
                     // Constructor properties are materialized by default
                     !property.isFromPrimaryConstructor &&
                     // Overrides are materialized by default
@@ -605,7 +605,7 @@ internal class SymbolLightAccessorMethod private constructor(
             isHiddenOrSynthetic(accessorSymbol, siteTarget) -> false
             !accessorSymbol.isNotDefault && accessorSymbol.visibility == KaSymbolVisibility.PRIVATE -> false
             // Value classes have special logic
-            context.destinationLightClass is SymbolLightClassForValueClass -> when {
+            context.destinationLightClass.isValueClass -> when {
                 // Overrides are generated for value classes
                 property.isOverride -> true
 
