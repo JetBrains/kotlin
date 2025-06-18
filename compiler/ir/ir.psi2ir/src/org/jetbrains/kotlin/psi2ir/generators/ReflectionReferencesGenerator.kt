@@ -125,7 +125,9 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         callBuilder.descriptor,
                         callBuilder.typeArguments
                     ).also { irCallableReference ->
-                        irCallableReference.dispatchReceiverViaCachedCalleeData = dispatchReceiverValue?.loadIfExists()
+                        dispatchReceiverValue?.loadIfExists()?.let {
+                            irCallableReference.arguments[0] = it
+                        }
                         irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
                     }
                 }
