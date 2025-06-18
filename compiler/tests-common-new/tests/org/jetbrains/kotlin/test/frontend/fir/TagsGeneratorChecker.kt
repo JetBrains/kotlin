@@ -95,6 +95,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.artifactsProvider
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper.Companion.isTeamCityBuild
 import org.jetbrains.kotlin.test.utils.firTestDataFile
@@ -130,20 +131,25 @@ class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(te
         testDataFiles: List<File>,
         firFiles: List<FirFile>,
     ) {
-        if (!isTeamCityBuild) {
-            for (testDataFile in testDataFiles) {
-                val testDataFileContent = testDataFile.readText()
-                if (testDataFileContent.contains(TAG_PREFIX)) return
-                if (firFiles.isEmpty()) return
+        for (testDataFile in testDataFiles) {
+            val testDataFileContent = testDataFile.readText()
+            if (testDataFileContent.contains(TAG_PREFIX)) return
+            if (firFiles.isEmpty()) return
 
-                val tags = createListOfTags(firFiles)
-                val wrappedTagComment = formatTagsAsMultilineComment(tags)
-
-                testDataFile.writer().use {
-                    it.append(testDataFileContent.trim())
-                    it.append("\n\n")
-                    it.appendLine(wrappedTagComment)
+            if (isTeamCityBuild) {
+                testServices.assertions.fail {
+                    """GENERATED_FIR_TAGS are missing for file ${testDataFile.name}.
+                        |Please rerun the test locally to generate tags.""".trimMargin()
                 }
+            }
+
+            val tags = createListOfTags(firFiles)
+            val wrappedTagComment = formatTagsAsMultilineComment(tags)
+
+            testDataFile.writer().use {
+                it.append(testDataFileContent.trim())
+                it.append("\n\n")
+                it.appendLine(wrappedTagComment)
             }
         }
     }
