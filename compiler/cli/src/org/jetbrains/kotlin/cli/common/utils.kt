@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.text
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
-import org.jetbrains.kotlin.cli.common.messages.toLogger as toLoggerNew
 
 fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean {
     return arguments.incrementalCompilation ?: IncrementalCompilation.isEnabledForJvm()
@@ -128,13 +126,6 @@ fun <PathProvider : Any> getLibraryFromHome(
     )
     return null
 }
-
-@Deprecated(
-    "Use org.jetbrains.kotlin.cli.common.messages.toLogger() instead",
-    ReplaceWith("toLogger()", "org.jetbrains.kotlin.cli.common.messages.toLogger"),
-    DeprecationLevel.ERROR
-)
-fun MessageCollector.toLogger(): Logger = toLoggerNew()
 
 fun disposeRootInWriteAction(disposable: Disposable) {
     if (ApplicationManager.getApplication() != null) {
