@@ -64,3 +64,5 @@ import androidx.compose.runtime.Composable
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, functionDeclaration, functionalType, lambdaLiteral, stringLiteral */

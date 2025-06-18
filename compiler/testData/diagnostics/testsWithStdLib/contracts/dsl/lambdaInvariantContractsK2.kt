@@ -30,3 +30,6 @@ fun testRunIfNot(s: String?) {
         s.length
     }
 }
+
+/* GENERATED_FIR_TAGS: contracts, equalityExpression, functionDeclaration, functionalType, ifExpression, inline,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, typeParameter */

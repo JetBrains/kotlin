@@ -20,3 +20,5 @@ class Test : ITest {
     override fun test(modifier: Modifier) {
     }
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */

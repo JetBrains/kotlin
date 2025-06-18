@@ -69,3 +69,6 @@ fun testNotNumber(x: Any) {
     decodeNotNumber("abc").length
 }
 
+/* GENERATED_FIR_TAGS: additiveExpression, contracts, equalityExpression, functionDeclaration, ifExpression,
+isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration, smartcast, stringLiteral, whenExpression,
+whenWithSubject */
