@@ -70,7 +70,9 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         val result = super.configureLanguageFeatures(arguments, collector)
         result.configureJvmLanguageFeatures(this)
 
-        if (!indyAllowAnnotatedLambdas) {
+        if (indyAllowAnnotatedLambdas == true) {
+            result[LanguageFeature.JvmIndyAllowLambdasWithAnnotations] = LanguageFeature.State.ENABLED
+        } else if (indyAllowAnnotatedLambdas == false) {
             result[LanguageFeature.JvmIndyAllowLambdasWithAnnotations] = LanguageFeature.State.DISABLED
         }
 

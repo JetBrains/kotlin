@@ -401,7 +401,6 @@ enum class LanguageFeature(
     MultiDollarInterpolation(KOTLIN_2_2, "KT-2425"),
     JvmDefaultEnableByDefault(KOTLIN_2_2, "KT-71768"),
     ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs(sinceVersion = KOTLIN_2_2, enabledInProgressiveMode = true, "KT-70916"),
-    JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_2, "KT-76606"),
     FixationEnhancementsIn22(KOTLIN_2_2, "KT-76345"), // KT-76345, KT-71854
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-71138"),
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
@@ -426,6 +425,7 @@ enum class LanguageFeature(
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-279"),
     ForbidObjectDelegationToItself(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-17417"),
     ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(KOTLIN_2_3, enabledInProgressiveMode = true, issue = "KT-25513"),
+    JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_3, "KT-76606"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),
     AllowContractsOnSomeOperators(KOTLIN_2_3, "KT-32313"),

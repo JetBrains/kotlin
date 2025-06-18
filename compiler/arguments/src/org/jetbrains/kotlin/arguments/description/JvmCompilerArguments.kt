@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
+import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
@@ -643,7 +644,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
     compilerArgument {
         name = "Xindy-allow-annotated-lambdas"
         description = "Allow using 'invokedynamic' for lambda expressions with annotations".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultNull
 
         @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
