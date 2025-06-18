@@ -263,8 +263,8 @@ internal object CompilationServiceImpl : CompilationService {
 
         val daemonOptions = configureDaemonOptions(
             DaemonOptions().apply {
-                if (daemonConfiguration.shutdownDelayMilliseconds != null) {
-                    shutdownDelayMilliseconds = daemonConfiguration.shutdownDelayMilliseconds
+                if (daemonConfiguration.shutdownDelay != null) {
+                    shutdownDelayMilliseconds = daemonConfiguration.shutdownDelay.toMillis()
                 }
             }
         )

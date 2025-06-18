@@ -47,6 +47,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -108,16 +109,14 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.daemon.shutdownDelayMs")
     protected Long daemonShutdownDelayMs;
 
-    private static final long SECOND = 1000;
-    private static final long MINUTE = 60 * SECOND;
     /**
      * The time the Kotlin daemon continues to live after the Maven build process finishes (without the Maven daemon)
      */
-    private static final long DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY = 30 * MINUTE;
+    private static final Duration DEFAULT_NON_MAVEN_DAEMON_SHUTDOWN_DELAY = Duration.ofMinutes(30);
     /**
      * The time the Kotlin daemon continues to live after the Maven daemon shuts down
      */
-    private static final long DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY = SECOND;
+    private static final Duration DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY = Duration.ofSeconds(1);
     /**
      * A system property used to detect we are inside the Maven Daemon.
      */
@@ -293,10 +292,10 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             CompilerExecutionStrategyConfiguration strategyConfig = compilationService.makeCompilerExecutionStrategyConfiguration();
             if (useDaemon) {
                 boolean inMavenDaemon = System.getProperty(MAVEN_DAEMON_PROPERTY_NAME) != null;
-                long usedDaemonShutdownDelay;
+                Duration usedDaemonShutdownDelay;
                 if (daemonShutdownDelayMs != null) {
                     // respect explicitly specified value
-                    usedDaemonShutdownDelay = daemonShutdownDelayMs;
+                    usedDaemonShutdownDelay = Duration.ofMillis(daemonShutdownDelayMs);
                 } else if (inMavenDaemon) {
                     usedDaemonShutdownDelay = DEFAULT_MAVEN_DAEMON_SHUTDOWN_DELAY;
                 } else {
