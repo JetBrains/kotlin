@@ -221,7 +221,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         )
                     ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$fnType")
 
-                irAdapterFun.valueParameters = listOf(irFnParameter)
+                irAdapterFun.parameters = listOf(irFnParameter)
                 irAdapterFun.body =
                     IrBlockBodyBuilder(
                         context,
