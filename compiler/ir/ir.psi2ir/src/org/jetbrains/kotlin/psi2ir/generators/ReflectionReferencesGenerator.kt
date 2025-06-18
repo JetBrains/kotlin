@@ -358,7 +358,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 hasBoundDispatchReceiver || isImportedFromObject ->
                     irCall.arguments[0] = receiverValue
                 hasBoundExtensionReceiver ->
-                    irCall.extensionReceiver = receiverValue
+                    irCall.arguments[resolvedCall.contextReceivers.size] = receiverValue
             }
         }
 
