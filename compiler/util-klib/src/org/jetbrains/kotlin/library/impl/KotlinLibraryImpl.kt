@@ -231,6 +231,7 @@ fun createKotlinLibrary(
     return KotlinLibraryImpl(base, metadata, ir)
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun createKotlinLibraryComponents(
     libraryFile: File,
     isDefault: Boolean = true,
@@ -243,6 +244,7 @@ fun createKotlinLibraryComponents(
     }
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun isKotlinLibrary(libraryFile: File): Boolean = try {
     val libraryPath = libraryFile.absolutePath
 
@@ -269,5 +271,6 @@ fun isKotlinLibrary(libraryFile: File): Boolean = try {
     false
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun isKotlinLibrary(libraryFile: java.io.File): Boolean =
     isKotlinLibrary(File(libraryFile.absolutePath))

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueName
 
+// TODO: drop this as a part of KLIB resolver (+)
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
         target: KonanTarget,

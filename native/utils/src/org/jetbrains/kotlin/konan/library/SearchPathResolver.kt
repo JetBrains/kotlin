@@ -8,10 +8,12 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
+// TODO: drop this as a part of KLIB resolver (+)
 interface SearchPathResolverWithTarget<L : KotlinLibrary> : SearchPathResolver<L> {
     val target: KonanTarget
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun defaultResolver(
     directLibs: List<String>,
     target: KonanTarget,
@@ -26,6 +28,7 @@ fun defaultResolver(
     logger = logger
 )
 
+// TODO: drop this as a part of KLIB resolver (+)
 class KonanLibraryProperResolver(
     directLibs: List<String>,
     override val target: KonanTarget,

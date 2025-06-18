@@ -16,6 +16,7 @@ const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
 const val KOTLIN_WASM_STDLIB_NAME: String = "kotlin"
 const val KOTLINTEST_MODULE_NAME: String = "kotlin-test"
 
+// TODO: drop this as a part of KLIB resolver (+)
 interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     /**
      * The search root for KLIBs.
@@ -106,12 +107,14 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun <L : KotlinLibrary> SearchPathResolver<L>.resolve(unresolved: UnresolvedLibrary): L? = when (unresolved) {
     is LenientUnresolvedLibrary -> resolve(unresolved)
     is RequiredUnresolvedLibrary -> resolve(unresolved)
 }
 
 // This is a simple library resolver that only cares for file names.
+// TODO: drop this as a part of KLIB resolver (+)
 abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     directLibs: List<String>,
     val distributionKlib: String?,
@@ -285,6 +288,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 // This is a library resolver aware of attributes shared between platforms,
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
+// TODO: drop this as a part of KLIB resolver (+)
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     directLibs: List<String>,
     distributionKlib: String?,
@@ -336,6 +340,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     }
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 class SingleKlibComponentResolver(
     klibFile: String,
     logger: Logger,
@@ -361,6 +366,7 @@ class SingleKlibComponentResolver(
  *
  * Typical usage scenario: compiler.
  */
+// TODO: drop this as a part of KLIB resolver (+)
 object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger) =
         SingleKlibComponentResolver(
@@ -375,6 +381,8 @@ object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
 // TODO: It looks like a hack because it is.
 //  The reason this strategy exists is that we shouldn't skip Native metadata-based interop libraries
 //  when generating compiler caches.
+//
+// TODO: drop this as a part of KLIB resolver (+)
 class CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
     private val knownIrProviders: List<String>
 ) : SingleFileKlibResolveStrategy {

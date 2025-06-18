@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 
+// TODO: drop this as a part of KLIB resolver (+)
 interface KotlinLibraryResolver<L : KotlinLibrary> {
 
     val searchPathResolver: SearchPathResolver<L>
@@ -55,6 +56,7 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult
@@ -66,8 +68,10 @@ interface KotlinLibraryResolveResult {
 }
 
 
+// TODO: drop this as a part of KLIB resolver (+)
 typealias LibraryOrder = (Iterable<KotlinResolvedLibrary>) -> List<KotlinResolvedLibrary>
 
+// TODO: drop this as a part of KLIB resolver (+)
 val TopologicalLibraryOrder: LibraryOrder = { input ->
     val sorted = mutableListOf<KotlinResolvedLibrary>()
     val visited = mutableSetOf<KotlinResolvedLibrary>()

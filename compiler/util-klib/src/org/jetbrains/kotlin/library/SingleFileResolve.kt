@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun interface SingleFileKlibResolveStrategy {
     fun resolve(libraryFile: File, logger: Logger): KotlinLibrary
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun resolveSingleFileKlib(
     libraryFile: File,
     logger: Logger = DummyLogger,
