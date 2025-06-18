@@ -1065,7 +1065,7 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
     ): IrExpression {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return this
+        if (!LanguageFeature.ImplicitSignedToUnsignedIntegerConversion.isEnabled()) return this
 
         if (parameter == null || !parameter.isMarkedWithImplicitIntegerCoercion) return this
         if (!argument.getExpectedType(session, parameter).fullyExpandedType().isUnsignedTypeOrNullableUnsignedType) return this
