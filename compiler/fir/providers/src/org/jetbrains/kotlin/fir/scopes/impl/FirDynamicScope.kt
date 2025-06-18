@@ -159,11 +159,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         origin = FirDeclarationOrigin.DynamicScope
         resolvePhase = FirResolvePhase.BODY_RESOLVE
 
-        returnTypeRef = if (name in FirOperationNameConventions.ASSIGNMENT_NAMES) {
-            session.builtinTypes.unitType
-        } else {
-            dynamicTypeRef
-        }
+        returnTypeRef = dynamicTypeRef
 
         val parameter = buildValueParameter {
             moduleData = session.moduleData
