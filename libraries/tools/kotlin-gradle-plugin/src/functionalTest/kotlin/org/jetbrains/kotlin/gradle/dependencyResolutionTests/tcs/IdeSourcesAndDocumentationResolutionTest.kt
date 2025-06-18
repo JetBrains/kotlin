@@ -31,6 +31,10 @@ class IdeSourcesAndDocumentationResolutionTest {
 
     @Test
     fun `test - MVIKotlin`() {
+        // KT-77580
+        // When using K/N from local repo this test doesn't unpack K/N to konan dir
+        // so it passes only after another test does the unpacking
+        // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
         val project = buildProject {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)

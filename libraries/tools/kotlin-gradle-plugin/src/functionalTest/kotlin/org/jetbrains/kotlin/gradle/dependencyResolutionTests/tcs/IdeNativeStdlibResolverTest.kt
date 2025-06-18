@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.junit.Test
 
 class IdeNativeStdlibResolverTest {
-
+    // KT-77580
+    // When using K/N from local repo these tests don't unpack K/N to konan dir
+    // so they pass only after another test does the unpacking
+    // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
 
     @Test
     fun `test single linux target`() {

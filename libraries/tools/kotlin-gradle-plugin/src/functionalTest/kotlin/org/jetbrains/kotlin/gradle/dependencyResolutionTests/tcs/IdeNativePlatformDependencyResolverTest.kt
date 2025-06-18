@@ -23,6 +23,10 @@ class IdeNativePlatformDependencyResolverTest {
 
     @Test
     fun `test - posix on linux`() {
+        // KT-77580
+        // When using K/N from local repo this test doesn't unpack K/N to konan dir
+        // so it passes only after another test does the unpacking
+        // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()

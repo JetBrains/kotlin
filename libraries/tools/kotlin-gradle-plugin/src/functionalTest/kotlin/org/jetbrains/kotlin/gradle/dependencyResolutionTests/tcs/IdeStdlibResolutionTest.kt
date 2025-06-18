@@ -29,6 +29,14 @@ import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 
 class IdeStdlibResolutionTest {
+    // KT-77580
+    // When using K/N from local repo these tests don't unpack K/N to konan dir:
+    //   `test bamboo linux`
+    //   `test jvm+native shared simple project`
+    //   `test nativeShared`
+    //   `test single native target`
+    // so they pass only after another test does the unpacking
+    // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
 
     @Test
     fun `test single jvm target`() {
