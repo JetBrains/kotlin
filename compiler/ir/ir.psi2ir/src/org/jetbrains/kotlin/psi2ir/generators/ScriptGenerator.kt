@@ -191,7 +191,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     containerSource = containerSource
                 )
             }.also { irConstructor ->
-                irConstructor.valueParameters = buildList {
+                irConstructor.parameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)
                     addAll(explicitCallParams)
                     addAll(irScript.implicitReceiversParameters)
