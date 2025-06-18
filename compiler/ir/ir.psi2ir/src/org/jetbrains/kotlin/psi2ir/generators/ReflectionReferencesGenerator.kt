@@ -500,7 +500,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         )
                 }
 
-                irAdapterFun.valueParameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
+                irAdapterFun.parameters += ktExpectedParameterTypes.mapIndexed { index, ktExpectedParameterType ->
                     createAdapterParameter(startOffset, endOffset, Name.identifier("p$index"), ktExpectedParameterType, IrParameterKind.Regular)
                 }
             }
