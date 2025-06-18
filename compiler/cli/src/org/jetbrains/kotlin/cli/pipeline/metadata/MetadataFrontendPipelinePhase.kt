@@ -64,8 +64,8 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         }
 
         val klibs: List<KotlinLibrary> = loadMetadataKlibs(
-            libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path },
-            configuration = configuration
+            configuration = configuration,
+            libraryPaths = configuration.contentRoots.mapNotNull { (it as? JvmClasspathRoot)?.file?.path }
         ).all
 
         val perfManager = configuration.perfManager

@@ -187,8 +187,8 @@ private fun createDependencyContainerForStdlibIfKlib(
     projectContext: ProjectContext,
 ): CommonDependenciesContainerImpl? {
     val stdlibKlib = loadMetadataKlibs(
-        libraryPaths = listOf(stdlibFilePath.toString()),
         configuration = environment.configuration,
+        libraryPaths = listOf(stdlibFilePath.toString()),
     ).all.singleOrNull() ?: return null
 
     val stdlibModuleDescriptor = createAndInitializeKlibBasedStdlibCommonDescriptor(stdlibKlib, environment, projectContext)
