@@ -988,17 +988,15 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
         is ConeTypeParameterType -> isMarkedNullable || this.lookupTag.typeParameterSymbol.resolvedBounds.all {
             it.coneType.canBeNull(session)
         }
-        is ConeStubType -> {
-            isMarkedNullable ||
-                    (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
-                        it == null || it.allBoundsAreNullableOrUnresolved(session)
-                    }
-        }
+        is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session)
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
         is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
-        is ConeIntegerLiteralType, is ConeTypeVariableType -> isMarkedNullable
+        is ConeIntegerLiteralType -> isMarkedNullable
+        is ConeTypeVariableType -> isMarkedNullable || (typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
+            it == null || it.allBoundsAreNullableOrUnresolved(session)
+        }
     }
 }
 

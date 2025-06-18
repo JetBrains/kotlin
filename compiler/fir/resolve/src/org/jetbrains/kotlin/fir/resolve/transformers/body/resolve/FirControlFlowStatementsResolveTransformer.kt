@@ -274,15 +274,15 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.resolvedType.isNullableType()) {
+            if (result.resolvedType.isMarkedNullable()) {
                 val rhsResolvedType = result.rhs.resolvedType
                 // This part of the code is a kind of workaround, and it probably will be resolved by KT-55692
-                if (!rhsResolvedType.isNullableType()) {
+                if (!rhsResolvedType.isMarkedNullable()) {
                     // It's definitely not a flexible with nullable bound
                     // Sometimes return type for special call for elvis operator might be nullable,
                     // but result is not nullable if the right type is not nullable
                     result.replaceConeTypeOrNull(result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
-                } else if (rhsResolvedType is ConeFlexibleType && !rhsResolvedType.lowerBound.isNullableType()) {
+                } else if (rhsResolvedType is ConeFlexibleType && !rhsResolvedType.lowerBound.isMarkedNullable()) {
                     result.replaceConeTypeOrNull(result.resultType.makeConeFlexibleTypeWithNotNullableLowerBound(session.typeContext))
                 }
             }

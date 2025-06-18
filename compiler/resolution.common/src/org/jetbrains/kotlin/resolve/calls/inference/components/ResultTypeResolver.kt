@@ -462,14 +462,14 @@ class ResultTypeResolver(
             if (it.kind != ConstraintKind.UPPER) return@filter false
             if (it.isProperConstraint()) return@filter true
             // Non-proper constraints like recursive upper bounds can still contribute nullability information
-            if (!it.type.isTypeVariableType() && !it.type.isNullableType()) hasNotNull = true
+            if (!it.type.isNullableType()) hasNotNull = true
             false
         }
 
         if (upperConstraints.isNotEmpty()) {
             return computeUpperType(upperConstraints).let {
                 if (hasNotNull && it.isNullableType() && languageVersionSettings.supportsFeature(LanguageFeature.InferenceEnhancementsIn23)) {
-                    it.withNullability(false)
+                    it.makeDefinitelyNotNullOrNotNull()
                 } else {
                     it
                 }
