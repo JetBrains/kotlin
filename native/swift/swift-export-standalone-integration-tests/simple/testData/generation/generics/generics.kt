@@ -1,3 +1,7 @@
+// KIND: STANDALONE
+// MODULE: main
+// FILE: main.kt
+
 fun <T> foo(param1: T, param2: T?) {}
 
 // A producer interface (covariant)
