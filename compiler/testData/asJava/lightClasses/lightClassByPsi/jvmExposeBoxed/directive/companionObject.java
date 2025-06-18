@@ -20,6 +20,9 @@ public final class StringWrapper /* StringWrapper*/ {
   public static final @org.jetbrains.annotations.NotNull() StringWrapper getStaticVariable();//  getStaticVariable()
 
   @kotlin.jvm.JvmExposeBoxed()
+  public  StringWrapper(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
+  @kotlin.jvm.JvmExposeBoxed()
   public static final int getRegularStaticVariable();//  getRegularStaticVariable()
 
   @kotlin.jvm.JvmExposeBoxed()

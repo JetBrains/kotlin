@@ -16,6 +16,9 @@ public final class MyValueClass /* one.MyValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String str;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  MyValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

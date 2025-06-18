@@ -11,6 +11,9 @@ public final class TopLevelValueClass /* TopLevelValueClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String s;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  TopLevelValueClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

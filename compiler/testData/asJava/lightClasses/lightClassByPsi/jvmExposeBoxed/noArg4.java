@@ -3,6 +3,12 @@
 public final class IntWrapper /* IntWrapper*/ {
   private final int i;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  IntWrapper();//  .ctor()
+
+  @kotlin.jvm.JvmExposeBoxed()
+  public  IntWrapper(int);//  .ctor(int)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

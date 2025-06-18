@@ -2,6 +2,9 @@
 public final class IntValue /* one.IntValue*/ {
   private final int value;
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  IntValue(int);//  .ctor(int)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 

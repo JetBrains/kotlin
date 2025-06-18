@@ -41,6 +41,9 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   @java.lang.Override()
   public void setRegularVariable(int);//  setRegularVariable(int)
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  ValueClass(int);//  .ctor(int)
+
   public boolean equals(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(@org.jetbrains.annotations.Nullable() java.lang.Object)
 
   public final int getInt();//  getInt()

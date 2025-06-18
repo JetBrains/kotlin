@@ -9,6 +9,9 @@ public final class ValueClass /* pack.ValueClass*/ implements pack.Interface {
   @java.lang.Override()
   public int getValue();//  getValue()
 
+  @kotlin.jvm.JvmExposeBoxed()
+  public  ValueClass(int);//  .ctor(int)
+
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
 
