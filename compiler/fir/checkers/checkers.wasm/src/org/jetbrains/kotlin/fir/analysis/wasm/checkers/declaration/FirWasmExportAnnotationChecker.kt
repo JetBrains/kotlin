@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
@@ -41,7 +42,7 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
             if (declaration.symbol.isEffectivelyExternal(context.session) || declaration.hasValidJsCodeBody()) {
                 reporter.reportOn(annotation.source, FirWasmErrors.WASM_EXPORT_ON_EXTERNAL_DECLARATION)
             }
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            if (LanguageFeature.ContextParameters.isEnabled()) {
                 if (declaration.contextParameters.isNotEmpty()) {
                     reporter.reportOn(declaration.source, FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS)
                 }
