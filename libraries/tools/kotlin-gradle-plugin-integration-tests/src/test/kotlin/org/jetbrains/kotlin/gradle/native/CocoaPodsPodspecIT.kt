@@ -17,10 +17,6 @@ import kotlin.test.assertEquals
 @NativeGradlePluginTests
 class CocoaPodsPodspecIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions
-        // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-        get() = super.defaultBuildOptions.disableIsolatedProjects()
-
     private val cocoapodsSingleKtPod = "native-cocoapods-single"
     private val cocoapodsMultipleKtPods = "native-cocoapods-multiple"
 

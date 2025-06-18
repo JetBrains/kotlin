@@ -65,9 +65,7 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testPodImportSingle(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             cocoapodsSingleKtPod,
-            gradleVersion,
-            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
@@ -85,9 +83,7 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             cocoapodsSingleKtPod,
-            gradleVersion,
-            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
 
             buildGradleKts.addCocoapodsBlock("noPodspec()")
@@ -107,9 +103,7 @@ class CocoaPodsIT : KGPBaseTest() {
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
         nativeProjectWithCocoapodsAndIosAppPodFile(
             cocoapodsMultipleKtPods,
-            gradleVersion,
-            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
 
             buildWithCocoapodsWrapper(podImportTaskName) {
@@ -735,9 +729,7 @@ class CocoaPodsIT : KGPBaseTest() {
         val subprojectPodInstallTask = ":$subProjectName$podInstallTaskName"
         nativeProjectWithCocoapodsAndIosAppPodFile(
             cocoapodsSingleKtPod,
-            gradleVersion,
-            // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-            buildOptions = defaultBuildOptions.disableIsolatedProjects(),
+            gradleVersion
         ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
