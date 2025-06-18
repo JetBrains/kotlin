@@ -73,9 +73,6 @@ context(c: TypeSystemInferenceExtensionContext)
 fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? = with(c) { typeParameter() }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker = with(c) { withNotNullProjection() }
-
-context(c: TypeSystemInferenceExtensionContext)
 fun CapturedTypeMarker.hasRawSuperType(): Boolean = with(c) { hasRawSuperType() }
 
 context(c: TypeSystemInferenceExtensionContext)

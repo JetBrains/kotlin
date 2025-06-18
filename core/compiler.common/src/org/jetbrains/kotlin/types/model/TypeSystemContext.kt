@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
@@ -247,6 +248,8 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker
     fun CapturedTypeMarker.typeParameter(): TypeParameterMarker?
+
+    @AllowedToUsedOnlyInK1
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
     /**
@@ -441,6 +444,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun CapturedTypeMarker.isOldCapturedType(): Boolean
     fun CapturedTypeMarker.typeConstructor(): CapturedTypeConstructorMarker
     fun CapturedTypeMarker.captureStatus(): CaptureStatus
+
+    @AllowedToUsedOnlyInK1
     fun CapturedTypeMarker.isProjectionNotNull(): Boolean
     fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker
 

@@ -116,9 +116,6 @@ context(c: TypeSystemContext)
 fun CapturedTypeMarker.captureStatus(): CaptureStatus = with(c) { captureStatus() }
 
 context(c: TypeSystemContext)
-fun CapturedTypeMarker.isProjectionNotNull(): Boolean = with(c) { isProjectionNotNull() }
-
-context(c: TypeSystemContext)
 fun CapturedTypeConstructorMarker.projection(): TypeArgumentMarker = with(c) { projection() }
 
 context(c: TypeSystemContext)
