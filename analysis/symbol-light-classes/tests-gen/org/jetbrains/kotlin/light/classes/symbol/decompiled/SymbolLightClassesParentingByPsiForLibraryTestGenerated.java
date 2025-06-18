@@ -728,6 +728,24 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
     }
 
     @Test
+    @TestMetadata("noArg3.kt")
+    public void testNoArg3() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg3.kt");
+    }
+
+    @Test
+    @TestMetadata("noArg4.kt")
+    public void testNoArg4() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArg4.kt");
+    }
+
+    @Test
+    @TestMetadata("noArgNoValueClass.kt")
+    public void testNoArgNoValueClass() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/noArgNoValueClass.kt");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");
@@ -902,6 +920,18 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
       @TestMetadata("noArg2.kt")
       public void testNoArg2() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg2.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg3.kt")
+      public void testNoArg3() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg3.kt");
+      }
+
+      @Test
+      @TestMetadata("noArg4.kt")
+      public void testNoArg4() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/noArg4.kt");
       }
 
       @Test
