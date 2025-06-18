@@ -488,8 +488,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
 
-                irAdapterFun.dispatchReceiverParameter = null
-
                 val boundReceiverType = callBuilder.original.getBoundReceiverType()
                 if (boundReceiverType != null) {
                     irAdapterFun.extensionReceiverParameter =
