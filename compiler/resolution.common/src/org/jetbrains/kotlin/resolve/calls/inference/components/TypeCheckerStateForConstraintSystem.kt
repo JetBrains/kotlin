@@ -278,9 +278,14 @@ abstract class TypeCheckerStateForConstraintSystem(
                      */
                     typeVariable.isMarkedNullable() -> {
                         val typeVariableTypeConstructor = typeVariable.typeConstructor()
-                        val needToMakeDefNotNull = subTypeConstructor.isTypeVariable() ||
-                                typeVariableTypeConstructor !is TypeVariableTypeConstructorMarker ||
-                                !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
+
+                        check(typeVariableTypeConstructor is TypeVariableTypeConstructorMarker) {
+                            "Unexpected ${typeVariableTypeConstructor::class} class for $typeVariable/$typeVariableTypeConstructor"
+                        }
+
+                        val needToMakeDefNotNull =
+                            subTypeConstructor.isTypeVariable() ||
+                                    !typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions()
 
                         val resultType = if (needToMakeDefNotNull) {
                             subType.makeDefinitelyNotNullOrNotNull()
