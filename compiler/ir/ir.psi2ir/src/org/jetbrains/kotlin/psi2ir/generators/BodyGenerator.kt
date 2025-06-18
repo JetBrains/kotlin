@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -373,8 +374,9 @@ internal class BodyGenerator(
         irBlockBody: IrBlockBody
     ) {
         val thisAsReceiverParameter = classDescriptor.thisAsReceiverParameter
+        val valueParameters = irConstructor.parameters.filter { it.kind == IrParameterKind.Regular || it.kind == IrParameterKind.Context }
         for ((index, receiverDescriptor) in classDescriptor.contextReceivers.withIndex()) {
-            val irValueParameter = irConstructor.valueParameters[index]
+            val irValueParameter = valueParameters[index]
             irBlockBody.statements.add(
                 IrSetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
