@@ -30,18 +30,6 @@ var JpsProject.kotlinCommonCompilerArguments
         getOrCreateSettings().commonCompilerArguments = value
     }
 
-var JpsProject.k2MetadataCompilerArguments
-    get() = kotlinCompilerSettingsContainer.k2MetadataCompilerArguments
-    internal set(value) {
-        getOrCreateSettings().k2MetadataCompilerArguments = value
-    }
-
-var JpsProject.k2JsCompilerArguments
-    get() = kotlinCompilerSettingsContainer.k2JsCompilerArguments
-    internal set(value) {
-        getOrCreateSettings().k2JsCompilerArguments = value
-    }
-
 var JpsProject.k2JvmCompilerArguments
     get() = kotlinCompilerSettingsContainer.k2JvmCompilerArguments
     internal set(value) {
@@ -62,26 +50,20 @@ private fun JpsProject.getOrCreateSettings(): JpsKotlinCompilerSettings {
 
 class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
     internal var commonCompilerArguments: CommonCompilerArguments = CommonCompilerArguments.DummyImpl()
-    internal var k2MetadataCompilerArguments = K2MetadataCompilerArguments()
     internal var k2JvmCompilerArguments = K2JVMCompilerArguments()
-    internal var k2JsCompilerArguments = K2JSCompilerArguments()
     internal var compilerSettings = CompilerSettings()
     internal var jpsPluginSettings = JpsPluginSettings()
 
     @Suppress("UNCHECKED_CAST")
     internal operator fun <T : CommonCompilerArguments> get(compilerArgumentsClass: Class<T>): T = when (compilerArgumentsClass) {
-        K2MetadataCompilerArguments::class.java -> k2MetadataCompilerArguments as T
         K2JVMCompilerArguments::class.java -> k2JvmCompilerArguments as T
-        K2JSCompilerArguments::class.java -> k2JsCompilerArguments as T
         else -> commonCompilerArguments as T
     }
 
     override fun createCopy(): JpsKotlinCompilerSettings {
         val copy = JpsKotlinCompilerSettings()
         copy.commonCompilerArguments = this.commonCompilerArguments
-        copy.k2MetadataCompilerArguments = this.k2MetadataCompilerArguments
         copy.k2JvmCompilerArguments = this.k2JvmCompilerArguments
-        copy.k2JsCompilerArguments = this.k2JsCompilerArguments
         copy.compilerSettings = this.compilerSettings
         copy.jpsPluginSettings = this.jpsPluginSettings
         return copy

@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.Serializable
@@ -38,9 +36,7 @@ internal class JpsCompilerServicesFacadeImpl(
     env.services[InlineConstTracker::class.java],
     env.services[EnumWhenTracker::class.java],
     env.services[ImportTracker::class.java],
-    env.services[IncrementalResultsConsumer::class.java],
-    env.services[IncrementalDataProvider::class.java],
-    port
+    port = port
 ), JpsCompilerServicesFacade {
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {

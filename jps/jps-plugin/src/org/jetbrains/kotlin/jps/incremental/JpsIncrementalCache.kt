@@ -24,7 +24,6 @@ import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
-import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import java.io.File
 
 interface JpsIncrementalCache : IncrementalCacheCommon, StorageOwner {
@@ -44,18 +43,6 @@ class JpsIncrementalJvmCache(
 
     override fun debugLog(message: String) {
         KotlinBuilder.LOG.debug(message)
-    }
-}
-
-class JpsIncrementalJsCache(
-    target: ModuleBuildTarget,
-    paths: BuildDataPaths,
-    icContext: IncrementalCompilationContext
-) : IncrementalJsCache(paths.getTargetDataRoot(target), icContext, KlibMetadataSerializerProtocol), JpsIncrementalCache {
-    override fun addJpsDependentCache(cache: JpsIncrementalCache) {
-        if (cache is JpsIncrementalJsCache) {
-            addDependentCache(cache)
-        }
     }
 }
 

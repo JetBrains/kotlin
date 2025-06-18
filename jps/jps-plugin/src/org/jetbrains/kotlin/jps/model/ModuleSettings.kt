@@ -81,12 +81,6 @@ val JpsModule.kotlinCompilerSettings: CompilerSettings
 val JpsModule.kotlinCompilerArguments
     get() = getCompilerArguments<CommonCompilerArguments>()
 
-val JpsModule.k2MetadataCompilerArguments
-    get() = getCompilerArguments<K2MetadataCompilerArguments>()
-
-val JpsModule.k2JsCompilerArguments
-    get() = getCompilerArguments<K2JSCompilerArguments>()
-
 val JpsModule.k2JvmCompilerArguments
     get() = getCompilerArguments<K2JVMCompilerArguments>()
 

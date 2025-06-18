@@ -6,18 +6,12 @@
 package org.jetbrains.kotlin.jps.targets
 
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.model.java.JpsJavaClasspathKind
-import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.jps.model.module.JpsModuleDependency
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinChunk
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
-import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.platform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.platform.impl.isJvm
 import kotlin.system.measureTimeMillis
 
@@ -71,8 +65,6 @@ internal class KotlinTargetsIndexBuilder internal constructor(
             val platform = target.module.platform?.idePlatformKind ?: JvmPlatforms.defaultJvmPlatform.idePlatformKind
 
             when {
-                platform.isCommon -> KotlinCommonModuleBuildTarget(uninitializedContext, target)
-                platform.isJavaScript -> KotlinJsModuleBuildTarget(uninitializedContext, target)
                 platform.isJvm -> KotlinJvmModuleBuildTarget(uninitializedContext, target)
                 else -> KotlinUnsupportedModuleBuildTarget(uninitializedContext, target)
             }
