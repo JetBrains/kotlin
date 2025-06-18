@@ -349,7 +349,10 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         if (hasBoundDispatchReceiver || hasBoundExtensionReceiver || isImportedFromObject) {
             // In case of a bound reference, the receiver (which can only be one) is passed in the extension receiver parameter.
             val receiverValue = IrGetValueImpl(
-                startOffset, endOffset, irAdapterFun.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                startOffset,
+                endOffset,
+                irAdapterFun.parameters.first { it.kind == IrParameterKind.ExtensionReceiver }.symbol,
+                IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
             when {
                 hasBoundDispatchReceiver || isImportedFromObject ->
