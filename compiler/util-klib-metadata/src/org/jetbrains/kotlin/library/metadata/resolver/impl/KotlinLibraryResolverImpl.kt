@@ -25,9 +25,11 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 
+// TODO: drop this as a part of KLIB resolver (+)
 fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false) =
     KotlinLibraryResolverImpl<L>(this, resolveManifestDependenciesLenient)
 
+// TODO: drop this as a part of KLIB resolver (+)
 class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     override val searchPathResolver: SearchPathResolver<L>,
     val resolveManifestDependenciesLenient: Boolean,
@@ -155,6 +157,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     }
 }
 
+// TODO: drop this as a part of KLIB resolver (+)
 class KotlinLibraryResolverResultImpl(
     private val roots: List<KotlinResolvedLibrary>,
 ) : KotlinLibraryResolveResult {

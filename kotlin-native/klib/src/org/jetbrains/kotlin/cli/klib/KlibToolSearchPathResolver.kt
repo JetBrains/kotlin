@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver
 
+// TODO: drop this as a part of KLIB resolver (+)
 internal fun klibResolver(
     distributionKlib: String?,
     skipCurrentDir: Boolean,

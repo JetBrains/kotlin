@@ -25,6 +25,7 @@ import java.io.IOException
  *
  * Typical usage scenario: IDE.
  */
+// TODO: drop this as a part of KLIB resolver (+)
 object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary =
         tryResolve(libraryFile, logger)
