@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryOnlyIrWriter
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -70,12 +71,17 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.createTempFile
-import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 @Tag("legacy-frontend")
 @Ignore
 class GenerateIrRuntime {
-    fun loadKlib(klibPath: String, isPacked: Boolean) = resolveSingleFileKlib(KonanFile("$klibPath${if (isPacked) ".klib" else ""}"))
+    fun loadKlib(klibPath: String, isPacked: Boolean): KotlinLibrary {
+        return loadWebKlibsInTestPipeline(
+            configuration = environment.configuration,
+            libraryPaths = listOf("$klibPath${if (isPacked) ".klib" else ""}"),
+            platformChecker = KlibPlatformChecker.JS
+        ).all.single()
+    }
 
     private fun buildConfiguration(environment: KotlinCoreEnvironment): CompilerConfiguration {
         val runtimeConfiguration = environment.configuration.copy()
