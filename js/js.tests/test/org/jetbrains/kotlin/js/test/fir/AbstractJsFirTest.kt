@@ -143,13 +143,28 @@ open class AbstractFirJsCodegenInlineTest : AbstractFirJsTest(
     testGroupOutputDirPrefix = "codegen/firBoxInline/"
 )
 
-open class AbstractFirJsTypeScriptExportTest : AbstractFirJsTest(
+open class AbstractFirJsTypeScriptExportTest(
+    testGroupOutputDirPrefix: String = "typescript-export/fir/"
+) : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/typescript-export/",
-    testGroupOutputDirPrefix = "typescript-export/fir/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureJsTypeScriptExportTest()
+    }
+}
+
+open class AbstractFirJsTypeScriptExportWithInlinedFunInKlibTest : AbstractFirJsTypeScriptExportTest(
+    testGroupOutputDirPrefix = "typescript-export/firWithInlinedFunInKlib"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 
