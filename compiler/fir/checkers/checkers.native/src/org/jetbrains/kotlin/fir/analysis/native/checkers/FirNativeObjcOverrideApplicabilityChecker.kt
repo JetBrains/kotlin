@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.PlatformConflictDe
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.backend.native.interop.getObjCMethodInfoFromOverriddenFunctions
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.Annotations.objCSignatureOverrideClassId
@@ -43,7 +44,7 @@ object NativeConflictDeclarationsDiagnosticDispatcher : PlatformConflictDeclarat
         conflictingDeclaration: FirBasedSymbol<*>,
         symbols: SmartSet<FirBasedSymbol<*>>
     ): KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ObjCSignatureOverrideAnnotation)) {
+        if (LanguageFeature.ObjCSignatureOverrideAnnotation.isEnabled()) {
             if (conflictingDeclaration is FirFunctionSymbol<*> && symbols.all { it is FirFunctionSymbol<*> }) {
                 if (conflictingDeclaration.isInheritedFromObjc() && symbols.all {
                         (it as FirFunctionSymbol<*>).isInheritedFromObjc(
