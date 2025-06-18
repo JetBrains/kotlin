@@ -190,7 +190,6 @@ data class ConeCapturedType(
     val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-    val isProjectionNotNull: Boolean = false
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
 
     constructor(
