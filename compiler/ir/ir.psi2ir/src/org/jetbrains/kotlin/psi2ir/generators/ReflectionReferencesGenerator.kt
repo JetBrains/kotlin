@@ -323,7 +323,11 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             )
             IrBlockImpl(startOffset, endOffset, irFunctionalType, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE).apply {
                 statements.add(irAdapterFun)
-                statements.add(irAdapterRef.apply { extensionReceiver = receiver })
+                statements.add(irAdapterRef.apply {
+                    if (receiver != null) {
+                        arguments[0] = receiver
+                    }
+                })
             }
         }
     }
