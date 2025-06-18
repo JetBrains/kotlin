@@ -82,10 +82,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
 
             irScript.thisReceiver = makeParameter(
                 descriptor.thisAsReceiverParameter, IrDeclarationOrigin.INSTANCE_RECEIVER, IrParameterKind.DispatchReceiver
-            ).also {
-                @OptIn(DelicateIrParameterIndexSetter::class)
-                it.indexInOldValueParameters = descriptor.thisAsReceiverParameter.indexOrMinusOne
-            }
+            )
 
             irScript.baseClass = descriptor.typeConstructor.supertypes.single().toIrType()
 
