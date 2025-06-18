@@ -16,10 +16,6 @@ import kotlin.io.path.appendText
 @NativeGradlePluginTests
 class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
 
-    override val defaultBuildOptions: BuildOptions
-        // KT-78387 Kotlin Cocoapods Gradle Plugin is not compatible with Gradle isolated projects
-        get() = super.defaultBuildOptions.disableIsolatedProjects()
-
     @DisplayName("Registers shared tasks")
     @GradleTest
     fun shouldCheckGradleRegisteredTasks(gradleVersion: GradleVersion) {
