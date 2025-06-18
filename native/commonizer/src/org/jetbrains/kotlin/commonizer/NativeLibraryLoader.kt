@@ -5,38 +5,23 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import java.io.File
 
-internal fun interface NativeLibraryLoader {
-    operator fun invoke(file: File): NativeLibrary
-}
+internal class NativeLibraryLoader(private val logger: CliLoggerAdapter) {
+    fun loadLibrary(libraryFile: File): NativeLibrary {
+        val result = KlibLoader { libraryPaths(libraryFile.path) }.load()
+        result.reportLoadingProblemsIfAny(logger, allAsErrors = true)
 
-internal class DefaultNativeLibraryLoader(
-    private val logger: Logger
-) : NativeLibraryLoader {
-    override fun invoke(file: File): NativeLibrary {
-        try {
-            val library = resolveSingleFileKlib(
-                libraryFile = org.jetbrains.kotlin.konan.file.File(file.path),
-                logger = logger,
-                strategy = ToolingSingleFileKlibResolveStrategy
-            )
+        val library = result.librariesStdlibFirst.single()
+        if (library.versions.metadataVersion == null)
+            logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: $libraryFile")
 
-            if (library.versions.metadataVersion == null)
-                logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: $file")
+        return NativeLibrary(library)
 
-            return NativeLibrary(library)
-        } catch (cause: Throwable) {
-            throw NativeLibraryLoadingException(
-                "Failed loading library at ${file.path}", cause
-            )
-        }
     }
 }
-
-internal class NativeLibraryLoadingException(message: String, cause: Throwable? = null) : Exception(message, cause)

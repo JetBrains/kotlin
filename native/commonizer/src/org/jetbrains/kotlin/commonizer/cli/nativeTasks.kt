@@ -59,7 +59,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val settings = getSettings()
 
         val logger = CliLoggerAdapter(logLevel, 2)
-        val libraryLoader = DefaultNativeLibraryLoader(logger)
+        val libraryLoader = NativeLibraryLoader(logger)
         val statsCollector = StatsCollector(statsType, commonizerTargets)
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
 
@@ -95,7 +95,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val logLevel = getOptional<CommonizerLogLevel, LogLevelOptionType>() ?: CommonizerLogLevel.Quiet
 
         val logger = CliLoggerAdapter(logLevel, 2)
-        val libraryLoader = DefaultNativeLibraryLoader(logger)
+        val libraryLoader = NativeLibraryLoader(logger)
         val repository = KonanDistributionRepository(distribution, outputTargets.konanTargets, libraryLoader)
         val statsCollector = StatsCollector(statsType, outputTargets.allLeaves().toList())
         val settings = getSettings()
