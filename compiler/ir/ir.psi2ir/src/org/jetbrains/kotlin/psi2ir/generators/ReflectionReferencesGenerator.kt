@@ -125,10 +125,14 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         callBuilder.descriptor,
                         callBuilder.typeArguments
                     ).also { irCallableReference ->
+                        var index = 0
                         dispatchReceiverValue?.loadIfExists()?.let {
-                            irCallableReference.arguments[0] = it
+                            irCallableReference.arguments[index] = it
+                            ++index
                         }
-                        irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()
+                        extensionReceiverValue?.loadIfExists()?.let {
+                            irCallableReference.arguments[index] = it
+                        }
                     }
                 }
             }
