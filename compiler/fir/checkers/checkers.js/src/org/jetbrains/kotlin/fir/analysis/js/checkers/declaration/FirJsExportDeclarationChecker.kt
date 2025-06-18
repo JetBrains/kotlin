@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isEnumEntries
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -71,7 +72,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXPORTED_DECLARATION, kind)
         }
 
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowExpectDeclarationsInJsExport) && declaration.isExpect) {
+        if (!LanguageFeature.AllowExpectDeclarationsInJsExport.isEnabled() && declaration.isExpect) {
             reportWrongExportedDeclaration("expect")
         }
 
