@@ -436,7 +436,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
             superQualifierSymbol = null
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = functionDescriptor
-            dispatchReceiverViaCachedCalleeData = receiver
+            arguments[0] = receiver
         }
     }
 
