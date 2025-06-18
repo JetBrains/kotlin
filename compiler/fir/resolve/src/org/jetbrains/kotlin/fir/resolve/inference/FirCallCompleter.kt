@@ -57,8 +57,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class FirCallCompleter(
     private val transformer: FirAbstractBodyResolveTransformerDispatcher,
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-) {
-    private val session = components.session
+) : SessionHolder {
+    override val session: FirSession = components.session
     private val inferenceSession
         get() = transformer.context.inferenceSession
 
@@ -187,7 +187,7 @@ class FirCallCompleter(
         resolutionMode: ResolutionMode,
     ) {
         if (resolutionMode !is ResolutionMode.WithExpectedType || resolutionMode.arrayLiteralPosition == ArrayLiteralPosition.AnnotationArgument) return
-        val expectedType = resolutionMode.expectedType.fullyExpandedType(session)
+        val expectedType = resolutionMode.expectedType.fullyExpandedType()
 
         val system = candidate.system
         when {

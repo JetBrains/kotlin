@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -15,7 +16,11 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 @RequiresOptIn(message = "Should be used just only in resolve processor")
 annotation class AdapterForResolveProcessor
 
-sealed class FirResolveProcessor(val session: FirSession, val scopeSession: ScopeSession, val phase: FirResolvePhase?) {
+sealed class FirResolveProcessor(
+    override val session: FirSession,
+    override val scopeSession: ScopeSession,
+    val phase: FirResolvePhase?,
+) : SessionAndScopeSessionHolder {
     open fun beforePhase() {
         if (phase != null) {
             session.lazyDeclarationResolver.startResolvingPhase(phase)

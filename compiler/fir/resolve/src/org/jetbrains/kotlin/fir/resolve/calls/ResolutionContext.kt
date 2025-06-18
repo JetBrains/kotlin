@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
@@ -15,10 +16,10 @@ import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.typeContext
 
 class ResolutionContext(
-    val session: FirSession,
+    override val session: FirSession,
     val bodyResolveComponents: BodyResolveComponents,
     val bodyResolveContext: BodyResolveContext
-) {
+) : SessionHolder {
     val typeContext: ConeInferenceContext
         get() = session.typeContext
 
