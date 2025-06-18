@@ -1,0 +1,37 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'constructor.kt'
+    private final field a: int
+    private final @org.jetbrains.annotations.NotNull field b1: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field b: java.lang.String
+    private final field c: float
+    public method <init>(): void
+    public synthetic deprecated @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method <init>(p0: int): void
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float): void
+    public synthetic deprecated method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method <init>(p0: int, p1: java.lang.String, p2: java.lang.String): void
+    public synthetic method <init>(p0: int, p1: java.lang.String, p2: java.lang.String, p3: float, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated method <init>(p0: int, p1: java.lang.String, p2: java.lang.String, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getA(): int
+    public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
+    public final method getC(): float
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'constructor.kt'
+    private final @org.jetbrains.annotations.NotNull field a1: java.lang.String
+    private final field a: int
+    private final @org.jetbrains.annotations.NotNull field b: java.lang.String
+    private final field c: float
+    public method <init>(): void
+    public synthetic deprecated @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method <init>(p0: int): void
+    public method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float): void
+    public synthetic deprecated method <init>(p0: int, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method <init>(p0: int, p1: java.lang.String, p2: float): void
+    public synthetic deprecated method <init>(p0: int, p1: java.lang.String, p2: float, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: java.lang.String, p2: java.lang.String, p3: float, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getA(): int
+    public final @org.jetbrains.annotations.NotNull method getA1(): java.lang.String
+    public final method getC(): float
+}

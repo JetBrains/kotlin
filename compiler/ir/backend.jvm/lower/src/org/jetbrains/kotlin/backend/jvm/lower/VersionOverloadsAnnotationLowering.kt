@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.VersionNumber
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.setSourceRange
@@ -49,9 +51,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_INTRODUCED_AT_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.SortedMap
 import kotlin.collections.plus
 
+@PhaseDescription(
+    name = "VersionOverloadsAnnotation"
+)
 internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private val irFactory = context.irFactory
     private val irBuiltIns = context.irBuiltIns
@@ -260,13 +266,12 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
 
     private class DeprecationBuilder(private val context: JvmBackendContext, level: DeprecationLevel) {
         private val classSymbol = context.irPluginContext?.referenceClass(StandardClassIds.Annotations.Deprecated)!!
-        private val deprecationLevelClass = context.irPluginContext?.referenceClass(StandardClassIds.DeprecationLevel)!!.owner
-        private val levelSymbol = deprecationLevelClass.declarations
+        private val deprecationLevelClass = context.irPluginContext?.referenceClass(StandardClassIds.DeprecationLevel)!!
+        private val levelSymbol = deprecationLevelClass.owner.declarations
             .filterIsInstance<IrEnumEntry>()
             .single { it.name.toString() == level.name }.symbol
 
         fun buildAnnotationCall() : IrConstructorCall {
-
             return IrConstructorCallImpl.fromSymbolOwner(
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
