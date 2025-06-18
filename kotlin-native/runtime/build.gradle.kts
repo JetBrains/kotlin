@@ -33,6 +33,8 @@ val downloadBreakpad = tasks.register<GitDownloadTask>("downloadBreakpad") {
     outputDirectory.set(layout.projectDirectory.dir("breakpad"))
 }
 
+val breakpadLocation = downloadBreakpad.flatMap { it.outputDirectory }
+
 val breakpadSources by configurations.creating {
     isCanBeConsumed = true
     isCanBeResolved = false
@@ -43,7 +45,7 @@ val breakpadSources by configurations.creating {
 }
 
 artifacts {
-    add(breakpadSources.name, downloadBreakpad.flatMap { it.outputDirectory })
+    add(breakpadSources.name, breakpadLocation)
 }
 
 googletest {
@@ -57,7 +59,7 @@ val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 bitcode {
     allTargets {
         module("main") {
-            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp")
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/breakpad/cpp", breakpadLocation.get().dir("src"))
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -80,6 +82,42 @@ bitcode {
         module("objcExport") {
             // There must not be any implementation files, only headers.
             sourceSets {}
+        }
+
+        module("breakpad") {
+            srcRoot.set(breakpadLocation)
+            val sources = listOf(
+                    "client/mac/handler/breakpad_nlist_64.cc",
+                    "client/mac/handler/dynamic_images.cc",
+                    "client/mac/handler/exception_handler.cc",
+                    "client/mac/handler/minidump_generator.cc",
+                    "client/mac/handler/protected_memory_allocator.cc",
+                    "client/minidump_file_writer.cc",
+                    "common/mac/arch_utilities.cc",
+                    "common/mac/file_id.cc",
+                    "common/mac/macho_id.cc",
+                    "common/mac/macho_utilities.cc",
+                    "common/mac/macho_walker.cc",
+                    "common/mac/string_utilities.cc",
+                    "common/convert_UTF.cc",
+                    "common/md5.cc",
+                    "common/string_conversion.cc",
+            )
+            sourceSets {
+                main {
+                    inputFiles.from(srcRoot.dir("src"))
+                    inputFiles.setIncludes(sources)
+                    headersDirs.setFrom(srcRoot.dir("src"), project.layout.projectDirectory.dir("src/breakpad/cpp"))
+                }
+            }
+
+            compilerArgs.set(listOf(
+                    "-std=c++17",
+                    "-DHAVE_MACH_O_NLIST_H",
+                    "-DHAVE_CONFIG_H",
+            ))
+
+            onlyIf { it.family.isAppleFamily }
         }
 
         module("libbacktrace") {
