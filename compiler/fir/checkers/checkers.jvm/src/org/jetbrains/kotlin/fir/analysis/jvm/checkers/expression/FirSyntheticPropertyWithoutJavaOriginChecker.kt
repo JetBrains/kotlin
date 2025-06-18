@@ -16,13 +16,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.noJavaOrigin
 
 object FirSyntheticPropertyWithoutJavaOriginChecker : FirPropertyAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirPropertyAccessExpression) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.DontCreateSyntheticPropertiesWithoutBaseJavaGetter)) return
+        if (LanguageFeature.DontCreateSyntheticPropertiesWithoutBaseJavaGetter.isEnabled()) return
         val syntheticProperty = expression.toResolvedCallableSymbol() as? FirSimpleSyntheticPropertySymbol ?: return
         val containingAssignment = context.callsOrAssignments.getOrNull(context.callsOrAssignments.size - 2) as? FirVariableAssignment
         val isAssignment = containingAssignment?.lValue === expression
@@ -31,7 +32,7 @@ object FirSyntheticPropertyWithoutJavaOriginChecker : FirPropertyAccessExpressio
             true -> syntheticProperty.setterSymbol?.delegateFunctionSymbol
         } ?: return
         if (syntheticProperty.noJavaOrigin) {
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSyntheticPropertiesWithoutBaseJavaGetter)) {
+            if (LanguageFeature.ForbidSyntheticPropertiesWithoutBaseJavaGetter.isEnabled()) {
                 reporter.reportOn(
                     expression.source,
                     FirErrors.FUNCTION_CALL_EXPECTED,
