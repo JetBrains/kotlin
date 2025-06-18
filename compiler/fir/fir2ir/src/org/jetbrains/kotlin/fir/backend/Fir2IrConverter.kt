@@ -493,7 +493,7 @@ class Fir2IrConverter(
                 if (
                     containingClass == null ||
                     !declaration.isEnumEntries(containingClass) ||
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
+                    LanguageFeature.EnumEntries.isEnabled()
                 ) {
                     // Note: we have to do it, because backend without the feature
                     // cannot process Enum.entries properly
