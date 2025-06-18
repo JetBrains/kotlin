@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -42,7 +43,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
+internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassLike {
+    val isValueClass: Boolean
+
     constructor(
         ktModule: KaModule,
         classSymbol: KaNamedClassSymbol,
@@ -53,6 +56,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         manager = manager,
     ) {
         require(classSymbol.classKind != KaClassKind.INTERFACE && classSymbol.classKind != KaClassKind.ANNOTATION_CLASS)
+        isValueClass = classSymbol.isInline
     }
 
     @OptIn(KaImplementationDetail::class)
@@ -64,21 +68,25 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         classSymbolPointer = classOrObject.createSymbolPointer(ktModule),
         ktModule = ktModule,
         manager = classOrObject.manager,
+        isValueClass = classOrObject.hasModifier(KtTokens.VALUE_KEYWORD) || classOrObject.hasModifier(KtTokens.INLINE_KEYWORD),
     ) {
         require(classOrObject !is KtClass || !classOrObject.isInterface() && !classOrObject.isAnnotation())
     }
 
-    protected constructor(
+    private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
         ktModule: KaModule,
         manager: PsiManager,
+        isValueClass: Boolean,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
-    )
+    ) {
+        this.isValueClass = isValueClass
+    }
 
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
@@ -91,9 +99,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         )
     }
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
-    override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun getImplementsList(): PsiReferenceList? = _implementsList
+    override fun getModifierList(): PsiModifierList = _modifierList
+    override fun getExtendsList(): PsiReferenceList = _extendsList
+    override fun getImplementsList(): PsiReferenceList = _implementsList
 
     private val _extendsList by lazyPub {
         withClassSymbol { classSymbol ->
@@ -278,6 +286,11 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         return _modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
     }
 
-    override fun copy(): SymbolLightClassForClassOrObject =
-        SymbolLightClassForClassOrObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
+        classOrObjectDeclaration = classOrObjectDeclaration,
+        classSymbolPointer = classSymbolPointer,
+        ktModule = ktModule,
+        manager = manager,
+        isValueClass = isValueClass,
+    )
 }
