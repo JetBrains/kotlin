@@ -108,6 +108,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("sam.kt")
+  public void testSam() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/sam.kt");
+  }
+
+  @Test
   @TestMetadata("sourceLibModuleInlineClass.kt")
   public void testSourceLibModuleInlineClass() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/sourceLibModuleInlineClass.kt");
