@@ -117,7 +117,7 @@ bitcode {
                     "-DHAVE_CONFIG_H",
             ))
 
-            onlyIf { it.family.isAppleFamily }
+            onlyIf { it.family == Family.OSX }
         }
 
         module("libbacktrace") {

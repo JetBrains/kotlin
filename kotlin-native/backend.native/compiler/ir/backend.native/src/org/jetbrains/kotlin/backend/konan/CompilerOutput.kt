@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
 import org.jetbrains.kotlin.konan.target.supportsLibBacktrace
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -124,7 +125,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         add(RuntimeModule.ALLOC_COMMON)
         add(RuntimeModule.GC_COMMON)
         add(RuntimeModule.GC_SCHEDULER_COMMON)
-        if (config.target.family.isAppleFamily)
+        if (config.target.family == Family.OSX)
             add(RuntimeModule.BREAKPAD)
         when (config.gcSchedulerType) {
             GCSchedulerType.MANUAL -> {
