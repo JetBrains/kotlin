@@ -279,7 +279,7 @@ class ClassicFrontendFacade(
             configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
         }.load()
 
-        result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
+        result.reportLoadingProblemsIfAny(configuration.messageCollector, allAsErrors = true)
 
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()

@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.LoadedKlibs
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.klibPaths
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.library.loader.KlibLoader
 
 /**
@@ -13,6 +14,6 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
  */
 fun loadJvmKlibs(configuration: CompilerConfiguration): LoadedKlibs {
     val result = KlibLoader { libraryPaths(configuration.klibPaths) }.load()
-    result.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
+    result.reportLoadingProblemsIfAny(configuration.messageCollector, allAsErrors = true)
     return LoadedKlibs(all = result.librariesStdlibFirst)
 }

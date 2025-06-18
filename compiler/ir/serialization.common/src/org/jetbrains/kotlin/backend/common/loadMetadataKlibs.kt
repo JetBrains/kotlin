@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.library.loader.KlibLoader
 
 /**
@@ -19,6 +20,6 @@ fun loadMetadataKlibs(configuration: CompilerConfiguration, libraryPaths: List<S
         libraryPaths(libraryPaths)
         // IMPORTANT: Do not set any ABI version requirements - metadata libraries are not supposed to have any ABI.
     }.load()
-    result.reportLoadingProblemsIfAny(configuration)
+    result.reportLoadingProblemsIfAny(configuration.messageCollector)
     return LoadedKlibs(all = result.librariesStdlibFirst)
 }
