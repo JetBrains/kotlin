@@ -236,7 +236,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                                         checkNotNullSubstituted
                                     irCall.type = irFnType
                                     irCall.typeArguments[0] = irFnType
-                                    irCall.putValueArgument(0, irGet(irFnParameter))
+                                    irCall.arguments[0] = irGet(irFnParameter)
                                 },
                                 irSamType
                             )
