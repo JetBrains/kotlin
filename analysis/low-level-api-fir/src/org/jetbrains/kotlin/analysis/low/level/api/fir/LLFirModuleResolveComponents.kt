@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
@@ -33,6 +34,7 @@ internal class LLFirModuleResolveComponents(
         invalidationTrackers = listOf(
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(globalResolveComponents.project),
+            DumbService.getInstance(globalResolveComponents.project).modificationTracker,
         )
     )
 
