@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.junit.Test
@@ -61,7 +62,7 @@ class KotlinKarmaTest {
         checkDebugConfig(KotlinPlatformType.wasm) { content, testDir ->
             assertContains(
                 content, "\"webpackCopy\": [\n" +
-                        "    \"${testDir.resolve("inputFile.wasm.map").normalize().absolutePathString()}\"\n" +
+                        "    ${testDir.resolve("inputFile.wasm.map").normalize().absolutePathString().jsQuoted()}\n" +
                         "  ]"
             )
         }
@@ -115,7 +116,7 @@ class KotlinKarmaTest {
         outputResult.toFile().readText().let {
             assertContains(it, "\"singleRun\": false")
             assertContains(it, "\"autoWatch\": true")
-            assertContains(it, "\"basePath\": \"${testDir.absolutePathString()}\"")
+            assertContains(it, "\"basePath\": ${testDir.absolutePathString().jsQuoted()}")
             assertContains(it, "\"port\": 12345")
             assertContains(it, "\"browsers\": []")
 
