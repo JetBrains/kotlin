@@ -4950,11 +4950,11 @@
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
-                                        "current": false,
+                                        "current": true,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": null,
                                         "valueInVersions": []
                                     }
                                 },

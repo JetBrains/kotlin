@@ -650,7 +650,7 @@ The default value is 'indy' if language version is 2.0+, and 'class' otherwise."
         value = "-Xindy-allow-annotated-lambdas",
         description = "Allow using 'invokedynamic' for lambda expressions with annotations",
     )
-    var indyAllowAnnotatedLambdas: Boolean = false
+    var indyAllowAnnotatedLambdas: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
