@@ -10,3 +10,5 @@ fun <T2 : Recursive<T2>> createRecursive(): T2 = TODO()
 fun <T3 : Recursive<T3>> foo(): T3? {
     return createRecursive()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, dnnType, functionDeclaration, nullableType, typeConstraint, typeParameter */

@@ -8,3 +8,5 @@ fun <T2 : Recursive<T2>> createRecursive(): T2 = TODO()
 fun <T3 : Recursive<T3>> foo(): T3? {
     return <!TYPE_MISMATCH!>createRecursive<!>()
 }
+
+/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, typeConstraint, typeParameter */
