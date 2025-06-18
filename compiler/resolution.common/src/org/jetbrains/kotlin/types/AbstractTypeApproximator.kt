@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
@@ -425,7 +426,8 @@ abstract class AbstractTypeApproximator(
         // C = out Number, C <: Number => C? <: Number?
         return when {
             capturedType.isMarkedNullable() -> baseResult.withNullability(true)
-            capturedType.isProjectionNotNull() -> baseResult.withNullability(false)
+            !isK2 && @OptIn(AllowedToUsedOnlyInK1::class) capturedType.isProjectionNotNull() ->
+                baseResult.withNullability(false)
             else -> baseResult
         }.let {
             when {

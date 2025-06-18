@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.types.TypeCheckerState.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
@@ -810,9 +811,11 @@ object AbstractNullabilityChecker {
 
             // i.e. subType is definitely not null
             @OptIn(ObsoleteTypeKind::class)
-            if (subType.isDefinitelyNotNullType() || subType.isNotNullTypeParameter()) return true
+            if (subType.isNotNullTypeParameter()) return true
+            if (subType.isDefinitelyNotNullType()) return true
 
             // i.e. subType is captured type, projection of which is marked not-null
+            @OptIn(AllowedToUsedOnlyInK1::class) // Here it's quite hard to check if we're in K2, but isProjectionNotNull is always false there
             if (subType is CapturedTypeMarker && subType.isProjectionNotNull()) return true
 
             // i.e. subType is not-nullable

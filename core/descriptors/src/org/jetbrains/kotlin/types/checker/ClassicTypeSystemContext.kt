@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -505,12 +506,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         }
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is NewCapturedType, this::errorMessage)
 
         return NewCapturedType(captureStatus, constructor, lowerType, attributes, isMarkedNullable, isProjectionNotNull = true)
     }
 
+    @AllowedToUsedOnlyInK1
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
         require(this is NewCapturedType, this::errorMessage)
         return this.isProjectionNotNull
