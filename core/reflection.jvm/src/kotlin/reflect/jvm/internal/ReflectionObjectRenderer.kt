@@ -27,6 +27,7 @@ import kotlin.reflect.*
 import kotlin.reflect.full.contextParameters
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.valueParameters
+import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.jvmName
 
 internal object ReflectionObjectRenderer {

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
 import java.lang.reflect.Type
 import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KType
+import kotlin.reflect.jvm.internal.ReflectProperties
+import kotlin.reflect.jvm.internal.ReflectionObjectRenderer
 
 internal abstract class AbstractKType(
     computeJavaType: (() -> Type)?,
