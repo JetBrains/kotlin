@@ -2970,6 +2970,46 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
       }
 
       @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NestedInheritors {
+        @Test
+        public void testAllFilesPresentInNestedInheritors() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("equality.kt")
+        public void testEquality() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors/equality.kt");
+        }
+
+        @Test
+        @TestMetadata("guard.kt")
+        public void testGuard() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors/guard.kt");
+        }
+
+        @Test
+        @TestMetadata("inWhen.kt")
+        public void testInWhen() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors/inWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("negatedIs.kt")
+        public void testNegatedIs() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors/negatedIs.kt");
+        }
+
+        @Test
+        @TestMetadata("property.kt")
+        public void testProperty() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/nestedInheritors/property.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/otherExpectedTypePositions")
       @TestDataPath("$PROJECT_ROOT")
       public class OtherExpectedTypePositions {

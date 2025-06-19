@@ -30,7 +30,7 @@ sealed class SealedClass {
 
 fun testAs(instance: SealedClass) {
     val SealedInheritor1 = instance as SealedInheritor1
-    val SealedInheritor2 = instance as <!UNRESOLVED_REFERENCE!>SealedInheritor2<!>
+    val SealedInheritor2 = instance <!CAST_NEVER_SUCCEEDS!>as<!> SealedInheritor2
 }
 
 fun testTypeAnnotation(arg: SealedClass) {

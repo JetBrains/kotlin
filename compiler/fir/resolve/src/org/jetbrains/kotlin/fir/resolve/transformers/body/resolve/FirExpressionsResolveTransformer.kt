@@ -1190,26 +1190,30 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         val argument = argumentList.arguments.singleOrNull() ?: error("Not a single argument: ${this.render()}")
 
-        val classToLookAt =
+        val chainToLookAt =
             argument.resolvedType.getClassRepresentativeForContextSensitiveResolution(session)
-                ?.takeIf { it.isSealed }
+                ?.getParentChainForContextSensitiveResolution(session)
+                ?.filter { it.isSealed }
                 ?: return
 
-        val resultingTypeRef = typeResolverTransformer.withBareTypes {
-            typeResolverTransformer.transformTypeRef(
-                userTypeRef,
-                TypeResolutionConfiguration.createForContextSensitiveResolution(
-                    context.containingClassDeclarations,
-                    context.file,
-                    context.topContainerForTypeResolution,
-                    sealedClassForContextSensitiveResolution = classToLookAt,
+        for (classToLookAt in chainToLookAt) {
+            val resultingTypeRef = typeResolverTransformer.withBareTypes {
+                typeResolverTransformer.transformTypeRef(
+                    userTypeRef,
+                    TypeResolutionConfiguration.createForContextSensitiveResolution(
+                        context.containingClassDeclarations,
+                        context.file,
+                        context.topContainerForTypeResolution,
+                        sealedClassForContextSensitiveResolution = classToLookAt,
+                    )
                 )
-            )
+            }
+
+            if (resultingTypeRef !is FirErrorTypeRef && resultingTypeRef.coneType !is ConeErrorType) {
+                replaceConversionTypeRef(resultingTypeRef)
+                break
+            }
         }
-
-        if (resultingTypeRef is FirErrorTypeRef || resultingTypeRef.coneType is ConeErrorType) return
-
-        replaceConversionTypeRef(resultingTypeRef)
     }
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
