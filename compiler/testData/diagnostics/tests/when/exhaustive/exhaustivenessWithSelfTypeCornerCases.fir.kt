@@ -26,7 +26,7 @@ fun bar(x: B): Int {
 object X
 
 fun baz(x: X): Int {
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return when (x) {
         X -> 0
     }
 }
