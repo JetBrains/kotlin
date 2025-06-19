@@ -8,3 +8,9 @@ inline fun <reified E : Exception, R> tryCatch(lazy: () -> R, failure: (E) -> R)
     } catch (<!UNSUPPORTED_FEATURE!>e: E<!>) {
         failure(e)
     }
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, localProperty, nullableType, propertyDeclaration,
+reified, tryExpression, typeConstraint, typeParameter */
+
+/* GENERATED_FIR_TAGS: functionDeclaration, functionalType, inline, localProperty, nullableType, propertyDeclaration,
+reified, tryExpression, typeConstraint, typeParameter */
