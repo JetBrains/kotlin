@@ -76,6 +76,6 @@ internal class KaFirTypeInformationProvider(
 
     override val KaType.fullyExpandedType: KaType
         get() = withValidityAssertion {
-            coneType.fullyExpandedType(analysisSession.firSession).asKtType()
+            coneType.fullyExpandedType(analysisSession.firSession).asKaType()
         }
 }

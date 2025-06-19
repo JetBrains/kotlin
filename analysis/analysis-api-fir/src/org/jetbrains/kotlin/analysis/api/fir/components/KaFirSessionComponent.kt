@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
 import org.jetbrains.kotlin.analysis.api.components.KaSubtypingErrorTypePolicy
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
 import org.jetbrains.kotlin.analysis.api.fir.types.KaFirType
-import org.jetbrains.kotlin.analysis.api.fir.utils.toKtSubstitutor
+import org.jetbrains.kotlin.analysis.api.fir.utils.toKaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
@@ -31,21 +33,21 @@ internal interface KaFirSessionComponent : KaSessionComponent {
     val project: Project get() = analysisSession.project
     val rootModuleSession: FirSession get() = analysisSession.resolutionFacade.useSiteFirSession
     val typeContext: ConeInferenceContext get() = rootModuleSession.typeContext
-    val firSymbolBuilder get() = analysisSession.firSymbolBuilder
-    val resolutionFacade get() = analysisSession.resolutionFacade
+    val firSymbolBuilder: KaSymbolByFirBuilder get() = analysisSession.firSymbolBuilder
+    val resolutionFacade: LLResolutionFacade get() = analysisSession.resolutionFacade
 
-    fun ConeKotlinType.asKtType() = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
+    fun ConeKotlinType.asKaType(): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
-    fun KtPsiDiagnostic.asKtDiagnostic(): KaDiagnosticWithPsi<*> =
+    fun KtPsiDiagnostic.asKaDiagnostic(): KaDiagnosticWithPsi<*> =
         KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as KtDiagnostic)
 
-    fun ConeDiagnostic.asKtDiagnostic(
+    fun ConeDiagnostic.asKaDiagnostic(
         source: KtSourceElement,
         callOrAssignmentSource: KtSourceElement?,
     ): KaDiagnosticWithPsi<*>? {
         val firDiagnostic = toFirDiagnostics(analysisSession.firSession, source, callOrAssignmentSource).firstOrNull() ?: return null
         check(firDiagnostic is KtPsiDiagnostic)
-        return firDiagnostic.asKtDiagnostic()
+        return firDiagnostic.asKaDiagnostic()
     }
 
     val KaType.coneType: ConeKotlinType
@@ -70,5 +72,5 @@ internal interface KaFirSessionComponent : KaSessionComponent {
         )
     }
 
-    fun ConeSubstitutor.toKtSubstitutor(): KaSubstitutor = toKtSubstitutor(analysisSession)
+    fun ConeSubstitutor.toKaSubstitutor(): KaSubstitutor = toKaSubstitutor(analysisSession)
 }

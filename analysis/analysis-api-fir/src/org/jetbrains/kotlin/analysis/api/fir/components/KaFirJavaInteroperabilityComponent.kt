@@ -263,7 +263,7 @@ internal class KaFirJavaInteroperabilityComponent(
         }
         val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.firSession, javaTypeParameterStack, source = null)
         val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.coneType ?: return null
-        return coneKotlinType.asKtType()
+        return coneKotlinType.asKaType()
     }
 
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {

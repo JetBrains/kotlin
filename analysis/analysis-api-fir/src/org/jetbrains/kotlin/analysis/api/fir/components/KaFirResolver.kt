@@ -361,7 +361,7 @@ internal class KaFirResolver(
                         val delegatedConstructorCall = this as? FirDelegatedConstructorCall ?: return null
                         val errorTypeRef = delegatedConstructorCall.constructedTypeRef as? FirErrorTypeRef ?: return null
                         val psiSource = psi.toKtPsiSourceElement()
-                        val ktDiagnostic = errorTypeRef.diagnostic.asKtDiagnostic(source ?: psiSource, psiSource) ?: return null
+                        val ktDiagnostic = errorTypeRef.diagnostic.asKaDiagnostic(source ?: psiSource, psiSource) ?: return null
                         KaBaseErrorCallInfo(emptyList(), ktDiagnostic)
                     }
                     else -> null
@@ -526,7 +526,7 @@ internal class KaFirResolver(
         handleCompoundAccessCall(psi, fir, resolveFragmentOfCall, typeArgumentsMapping)?.let { return it }
 
         val signature = with(analysisSession) {
-            val substitutor = substitutorByMap(firTypeArgumentsMapping, firSession).toKtSubstitutor()
+            val substitutor = substitutorByMap(firTypeArgumentsMapping, firSession).toKaSubstitutor()
 
             // This is crucial to create a signature by Fir symbol as it can be call-site substitution
             val unsubstitutedSignature = targetSymbol.toKaSignature()
@@ -588,7 +588,7 @@ internal class KaFirResolver(
 
                     dispatchReceiverValue = KaBaseExplicitReceiverValue(
                         expression = explicitReceiverPsi,
-                        backingType = dispatchReceiver.resolvedType.asKtType(),
+                        backingType = dispatchReceiver.resolvedType.asKaType(),
                         isSafeNavigation = false,
                     )
 
@@ -616,7 +616,7 @@ internal class KaFirResolver(
                     dispatchReceiverValue = dispatchReceiver?.toKtReceiverValue()
                     extensionReceiverValue = KaBaseExplicitReceiverValue(
                         expression = explicitReceiverPsi,
-                        backingType = extensionReceiver.resolvedType.asKtType(),
+                        backingType = extensionReceiver.resolvedType.asKaType(),
                         isSafeNavigation = false,
                     )
                 }
@@ -1014,7 +1014,7 @@ internal class KaFirResolver(
         val substitutor = unwrapLValue()?.createConeSubstitutorFromTypeArguments(rootModuleSession) ?: return null
         val ktSignature = variableSymbol.toKaSignature()
         return KaBasePartiallyAppliedSymbol(
-            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
+            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKaSubstitutor()) },
             dispatchReceiver = dispatchReceiver?.toKtReceiverValue(),
             extensionReceiver = extensionReceiver?.toKtReceiverValue(),
             contextArguments = contextArguments.toKaContextParameterValues(),
@@ -1044,18 +1044,18 @@ internal class KaFirResolver(
         }
 
         val dispatchReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == dispatchReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue(dispatchReceiver!!.resolvedType.asKtType())
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(dispatchReceiver!!.resolvedType.asKaType())
         } else {
             dispatchReceiver?.toKtReceiverValue()
         }
         val extensionReceiverValue = if (explicitReceiverPsiSupplement != null && explicitReceiver == extensionReceiver) {
-            explicitReceiverPsiSupplement.toExplicitReceiverValue(extensionReceiver!!.resolvedType.asKtType())
+            explicitReceiverPsiSupplement.toExplicitReceiverValue(extensionReceiver!!.resolvedType.asKaType())
         } else {
             extensionReceiver?.toKtReceiverValue()
         }
         val ktSignature = operationSymbol.toKaSignature()
         return KaBasePartiallyAppliedSymbol(
-            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKtSubstitutor()) },
+            backingSignature = with(analysisSession) { ktSignature.substitute(substitutor.toKaSubstitutor()) },
             dispatchReceiver = dispatchReceiverValue,
             extensionReceiver = extensionReceiverValue,
             contextArguments = contextArguments.toKaContextParameterValues(),
@@ -1080,7 +1080,7 @@ internal class KaFirResolver(
             is FirSmartCastExpression -> {
                 val result = originalExpression.toKtReceiverValue()
                 if (result != null && isStable) {
-                    KaBaseSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())
+                    KaBaseSmartCastedReceiverValue(result, smartcastType.coneType.asKaType())
                 } else {
                     result
                 }
@@ -1101,7 +1101,7 @@ internal class KaFirResolver(
                     null -> return null
                 }
 
-                KaBaseImplicitReceiverValue(symbol, resolvedType.asKtType())
+                KaBaseImplicitReceiverValue(symbol, resolvedType.asKaType())
             }
 
             is FirPropertyAccessExpression if source?.kind is KtFakeSourceElementKind.ImplicitContextParameterArgument -> {
@@ -1109,18 +1109,18 @@ internal class KaFirResolver(
 
                 require(firSymbol is FirValueParameterSymbol) { "Unexpected symbol ${firSymbol::class.simpleName}" }
                 val symbol = firSymbolBuilder.variableBuilder.buildParameterSymbol(firSymbol)
-                KaBaseImplicitReceiverValue(symbol, resolvedType.asKtType())
+                KaBaseImplicitReceiverValue(symbol, resolvedType.asKaType())
             }
 
             is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.symbol ?: return null
-                KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKtType())
+                KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKaType())
             }
 
             else -> {
                 val psi = psi
                 if (psi !is KtExpression) return null
-                psi.toExplicitReceiverValue(resolvedType.asKtType())
+                psi.toExplicitReceiverValue(resolvedType.asKaType())
             }
         }
     }
@@ -1188,7 +1188,7 @@ internal class KaFirResolver(
     }
 
     private fun FirArrayLiteral.toTypeArgumentsMapping(symbol: KaDeclarationSymbol): Map<KaTypeParameterSymbol, KaType> {
-        val elementType = resolvedType.arrayElementType()?.asKtType() ?: return emptyMap()
+        val elementType = resolvedType.arrayElementType()?.asKaType() ?: return emptyMap()
         val typeParameter = symbol.typeParameters.singleOrNull() ?: return emptyMap()
         return mapOf(typeParameter to elementType)
     }
@@ -1257,7 +1257,7 @@ internal class KaFirResolver(
 
     private fun Map<FirTypeParameterSymbol, ConeKotlinType>.asKaTypeParametersMapping(): Map<KaTypeParameterSymbol, KaType> {
         return map { (key, value) ->
-            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(key) to value.asKtType()
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(key) to value.asKaType()
         }.toMap()
     }
 
@@ -1393,7 +1393,7 @@ internal class KaFirResolver(
         val diagnostic = createConeDiagnosticForCandidateWithError(candidate.lowestApplicability, candidate)
         if (diagnostic is ConeHiddenCandidateError) return null
         val ktDiagnostic =
-            resolvable.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement()) }
+            resolvable.source?.let { diagnostic.asKaDiagnostic(it, element.toKtPsiSourceElement()) }
                 ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token)
         return KaBaseInapplicableCallCandidateInfo(call, isInBestCandidates, ktDiagnostic)
     }
@@ -1505,7 +1505,7 @@ internal class KaFirResolver(
                             backingSignature = kaSignature,
                             dispatchReceiver = KaBaseExplicitReceiverValue(
                                 expression = leftPsi,
-                                backingType = leftOperand.resolvedType.asKtType(),
+                                backingType = leftOperand.resolvedType.asKaType(),
                                 isSafeNavigation = false,
                             ),
                             extensionReceiver = null,
@@ -1631,7 +1631,7 @@ internal class KaFirResolver(
     }
 
     private fun FirDiagnosticHolder.createKtDiagnostic(psi: KtElement?): KaDiagnostic {
-        return (source?.let { diagnostic.asKtDiagnostic(it, psi?.toKtPsiSourceElement()) }
+        return (source?.let { diagnostic.asKaDiagnostic(it, psi?.toKtPsiSourceElement()) }
             ?: KaNonBoundToPsiErrorDiagnostic(factoryName = FirErrors.OTHER_ERROR.name, diagnostic.reason, token))
     }
 }

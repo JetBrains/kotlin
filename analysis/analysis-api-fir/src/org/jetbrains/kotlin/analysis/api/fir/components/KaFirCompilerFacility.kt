@@ -180,7 +180,7 @@ internal class KaFirCompilerFacility(
         target: KaCompilerTarget.Jvm,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult {
-        val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKtDiagnostic() }
+        val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKaDiagnostic() }
             .also(mainFile::accept).diagnostics
 
         if (syntaxErrors.isNotEmpty()) {
@@ -1070,7 +1070,7 @@ internal class KaFirCompilerFacility(
                 require(diagnostic is KtDiagnostic)
                 if (diagnostic.severity == Severity.ERROR) {
                     val ktDiagnostic = when (diagnostic) {
-                        is KtPsiDiagnostic -> diagnostic.asKtDiagnostic()
+                        is KtPsiDiagnostic -> diagnostic.asKaDiagnostic()
                         else -> {
                             val message = diagnostic.renderMessage()
                             KaNonBoundToPsiErrorDiagnostic(diagnostic.factoryName, message, analysisSession.token)

@@ -208,7 +208,7 @@ internal fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(
     analysisSession: KaFirSession,
     discardErrorTypes: Boolean = false,
 ): KaSubstitutor? =
-    createConeSubstitutorFromTypeArguments(analysisSession.firSession, discardErrorTypes)?.toKtSubstitutor(analysisSession)
+    createConeSubstitutorFromTypeArguments(analysisSession.firSession, discardErrorTypes)?.toKaSubstitutor(analysisSession)
 
-internal fun ConeSubstitutor.toKtSubstitutor(analysisSession: KaFirSession): KaSubstitutor =
+internal fun ConeSubstitutor.toKaSubstitutor(analysisSession: KaFirSession): KaSubstitutor =
     analysisSession.firSymbolBuilder.typeBuilder.buildSubstitutor(this)

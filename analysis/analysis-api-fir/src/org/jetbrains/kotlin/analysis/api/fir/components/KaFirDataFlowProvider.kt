@@ -59,8 +59,8 @@ internal class KaFirDataFlowProvider(
         get() = withPsiValidityAssertion {
             with(analysisSession) {
                 val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this@smartCastInfo) ?: return null
-                val originalType = firSmartCastExpression.originalExpression.resolvedType.asKtType()
-                val smartCastType = firSmartCastExpression.smartcastType.coneType.asKtType()
+                val originalType = firSmartCastExpression.originalExpression.resolvedType.asKaType()
+                val smartCastType = firSmartCastExpression.smartcastType.coneType.asKaType()
 
                 if (originalType.semanticallyEquals(smartCastType)) {
                     // Skip trivial smart casts
@@ -155,7 +155,7 @@ internal class KaFirDataFlowProvider(
         if (receiver == null || receiver == firExpression.explicitReceiver) return null
         if (!receiver.isStableSmartcast()) return null
 
-        val type = receiver.resolvedType.asKtType()
+        val type = receiver.resolvedType.asKaType()
         return KaBaseImplicitReceiverSmartCast(type, kind)
     }
 

@@ -38,7 +38,7 @@ internal class KaFirTypeCreator(
         val lookupTag = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType()
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKaType()
                 classSymbol.toLookupTag()
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
@@ -54,7 +54,7 @@ internal class KaFirTypeCreator(
             builder.isMarkedNullable
         ) as ConeClassLikeType
 
-        return coneType.asKtType()
+        return coneType.asKaType()
     }
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
@@ -63,7 +63,7 @@ internal class KaFirTypeCreator(
             val symbol = builder.symbol
             val coneType = symbol.firSymbol.toConeType()
                 .withNullability(nullable = builder.isMarkedNullable, typeContext = analysisSession.firSession.typeContext)
-            return coneType.asKtType() as KaTypeParameterType
+            return coneType.asKaType() as KaTypeParameterType
         }
     }
 }

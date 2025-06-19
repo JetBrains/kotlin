@@ -22,13 +22,13 @@ internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider, KaFirSessionComponent {
     override fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
-        getDiagnostics(resolutionFacade, filter.asLLFilter()).map { it.asKtDiagnostic() }
+        getDiagnostics(resolutionFacade, filter.asLLFilter()).map { it.asKaDiagnostic() }
     }
 
     override fun KtFile.collectDiagnostics(
         filter: KaDiagnosticCheckerFilter,
     ): Collection<KaDiagnosticWithPsi<*>> = withPsiValidityAssertion {
-        collectDiagnosticsForFile(resolutionFacade, filter.asLLFilter()).map { it.asKtDiagnostic() }
+        collectDiagnosticsForFile(resolutionFacade, filter.asLLFilter()).map { it.asKaDiagnostic() }
     }
 
     private fun KaDiagnosticCheckerFilter.asLLFilter() = when (this) {
