@@ -109,9 +109,16 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.ReturnType -> {
-                (it.expression.resolvedType as? ConeClassLikeType)?.returnType(session)?.let { returnType ->
-                    Interpreter.Success(Marker(returnType))
-                }
+                val type = it.expression.resolvedType as? ConeClassLikeType
+                type
+                    ?.let {
+                        if (type.isSomeFunctionType(session)) {
+                            type.returnType(session)
+                        } else {
+                            type
+                        }
+                    }
+                    ?.let { returnType -> Interpreter.Success(Marker(returnType)) }
             }
 
             is Interpreter.Dsl -> {

@@ -85,7 +85,11 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AllUpTo2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupBy
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.AsGroupByDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByCharDelimiters
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByIterable
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByName
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByRegex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ByStringDelimiters
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ColGroups2
@@ -164,6 +168,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.LeftJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MapToFrame
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchRegex
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.MatchStringRegex
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Max0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Max1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Mean0
@@ -223,6 +229,19 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.RightJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Single2
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Split0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameIntoColumns
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitAnyFrameRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitInplace
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIntoRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIterableInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPair
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformDefault
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInplace
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInto0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformIntoRows
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInward0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Std1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Sum0
@@ -449,6 +468,25 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ValueCols1" -> ValueCols1()
         "ValueCols2" -> ValueCols2()
         "ColumnRange" -> ColumnRange()
+        "Split0" -> Split0()
+        "ByIterable" -> ByIterable()
+        "ByCharDelimiters" -> ByCharDelimiters()
+        "ByStringDelimiters" -> ByStringDelimiters()
+        "ByRegex" -> ByRegex()
+        "MatchRegex" -> MatchRegex()
+        "MatchStringRegex" -> MatchStringRegex()
+        "SplitWithTransformInto0" -> SplitWithTransformInto0()
+        "SplitWithTransformInward0" -> SplitWithTransformInward0()
+        "SplitInplace" -> SplitInplace()
+        "SplitWithTransformInplace" -> SplitWithTransformInplace()
+        "SplitDefault" -> SplitDefault()
+        "SplitIntoRows" -> SplitIntoRows()
+        "SplitAnyFrameRows" -> SplitAnyFrameRows()
+        "SplitPair" -> SplitPair()
+        "SplitAnyFrameIntoColumns" -> SplitAnyFrameIntoColumns()
+        "SplitIterableInto" -> SplitIterableInto()
+        "SplitWithTransformDefault" -> SplitWithTransformDefault()
+        "SplitWithTransformIntoRows" -> SplitWithTransformIntoRows()
         "Named0" -> Named0()
         "toDataFrameDsl" -> ToDataFrameDsl()
         "toDataFrame" -> ToDataFrame()
