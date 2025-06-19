@@ -182,13 +182,20 @@ private class IrFileValidator(
         }
     }
 
-    override fun visitElement(element: IrElement) {
-        var block = { element.acceptChildrenVoid(this) }
+    private inline fun withUpdatedContest(element: IrElement, block: () -> Unit) {
         for (contextUpdater in contextUpdaters) {
-            val currentBlock = block
-            block = { contextUpdater.runInNewContext(context, element, currentBlock) }
+            contextUpdater.onEnterElement(context, element)
         }
         block()
+        for (contextUpdater in contextUpdaters.asReversed()) {
+            contextUpdater.onExitElement(context, element)
+        }
+    }
+
+    override fun visitElement(element: IrElement) {
+        withUpdatedContest(element) {
+            super.visitElement(element)
+        }
     }
 
     override fun visitConst(expression: IrConst) {

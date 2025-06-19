@@ -5,19 +5,28 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.context
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.LOCAL
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 
 internal object TypeParameterScopeUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
+    override fun onEnterElement(context: CheckerContext, element: IrElement) {
         if (element is IrTypeParametersContainer) {
-            context.withTypeParametersInScope(element, block)
-        } else {
-            block()
+            context.typeParameterScopeStack.pushScope(
+                outerScopesAreInvisible = element is IrClass && !element.isInner && element.visibility != LOCAL
+            ) {
+                element.typeParameters.mapTo(this) { it.symbol }
+            }
         }
+        super.onEnterElement(context, element)
+    }
+
+    override fun onExitElement(context: CheckerContext, element: IrElement) {
+        if (element is IrTypeParametersContainer) {
+            context.typeParameterScopeStack.popScope()
+        }
+        super.onExitElement(context, element)
     }
 }

@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.ir.IrElement
  * Manages temporary updates to a [CheckerContext] during the processing of an [IrElement].
  */
 internal interface ContextUpdater {
-    /**
-     * Temporarily updates the [context]  based on the given [element], executes [block] within the updated context,
-     * and then restores the context to its original state.
-     */
-    fun runInNewContext(context: CheckerContext, element: IrElement, block: () -> Unit)
+    fun onEnterElement(context: CheckerContext, element: IrElement) {}
+    fun onExitElement(context: CheckerContext, element: IrElement) {}
 }

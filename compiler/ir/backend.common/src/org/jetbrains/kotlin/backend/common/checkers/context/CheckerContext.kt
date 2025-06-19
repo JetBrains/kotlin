@@ -29,21 +29,4 @@ internal class CheckerContext(
     val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
 
     fun error(element: IrElement, message: String) = reportError(file, element, message, parentChain)
-
-    fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
-        typeParameterScopeStack.withNewScope(
-            outerScopesAreInvisible = container is IrClass && !container.isInner && container.visibility != DescriptorVisibilities.LOCAL,
-            populateScope = { container.typeParameters.forEach { add(it.symbol) } },
-            block = block,
-        )
-    }
-
-    fun withScopeOwner(owner: IrElement, block: () -> Unit, populateScope: MutableSet<IrValueSymbol>.() -> Unit = {}) {
-        valueSymbolScopeStack.withNewScope(
-            isGlobalScope = owner is IrScript,
-            outerScopesAreInvisible = owner is IrClass && !owner.isInner && owner.visibility != DescriptorVisibilities.LOCAL,
-            block = block,
-            populateScope = populateScope
-        )
-    }
 }
