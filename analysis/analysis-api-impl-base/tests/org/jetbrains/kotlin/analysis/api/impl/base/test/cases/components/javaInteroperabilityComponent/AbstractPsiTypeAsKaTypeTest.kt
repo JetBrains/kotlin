@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiVariable
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.render
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -37,9 +38,9 @@ abstract class AbstractPsiTypeAsKaTypeTest : AbstractAnalysisApiBasedTest() {
                     }
 
                     testServices.assertions.assertNotNull(psiType)
-                    val ktType = psiType!!.asKaType(useSitePosition ?: psiDeclaration)!!
-                    appendLine("${PsiType::class.simpleName}: ${JavaInteroperabilityComponentTestUtils.render(psiType)}")
-                    appendLine("${KaType::class.simpleName}: ${JavaInteroperabilityComponentTestUtils.render(useSiteSession, ktType)}")
+                    val kaType = psiType!!.asKaType(useSitePosition ?: psiDeclaration)!!
+                    appendLine("${PsiType::class.simpleName}: ${psiType.render()}")
+                    appendLine("${KaType::class.simpleName}: ${kaType.render(useSiteSession)}")
                 }
             }
         }

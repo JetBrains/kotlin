@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaIn
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.findLightDeclarationContext
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.getContainingKtLightClass
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.JavaInteroperabilityComponentTestUtils.render
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -32,10 +33,10 @@ abstract class AbstractDeclarationTypeAsPsiTypeTest : AbstractAnalysisApiBasedTe
         val actual = buildString {
             executeOnPooledThreadInReadAction {
                 copyAwareAnalyzeForTest(declaration) { contextDeclaration ->
-                    val ktType = contextDeclaration.returnType
-                    appendLine("${KaType::class.simpleName}: ${JavaInteroperabilityComponentTestUtils.render(useSiteSession, ktType)}")
-                    val psiType = ktType.asPsiType(psiContext, allowErrorTypes = false)
-                    appendLine("${PsiType::class.simpleName}: ${JavaInteroperabilityComponentTestUtils.render(psiType)}")
+                    val kaType = contextDeclaration.returnType
+                    val psiType = kaType.asPsiType(psiContext, allowErrorTypes = false)
+                    appendLine("${KaType::class.simpleName}: ${kaType.render(useSiteSession)}")
+                    appendLine("${PsiType::class.simpleName}: ${psiType?.render()}")
                 }
             }
         }

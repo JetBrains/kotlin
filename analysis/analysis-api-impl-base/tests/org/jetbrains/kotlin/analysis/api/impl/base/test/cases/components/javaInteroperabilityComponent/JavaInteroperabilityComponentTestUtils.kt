@@ -24,17 +24,13 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal object JavaInteroperabilityComponentTestUtils {
-    fun render(
-        analysisSession: KaSession,
-        type: KaType?,
-        variance: Variance = Variance.INVARIANT,
-    ): String? {
+    fun KaType.render(analysisSession: KaSession): String {
         with(analysisSession) {
-            return type?.render(position = variance)
+            return this@render.render(position = Variance.INVARIANT)
         }
     }
 
-    fun render(type: PsiType?): String? = type?.let(PsiClassRenderer::renderType)
+    fun PsiType.render(): String = PsiClassRenderer.renderType(this)
 
     internal fun getContainingKtLightClass(
         declaration: KtDeclaration,
