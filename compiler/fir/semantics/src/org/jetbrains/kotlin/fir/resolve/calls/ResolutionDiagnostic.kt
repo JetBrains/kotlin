@@ -165,7 +165,7 @@ class Unsupported(val message: String, val source: KtSourceElement?) : Resolutio
 
 class NotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ResolutionDiagnostic(K2_NOT_FUNCTION_AS_OPERATOR)
 
-class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(INAPPLICABLE)
 
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
 

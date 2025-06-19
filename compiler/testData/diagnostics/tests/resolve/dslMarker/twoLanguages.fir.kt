@@ -38,7 +38,7 @@ fun test() {
             }
 
             bar2 {
-                <!DSL_SCOPE_VIOLATION!>a<!>()
+                a()
                 b()
             }
         }

@@ -40,7 +40,7 @@ fun test() {
         contextFunctionTypeVal()
 
         with(Other()) {
-            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!NONE_APPLICABLE!>contextFun<!>()
             <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
@@ -50,7 +50,7 @@ fun test() {
         contextFunctionTypeVal()
 
         context(Other()) {
-            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!NONE_APPLICABLE!>contextFun<!>()
             <!DSL_SCOPE_VIOLATION!>contextFunctionTypeVal<!>()
         }
     }
@@ -59,7 +59,7 @@ fun test() {
         contextFun()
 
         with(Other()) {
-            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!NONE_APPLICABLE!>contextFun<!>()
         }
     }
 
@@ -67,17 +67,17 @@ fun test() {
         contextFun()
 
         with(Other()) {
-            <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+            <!NONE_APPLICABLE!>contextFun<!>()
         }
     }
 
     annotatedFunctionTypeWithContext {
         // NO DSL_SCOPE_VIOLATION because receiver and context parameter come from the same scope
-        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+        <!NONE_APPLICABLE!>contextFun<!>()
     }
 
     context(DslReceiver(), Other()) {
-        <!DSL_SCOPE_VIOLATION!>contextFun<!>()
+        <!NONE_APPLICABLE!>contextFun<!>()
         <!DSL_SCOPE_VIOLATION!>otherContextFun<!>()
     }
 }
