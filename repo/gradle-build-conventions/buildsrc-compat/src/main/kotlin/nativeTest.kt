@@ -206,7 +206,9 @@ fun Project.nativeTest(
                         }
                         dependsOn(it)
                     }
-                    lazyClassPath { fileCollection.singleFile }
+                    lazy {
+                        fileCollection.singleFile.absolutePath
+                    }
                 } else {
                     lazy { null }
                 }
