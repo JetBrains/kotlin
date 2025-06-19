@@ -6718,14 +6718,17 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY) { firDiagnostic ->
-        InvalidDefaultValueDependencyImpl(
+    add(FirJvmErrors.NONFINAL_VERSIONED_FUNCTION) { firDiagnostic ->
+        NonfinalVersionedFunctionImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirJvmErrors.NONFINAL_VERSIONED_FUNCTION) { firDiagnostic ->
-        NonfinalVersionedFunctionImpl(
+    add(FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY) { firDiagnostic ->
+        InvalidDefaultValueDependencyImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

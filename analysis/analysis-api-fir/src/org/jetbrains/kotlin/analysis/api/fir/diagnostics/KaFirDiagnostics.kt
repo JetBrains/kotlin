@@ -4699,12 +4699,15 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
     }
 
-    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidDefaultValueDependency::class
-    }
-
     interface NonfinalVersionedFunction : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NonfinalVersionedFunction::class
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+        val dependOn: KaCallableSymbol
+        val dependOnVersion: String
+        val maxVersion: String
     }
 
     interface ConflictWithJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {

@@ -5651,15 +5651,18 @@ internal class InvalidVersioningOnNonOptionalImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnNonOptional
 
-internal class InvalidDefaultValueDependencyImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidDefaultValueDependency
-
 internal class NonfinalVersionedFunctionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonfinalVersionedFunction
+
+internal class InvalidDefaultValueDependencyImpl(
+    override val dependOn: KaCallableSymbol,
+    override val dependOnVersion: String,
+    override val maxVersion: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidDefaultValueDependency
 
 internal class ConflictWithJvmOverloadsAnnotationImpl(
     firDiagnostic: KtPsiDiagnostic,

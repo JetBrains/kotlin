@@ -35,8 +35,8 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
+        val inOverridableFunction = declaration.isOverridable()
         var inVersionedPart = false
-        var hasVersionAnnotation = false
         var lastVersionNumber: MavenComparableVersion? = null
         val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
 
@@ -48,24 +48,22 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
                         param.returnTypeRef.coneType.isSomeFunctionType(context.session)
 
                 when {
-                    inVersionedPart && !isTrailingLambda -> {
-                        reporter.reportOn(param.source, FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
-                    }
-                    versionAnnotation != null -> {
+                    versionAnnotation != null ->
                         reporter.reportOn(versionAnnotation.source, FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
-                        hasVersionAnnotation = true
-                    }
+
+                    inVersionedPart && !isTrailingLambda ->
+                        reporter.reportOn(param.source, FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
                 }
 
                 continue
             }
 
             if (versionAnnotation == null) continue
-            hasVersionAnnotation = true
 
             inVersionedPart = true
             val versionString = versionAnnotation.getStringArgument(versionNumberArgument, context.session) ?: continue
 
+            if (inOverridableFunction) reporter.reportOn(versionAnnotation.source, FirJvmErrors.NONFINAL_VERSIONED_FUNCTION)
 
             val version = MavenComparableVersion(versionString)
             paramVersions[param.symbol] = version
@@ -77,16 +75,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             }
         }
 
-        if (hasVersionAnnotation) {
-            when {
-                declaration.isOverridable() -> {
-                    reporter.reportOn(declaration.source, FirJvmErrors.NONFINAL_VERSIONED_FUNCTION)
-                }
-
-                declaration.hasAnnotation(JVM_OVERLOADS_CLASS_ID, context.session) -> {
-                    reporter.reportOn(declaration.source, FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
-                }
-            }
+        val jvmOverloadAnnotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, context.session)
+        if (jvmOverloadAnnotation != null && paramVersions.isNotEmpty()) {
+            reporter.reportOn(jvmOverloadAnnotation.source, FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
         }
 
         checkDependency(declaration, paramVersions)
@@ -124,13 +115,19 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: MavenComparableVersion?) {
             super.visitQualifiedAccessExpression(qualifiedAccessExpression, data)
 
-            val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return
-            val version = symbolVersions[symbol]
+            val dependOnSymbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return
+            val dependVersion = symbolVersions[dependOnSymbol] ?: return
             val maxVersion = data
 
-            if (!version.lessThanEqual(maxVersion)) {
+            if (!dependVersion.lessThanEqual(maxVersion)) {
                 with(context) {
-                    reporter.reportOn(qualifiedAccessExpression.source, FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY)
+                    reporter.reportOn(
+                        qualifiedAccessExpression.source,
+                        FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY,
+                        dependOnSymbol,
+                        dependVersion.renderString(),
+                        maxVersion.renderString(),
+                    )
                 }
             }
         }
@@ -142,4 +139,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         return this <= other
     }
+
+    private fun MavenComparableVersion?.renderString() = this?.toString() ?: "base version"
 }
