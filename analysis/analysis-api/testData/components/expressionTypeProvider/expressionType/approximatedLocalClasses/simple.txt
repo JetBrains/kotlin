@@ -1,2 +1,2 @@
 expression: B()
-type: B
+type: T
