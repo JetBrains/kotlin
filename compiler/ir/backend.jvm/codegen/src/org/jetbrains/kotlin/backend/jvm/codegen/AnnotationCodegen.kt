@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
@@ -29,11 +30,9 @@ import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -163,7 +161,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotation(annotation: IrConstructorCall, path: TypePath?, isTypeAnnotation: Boolean): String? {
         val annotationClass = annotation.annotationClass
-        val retentionPolicy = getRetentionPolicy(annotationClass)
+        val retentionPolicy = annotationClass.getJvmAnnotationRetention()
         if (retentionPolicy == RetentionPolicy.SOURCE && !context.state.classBuilderMode.generateSourceRetentionAnnotations) return null
 
         // Annotations in the internal IR package do not have real class files.
@@ -318,35 +316,6 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 else ->
                     false
             }
-
-        private val annotationRetentionMap = mapOf(
-            KotlinRetention.SOURCE to RetentionPolicy.SOURCE,
-            KotlinRetention.BINARY to RetentionPolicy.CLASS,
-            KotlinRetention.RUNTIME to RetentionPolicy.RUNTIME
-        )
-
-        private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {
-            val retention = irClass.getAnnotationRetention()
-            if (retention != null) {
-                @Suppress("MapGetWithNotNullAssertionOperator")
-                return annotationRetentionMap[retention]!!
-            }
-            irClass.getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
-                val value = retentionAnnotation.arguments[0]
-                if (value is IrDeclarationReference) {
-                    val symbol = value.symbol
-                    if (symbol is IrEnumEntrySymbol) {
-                        val entry = symbol.owner
-                        val enumClassFqName = entry.parentAsClass.fqNameWhenAvailable
-                        if (RetentionPolicy::class.java.name == enumClassFqName?.asString()) {
-                            return RetentionPolicy.valueOf(entry.name.asString())
-                        }
-                    }
-                }
-            }
-
-            return RetentionPolicy.RUNTIME
-        }
 
         val IrConstructorCall.annotationClass: IrClass get() = symbol.owner.parentAsClass
     }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
@@ -68,6 +71,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
+import java.lang.annotation.RetentionPolicy
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?
@@ -535,3 +539,31 @@ fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction
 val IrValueParameter.isSkippedInGenericSignature: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
             origin == JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
+
+private val annotationRetentionMap = mapOf(
+    KotlinRetention.SOURCE to RetentionPolicy.SOURCE,
+    KotlinRetention.BINARY to RetentionPolicy.CLASS,
+    KotlinRetention.RUNTIME to RetentionPolicy.RUNTIME
+)
+
+fun IrClass.getJvmAnnotationRetention(): RetentionPolicy {
+    val retention = getAnnotationRetention()
+    if (retention != null) {
+        return annotationRetentionMap[retention]!!
+    }
+    getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
+        val value = retentionAnnotation.arguments[0]
+        if (value is IrDeclarationReference) {
+            val symbol = value.symbol
+            if (symbol is IrEnumEntrySymbol) {
+                val entry = symbol.owner
+                val enumClassFqName = entry.parentAsClass.fqNameWhenAvailable
+                if (RetentionPolicy::class.java.name == enumClassFqName?.asString()) {
+                    return RetentionPolicy.valueOf(entry.name.asString())
+                }
+            }
+        }
+    }
+
+    return RetentionPolicy.RUNTIME
+}

@@ -1,14 +1,13 @@
-// LANGUAGE: +JvmIndyAllowLambdasWithAnnotations
+// LANGUAGE: -JvmIndyAllowLambdasWithAnnotations
 // LAMBDAS: INDY
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// 3 java/lang/invoke/LambdaMetafactory
+// 0 java/lang/invoke/LambdaMetafactory
 
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
 public annotation class SomeAnnotation
 
 fun box(): String {
