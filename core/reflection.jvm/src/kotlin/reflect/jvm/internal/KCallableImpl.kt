@@ -22,6 +22,7 @@ import kotlin.coroutines.Continuation
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.internal.calls.getMfvcUnboxMethods
+import kotlin.reflect.jvm.internal.types.KTypeImpl
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import java.lang.reflect.Array as ReflectArray

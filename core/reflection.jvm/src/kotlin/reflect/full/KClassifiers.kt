@@ -24,7 +24,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance
 import kotlin.reflect.jvm.internal.KClassifierImpl
-import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.types.KTypeImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 
 /**

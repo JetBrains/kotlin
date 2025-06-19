@@ -22,6 +22,7 @@ import java.lang.reflect.Type
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.ValueClassAwareCaller
+import kotlin.reflect.jvm.internal.types.KTypeImpl
 
 internal class KParameterImpl(
     val callable: KCallableImpl<*>,

@@ -51,6 +51,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import kotlin.reflect.jvm.internal.types.KTypeImpl
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 

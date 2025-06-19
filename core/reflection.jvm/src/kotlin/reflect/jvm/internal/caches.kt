@@ -6,12 +6,10 @@
 package kotlin.reflect.jvm.internal
 
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.KDeclarationContainer
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.full.createType
-
-import kotlin.reflect.KDeclarationContainer
-
 
 private val K_CLASS_CACHE = createCache { KClassImpl(it) }
 private val K_PACKAGE_CACHE = createCache { KPackageImpl(it) }
