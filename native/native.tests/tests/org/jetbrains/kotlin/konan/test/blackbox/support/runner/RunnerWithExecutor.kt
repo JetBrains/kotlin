@@ -6,15 +6,19 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.konan.test.blackbox.support.ProcessLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.AbstractRunner.AbstractRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.native.executors.ExecuteRequest
 import org.jetbrains.kotlin.native.executors.Executor
+import org.jetbrains.kotlin.native.executors.runProcess
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.nio.file.Files
+import kotlin.io.path.Path
 
 internal open class RunnerWithExecutor(
     private val executor: Executor,
@@ -39,9 +43,10 @@ internal open class RunnerWithExecutor(
     override fun buildRun() = AbstractRun {
         val stdout = ByteArrayOutputStream()
         val stderr = ByteArrayOutputStream()
+        val workingDirectory = executable.executable.executableFile.parentFile
         val request = ExecuteRequest(programArgs[0]).apply {
             this.args.addAll(programArgs.drop(1))
-            this.workingDirectory = executable.executable.executableFile.parentFile
+            this.workingDirectory = workingDirectory
             inputStreamFromTestParameter()?.let {
                 this.stdin = it
             }
@@ -50,6 +55,27 @@ internal open class RunnerWithExecutor(
             this.timeout = testRun.checks.executionTimeoutCheck.timeout
         }
         val response = executor.execute(request)
+
+        if (response.exitCode != 0) {
+            val stderrString = stderr.toString("UTF-8")
+            val regex = "^Minidump written to \"(.*)\"$".toRegex()
+            val matchResult = regex.find(stderrString)
+            val minidumpFileName = matchResult?.groups?.get(1)?.value
+            if (minidumpFileName != null) {
+                val minidumpAnalyzerOutput = ByteArrayOutputStream()
+                runProcess(
+                    ProcessLevelProperty.MINIDUMP_ANALYZER.readValue(),
+                    executable.executable.executableFile.absolutePath, minidumpFileName,
+                ) {
+                    this.workingDirectory = workingDirectory
+                    this.stdout = minidumpAnalyzerOutput
+                    this.stderr = minidumpAnalyzerOutput
+                }
+                stderr.write(minidumpAnalyzerOutput.toByteArray())
+                Files.write(Path("$minidumpFileName.log"), minidumpAnalyzerOutput.toByteArray())
+            }
+        }
+
         RunResult(
             testExecutable = executable,
             exitCode = response.exitCode,

@@ -389,7 +389,8 @@ class ObjCFrameworkCompilation(
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
             "-produce", "framework",
-            "-output", expectedArtifact.frameworkDir.absolutePath
+            "-output", expectedArtifact.frameworkDir.absolutePath,
+            "-Xbinary=minidumpLocation=${expectedArtifact.logFile.parentFile.absolutePath}",
         )
         super.applySpecificArgs(argsBuilder)
     }
@@ -634,6 +635,12 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
         addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+    }
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) {
+        super.applySpecificArgs(argsBuilder)
+
+        argsBuilder.add("-Xbinary=minidumpLocation=${expectedArtifact.logFile.parentFile.absolutePath}")
     }
 }
 
