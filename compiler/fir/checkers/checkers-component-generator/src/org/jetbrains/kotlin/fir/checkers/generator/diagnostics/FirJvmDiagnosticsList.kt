@@ -77,12 +77,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<FirFieldSymbol>("hidden")
         }
 
-        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by error<KtDeclaration>()
-        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<KtDeclaration>()
-        val INVALID_VERSION_NUMBER_FORMAT by error<KtDeclaration>()
-        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<KtDeclaration>()
-        val NONFINAL_VERSIONED_FUNCTION by error<KtDeclaration>()
-        val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by error<KtDeclaration>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
@@ -252,6 +246,16 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("inlinedBytecodeVersion")
             parameter<String>("currentModuleBytecodeVersion")
         }
+    }
+
+    val VERSION_OVERLOADS by object : DiagnosticGroup("Version Overloads") {
+        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
+        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<PsiElement>()
+        val NONFINAL_VERSIONED_FUNCTION by error<PsiElement>()
+
+        val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by warning<PsiElement>()
+        val NON_ASCENDING_VERSION_ANNOTATION by warning<PsiElement>()
     }
 
     val MISC by object : DiagnosticGroup("Misc") {

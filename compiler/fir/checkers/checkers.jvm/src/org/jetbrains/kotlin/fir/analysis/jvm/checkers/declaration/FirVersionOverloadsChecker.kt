@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.config.VersionNumber
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -36,9 +36,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         var inVersionedPart = false
-        var positionValid = true
         var hasVersionAnnotation = false
-        val paramVersions = mutableMapOf<FirCallableSymbol<*>, VersionNumber>()
+        var lastVersionNumber: MavenComparableVersion? = null
+        val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
 
         for ((i, param) in declaration.valueParameters.withIndex()) {
             val versionAnnotation = param.getAnnotationByClassId(JVM_INTRODUCED_AT_CLASS_ID, context.session)
@@ -50,11 +50,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 when {
                     inVersionedPart && !isTrailingLambda -> {
                         reporter.reportOn(param.source, FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
-                        positionValid = false
                     }
                     versionAnnotation != null -> {
-                        reporter.reportOn(param.source, FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
-                        positionValid = false
+                        reporter.reportOn(versionAnnotation.source, FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
                         hasVersionAnnotation = true
                     }
                 }
@@ -69,12 +67,13 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             val versionString = versionAnnotation.getStringArgument(versionNumberArgument, context.session) ?: continue
 
 
-            try {
-                val version = VersionNumber(versionString)
-                paramVersions[param.symbol] = version
-            } catch (_: Exception) {
-                reporter.reportOn(param.source, FirJvmErrors.INVALID_VERSION_NUMBER_FORMAT)
-                positionValid = false
+            val version = MavenComparableVersion(versionString)
+            paramVersions[param.symbol] = version
+
+            if (lastVersionNumber.lessThanEqual(version)) {
+                lastVersionNumber = version
+            } else {
+//                reporter.reportOn(param.source, FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION)
             }
         }
 
@@ -82,19 +81,15 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             when {
                 declaration.isOverridable() -> {
                     reporter.reportOn(declaration.source, FirJvmErrors.NONFINAL_VERSIONED_FUNCTION)
-                    positionValid = false
                 }
 
                 declaration.hasAnnotation(JVM_OVERLOADS_CLASS_ID, context.session) -> {
                     reporter.reportOn(declaration.source, FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
-                    positionValid = false
                 }
             }
         }
 
-        if (positionValid) {
-            checkDependency(declaration, paramVersions)
-        }
+        checkDependency(declaration, paramVersions)
     }
 
 
@@ -103,51 +98,45 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDependency(
         declaration: FirFunction,
-        paramVersions: Map<FirCallableSymbol<*>, VersionNumber>
+        paramVersions: Map<FirCallableSymbol<*>, MavenComparableVersion>
     ) {
-        val visitor = LatestDependencyCollector(paramVersions)
+        val visitor = DependencyChecker(context, reporter,paramVersions)
 
         for (param in declaration.valueParameters) {
             val defaultValue = param.defaultValue ?: continue
-            val latestDependency = visitor.getLatestDependency(defaultValue)
-
-            if (!latestDependency.lessThanEqual(paramVersions[param.symbol])){
-                reporter.reportOn(param.source, FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY)
-            }
+            visitor.check(defaultValue, paramVersions[param.symbol])
         }
     }
 
-    class LatestDependencyCollector(val symbolVersions: Map<FirCallableSymbol<*>, VersionNumber>)
-        : FirDefaultVisitor<Unit, LatestDependencyCollector.Context>() {
-
-        class Context(var latestDependency: VersionNumber? = null)
-
-        fun getLatestDependency(expression: FirExpression): VersionNumber? {
-            val context = Context()
-            expression.accept(this, context)
-            return context.latestDependency
+    class DependencyChecker(
+        val context: CheckerContext,
+        val reporter: DiagnosticReporter,
+        val symbolVersions: Map<FirCallableSymbol<*>, MavenComparableVersion>,
+    ) : FirDefaultVisitor<Unit, MavenComparableVersion?>() {
+        fun check(expression: FirExpression, maxVersion: MavenComparableVersion?) {
+            expression.accept(this, maxVersion)
         }
 
-        override fun visitElement(element: FirElement, data: Context) {
+        override fun visitElement(element: FirElement, data: MavenComparableVersion?) {
             element.acceptChildren(this, data)
         }
 
-        override fun visitQualifiedAccessExpression(
-            qualifiedAccessExpression: FirQualifiedAccessExpression,
-            data: Context
-        ) {
+        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: MavenComparableVersion?) {
             super.visitQualifiedAccessExpression(qualifiedAccessExpression, data)
 
             val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return
-            val version = symbolVersions[symbol] ?: return
+            val version = symbolVersions[symbol]
+            val maxVersion = data
 
-            if (data.latestDependency.lessThanEqual(version)) {
-                data.latestDependency = version
+            if (!version.lessThanEqual(maxVersion)) {
+                with(context) {
+                    reporter.reportOn(qualifiedAccessExpression.source, FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY)
+                }
             }
         }
     }
 
-    private fun VersionNumber?.lessThanEqual(other: VersionNumber?): Boolean {
+    private fun MavenComparableVersion?.lessThanEqual(other: MavenComparableVersion?): Boolean {
         if (this == null) return true
         if (other == null) return false
 

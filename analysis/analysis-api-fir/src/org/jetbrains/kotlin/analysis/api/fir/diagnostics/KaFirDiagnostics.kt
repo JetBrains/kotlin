@@ -4695,6 +4695,30 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val function: KaCallableSymbol
     }
 
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+    }
+
+    interface NonfinalVersionedFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonfinalVersionedFunction::class
+    }
+
+    interface ConflictWithJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ConflictWithJvmOverloadsAnnotation::class
+    }
+
+    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
+    }
+
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonAscendingVersionAnnotation::class
+    }
+
     interface InapplicableJvmField : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = InapplicableJvmField::class
         val message: String
