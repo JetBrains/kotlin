@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider
+package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-object AnalysisApiPsiTypeProviderTestUtils {
+internal object JavaInteroperabilityComponentTestUtils {
     fun render(
         analysisSession: KaSession,
         type: KaType?,

@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inherit
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiKtTypeByPsiTypeProviderTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.readWriteAccess.AbstractReadWriteAccessTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.referenceResolveProvider.AbstractIsImplicitCompanionReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractOriginalConstructorIfTypeAliasedTest
@@ -490,16 +490,16 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("psiTypeProvider") {
-        test<AbstractAnalysisApiPsiTypeProviderTest> {
+    component("javaInteroperabilityComponent") {
+        test<AbstractDeclarationTypeAsPsiTypeTest> {
             model(it, "psiType/forDeclaration")
         }
 
-        test<AbstractAnalysisApiExpressionPsiTypeProviderTest> {
+        test<AbstractExpressionTypeAsPsiTypeTest> {
             model(it, "psiType/forExpression")
         }
 
-        test<AbstractAnalysisApiKtTypeByPsiTypeProviderTest>(filter = frontendIs(FrontendKind.Fir)) {
+        test<AbstractPsiTypeAsKaTypeTest>(filter = frontendIs(FrontendKind.Fir)) {
             model(it, "psiType/asKtType")
         }
     }
