@@ -38,12 +38,15 @@
 #include <mach-o/arch.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <algorithm>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -119,9 +122,9 @@ static void CopyCFIDataBetweenModules(Module* to_module,
   }
 }
 
-static bool Start(string srcPath) {
+static std::optional<std::string> CreateSyms(string srcPath) {
   string dsymPath = srcPath + ".dSYM";
-  SymbolData symbol_data = NO_DATA | CFI | SYMBOLS_AND_FILES;
+  SymbolData symbol_data = CFI | SYMBOLS_AND_FILES;
   DumpSymbols dump_symbols(symbol_data, true, false, "", false);
 
   // For x86_64 binaries, the CFI data is in the __TEXT,__eh_frame of the
@@ -139,23 +142,23 @@ static bool Start(string srcPath) {
   dump_symbols.SetReportWarnings(false);
 
   if (!dump_symbols.Read(primary_file))
-    return false;
+    return {};
 
   // Read the primary file into a Breakpad Module.
   Module* module = NULL;
   if (!dump_symbols.ReadSymbolData(&module))
-    return false;
+    return {};
   scoped_ptr<Module> scoped_module(module);
 
   // If this is a split module, read the secondary Mach-O file, from which the
   // CFI data will be extracted.
   if (split_module && primary_file == dsymPath) {
     if (!dump_symbols.Read(srcPath))
-      return false;
+      return {};
 
     Module* cfi_module = NULL;
     if (!dump_symbols.ReadSymbolData(&cfi_module))
-      return false;
+      return {};
     scoped_ptr<Module> scoped_cfi_module(cfi_module);
 
     bool name_matches = cfi_module->name() == module->name();
@@ -183,13 +186,50 @@ static bool Start(string srcPath) {
         fprintf(stderr, "Identifier mismatch: binary=[%s], dSYM=[%s]\n",
                 cfi_module->identifier().c_str(), module->identifier().c_str());
       }
-      return false;
+      return {};
     }
 
     CopyCFIDataBetweenModules(module, cfi_module);
   }
 
-  return module->Write(std::cout, symbol_data);
+  std::stringstream out;
+  if (!module->Write(out, symbol_data))
+    return {};
+  return out.str();
+}
+
+static bool createDir(std::string path) {
+  if (mkdir(path.c_str(), 0700) != 0) {
+    fprintf(stderr, "Failed to create directory at %s: %s\n", path.c_str(), strerror(errno));
+    return false;
+  }
+  return true;
+}
+
+static bool SaveSyms(std::string syms, std::string symbol_path) {
+  std::string slash = "/";
+  if (!createDir(symbol_path))
+    return false;
+  std::string header = syms.substr(0, syms.find_first_of('\n'));
+  auto keywordDelimeter = header.find_first_of(' ');
+  if (header.substr(0, keywordDelimeter) != "MODULE") {
+    fprintf(stderr, "Header does not start with MODULE: %s\n", header.c_str());
+    return false;
+  }
+  auto platformDelimeter = header.find_first_of(' ', keywordDelimeter + 1);
+  auto archDelimeter = header.find_first_of(' ', platformDelimeter + 1);
+  auto hashDelimeter = header.find_first_of(' ', archDelimeter + 1);
+  std::string hash = std::string(header.substr(archDelimeter + 1, hashDelimeter - archDelimeter - 1));
+  std::string moduleName = std::string(header.substr(hashDelimeter + 1));
+  std::string modulePath = std::string(symbol_path + slash + moduleName);
+  if (!createDir(modulePath))
+    return false;
+  std::string hashPath = modulePath + slash + hash;
+  if (!createDir(hashPath))
+    return false;
+  std::ofstream symFile(hashPath + slash + moduleName + std::string(".sym"));
+  symFile << syms;
+  return true;
 }
 
 // Processes |options.minidump_file| using MinidumpProcessor.
@@ -234,7 +274,11 @@ bool PrintMinidumpProcess(const char* minidump_file, const char* symbol_path) {
 
 //=============================================================================
 int main (int argc, const char * argv[]) {
-  if (!Start(argv[1])) return 1;
-  if (!PrintMinidumpProcess(argv[2], "syms")) return 1;
+  const char* symbol_path = "syms";
+  auto syms = CreateSyms(argv[1]);
+  if (!syms)
+    return 1;
+  if (!SaveSyms(std::move(*syms), symbol_path)) return 1;
+  if (!PrintMinidumpProcess(argv[2], symbol_path)) return 1;
   return 0;
 }
