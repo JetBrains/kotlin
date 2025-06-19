@@ -674,6 +674,108 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("splitAnyFrameIntoColumns.kt")
+  public void testSplitAnyFrameIntoColumns() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitAnyFrameIntoColumns.kt");
+  }
+
+  @Test
+  @TestMetadata("splitByChar.kt")
+  public void testSplitByChar() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitByChar.kt");
+  }
+
+  @Test
+  @TestMetadata("splitByRegex.kt")
+  public void testSplitByRegex() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitByRegex.kt");
+  }
+
+  @Test
+  @TestMetadata("splitByString.kt")
+  public void testSplitByString() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitByString.kt");
+  }
+
+  @Test
+  @TestMetadata("splitDataFrameIntoRows.kt")
+  public void testSplitDataFrameIntoRows() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitDataFrameIntoRows.kt");
+  }
+
+  @Test
+  @TestMetadata("splitDefault.kt")
+  public void testSplitDefault() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitDefault.kt");
+  }
+
+  @Test
+  @TestMetadata("splitInplace.kt")
+  public void testSplitInplace() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitInplace.kt");
+  }
+
+  @Test
+  @TestMetadata("splitInto.kt")
+  public void testSplitInto() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitInto.kt");
+  }
+
+  @Test
+  @TestMetadata("splitIntoRows.kt")
+  public void testSplitIntoRows() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitIntoRows.kt");
+  }
+
+  @Test
+  @TestMetadata("splitInward.kt")
+  public void testSplitInward() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitInward.kt");
+  }
+
+  @Test
+  @TestMetadata("splitIterableInto.kt")
+  public void testSplitIterableInto() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitIterableInto.kt");
+  }
+
+  @Test
+  @TestMetadata("splitMatch.kt")
+  public void testSplitMatch() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitMatch.kt");
+  }
+
+  @Test
+  @TestMetadata("splitMatchString.kt")
+  public void testSplitMatchString() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitMatchString.kt");
+  }
+
+  @Test
+  @TestMetadata("splitPair.kt")
+  public void testSplitPair() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitPair.kt");
+  }
+
+  @Test
+  @TestMetadata("splitWithTransformDefault.kt")
+  public void testSplitWithTransformDefault() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitWithTransformDefault.kt");
+  }
+
+  @Test
+  @TestMetadata("splitWithTransformInplace.kt")
+  public void testSplitWithTransformInplace() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitWithTransformInplace.kt");
+  }
+
+  @Test
+  @TestMetadata("splitWithTransformIntoRows.kt")
+  public void testSplitWithTransformIntoRows() {
+    runTest("plugins/kotlin-dataframe/testData/box/splitWithTransformIntoRows.kt");
+  }
+
+  @Test
   @TestMetadata("std.kt")
   public void testStd() {
     runTest("plugins/kotlin-dataframe/testData/box/std.kt");
