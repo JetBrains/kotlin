@@ -7,3 +7,4 @@ org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Test
 org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLReversedDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
 org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLDiagnosticsFe10TestGenerated.Tests.Crv.testBasicJInterop,,,
 org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.PartialBodyAnalysisDiagnosticCompilerTestDataTestGenerated.Tests.Crv.testBasicJInterop,,,
+org.jetbrains.kotlin.js.test.ir.ClassicJsIrTextTestGenerated.Expressions.testKt47450,,,FLAKY
