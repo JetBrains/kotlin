@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -35,6 +36,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
+        // skip checking copy method because it is equivalent to the constructor
+        if (declaration.isCopyMethod()) return
+
         val inOverridableFunction = declaration.isOverridable()
         var inVersionedPart = false
         var lastVersionNumber: MavenComparableVersion? = null
@@ -71,7 +75,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (lastVersionNumber.lessThanEqual(version)) {
                 lastVersionNumber = version
             } else {
-//                reporter.reportOn(param.source, FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION)
+                reporter.reportOn(versionAnnotation.source, FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION)
             }
         }
 
@@ -82,9 +86,6 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         checkDependency(declaration, paramVersions)
     }
-
-
-    private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClass()?.isFinal == false
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDependency(
@@ -99,7 +100,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 
-    class DependencyChecker(
+    private class DependencyChecker(
         val context: CheckerContext,
         val reporter: DiagnosticReporter,
         val symbolVersions: Map<FirCallableSymbol<*>, MavenComparableVersion>,
@@ -141,4 +142,8 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     }
 
     private fun MavenComparableVersion?.renderString() = this?.toString() ?: "base version"
+
+    private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClass()?.isFinal == false
+
+    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName.asString() == "copy" && getContainingClass()?.isData == true
 }

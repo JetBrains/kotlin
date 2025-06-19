@@ -9,6 +9,7 @@ class C {
         @kotlin.jvm.IntroducedAt("2") c: Int = 3,
     ) = a + b + c
 
+    @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
     fun mid(
         a : Int = 1,
         @kotlin.jvm.IntroducedAt("2") a1: Int = 2,

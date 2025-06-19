@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// DIAGNOSTICS: -UNUSED_PARAMETER,-NON_ASCENDING_VERSION_ANNOTATION
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.jvm.IntroducedAt
 
@@ -11,6 +11,7 @@ class C {
         @IntroducedAt("2") b: Int = a + a1,
     ) { }
 
+    @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
     fun foo2(
         a: Int = 1,
         @IntroducedAt("2") a1: Int = 1,
@@ -20,6 +21,7 @@ class C {
     ) { }
 }
 
+@Suppress("NON_ASCENDING_VERSION_ANNOTATION")
 data class D(
     val a: Int = 1,
     @IntroducedAt("2") val a1: Int = 1,

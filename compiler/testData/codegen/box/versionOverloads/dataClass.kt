@@ -8,6 +8,7 @@ data class C (
     @kotlin.jvm.IntroducedAt("2") val c: Int = 3,
 )
 
+@Suppress("NON_ASCENDING_VERSION_ANNOTATION")
 data class D (
     val a : Int = 1,
     @kotlin.jvm.IntroducedAt("2") val a1: Int = 2,

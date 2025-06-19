@@ -12,6 +12,14 @@ class C {
         @IntroducedAt("1") b: Int = 2,
         @IntroducedAt("2") c: Int = 3,
     ) { }
+
+    @Suppress("CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION")
+    @JvmOverloads
+    fun foo2(
+        a: Int = 1,
+        @IntroducedAt("1") b: Int = 2,
+        @IntroducedAt("2") c: Int = 3,
+    ) { }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, secondaryConstructor */

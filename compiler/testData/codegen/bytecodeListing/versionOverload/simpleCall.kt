@@ -10,6 +10,7 @@ class X {
         @kotlin.jvm.IntroducedAt("2") c: Float = 0f,
     ) {}
 
+    @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
     fun mid(
         a : Int,
         @kotlin.jvm.IntroducedAt("2") a1: Int = 1,
