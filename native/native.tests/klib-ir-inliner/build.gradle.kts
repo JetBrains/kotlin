@@ -1,5 +1,9 @@
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -24,13 +28,29 @@ sourceSets {
     }
 }
 
+compilerTests {
+    testData(project(":compiler").isolated, "testData/klib")
+    testData(project(":compiler").isolated, "testData/codegen")
+    testData(project(":compiler").isolated, "testData/ir")
+    testData(project(":compiler").isolated, "testData/diagnostics")
+    testData(project(":native:native.tests").isolated, "testData/klib")
+}
+
 testsJar {}
 
 nativeTest(
     "test",
     null,
     allowParallelExecution = true,
-)
+    requirePlatformLibs = true,
+) {
+    extensions.configure<TestInputsCheckExtension> {
+        isNative.set(true)
+        useXcode.set(OperatingSystem.current().isMacOsX)
+    }
+    // nativeTest sets workingDir to rootDir so here we need to override it
+    workingDir = projectDir
+}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
