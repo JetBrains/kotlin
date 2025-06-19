@@ -213,6 +213,20 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js")
                 assertFileInProjectExists("build/${Distribution.DIST}/wasmJs/productionExecutable/new-mpp-wasm-js.js.map")
 
+                assertFileContains(
+                    projectPath.resolve(
+                        "build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm.map"
+                    ),
+                    "../../../../../src/wasmJsMain/kotlin/foo.kt"
+                )
+
+                assertFileContains(
+                    projectPath.resolve(
+                        "build/wasm/packages/redefined-wasm-module-name/kotlin/redefined-wasm-module-name.wasm.map"
+                    ),
+                    "../../../../../src/wasmJsMain/kotlin/foo.kt"
+                )
+
                 assertTrue("Expected one wasm file") {
                     projectPath.resolve("build/${Distribution.DIST}/wasmJs/productionExecutable").toFile().listFiles()!!
                         .filter { it.extension == "wasm" }

@@ -19,7 +19,7 @@ import java.io.File
 
 class SourceMapGenerator(
     baseFileName: String,
-    private val configuration: CompilerConfiguration
+    private val configuration: CompilerConfiguration,
 ) : DebugInformationGenerator {
     // TODO: eliminate duplication for the [org.jetbrains.kotlin.backend.wasm.writeCompilationResult] logic
     private val sourceMapFileName = "$baseFileName.map"
@@ -75,11 +75,10 @@ class SourceMapGenerator(
                     if (offsetExpectedNextLocation == -1) offsetExpectedNextLocation = generatedLocation.column
                 }
                 is SourceLocation.WithFileAndLineNumberInformation -> {
-                    // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.
                     val relativePath = if (sourceLocation is SourceLocation.DefinedLocation) {
                         pathResolver
                             .getPathRelativeToSourceRootsIfExists(sourceLocation.module, File(sourceLocation.file))
-                            ?.replace(Regex("^\\.\\./"), "") ?: continue
+                            ?: continue
                     } else sourceLocation.file
 
                     if (offsetExpectedNextLocation != -1) {
