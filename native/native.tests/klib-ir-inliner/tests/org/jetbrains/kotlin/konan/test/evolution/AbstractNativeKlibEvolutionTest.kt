@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.evolution
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compatibility.binary.AbstractKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
@@ -46,7 +47,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     protected fun runTest(@TestDataFile testPath: String) {
         Assumptions.assumeFalse(isIgnoredTest(testPath))
         AbstractKlibBinaryCompatibilityTest.doTest(
-            filePath = testPath,
+            filePath = ForTestCompileRuntime.transformTestDataPath(testPath).absolutePath,
             expectedResult = "OK",
             produceKlib = ::buildKlib,
             produceAndRunProgram = ::buildAndExecuteBinary
