@@ -492,15 +492,15 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
     component("javaInteroperabilityComponent") {
         test<AbstractDeclarationTypeAsPsiTypeTest> {
-            model(it, "psiType/forDeclaration")
+            model(it, "asPsiType/forDeclaration")
         }
 
         test<AbstractExpressionTypeAsPsiTypeTest> {
-            model(it, "psiType/forExpression")
+            model(it, "asPsiType/forExpression")
         }
 
         test<AbstractPsiTypeAsKaTypeTest>(filter = frontendIs(FrontendKind.Fir)) {
-            model(it, "psiType/asKtType")
+            model(it, "asKaType")
         }
     }
 
