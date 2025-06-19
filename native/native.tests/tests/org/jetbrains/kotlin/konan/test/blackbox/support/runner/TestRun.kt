@@ -19,7 +19,7 @@ import java.io.IOException
 class TestExecutable(
     val executable: Executable,
     val loggedCompilationToolCall: LoggedData.CompilerCall,
-    val testNames: Collection<TestName>
+    val testNames: Collection<TestName>,
 ) {
     companion object {
         fun fromCompilationResult(testCase: TestCase, compilationResult: Success<out Executable>): TestExecutable {

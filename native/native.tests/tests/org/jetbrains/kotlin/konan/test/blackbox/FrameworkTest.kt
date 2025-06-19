@@ -574,7 +574,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
-            listOf(TestName(testName))
+            listOf(TestName(testName)),
         )
         runExecutableAndVerify(testCase, testExecutable)
     }

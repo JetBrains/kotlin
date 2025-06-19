@@ -14,7 +14,8 @@ internal enum class ProcessLevelProperty(shortName: String) {
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
     TEAMCITY("teamcity"),
-    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
+    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath"),
+    MINIDUMP_ANALYZER("minidumpAnalyzer");
 
     private val propertyName = fullPropertyName(shortName)
 

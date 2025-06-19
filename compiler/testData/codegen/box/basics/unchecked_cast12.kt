@@ -1,4 +1,4 @@
-// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=true
+// FREE_COMPILER_ARGS: -Xbinary=genericSafeCasts=false
 
 class Foo(val s: String): Comparable<Foo> {
     override fun compareTo(other: Foo): Int {
