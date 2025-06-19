@@ -109,6 +109,8 @@ native {
                     "-I${projectDir.resolve("src/main/include")}",
                     "-DHAVE_MACH_O_NLIST_H",
                     "-DHAVE_CONFIG_H",
+                    "-DBP_LOGGING_INCLUDE=\"loggingDisabled.h\"",
+                    "-DBPLOG_INFO=LoggingLevelDisabled()",
                     "-c", "-o", ruleOut(), ruleInFirst())
         }
         (".c" to ".$obj") {
