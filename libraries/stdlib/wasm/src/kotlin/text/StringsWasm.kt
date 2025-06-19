@@ -155,6 +155,7 @@ public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  */
 @SinceKotlin("2.0")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@IgnorableReturnValue
 public actual fun String.toCharArray(
     destination: CharArray,
     destinationOffset: Int = 0,

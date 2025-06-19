@@ -153,6 +153,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.put
      */
+    @IgnorableReturnValue
     public actual fun put(key: K, value: V): V?
 
     /**
@@ -162,6 +163,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
      *
      * @sample samples.collections.Maps.CoreApi.remove
      */
+    @IgnorableReturnValue
     public actual fun remove(key: K): V?
 
     // Bulk Modification Operations
@@ -213,6 +215,7 @@ public actual interface MutableMap<K, V> : Map<K, V> {
          *
          * @return the previous value corresponding to the key.
          */
+        @IgnorableReturnValue
         public actual fun setValue(newValue: V): V
     }
 }

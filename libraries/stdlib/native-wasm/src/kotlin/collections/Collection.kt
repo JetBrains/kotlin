@@ -103,6 +103,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.add
      * @sample samples.collections.Collections.Sets.add
      */
+    @IgnorableReturnValue
     public actual fun add(element: E): Boolean
 
     /**
@@ -114,6 +115,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.remove
      * @sample samples.collections.Collections.Sets.remove
      */
+    @IgnorableReturnValue
     public actual fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -125,6 +127,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.addAll
      * @sample samples.collections.Collections.Sets.addAll
      */
+    @IgnorableReturnValue
     public actual fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -135,6 +138,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      * @sample samples.collections.Collections.Lists.removeAll
      * @sample samples.collections.Collections.Sets.removeAll
      */
+    @IgnorableReturnValue
     public actual fun removeAll(elements: Collection<E>): Boolean
 
     /**
@@ -144,6 +148,7 @@ public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E>
      *
      * @sample samples.collections.Collections.Collections.retainAll
      */
+    @IgnorableReturnValue
     public actual fun retainAll(elements: Collection<E>): Boolean
 
     /**

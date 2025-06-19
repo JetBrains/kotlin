@@ -195,7 +195,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-Xcontext-parameters",
                 // See allowReturnValueCheckerButNotReport() in libraries/stdlib/build.gradle.kts:
                 "-Xreturn-value-checker=check",
-                "-Xwarning-level=RETURN_VALUE_NOT_USED:disabled,ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT:disabled",
+                "-Xwarning-level=RETURN_VALUE_NOT_USED:disabled",
             )
         )
     }

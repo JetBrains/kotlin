@@ -168,6 +168,7 @@ private fun String.isNaN(): Boolean = when (this.lowercase()) {
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
+@IgnorableReturnValue
 @PublishedApi
 internal actual fun checkRadix(radix: Int): Int {
     if (radix !in 2..36) {
