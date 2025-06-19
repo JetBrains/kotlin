@@ -1,3 +1,4 @@
+// LANGUAGE: +JvmIndyAllowLambdasWithAnnotations
 // WITH_FIR_TEST_COMPILER_PLUGIN
 // DUMP_IR
 

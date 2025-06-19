@@ -33999,6 +33999,18 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("runtimeAnnotationImplicit.kt")
+      public void testRuntimeAnnotationImplicit() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationImplicit.kt");
+      }
+
+      @Test
+      @TestMetadata("runtimeAnnotationImplicit_allowAnnotatedLambdas.kt")
+      public void testRuntimeAnnotationImplicit_allowAnnotatedLambdas() {
+        runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotationImplicit_allowAnnotatedLambdas.kt");
+      }
+
+      @Test
       @TestMetadata("runtimeAnnotation_allowAnnotatedLambdas.kt")
       public void testRuntimeAnnotation_allowAnnotatedLambdas() {
         runTest("compiler/testData/codegen/box/invokedynamic/lambdas/runtimeAnnotation_allowAnnotatedLambdas.kt");
