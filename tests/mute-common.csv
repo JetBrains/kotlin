@@ -3,3 +3,6 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,STABLE
 org.jetbrains.kotlin.gradle.JsSetupConfigurationCacheIT.checkNodeJsSetup,,FLAKY
 org.jetbrains.kotlin.js.test.fir.FirLightTreeJsOldFrontendDiagnosticsTestGenerated.Export.testPrimitiveNullableTypes,,STABLE
 org.jetbrains.kotlin.js.test.fir.FirPsiJsOldFrontendDiagnosticsTestGenerated.Export.testPrimitiveNullableTypes,,STABLE
+org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testObjCAction_expectAnnotation,,STABLE
+org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testObjCOutlet_expectAnnotation,,STABLE
+org.jetbrains.kotlin.konan.test.diagnostics.DiagnosticsNativeTestGenerated.Multiplatform.testOverrideInit_expectAnnotation,,STABLE
