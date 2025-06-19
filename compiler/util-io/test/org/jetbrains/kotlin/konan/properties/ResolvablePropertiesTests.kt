@@ -121,8 +121,8 @@ class ResolvablePropertiesTests {
     }
 
     companion object {
-        private fun propertiesOf(vararg pairs: Pair<String, Any>): Properties =
-            Properties().also {
+        private fun propertiesOf(vararg pairs: Pair<String, Any>): java.util.Properties =
+            java.util.Properties().also {
                 it.putAll(mapOf(*pairs))
             }
     }

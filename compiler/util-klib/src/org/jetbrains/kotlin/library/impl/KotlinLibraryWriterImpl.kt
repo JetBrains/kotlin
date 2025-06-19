@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.zipDirAs
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
+import java.util.Properties
 
 const val KLIB_DEFAULT_COMPONENT_NAME = "default"
 

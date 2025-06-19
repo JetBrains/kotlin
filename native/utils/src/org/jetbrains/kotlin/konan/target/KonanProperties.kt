@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.target.Configurables
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.*
 import java.io.File
+import java.util.Properties
 
 interface TargetableExternalStorage {
     fun targetString(key: String): String?

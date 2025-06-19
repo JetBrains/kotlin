@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.konan.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.konan.util.substitute
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.*
 import java.nio.file.Paths
+import java.util.Properties
 
 open class TargetedLibraryImpl(
     private val access: TargetedLibraryAccess<TargetedKotlinLibraryLayout>,

@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.konan.properties
 
-import org.jetbrains.kotlin.konan.file.*
+import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 import java.io.StringWriter
 
+@Deprecated(
+    "Redundant typealias. Scheduled for removal in Kotlin 2.4",
+    ReplaceWith("java.util.Properties", imports = ["java.util.Properties"]),
+)
 typealias Properties = java.util.Properties
 
-fun File.loadProperties(): Properties {
+fun File.loadProperties(): java.util.Properties {
     val properties = java.util.Properties()
     this.bufferedReader().use { reader ->
         properties.load(reader)
@@ -21,7 +24,7 @@ fun File.loadProperties(): Properties {
     return properties
 }
 
-fun loadProperties(path: String): Properties = File(path).loadProperties()
+fun loadProperties(path: String): java.util.Properties = File(path).loadProperties()
 
 /**
  * Standard properties writer has two issues, which prevents build reproducibility
@@ -31,7 +34,7 @@ fun loadProperties(path: String): Properties = File(path).loadProperties()
  *
  * This function deals with both issues
  */
-fun File.saveProperties(properties: Properties) {
+fun File.saveProperties(properties: java.util.Properties) {
     val rawData = StringWriter().apply {
         properties.store(this, null)
     }.toString()
@@ -46,16 +49,16 @@ fun File.saveProperties(properties: Properties) {
     }
 }
 
-fun Properties.saveToFile(file: File) = file.saveProperties(this)
+fun java.util.Properties.saveToFile(file: File) = file.saveProperties(this)
 
-fun Properties.propertyString(key: String, suffix: String? = null): String? = getProperty(key.suffix(suffix)) ?: this.getProperty(key)
+fun java.util.Properties.propertyString(key: String, suffix: String? = null): String? = getProperty(key.suffix(suffix)) ?: this.getProperty(key)
 
 /**
  * TODO: this method working with suffixes should be replaced with
  *  functionality borrowed from def file parser and unified for interop tool
  *  and kotlin compiler.
  */
-fun Properties.propertyList(key: String, suffix: String? = null, escapeInQuotes: Boolean = false): List<String> {
+fun java.util.Properties.propertyList(key: String, suffix: String? = null, escapeInQuotes: Boolean = false): List<String> {
     val value: String? = (getProperty(key.suffix(suffix)) ?: getProperty(key))?.trim(Char::isWhitespace)
     return when {
         value.isNullOrEmpty() -> emptyList()
@@ -64,14 +67,13 @@ fun Properties.propertyList(key: String, suffix: String? = null, escapeInQuotes:
     }
 }
 
-fun Properties.hasProperty(key: String, suffix: String? = null): Boolean
-        = this.getProperty(key.suffix(suffix)) != null
+fun java.util.Properties.hasProperty(key: String, suffix: String? = null): Boolean = this.getProperty(key.suffix(suffix)) != null
 
 fun String.suffix(suf: String?): String =
     if (suf == null) this
     else "${this}.$suf"
 
-fun Properties.keepOnlyDefaultProfiles() {
+fun java.util.Properties.keepOnlyDefaultProfiles() {
     val DEPENDENCY_PROFILES_KEY = "dependencyProfiles"
     val dependencyProfiles = this.getProperty(DEPENDENCY_PROFILES_KEY)
     if (dependencyProfiles != "default alt")
@@ -87,9 +89,9 @@ fun Properties.keepOnlyDefaultProfiles() {
 /**
  * Wraps [propertyList] with resolving mechanism. See [String.resolveValue].
  */
-fun Properties.resolvablePropertyList(
+fun java.util.Properties.resolvablePropertyList(
     key: String, suffix: String? = null, escapeInQuotes: Boolean = false,
-    visitedProperties: MutableSet<String> = mutableSetOf()
+    visitedProperties: MutableSet<String> = mutableSetOf(),
 ): List<String> = propertyList(key, suffix, escapeInQuotes).flatMap {
     // We need to create a copy of a visitedProperties to avoid collisions
     // between different elements of the list.
@@ -99,9 +101,9 @@ fun Properties.resolvablePropertyList(
 /**
  * Wraps [propertyString] with resolving mechanism. See [String.resolveValue].
  */
-fun Properties.resolvablePropertyString(
+fun java.util.Properties.resolvablePropertyString(
     key: String, suffix: String? = null,
-    visitedProperties: MutableSet<String> = mutableSetOf()
+    visitedProperties: MutableSet<String> = mutableSetOf(),
 ): String? = propertyString(key, suffix)
     ?.split(' ')
     ?.flatMap { it.resolveValue(this, visitedProperties) }
@@ -118,7 +120,7 @@ fun Properties.resolvablePropertyString(
  *
  * "$key1".resolveValue(properties) will return List("value3", "value1", "value2")
  */
-private fun String.resolveValue(properties: Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
+private fun String.resolveValue(properties: java.util.Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
     when {
         contains("$") -> {
             val prefix = this.substringBefore('$', missingDelimiterValue = "")

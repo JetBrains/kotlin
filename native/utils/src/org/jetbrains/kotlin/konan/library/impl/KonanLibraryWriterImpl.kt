@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.BitcodeWriter
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.library.KonanLibraryWriter
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.*
+import java.util.Properties
 
 class KonanLibraryLayoutForWriter(
     libFile: File,
