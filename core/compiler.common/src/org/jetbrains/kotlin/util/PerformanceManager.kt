@@ -13,9 +13,7 @@ import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.lang.management.ThreadMXBean
-import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -290,10 +288,6 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
     }
 
-    private val dateTimeForFileNameFormatter by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
-    }
-
     fun dumpPerformanceReport(destFileNameOrPlaceholder: String) {
         val refinedFileName: String = if (File(destFileNameOrPlaceholder).isDirectory) {
             // We can't use `Paths.get` because of its absence in earlier Android SDKs
@@ -309,7 +303,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
                 destFileNameOrPlaceholder.indexOf('.', lastSlashIndex).let { if (it == -1) destFileNameOrPlaceholder.length else it }
             // It's ok if `lastSlashIndex` == -1
             val fileNameOrPlaceholder = destFileNameOrPlaceholder.substring(lastSlashIndex + 1, extensionDotIndex)
-            if (fileNameOrPlaceholder == "$") {
+            if (fileNameOrPlaceholder == "*") {
                 val pathString = if (lastSlashIndex != -1) destFileNameOrPlaceholder.take(lastSlashIndex + 1) else ""
                 val fileName = generateFileName()
                 val extension = destFileNameOrPlaceholder.substring(extensionDotIndex)
@@ -325,10 +319,14 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     /**
      * Generate a unique name to avoid files overwriting.
-     * Use the current date-time stamp with seconds precision (should be enough) as a part of the unique name.
+     * Use the current date-time stamp with millis precision as a part of the unique name.
      */
     private fun generateFileName(): String {
-        return "${unitStats.name}_${LocalDateTime.now().format(dateTimeForFileNameFormatter)}"
+        return "${unitStats.name}_${dateFormatterForFileName.format(System.currentTimeMillis())}"
+    }
+
+    private val dateFormatterForFileName by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
     }
 
     fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
