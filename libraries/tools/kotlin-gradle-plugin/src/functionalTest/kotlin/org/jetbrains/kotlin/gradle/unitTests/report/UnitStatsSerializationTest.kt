@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.unitTests.report
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.util.*
 import org.junit.Test
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 
 class UnitStatsSerializationTest {
@@ -15,6 +17,7 @@ class UnitStatsSerializationTest {
     fun validateAllProperties() {
         val moduleStats = UnitStats(
             name = "all_properties",
+            timeStampMs = LocalDateTime.of(2025, 6, 19, 20, 30, 56).toInstant(ZoneOffset.UTC).toEpochMilli(),
             platform = PlatformType.Native,
             compilerType = CompilerType.K1andK2,
             hasErrors = true,

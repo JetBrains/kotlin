@@ -28,6 +28,8 @@ data class UnitStats(
     In the last case, it should have a suffix like `(Child)`.
      */
     val name: String?,
+    // Use plain millis to get rid of using a custom JSON serializer for `java.util.Date`
+    val timeStampMs: Long = System.currentTimeMillis(),
     val platform: PlatformType = PlatformType.JVM,
     val compilerType: CompilerType = CompilerType.K2,
     val hasErrors: Boolean = false,
