@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.properties.Properties
+import java.util.Properties
 
 interface BaseWriter {
     val versions: KotlinLibraryVersioning

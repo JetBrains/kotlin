@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.util.InternalServer
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.ProgressCallback
 import java.nio.file.Paths
+import java.util.Properties
 
 class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, dependenciesRoot: String?, progressCallback : ProgressCallback) : MingwConfigurables,
     KonanPropertiesLoader(target, properties, dependenciesRoot, progressCallback = progressCallback) {

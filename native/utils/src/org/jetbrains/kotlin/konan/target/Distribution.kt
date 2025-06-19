@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.nio.file.Path
+import java.util.*
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(
@@ -18,7 +17,7 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         onlyDefaultProfiles: Boolean = false,
         runtimeFileOverride: String? = null,
         propertyOverrides: Map<String, String>? = null,
-        konanDataDir: String? = null
+        konanDataDir: String? = null,
     ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides, konanDataDir))
 
     val konanHome by serialized::konanHome
@@ -132,6 +131,7 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 }
 
 // TODO: Move into K/N?
-fun buildDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,true, null, konanDataDir = konanDataDir)
+fun buildDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome, true, null, konanDataDir = konanDataDir)
 
-fun customerDistribution(konanHome: String, konanDataDir: String? = null) = Distribution(konanHome,false, null, konanDataDir = konanDataDir)
+fun customerDistribution(konanHome: String, konanDataDir: String? = null) =
+    Distribution(konanHome, false, null, konanDataDir = konanDataDir)
