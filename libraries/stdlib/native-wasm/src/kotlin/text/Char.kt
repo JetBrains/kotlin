@@ -222,6 +222,7 @@ public actual val Char.category: CharCategory
 /**
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
+@IgnorableReturnValue
 @PublishedApi
 @Suppress("DEPRECATION")
 internal actual fun checkRadix(radix: Int): Int {
