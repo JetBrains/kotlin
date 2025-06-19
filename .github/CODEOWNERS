@@ -91,7 +91,6 @@
 /compiler/psi/psi-utils/ @JetBrains/kotlin-analysis-api
 /compiler/psi/psi-frontend-utils/ @JetBrains/kotlin-analysis-api
 /compiler/multiplatform-parsing/ @JetBrains/kotlin-frontend
-/compiler/stats-analyser/ @JetBrains/kotlin-frontend
 /compiler/resolution/ @JetBrains/kotlin-frontend
 /compiler/resolution.common/ @JetBrains/kotlin-frontend
 /compiler/resolution.common.jvm/ @JetBrains/kotlin-frontend
@@ -354,6 +353,7 @@
 /libraries/tools/kotlinp/ @JetBrains/kotlin-jvm @JetBrains/kotlin-common-backend
 /libraries/tools/kotlinp/jvm/ @JetBrains/kotlin-jvm
 /libraries/tools/kotlinp/klib/ @JetBrains/kotlin-common-backend
+/libraries/tools/stats-analyser/ @JetBrains/kotlin-frontend
 /libraries/tools/maven-archetypes/ @JetBrains/kotlin-build-tools
 /libraries/tools/mutability-annotations-compat/ @JetBrains/kotlin-libraries
 /libraries/tools/script-runtime/ @JetBrains/kotlin-frontend
