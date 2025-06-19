@@ -12,6 +12,20 @@ package kotlin
 
 
 /**
+ * Runs the specified [block] with the given values in context scope.
+ *
+ * As opposed to [with], [context] only makes the values available for
+ * context parameter resolution, but not as implicit receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
+@Deprecated(level = DeprecationLevel.ERROR, message = "'context' requires at least one value")
+public fun <R> context(block: () -> R): R = throw NotImplementedError()             
+
+
+/**
  * Runs the specified [block] with the given value in context scope.
  *
  * As opposed to [with], [context] only makes the value available for

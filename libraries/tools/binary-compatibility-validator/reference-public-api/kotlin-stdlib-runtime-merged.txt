@@ -8,6 +8,10 @@ public abstract interface annotation class kotlin/ContextFunctionTypeParams : ja
 	public abstract fun count ()I
 }
 
+public final class kotlin/ContextParametersKt {
+	public static final fun context (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+}
+
 public final class kotlin/DeepRecursiveFunction {
 	public fun <init> (Lkotlin/jvm/functions/Function3;)V
 }

@@ -6576,6 +6576,7 @@ final fun <#A: kotlin/Any?> kotlin.sequences/iterator(kotlin.coroutines/SuspendF
 final fun <#A: kotlin/Any?> kotlin.sequences/sequence(kotlin.coroutines/SuspendFunction1<kotlin.sequences/SequenceScope<#A>, kotlin/Unit>): kotlin.sequences/Sequence<#A> // kotlin.sequences/sequence|sequence(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/sequenceOf(#A): kotlin.sequences/Sequence<#A> // kotlin.sequences/sequenceOf|sequenceOf(0:0){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/sequenceOf(kotlin/Array<out #A>...): kotlin.sequences/Sequence<#A> // kotlin.sequences/sequenceOf|sequenceOf(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+final fun <#A: kotlin/Any?> kotlin/context(kotlin/Function0<#A>): #A // kotlin/context|context(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin/lazy(kotlin/Any?, kotlin/Function0<#A>): kotlin/Lazy<#A> // kotlin/lazy|lazy(kotlin.Any?;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin/lazy(kotlin/Function0<#A>): kotlin/Lazy<#A> // kotlin/lazy|lazy(kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin/lazy(kotlin/LazyThreadSafetyMode, kotlin/Function0<#A>): kotlin/Lazy<#A> // kotlin/lazy|lazy(kotlin.LazyThreadSafetyMode;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]

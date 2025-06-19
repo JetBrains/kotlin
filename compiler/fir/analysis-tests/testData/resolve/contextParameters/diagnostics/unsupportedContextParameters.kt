@@ -32,7 +32,7 @@ object O
 <!UNSUPPORTED!>context(_: String)<!>
 typealias TA = Any
 
-val objectExpression = context(<!UNRESOLVED_REFERENCE!>_<!><!SYNTAX!>: String<!>)<!SYNTAX!><!> object<!SYNTAX!><!> {}
+val objectExpression = <!CANNOT_INFER_PARAMETER_TYPE, DEPRECATION_ERROR!>context<!>(<!UNRESOLVED_REFERENCE!>_<!><!SYNTAX!>: String<!>)<!SYNTAX!><!> object<!SYNTAX!><!> {}
 
 <!UNSUPPORTED!>context(_: String)<!>
 operator fun Any.getValue(thiz: Any?, metadata: Any?): Any = this

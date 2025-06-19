@@ -13,6 +13,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
     override fun getMultifileClassName(): String = "ContextParametersKt"
 
     override fun generateBody() {
+        generateZeroFunction()
         generateSingleFunction(listOf("with"), listOf("T"), "R")
         for (i in 2..MAX_PARAM_COUNT) {
             val parameterNames = ('a' .. 'z').take(i)
@@ -24,24 +25,26 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
         }
     }
 
+    fun generateZeroFunction() {
+        out.println(
+            """
+${generateComment(0)}
+@kotlin.internal.InlineOnly
+@SinceKotlin("2.2")
+@Deprecated(level = DeprecationLevel.ERROR, message = "'context' requires at least one value")
+public fun <R> context(block: () -> R): R = throw NotImplementedError()             
+"""
+        )
+    }
+
     fun generateSingleFunction(parameterNames: List<String>, parameterTypes: List<String>, resultType: String) {
         val arguments = parameterNames.joinToString()
         val parameters = parameterNames.zip(parameterTypes) { name, type -> "$name: $type" }.joinToString()
         val types = parameterTypes.joinToString()
 
-        val values = if (parameterTypes.size == 1) "value" else "values"
-        val receivers = if (parameterTypes.size == 1) "receiver" else "receivers"
-
         out.println(
             """
-/**
- * Runs the specified [block] with the given $values in context scope.
- *
- * As opposed to [with], [context] only makes the $values available for
- * context parameter resolution, but not as implicit $receivers.
- *
- * @sample samples.misc.ContextParameters.useContext
- */
+${generateComment(parameterTypes.size)}
 @kotlin.internal.InlineOnly
 @SinceKotlin("2.2")
 public inline fun <$types, $resultType> context($parameters, block: context($types) () -> $resultType): $resultType {
@@ -52,6 +55,22 @@ public inline fun <$types, $resultType> context($parameters, block: context($typ
 }
 """
         )
+    }
+
+    fun generateComment(size: Int): String {
+        val values = if (size == 1) "value" else "values"
+        val receivers = if (size == 1) "receiver" else "receivers"
+
+        return """        
+/**
+ * Runs the specified [block] with the given $values in context scope.
+ *
+ * As opposed to [with], [context] only makes the $values available for
+ * context parameter resolution, but not as implicit $receivers.
+ *
+ * @sample samples.misc.ContextParameters.useContext
+ */ 
+""".trim()
     }
 
 }
