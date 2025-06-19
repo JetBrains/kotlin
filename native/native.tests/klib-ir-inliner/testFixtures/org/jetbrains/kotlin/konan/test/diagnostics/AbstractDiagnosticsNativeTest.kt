@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.diagnostics
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
@@ -68,8 +69,9 @@ abstract class AbstractDiagnosticsNativeTestBase(
     }
 
     override fun runTest(filePath: String) {
-        mutePlatformTestIfNecessary(filePath)
-        super.runTest(filePath)
+        val transformedFilePath = ForTestCompileRuntime.transformTestDataPath(filePath)
+        mutePlatformTestIfNecessary(transformedFilePath.path)
+        super.runTest(transformedFilePath.path)
     }
 
     private fun mutePlatformTestIfNecessary(filePath: String) {
