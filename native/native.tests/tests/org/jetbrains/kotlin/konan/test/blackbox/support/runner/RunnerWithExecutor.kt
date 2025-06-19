@@ -43,9 +43,10 @@ internal open class RunnerWithExecutor(
     override fun buildRun() = AbstractRun {
         val stdout = ByteArrayOutputStream()
         val stderr = ByteArrayOutputStream()
+        val workingDirectory = executable.executable.executableFile.parentFile
         val request = ExecuteRequest(programArgs[0]).apply {
             this.args.addAll(programArgs.drop(1))
-            this.workingDirectory = executable.executable.executableFile.parentFile
+            this.workingDirectory = workingDirectory
             inputStreamFromTestParameter()?.let {
                 this.stdin = it
             }
@@ -66,6 +67,7 @@ internal open class RunnerWithExecutor(
                     ProcessLevelProperty.MINIDUMP_ANALYZER.readValue(),
                     executable.executable.executableFile.absolutePath, minidumpFileName,
                 ) {
+                    this.workingDirectory = workingDirectory
                     this.stdout = minidumpAnalyzerOutput
                     this.stderr = minidumpAnalyzerOutput
                 }
