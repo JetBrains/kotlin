@@ -26,7 +26,7 @@ fun testSomeValidCases(p0: KProperty0<Int>, pm0: KMutableProperty0<String>, f: K
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
-    k.<!UNSUPPORTED!>qualifiedName<!>
+    k.<!UNSUPPORTED_REFLECTION_API!>qualifiedName<!>
     k.<!UNRESOLVED_REFERENCE!>members<!>
     k.<!UNRESOLVED_REFERENCE!>constructors<!>
     k.<!UNRESOLVED_REFERENCE!>nestedClasses<!>
