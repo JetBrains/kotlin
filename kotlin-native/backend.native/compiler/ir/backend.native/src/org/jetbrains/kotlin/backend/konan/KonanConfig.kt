@@ -394,8 +394,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }
 
-    val miniDumpFile by lazy {
-        configuration.get(BinaryOptions.miniDumpFile)
+    val minidumpLocation by lazy {
+        configuration.get(BinaryOptions.minidumpLocation)
     }
 
     val swiftExport by lazy {

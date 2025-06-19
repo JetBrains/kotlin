@@ -92,12 +92,14 @@ bitcode {
         module("breakpad") {
             srcRoot.set(breakpadLocation)
             val sources = listOf(
+                    "client/mac/crash_generation/crash_generation_client.cc",
                     "client/mac/handler/breakpad_nlist_64.cc",
                     "client/mac/handler/dynamic_images.cc",
                     "client/mac/handler/exception_handler.cc",
                     "client/mac/handler/minidump_generator.cc",
                     "client/mac/handler/protected_memory_allocator.cc",
                     "client/minidump_file_writer.cc",
+                    "common/mac/MachIPC.mm",
                     "common/mac/arch_utilities.cc",
                     "common/mac/file_id.cc",
                     "common/mac/macho_id.cc",
@@ -125,7 +127,6 @@ bitcode {
                     "-std=c++17",
                     "-DHAVE_MACH_O_NLIST_H",
                     "-DHAVE_CONFIG_H",
-                    "-DTARGET_OS_IPHONE",
             ))
 
             onlyIf { it.family == Family.OSX }

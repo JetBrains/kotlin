@@ -36,7 +36,7 @@ RUNTIME_WEAK int32_t Kotlin_globalDataLazyInit = 1;
 RUNTIME_WEAK int32_t Kotlin_swiftExport = 0;
 RUNTIME_WEAK int32_t Kotlin_latin1Strings = 0;
 RUNTIME_WEAK uint8_t Kotlin_mmapTag = 0;
-RUNTIME_WEAK const int8_t* Kotlin_miniDumpFile = nullptr;
+RUNTIME_WEAK const int8_t* Kotlin_minidumpLocation = nullptr;
 
 ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
     return Kotlin_gcMutatorsCooperate != 0;
@@ -103,6 +103,6 @@ ALWAYS_INLINE bool compiler::latin1Strings() noexcept {
 ALWAYS_INLINE uint8_t compiler::mmapTag() noexcept {
     return Kotlin_mmapTag;
 }
-ALWAYS_INLINE const char* compiler::miniDumpFile() noexcept{
-return reinterpret_cast<const char*>(Kotlin_miniDumpFile);
+ALWAYS_INLINE const char* compiler::minidumpLocation() noexcept{
+return reinterpret_cast<const char*>(Kotlin_minidumpLocation);
 }

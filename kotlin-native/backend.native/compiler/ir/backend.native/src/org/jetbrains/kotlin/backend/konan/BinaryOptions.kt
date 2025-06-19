@@ -108,7 +108,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val stackProtector by option<StackProtectorMode>()
 
-    val miniDumpFile by stringOption()
+    val minidumpLocation by stringOption()
 }
 
 open class BinaryOption<T : Any>(
