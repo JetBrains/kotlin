@@ -72,7 +72,13 @@ bitcode {
                         dependsOn(downloadBreakpad)
                     }
                 }
-                testFixtures {}
+                testFixtures {
+                    // Fix Gradle Configuration Cache: this task depends on headers from breakpad; support this task being configured
+                    // before breakpad is actually downloaded.
+                    compileTask.configure {
+                        dependsOn(downloadBreakpad)
+                    }
+                }
                 test {}
             }
         }
