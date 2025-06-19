@@ -162,7 +162,7 @@ fun findStaticallyKnownSubtype(
             val resultValue = when (val value = substitution[variable]) {
                 null -> null
                 is ConeStarProjection -> {
-                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
+                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", true, null), isMarkedNullable = true)
                 }
                 else -> value.type
             }

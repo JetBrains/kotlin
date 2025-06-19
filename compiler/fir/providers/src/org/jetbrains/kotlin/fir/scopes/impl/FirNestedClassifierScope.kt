@@ -23,7 +23,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.CETypeParameterType
+import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
@@ -125,9 +131,26 @@ class FirCompositeNestedClassifierScope(
     }
 }
 
-fun FirTypeParameterRef.toConeType(): ConeTypeParameterType = symbol.toConeType()
+fun FirTypeParameterRef.toConeType(): ConeRigidType = symbol.toConeType()
 
-fun FirTypeParameterSymbol.toConeType(): ConeTypeParameterType = toConeType(false)
+fun FirTypeParameterSymbol.toConeType(): ConeRigidType = toConeType(false)
 
-fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeTypeParameterType =
-    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable)
+fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeRigidType =
+    if (mayHaveErrorComponent()) {
+        ConeErrorUnionType(
+            ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable),
+            CETypeParameterType(ConeTypeParameterLookupTag(this))
+        )
+    } else {
+        ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable)
+    }
+
+fun FirTypeParameterSymbol.mayHaveErrorComponent(): Boolean {
+    fun ConeKotlinType.mayHaveErrorComponent(): Boolean = when (this) {
+        is ConeFlexibleType -> lowerBound.mayHaveErrorComponent() || upperBound.mayHaveErrorComponent()
+        is ConeErrorUnionType -> true
+        else -> false
+    }
+
+    return resolvedBounds.all { it.coneType.mayHaveErrorComponent() }
+}

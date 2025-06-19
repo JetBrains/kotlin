@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexi
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
@@ -222,7 +225,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionType
+            is ConeIntersectionType,
                 -> 0
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session)) {
@@ -636,23 +639,132 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return (this as ConeErrorUnionType).errorType
     }
 
+    override fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker {
+        return when (this) {
+            is ConeFlexibleType -> {
+                val lb = lowerBound.projectOnValue() as ConeRigidType
+                val ub = upperBound.projectOnValue() as ConeRigidType
+                ConeFlexibleType(lb, ub, isTrivial)
+            }
+            is ConeErrorUnionType -> valueType
+            else -> this
+        }
+    }
+
+    override fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker {
+        return when (this) {
+            is ConeFlexibleType -> {
+                val lb = lowerBound.projectOnError() as ConeErrorType
+                val ub = upperBound.projectOnError() as ConeErrorType
+                if (lb == ub) {
+                    return lb
+                } else {
+                    error("Flexible of errors??")
+                    // ConeFlexibleType(lb, ub, isTrivial)
+                }
+            }
+            is ConeErrorUnionType -> {
+                if (valueType.isNothing) {
+                    this
+                } else {
+                    ConeErrorUnionType(StandardTypes.Nothing, errorType)
+                }
+            }
+            else -> StandardTypes.Nothing
+        }
+    }
+
+    override fun KotlinTypeMarker.containsErrorComponent(): Boolean {
+        return when (this) {
+            is ConeFlexibleType -> {
+                lowerBound.containsErrorComponent() || upperBound.containsErrorComponent()
+            }
+            is ConeErrorUnionType -> true
+            else -> false
+        }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun ConeRigidType.isPureErrorType(): Boolean {
+        contract {
+            returns(true) implies (this@isPureErrorType is ConeErrorUnionType)
+        }
+        if (this !is ConeErrorUnionType) return false
+        return valueType.isNothing
+    }
+
+    override fun KotlinTypeMarker.disableFlexibilityForErrorType(): ErrorTypeMarker {
+        return when (this) {
+            is ConeFlexibleType -> {
+                require(lowerBound.isPureErrorType()) { "Not a pure error type" }
+                require(upperBound.isPureErrorType()) { "Not a pure error type" }
+                val lbT = (lowerBound as ConeErrorUnionType).errorType
+                val ubT = (upperBound as ConeErrorUnionType).errorType
+                check(lbT == ubT) { "flexible for errors with different bounds is not expected" }
+                return lbT
+            }
+            is ConeErrorUnionType -> {
+                require(valueType.isNothing) { "Not a pure error type" }
+                return errorType
+            }
+            else if this.isNothing() -> CEBotType
+            else -> error("Not a pure error type")
+        }
+    }
+
+    private fun CEType.isSubtypeOfAtomic(other: CEType): Boolean {
+        require(other !is CEUnionType) { "Not atomic" }
+        if (other is CETopType) return true
+        return when (this) {
+            is CEBotType -> true
+            is CELookupTagBasedType -> this == other
+            is CETopType -> false
+            is CETypeVariable -> this == other
+            is CEUnionType -> error("Not atomic")
+        }
+    }
+
+    private fun <T : MutableCollection<CEType>> collectAtomics(type: CEType, col: T): T {
+        when (type) {
+            is CELookupTagBasedType -> col.add(type)
+            is CETypeVariable -> col.add(type)
+            is CETopType -> col.add(type)
+            is CEUnionType -> type.types.forEach { collectAtomics(it, col) }
+            is CEBotType -> {}
+        }
+        return col
+    }
+
     override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
         // TODO: RE: MID: for better and faster subtyping we should initially store them in some kind of sets
+        val subTs = collectAtomics(this as CEType, mutableListOf())
+        val superTs = collectAtomics(other as CEType, mutableListOf())
+
+        return subTs.all { subT -> superTs.any { superT -> subT.isSubtypeOfAtomic(superT) } }
+    }
+
+    override fun simplifyAndIncorporateSubtyping(
+        lowerType: ErrorTypeMarker,
+        upperType: ErrorTypeMarker,
+    ): List<Pair<ErrorTypeMarker, ErrorTypeMarker>> {
+        val subTs = collectAtomics(lowerType as CEType, mutableListOf())
+        val superTs = collectAtomics(upperType as CEType, mutableListOf())
+
+        val unsatisfiedSubTs = subTs.filter { subTs -> superTs.none { superTs -> subTs.isSubtypeOfAtomic(superTs) } }
+
+        return unsatisfiedSubTs.map { it to upperType }
+    }
+
+    override fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean {
+        require(this !is CEUnionType) { "Expected atomic" }
+        require(!this.isSubtypeOf(other)) { "Already a subtype" }
+
         val subT = this as CEType
-        val superT = other as CEType
+        val superTs = collectAtomics(other as CEType, mutableListOf())
 
-        fun <T : MutableCollection<CEType>> collectAtomics(type: CEType, col: T): T {
-            when (type) {
-                is CELookupTagBasedType -> col.add(type)
-                is CETypeVariable -> col.add(type)
-                is CEUnionType -> type.types.forEach { collectAtomics(it, col) }
-            }
-            return col
-        }
+        if (subT is CETypeVariable) return true
+        if (superTs.any { it is CETypeVariable }) return true
 
-        val subList = collectAtomics(subT, mutableListOf())
-        val superSet = collectAtomics(superT, mutableSetOf())
-
-        return subList.all { it in superSet }
+        return false
     }
 }

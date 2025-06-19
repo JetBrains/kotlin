@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.utils.addDefaultTopBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
@@ -545,7 +545,7 @@ class FirSyntheticCallGenerator(
                 if (!isNullableBound) {
                     bounds += moduleData.session.builtinTypes.anyType
                 } else {
-                    addDefaultBoundIfNecessary()
+                    addDefaultTopBoundIfNecessary()
                 }
             }
 

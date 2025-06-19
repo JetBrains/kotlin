@@ -106,9 +106,17 @@ class ConeStubTypeForTypeVariableInSubtyping(
     )
 }
 
-open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
+open class ConeTypeVariable(name: String, containsErrorComponent: Boolean, originalTypeParameter: TypeParameterMarker? = null) :
+    TypeVariableMarker {
     val typeConstructor: ConeTypeVariableTypeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)
-    val defaultType: ConeTypeVariableType = ConeTypeVariableType(isMarkedNullable = false, typeConstructor)
+    val defaultType: ConeRigidType = if (containsErrorComponent) {
+        ConeErrorUnionType(
+            ConeTypeVariableType(isMarkedNullable = false, typeConstructor),
+            CETypeVariable(typeConstructor)
+        )
+    } else {
+        ConeTypeVariableType(isMarkedNullable = false, typeConstructor)
+    }
 
     override fun toString(): String {
         return defaultType.toString()

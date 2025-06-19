@@ -323,8 +323,8 @@ object AbstractTypeChecker {
                     state,
                     preparedSubTypeLb,
                     preparedSuperTypeUb,
-                    preparedSubType,
-                    preparedSuperType,
+                    preparedSubType.projectOnValue(),
+                    preparedSuperType.projectOnValue(),
                     isFromNullabilityConstraint
                 )
             }
@@ -333,8 +333,8 @@ object AbstractTypeChecker {
                     state,
                     preparedSubTypeLb,
                     preparedSuperTypeUb.valueType(),
-                    preparedSubType,
-                    preparedSuperType,
+                    preparedSubType.projectOnValue(),
+                    preparedSuperType.projectOnValue(),
                     isFromNullabilityConstraint
                 )
             }
@@ -346,8 +346,8 @@ object AbstractTypeChecker {
                     state,
                     preparedSubTypeLb.valueType(),
                     preparedSuperTypeUb.valueType(),
-                    preparedSubType,
-                    preparedSuperType,
+                    preparedSubType.projectOnValue(),
+                    preparedSuperType.projectOnValue(),
                     isFromNullabilityConstraint
                 ) && completeIsSubTypeOfErrors(state, preparedSubTypeLb.errorType(), preparedSuperTypeUb.errorType())
             }

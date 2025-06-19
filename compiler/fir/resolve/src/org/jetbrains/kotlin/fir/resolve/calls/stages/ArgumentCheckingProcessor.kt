@@ -436,7 +436,7 @@ internal object ArgumentCheckingProcessor {
             "Currently, we only extract lambda info from its shape when expected type is not function, but $expectedType"
         }
         val lambda = argument.anonymousFunction
-        val typeVariable = ConeTypeVariableForLambdaReturnType(lambda, "_L")
+        val typeVariable = ConeTypeVariableForLambdaReturnType(lambda, "_L", true)
 
         val receiverType = lambda.receiverType
         val returnType = lambda.returnType ?: typeVariable.defaultType
@@ -446,13 +446,13 @@ internal object ArgumentCheckingProcessor {
         val parameters = lambda.valueParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?: defaultType
-                ?: ConeTypeVariableForLambdaParameterType("_P$i").apply { csBuilder.registerVariable(this) }.defaultType
+                ?: ConeTypeVariableForLambdaParameterType("_P$i", true).apply { csBuilder.registerVariable(this) }.defaultType
         }
 
         val contextParameters = lambda.contextParameters.mapIndexed { i, it ->
             it.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?: defaultType
-                ?: ConeTypeVariableForLambdaParameterType("_C$i").apply { csBuilder.registerVariable(this) }.defaultType
+                ?: ConeTypeVariableForLambdaParameterType("_C$i", true).apply { csBuilder.registerVariable(this) }.defaultType
         }
 
         val newTypeVariableUsed = returnType == typeVariable.defaultType

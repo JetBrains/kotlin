@@ -437,7 +437,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.substituteOrSelf(type)
     }
 
-    override fun TypeVariableMarker.defaultType(): ConeTypeVariableType {
+    override fun TypeVariableMarker.defaultType(): ConeRigidType {
         require(this is ConeTypeVariable)
         return this.defaultType
     }

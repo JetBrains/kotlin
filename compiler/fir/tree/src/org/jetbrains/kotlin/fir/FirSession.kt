@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.fir.types.CETopType
+import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
 import org.jetbrains.kotlin.util.ArrayMapAccessor
@@ -93,4 +97,8 @@ class BuiltinTypes {
 
     val charSequenceType: FirImplicitCharSequenceTypeRef = FirImplicitCharSequenceTypeRef(null)
     val charIteratorType: FirImplicitCharIteratorTypeRef = FirImplicitCharIteratorTypeRef(null)
+
+    val nullableAnyOrErrorType: FirResolvedTypeRef = buildResolvedTypeRef {
+        coneType = ConeErrorUnionType(StandardTypes.NullableAny, CETopType)
+    }
 }

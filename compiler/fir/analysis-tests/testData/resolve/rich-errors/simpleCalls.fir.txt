@@ -1,0 +1,81 @@
+FILE: simpleCalls.kt
+    public final object E1 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object E2 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object E3 : R|kotlin/Any| {
+        private constructor(): R|kotlin/Nothing | E3| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo1(arg: R|kotlin/Any?|): R|kotlin/Unit| {
+    }
+    public final fun foo2(arg: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun foo3(arg: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo4(arg: R|kotlin/Any? | E1|): R|kotlin/Unit| {
+    }
+    public final fun foo5(arg: R|kotlin/Int | E1|): R|kotlin/Unit| {
+    }
+    public final fun foo6(arg: R|kotlin/Any? | E1 | E2|): R|kotlin/Unit| {
+    }
+    public final fun foo7(arg: R|kotlin/Int | E1 | E2|): R|kotlin/Unit| {
+    }
+    public final fun foo8(): R|kotlin/Nothing | E1| {
+        ^foo8 Q|E1|
+    }
+    public final fun foo9(): R|kotlin/Int | E2| {
+        ^foo9 Int(4)
+    }
+    public final fun bar(e1: R|kotlin/Nothing | E1|, e2: R|kotlin/Nothing | E2|, e3: R|kotlin/Nothing | E3|): R|kotlin/Unit| {
+        R|/foo1<Inapplicable(INAPPLICABLE): /foo1>#|(R|<local>/e1|)
+        R|/foo1<Inapplicable(INAPPLICABLE): /foo1>#|(Q|E1|)
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|<local>/e2|)
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(Q|E2|)
+        R|/foo3<Inapplicable(INAPPLICABLE): /foo3>#|(R|<local>/e3|)
+        R|/foo3<Inapplicable(INAPPLICABLE): /foo3>#|(Q|E3|)
+        R|/foo4|(R|<local>/e1|)
+        R|/foo4|(Q|E1|)
+        R|/foo4<Inapplicable(INAPPLICABLE): /foo4>#|(R|<local>/e2|)
+        R|/foo4<Inapplicable(INAPPLICABLE): /foo4>#|(Q|E2|)
+        R|/foo5|(R|<local>/e1|)
+        R|/foo5|(Q|E1|)
+        R|/foo5<Inapplicable(INAPPLICABLE): /foo5>#|(R|<local>/e2|)
+        R|/foo5<Inapplicable(INAPPLICABLE): /foo5>#|(Q|E2|)
+        R|/foo6|(R|<local>/e1|)
+        R|/foo6|(Q|E1|)
+        R|/foo6|(R|<local>/e2|)
+        R|/foo6|(Q|E2|)
+        R|/foo6<Inapplicable(INAPPLICABLE): /foo6>#|(R|<local>/e3|)
+        R|/foo6<Inapplicable(INAPPLICABLE): /foo6>#|(Q|E3|)
+        R|/foo7|(R|<local>/e1|)
+        R|/foo7|(Q|E1|)
+        R|/foo7|(R|<local>/e2|)
+        R|/foo7|(Q|E2|)
+        R|/foo7<Inapplicable(INAPPLICABLE): /foo7>#|(R|<local>/e3|)
+        R|/foo7<Inapplicable(INAPPLICABLE): /foo7>#|(Q|E3|)
+        R|/foo1<Inapplicable(INAPPLICABLE): /foo1>#|(R|/foo8|())
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|/foo8|())
+        R|/foo3<Inapplicable(INAPPLICABLE): /foo3>#|(R|/foo8|())
+        R|/foo4|(R|/foo8|())
+        R|/foo5|(R|/foo8|())
+        R|/foo6|(R|/foo8|())
+        R|/foo7|(R|/foo8|())
+        R|/foo1<Inapplicable(INAPPLICABLE): /foo1>#|(R|/foo9|())
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|/foo9|())
+        R|/foo3<Inapplicable(INAPPLICABLE): /foo3>#|(R|/foo9|())
+        R|/foo4<Inapplicable(INAPPLICABLE): /foo4>#|(R|/foo9|())
+        R|/foo5<Inapplicable(INAPPLICABLE): /foo5>#|(R|/foo9|())
+        R|/foo6|(R|/foo9|())
+        R|/foo7|(R|/foo9|())
+    }

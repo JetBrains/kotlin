@@ -56612,6 +56612,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class Rich_errors {
       @Test
+      @TestMetadata("play.kt")
+      public void testPlay() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/play.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleCalls.kt")
+      public void testSimpleCalls() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/simpleCalls.kt");
+      }
+
+      @Test
       @TestMetadata("subtyping.kt")
       public void testSubtyping() {
         runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/subtyping.kt");

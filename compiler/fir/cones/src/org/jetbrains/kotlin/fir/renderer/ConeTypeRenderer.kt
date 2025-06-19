@@ -280,6 +280,13 @@ open class ConeTypeRenderer(
                 renderConstructor(type.typeConstructor)
             }
             is CEUnionType -> type.types.forEach { render(it) }
+            is CETopType -> {
+                builder.append(" | ")
+                builder.append("Error")
+            }
+            is CEBotType -> {
+                error("wtf?")
+            }
         }
     }
 }

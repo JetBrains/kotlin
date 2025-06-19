@@ -10,10 +10,26 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.name.SpecialNames
 
-class ConeTypeVariableForPostponedAtom(name: String) : ConeTypeVariable(name)
-class ConeTypeVariableForLambdaParameterType(name: String) : ConeTypeVariable(name)
-class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
+class ConeTypeVariableForPostponedAtom(
+    name: String,
+    containsErrorComponent: Boolean,
+) : ConeTypeVariable(name, containsErrorComponent)
+
+class ConeTypeVariableForLambdaParameterType(
+    name: String,
+    containsErrorComponent: Boolean,
+) : ConeTypeVariable(name, containsErrorComponent)
+
+class ConeTypeVariableForLambdaReturnType(
+    val argument: FirAnonymousFunction, name: String,
+    containsErrorComponent: Boolean,
+) : ConeTypeVariable(name, containsErrorComponent)
 
 class ConeTypeParameterBasedTypeVariable(
-    val typeParameterSymbol: FirTypeParameterSymbol
-) : ConeTypeVariable(SpecialNames.safeIdentifier(typeParameterSymbol.name).identifier, typeParameterSymbol.toLookupTag())
+    val typeParameterSymbol: FirTypeParameterSymbol,
+    containsErrorComponent: Boolean,
+) : ConeTypeVariable(
+    SpecialNames.safeIdentifier(typeParameterSymbol.name).identifier,
+    containsErrorComponent,
+    typeParameterSymbol.toLookupTag()
+)

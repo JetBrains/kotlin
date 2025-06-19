@@ -84,6 +84,10 @@ abstract class CELookupTagBasedType : CEType() {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
+data object CETopType : CEType()
+
+data object CEBotType : CEType()
+
 data class CETypeVariable(
     val typeConstructor: ConeTypeVariableTypeConstructor,
 ) : CEType()

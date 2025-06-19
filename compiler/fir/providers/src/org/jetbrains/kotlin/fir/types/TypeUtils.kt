@@ -1023,10 +1023,15 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
             it.coneType.canBeNull(session)
         }
         is ConeStubType -> {
-            isMarkedNullable ||
-                    (constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
-                        it == null || it.allBoundsAreNullableOrUnresolved(session)
-                    }
+            if (isMarkedNullable) return true
+            val typeConstructor = when (val defaultType = constructor.variable.defaultType) {
+                is ConeErrorUnionType -> (defaultType.valueType as ConeTypeVariableType).typeConstructor
+                is ConeTypeVariableType -> defaultType.typeConstructor
+                else -> error("unreachable")
+            }
+            (typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
+                it == null || it.allBoundsAreNullableOrUnresolved(session)
+            }
         }
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session) }
         is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session) } == true

@@ -214,7 +214,7 @@ class ConeResolvedLambdaAtom(
 
     override val outputType: ConeKotlinType get() = returnType
 
-    fun replaceExpectedType(expectedType: ConeKotlinType, newReturnType: ConeTypeVariableType) {
+    fun replaceExpectedType(expectedType: ConeKotlinType, newReturnType: ConeRigidType) {
         this.expectedType = expectedType
         this.returnType = newReturnType
     }

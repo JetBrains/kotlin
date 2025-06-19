@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVari
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.mayHaveErrorComponent
 import org.jetbrains.kotlin.fir.scopes.impl.overrides
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -615,7 +617,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ (it as ConeTypeParameterLookupTag).typeParameterSymbol }) {
             require(it is ConeTypeParameterLookupTag)
-            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol)
+            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol, it.symbol.mayHaveErrorComponent())
             csBuilder.registerVariable(variable)
 
             variable.defaultType

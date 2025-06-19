@@ -11,7 +11,7 @@ fun TypeSubstitutorMarker.safeSubstitute(
     type: KotlinTypeMarker
 ): KotlinTypeMarker = with(c) { safeSubstitute(type) }
 
-fun TypeVariableMarker.defaultType(c: TypeSystemInferenceExtensionContext): SimpleTypeMarker = with(c) { defaultType() }
+fun TypeVariableMarker.defaultType(c: TypeSystemInferenceExtensionContext): RigidTypeMarker = with(c) { defaultType() }
 
 fun KotlinTypeMarker.dependsOnTypeConstructor(c: TypeSystemInferenceExtensionContext, typeConstructors: Set<TypeConstructorMarker>): Boolean =
     with(c) {

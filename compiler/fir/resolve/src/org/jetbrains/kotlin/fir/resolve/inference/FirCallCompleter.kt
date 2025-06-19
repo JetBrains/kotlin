@@ -309,7 +309,7 @@ class FirCallCompleter(
         atom: ConeResolvedLambdaAtom,
         candidate: Candidate,
     ) {
-        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, "_R")
+        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, "_R", true)
         val csBuilder = candidate.system.getBuilder()
         csBuilder.registerVariable(returnVariable)
         val functionalType = csBuilder.buildCurrentSubstitutor()

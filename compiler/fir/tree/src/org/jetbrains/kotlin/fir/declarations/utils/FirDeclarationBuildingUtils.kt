@@ -15,6 +15,12 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary() {
     }
 }
 
+fun FirTypeParameterBuilder.addDefaultTopBoundIfNecessary() {
+    if (bounds.isEmpty()) {
+        bounds += moduleData.session.builtinTypes.nullableAnyOrErrorType
+    }
+}
+
 fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
 }

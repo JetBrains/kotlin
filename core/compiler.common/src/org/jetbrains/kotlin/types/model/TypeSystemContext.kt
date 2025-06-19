@@ -260,7 +260,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun CapturedTypeMarker.hasRawSuperType(): Boolean
 
-    fun TypeVariableMarker.defaultType(): SimpleTypeMarker
+    fun TypeVariableMarker.defaultType(): RigidTypeMarker
 
     fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
@@ -410,6 +410,15 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker
 
     fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean
+    fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean
+
+    fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker
+    fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker
+
+    fun KotlinTypeMarker.containsErrorComponent(): Boolean
+    fun KotlinTypeMarker.disableFlexibilityForErrorType(): ErrorTypeMarker
+
+    fun simplifyAndIncorporateSubtyping(lowerType: ErrorTypeMarker, upperType: ErrorTypeMarker): List<Pair<ErrorTypeMarker, ErrorTypeMarker>>
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
     fun DynamicTypeMarker.asDynamicType(): DynamicTypeMarker = this
