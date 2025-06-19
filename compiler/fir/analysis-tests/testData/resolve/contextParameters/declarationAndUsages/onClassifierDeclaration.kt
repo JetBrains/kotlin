@@ -54,7 +54,7 @@ class Test11 {
     companion object { }
 }
 
-val test12 = context(<!UNRESOLVED_REFERENCE!>c<!><!SYNTAX!>: A<!>)<!SYNTAX!><!> object<!SYNTAX!><!> { }
+val test12 = <!CANNOT_INFER_PARAMETER_TYPE, DEPRECATION_ERROR!>context<!>(<!UNRESOLVED_REFERENCE!>c<!><!SYNTAX!>: A<!>)<!SYNTAX!><!> object<!SYNTAX!><!> { }
 
 <!UNSUPPORTED!>context(c: A)<!>
 typealias Test13 = String
