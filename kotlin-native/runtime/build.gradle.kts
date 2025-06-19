@@ -66,6 +66,11 @@ bitcode {
                     if (sanitizer == null) {
                         outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
                     }
+                    // Fix Gradle Configuration Cache: this task depends on headers from breakpad; support this task being configured
+                    // before breakpad is actually downloaded.
+                    compileTask.configure {
+                        dependsOn(downloadBreakpad)
+                    }
                 }
                 testFixtures {}
                 test {}
@@ -108,6 +113,11 @@ bitcode {
                     inputFiles.from(srcRoot.dir("src"))
                     inputFiles.setIncludes(sources)
                     headersDirs.setFrom(srcRoot.dir("src"), project.layout.projectDirectory.dir("src/breakpad/cpp"))
+                    // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
+                    compileTask.configure {
+                        inputFiles.setFrom(sources.map { breakpadLocation.get().dir("src").file(it) })
+                        dependsOn(downloadBreakpad)
+                    }
                 }
             }
 
