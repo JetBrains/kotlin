@@ -15,6 +15,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
+    @IgnorableReturnValue
     actual abstract override fun put(key: K, value: V): V?
 
 
@@ -24,6 +25,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         }
     }
 
+    @IgnorableReturnValue
     actual override fun remove(key: K): V? {
         val iter = entries.iterator()
         while (iter.hasNext()) {

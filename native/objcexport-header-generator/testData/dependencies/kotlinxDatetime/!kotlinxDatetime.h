@@ -1106,8 +1106,23 @@ __attribute__((objc_subclassing_restricted))
 
 @protocol KotlinAppendable
 @required
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue:(unichar)value __attribute__((swift_name("append(value:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue_:(id _Nullable)value __attribute__((swift_name("append(value_:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (id<KotlinAppendable>)appendValue:(id _Nullable)value startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("append(value:startIndex:endIndex:)")));
 @end
 

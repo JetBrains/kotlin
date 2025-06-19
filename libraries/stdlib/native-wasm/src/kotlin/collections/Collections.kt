@@ -101,6 +101,7 @@ public actual fun <T> MutableList<T>.shuffle(): Unit {
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly
@@ -111,6 +112,7 @@ internal actual inline fun checkIndexOverflow(index: Int): Int {
     return index
 }
 
+@IgnorableReturnValue
 @PublishedApi
 @SinceKotlin("1.3")
 @InlineOnly

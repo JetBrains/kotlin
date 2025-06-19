@@ -24,11 +24,11 @@ public actual interface Collection<out E> : Iterable<E> {
 
 public actual interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     actual override fun iterator(): MutableIterator<E>
-    public actual fun add(element: E): Boolean
-    public actual fun remove(element: E): Boolean
-    public actual fun addAll(elements: Collection<E>): Boolean
-    public actual fun removeAll(elements: Collection<E>): Boolean
-    public actual fun retainAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue public actual fun add(element: E): Boolean
+    @IgnorableReturnValue public actual fun remove(element: E): Boolean
+    @IgnorableReturnValue public actual fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue public actual fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue public actual fun retainAll(elements: Collection<E>): Boolean
     public actual fun clear(): Unit
 }
 
@@ -47,16 +47,16 @@ public actual interface List<out E> : Collection<E> {
 }
 
 public actual interface MutableList<E> : List<E>, MutableCollection<E> {
-    actual override fun add(element: E): Boolean
-    actual override fun remove(element: E): Boolean
-    actual override fun addAll(elements: Collection<E>): Boolean
-    public actual fun addAll(index: Int, elements: Collection<E>): Boolean
-    actual override fun removeAll(elements: Collection<E>): Boolean
-    actual override fun retainAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun add(element: E): Boolean
+    @IgnorableReturnValue actual override fun remove(element: E): Boolean
+    @IgnorableReturnValue actual override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue public actual fun addAll(index: Int, elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
-    public actual operator fun set(index: Int, element: E): E
+    @IgnorableReturnValue public actual operator fun set(index: Int, element: E): E
     public actual fun add(index: Int, element: E): Unit
-    public actual fun removeAt(index: Int): E
+    @IgnorableReturnValue public actual fun removeAt(index: Int): E
     actual override fun listIterator(): MutableListIterator<E>
     actual override fun listIterator(index: Int): MutableListIterator<E>
     actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
@@ -72,11 +72,11 @@ public actual interface Set<out E> : Collection<E> {
 
 public actual interface MutableSet<E> : Set<E>, MutableCollection<E> {
     actual override fun iterator(): MutableIterator<E>
-    actual override fun add(element: E): Boolean
-    actual override fun remove(element: E): Boolean
-    actual override fun addAll(elements: Collection<E>): Boolean
-    actual override fun removeAll(elements: Collection<E>): Boolean
-    actual override fun retainAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun add(element: E): Boolean
+    @IgnorableReturnValue actual override fun remove(element: E): Boolean
+    @IgnorableReturnValue actual override fun addAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun removeAll(elements: Collection<E>): Boolean
+    @IgnorableReturnValue actual override fun retainAll(elements: Collection<E>): Boolean
     actual override fun clear(): Unit
 }
 
@@ -96,15 +96,15 @@ public actual interface Map<K, out V> {
 }
 
 public actual interface MutableMap<K, V> : Map<K, V> {
-    public actual fun put(key: K, value: V): V?
-    public actual fun remove(key: K): V?
+    @IgnorableReturnValue public actual fun put(key: K, value: V): V?
+    @IgnorableReturnValue public actual fun remove(key: K): V?
     public actual fun putAll(from: Map<out K, V>): Unit
     public actual fun clear(): Unit
     actual override val keys: MutableSet<K>
     actual override val values: MutableCollection<V>
     actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
     public actual interface MutableEntry<K, V> : Map.Entry<K, V> {
-        public actual fun setValue(newValue: V): V
+        @IgnorableReturnValue public actual fun setValue(newValue: V): V
     }
 }
 

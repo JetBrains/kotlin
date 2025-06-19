@@ -65,7 +65,7 @@ fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
 
 fun KotlinCommonCompilerOptions.allowReturnValueCheckerButNotReport() {
     freeCompilerArgs.add("-Xreturn-value-checker=check")
-    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled,ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT:disabled")
+    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled")
 }
 
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"

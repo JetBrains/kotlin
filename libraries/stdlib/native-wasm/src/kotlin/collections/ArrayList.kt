@@ -57,6 +57,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         return backing[index]
     }
 
+    @IgnorableReturnValue
     actual override operator fun set(index: Int, element: E): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
@@ -91,6 +92,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         return Itr(this, index)
     }
 
+    @IgnorableReturnValue
     actual override fun add(element: E): Boolean {
         checkIsMutable()
         addAtInternal(length, element)
@@ -103,6 +105,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         addAtInternal(index, element)
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         val n = elements.size
@@ -110,6 +113,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         return n > 0
     }
 
+    @IgnorableReturnValue
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         checkIsMutable()
         AbstractList.checkPositionIndex(index, length)
@@ -123,12 +127,14 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         removeRangeInternal(0, length)
     }
 
+    @IgnorableReturnValue
     actual override fun removeAt(index: Int): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
         return removeAtInternal(index)
     }
 
+    @IgnorableReturnValue
     actual override fun remove(element: E): Boolean {
         checkIsMutable()
         val i = indexOf(element)
@@ -136,11 +142,13 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
         return i >= 0
     }
 
+    @IgnorableReturnValue
     actual override fun removeAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         return retainOrRemoveAllInternal(0, length, elements, false) > 0
     }
 
+    @IgnorableReturnValue
     actual override fun retainAll(elements: Collection<E>): Boolean {
         checkIsMutable()
         return retainOrRemoveAllInternal(0, length, elements, true) > 0

@@ -43,18 +43,21 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
     actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence = substring(startIndex, endIndex)
 
     // Of Appenable.
+    @IgnorableReturnValue
     actual override fun append(value: Char) : StringBuilder {
         ensureExtraCapacity(1)
         array[_length++] = value
         return this
     }
 
+    @IgnorableReturnValue
     actual override fun append(value: CharSequence?): StringBuilder {
         // Kotlin/JVM processes null as if the argument was "null" char sequence.
         val toAppend = value ?: "null"
         return append(toAppend, 0, toAppend.length)
     }
 
+    @IgnorableReturnValue
     actual override fun append(value: CharSequence?, startIndex: Int, endIndex: Int): StringBuilder =
             this.appendRange(value ?: "null", startIndex, endIndex)
 
@@ -68,6 +71,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * For example, reversing `"\uDC00\uD800"` produces `"\uD800\uDC00"` which is a valid surrogate pair.
      */
     // Based on Apache Harmony implementation.
+    @IgnorableReturnValue
     public actual fun reverse(): StringBuilder {
         if (this.length < 2) {
             return this
@@ -140,6 +144,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Any?): StringBuilder = append(value.toString())
 
     // TODO: optimize the append overloads with primitive value!
@@ -150,6 +155,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Boolean): StringBuilder = append(value.toString())
 
     /**
@@ -174,6 +180,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Int): StringBuilder {
         ensureExtraCapacity(11)
         _length += insertInt(array, _length, value)
@@ -186,6 +193,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Long): StringBuilder = append(value.toString())
 
     /**
@@ -194,6 +202,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Float): StringBuilder = append(value.toString())
 
     /**
@@ -202,6 +211,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
+    @IgnorableReturnValue
     public actual fun append(value: Double): StringBuilder = append(value.toString())
 
     /**
@@ -209,6 +219,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * Characters are appended in order, starting at the index 0.
      */
+    @IgnorableReturnValue
     public actual fun append(value: CharArray): StringBuilder {
         ensureExtraCapacity(value.size)
         value.copyInto(array, _length)
@@ -221,6 +232,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * If [value] is `null`, then the four characters `"null"` are appended.
      */
+    @IgnorableReturnValue
     public actual fun append(value: String?): StringBuilder {
         val toAppend = value ?: "null"
         ensureExtraCapacity(toAppend.length)
@@ -302,6 +314,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
 
     /**
@@ -332,6 +345,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Int): StringBuilder = insert(index, value.toString())
 
     /**
@@ -342,6 +356,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Long): StringBuilder = insert(index, value.toString())
 
     /**
@@ -352,6 +367,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Float): StringBuilder = insert(index, value.toString())
 
     /**
@@ -362,6 +378,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Double): StringBuilder = insert(index, value.toString())
 
     /**
@@ -369,6 +386,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Char): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(1)
@@ -388,6 +406,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: CharArray): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         ensureExtraCapacity(value.size)
@@ -409,6 +428,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: CharSequence?): StringBuilder {
         // Kotlin/JVM inserts the "null" string if the argument is null.
         val toInsert = value ?: "null"
@@ -423,6 +443,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: Any?): StringBuilder = insert(index, value.toString())
 
     /**
@@ -432,6 +453,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
+    @IgnorableReturnValue
     public actual fun insert(index: Int, value: String?): StringBuilder {
         val toInsert = value ?: "null"
         AbstractList.checkPositionIndex(index, _length)
@@ -723,6 +745,7 @@ private constructor (private var array: CharArray) : CharSequence, Appendable {
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value)
 
 /**
@@ -733,6 +756,7 @@ public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value)
 
 /**
@@ -745,6 +769,7 @@ public actual inline fun StringBuilder.append(value: Short): StringBuilder = thi
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value)
 
 /**
@@ -757,6 +782,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBu
  */
 @SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value)
 
 /**
@@ -765,6 +791,7 @@ public actual inline fun StringBuilder.insert(index: Int, value: Short): StringB
  * @sample samples.text.Strings.clearStringBuilder
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public actual fun StringBuilder.clear(): StringBuilder = apply { setLength(0) }
 
 /**
@@ -786,6 +813,7 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
         this.setRange(startIndex, endIndex, value)
 
@@ -800,6 +828,7 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteAt(index)
 
 /**
@@ -812,6 +841,7 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.deleteRange(startIndex, endIndex)
 
 /**
@@ -845,6 +875,7 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
         this.appendRange(value, startIndex, endIndex)
 
@@ -859,6 +890,7 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.appendRange(value, startIndex, endIndex)
 
@@ -877,6 +909,7 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
 
@@ -895,6 +928,7 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
         this.insertRange(index, value, startIndex, endIndex)
 
