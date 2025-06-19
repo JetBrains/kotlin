@@ -796,6 +796,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {
+        val GET_CLASS_OF_UNBOUNDED_GENERIC by warning<PsiElement> {}
+
         val RECURSION_IN_IMPLICIT_TYPES by error<PsiElement>()
         val INFERENCE_ERROR by error<PsiElement>()
         val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error<PsiElement>()

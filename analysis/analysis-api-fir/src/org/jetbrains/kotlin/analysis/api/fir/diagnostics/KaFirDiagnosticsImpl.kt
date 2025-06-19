@@ -2102,6 +2102,11 @@ internal class ContextualOverloadShadowedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ContextualOverloadShadowed
 
+internal class GetClassOfUnboundedGenericImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.GetClassOfUnboundedGeneric
+
 internal class RecursionInImplicitTypesImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -492,6 +492,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val CONTEXTUAL_OVERLOAD_SHADOWED: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("CONTEXTUAL_OVERLOAD_SHADOWED", WARNING, SourceElementPositioningStrategies.CALLABLE_DECLARATION_SIGNATURE_NO_MODIFIERS, KtElement::class, getRendererFactory())
 
     // Types & type parameters
+    val GET_CLASS_OF_UNBOUNDED_GENERIC: KtDiagnosticFactory0 = KtDiagnosticFactory0("GET_CLASS_OF_UNBOUNDED_GENERIC", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val RECURSION_IN_IMPLICIT_TYPES: KtDiagnosticFactory0 = KtDiagnosticFactory0("RECURSION_IN_IMPLICIT_TYPES", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INFERENCE_ERROR: KtDiagnosticFactory0 = KtDiagnosticFactory0("INFERENCE_ERROR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT: KtDiagnosticFactory0 = KtDiagnosticFactory0("PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

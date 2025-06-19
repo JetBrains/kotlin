@@ -360,6 +360,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GET_CLASS_OF_UNBOUNDED_GENERIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
@@ -1688,6 +1689,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             CONTEXTUAL_OVERLOAD_SHADOWED,
             "Contextual declaration is shadowed by the following overloads:{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            GET_CLASS_OF_UNBOUNDED_GENERIC,
+            "ROMANV;~;ROMANV"
         )
         map.put(
             SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR,

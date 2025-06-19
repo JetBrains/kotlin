@@ -1750,6 +1750,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val symbols: List<KaSymbol>
     }
 
+    interface GetClassOfUnboundedGeneric : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = GetClassOfUnboundedGeneric::class
+    }
+
     interface RecursionInImplicitTypes : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RecursionInImplicitTypes::class
     }

@@ -2469,6 +2469,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.GET_CLASS_OF_UNBOUNDED_GENERIC) { firDiagnostic ->
+        GetClassOfUnboundedGenericImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RECURSION_IN_IMPLICIT_TYPES) { firDiagnostic ->
         RecursionInImplicitTypesImpl(
             firDiagnostic as KtPsiDiagnostic,
