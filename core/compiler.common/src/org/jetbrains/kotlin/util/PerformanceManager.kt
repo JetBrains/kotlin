@@ -105,6 +105,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         UnitStats(
             targetDescription,
+            System.currentTimeMillis(),
             targetPlatform.getPlatformEnumValue(),
             compilerType,
             hasErrors,
@@ -322,7 +323,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
      * Use the current date-time stamp with millis precision as a part of the unique name.
      */
     private fun generateFileName(): String {
-        return "${unitStats.name}_${dateFormatterForFileName.format(System.currentTimeMillis())}"
+        return "${unitStats.name}_${dateFormatterForFileName.format(unitStats.timeStampMs)}"
     }
 
     private val dateFormatterForFileName by lazy(LazyThreadSafetyMode.PUBLICATION) {

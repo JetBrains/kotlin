@@ -28,6 +28,9 @@ data class UnitStats(
     In the last case, it should have a suffix like `(Child)`.
      */
     val name: String?,
+    // We can't use `LocalDateTime` here because it's not a part of an earlier Android SDK
+    // And `LocalDateTime` requires a custom JSON serializer
+    val timeStampMs: Long = System.currentTimeMillis(),
     val platform: PlatformType = PlatformType.JVM,
     val compilerType: CompilerType = CompilerType.K2,
     val hasErrors: Boolean = false,

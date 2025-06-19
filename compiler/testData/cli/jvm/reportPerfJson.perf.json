@@ -1,5 +1,6 @@
 {
   "name": "main-java-production",
+  "timeStampMs": $UINT$,
   "platform": "JVM",
   "compilerType": "K2",
   "hasErrors": false,
