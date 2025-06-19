@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.

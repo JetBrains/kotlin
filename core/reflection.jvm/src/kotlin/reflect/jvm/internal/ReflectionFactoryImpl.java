@@ -10,6 +10,7 @@ import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
 import kotlin.reflect.jvm.ReflectLambdaKt;
+import kotlin.reflect.jvm.internal.types.TypeOfImplKt;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;

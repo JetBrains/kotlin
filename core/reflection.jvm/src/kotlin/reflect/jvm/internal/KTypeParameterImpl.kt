@@ -27,6 +27,7 @@ import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KVariance
+import kotlin.reflect.jvm.internal.types.KTypeFromDescriptor
 
 internal class KTypeParameterImpl(
     container: KTypeParameterOwnerImpl?,

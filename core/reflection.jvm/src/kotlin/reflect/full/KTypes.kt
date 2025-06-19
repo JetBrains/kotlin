@@ -19,7 +19,7 @@
 package kotlin.reflect.full
 
 import kotlin.reflect.KType
-import kotlin.reflect.jvm.internal.AbstractKType
+import kotlin.reflect.jvm.internal.types.AbstractKType
 
 /**
  * Returns a new type with the same classifier, arguments and annotations as the given type, and with the given nullability.
