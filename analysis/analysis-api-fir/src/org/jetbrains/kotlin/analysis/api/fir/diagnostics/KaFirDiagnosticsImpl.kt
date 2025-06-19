@@ -2660,6 +2660,12 @@ internal class MutablePropertyWithCapturedTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MutablePropertyWithCapturedType
 
+internal class UnsupportedReflectionApiImpl(
+    override val unsupportedReflectionAPI: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedReflectionApi
+
 internal class NothingToOverrideImpl(
     override val declaration: KaCallableSymbol,
     override val candidates: List<KaCallableSymbol>,
