@@ -10,4 +10,4 @@ org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.Partia
 org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated.Tests.ControlStructures.testCatchReifiedTypeAllowed,,,
 org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticPsiTestGenerated.Tests.ControlStructures.testCatchReifiedTypeForbidden,,,
 org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.ControlStructures.testCatchReifiedTypeAllowed,,,
-org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.ControlStructures.testCatchReifiedTypeForbidden
+org.jetbrains.kotlin.test.runners.PhasedJvmDiagnosticLightTreeTestGenerated.Tests.ControlStructures.testCatchReifiedTypeForbidden,,,
