@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.config.VersionNumber
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -76,7 +76,7 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
 
     class LoweringContext(
         val irClass: IrClass,
-        var copyMethodVersions: SortedMap<VersionNumber?, MutableList<Int>>? = null
+        var copyMethodVersions: SortedMap<MavenComparableVersion?, MutableList<Int>>? = null
     )
 
     fun generateVersionOverloads(target: IrFunction, loweringContext: LoweringContext) {
@@ -105,7 +105,7 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
     private fun generateVersions(
         func: IrFunction,
         containingClass: IrClass,
-        versionParamIndexes: SortedMap<VersionNumber?, MutableList<Int>>?
+        versionParamIndexes: SortedMap<MavenComparableVersion?, MutableList<Int>>?
     ) {
         if (versionParamIndexes == null || versionParamIndexes.size < 2) return
 
@@ -122,8 +122,8 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
         }
     }
 
-    private fun getSortedVersionParameterIndexes(func: IrFunction): SortedMap<VersionNumber?, MutableList<Int>> {
-        val versionIndexes = sortedMapOf<VersionNumber?, MutableList<Int>>(nullsLast(compareByDescending { it }))
+    private fun getSortedVersionParameterIndexes(func: IrFunction): SortedMap<MavenComparableVersion?, MutableList<Int>> {
+        val versionIndexes = sortedMapOf<MavenComparableVersion?, MutableList<Int>>(nullsLast(compareByDescending { it }))
 
         func.parameters.forEachIndexed { i, param ->
             val versionNumber = param.getVersionNumber()
@@ -138,12 +138,12 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
         return versionIndexes
     }
 
-    private fun IrValueParameter.getVersionNumber() : VersionNumber? {
+    private fun IrValueParameter.getVersionNumber() : MavenComparableVersion? {
         if (kind != IrParameterKind.Regular || defaultValue == null) return null
         val annotation = getAnnotation(JVM_INTRODUCED_AT_FQ_NAME) ?: return null
         val versionString = (annotation.arguments.first() as? IrConst)?.value as? String ?: return null
 
-        return parseVersion(versionString)
+        return MavenComparableVersion(versionString)
     }
 
     private fun generateWrapper(original: IrFunction, includedParams: BooleanArray): IrFunction {
@@ -245,14 +245,6 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
             ).transform(transformer, null)
         }
 
-    }
-
-    private fun parseVersion(versionString: String): VersionNumber? {
-        return try {
-            VersionNumber(versionString)
-        } catch (_: Exception) {
-            null
-        }
     }
 
     private class GetValueTransformer(val irFunction: IrFunction) : IrElementTransformerVoid() {
