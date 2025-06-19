@@ -57068,6 +57068,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("referenceToSmartcastedProperty.kt")
+      public void testReferenceToSmartcastedProperty() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/referenceToSmartcastedProperty.kt");
+      }
+
+      @Test
       @TestMetadata("smartCastInInit.kt")
       public void testSmartCastInInit() {
         runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartCastInInit.kt");
