@@ -72,6 +72,7 @@ class VariableStorage private constructor(
                 unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
             is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
+            is FirCallableReferenceAccess -> null
             is FirResolvable -> unwrapped.calleeReference.symbol
             else -> null
         }?.takeIf {

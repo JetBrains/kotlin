@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78429
 
 val x: Any = ""
@@ -6,7 +6,7 @@ val x: Any = ""
 fun test() {
     if (x is String) {
         val ref = ::x
-        ref.length
+        ref.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
