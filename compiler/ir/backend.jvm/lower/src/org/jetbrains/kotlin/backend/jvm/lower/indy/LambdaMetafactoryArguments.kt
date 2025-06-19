@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -182,10 +181,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
 
         // Don't use JDK LambdaMetafactory for big arity lambdas.
-        if (plainLambda) {
-            var parametersCount = implFun.parameters.size
-            if (parametersCount >= BuiltInFunctionArity.BIG_ARITY)
-                abiHazard = true
+        if (plainLambda && implFun.parameters.size >= BuiltInFunctionArity.BIG_ARITY) {
+            abiHazard = true
         }
 
         // Can't use indy-based SAM conversion inside inline fun (Ok in inline lambda).
@@ -456,19 +453,12 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun adjustLambdaFunction(lambda: IrSimpleFunction) {
-        lambda.parameters.forEach { parameter ->
+        for (parameter in lambda.parameters) {
             if (parameter.kind != IrParameterKind.DispatchReceiver) {
                 parameter.kind = IrParameterKind.Regular
             }
         }
     }
-
-
-    private fun IrValueParameter.copy(parent: IrSimpleFunction, newName: Name = this.name): IrValueParameter =
-        buildValueParameter(parent) {
-            updateFrom(this@copy)
-            name = newName
-        }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
         for ((valueParameter, constraint) in constraints.parameters) {
