@@ -34,6 +34,7 @@ compilerTests {
     testData(project(":compiler").isolated, "testData/ir")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":native:native.tests").isolated, "testData/klib")
+    testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
 }
 
 testsJar {}
