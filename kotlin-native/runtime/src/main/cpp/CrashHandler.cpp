@@ -19,6 +19,7 @@
 #endif
 
 namespace {
+#if KONAN_APPLE
     [[maybe_unused]] int kHandledSignals[] = {
             //SIGABRT,
             SIGBUS,
@@ -32,7 +33,6 @@ namespace {
         return kotlin::compiler::minidumpLocation() != nullptr;
     }
 
-#if KONAN_APPLE
     std::unique_ptr<google_breakpad::ExceptionHandler> gExceptionHandler = nullptr;
 
     bool exceptionFilter(void* context) {
@@ -56,8 +56,8 @@ namespace {
 }
 
 void kotlin::crashHandlerInit() noexcept {
-    if (minidumpsEnabled()) {
 #if KONAN_APPLE
+    if (minidumpsEnabled()) {
         RuntimeLogInfo({logging::Tag::kRT}, "Initializing crash handler, minidumps will be written to \"%s\"",
                        compiler::minidumpLocation());
 
@@ -69,14 +69,14 @@ void kotlin::crashHandlerInit() noexcept {
                 true,
                 nullptr // in-process generation
         );
-#endif
     }
+#endif
 }
 
 void kotlin::writeMinidump() noexcept {
-    if (minidumpsEnabled()) {
 #if KONAN_APPLE
+    if (minidumpsEnabled()) {
         gExceptionHandler->WriteMinidump();
-#endif
     }
+#endif
 }
