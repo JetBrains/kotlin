@@ -620,6 +620,16 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
             if (typeOperatorCall.operation != FirOperation.IS) return
             data.add(typeOperatorCall.conversionTypeRef.coneType)
         }
+
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: MutableSet<ConeKotlinType>) {
+            if (equalityOperatorCall.operation != FirOperation.EQ && equalityOperatorCall.operation != FirOperation.IDENTITY) return
+            val argument = equalityOperatorCall.arguments[1]
+            val symbol = (argument as? FirResolvedQualifier)?.symbol ?: return
+
+            if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.OBJECT) {
+                data.add(argument.resolvedType)
+            }
+        }
     }
 
 }

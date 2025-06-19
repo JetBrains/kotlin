@@ -10,7 +10,7 @@ interface MySealedInterface {
 
 fun negSimpleSealed(x: MySealedInterface): Int {
     if (x !is MySealedInterface.C) return 0
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return when (x) {
         MySealedInterface.C -> 1
     }
 }
