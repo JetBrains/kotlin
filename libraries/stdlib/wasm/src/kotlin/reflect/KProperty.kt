@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,15 +13,15 @@ package kotlin.reflect
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/reflection.html)
  * for more information.
  *
- * @param R the type of the property.
+ * @param V the type of the property.
  */
-public actual interface KProperty<out R> : KCallable<R> {
+public actual interface KProperty<out V> : KCallable<V> {
 }
 
 /**
  * Represents a property declared as a `var`.
  */
-public actual interface KMutableProperty<R> : KProperty<R> {
+public actual interface KMutableProperty<V> : KProperty<V> {
 }
 
 
@@ -30,23 +30,23 @@ public actual interface KMutableProperty<R> : KProperty<R> {
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
-public actual interface KProperty0<out R> : KProperty<R>, () -> R {
+public actual interface KProperty0<out V> : KProperty<V>, () -> V {
     /**
      * Returns the current value of the property.
      */
-    public actual fun get(): R
+    public actual fun get(): V
 }
 
 /**
  * Represents a `var`-property without any kind of receiver.
  */
-public actual interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
+public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
      *
      * @param value the new value to be assigned to this property.
      */
-    public actual fun set(value: R)
+    public actual fun set(value: V)
 }
 
 
@@ -54,9 +54,9 @@ public actual interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R
  * Represents a property, operations on which take one receiver as a parameter.
  *
  * @param T the type of the receiver which should be used to obtain the value of the property.
- * @param R the type of the property.
+ * @param V the type of the property.
  */
-public actual interface KProperty1<T, out R> : KProperty<R>, (T) -> R {
+public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
     /**
      * Returns the current value of the property.
      *
@@ -64,13 +64,13 @@ public actual interface KProperty1<T, out R> : KProperty<R>, (T) -> R {
      *                 For example, it should be a class instance if this is a member property of that class,
      *                 or an extension receiver if this is a top level extension property.
      */
-    public actual fun get(receiver: T): R
+    public actual fun get(receiver: T): V
 }
 
 /**
  * Represents a `var`-property, operations on which take one receiver as a parameter.
  */
-public actual interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R> {
+public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
      *
@@ -79,7 +79,7 @@ public actual interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProp
      *                 or an extension receiver if this is a top level extension property.
      * @param value the new value to be assigned to this property.
      */
-    public actual fun set(receiver: T, value: R)
+    public actual fun set(receiver: T, value: V)
 }
 
 
@@ -91,9 +91,9 @@ public actual interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProp
  *        the type of the declaring class of the property, or any subclass of that class.
  * @param E the type of the second receiver. In case of the extension property in a class this is
  *        the type of the extension receiver.
- * @param R the type of the property.
+ * @param V the type of the property.
  */
-public actual interface KProperty2<D, E, out R> : KProperty<R>, (D, E) -> R {
+public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
     /**
      * Returns the current value of the property. In case of the extension property in a class,
      * the instance of the class should be passed first and the instance of the extension receiver second.
@@ -101,13 +101,13 @@ public actual interface KProperty2<D, E, out R> : KProperty<R>, (D, E) -> R {
      * @param receiver1 the instance of the first receiver.
      * @param receiver2 the instance of the second receiver.
      */
-    public actual fun get(receiver1: D, receiver2: E): R
+    public actual fun get(receiver1: D, receiver2: E): V
 }
 
 /**
  * Represents a `var`-property, operations on which take two receivers as parameters.
  */
-public actual interface KMutableProperty2<D, E, R> : KProperty2<D, E, R>, KMutableProperty<R> {
+public actual interface KMutableProperty2<D, E, V> : KProperty2<D, E, V>, KMutableProperty<V> {
     /**
      * Modifies the value of the property.
      *
@@ -115,5 +115,5 @@ public actual interface KMutableProperty2<D, E, R> : KProperty2<D, E, R>, KMutab
      * @param receiver2 the instance of the second receiver.
      * @param value the new value to be assigned to this property.
      */
-    public actual fun set(receiver1: D, receiver2: E, value: R)
+    public actual fun set(receiver1: D, receiver2: E, value: V)
 }
