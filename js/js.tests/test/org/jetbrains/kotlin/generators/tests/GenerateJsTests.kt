@@ -66,18 +66,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
-            testClass<AbstractJsKlibCompatibilityNoICTestCase>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-            testClass<AbstractJsKlibCompatibilityNoICES6TestCase>(annotations = listOf(*legacyFrontend(), *es6())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-            testClass<AbstractJsKlibCompatibilityWithICTestCase>(annotations = listOf(*legacyFrontend())) {
-                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-        }
-
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
             testClass<AbstractJsIrInvalidationPerFileTest>(annotations = listOf(*legacyFrontend())) {
                 model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
