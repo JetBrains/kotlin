@@ -202,6 +202,7 @@ open class UpgradeCallableReferences(
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
+            fixCallableReferenceComingFromKlib(expression)
             if (!upgradeFunctionReferencesAndLambdas) return expression
             val arguments = expression.getArgumentsWithIr()
             return IrRichFunctionReferenceImpl(
@@ -220,6 +221,7 @@ open class UpgradeCallableReferences(
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
+            fixCallableReferenceComingFromKlib(expression)
             if (!upgradePropertyReferences) return expression
             val getter = expression.getter?.owner
             val arguments = expression.getArgumentsWithIr()
@@ -251,6 +253,43 @@ open class UpgradeCallableReferences(
             ).apply {
                 boundValues += arguments.map { it.second }
             }
+        }
+
+        /**
+         * KLIBs don't contain enough information for initializing the correct shape for [IrFunctionReference]s and [IrPropertyReference]s.
+         *
+         * For example, consider the following code:
+         *
+         * ```kotlin
+         * class C {
+         *     fun foo() {}
+         * }
+         *
+         * fun bar() {}
+         * ```
+         *
+         * Function references `C::foo` and `::bar` will both be serialized (and deserialized) as having the following shape:
+         * ```
+         * dispatch_receiver = null
+         * extension_receiver = null
+         * value_argument = []
+         * ```
+         *
+         * However, `C::foo` has unbound dispatch receiver, while `::bar` doesn't have any dispatch receiver.
+         * To be able to adopt the new value parameter API ([KT-71850](https://youtrack.jetbrains.com/issue/KT-71850)),
+         * we have to be able to distinguish these two situations, because for `C::foo` the target function's [IrFunction.parameters]
+         * will be [[dispatch receiver]], while for `::bar` the target function's [IrFunction.parameters] will be an empty list,
+         * and [IrFunctionReference.arguments] must always match the target function's [IrFunction.parameters] list.
+         *
+         * The same applies to [IrPropertyReference].
+         *
+         * Because existing KLIBs already don't contain enough information for setting the correct shape, the following hack is used:
+         * After linking we visit callable references and update their shape from the linked target function/property.
+         *
+         * See [KT-71849](https://youtrack.jetbrains.com/issue/KT-71849).
+         */
+        private fun fixCallableReferenceComingFromKlib(reference: IrCallableReference<*>) {
+            reference.initializeTargetShapeFromSymbol()
         }
 
         override fun visitLocalDelegatedPropertyReference(
