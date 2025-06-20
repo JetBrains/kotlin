@@ -105,6 +105,7 @@ class KmpDependenciesDiagnosticIT : KGPBaseTest() {
                 }
             }
 
+            // FIXME: KT-78494
             build("compileCommonMainKotlinMetadata")
         }
     }
