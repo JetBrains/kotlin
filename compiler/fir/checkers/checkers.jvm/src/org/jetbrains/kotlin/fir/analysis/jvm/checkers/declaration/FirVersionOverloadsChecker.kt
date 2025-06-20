@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
 import org.jetbrains.kotlin.name.Name
 
 object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
-    private val versionNumberArgument = Name.identifier("versionNumber")
+    private val versionArgument = Name.identifier("version")
+    private val copyMethodName = Name.identifier("copy")
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -65,7 +66,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (versionAnnotation == null) continue
 
             inVersionedPart = true
-            val versionString = versionAnnotation.getStringArgument(versionNumberArgument, context.session) ?: continue
+            val versionString = versionAnnotation.getStringArgument(versionArgument, context.session) ?: continue
 
             if (inOverridableFunction) reporter.reportOn(versionAnnotation.source, FirJvmErrors.NONFINAL_VERSIONED_FUNCTION)
 
@@ -145,5 +146,5 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClass()?.isFinal == false
 
-    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName.asString() == "copy" && getContainingClass()?.isData == true
+    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == copyMethodName && getContainingClass()?.isData == true
 }

@@ -1,18 +1,21 @@
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB
+@file:OptIn(ExperimentalStdlibApi::class)
+
+import kotlin.jvm.IntroducedAt
 
 class C (
     val a : Int = 1,
-    @kotlin.jvm.IntroducedAt("1") val b: String = "",
-    @kotlin.jvm.IntroducedAt("1") private val b1: String = "",
-    @kotlin.jvm.IntroducedAt("2") val c: Float = 3f,
+    @IntroducedAt("1") val b: String = "",
+    @IntroducedAt("1") private val b1: String = "",
+    @IntroducedAt("2") val c: Float = 3f,
 )
 
 @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
 class D (
     val a : Int = 1,
-    @kotlin.jvm.IntroducedAt("2") val a1: String = "",
-    @kotlin.jvm.IntroducedAt("1") private val b: String = "",
-    @kotlin.jvm.IntroducedAt("1") val c: Float = 3f,
+    @IntroducedAt("2") val a1: String = "",
+    @IntroducedAt("1") private val b: String = "",
+    @IntroducedAt("1") val c: Float = 3f,
 )

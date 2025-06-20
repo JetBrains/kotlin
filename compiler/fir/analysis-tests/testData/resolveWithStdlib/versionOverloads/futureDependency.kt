@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_PARAMETER
+@file:OptIn(ExperimentalStdlibApi::class)
 
 import kotlin.jvm.IntroducedAt
 

@@ -1,20 +1,23 @@
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB
+@file:OptIn(ExperimentalStdlibApi::class)
+
+import kotlin.jvm.IntroducedAt
 
 class C {
     fun foo(
         a : Int = 1,
-        @kotlin.jvm.IntroducedAt("1") b: Int = 2,
-        @kotlin.jvm.IntroducedAt("2") c: Int = 3,
+        @IntroducedAt("1") b: Int = 2,
+        @IntroducedAt("2") c: Int = 3,
         f : (Int) -> Int
     ) = f(a + b + c)
 
     @Suppress("NON_ASCENDING_VERSION_ANNOTATION")
     fun mid(
         a : Int = 1,
-        @kotlin.jvm.IntroducedAt("2") a1: Int = 2,
-        @kotlin.jvm.IntroducedAt("1") b: Int = 3,
+        @IntroducedAt("2") a1: Int = 2,
+        @IntroducedAt("1") b: Int = 3,
         f : (Int) -> Int
     ) = f(a + a1 + b)
 }

@@ -268,5 +268,6 @@ public expect annotation class JvmExposeBoxed(val jvmName: String = "")
  */
 @Target(VALUE_PARAMETER)
 @MustBeDocumented
+@ExperimentalStdlibApi
 @OptionalExpectation
-public expect annotation class IntroducedAt(val versionNumber: String)
+public expect annotation class IntroducedAt(val version: String)

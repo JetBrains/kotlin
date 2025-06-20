@@ -235,5 +235,6 @@ public actual annotation class JvmExposeBoxed(actual val jvmName: String)
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.SOURCE)
+@ExperimentalStdlibApi
 @MustBeDocumented
-public actual annotation class IntroducedAt(actual val versionNumber: String)
+public actual annotation class IntroducedAt(actual val version: String)
