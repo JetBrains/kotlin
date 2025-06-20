@@ -13,6 +13,7 @@ object UnitStatsJsonDumper {
             return buildString {
                 appendArrayElement(this, indent = 0, trailingComma = false) {
                     name?.let { appendKeyValue(::name, it, indent = 1) }
+                    outputKind?.let { appendKeyValue(::outputKind, it, indent = 1) }
                     appendKeyValue(::timeStampMs, timeStampMs, indent = 1)
 
                     // Unfortunately, it's not possible to ignore the properties `platform`, `compilerType`, `hasErrors` if they have default values

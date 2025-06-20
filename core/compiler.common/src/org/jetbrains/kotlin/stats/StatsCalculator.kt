@@ -86,6 +86,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         if (size == 1) return first().let { AggregatedStats(it, it) }
 
         var name: String? = null
+        var outputKind: String? = null
         var latestCurrentTimeMs: Long? = null
         var platform: PlatformType? = null
         var compilerType: CompilerType? = null
@@ -109,6 +110,11 @@ class StatsCalculator(val reportsData: ReportsData) {
             if (name == null) {
                 name = moduleStats.name
             } else if (name != moduleStats.name) {
+                name = "Aggregate"
+            }
+            if (outputKind == null) {
+                outputKind = moduleStats.name
+            } else if (outputKind != moduleStats.outputKind) {
                 name = "Aggregate"
             }
             if (latestCurrentTimeMs == null || latestCurrentTimeMs < moduleStats.timeStampMs) {
@@ -149,6 +155,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         fun getStats(total: Boolean): UnitStats {
             return UnitStats(
                 name = name,
+                outputKind = outputKind,
                 timeStampMs = latestCurrentTimeMs ?: System.currentTimeMillis(),
                 platform = platform!!,
                 compilerType = compilerType ?: CompilerType.K1andK2,
