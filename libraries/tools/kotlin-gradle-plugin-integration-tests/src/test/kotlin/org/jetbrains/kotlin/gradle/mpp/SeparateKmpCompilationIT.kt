@@ -100,7 +100,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 ":compileKotlinJvm",
                 ":compileKotlinJs",
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
-                buildAction = ReturnFromBuildScriptAfterExecution.build
             )
             for ((targetName, particularCompileArgs) in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
@@ -399,7 +398,6 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }.buildAndReturn(
                 ":compileKotlinLinuxArm64",
                 configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED, // otherwise we would access GMT task outputs before the task execution
-                buildAction = ReturnFromBuildScriptAfterExecution.build
             )
             val fragmentDependencies = compileArgs.fragmentDependencies
             assert(fragmentDependencies != null) { "Fragment dependencies are not set" }
