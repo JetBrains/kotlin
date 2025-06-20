@@ -6,9 +6,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -377,40 +374,6 @@ open class IrFactory(
             factory = this
         ).declarationCreated()
 
-    /**
-     * Please use [createValueParameter] overload that takes [IrParameterKind] parameter.
-     *
-     * See docs/backend/IR_parameter_api_migration.md
-     */
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-    fun createValueParameter(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        name: Name,
-        type: IrType,
-        isAssignable: Boolean,
-        symbol: IrValueParameterSymbol,
-        varargElementType: IrType?,
-        isCrossinline: Boolean,
-        isNoinline: Boolean,
-        isHidden: Boolean,
-    ): IrValueParameter =
-        IrValueParameterImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            symbol = symbol,
-            name = name,
-            type = type,
-            varargElementType = varargElementType,
-            isCrossinline = isCrossinline,
-            isNoinline = isNoinline,
-            isHidden = isHidden,
-            isAssignable = isAssignable,
-            factory = this
-        ).declarationCreated()
-
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,
@@ -441,38 +404,6 @@ open class IrFactory(
         ).apply {
             this.kind = kind
         }.declarationCreated()
-
-    /**
-     * Please use the overload accepting `kind` argument.
-     */
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-    @Suppress("unused") // Deprecated, parameter [index] is ignored. Kept for backward compatibility only.
-    fun createValueParameter(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        name: Name,
-        type: IrType,
-        isAssignable: Boolean,
-        symbol: IrValueParameterSymbol,
-        index: Int,
-        varargElementType: IrType?,
-        isCrossinline: Boolean,
-        isNoinline: Boolean,
-        isHidden: Boolean,
-    ): IrValueParameter = createValueParameter(
-        startOffset = startOffset,
-        endOffset = endOffset,
-        origin = origin,
-        name = name,
-        type = type,
-        isAssignable = isAssignable,
-        symbol = symbol,
-        varargElementType = varargElementType,
-        isCrossinline = isCrossinline,
-        isNoinline = isNoinline,
-        isHidden = isHidden,
-    )
 
     fun createExpressionBody(
         startOffset: Int,
