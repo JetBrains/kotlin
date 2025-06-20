@@ -55,6 +55,7 @@ open class DeepCopyIrTreeWithSymbols(
             factory = declaration.factory,
             name = declaration.name,
             type = declaration.type.remapType(),
+            kind = declaration.kind,
             isAssignable = declaration.isAssignable,
             symbol = symbolRemapper.getDeclaredValueParameter(declaration.symbol),
             varargElementType = declaration.varargElementType?.remapType(),
@@ -65,7 +66,6 @@ open class DeepCopyIrTreeWithSymbols(
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             defaultValue = declaration.defaultValue?.transform()
-            kind = declaration.kind
             processAttributes(declaration)
         }
 
