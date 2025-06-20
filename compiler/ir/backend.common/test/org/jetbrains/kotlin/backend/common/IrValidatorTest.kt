@@ -1329,7 +1329,7 @@ class IrValidatorTest {
         )
     }
 
-    @OptIn(DelicateIrParameterIndexSetter::class, DeprecatedForRemovalCompilerApi::class)
+    @OptIn(DelicateIrParameterIndexSetter::class)
     @Test
     fun `functions with incorrect parameter index are reported`() {
         val file = createIrFile()
@@ -1344,7 +1344,6 @@ class IrValidatorTest {
         function.addTypeParameter {
             name = Name.identifier("T")
         }
-        function.parameters[0].indexInOldValueParameters = 1
         function.parameters[0].indexInParameters = 1
         function.typeParameters[0].index = 1
         file.addChild(function)
@@ -1355,16 +1354,7 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     """
-                    [IR VALIDATION] IrValidatorTest: Inconsistent index (old API) of value parameter 1 != 0
-                    FUN name:foo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Any
-                      inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null)
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: Inconsistent index (new API) of value parameter 1 != 0
+                    [IR VALIDATION] IrValidatorTest: Inconsistent index of parameter 1 != 0
                     FUN name:foo visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Any
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
