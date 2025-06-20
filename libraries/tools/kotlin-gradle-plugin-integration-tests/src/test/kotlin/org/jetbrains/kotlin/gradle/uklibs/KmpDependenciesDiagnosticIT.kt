@@ -16,6 +16,17 @@ import org.junit.jupiter.api.DisplayName
 @MppGradlePluginTests
 @DisplayName("Test diagnostics about consuming dependencies with inappropriate set of targets")
 class KmpDependenciesDiagnosticIT : KGPBaseTest() {
+
+    override val defaultBuildOptions: BuildOptions
+        get() {
+            val options = super.defaultBuildOptions
+            return options.copy(
+                nativeOptions = options.nativeOptions.copy(
+                    enableKlibsCrossCompilation = true
+                )
+            )
+        }
+
     @GradleTest
     fun `consumption with a subset of targets - metadata compilation with KotlinJsIrTarget transforms`(
         version: GradleVersion,
