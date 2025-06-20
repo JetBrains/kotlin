@@ -65,7 +65,6 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:Internal
     internal val hostSpecificMetadataConfigurations: List<Configuration>
         get() {
-            val hostSpecificSourceSets: Set<KotlinSourceSet> = project.future { getHostSpecificSourceSets(project) }.getOrThrow()
             return kotlinSourceSet.internal.compilations
                 .filter { compilation ->
                     if (compilation is KotlinNativeCompilation) {
@@ -74,9 +73,7 @@ internal class MetadataDependencyTransformationTaskInputs(
                         true
                     }
                 }.filter { compilation ->
-                    compilation.allKotlinSourceSets.any {
-                        hostSpecificSourceSets.contains(it)
-                    }
+                    project.future { compilation.hasHostSpecificSourceSets() }.getOrThrow()
                 }
                 .mapNotNull {
                     it.internal.configurations.hostSpecificMetadataConfiguration

@@ -54,10 +54,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         val mutableUsageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
         project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
-            val hostSpecificSourceSets = getHostSpecificSourceSets(project)
-                .intersect(mainCompilation.allKotlinSourceSets)
-
-            if (hostSpecificSourceSets.isNotEmpty()) {
+            if (mainCompilation.hasHostSpecificSourceSets()) {
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
@@ -165,6 +162,11 @@ internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSour
                 .mapTo(mutableSetOf()) { it.konanTarget }
         }
     )
+}
+
+internal suspend fun KotlinCompilation<*>.hasHostSpecificSourceSets(): Boolean {
+    val sourceSets = getHostSpecificSourceSets(project)
+    return allKotlinSourceSets.any { it in sourceSets }
 }
 
 /**
