@@ -40,6 +40,7 @@ class WasmPreSerializationLoweringFacade(
         when (inputArtifact) {
             is Fir2IrCliBasedOutputArtifact<*> -> {
                 val cliArtifact = inputArtifact.cliArtifact
+                // TODO: When KT-74671 would be implemented, feel free to adjust the following code for possibly another artifact type
                 require(cliArtifact is JsFir2IrPipelineArtifact) {
                     "Fir2IrCliBasedOutputArtifact should have JsFir2IrPipelineArtifact as cliArtifact, but has ${cliArtifact::class}"
                 }
@@ -58,6 +59,7 @@ class WasmPreSerializationLoweringFacade(
                 return Fir2IrCliBasedOutputArtifact(output)
             }
             is IrBackendInput.WasmAfterFrontendBackendInput -> {
+                // TODO: When KT-74671 would be implemented, the following code would be never used and is subject to be deleted
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
