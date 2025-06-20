@@ -129,14 +129,6 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "NativePartialLinkageTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativePartialLinkageTest>(
-                suiteTestClassName = "FirNativePartialLinkageTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -146,14 +138,6 @@ fun main() {
         testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
             testClass<AbstractNativeKlibCompatibilityTest>(
                 suiteTestClassName = "NativeKlibCompatibilityTestGenerated",
-                annotations = listOf(
-                    *frontendClassic(),
-                )
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-            testClass<AbstractNativeKlibCompatibilityTest>(
-                suiteTestClassName = "FirNativeKlibCompatibilityTestGenerated",
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
