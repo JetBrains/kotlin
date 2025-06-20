@@ -360,8 +360,12 @@ internal class CustomNativeCompiler(private val lazyNativeHome: Lazy<KotlinNativ
     val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
 
     val lazyClassloader: Lazy<URLClassLoader> = lazy {
-        val nativeClassPath = setOf(
-            nativeHome.dir.resolve("konan/lib/trove4j.jar"), // to be removed after bumping `kotlin.internal.native.test.compat.customCompilerVersion` to 2.2.0+
+        val nativeClassPath = setOfNotNull(
+            nativeHome.dir.resolve("konan/lib/trove4j.jar").takeIf {
+                // This artifact was removed in Kotlin/Native 2.2.0-Beta1.
+                // But it is still available in older compiler versions, where we need to load it.
+                it.exists()
+            },
             nativeHome.dir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
         )
             .map { it.toURI().toURL() }
