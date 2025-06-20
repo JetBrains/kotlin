@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.wasm.test
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -26,15 +24,13 @@ import java.io.File
 import java.io.PrintStream
 import kotlin.io.path.createTempDirectory
 
-abstract class AbstractWasmPartialLinkageNoICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.K1_NO_IC)
-abstract class AbstractWasmPartialLinkageWithICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.K1_WITH_IC)
-abstract class AbstractFirWasmPartialLinkageNoICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.K2_NO_IC)
+abstract class AbstractWasmPartialLinkageNoICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.NO_IC)
+abstract class AbstractWasmPartialLinkageWithICTestCase : AbstractWasmPartialLinkageTestCase(CompilerType.WITH_IC)
 
 abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: CompilerType) {
-    enum class CompilerType(val useFir: Boolean, val useIc: Boolean) {
-        K1_NO_IC(useFir = false, useIc = false),
-        K1_WITH_IC(useFir = false, useIc = true),
-        K2_NO_IC(useFir = true, useIc = false)
+    enum class CompilerType(val useIc: Boolean) {
+        NO_IC(useIc = false),
+        WITH_IC(useIc = true),
     }
 
     private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
@@ -111,11 +107,6 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
                 K2JSCompilerArguments::wasm.cliArgument
             ),
             dependencies.toCompilerArgs(),
-            listOf(
-                CommonCompilerArguments::languageVersion.cliArgument, "2.0",
-                // Don't fail on language version warnings.
-                K2JSCompilerArguments::suppressVersionWarnings.cliArgument
-            ).takeIf { compilerType.useFir },
             compilerArguments,
             kotlinSourceFilePaths
         )
