@@ -24,20 +24,12 @@ class IrCallImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    symbol: IrSimpleFunctionSymbol,
+    override var symbol: IrSimpleFunctionSymbol,
     override var superQualifierSymbol: IrClassSymbol?,
 ) : IrCall() {
     override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrSimpleFunctionSymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
 
     companion object
 }
