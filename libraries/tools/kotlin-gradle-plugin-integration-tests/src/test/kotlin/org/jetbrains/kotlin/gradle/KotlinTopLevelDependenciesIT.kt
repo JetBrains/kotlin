@@ -175,7 +175,9 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     }
 
     private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
-        build(":assemble")
+        build(":assemble") {
+            assertNoDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
+        }
 
         // Verify that the published jvm POM contains the kotlinx-coroutines dependency
         val pomFile = parsePom(
