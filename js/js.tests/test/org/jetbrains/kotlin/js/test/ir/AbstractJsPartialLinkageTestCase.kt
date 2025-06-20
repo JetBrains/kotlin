@@ -14,10 +14,9 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
 import java.io.File
 
-abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_NO_IC)
-abstract class AbstractJsPartialLinkageNoICES6TestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_NO_IC_WITH_ES6)
-abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_WITH_IC)
-abstract class AbstractFirJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K2_NO_IC)
+abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.NO_IC)
+abstract class AbstractJsPartialLinkageNoICES6TestCase : AbstractJsPartialLinkageTestCase(CompilerType.NO_IC_WITH_ES6)
+abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.WITH_IC)
 
 abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsKlibLinkageTestCase(compilerType) {
     // The entry point to generated test classes.
@@ -50,11 +49,6 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
                 K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
             ),
             dependencies.toCompilerArgs(),
-            listOf(
-                K2JSCompilerArguments::languageVersion.cliArgument, "2.0",
-                // Don't fail on language version warnings.
-                K2JSCompilerArguments::suppressVersionWarnings.cliArgument
-            ).takeIf { compilerType.useFir },
             compilerArguments,
             kotlinSourceFilePaths
         )

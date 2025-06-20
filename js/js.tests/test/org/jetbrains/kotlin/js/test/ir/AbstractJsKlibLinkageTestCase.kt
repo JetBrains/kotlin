@@ -29,11 +29,10 @@ import kotlin.io.path.createTempDirectory
 
 
 abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: CompilerType) {
-    enum class CompilerType(val useFir: Boolean, val es6Mode: Boolean, val useIc: Boolean) {
-        K1_NO_IC(useFir = false, es6Mode = false, useIc = false),
-        K1_NO_IC_WITH_ES6(useFir = false, es6Mode = true, useIc = false),
-        K1_WITH_IC(useFir = false, es6Mode = false, useIc = true),
-        K2_NO_IC(useFir = true, es6Mode = false, useIc = false)
+    enum class CompilerType(val es6Mode: Boolean, val useIc: Boolean) {
+        NO_IC(es6Mode = false, useIc = false),
+        NO_IC_WITH_ES6(es6Mode = true, useIc = false),
+        WITH_IC(es6Mode = false, useIc = true),
     }
 
     private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
