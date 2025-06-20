@@ -6283,49 +6283,49 @@ public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ByteArray.sorted(): List<Byte> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ShortArray.sorted(): List<Short> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun IntArray.sorted(): List<Int> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun LongArray.sorted(): List<Long> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun FloatArray.sorted(): List<Float> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun DoubleArray.sorted(): List<Double> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun CharArray.sorted(): List<Char> {
-    return toTypedArray().apply { sort() }.asList()
+    return sortedArray().asList()
 }
 
 /**
