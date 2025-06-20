@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.publishJavaPlatform
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -32,7 +33,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
     @GradleTest
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     fun testFusCollection(gradleVersion: GradleVersion) {
-        val fusEventName = "KMP_TOP_LEVEL_DEPENDENCIES_BLOCK"
+        val fusEventName = BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK.name
         project("empty", gradleVersion) {
             plugins {
                 kotlin("multiplatform")
@@ -40,6 +41,9 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
             buildScriptInjection {
                 kotlinMultiplatform.apply {
                     jvm()
+                    sourceSets.commonMain.dependencies {
+                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                    }
                 }
             }
             assertEquals(
