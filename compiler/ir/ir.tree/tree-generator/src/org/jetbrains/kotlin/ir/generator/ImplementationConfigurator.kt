@@ -55,6 +55,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         allImplOf(function) {
+            defaultEmptyList("parameters")
             defaultNull("body")
             isLateinit("returnType")
         }

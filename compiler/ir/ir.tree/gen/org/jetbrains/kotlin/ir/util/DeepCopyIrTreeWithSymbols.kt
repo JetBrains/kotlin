@@ -151,9 +151,9 @@ open class DeepCopyIrTreeWithSymbols(
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
+            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
             returnType = declaration.returnType.remapType()
             body = declaration.body?.transform()
-            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
             processAttributes(declaration)
         }
 
@@ -317,11 +317,11 @@ open class DeepCopyIrTreeWithSymbols(
             with(factory) { declarationCreated() }
             annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
             typeParameters = declaration.typeParameters.memoryOptimizedMap { it.transform() }
+            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
             returnType = declaration.returnType.remapType()
             body = declaration.body?.transform()
             overriddenSymbols = declaration.overriddenSymbols.memoryOptimizedMap { symbolRemapper.getReferencedSimpleFunction(it) }
             correspondingPropertySymbol = declaration.correspondingPropertySymbol?.let(symbolRemapper::getReferencedProperty)
-            parameters = declaration.parameters.memoryOptimizedMap { it.transform() }
             processAttributes(declaration)
         }
 

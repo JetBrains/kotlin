@@ -383,8 +383,6 @@ object IrTree : AbstractTreeBuilder() {
         +declaredSymbol(returnTargetSymbol)
     }
     val function: Element by sealedElement(Declaration) {
-        doPrint = false
-
         parent(declarationBase)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -400,8 +398,36 @@ object IrTree : AbstractTreeBuilder() {
         // NB: there's an inline constructor for Array and each primitive array class.
         +field("isInline", boolean)
         +field("isExpect", boolean)
+        +listField("parameters", valueParameter, mutability = Var) {
+            doPrint = false
+        }
         +field("returnType", irTypeType)
         +field("body", body, nullable = true)
+
+        generationCallback = {
+            println()
+            printlnMultiLine(
+                """
+    var parameters: List<IrValueParameter> = emptyList()
+        @OptIn(DelicateIrParameterIndexSetter::class)
+        set(value) {
+            for (parameter in field) {
+                parameter.indexInParameters = -1
+            }
+            for ((index, parameter) in value.withIndex()) {
+                parameter.indexInParameters = index
+            }
+            field = value
+        }
+    
+    /**
+     * The first parameter of kind [IrParameterKind.DispatchReceiver] in [parameters], if present.
+     */
+    val dispatchReceiverParameter: IrValueParameter?
+        get() = parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
+                """.trimIndent()
+            )
+        }
     }
     val constructor: Element by element(Declaration) {
         parent(function)
