@@ -15,7 +15,7 @@ package kotlin.time
  * This way, tests can be written deterministically by providing custom [Clock] implementations
  * to the system under test.
  */
-@SinceKotlin("2.1")
+@SinceKotlin("2.1.20")
 @ExperimentalTime
 public interface Clock {
     /**
