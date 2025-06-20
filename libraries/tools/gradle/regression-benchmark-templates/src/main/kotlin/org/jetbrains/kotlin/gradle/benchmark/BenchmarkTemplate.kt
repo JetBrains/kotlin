@@ -14,7 +14,6 @@ import org.eclipse.jgit.lib.TextProgressMonitor
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.api.*
 import org.jetbrains.kotlinx.dataframe.io.*
-import org.jetbrains.kotlinx.dataframe.math.median
 import java.io.File
 import java.io.InputStream
 import java.util.zip.ZipInputStream
@@ -200,7 +199,7 @@ abstract class BenchmarkTemplate(
     fun aggregateBenchmarkResults(benchmarkResult: BenchmarkResult) {
         println("Aggregating benchmark results...")
         val results = DataFrame
-            .readCSV(benchmarkResult.result, duplicate = true)
+            .readCsv(benchmarkResult.result, allowMissingColumns = true)
             .drop {
                 // Removing unused rows
                 it["scenario"] in listOf("version", "tasks") ||
@@ -208,7 +207,7 @@ abstract class BenchmarkTemplate(
             }
             .flipColumnsWithRows()
             .add("median build time") { // squashing build times into median build time
-                valuesOf<Int>().median()
+                rowMedianOf<Int>()
             }
             .remove { nameContains("measured build") } // removing iterations results
             .groupBy("scenario").aggregate { // merging configuration and build times into one row
@@ -262,10 +261,10 @@ abstract class BenchmarkTemplate(
 
         val benchmarkOutputDir = benchmarkOutputsDir.resolve(projectName)
         val benchmarkCsv = benchmarkOutputDir.resolve("$projectName.csv")
-        results.writeCSV(benchmarkCsv)
+        results.writeCsv(benchmarkCsv)
         val benchmarkHtml = benchmarkOutputDir.resolve("$projectName.html")
         benchmarkHtml.writeText(
-            results.toStandaloneHTML(
+            results.toStandaloneHtml(
                 configuration = DisplayConfiguration(
                     cellContentLimit = 120,
                     cellFormatter = { dataRow, dataColumn ->
