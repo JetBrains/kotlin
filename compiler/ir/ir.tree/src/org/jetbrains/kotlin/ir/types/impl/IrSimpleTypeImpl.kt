@@ -10,18 +10,17 @@ import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.compactIfPossible
 
-abstract class IrAbstractSimpleType : IrSimpleType() {
-    abstract override val classifier: IrClassifierSymbol
-    abstract override val nullability: SimpleTypeNullability
-    abstract override val arguments: List<IrTypeArgument>
-    abstract override val annotations: List<IrConstructorCall>
-    abstract override val abbreviation: IrTypeAbbreviation?
+abstract class IrAbstractSimpleType(
+    final override val classifier: IrClassifierSymbol,
+    final override val nullability: SimpleTypeNullability,
+) : IrSimpleType() {
 
     override fun equals(other: Any?): Boolean =
         other is IrAbstractSimpleType &&
@@ -35,7 +34,7 @@ abstract class IrAbstractSimpleType : IrSimpleType() {
                 arguments.hashCode()
 }
 
-abstract class IrDelegatedSimpleType : IrAbstractSimpleType() {
+abstract class IrDelegatedSimpleType : IrSimpleType() {
 
     protected abstract val delegate: IrSimpleType
 
@@ -49,39 +48,91 @@ abstract class IrDelegatedSimpleType : IrAbstractSimpleType() {
         get() = delegate.abbreviation
     override val annotations: List<IrConstructorCall>
         get() = delegate.annotations
+
+    override fun equals(other: Any?): Boolean = delegate == other
+    override fun hashCode(): Int = delegate.hashCode()
+    override fun toString(): String = delegate.toString()
 }
 
-open class IrSimpleTypeImpl(
-    final override val classifier: IrClassifierSymbol,
+private class IrSimpleTypeImpl(
+    @Suppress("UNUSED_PARAMETER") constructorIndicator: IrElementConstructorIndicator?,
+    classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
-    final override val arguments: List<IrTypeArgument>,
-    final override val annotations: List<IrConstructorCall>,
-    final override val abbreviation: IrTypeAbbreviation? = null,
-) : IrAbstractSimpleType() {
-
-    final override val nullability =
-        if (classifier !is IrTypeParameterSymbol && nullability == SimpleTypeNullability.NOT_SPECIFIED)
-            SimpleTypeNullability.DEFINITELY_NOT_NULL
-        else
-            nullability
-
-    constructor(
-        classifier: IrClassifierSymbol,
-        hasQuestionMark: Boolean,
-        arguments: List<IrTypeArgument>,
-        annotations: List<IrConstructorCall>,
-        abbreviation: IrTypeAbbreviation? = null
-    ) : this(classifier, SimpleTypeNullability.fromHasQuestionMark(hasQuestionMark), arguments, annotations, abbreviation)
+    override val arguments: List<IrTypeArgument>,
+    override val annotations: List<IrConstructorCall>,
+) : IrAbstractSimpleType(classifier, nullability) {
+    override val abbreviation: IrTypeAbbreviation? = null
 }
 
-class IrSimpleTypeWithOriginalKotlinTypeImpl(
-    override val originalKotlinType: KotlinType,
+private class IrSimpleTypeOnlyClassifierImpl(
+    classifier: IrClassifierSymbol,
+    nullability: SimpleTypeNullability,
+) : IrAbstractSimpleType(classifier, nullability) {
+    override val annotations: List<IrConstructorCall> get() = emptyList()
+    override val abbreviation: IrTypeAbbreviation? get() = null
+    override val arguments: List<IrTypeArgument> get() = emptyList()
+}
+
+private class IrSimpleTypeFullImpl(
+    classifier: IrClassifierSymbol,
+    nullability: SimpleTypeNullability,
+    override val arguments: List<IrTypeArgument>,
+    override val annotations: List<IrConstructorCall>,
+    override val originalKotlinType: KotlinType?,
+    override val abbreviation: IrTypeAbbreviation? = null,
+) : IrAbstractSimpleType(classifier, nullability)
+
+
+fun IrSimpleTypeImpl(
+    classifier: IrClassifierSymbol,
+    hasQuestionMark: Boolean,
+    arguments: List<IrTypeArgument>,
+    annotations: List<IrConstructorCall>,
+    abbreviation: IrTypeAbbreviation? = null
+): IrSimpleType = IrSimpleTypeImpl(
+    classifier, SimpleTypeNullability.fromHasQuestionMark(hasQuestionMark), arguments, annotations, abbreviation
+)
+
+fun IrSimpleTypeImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
     arguments: List<IrTypeArgument>,
     annotations: List<IrConstructorCall>,
     abbreviation: IrTypeAbbreviation? = null,
-) : IrSimpleTypeImpl(classifier, nullability, arguments, annotations, abbreviation)
+    originalKotlinType: KotlinType? = null,
+): IrSimpleType {
+    val realNullability = if (classifier !is IrTypeParameterSymbol && nullability == SimpleTypeNullability.NOT_SPECIFIED)
+        SimpleTypeNullability.DEFINITELY_NOT_NULL
+    else
+        nullability
+    return when {
+        originalKotlinType != null || abbreviation != null -> {
+            IrSimpleTypeFullImpl(
+                classifier,
+                realNullability,
+                arguments.compactIfPossible(),
+                annotations.compactIfPossible(),
+                originalKotlinType,
+                abbreviation,
+            )
+        }
+        annotations.isEmpty() && arguments.isEmpty() -> {
+            IrSimpleTypeOnlyClassifierImpl(
+                classifier,
+                realNullability,
+            )
+        }
+        else -> {
+            IrSimpleTypeImpl(
+                constructorIndicator = null,
+                classifier,
+                realNullability,
+                arguments.compactIfPossible(),
+                annotations.compactIfPossible(),
+            )
+        }
+    }
+}
 
 class IrSimpleTypeBuilder {
     var kotlinType: KotlinType? = null
@@ -139,24 +190,14 @@ fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
         val classifier = this.classifier ?: throw AssertionError("Classifier not provided")
         val arguments = this.arguments.compactIfPossible()
         val annotations = this.annotations.compactIfPossible()
-        if (kotlinType == null) {
-            IrSimpleTypeImpl(
-                classifier,
-                nullability,
-                arguments,
-                annotations,
-                abbreviation,
-            )
-        } else {
-            IrSimpleTypeWithOriginalKotlinTypeImpl(
-                kotlinType,
-                classifier,
-                nullability,
-                arguments,
-                annotations,
-                abbreviation,
-            )
-        }
+        IrSimpleTypeImpl(
+            classifier,
+            nullability,
+            arguments,
+            annotations,
+            abbreviation,
+            originalKotlinType = kotlinType
+        )
     }
 
 fun IrSimpleTypeBuilder.buildTypeProjection(variance: Variance): IrTypeProjection =
