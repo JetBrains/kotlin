@@ -414,8 +414,8 @@ open class DeepCopyIrTreeWithSymbols(
             source = expression.source,
             constructorTypeArgumentsCount = expression.constructorTypeArgumentsCount,
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -549,8 +549,8 @@ open class DeepCopyIrTreeWithSymbols(
             symbol = symbolRemapper.getReferencedSimpleFunction(expression.symbol),
             superQualifierSymbol = expression.superQualifierSymbol?.let(symbolRemapper::getReferencedClass),
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -564,8 +564,8 @@ open class DeepCopyIrTreeWithSymbols(
             symbol = symbolRemapper.getReferencedFunction(expression.symbol),
             reflectionTarget = expression.reflectionTarget?.let(symbolRemapper::getReferencedFunction),
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -581,8 +581,8 @@ open class DeepCopyIrTreeWithSymbols(
             getter = expression.getter?.let(symbolRemapper::getReferencedSimpleFunction),
             setter = expression.setter?.let(symbolRemapper::getReferencedSimpleFunction),
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -598,6 +598,8 @@ open class DeepCopyIrTreeWithSymbols(
             getter = symbolRemapper.getReferencedSimpleFunction(expression.getter),
             setter = expression.setter?.let(symbolRemapper::getReferencedSimpleFunction),
         ).apply {
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -703,8 +705,8 @@ open class DeepCopyIrTreeWithSymbols(
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
@@ -742,8 +744,8 @@ open class DeepCopyIrTreeWithSymbols(
             origin = expression.origin,
             symbol = symbolRemapper.getReferencedConstructor(expression.symbol),
         ).apply {
-            copyRemappedTypeArgumentsFrom(expression)
-            transformValueArguments(expression)
+            arguments.assignFrom(expression.arguments) { it?.transform() }
+            typeArguments.assignFrom(expression.typeArguments) { it?.remapType() }
             processAttributes(expression)
         }
 
