@@ -16,12 +16,11 @@ fun main(args: Array<String>) {
 
     val analysedModule = args.getOrNull(1)
 
-    val jsonReportFiles: Array<File> = extractJsonReportFiles(fileOrDirectoryPath) ?: return
+    val jsonReportFiles: Array<File> = FileUtils.extractJsonReportFiles(fileOrDirectoryPath) ?: return
 
-    val reportsData: ReportsData = deserializeJsonReports(jsonReportFiles, analysedModule)
+    val reportsData: ReportsData = FileUtils.deserializeJsonReports(jsonReportFiles, analysedModule)
 
     val statsCalculator = StatsCalculator(reportsData)
 
-    MarkdownReportRenderer(statsCalculator).render()
+    print(MarkdownReportRenderer(statsCalculator).render())
 }
-

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
@@ -380,7 +381,7 @@ abstract class CompileServiceImplBase(
                 doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                     val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
 
-                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(isJson = false)
+                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
                             CompilationResultCategory.BUILD_REPORT_LINES.code,

@@ -73,6 +73,8 @@ class StatsCalculator(val reportsData: ReportsData) {
     private fun Collection<UnitStats>.aggregateStats(): UnitStats {
         require(isNotEmpty()) { "At least one entry is required" }
 
+        if (size == 1) return first()
+
         var name: String? = null
         var latestCurrentTimeMs: Long? = null
         var platform: PlatformType? = null
@@ -125,7 +127,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 val gcKind = gcInfo.kind
                 val existingGcStats = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) }
                 gcStats[gcKind] =
-                    GarbageCollectionStats(gcKind, existingGcStats.count + gcInfo.count, existingGcStats.millis + gcInfo.millis)
+                    GarbageCollectionStats(gcKind, existingGcStats.millis + gcInfo.millis, existingGcStats.count + gcInfo.count)
             }
             jitTimeMillis += moduleStats.jitTimeMillis ?: 0
         }

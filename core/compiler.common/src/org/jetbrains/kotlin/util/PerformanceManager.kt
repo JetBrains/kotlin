@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.stats.MarkdownReportRenderer
+import org.jetbrains.kotlin.stats.SingleReportsData
+import org.jetbrains.kotlin.stats.StatsCalculator
 import java.io.File
 import java.lang.management.CompilationMXBean
 import java.lang.management.GarbageCollectorMXBean
@@ -315,7 +318,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         }
 
         val destinationFile = File(refinedFileName)
-        destinationFile.writeBytes(createPerformanceReport(isJson = destinationFile.extension == "json").toByteArray())
+        val dumpFormat = DumpFormat.entries.firstOrNull { it.extension == destinationFile.extension } ?: DumpFormat.PlainText
+        destinationFile.writeBytes(createPerformanceReport(dumpFormat).toByteArray())
     }
 
     /**
@@ -330,13 +334,19 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
     }
 
-    fun createPerformanceReport(isJson: Boolean): String = if (isJson) {
-        UnitStatsJsonDumper.dump(unitStats)
-    } else {
-        buildString {
+    enum class DumpFormat(val extension: String) {
+        PlainText("log"),
+        Json("json"),
+        Markdown("md"),
+    }
+
+    fun createPerformanceReport(dumpFormat: DumpFormat): String = when (dumpFormat) {
+        DumpFormat.PlainText -> buildString {
             append("$presentableName performance report\n")
             unitStats.forEachStringMeasurement { appendLine(it) }
         }
+        DumpFormat.Json -> UnitStatsJsonDumper.dump(unitStats)
+        DumpFormat.Markdown -> MarkdownReportRenderer(StatsCalculator(SingleReportsData(unitStats))).render()
     }
 
     private fun ensureNotFinalizedAndSameThread() {
