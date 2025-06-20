@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
 import java.io.File
 
-abstract class AbstractJsKlibCompatibilityNoICTestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.K1_NO_IC)
-abstract class AbstractJsKlibCompatibilityNoICES6TestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.K1_NO_IC_WITH_ES6)
-abstract class AbstractJsKlibCompatibilityWithICTestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.K1_WITH_IC)
+abstract class AbstractJsKlibCompatibilityNoICTestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.NO_IC)
+abstract class AbstractJsKlibCompatibilityNoICES6TestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.NO_IC_WITH_ES6)
+abstract class AbstractJsKlibCompatibilityWithICTestCase : AbstractJsKlibCompatibilityTestCase(CompilerType.WITH_IC)
 
 abstract class AbstractJsKlibCompatibilityTestCase(compilerType: CompilerType) : AbstractJsKlibLinkageTestCase(compilerType) {
     // The entry point to generated test classes.
