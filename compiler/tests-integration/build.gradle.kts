@@ -69,6 +69,7 @@ projectTest(
     jUnitMode = JUnitMode.JUnit4
 ) {
     dependsOn(":dist")
+    dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
 
     workingDir = rootDir
 
