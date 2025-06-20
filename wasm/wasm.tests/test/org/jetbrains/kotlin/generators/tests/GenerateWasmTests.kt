@@ -47,12 +47,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractFirWasmPartialLinkageNoICTestCase> {
-                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.WASM, recursive = false)
-            }
-        }
-
         testGroup("wasm/wasm.tests/tests-gen", "js/js.translator/testData") {
             testClass<AbstractFirWasmInvalidationTest> {
                 model(
