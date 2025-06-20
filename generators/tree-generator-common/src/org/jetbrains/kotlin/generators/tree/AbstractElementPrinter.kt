@@ -26,7 +26,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field, 
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
-    protected open fun filterFields(element: Element): Collection<Field> = element.allFields
+    protected open fun filterFields(element: Element): Collection<Field> = element.allFields.filter { it.doPrint }
 
     protected open fun ImportCollecting.elementKDoc(element: Element): String = element.extendedKDoc()
 
