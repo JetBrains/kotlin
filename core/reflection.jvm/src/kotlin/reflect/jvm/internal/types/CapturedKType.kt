@@ -5,11 +5,14 @@
 
 package kotlin.reflect.jvm.internal.types
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import kotlin.reflect.*
-import kotlin.reflect.full.toDescriptorTypeProjection
 import kotlin.reflect.jvm.internal.KTypeParameterImpl
 
 // Based on NewCapturedType but greatly simplified.
@@ -59,6 +62,27 @@ internal class CapturedKTypeConstructor(
         kotlinTypeConstructor.hashCode()
 
     override fun toString(): String = "CapturedType($projection)"
+}
+
+private fun KTypeProjection.toDescriptorTypeProjection(typeParameter: TypeParameterDescriptor): TypeProjection =
+    if (type == null) StarProjectionImpl(typeParameter)
+    else TypeProjectionImpl(variance!!.toDescriptorVariance(), type!!.toDescriptorType())
+
+private fun KType.toDescriptorType(): KotlinType = when (this) {
+    is KTypeFromDescriptor -> type
+    is CapturedKType -> NewCapturedType(
+        CaptureStatus.FOR_SUBTYPING,
+        typeConstructor.kotlinTypeConstructor,
+        lowerType?.toDescriptorType()?.unwrap(),
+        isMarkedNullable = isMarkedNullable,
+    )
+    else -> error("Unsupported KType implementation: $this (${this::class})")
+}
+
+private fun KVariance.toDescriptorVariance(): Variance = when (this) {
+    KVariance.INVARIANT -> Variance.INVARIANT
+    KVariance.IN -> Variance.IN_VARIANCE
+    KVariance.OUT -> Variance.OUT_VARIANCE
 }
 
 internal fun captureKTypeFromArguments(type: KType): KType? {
