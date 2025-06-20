@@ -607,7 +607,7 @@ internal constructor(
                 output.parentFile.mkdirs()
 
                 buildFusService.orNull?.reportFusMetrics {
-                    NativeCompilerOptionMetrics.collectMetrics(compilerOptions, it)
+                    NativeCompilerOptionMetrics.collectMetrics(compilerOptions, separateKmpCompilation.get(), it)
                 }
 
                 ArgumentUtils.convertArgumentsToStringList(arguments)
