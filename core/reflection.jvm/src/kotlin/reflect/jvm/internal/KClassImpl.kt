@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -162,7 +160,7 @@ internal class KClassImpl<T : Any>(
 
         val supertypes: List<KType> by ReflectProperties.lazySoft {
             val kotlinTypes = descriptor.typeConstructor.supertypes
-            val result = ArrayList<KTypeFromDescriptor>(kotlinTypes.size)
+            val result = ArrayList<KType>(kotlinTypes.size)
             kotlinTypes.mapTo(result) { kotlinType ->
                 KTypeFromDescriptor(kotlinType) {
                     val superClass = kotlinType.constructor.declarationDescriptor
@@ -181,10 +179,10 @@ internal class KClassImpl<T : Any>(
                 }
             }
             if (!KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor) && result.all {
-                    val classKind = DescriptorUtils.getClassDescriptorForType(it.type).kind
-                    classKind == DescriptorClassKind.INTERFACE || classKind == DescriptorClassKind.ANNOTATION_CLASS
+                    val klass = it.classifier as? KClassImpl<*>
+                    klass != null && (klass.classKind == ClassKind.INTERFACE || klass.classKind == ClassKind.ANNOTATION_CLASS)
                 }) {
-                result += KTypeFromDescriptor(descriptor.builtIns.anyType) { Any::class.java }
+                result += ANY_TYPE
             }
             result.compact()
         }
@@ -422,5 +420,7 @@ internal class KClassImpl<T : Any>(
         private val SPECIAL_JVM_ANNOTATION_NAMES: Set<String> = SpecialJvmAnnotations.SPECIAL_ANNOTATIONS.mapTo(HashSet()) {
             it.asSingleFqName().toString()
         }
+
+        private val ANY_TYPE: KType = typeOf<Any>()
     }
 }
