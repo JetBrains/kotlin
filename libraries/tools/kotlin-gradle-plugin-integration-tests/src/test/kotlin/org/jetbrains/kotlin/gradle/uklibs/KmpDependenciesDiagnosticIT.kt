@@ -64,10 +64,6 @@ class KmpDependenciesDiagnosticIT : KGPBaseTest() {
                 iosArm64()
                 iosX64()
             },
-            consumerBuildOptions = defaultBuildOptions.copy(
-                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
-            ),
             gradleVersion = version,
         )
     }
