@@ -62,7 +62,7 @@ abstract class AbstractNativeKlibCompatibilityTest : AbstractKlibLinkageTest() {
         val testCase = createTestCase(moduleName, moduleSourceDir, compilerArgs)
 
         val compilation = when (compilerEdition) {
-            LATEST_RELEASE -> compilationByCustomCompiler(testCase, klibArtifact, dependencies)
+            CUSTOM -> compilationByCustomCompiler(testCase, klibArtifact, dependencies)
             CURRENT -> compilationByCurrentCompiler(testCase, klibArtifact, dependencies)
         }
 

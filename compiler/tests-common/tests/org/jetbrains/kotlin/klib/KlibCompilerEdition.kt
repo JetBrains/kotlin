@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.klib
 
+/**
+ * At the moment, only two compiler editions are supported:
+ * [CURRENT] - the compiler that was just built from fresh sources.
+ * [CUSTOM] - a custom (previously built and published) compiler.
+ */
 enum class KlibCompilerEdition(
     val args: List<String> = emptyList(),
 ) {
     CURRENT,
-    LATEST_RELEASE,
+    CUSTOM,
 }
 
 /**
@@ -27,9 +32,9 @@ enum class KlibCompilerChangeScenario(
     val intermediate: KlibCompilerEdition,
 ) {
     NoChange(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithCurrent(KlibCompilerEdition.LATEST_RELEASE, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithLatest(KlibCompilerEdition.LATEST_RELEASE, KlibCompilerEdition.CURRENT, KlibCompilerEdition.LATEST_RELEASE),
-    FwLatest(KlibCompilerEdition.CURRENT, KlibCompilerEdition.LATEST_RELEASE, KlibCompilerEdition.CURRENT);
+    BwLatestWithCurrent(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
+    BwLatestWithLatest(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM),
+    FwLatest(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT);
 
     override fun toString() = "${this.name}: [$bottomV1 -> $bottomV2, $intermediate]"
 }
