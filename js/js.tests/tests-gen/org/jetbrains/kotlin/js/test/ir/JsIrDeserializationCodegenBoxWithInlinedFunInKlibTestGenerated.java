@@ -15878,6 +15878,46 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
             runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/simple.kt");
           }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WrapContinuation {
+          @Test
+          public void testAllFilesPresentInWrapContinuation() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("av22.kt")
+          public void testAv22() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av22.kt");
+          }
+
+          @Test
+          @TestMetadata("av23.kt")
+          public void testAv23() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23.kt");
+          }
+
+          @Test
+          @TestMetadata("av23_wrapped.kt")
+          public void testAv23_wrapped() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/av23_wrapped.kt");
+          }
+
+          @Test
+          @TestMetadata("samDefault.kt")
+          public void testSamDefault() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefault.kt");
+          }
+
+          @Test
+          @TestMetadata("samDefaultInline.kt")
+          public void testSamDefaultInline() {
+            runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation/samDefaultInline.kt");
+          }
+        }
       }
 
       @Nested
