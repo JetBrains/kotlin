@@ -12,6 +12,7 @@ internal fun THROW_CCE(): Nothing {
 }
 
 internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolean): Nothing {
+    @Suppress("UNSUPPORTED_REFLECTION_API")
     val targetType = klass.qualifiedName ?: klass.simpleName ?: "<unknown>"
 
     if (!isNullable && obj == null) {
@@ -21,6 +22,7 @@ internal fun THROW_CCE_WITH_INFO(obj: Any?, klass: KClass<*>, isNullable: Boolea
     val targetTypeWithNullability = if (isNullable) "$targetType?" else targetType
 
     val message = if (obj != null) {
+        @Suppress("UNSUPPORTED_REFLECTION_API")
         val valueType = (obj::class).let { it.qualifiedName ?: it.simpleName } ?: "<unknown>"
         if (klass == Nothing::class && isNullable) {
             "Expected null (Nothing?), got an instance of $valueType"
