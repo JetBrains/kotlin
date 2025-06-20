@@ -182,13 +182,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             defaultWithErrorOnSet("endOffset", "fileEntry.maxOffset")
             isMutable("module")
             isLateinit("module")
-            implementation.generationCallback = {
-                println()
-                println("internal val isInsideModule: Boolean")
-                withIndent {
-                    println("get() = ::module.isInitialized")
-                }
-            }
         }
 
         allImplOf(loop) {
