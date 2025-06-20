@@ -49,9 +49,6 @@ class IrFileImpl(
 
     override lateinit var module: IrModuleFragment
 
-    internal val isInsideModule: Boolean
-        get() = ::module.isInitialized
-
     init {
         symbol.bind(this)
     }
