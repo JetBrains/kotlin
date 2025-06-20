@@ -141,7 +141,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
 
     private inner class TypeSubstitutor : AbstractIrTypeSubstitutor() {
         override fun substitute(type: IrType): IrType {
-            if (type !is IrSimpleTypeImpl) return type
+            if (type !is IrSimpleType) return type
             val newArguments = type.arguments.map { substituteArgument(it) }
             val newClassifier = calculateUpdatedClassifier(type.classifier) ?: type.classifier
             return IrSimpleTypeImpl(
