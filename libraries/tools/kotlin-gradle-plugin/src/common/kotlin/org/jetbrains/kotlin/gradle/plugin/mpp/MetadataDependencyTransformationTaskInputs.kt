@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.FileCollection
@@ -14,11 +15,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataR
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class MetadataDependencyTransformationTaskInputs(
-    project: Project,
-    kotlinSourceSet: KotlinSourceSet,
+    @Transient private val project: Project,
+    @Transient private val kotlinSourceSet: KotlinSourceSet,
     private val keepProjectDependencies: Boolean = true,
 ) {
     private val currentBuild = project.currentBuild
@@ -53,32 +55,50 @@ internal class MetadataDependencyTransformationTaskInputs(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val configurationToResolve: FileCollection = kotlinSourceSet
+    val metadataConfigurationsToResolve: FileCollection = kotlinSourceSet
         .internal
         .resolvableMetadataConfiguration
-        .applyIf(!keepProjectDependencies) { withoutProjectDependencies() }
+        .incoming.artifactView { view ->
+            view.withoutProjectDependenciesIfNeeded()
+        }.files
 
+    @get:Internal
+    internal val hostSpecificMetadataConfigurations: List<Configuration>
+        get() {
+            val hostSpecificSourceSets: Set<KotlinSourceSet> = project.future { getHostSpecificSourceSets(project) }.getOrThrow()
+            return kotlinSourceSet.internal.compilations
+                .filter { compilation ->
+                    if (compilation is KotlinNativeCompilation) {
+                        compilation.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+                    } else {
+                        true
+                    }
+                }.filter { compilation ->
+                    compilation.allKotlinSourceSets.any {
+                        hostSpecificSourceSets.contains(it)
+                    }
+                }
+                .mapNotNull {
+                    it.internal.configurations.hostSpecificMetadataConfiguration
+                }
+        }
 
     @Suppress("unused") // Gradle input
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
-    val hostSpecificMetadataConfigurationsToResolve: FileCollection = project.filesProvider {
-        kotlinSourceSet.internal.compilations
-            .filter { compilation ->
-                if (compilation is KotlinNativeCompilation) {
-                    compilation.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
-                } else {
-                    true
-                }
-            }.mapNotNull { compilation ->
-                compilation
-                    .internal
-                    .configurations
-                    .hostSpecificMetadataConfiguration
-                    ?.applyIf(!keepProjectDependencies) { withoutProjectDependencies() }
-            }
+    val hostSpecificMetadataToResolve: FileCollection = project.filesProvider {
+        hostSpecificMetadataConfigurations.map { configuration ->
+            configuration.incoming.artifactView { view ->
+                view.withoutProjectDependenciesIfNeeded()
+                /**
+                 * These configuration will fail to resolve when the dependency is missing an Apple target required by the consumer. If we
+                 * explode with a resolution error here then we can't emit a diagnostic in GMT
+                 */
+                view.isLenient = true
+            }.files
+        }
     }
 
     @Transient // Only needed for configuring task inputs;
@@ -114,10 +134,10 @@ internal class MetadataDependencyTransformationTaskInputs(
         }
     }
 
-    private fun Configuration.withoutProjectDependencies(): FileCollection {
-        return incoming.artifactView { view ->
-            view.componentFilter { componentIdentifier -> componentIdentifier !in currentBuild }
-        }.files
+    private fun ArtifactView.ViewConfiguration.withoutProjectDependenciesIfNeeded() {
+        if (!keepProjectDependencies) {
+            componentFilter { componentIdentifier -> componentIdentifier !in currentBuild }
+        }
     }
 
 }
