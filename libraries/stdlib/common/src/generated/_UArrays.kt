@@ -2802,9 +2802,7 @@ public inline fun UShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
 @ExperimentalUnsignedTypes
 public fun UIntArray.reversed(): List<UInt> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -2814,9 +2812,7 @@ public fun UIntArray.reversed(): List<UInt> {
 @ExperimentalUnsignedTypes
 public fun ULongArray.reversed(): List<ULong> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -2826,9 +2822,7 @@ public fun ULongArray.reversed(): List<ULong> {
 @ExperimentalUnsignedTypes
 public fun UByteArray.reversed(): List<UByte> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
@@ -2838,9 +2832,7 @@ public fun UByteArray.reversed(): List<UByte> {
 @ExperimentalUnsignedTypes
 public fun UShortArray.reversed(): List<UShort> {
     if (isEmpty()) return emptyList()
-    val list = toMutableList()
-    list.reverse()
-    return list
+    return copyOf().apply { reverse() }.asList()
 }
 
 /**
