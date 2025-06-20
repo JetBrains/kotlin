@@ -10,8 +10,10 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
-import kotlin.test.Test
+import org.junit.Test
 import kotlin.test.assertEquals
 
 /**
@@ -121,6 +123,126 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 }
             }
         }
+    }
+
+    @Test
+    fun topLevelDependenciesAreCorrectlyPropagatedToResolvableConfigurationsInCompilation() {
+        val repoRoot = tempFolder.newFolder()
+        val project = buildProjectWithMPP(preApplyCode = {
+            enableDefaultStdlibDependency(false)
+            enableDefaultJsDomApiDependency(false)
+        }) {
+            val dsl = SourceSetDependenciesDsl(project)
+            project.defaultTargets()
+            project.kotlin {
+                dependencies {
+                    with(dsl) {
+                        api(mockedDependency("top-level-api", "1.0"))
+                        implementation(mockedDependency("top-level-implementation", "1.0"))
+                        compileOnly(mockedDependency("top-level-compileOnly", "1.0"))
+                        runtimeOnly(mockedDependency("top-level-runtimeOnly", "1.0"))
+
+                        testImplementation(mockedDependency("top-level-test-implementation", "1.0"))
+                        testCompileOnly(mockedDependency("top-level-test-compileOnly", "1.0"))
+                        testRuntimeOnly(mockedDependency("top-level-test-runtimeOnly", "1.0"))
+                    }
+                }
+            }
+            dsl.mavenRepositoryMock.applyToProject(project, repoRoot)
+        }.evaluate()
+
+        val resolvedPerConfigurationComponents: MutableMap<String, MutableSet<String>> = mutableMapOf()
+        project.multiplatformExtension.targets
+            .filter { it.platformType != KotlinPlatformType.common }
+            .forEach { target ->
+                target.compilations.forEach { compilation ->
+                    project.configurations.getByName(
+                        compilation.compileDependencyConfigurationName
+                    ).incoming.resolutionResult.allComponents.forEach { component ->
+                        resolvedPerConfigurationComponents.getOrPut(compilation.compileDependencyConfigurationName, { mutableSetOf() })
+                            .add(component.id.displayName)
+                        compilation.runtimeDependencyConfigurationName?.let { runtimeConfiguration ->
+                            resolvedPerConfigurationComponents.getOrPut(runtimeConfiguration, { mutableSetOf() })
+                                .add(component.id.displayName)
+                        }
+                    }
+                }
+            }
+
+        assertEquals(
+            mutableMapOf(
+                "jsCompileClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                ),
+                "jsRuntimeClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                ),
+                "jsTestCompileClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-test-implementation:1.0",
+                ),
+                "jsTestRuntimeClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-test-implementation:1.0",
+                ),
+                "jvmCompileClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                ),
+                "jvmRuntimeClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                ),
+                "jvmTestCompileClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-test-implementation:1.0",
+                ),
+                "jvmTestRuntimeClasspath" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-test-implementation:1.0",
+                ),
+                "linuxX64CompileKlibraries" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-compileOnly:1.0",
+                    "test:top-level-implementation:1.0",
+                ),
+                "linuxX64TestCompileKlibraries" to mutableSetOf(
+                    "root project :",
+                    "test:top-level-api:1.0",
+                    "test:top-level-implementation:1.0",
+                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-test-implementation:1.0",
+                ),
+            ).prettyPrinted,
+            resolvedPerConfigurationComponents.prettyPrinted,
+        )
     }
 
 }

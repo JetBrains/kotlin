@@ -17,6 +17,7 @@ private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level d
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinBackwardsDeploymentDependencyCollector {
     operator fun invoke(p: Any)
+    operator fun invoke(p: Any, a: org.gradle.api.Action<in org.gradle.api.artifacts.ExternalModuleDependency>)
 }
 
 /**
