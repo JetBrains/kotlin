@@ -25,7 +25,7 @@ class IrLocalDelegatedPropertyReferenceImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    symbol: IrLocalDelegatedPropertySymbol,
+    override var symbol: IrLocalDelegatedPropertySymbol,
     override var delegate: IrVariableSymbol,
     override var getter: IrSimpleFunctionSymbol,
     override var setter: IrSimpleFunctionSymbol?,
@@ -33,12 +33,4 @@ class IrLocalDelegatedPropertyReferenceImpl internal constructor(
     override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrLocalDelegatedPropertySymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
 }

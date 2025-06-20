@@ -23,20 +23,12 @@ class IrFunctionReferenceImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    symbol: IrFunctionSymbol,
+    override var symbol: IrFunctionSymbol,
     override var reflectionTarget: IrFunctionSymbol?,
 ) : IrFunctionReference() {
     override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrFunctionSymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
 
     companion object
 }
