@@ -45,10 +45,10 @@ import static org.jetbrains.kotlin.maven.Util.joinArrays;
 
 public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> extends AbstractMojo {
     @Component
-    protected PlexusContainer container;
+    private PlexusContainer container;
 
     @Component
-    protected MojoExecution mojoExecution;
+    private MojoExecution mojoExecution;
 
     @Component
     protected RepositorySystem system;
