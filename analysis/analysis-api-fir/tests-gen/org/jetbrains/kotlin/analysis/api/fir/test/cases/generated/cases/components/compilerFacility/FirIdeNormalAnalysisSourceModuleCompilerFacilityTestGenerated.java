@@ -314,6 +314,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
     }
 
     @Test
+    @TestMetadata("customActualization.kt")
+    public void testCustomActualization() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customActualization.kt");
+    }
+
+    @Test
+    @TestMetadata("customActualization2.kt")
+    public void testCustomActualization2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customActualization2.kt");
+    }
+
+    @Test
     @TestMetadata("customName.kt")
     public void testCustomName() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/customName.kt");
