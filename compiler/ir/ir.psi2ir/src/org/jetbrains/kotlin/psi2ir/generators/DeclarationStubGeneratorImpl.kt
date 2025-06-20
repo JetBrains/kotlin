@@ -256,7 +256,9 @@ class DeclarationStubGeneratorImpl(
 
     override fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         IrLazyValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this),
+            IrParameterKind.Regular,
+            IrValueParameterSymbolImpl(this), this, name,
             type, varargElementType,
             isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
             stubGenerator = this@DeclarationStubGeneratorImpl, typeTranslator = typeTranslator

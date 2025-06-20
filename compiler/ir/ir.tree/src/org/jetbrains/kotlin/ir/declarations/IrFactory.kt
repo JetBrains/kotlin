@@ -393,6 +393,7 @@ open class IrFactory(
             endOffset = endOffset,
             origin = origin,
             symbol = symbol,
+            kind = kind,
             name = name,
             type = type,
             varargElementType = varargElementType,
@@ -401,9 +402,7 @@ open class IrFactory(
             isHidden = isHidden,
             isAssignable = isAssignable,
             factory = this
-        ).apply {
-            this.kind = kind
-        }.declarationCreated()
+        ).declarationCreated()
 
     fun createExpressionBody(
         startOffset: Int,

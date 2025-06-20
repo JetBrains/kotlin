@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -25,6 +26,7 @@ class IrLazyValueParameter(
     override var startOffset: Int,
     override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
+    override var kind: IrParameterKind,
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
