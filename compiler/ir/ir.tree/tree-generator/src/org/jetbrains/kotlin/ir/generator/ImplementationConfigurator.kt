@@ -364,8 +364,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
-
-            recordTargetShapeOnSymbolChange()
         }
 
         impl(constructorCall) {
@@ -375,8 +373,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
-
-            recordTargetShapeOnSymbolChange()
         }
 
         impl(delegatingConstructorCall) {
@@ -384,8 +380,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
-
-            recordTargetShapeOnSymbolChange()
         }
 
         impl(enumConstructorCall) {
@@ -393,8 +387,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
-
-            recordTargetShapeOnSymbolChange()
         }
 
         impl(functionReference) {
@@ -402,27 +394,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 println()
                 println("companion object")
             }
-
-            recordTargetShapeOnSymbolChange()
-        }
-
-        impl(propertyReference) {
-            recordTargetShapeOnSymbolChange()
-        }
-
-        impl(localDelegatedPropertyReference) {
-            recordTargetShapeOnSymbolChange()
-        }
-    }
-
-    private fun ImplementationContext.recordTargetShapeOnSymbolChange() {
-        default("symbol") {
-            customSetter = """
-                if (field !== value) {
-                    field = value
-                    updateTargetSymbol()
-                }
-            """.trimIndent()
         }
     }
 
