@@ -112,7 +112,7 @@ open class AbstractFirWasmJsCodegenBoxTest(
 }
 
 open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmJsCodegenBoxTest(
-    testGroupOutputDirPrefix = "codegen/firBoxInline/"
+    testGroupOutputDirPrefix = "codegen/boxInlKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -199,7 +199,7 @@ open class AbstractFirWasmWasiCodegenBoxTest(
 }
 
 open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmWasiCodegenBoxTest(
-    testGroupOutputDirPrefix = "codegen/firWasiBoxInlined/"
+    testGroupOutputDirPrefix = "codegen/wasiBoxInlKlib/"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
