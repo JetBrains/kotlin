@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// ISSUE: KT-59326
 
 // Test that we don't have this exception in Kotlin/JS:
 // Unhandled JavaScript exception: expected expression, got keyword 'default'
