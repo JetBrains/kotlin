@@ -12170,6 +12170,18 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      @Tag("es6")
+      public class WrapContinuation {
+        @Test
+        public void testAllFilesPresentInWrapContinuation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+      }
     }
 
     @Nested

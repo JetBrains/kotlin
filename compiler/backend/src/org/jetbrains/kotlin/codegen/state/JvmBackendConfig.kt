@@ -110,6 +110,8 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
     val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
 
+    val wrapContinuationForTailCallFunctions: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
+
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
             configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INLINE)

@@ -12056,6 +12056,17 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("legacy-frontend")
+      public class WrapContinuation {
+        @Test
+        public void testAllFilesPresentInWrapContinuation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+      }
     }
 
     @Nested

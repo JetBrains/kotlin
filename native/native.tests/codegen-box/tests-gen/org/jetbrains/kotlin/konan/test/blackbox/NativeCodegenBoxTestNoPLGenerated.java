@@ -13169,6 +13169,21 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
           }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+        @TestDataPath("$PROJECT_ROOT")
+        @ClassicPipeline()
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        @Tag("codegen-box")
+        public class WrapContinuation {
+          @Test
+          public void testAllFilesPresentInWrapContinuation() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+          }
+        }
       }
 
       @Nested

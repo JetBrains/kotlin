@@ -12039,6 +12039,13 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
         @Tag("klib")
         public class Unit {
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/wrapContinuation")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("klib")
+        public class WrapContinuation {
+        }
       }
 
       @Nested

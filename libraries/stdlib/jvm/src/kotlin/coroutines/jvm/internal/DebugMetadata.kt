@@ -6,6 +6,7 @@
 package kotlin.coroutines.jvm.internal
 
 import java.lang.reflect.Method
+import kotlin.coroutines.Continuation
 
 @Target(AnnotationTarget.CLASS)
 @SinceKotlin("1.3")
@@ -53,7 +54,7 @@ internal fun BaseContinuationImpl.getStackTraceElementImpl(): StackTraceElement?
     return StackTraceElement(moduleAndClass, debugMetadata.methodName, debugMetadata.sourceFile, lineNumber)
 }
 
-private object ModuleNameRetriever {
+internal object ModuleNameRetriever {
     private class Cache(
         @JvmField
         val getModuleMethod: Method?,
@@ -67,7 +68,7 @@ private object ModuleNameRetriever {
 
     private var cache: Cache? = null
 
-    fun getModuleName(continuation: BaseContinuationImpl): String? {
+    fun getModuleName(continuation: Continuation<Any?>): String? {
         val cache = this.cache ?: buildCache(continuation)
         if (cache === notOnJava9) {
             return null
@@ -77,7 +78,7 @@ private object ModuleNameRetriever {
         return cache.nameMethod?.invoke(descriptor) as? String
     }
 
-    private fun buildCache(continuation: BaseContinuationImpl): Cache {
+    private fun buildCache(continuation: Continuation<Any?>): Cache {
         try {
             val getModuleMethod = Class::class.java.getDeclaredMethod("getModule")
             val methodClass = continuation.javaClass.classLoader.loadClass("java.lang.Module")
@@ -85,7 +86,7 @@ private object ModuleNameRetriever {
             val moduleDescriptorClass = continuation.javaClass.classLoader.loadClass("java.lang.module.ModuleDescriptor")
             val nameMethod = moduleDescriptorClass.getDeclaredMethod("name")
             return Cache(getModuleMethod, getDescriptorMethod, nameMethod).also { cache = it }
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
             return notOnJava9.also { cache = it }
         }
     }
