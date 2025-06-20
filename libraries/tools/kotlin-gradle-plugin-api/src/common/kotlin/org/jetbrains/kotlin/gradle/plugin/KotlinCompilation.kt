@@ -110,16 +110,17 @@ interface KotlinCompilation<UNUSED : KotlinAnyOptionsDeprecated> : Named,
     val compilationName: String
 
     /**
-     * All [KotlinSourceSets](KotlinSourceSet) used by this compilation.
+     * [KotlinSourceSets][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet] used by this compilation directly.
      *
-     * Additional Kotlin source sets that can be included either via [source] or [associateWith] methods.
+     * Additional Kotlin source sets can be included either via [source] method.
      */
     val kotlinSourceSets: Set<KotlinSourceSet>
 
     /**
-     * All [KotlinSourceSets](KotlinSourceSet) used by this compilation.
+     * The full set of sources that this compilation sees: [kotlinSourceSets] and their
+     * [dependsOn][org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.dependsOn] closure.
      *
-     * Additional Kotlin source sets can be included either via [source] or [associateWith] methods.
+     * Additional Kotlin source sets can be included either via [source] method.
      */
     val allKotlinSourceSets: Set<KotlinSourceSet>
 
