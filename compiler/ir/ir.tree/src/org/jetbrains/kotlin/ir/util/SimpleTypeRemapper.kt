@@ -14,44 +14,27 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class SimpleTypeRemapper(
     private val symbolRemapper: SymbolRemapper
-) : TypeRemapper {
+) : AbstractTypeRemapper() {
 
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {
+    override fun remapTypeOrNull(type: IrType): IrType? {
+        if (type !is IrSimpleType) return null
+        val symbol = symbolRemapper.getReferencedClassifier(type.classifier)
+        val arguments = remapTypeArguments(type.arguments)
+        if (symbol == type.classifier && arguments == null && type.abbreviation == null) return null
+        return IrSimpleTypeImpl(
+            symbol,
+            type.nullability,
+            arguments ?: type.arguments,
+            type.annotations,
+            type.abbreviation?.remapTypeAbbreviation()
+        )
     }
-
-    override fun leaveScope() {
-    }
-
-    override fun remapType(type: IrType): IrType =
-        if (type !is IrSimpleType)
-            type
-        else {
-            val symbol = symbolRemapper.getReferencedClassifier(type.classifier)
-            val arguments = type.arguments.memoryOptimizedMap { remapTypeArgument(it) }
-            if (symbol == type.classifier && arguments == type.arguments)
-                type
-            else {
-                IrSimpleTypeImpl(
-                    symbol,
-                    type.nullability,
-                    arguments,
-                    type.annotations,
-                    type.abbreviation?.remapTypeAbbreviation()
-                )
-            }
-        }
-
-    private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
-        when (typeArgument) {
-            is IrTypeProjection -> makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
-            is IrStarProjection -> typeArgument
-        }
 
     private fun IrTypeAbbreviation.remapTypeAbbreviation() =
         IrTypeAbbreviationImpl(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
-            arguments.memoryOptimizedMap { remapTypeArgument(it) },
+            arguments.memoryOptimizedMap { remapTypeArgument(it) ?: it },
             annotations
         )
 }

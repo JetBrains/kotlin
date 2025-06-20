@@ -693,10 +693,10 @@ open class LocalDeclarationsLowering(
         private inner class LocalClassTypeParameterRemapper(currentLocalClass: LocalClassContext?) : IrTypeParameterRemapper(
             currentLocalClass?.capturedTypeParameterToTypeParameter ?: emptyMap()
         ) {
-            override fun remapType(type: IrType): IrType {
-                if (type !is IrSimpleType) return super.remapType(type)
+            override fun remapTypeOrNull(type: IrType): IrType? {
+                if (type !is IrSimpleType) return super.remapTypeOrNull(type)
                 val referencedLocalClass = localClasses[type.classifier.owner]
-                    ?: return super.remapType(type)
+                    ?: return super.remapTypeOrNull(type)
                 val capturedTypeParameters = referencedLocalClass.closure.capturedTypeParameters
 
                 // Normally, types with local class classifiers produced by the frontend already include the enclosing
@@ -719,7 +719,7 @@ open class LocalDeclarationsLowering(
                     type.annotations,
                     type.abbreviation,
                 )
-                return super.remapType(correctedType)
+                return super.remapTypeOrNull(correctedType)
             }
         }
 

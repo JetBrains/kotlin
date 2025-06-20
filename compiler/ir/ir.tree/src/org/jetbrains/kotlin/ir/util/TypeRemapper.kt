@@ -6,12 +6,48 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.types.IrStarProjection
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 interface TypeRemapper {
     fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
     fun remapType(type: IrType): IrType
     fun leaveScope()
+}
+
+abstract class AbstractTypeRemapper() : TypeRemapper {
+    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
+    override fun leaveScope() {}
+
+    // in all functions below null means can reuse
+    protected abstract fun remapTypeOrNull(type: IrType): IrType?
+
+    protected fun remapTypeArguments(arguments: List<IrTypeArgument>): List<IrTypeArgument>? {
+        var anyChanged = false
+        val result = arguments.memoryOptimizedMap {
+            val r = remapTypeArgument(it)
+            if (r != null) anyChanged = true
+            r ?: it
+        }
+        return if (anyChanged) result else null
+    }
+
+    protected fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument? {
+        return when (typeArgument) {
+            is IrTypeProjection -> makeTypeProjection(this.remapTypeOrNull(typeArgument.type) ?: return null, typeArgument.variance)
+            is IrStarProjection -> null
+        }
+    }
+
+    final override fun remapType(type: IrType): IrType {
+        return remapTypeOrNull(type) ?: type
+    }
+
 }
 
 inline fun <T> TypeRemapper.withinScope(irTypeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {

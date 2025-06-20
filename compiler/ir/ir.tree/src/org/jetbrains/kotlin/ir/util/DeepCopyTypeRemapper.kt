@@ -15,42 +15,33 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class DeepCopyTypeRemapper(
     private val symbolRemapper: ReferencedSymbolRemapper
-) : TypeRemapper {
+) : AbstractTypeRemapper() {
 
     lateinit var deepCopy: DeepCopyIrTreeWithSymbols
 
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {
-        // TODO
-    }
-
-    override fun leaveScope() {
-        // TODO
-    }
-
-    override fun remapType(type: IrType): IrType {
+    override fun remapTypeOrNull(type: IrType): IrType? {
         return when (type) {
-            is IrSimpleType -> IrSimpleTypeImpl(
-                symbolRemapper.getReferencedClassifier(type.classifier),
-                type.nullability,
-                type.arguments.memoryOptimizedMap { remapTypeArgument(it) },
-                type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
-                type.abbreviation?.remapTypeAbbreviation()
-            )
-            else -> type
+            is IrSimpleType -> {
+                val newClassifier = symbolRemapper.getReferencedClassifier(type.classifier)
+                val typeParameters = remapTypeArguments(type.arguments)
+                if (type.annotations.isEmpty() && typeParameters == null && newClassifier == type.classifier && type.abbreviation == null) return type
+                IrSimpleTypeImpl(
+                    newClassifier,
+                    type.nullability,
+                    typeParameters ?: type.arguments,
+                    type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
+                    type.abbreviation?.remapTypeAbbreviation()
+                )
+            }
+            else -> null
         }
     }
-
-    private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
-        when (typeArgument) {
-            is IrTypeProjection -> makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
-            is IrStarProjection -> typeArgument
-        }
 
     private fun IrTypeAbbreviation.remapTypeAbbreviation() =
         IrTypeAbbreviationImpl(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
-            arguments.memoryOptimizedMap { remapTypeArgument(it) },
+            arguments.memoryOptimizedMap { remapTypeArgument(it) ?: it },
             annotations
         )
 }
