@@ -19,6 +19,7 @@ private enum class TestProperty(shortName: String) {
     COMPILER_CLASSPATH("compilerClasspath"),
     COMPILER_PLUGINS("compilerPlugins"),
     CUSTOM_KLIBS("customKlibs"),
+    CUSTOM_KOTLIN_NATIVE_HOME("customNativeHome"),
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     TEST_KIND("testKind"),
@@ -36,7 +37,7 @@ private enum class TestProperty(shortName: String) {
     EAGER_GROUP_CREATION("eagerGroupCreation"),
     XCTEST_FRAMEWORK("xctest"),
     TEAMCITY("teamcity"),
-    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
+    ;
 
     val fullName = "kotlin.internal.native.test.$shortName"
 
@@ -117,7 +118,7 @@ fun Project.nativeTest(
     customTestDependencies: List<Configuration> = emptyList(),
     compilerPluginDependencies: List<Configuration> = emptyList(),
     allowParallelExecution: Boolean = true,
-    releasedCompilerDist: TaskProvider<Sync>? = null,
+    customCompilerDist: TaskProvider<Sync>? = null,
     maxMetaspaceSizeMb: Int = 512,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
@@ -251,10 +252,10 @@ fun Project.nativeTest(
             compute(EAGER_GROUP_CREATION)
             compute(XCTEST_FRAMEWORK)
 
-            computeLazy(LATEST_RELEASED_COMPILER_PATH) {
-                if (releasedCompilerDist != null) dependsOn(releasedCompilerDist)
+            computeLazy(CUSTOM_KOTLIN_NATIVE_HOME) {
+                if (customCompilerDist != null) dependsOn(customCompilerDist)
                 lazy {
-                    releasedCompilerDist?.get()?.destinationDir?.absolutePath
+                    customCompilerDist?.get()?.destinationDir?.absolutePath
                 }
             }
 

@@ -351,11 +351,17 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
 
 val Settings.systemFrameworksPath: String get() = get<XCTestRunner>().frameworksPath
 
-internal class ReleasedCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
+/**
+ * A custom (i.e., the second, an alternative) distribution of the Kotlin/Native compiler.
+ * Intended for the use only in KLIB forward/backward compatibility tests where we need to compare
+ * the compilation results of both the _current_ and the _custom_ compiler.
+ */
+internal class CustomNativeCompiler(private val lazyNativeHome: Lazy<KotlinNativeHome>) {
     val nativeHome: KotlinNativeHome get() = lazyNativeHome.value
+
     val lazyClassloader: Lazy<URLClassLoader> = lazy {
         val nativeClassPath = setOf(
-            nativeHome.dir.resolve("konan/lib/trove4j.jar"), // to be removed after bumping `kotlin.internal.native.test.latestReleasedCompilerVersion` to 2.2.0+
+            nativeHome.dir.resolve("konan/lib/trove4j.jar"), // to be removed after bumping `kotlin.internal.native.test.compat.customCompilerVersion` to 2.2.0+
             nativeHome.dir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
         )
             .map { it.toURI().toURL() }
