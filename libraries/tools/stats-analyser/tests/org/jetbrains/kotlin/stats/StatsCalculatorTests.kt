@@ -5,22 +5,18 @@
 
 package org.jetbrains.kotlin.stats
 
+import org.jetbrains.kotlin.stats.TestData.moduleStats
+import org.jetbrains.kotlin.stats.TestData.moduleStats0
+import org.jetbrains.kotlin.stats.TestData.moduleStats1
+import org.jetbrains.kotlin.stats.TestData.moduleStats2
 import org.jetbrains.kotlin.util.CompilerType
 import org.jetbrains.kotlin.util.GarbageCollectionStats
 import org.jetbrains.kotlin.util.PlatformType
-import org.jetbrains.kotlin.util.SideStats
-import org.jetbrains.kotlin.util.Time
-import org.jetbrains.kotlin.util.UnitStats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class StatsCalculatorTests {
-    val moduleStats0 = createDummyModuleStats(0, CompilerType.K1, hasErrors = false)
-    val moduleStats1 = createDummyModuleStats(1, CompilerType.K2, hasErrors = false)
-    val moduleStats2 = createDummyModuleStats(2, CompilerType.K2, hasErrors = true)
-
-    val moduleStats: ModulesReportsData = ModulesReportsData(listOf(moduleStats0, moduleStats1, moduleStats2).associateBy { it.name!! })
     val statsCalculator = StatsCalculator(moduleStats)
 
     @Test
@@ -45,9 +41,9 @@ class StatsCalculatorTests {
             assertEquals(moduleStats0.findKotlinClassStats!! + moduleStats1.findKotlinClassStats + moduleStats2.findKotlinClassStats, findKotlinClassStats)
             assertEquals(
                 listOf(
-                    GarbageCollectionStats("0", 0, 0),
-                    GarbageCollectionStats("1", 1, 1),
-                    GarbageCollectionStats("2", 2, 2),
+                    GarbageCollectionStats("gc-1", 100, 1),
+                    GarbageCollectionStats("gc-2", 200, 2),
+                    GarbageCollectionStats("gc-3", 300, 3),
                 ),
                 gcStats
             )
@@ -76,34 +72,6 @@ class StatsCalculatorTests {
         assertEquals(
             listOf(moduleStats0, moduleStats1),
             statsCalculator.getTopModulesBy(max = false, count = 2) { it.getTotalTime().nanos }
-        )
-    }
-
-    private fun createDummyModuleStats(increment: Int, compilerType: CompilerType, hasErrors: Boolean): UnitStats {
-        val time = Time(System.nanoTime() + increment, increment.toLong(), increment.toLong())
-        val sideStats = SideStats(increment, time)
-        return UnitStats(
-            name = increment.toString(),
-            timeStampMs = System.currentTimeMillis() + increment,
-            platform = PlatformType.JVM,
-            compilerType = compilerType,
-            hasErrors = hasErrors,
-            filesCount = increment,
-            linesCount = increment,
-            initStats = time,
-            analysisStats = time,
-            translationToIrStats = time,
-            irPreLoweringStats = time,
-            irSerializationStats = time,
-            klibWritingStats = time,
-            irLoweringStats = time,
-            backendStats = time,
-            findJavaClassStats = sideStats,
-            findKotlinClassStats = sideStats,
-            gcStats = listOf(
-                GarbageCollectionStats(increment.toString(), increment.toLong(), increment.toLong()),
-            ),
-            jitTimeMillis = increment.toLong(),
         )
     }
 }

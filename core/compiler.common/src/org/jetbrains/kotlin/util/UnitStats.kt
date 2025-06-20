@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.util
 
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.round
 
 /**
  * Represents aggregated info about performance and other measurements in a simple format that compatible with
@@ -59,7 +60,7 @@ data class UnitStats(
 
     @property:DeprecatedMeasurementForBackCompatibility
     val extendedStats: List<String>? = null,
-) {
+) : Comparable<UnitStats> {
     fun getTotalTime(): Time {
         return Time.ZERO +
                 initStats +
@@ -72,6 +73,10 @@ data class UnitStats(
                 backendStats +
                 findJavaClassStats?.time +
                 findKotlinClassStats?.time
+    }
+
+    override fun compareTo(other: UnitStats): Int {
+        return timeStampMs.compareTo(other.timeStampMs)
     }
 }
 
@@ -141,6 +146,14 @@ data class Time(val nanos: Long, val userNanos: Long, val cpuNanos: Long) {
             nanos.toDouble() / other.nanos,
             userNanos.toDouble() / other.userNanos,
             cpuNanos.toDouble() / other.cpuNanos,
+        )
+    }
+
+    operator fun times(multiplier: Double): Time {
+        return Time(
+            round(nanos * multiplier).toLong(),
+            round(userNanos * multiplier).toLong(),
+            round(cpuNanos * multiplier).toLong(),
         )
     }
 }

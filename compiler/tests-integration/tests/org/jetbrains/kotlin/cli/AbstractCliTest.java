@@ -205,7 +205,14 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             expectedPerfLogFile = new File(fileName.replaceFirst("\\.args$", ".perf.log"));
         }
 
-        @NotNull String actualPerfReport = perfManager.createPerformanceReport(isJson);
+        PerformanceManager.DumpFormat dumpFormat;
+        if (isJson) {
+            dumpFormat = PerformanceManager.DumpFormat.Json;
+        } else {
+            dumpFormat = PerformanceManager.DumpFormat.PlainText;
+        }
+
+        @NotNull String actualPerfReport = perfManager.createPerformanceReport(dumpFormat);
 
         assertValueAgnosticEqualsToFile(expectedPerfLogFile, actualPerfReport);
     }

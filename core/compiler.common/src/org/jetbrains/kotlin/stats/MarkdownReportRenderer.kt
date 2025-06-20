@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.util.forEachPhaseSideMeasurement
 import org.jetbrains.kotlin.util.nanosInSecond
 import org.jetbrains.kotlin.util.phaseSideTypeName
 import org.jetbrains.kotlin.util.phaseTypeName
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
@@ -26,41 +23,43 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
     val unitStats = statsCalculator.unitStats
     val totalStats = statsCalculator.totalStats
 
-    fun render() {
-        printInfo()
-        printTotalStats()
-        printSystemStats()
-        if (statsCalculator.unitStats.size > 1) {
-            printTopUnitStats()
+    fun render(): String {
+        return buildString {
+            renderInfo()
+            renderTotalStats()
+            renderSystemStats()
+            if (statsCalculator.unitStats.size > 1) {
+                renderTopUnitStats()
+            }
         }
     }
 
-    private fun printInfo() {
-        println("# Stats for ${totalStats.getTitleName(total = true)}")
-        println()
-        println("* Platform: ${totalStats.platform}")
-        println("* Has errors: ${totalStats.hasErrors}")
-        println("* Modules count: ${unitStats.size}")
-        println("* Files count: ${totalStats.filesCount}")
-        println("* Lines count: ${totalStats.linesCount}")
-        println()
+    private fun StringBuilder.renderInfo() {
+        appendLine("# Stats for ${totalStats.getTitleName(total = true)}")
+        appendLine()
+        appendLine("* Platform: ${totalStats.platform}")
+        appendLine("* Has errors: ${totalStats.hasErrors}")
+        appendLine("* Modules count: ${unitStats.size}")
+        appendLine("* Files count: ${totalStats.filesCount}")
+        appendLine("* Lines count: ${totalStats.linesCount}")
+        appendLine()
     }
 
-    private fun printTotalStats() {
+    private fun StringBuilder.renderTotalStats() {
         val totalTime = totalStats.getTotalTime()
-        println("# Total time")
-        println()
+        appendLine("# Total time")
+        appendLine()
 
         val maxTotalTime = maxOf(totalTime.nanos, totalTime.userNanos, totalTime.cpuNanos)
         val nameMaxColumnWidth = maxOf(phaseTypeName.values.maxOf { it.length }, phaseSideTypeName.values.maxOf { it.length })
         val valueMaxColumnWidth = formatTime(1.0, maxTotalTime).length
 
         with(MarkdownTableRenderer(4, nameMaxColumnWidth, valueMaxColumnWidth)) {
-            fun printTimeLine(name: String, time: Time?, wholeTime: Time) {
+            fun renderTimeLine(name: String, time: Time?, wholeTime: Time) {
                 if (time == null || time == Time.ZERO) return
                 val timeRatio = time / wholeTime
 
-                printLine(
+                renderLine(
                     name,
                     formatTime(timeRatio.nanos, time.nanos),
                     formatTime(timeRatio.userNanos, time.userNanos),
@@ -68,55 +67,55 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
                 )
             }
 
-            printHeader("Phase", "Absolute", "User", "Cpu")
+            renderHeader("Phase", "Absolute", "User", "Cpu")
 
             totalStats.forEachPhaseMeasurement { phaseType, time ->
-                printTimeLine(phaseTypeName.getValue(phaseType), time, totalTime)
+                renderTimeLine(phaseTypeName.getValue(phaseType), time, totalTime)
             }
 
-            printBreak()
+            renderBreak()
 
             totalStats.forEachPhaseSideMeasurement { phaseSideType, time ->
-                printTimeLine(phaseSideTypeName.getValue(phaseSideType), time?.time, totalTime)
+                renderTimeLine(phaseSideTypeName.getValue(phaseSideType), time?.time, totalTime)
             }
 
-            printBreak()
+            renderBreak()
 
-            printTimeLine("TOTAL", totalTime, totalTime)
+            renderTimeLine("TOTAL", totalTime, totalTime)
         }
 
-        println()
+        appendLine()
     }
 
-    private fun printSystemStats() {
-        println("# System stats")
-        println()
-        println("* JIT time: ${totalStats.jitTimeMillis} ms")
-        println("* GC stats:")
+    private fun StringBuilder.renderSystemStats() {
+        appendLine("# System stats")
+        appendLine()
+        appendLine("* JIT time: ${totalStats.jitTimeMillis} ms")
+        appendLine("* GC stats:")
         for (gcStats in totalStats.gcStats) {
-            println("  * ${gcStats.kind}: ${gcStats.millis} ms (${gcStats.count} collections)")
+            appendLine("  * ${gcStats.kind}: ${gcStats.millis} ms (${gcStats.count} collections)")
         }
-        println()
+        appendLine()
     }
 
-    private fun printTopUnitStats() {
-        println("# Slowest ${if (statsCalculator.reportsData is TimestampReportsData) "runs" else "modules"}")
-        println()
+    private fun StringBuilder.renderTopUnitStats() {
+        appendLine("# Slowest ${if (statsCalculator.reportsData is TimestampReportsData) "runs" else "modules"}")
+        appendLine()
 
-        printTopModules(
+        renderTopModules(
             "total time",
             max = true,
             selector = { it.getTotalTime().nanos },
             printer = { moduleResult, totalResult -> formatTime(moduleResult.toDouble() / totalResult, moduleResult) }
         )
-        printTopModules(
+        renderTopModules(
             "analysis time",
             max = true,
             selector = { it.analysisStats?.nanos ?: 0 },
             printer = { moduleResult, totalResult -> formatTime(moduleResult.toDouble() / totalResult, moduleResult) }
         )
 
-        printTopModules(
+        renderTopModules(
             "LPS (lines per second)",
             max = false,
             selector = { (it.linesCount.toDouble() / it.getTotalTime().nanos) * nanosInSecond },
@@ -126,14 +125,14 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
         // Other metrics can be easily added in the same way
     }
 
-    private fun <R : Comparable<R>> printTopModules(
+    private fun <R : Comparable<R>> StringBuilder.renderTopModules(
         name: String,
         max: Boolean,
         selector: (UnitStats) -> R,
         printer: (moduleResult: R, totalResult: R) -> String,
     ) {
-        println("## By $name")
-        println()
+        appendLine("## By $name")
+        appendLine()
 
         val totalValue = selector(totalStats)
         val topAnalysisModules = statsCalculator.getTopModulesBy(TOP_MODULE_COUNT, max, selector = selector)
@@ -142,13 +141,13 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
         val valueMaxColumnWidth = printer(selector(if (max) topAnalysisModules.first() else topAnalysisModules.last()), totalValue).length
 
         with(MarkdownTableRenderer(2, nameMaxColumnWidth, valueMaxColumnWidth)) {
-            printHeader(firstColumnName, "Value")
+            renderHeader(firstColumnName, "Value")
             for (module in topAnalysisModules) {
-                printLine(module.getTitleName(total = false), printer(selector(module), totalValue))
+                renderLine(module.getTitleName(total = false), printer(selector(module), totalValue))
             }
         }
 
-        println()
+        appendLine()
     }
 
     private fun formatTime(ratio: Double, nanos: Long): String {
@@ -162,13 +161,11 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
             name ?: ""
         } else {
             val prefix = if (statsCalculator.unitStats.size == 1) "$name at " else ""
-            prefix + dateTimeWithoutMsFormatter.format(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampMs), ZoneId.systemDefault()))
+            prefix + dateTimeFormatter.format(timeStampMs)
         }
     }
 
-    private val dateTimeWithoutMsFormatter by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-    }
+    private val dateTimeFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 }
 
 class MarkdownTableRenderer(val columnsCount: Int, val nameColumnWidth: Int, val valueColumnWidth: Int) {
@@ -182,10 +179,10 @@ class MarkdownTableRenderer(val columnsCount: Int, val nameColumnWidth: Int, val
 
     private val emptyColumns by lazy { Array(columnsCount) { "" } }
 
-    fun printHeader(vararg columns: String) {
+    fun StringBuilder.renderHeader(vararg columns: String) {
         require(columns.size == columnsCount) { "Columns count must be $columnsCount" }
 
-        printLine(*columns)
+        renderLine(*columns)
 
         val tableFormattingColumns = buildList {
             val valueColumnTableFormat = "-".repeat(valueColumnWidth - 1) + ':'
@@ -199,16 +196,16 @@ class MarkdownTableRenderer(val columnsCount: Int, val nameColumnWidth: Int, val
             }
         }.toTypedArray()
 
-        printLine(*tableFormattingColumns)
+        renderLine(*tableFormattingColumns)
     }
 
-    fun printBreak() {
-        printLine(*emptyColumns)
+    fun StringBuilder.renderBreak() {
+        renderLine(*emptyColumns)
     }
 
-    fun printLine(vararg columns: String) {
+    fun StringBuilder.renderLine(vararg columns: String) {
         require(columns.size == columnsCount) { "Columns count must be $columnsCount" }
 
-        println(String.format(columnsFormat, *columns))
+        appendLine(String.format(columnsFormat, *columns))
     }
 }
