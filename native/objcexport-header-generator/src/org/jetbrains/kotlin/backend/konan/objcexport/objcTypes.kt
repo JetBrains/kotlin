@@ -98,15 +98,15 @@ object ObjCInstanceType : ObjCNonNullReferenceType() {
 
 data class ObjCBlockPointerType(
     val returnType: ObjCType,
-    val parameterTypes: List<ObjCReferenceType>,
+    val parameters: List<ObjCParameter>,
     override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = returnType.render(buildString {
         append("(^")
         append(attrsAndName)
         append(")(")
-        if (parameterTypes.isEmpty()) append("void")
-        parameterTypes.joinTo(this) { it.render() }
+        if (parameters.isEmpty()) append("void")
+        parameters.joinTo(this) { it.type.render(it.name) }
         append(')')
     })
 }
