@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.klib
 
+import org.jetbrains.kotlin.codegen.ModuleInfo.CompilerCase
+
 /**
  * At the moment, only two compiler editions are supported:
  * [CURRENT] - the compiler that was just built from fresh sources.
@@ -26,15 +28,45 @@ enum class KlibCompilerEdition(
  * and it works.
  * For `Fw*` = `Forward*` cases we check that the klib built with older compiler can be used in runtime.
  */
-enum class KlibCompilerChangeScenario(
-    val bottomV1: KlibCompilerEdition,
-    val bottomV2: KlibCompilerEdition,
-    val intermediate: KlibCompilerEdition,
-) {
-    NoChange(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithCurrent(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithLatest(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM),
-    FwLatest(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT);
+enum class KlibCompilerChangeScenario {
+    /** Always return [KlibCompilerEdition.CURRENT] */
+    NoChange,
 
-    override fun toString() = "${this.name}: [$bottomV1 -> $bottomV2, $intermediate]"
+    @Deprecated("This compiler change scenario is currently not used. It might be removed in the future.")
+    BwLatestWithCurrent {
+        override fun getCompilerEditionForKlib(compilerCodename: String?) = when (parseCompilerCase(compilerCodename)) {
+            CompilerCase.BOTTOM_V1 -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    },
+
+    @Deprecated("This compiler change scenario is currently not used. It might be removed in the future.")
+    BwLatestWithLatest {
+        override fun getCompilerEditionForKlib(compilerCodename: String?) = when (parseCompilerCase(compilerCodename)) {
+            CompilerCase.BOTTOM_V1, CompilerCase.INTERMEDIATE -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    },
+
+    @Deprecated("This compiler change scenario is currently not used. It might be removed in the future.")
+    FwLatest {
+        override fun getCompilerEditionForKlib(compilerCodename: String?) = when (parseCompilerCase(compilerCodename)) {
+            CompilerCase.BOTTOM_V2 -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    };
+
+    /**
+     * Get the appropriate [KlibCompilerEdition] for compilation of a KLIB in
+     * the current [KlibCompilerChangeScenario] and the specified [compilerCodename].
+     *
+     * Note: The same [compilerCodename] may resolve to different [KlibCompilerEdition]s in different [KlibCompilerChangeScenario]s.
+     */
+    open fun getCompilerEditionForKlib(compilerCodename: String?): KlibCompilerEdition = KlibCompilerEdition.CURRENT
+
+    companion object {
+        private fun parseCompilerCase(compilerCodename: String?): CompilerCase =
+            CompilerCase.entries.firstOrNull { it.name == compilerCodename }
+                ?: error("Could not resolve ${CompilerCase::class.java} by codename: $compilerCodename")
+    }
 }
