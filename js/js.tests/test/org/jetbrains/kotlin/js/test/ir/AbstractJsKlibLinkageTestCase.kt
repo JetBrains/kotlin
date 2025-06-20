@@ -51,8 +51,6 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         override val testModeConstructorParameters = mapOf("isJs" to "true")
         override val targetBackend
             get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
-        override val isK2: Boolean
-            get() = compilerType.useFir
 
         override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
             if (moduleName == MAIN_MODULE_NAME)

@@ -34,8 +34,6 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
         override val buildDir get() = this@AbstractKlibLinkageTest.buildDir
         override val stdlibFile get() = this@AbstractKlibLinkageTest.stdlibFile
         override val targetBackend get() = TargetBackend.NATIVE
-        override val isK2: Boolean
-            get() = testRunSettings.get<PipelineType>() == PipelineType.K2
 
         override val testModeConstructorParameters = buildMap {
             this["isNative"] = "true"
