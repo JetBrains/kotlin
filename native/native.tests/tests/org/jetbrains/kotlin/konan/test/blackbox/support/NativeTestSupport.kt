@@ -103,7 +103,7 @@ object NativeTestSupport {
                 RegularKotlinNativeClassLoader.kotlinNativeClassLoader,
                 computeBaseDirs(),
                 LLDB(nativeHome),
-                computeReleasedCompiler()
+                computeCustomNativeCompiler()
             )
         } as TestProcessSettings
 
@@ -137,9 +137,9 @@ object NativeTestSupport {
         return BaseDirs(testBuildDir)
     }
 
-    private fun computeReleasedCompiler() = ReleasedCompiler(
+    private fun computeCustomNativeCompiler() = CustomNativeCompiler(
         lazy {
-            val parentDirectory = File(ProcessLevelProperty.LATEST_RELEASED_COMPILER_PATH.readValue())
+            val parentDirectory = File(ProcessLevelProperty.CUSTOM_KOTLIN_NATIVE_HOME.readValue())
             val nativePrebuilt = findNativePrebuilt(parentDirectory)
             KotlinNativeHome(nativePrebuilt)
         }
@@ -147,7 +147,7 @@ object NativeTestSupport {
 
     private fun findNativePrebuilt(parentDir: File): File {
         val filesInParentDir = parentDir.listFiles()
-        require(filesInParentDir != null) { "Parent directory for released compiler not found: $parentDir" }
+        require(filesInParentDir != null) { "Parent directory for the custom compiler not found: $parentDir" }
         return filesInParentDir.single { it.name.contains("kotlin-native-prebuilt") }
     }
 

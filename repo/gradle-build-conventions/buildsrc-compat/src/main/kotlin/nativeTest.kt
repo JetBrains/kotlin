@@ -31,6 +31,7 @@ private enum class TestProperty(shortName: String) {
     COMPILER_CLASSPATH("compilerClasspath"),
     COMPILER_PLUGINS("compilerPlugins"),
     CUSTOM_KLIBS("customKlibs"),
+    CUSTOM_KOTLIN_NATIVE_HOME("customNativeHome"),
     TEST_TARGET("target"),
     TEST_MODE("mode"),
     TEST_KIND("testKind"),
@@ -48,7 +49,7 @@ private enum class TestProperty(shortName: String) {
     EAGER_GROUP_CREATION("eagerGroupCreation"),
     XCTEST_FRAMEWORK("xctest"),
     TEAMCITY("teamcity"),
-    LATEST_RELEASED_COMPILER_PATH("latestReleasedCompilerPath");
+    ;
 
     val fullName = "kotlin.internal.native.test.$shortName"
 
@@ -146,7 +147,7 @@ private open class NativeArgsProvider @Inject constructor(
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
-    val releasedCompilerDist: DirectoryProperty = objects.directoryProperty()
+    val customCompilerDist: DirectoryProperty = objects.directoryProperty()
 
     @get:Classpath
     protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
@@ -210,7 +211,7 @@ private open class NativeArgsProvider @Inject constructor(
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
             "-D${TEAMCITY.fullName}=$teamcity",
-            releasedCompilerDist.orNull?.let { "-D${LATEST_RELEASED_COMPILER_PATH.fullName}=${it.asFile.absolutePath}" },
+            customCompilerDist.orNull?.let { "-D${CUSTOM_KOTLIN_NATIVE_HOME.fullName}=${it.asFile.absolutePath}" },
             testTarget.orNull?.let { "-D${TEST_TARGET.fullName}=$it" },
             testMode.orNull?.let { "-D${TEST_MODE.fullName}=$it" },
             compileOnly.orNull?.let { "-D${COMPILE_ONLY.fullName}=$it" },
@@ -252,7 +253,7 @@ fun Project.nativeTest(
     customTestDependencies: List<FileCollection> = emptyList(),
     compilerPluginDependencies: List<FileCollection> = emptyList(),
     allowParallelExecution: Boolean = true,
-    releasedCompilerDist: TaskProvider<Sync>? = null,
+    customCompilerDist: TaskProvider<Sync>? = null,
     maxMetaspaceSizeMb: Int = 512,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
@@ -294,8 +295,8 @@ fun Project.nativeTest(
             this.customCompilerDependencies.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
             this.customTestDependencies.from(customTestDependencies)
-            if (releasedCompilerDist != null) {
-                this.releasedCompilerDist.fileProvider(releasedCompilerDist.map { it.destinationDir })
+            if (customCompilerDist != null) {
+                this.customCompilerDist.fileProvider(customCompilerDist.map { it.destinationDir })
             }
         })
 
