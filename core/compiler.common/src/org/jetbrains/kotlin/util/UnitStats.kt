@@ -142,11 +142,11 @@ data class Time(val nanos: Long, val userNanos: Long, val cpuNanos: Long) {
     }
 
     operator fun div(other: Time): TimeRatio {
-        return TimeRatio(
-            nanos.toDouble() / other.nanos,
-            userNanos.toDouble() / other.userNanos,
-            cpuNanos.toDouble() / other.cpuNanos,
-        )
+        return TimeRatio(nanos.toDouble() / other.nanos, userNanos.toDouble() / other.userNanos, cpuNanos.toDouble() / other.cpuNanos)
+    }
+
+    operator fun div(divider: Int): Time {
+        return Time(nanos / divider, userNanos / divider, cpuNanos / divider)
     }
 
     operator fun times(multiplier: Double): Time {
@@ -180,6 +180,10 @@ data class SideStats(
     operator fun plus(other: SideStats?): SideStats {
         if (other == null) return this
         return SideStats(count + other.count, time + other.time)
+    }
+
+    operator fun div(divider: Int): SideStats {
+        return SideStats(count / divider, time / divider)
     }
 }
 

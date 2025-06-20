@@ -15,7 +15,15 @@ import java.util.PriorityQueue
 
 class StatsCalculator(val reportsData: ReportsData) {
     val unitStats = reportsData.unitStats
-    val totalStats = unitStats.aggregateStats()
+    val totalStats: UnitStats
+    val averageStats: UnitStats
+
+    init {
+        unitStats.aggregateStats().let {
+            totalStats = it.total
+            averageStats = it.average
+        }
+    }
 
     /**
      * Use when you are interested in top [count] slowest/fastest modules by the given [selector], where [count] is not very big.
@@ -70,18 +78,20 @@ class StatsCalculator(val reportsData: ReportsData) {
             priorityQueue.sortedBy(selector)
     }
 
-    private fun Collection<UnitStats>.aggregateStats(): UnitStats {
+    data class AggregatedStats(val total: UnitStats, val average: UnitStats)
+
+    private fun Collection<UnitStats>.aggregateStats(): AggregatedStats {
         require(isNotEmpty()) { "At least one entry is required" }
 
-        if (size == 1) return first()
+        if (size == 1) return first().let { AggregatedStats(it, it) }
 
         var name: String? = null
         var latestCurrentTimeMs: Long? = null
         var platform: PlatformType? = null
         var compilerType: CompilerType? = null
         var hasErrors = false
-        var filesCount = 0
-        var linesCount = 0
+        var filesCount = 0L
+        var linesCount = 0L
         var initStats = Time.ZERO
         var analysisStats = Time.ZERO
         var translationToIrStats: Time = Time.ZERO
@@ -92,7 +102,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         var backendStats: Time = Time.ZERO
         var findJavaClassStats: SideStats = SideStats.EMPTY
         var findKotlinClassStats: SideStats = SideStats.EMPTY
-        val gcStats = mutableMapOf<String, GarbageCollectionStats>()
+        val gcStats = mutableMapOf<String, Pair<GarbageCollectionStats, Long>>()
         var jitTimeMillis: Long = 0
 
         for (moduleStats in this) {
@@ -125,34 +135,49 @@ class StatsCalculator(val reportsData: ReportsData) {
             findKotlinClassStats += moduleStats.findKotlinClassStats
             for (gcInfo in moduleStats.gcStats) {
                 val gcKind = gcInfo.kind
-                val existingGcStats = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) }
+                val (existingGcStats, count) = gcStats.getOrPut(gcKind) { GarbageCollectionStats(gcKind, 0L, 0L) to 0L }
                 gcStats[gcKind] =
-                    GarbageCollectionStats(gcKind, existingGcStats.millis + gcInfo.millis, existingGcStats.count + gcInfo.count)
+                    GarbageCollectionStats(
+                        gcKind,
+                        existingGcStats.millis + gcInfo.millis,
+                        existingGcStats.count + gcInfo.count
+                    ) to count + 1
             }
             jitTimeMillis += moduleStats.jitTimeMillis ?: 0
         }
 
-        return UnitStats(
-            name = name,
-            timeStampMs = latestCurrentTimeMs ?: System.currentTimeMillis(),
-            platform = platform!!,
-            compilerType = compilerType ?: CompilerType.K1andK2,
-            hasErrors = hasErrors,
-            filesCount = filesCount,
-            linesCount = linesCount,
-            initStats = initStats,
-            analysisStats = analysisStats,
-            translationToIrStats = translationToIrStats,
-            irPreLoweringStats = irPreLoweringStats,
-            irSerializationStats = irSerializationStats,
-            klibWritingStats = klibWritingStats,
-            irLoweringStats = irLoweringStats,
-            backendStats = backendStats,
-            findJavaClassStats = findJavaClassStats,
-            findKotlinClassStats = findKotlinClassStats,
-            gcStats = gcStats.values.toList(),
-            jitTimeMillis = jitTimeMillis,
-        )
+        fun getStats(total: Boolean): UnitStats {
+            return UnitStats(
+                name = name,
+                timeStampMs = latestCurrentTimeMs ?: System.currentTimeMillis(),
+                platform = platform!!,
+                compilerType = compilerType ?: CompilerType.K1andK2,
+                hasErrors = hasErrors,
+                filesCount = filesCount.let { if (total) it else it / size }.toInt(),
+                linesCount = linesCount.let { if (total) it else it / size }.toInt(),
+                initStats = initStats.let { if (total) it else it / size },
+                analysisStats = analysisStats.let { if (total) it else it / size },
+                translationToIrStats = translationToIrStats.let { if (total) it else it / size },
+                irPreLoweringStats = irPreLoweringStats.let { if (total) it else it / size },
+                irSerializationStats = irSerializationStats.let { if (total) it else it / size },
+                klibWritingStats = klibWritingStats.let { if (total) it else it / size },
+                irLoweringStats = irLoweringStats.let { if (total) it else it / size },
+                backendStats = backendStats.let { if (total) it else it / size },
+                findJavaClassStats = findJavaClassStats.let { if (total) it else it / size },
+                findKotlinClassStats = findKotlinClassStats.let { if (total) it else it / size },
+                gcStats = gcStats.values.map { gcStatsToCount ->
+                    val (gcStats, count) = gcStatsToCount
+                    GarbageCollectionStats(
+                        gcStats.kind,
+                        gcStats.millis.let { if (total) it else it / count },
+                        gcStats.count.let { if (total) it else it / count }
+                    )
+                },
+                jitTimeMillis = jitTimeMillis.let { if (total) it else it / size },
+            )
+        }
+
+        return AggregatedStats(getStats(total = true), getStats(total = false))
     }
 }
 

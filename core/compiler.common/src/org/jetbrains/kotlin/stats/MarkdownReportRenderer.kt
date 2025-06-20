@@ -22,11 +22,13 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
 
     val unitStats = statsCalculator.unitStats
     val totalStats = statsCalculator.totalStats
+    val isTimestampMode = statsCalculator.reportsData is TimestampReportsData
+    val aggregatedStats = (if (isTimestampMode) statsCalculator.averageStats else totalStats)
 
     fun render(): String {
         return buildString {
             renderInfo()
-            renderTotalStats()
+            renderAggregateTimeStats()
             renderSystemStats()
             if (statsCalculator.unitStats.size > 1) {
                 renderTopUnitStats()
@@ -45,19 +47,19 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
         appendLine()
     }
 
-    private fun StringBuilder.renderTotalStats() {
-        val totalTime = totalStats.getTotalTime()
-        appendLine("# Total time")
+    private fun StringBuilder.renderAggregateTimeStats() {
+        val aggregatedTime = aggregatedStats.getTotalTime()
+        appendLine("# ${if (isTimestampMode) "Average" else "Total"} time")
         appendLine()
 
-        val maxTotalTime = maxOf(totalTime.nanos, totalTime.userNanos, totalTime.cpuNanos)
+        val maxTotalTime = maxOf(aggregatedTime.nanos, aggregatedTime.userNanos, aggregatedTime.cpuNanos)
         val nameMaxColumnWidth = maxOf(phaseTypeName.values.maxOf { it.length }, phaseSideTypeName.values.maxOf { it.length })
         val valueMaxColumnWidth = formatTime(1.0, maxTotalTime).length
 
         with(MarkdownTableRenderer(4, nameMaxColumnWidth, valueMaxColumnWidth)) {
-            fun renderTimeLine(name: String, time: Time?, wholeTime: Time) {
+            fun renderTimeLine(name: String, time: Time?) {
                 if (time == null || time == Time.ZERO) return
-                val timeRatio = time / wholeTime
+                val timeRatio = time / aggregatedTime
 
                 renderLine(
                     name,
@@ -69,37 +71,37 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
 
             renderHeader("Phase", "Absolute", "User", "Cpu")
 
-            totalStats.forEachPhaseMeasurement { phaseType, time ->
-                renderTimeLine(phaseTypeName.getValue(phaseType), time, totalTime)
+            aggregatedStats.forEachPhaseMeasurement { phaseType, time ->
+                renderTimeLine(phaseTypeName.getValue(phaseType), time)
             }
 
             renderBreak()
 
-            totalStats.forEachPhaseSideMeasurement { phaseSideType, time ->
-                renderTimeLine(phaseSideTypeName.getValue(phaseSideType), time?.time, totalTime)
+            aggregatedStats.forEachPhaseSideMeasurement { phaseSideType, time ->
+                renderTimeLine(phaseSideTypeName.getValue(phaseSideType), time?.time)
             }
 
             renderBreak()
 
-            renderTimeLine("TOTAL", totalTime, totalTime)
+            renderTimeLine("TOTAL", aggregatedTime)
         }
 
         appendLine()
     }
 
     private fun StringBuilder.renderSystemStats() {
-        appendLine("# System stats")
+        appendLine("# System stats" + if (isTimestampMode) " (Average)" else "")
         appendLine()
-        appendLine("* JIT time: ${totalStats.jitTimeMillis} ms")
+        appendLine("* JIT time: ${aggregatedStats.jitTimeMillis} ms")
         appendLine("* GC stats:")
-        for (gcStats in totalStats.gcStats) {
+        for (gcStats in aggregatedStats.gcStats) {
             appendLine("  * ${gcStats.kind}: ${gcStats.millis} ms (${gcStats.count} collections)")
         }
         appendLine()
     }
 
     private fun StringBuilder.renderTopUnitStats() {
-        appendLine("# Slowest ${if (statsCalculator.reportsData is TimestampReportsData) "runs" else "modules"}")
+        appendLine("# Slowest ${if (isTimestampMode) "runs" else "modules"}")
         appendLine()
 
         renderTopModules(
