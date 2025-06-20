@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -24,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.java.SyntheticPropertiesCacheKey
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
+import org.jetbrains.kotlin.fir.java.scopes.FirRenamedForOverrideSymbolsStorage.AccidentalOverrideWithDeclaredFunctionHiddenCopyCreationContext
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
@@ -600,35 +604,12 @@ class JavaClassUseSiteMemberScope(
                         )
             } ?: return null // No declared functions with erased parameters => no additional processing needed
 
-        /**
-         * See the comment to [shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters] function
-         * It explains why we should check value parameters for `Any` type
-         */
-        var allParametersAreAny = true
-        // It's a copy like contains(T) or contains(String) in Java, we perform "unerasing" here
-        val declaredFunctionCopyWithParameterTypesFromSupertype = buildJavaMethodCopy(
-            explicitlyDeclaredFunctionWithErasedValueParameters.fir as FirJavaMethod
-        ) {
-            this.name = name
-            symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
-            this.valueParameters.clear()
-            explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
-                relevantFunctionFromSupertypes.fir.valueParameters
-            ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
-                if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
-                    allParametersAreAny = false
-                }
-                buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
-                    this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
-                }
-            }
-        }.apply {
-            initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
-        }.symbol
 
-        if (allParametersAreAny) {
-            return null
-        }
+        // It's a copy like contains(T) or contains(String) in Java, we perform "unerasing" here
+        val declaredFunctionCopyWithParameterTypesFromSupertype = session.renamedFunctionsCache
+            .declaredFunctionCopyWithParameterTypesFromSupertypeCache
+            .getValue(explicitlyDeclaredFunctionWithErasedValueParameters to name, relevantFunctionFromSupertypes)
+            ?: return null
 
         // E.g. contains(String) from Java, if any
         val accidentalOverrideWithDeclaredFunction = explicitlyDeclaredFunction?.takeIf {
@@ -641,18 +622,11 @@ class JavaClassUseSiteMemberScope(
             // Collect synthetic function which is an "unerased" copy of declared one with erased parameters
             declaredFunctionCopyWithParameterTypesFromSupertype
         } else {
-            val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
-            val original = accidentalOverrideWithDeclaredFunction.fir
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(original) {
-                this.name = name
-                symbol = newSymbol
-                dispatchReceiverType = klass.defaultType()
-            }.apply {
-                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
-                isHiddenToOvercomeSignatureClash = true
-            }
             // Collect synthetic function which is a hidden copy of declared one with unerased parameters
-            accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
+            session.renamedFunctionsCache.accidentalOverrideWithDeclaredFunctionHiddenCopyIfDeclaredFunctionParametersAreErasedCache.getValue(
+                accidentalOverrideWithDeclaredFunction to name,
+                AccidentalOverrideWithDeclaredFunctionHiddenCopyCreationContext(explicitlyDeclaredFunctionWithErasedValueParameters, klass)
+            )
         }
         return symbolToBeCollected
     }
@@ -689,16 +663,10 @@ class JavaClassUseSiteMemberScope(
             relevantFunctionFromSupertypes
         )
         return if (thereIsClashBetweenDeclaredAndInheritedFunction) {
-            val newSymbol = FirNamedFunctionSymbol(relevantFunctionFromSupertypes.callableId)
-            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(relevantFunctionFromSupertypes.fir) {
-                this.name = name
-                symbol = newSymbol
-                dispatchReceiverType = klass.defaultType()
-            }.apply {
-                isHiddenToOvercomeSignatureClash = true
-            }
-            // Collect synthetic function which is a hidden copy of inherited one with unerased parameters
-            accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
+            session.renamedFunctionsCache.accidentalOverrideWithDeclaredFunctionHiddenCopyIfInheritedFunctionParametersAreErasedCache.getValue(
+                relevantFunctionFromSupertypes to name,
+                klass
+            )
         } else {
             relevantFunctionFromSupertypes
         }
@@ -792,36 +760,8 @@ class JavaClassUseSiteMemberScope(
             isHidden: Boolean = false,
             origin: FirDeclarationOrigin? = null,
         ): FirNamedFunctionSymbol {
-            val original = originalSymbol.fir
-            val newSymbol = FirNamedFunctionSymbol(originalSymbol.callableId.copy(callableName = naturalName))
-
-            // If original is declared, it's a FirJavaMethod.
-            // If it's inherited, it's a (possibly enhanced) FirSimpleMethod.
-            return if (original is FirJavaMethod) {
-                buildJavaMethodCopy(original) {
-                    name = naturalName
-                    symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
-
-                    status = if (OperatorConventions.isConventionName(naturalName)) {
-                        original.status.copy(isOperator = true)
-                    } else {
-                        original.status
-                    }
-                }
-            } else {
-                buildSimpleFunctionCopy(original) {
-                    name = naturalName
-                    symbol = newSymbol
-                    dispatchReceiverType = klass.defaultType()
-                    origin?.let { this.origin = it }
-                }
-            }.apply {
-                initialSignatureAttr = original.symbol
-                if (isHidden) {
-                    isHiddenToOvercomeSignatureClash = true
-                }
-            }.symbol
+            val context = FirRenamedForOverrideSymbolsStorage.RenamedFunctionCreationContext(klass, isHidden, origin)
+            return session.renamedFunctionsCache.renamedFunctionsCache.getValue(originalSymbol to naturalName, context)
         }
 
         // Non-builtins with natural name are never here!
@@ -1104,4 +1044,155 @@ class JavaClassUseSiteMemberScope(
         }
         return true
     }
+
+    companion object {
+        fun createCopyWithNaturalName(
+            originalSymbol: FirNamedFunctionSymbol,
+            naturalName: Name,
+            klass: FirJavaClass,
+            isHidden: Boolean,
+            origin: FirDeclarationOrigin?
+        ): FirNamedFunctionSymbol {
+            val original = originalSymbol.fir
+            val newSymbol = FirNamedFunctionSymbol(originalSymbol.callableId.copy(callableName = naturalName))
+
+            // If original is declared, it's a FirJavaMethod.
+            // If it's inherited, it's a (possibly enhanced) FirSimpleMethod.
+            return if (original is FirJavaMethod) {
+                buildJavaMethodCopy(original) {
+                    name = naturalName
+                    symbol = newSymbol
+                    dispatchReceiverType = klass.defaultType()
+
+                    status = if (OperatorConventions.isConventionName(naturalName)) {
+                        original.status.copy(isOperator = true)
+                    } else {
+                        original.status
+                    }
+                }
+            } else {
+                buildSimpleFunctionCopy(original) {
+                    name = naturalName
+                    symbol = newSymbol
+                    dispatchReceiverType = klass.defaultType()
+                    origin?.let { this.origin = it }
+                }
+            }.apply {
+                initialSignatureAttr = original.symbol
+                if (isHidden) {
+                    isHiddenToOvercomeSignatureClash = true
+                }
+            }.symbol
+        }
+
+        fun createDeclaredFunctionCopyWithParameterTypesFromSupertype(
+            explicitlyDeclaredFunctionWithErasedValueParameters: FirNamedFunctionSymbol,
+            name: Name,
+            relevantFunctionFromSupertypes: FirNamedFunctionSymbol,
+        ): FirNamedFunctionSymbol? {
+            /**
+             * See the comment to [shouldBeVisibleAsOverrideOfBuiltInWithErasedValueParameters] function
+             * It explains why we should check value parameters for `Any` type
+             */
+            var allParametersAreAny = true
+            val method = buildJavaMethodCopy(
+                explicitlyDeclaredFunctionWithErasedValueParameters.fir as FirJavaMethod
+            ) {
+                this.name = name
+                symbol = FirNamedFunctionSymbol(explicitlyDeclaredFunctionWithErasedValueParameters.callableId)
+                this.valueParameters.clear()
+                explicitlyDeclaredFunctionWithErasedValueParameters.fir.valueParameters.zip(
+                    relevantFunctionFromSupertypes.fir.valueParameters
+                ).mapTo(this.valueParameters) { (overrideParameter, parameterFromSupertype) ->
+                    if (!parameterFromSupertype.returnTypeRef.coneType.lowerBoundIfFlexible().isAny) {
+                        allParametersAreAny = false
+                    }
+                    buildJavaValueParameterCopy(overrideParameter as FirJavaValueParameter) {
+                        this@buildJavaValueParameterCopy.returnTypeRef = parameterFromSupertype.returnTypeRef
+                    }
+                }
+            }.apply {
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
+            }
+            return method.symbol.takeIf { !allParametersAreAny }
+        }
+
+        fun createAccidentalOverrideWithDeclaredFunctionHiddenIfDeclaredFunctionParametersAreErasedCopy(
+            accidentalOverrideWithDeclaredFunction: FirNamedFunctionSymbol,
+            name: Name,
+            explicitlyDeclaredFunctionWithErasedValueParameters: FirNamedFunctionSymbol,
+            klass: FirJavaClass,
+        ): FirNamedFunctionSymbol {
+            val newSymbol = FirNamedFunctionSymbol(accidentalOverrideWithDeclaredFunction.callableId)
+            val original = accidentalOverrideWithDeclaredFunction.fir
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(original) {
+                this.name = name
+                symbol = newSymbol
+                dispatchReceiverType = klass.defaultType()
+            }.apply {
+                initialSignatureAttr = explicitlyDeclaredFunctionWithErasedValueParameters
+                isHiddenToOvercomeSignatureClash = true
+            }
+            return accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
+        }
+
+        fun createAccidentalOverrideWithDeclaredFunctionHiddenIfInheritedFunctionParametersAreErasedCopy(
+            relevantFunctionFromSupertypes: FirNamedFunctionSymbol,
+            name: Name,
+            klass: FirJavaClass
+        ): FirNamedFunctionSymbol {
+            val newSymbol = FirNamedFunctionSymbol(relevantFunctionFromSupertypes.callableId)
+            val accidentalOverrideWithDeclaredFunctionHiddenCopy = buildSimpleFunctionCopy(relevantFunctionFromSupertypes.fir) {
+                this.name = name
+                symbol = newSymbol
+                dispatchReceiverType = klass.defaultType()
+            }.apply {
+                isHiddenToOvercomeSignatureClash = true
+            }
+            // Collect synthetic function which is a hidden copy of inherited one with unerased parameters
+            return accidentalOverrideWithDeclaredFunctionHiddenCopy.symbol
+        }
+    }
 }
+
+class FirRenamedForOverrideSymbolsStorage(cachesFactory: FirCachesFactory) : FirSessionComponent {
+    constructor(session: FirSession) : this(session.firCachesFactory)
+
+    val renamedFunctionsCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, RenamedFunctionCreationContext> =
+        cachesFactory.createCache { (originalSymbol, naturalName), (klass, isHidden, origin) ->
+            JavaClassUseSiteMemberScope.createCopyWithNaturalName(originalSymbol, naturalName, klass, isHidden, origin)
+        }
+
+    data class RenamedFunctionCreationContext(val klass: FirJavaClass, val isHidden: Boolean, val origin: FirDeclarationOrigin?)
+
+    val declaredFunctionCopyWithParameterTypesFromSupertypeCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol?, FirNamedFunctionSymbol> =
+        cachesFactory.createCache { (explicitlyDeclaredFunctionWithErasedValueParameters, name), relevantFunctionFromSupertypes ->
+            JavaClassUseSiteMemberScope.createDeclaredFunctionCopyWithParameterTypesFromSupertype(
+                explicitlyDeclaredFunctionWithErasedValueParameters, name, relevantFunctionFromSupertypes
+            )
+        }
+
+    val accidentalOverrideWithDeclaredFunctionHiddenCopyIfDeclaredFunctionParametersAreErasedCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, AccidentalOverrideWithDeclaredFunctionHiddenCopyCreationContext> =
+        cachesFactory.createCache { (accidentalOverrideWithDeclaredFunction, name), (explicitlyDeclaredFunctionWithErasedValueParameters, klass) ->
+            JavaClassUseSiteMemberScope.createAccidentalOverrideWithDeclaredFunctionHiddenIfDeclaredFunctionParametersAreErasedCopy(
+                accidentalOverrideWithDeclaredFunction,
+                name,
+                explicitlyDeclaredFunctionWithErasedValueParameters,
+                klass,
+            )
+        }
+
+    data class AccidentalOverrideWithDeclaredFunctionHiddenCopyCreationContext(
+        val explicitlyDeclaredFunctionWithErasedValueParameters: FirNamedFunctionSymbol,
+        val klass: FirJavaClass,
+    )
+
+    val accidentalOverrideWithDeclaredFunctionHiddenCopyIfInheritedFunctionParametersAreErasedCache: FirCache<Pair<FirNamedFunctionSymbol, Name>, FirNamedFunctionSymbol, FirJavaClass> =
+        cachesFactory.createCache { (relevantFunctionFromSupertypes, name), klass ->
+            JavaClassUseSiteMemberScope.createAccidentalOverrideWithDeclaredFunctionHiddenIfInheritedFunctionParametersAreErasedCopy(
+                relevantFunctionFromSupertypes, name, klass,
+            )
+        }
+}
+
+private val FirSession.renamedFunctionsCache: FirRenamedForOverrideSymbolsStorage by FirSession.sessionComponentAccessor()

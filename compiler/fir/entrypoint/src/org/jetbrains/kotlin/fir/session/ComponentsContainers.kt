@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
 import org.jetbrains.kotlin.fir.java.deserialization.FirJvmDeserializationExtension
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
+import org.jetbrains.kotlin.fir.java.scopes.FirRenamedForOverrideSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.modules.FirJavaModuleResolverProvider
 import org.jetbrains.kotlin.fir.resolve.*
@@ -132,11 +133,13 @@ fun FirSession.registerCliCompilerOnlyComponents(languageVersionSettings: Langua
 
 class FirSharableJavaComponents(
     val enhancementStorage: FirEnhancedSymbolsStorage,
-    val mappedStorage: FirMappedSymbolStorage
+    val mappedStorage: FirMappedSymbolStorage,
+    val renamedFunctionsStorage: FirRenamedForOverrideSymbolsStorage,
 ) {
     constructor(cachesFactory: FirCachesFactory) : this(
         FirEnhancedSymbolsStorage(cachesFactory),
-        FirMappedSymbolStorage(cachesFactory)
+        FirMappedSymbolStorage(cachesFactory),
+        FirRenamedForOverrideSymbolsStorage(cachesFactory)
     )
 }
 
@@ -155,6 +158,7 @@ fun FirSession.registerJavaComponents(
     )
     register(FirEnhancedSymbolsStorage::class, predefinedComponents?.enhancementStorage ?: FirEnhancedSymbolsStorage(this))
     register(FirMappedSymbolStorage::class, predefinedComponents?.mappedStorage ?: FirMappedSymbolStorage(this))
+    register(FirRenamedForOverrideSymbolsStorage::class, predefinedComponents?.renamedFunctionsStorage ?: FirRenamedForOverrideSymbolsStorage(this))
     register(FirSyntheticPropertiesStorage::class, FirSyntheticPropertiesStorage(this))
     register(FirJvmDefaultModeComponent::class, FirJvmDefaultModeComponent(languageVersionSettings.jvmDefaultMode))
     register(PlatformSupertypeUpdater::class, JvmSupertypeUpdater(this))
