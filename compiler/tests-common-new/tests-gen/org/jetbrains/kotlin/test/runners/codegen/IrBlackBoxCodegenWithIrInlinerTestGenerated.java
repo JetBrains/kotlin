@@ -54577,9 +54577,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Test
-      @TestMetadata("flexibleTypes_after.kt")
-      public void testFlexibleTypes_after() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes_after.kt");
+      @TestMetadata("flexibleTypes.kt")
+      public void testFlexibleTypes() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/flexibleTypes.kt");
       }
 
       @Test
@@ -54631,15 +54631,15 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Test
-      @TestMetadata("mutableCollections_after.kt")
-      public void testMutableCollections_after() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections_after.kt");
+      @TestMetadata("mutableCollections.kt")
+      public void testMutableCollections() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/mutableCollections.kt");
       }
 
       @Test
-      @TestMetadata("nothing_after.kt")
-      public void testNothing_after() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/nothing_after.kt");
+      @TestMetadata("nothing.kt")
+      public void testNothing() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/nothing.kt");
       }
 
       @Test
@@ -54649,9 +54649,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
       }
 
       @Test
-      @TestMetadata("rawTypes_after.kt")
-      public void testRawTypes_after() {
-        runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes_after.kt");
+      @TestMetadata("rawTypes.kt")
+      public void testRawTypes() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/rawTypes.kt");
       }
 
       @Test
@@ -54704,9 +54704,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
-        @TestMetadata("flexibleTypes_after.kt")
-        public void testFlexibleTypes_after() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/flexibleTypes_after.kt");
+        @TestMetadata("flexibleTypes.kt")
+        public void testFlexibleTypes() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/flexibleTypes.kt");
         }
 
         @Test
@@ -54722,15 +54722,15 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
-        @TestMetadata("mutableCollections_after.kt")
-        public void testMutableCollections_after() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections_after.kt");
+        @TestMetadata("mutableCollections.kt")
+        public void testMutableCollections() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/mutableCollections.kt");
         }
 
         @Test
-        @TestMetadata("nothing_after.kt")
-        public void testNothing_after() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing_after.kt");
+        @TestMetadata("nothing.kt")
+        public void testNothing() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nothing.kt");
         }
 
         @Test
@@ -54740,9 +54740,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
-        @TestMetadata("rawTypes_after.kt")
-        public void testRawTypes_after() {
-          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/rawTypes_after.kt");
+        @TestMetadata("rawTypes.kt")
+        public void testRawTypes() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/rawTypes.kt");
         }
 
         @Test
