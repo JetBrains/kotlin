@@ -221,9 +221,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                 println("copyRemappedTypeArgumentsFrom(", element.visitorParameterName, ")")
                 println("transformValueArguments(", element.visitorParameterName, ")")
             }
-            if (element.isSubclassOf(IrTree.function)) {
-                println("parameters = ${element.visitorParameterName}.parameters.memoryOptimizedMap { it.transform() }")
-            }
             if (element.isSubclassOf(IrTree.file)) {
                 println("module = transformedModule ?: ${element.visitorParameterName}.module")
             }
