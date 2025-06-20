@@ -135,13 +135,19 @@ internal class KTypeImpl(
         get() {
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             if (!JavaToKotlinClassMapper.isMutable(classDescriptor)) return null
-            return MutableCollectionKClass(
-                classifier as KClass<*>,
-                classDescriptor.fqNameSafe.asString(),
-                classDescriptor.typeConstructor.supertypes.map(::KTypeImpl)
-            ) { container ->
-                classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
+            if (useK1Implementation) {
+                return MutableCollectionKClass(
+                    classifier as KClass<*>,
+                    classDescriptor.fqNameSafe.asString(),
+                    { container ->
+                        classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
+                    },
+                    {
+                        classDescriptor.typeConstructor.supertypes.map(::KTypeImpl)
+                    },
+                )
             }
+            return getMutableCollectionKClass(classDescriptor.fqNameSafe, classifier as KClass<*>)
         }
 
     override val isSuspendFunctionType: Boolean
@@ -180,7 +186,7 @@ internal fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = n
     val result = if (type is NewCapturedType) {
         CapturedKType(
             type.lowerType?.let(::KTypeImpl),
-            CapturedKTypeConstructor(type.constructor.projection.toKTypeProjection(), type.constructor),
+            CapturedKTypeConstructor(type.constructor.projection.toKTypeProjection()),
             type.isMarkedNullable,
         )
     } else {

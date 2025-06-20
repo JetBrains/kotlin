@@ -10,4 +10,5 @@ import kotlin.reflect.typeOf
 
 internal object StandardKTypes {
     val ANY: KType = typeOf<Any>()
+    val NULLABLE_ANY: KType = typeOf<Any?>()
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import kotlin.jvm.internal.TypeParameterReference
 import kotlin.reflect.KType
@@ -36,7 +37,7 @@ internal class KTypeParameterImpl(
     override val name: String,
     override val variance: KVariance,
     override val isReified: Boolean,
-) : KClassifierImpl, KTypeParameter, TypeParameterMarker {
+) : KTypeParameter, TypeParameterMarker, TypeConstructorMarker {
     constructor(
         container: KTypeParameterOwnerImpl,
         name: String,
@@ -55,7 +56,7 @@ internal class KTypeParameterImpl(
     }
 
     private val _descriptor: TypeParameterDescriptor? = descriptor
-    override val descriptor: TypeParameterDescriptor
+    val descriptor: TypeParameterDescriptor
         get() = _descriptor ?: error("Descriptor-less type parameter: $this")
 
     @Volatile
