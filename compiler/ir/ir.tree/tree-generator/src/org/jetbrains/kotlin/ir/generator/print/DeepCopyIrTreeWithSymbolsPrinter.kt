@@ -216,10 +216,6 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                     }
                 }
             }
-            if (element.isSubclassOf(IrTree.memberAccessExpression) && !element.isSubclassOf(IrTree.localDelegatedPropertyReference)) {
-                println("copyRemappedTypeArgumentsFrom(", element.visitorParameterName, ")")
-                println("transformValueArguments(", element.visitorParameterName, ")")
-            }
             if (element.isSubclassOf(IrTree.file)) {
                 println("module = transformedModule ?: ${element.visitorParameterName}.module")
             }

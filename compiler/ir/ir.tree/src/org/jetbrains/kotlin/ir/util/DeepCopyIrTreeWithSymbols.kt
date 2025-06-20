@@ -45,15 +45,4 @@ abstract class IrDeepCopyBase : IrElementTransformerVoid() {
     protected fun IrMutableAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
         annotations = declaration.annotations.memoryOptimizedMap { it.transform() }
     }
-
-    protected fun IrMemberAccessExpression<*>.copyRemappedTypeArgumentsFrom(other: IrMemberAccessExpression<*>) {
-        typeArguments.assignFrom(other.typeArguments) { it?.remapType() }
-    }
-
-    protected fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
-        rawCopyValueArgumentsFrom(original)
-        for ((i, arg) in original.arguments.withIndex()) {
-            arguments[i] = arg?.transform()
-        }
-    }
 }
