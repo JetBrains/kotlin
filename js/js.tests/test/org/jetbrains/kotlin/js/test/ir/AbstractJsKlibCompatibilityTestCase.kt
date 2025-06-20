@@ -62,6 +62,6 @@ private fun Dependencies.replaceStdlib(compilerEdition: KlibCompilerEdition): De
 }
 
 private fun Set<Dependency>.replaceStdLib() = map {
-    if (it.moduleName == "stdlib") Dependency("stdlib", JsKlibTestSettings.releasedArtifactHome.jsStdLib)
+    if (it.moduleName == "stdlib") Dependency("stdlib", JsKlibTestSettings.customJsCompilerArtifacts.jsStdLib)
     else it
 }.toSet()
