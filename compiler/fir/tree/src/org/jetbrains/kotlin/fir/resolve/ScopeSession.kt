@@ -21,6 +21,10 @@ class ScopeSession {
             build()
         } as FS
     }
+
+    fun clear() {
+        scopes.clear()
+    }
 }
 
 abstract class ScopeSessionKey<ID : Any, FS : Any>

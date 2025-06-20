@@ -252,6 +252,10 @@ private class Fir2IrPipeline(
 
         pluginContext.applyIrGenerationExtensions(fir2IrConfiguration, mainIrFragment, irGeneratorExtensions)
 
+        for (storage in componentsStoragePerSourceSession.values) {
+            storage.scopeSession.clear()
+        }
+
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
 
