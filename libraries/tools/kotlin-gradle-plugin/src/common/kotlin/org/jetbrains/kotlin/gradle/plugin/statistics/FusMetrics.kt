@@ -142,13 +142,20 @@ internal object NativeArgumentMetrics : FusMetrics {
 }
 
 internal object NativeCompilerOptionMetrics : FusMetrics {
-    fun collectMetrics(compilerOptions: KotlinNativeCompilerOptions, metricsConsumer: StatisticsValuesConsumer) {
+    fun collectMetrics(
+        compilerOptions: KotlinNativeCompilerOptions,
+        separateKmpCompilationEnabled: Boolean,
+        metricsConsumer: StatisticsValuesConsumer
+    ) {
         metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
         compilerOptions.apiVersion.orNull?.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
         }
         compilerOptions.languageVersion.orNull?.also { v ->
             metricsConsumer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+        }
+        if (separateKmpCompilationEnabled) {
+            metricsConsumer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
         }
     }
 }
@@ -229,6 +236,7 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
     internal fun collectMetrics(
         name: String,
         compilerOptions: KotlinCommonCompilerOptions,
+        separateKmpCompilationEnabled: Boolean,
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -242,6 +250,9 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
             metricsContainer.report(BooleanMetrics.TESTS_EXECUTED, true)
         else
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
+        if (separateKmpCompilationEnabled) {
+            metricsContainer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
+        }
     }
 }
 

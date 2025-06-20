@@ -492,3 +492,5 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
         else -> this
     }
 }
+
+fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")
