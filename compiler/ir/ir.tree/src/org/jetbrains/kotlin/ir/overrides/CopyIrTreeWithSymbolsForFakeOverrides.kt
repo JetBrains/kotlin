@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.AbstractTypeRemapper
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.copyAnnotations
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -45,17 +46,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
     private class FakeOverrideTypeRemapper(
         val typeParameters: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>,
         val substitution: Map<IrTypeParameterSymbol, IrType>
-    ) : TypeRemapper {
-        override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
-
-        override fun leaveScope() {}
-
-        private fun remapTypeArguments(arguments: List<IrTypeArgument>) =
-            arguments.memoryOptimizedMap { argument ->
-                (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
-                    ?: argument
-            }
-
+    ) : AbstractTypeRemapper() {
         private fun IrType.mergeTypeAnnotations(other: IrType): IrType {
             // Flexible types are represented as a type annotation in IR, so we need to keep it when substituting type during override.
             // Note that it's incorrect to merge _all_ type annotations though, because for a Collection subclass:
@@ -71,17 +62,22 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
             })
         }
 
-        override fun remapType(type: IrType): IrType {
-            if (type !is IrSimpleType) return type
+        override fun remapTypeOrNull(type: IrType): IrType? {
+            if (type !is IrSimpleType) return null
 
             return when (val substitutedType = substitution[type.classifier]) {
                 is IrDynamicType -> substitutedType
                 is IrSimpleType -> substitutedType.mergeNullability(type).mergeTypeAnnotations(type)
-                else -> type.buildSimpleType {
-                    kotlinType = null
-                    classifier = remapClassifier(type.classifier)
-                    arguments = remapTypeArguments(type.arguments)
-                    annotations = type.copyAnnotations()
+                else -> {
+                    val newClassifier = remapClassifier(type.classifier)
+                    val newTypeArguments = remapTypeArguments(type.arguments)
+                    if (newClassifier == type.classifier && newTypeArguments == null) return null
+                    IrSimpleTypeImpl(
+                        newClassifier,
+                        type.nullability,
+                        newTypeArguments ?: type.arguments,
+                        type.annotations,
+                    )
                 }
             }
         }

@@ -20,23 +20,25 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
  */
 open class IrTypeParameterRemapper(
     private val typeParameterMap: Map<IrTypeParameter, IrTypeParameter>
-) : TypeRemapper {
-    override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
-    override fun leaveScope() {}
+) : AbstractTypeRemapper() {
 
-    override fun remapType(type: IrType): IrType =
-        if (type !is IrSimpleType)
-            type
-        else
-            IrSimpleTypeImpl(
-                type.classifier.remap(),
-                type.nullability,
-                type.arguments.memoryOptimizedMap { it.remap() },
-                type.annotations,
-                type.abbreviation?.remap()
-            ).apply {
-                annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
-            }
+    override fun remapTypeOrNull(type: IrType): IrType? {
+        if (type !is IrSimpleType) return null
+        val classifier = type.classifier.remap()
+        val arguments = remapTypeArguments(type.arguments)
+        if (classifier === type.classifier && arguments == null && type.annotations.isEmpty() && type.abbreviation == null) {
+            return null
+        }
+        return IrSimpleTypeImpl(
+            classifier,
+            type.nullability,
+            arguments ?: type.arguments,
+            type.annotations,
+            type.abbreviation?.remap()
+        ).apply {
+            annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
+        }
+    }
 
     private fun IrClassifierSymbol.remap() =
         (owner as? IrTypeParameter)?.let { typeParameterMap[it]?.symbol }
