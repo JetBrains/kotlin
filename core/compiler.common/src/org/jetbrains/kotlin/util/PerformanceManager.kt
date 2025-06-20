@@ -52,6 +52,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
 
     var targetDescription: String? = null
+    var outputKind: String? = null
     var files: Int = 0
         private set
     var lines: Int = 0
@@ -62,7 +63,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         get() = phaseStartTime != null
 
     fun getTargetInfo(): String =
-        "$targetDescription, $files files ($lines lines)"
+        listOfNotNull(targetDescription, outputKind).joinToString("-") + " $files files ($lines lines)"
 
     fun initializeCurrentThread() {
         thread = Thread.currentThread()
@@ -108,6 +109,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
         UnitStats(
             targetDescription,
+            outputKind,
             System.currentTimeMillis(),
             targetPlatform.getPlatformEnumValue(),
             compilerType,

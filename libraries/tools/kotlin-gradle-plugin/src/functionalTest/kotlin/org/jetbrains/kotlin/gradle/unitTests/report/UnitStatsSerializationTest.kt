@@ -17,6 +17,7 @@ class UnitStatsSerializationTest {
     fun validateAllProperties() {
         val moduleStats = UnitStats(
             name = "all_properties",
+            outputKind = null,
             timeStampMs = LocalDateTime.of(2025, 6, 19, 20, 30, 56).toInstant(ZoneOffset.UTC).toEpochMilli(),
             platform = PlatformType.Native,
             compilerType = CompilerType.K1andK2,

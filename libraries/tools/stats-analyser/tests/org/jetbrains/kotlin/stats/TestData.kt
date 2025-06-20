@@ -39,6 +39,7 @@ object TestData {
             elapsedNanosThatLooksReal + (0.5 * TimeUnit.SECONDS.toNanos(1)).toLong())
         return UnitStats(
             name = name ?: "module-$increment",
+            outputKind = increment.toString(),
             timeStampMs = timestampMsFromDateThatLooksReal + TimeUnit.DAYS.toMillis(increment.toLong()),
             platform = PlatformType.JVM,
             compilerType = compilerType,
