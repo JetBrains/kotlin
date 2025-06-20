@@ -90,7 +90,7 @@ internal class KlibTypeExtension : KmTypeExtension {
 
 internal class KlibPropertyExtension : KmPropertyExtension {
     var uniqId: UniqId? = null
-    var file: Int? = null
+    var file: KlibSourceFile? = null
     var compileTimeValue: KmAnnotationArgument? = null
 
     override val type: KmExtensionType

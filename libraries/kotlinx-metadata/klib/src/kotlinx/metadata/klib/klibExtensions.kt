@@ -39,7 +39,7 @@ var KmProperty.uniqId: UniqId?
         klibExtensions.uniqId = value
     }
 
-var KmProperty.file: Int?
+var KmProperty.file: KlibSourceFile?
     get() = klibExtensions.file
     set(value) {
         klibExtensions.file = value
