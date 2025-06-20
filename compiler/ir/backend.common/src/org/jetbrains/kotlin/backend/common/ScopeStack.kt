@@ -30,7 +30,7 @@ internal class ScopeStack<E> {
     }
 
     fun addToCurrentScope(element: E) {
-        scopes.last().values.add(element)
+        scopes.lastOrNull()?.values?.add(element)
     }
 
     fun isVisibleInCurrentScope(element: E): Boolean {

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
+import org.jetbrains.kotlin.backend.common.checkers.symbol.IrScopeChecker
+import org.jetbrains.kotlin.backend.common.checkers.symbol.IrScopeCheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.symbol.IrScopeContextUpdater
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.check
@@ -38,6 +41,7 @@ data class IrValidatorConfig(
     val checkTypes: Boolean = false,
     val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
+    val checkScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
     val checkCrossFileFieldUsage: Boolean = false,
     val checkAllKotlinFieldsArePrivate: Boolean = false,
@@ -132,6 +136,11 @@ private class IrFileValidator(
     private val callCheckers: MutableList<IrCallChecker> = mutableListOf(IrCallFunctionDispatchReceiverChecker)
 
     init {
+        if (config.checkScopes) {
+            val x = IrScopeCheckerContext()
+            contextUpdaters.add(IrScopeContextUpdater(x))
+            symbolCheckers.add(IrScopeChecker(x))
+        }
         if (config.checkValueScopes) {
             contextUpdaters.add(ValueScopeUpdater)
             valueAccessCheckers.add(IrValueAccessScopeChecker)

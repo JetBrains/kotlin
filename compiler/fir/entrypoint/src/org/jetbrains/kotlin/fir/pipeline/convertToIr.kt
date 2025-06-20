@@ -477,6 +477,7 @@ private fun IrPluginContext.runMandatoryIrValidation(
                 // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
                 // so we disable them not to cause too much breakage.
                 checkTreeConsistency = false,
+                checkScopes = true,
                 // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
                 checkCrossFileFieldUsage = true,
                 // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying

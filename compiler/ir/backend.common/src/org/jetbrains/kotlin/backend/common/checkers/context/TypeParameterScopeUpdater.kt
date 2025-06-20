@@ -20,13 +20,11 @@ internal object TypeParameterScopeUpdater : ContextUpdater {
                 element.typeParameters.mapTo(this) { it.symbol }
             }
         }
-        super.onEnterElement(context, element)
     }
 
     override fun onExitElement(context: CheckerContext, element: IrElement) {
         if (element is IrTypeParametersContainer) {
             context.typeParameterScopeStack.popScope()
         }
-        super.onExitElement(context, element)
     }
 }
