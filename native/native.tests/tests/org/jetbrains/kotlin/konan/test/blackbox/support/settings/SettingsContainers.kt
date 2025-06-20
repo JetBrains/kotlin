@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
 abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
@@ -74,17 +73,3 @@ val Settings.configurables: Configurables
         )
         return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }
-
-internal fun Settings.withCustomCompiler(compiler: ReleasedCompiler): Settings {
-    return object : Settings(
-        parent = this,
-        settings = listOf(
-            compiler.nativeHome,
-            LLDB(compiler.nativeHome),
-            KotlinNativeClassLoader(lazyClassLoader = compiler.lazyClassloader),
-            PipelineType.DEFAULT,
-            GCType.UNSPECIFIED,
-            ThreadStateChecker.DISABLED
-        )
-    ) {}
-}

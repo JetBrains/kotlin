@@ -134,15 +134,6 @@ fun main() {
             }
         }
 
-        // Klib Compatibility tests.
-        testGroup("native/native.tests/klib-compatibility/tests-gen", "compiler/testData/klib/versionCompatibility") {
-            testClass<AbstractNativeKlibCompatibilityTest>(
-                suiteTestClassName = "NativeKlibCompatibilityTestGenerated",
-            ) {
-                model(pattern = "^([^_](.+))$", recursive = false)
-            }
-        }
-
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData/CInterop") {
             testClass<AbstractNativeCInteropFModulesTest>(
