@@ -38,10 +38,6 @@ class IrLazyConstructor(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), Psi2IrLazyFunctionBase {
-    init {
-        this.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-    }
-
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override var body: IrBody? = null
