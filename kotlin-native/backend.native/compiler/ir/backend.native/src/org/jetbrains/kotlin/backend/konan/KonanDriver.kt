@@ -117,7 +117,8 @@ class KonanDriver(
 
         val sourcesFiles = environment.getSourceFiles()
         performanceManager?.apply {
-            targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
+            targetDescription = konanConfig.moduleId
+            this.outputKind = konanConfig.produce.name
             addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
             // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
             // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".

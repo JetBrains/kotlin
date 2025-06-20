@@ -28,6 +28,7 @@ data class UnitStats(
     In the last case, it should have a suffix like `(Child)`.
      */
     val name: String?,
+    val outputKind: String?,
     val platform: PlatformType = PlatformType.JVM,
     val compilerType: CompilerType = CompilerType.K2,
     val hasErrors: Boolean = false,

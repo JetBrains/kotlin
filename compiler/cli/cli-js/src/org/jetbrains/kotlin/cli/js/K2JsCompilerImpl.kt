@@ -173,7 +173,8 @@ internal class K2JsCompilerImpl(
         }
 
         performanceManager?.apply {
-            targetDescription = "$moduleName-${configuration.moduleKind}"
+            targetDescription = moduleName
+            outputKind = configuration.moduleKind?.name
             addSourcesStats(sourcesFiles.size, environmentForJS.countLinesOfCode(sourcesFiles))
             notifyPhaseFinished(PhaseType.Initialization)
         }
