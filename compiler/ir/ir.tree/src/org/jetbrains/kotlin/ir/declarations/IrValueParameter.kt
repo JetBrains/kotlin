@@ -28,62 +28,16 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
 
 
     /**
-     * Severely deprecated, kept only for source compatibility.
-     *
-     * Please replace with [indexInOldValueParameters],
-     * or migrate to new parameter API with [indexInParameters].
-     *
-     * See docs/backend/IR_parameter_api_migration.md
-     */
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-    var index: Int by ::indexInOldValueParameters
-        @DelicateIrParameterIndexSetter
-        set
-
-    /**
-     * Index of this parameter in [IrFunction.valueParameters] list, or -1 if it is not present in that list
-     * (which often means it is either [IrFunction.dispatchReceiverParameter] or [IrFunction.extensionReceiverParameter]).
-     *
-     * It is automatically updated when adding or removing from [IrFunction.parameters].
-     * Only in rare cases it may need to be set manually.
-     *
-     * ##### This is a deprecated API
-     * Instead, use [IrFunction.parameters] together with [indexInParameters].
-     *
-     * See docs/backend/IR_parameter_api_migration.md
-     */
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)
-    var indexInOldValueParameters: Int = -1
-        @DelicateIrParameterIndexSetter
-        set
-
-    /**
      * Index of this parameter in [IrFunction.parameters] list, or -1 if not present in that list.
      *
      * It is automatically updated when adding or removing from [IrFunction.parameters].
      * Only in rare cases it may need to be set manually.
-     *
-     * Note: after removal of old parameter API (KT-68003), once `index` property is removed, this property
-     * is going to be renamed to back to `index`.
      */
     var indexInParameters: Int = -1
         @DelicateIrParameterIndexSetter
         set
 
-    // Here the kind defaults to Regular, however, unless using the old parameter API,
-    // it is reassigned right away to the specified value (see IrFactory.createValueParameter).
-    // Also, when using the old API, kind is assigned automatically when a parameter is added to a function, and reverts to Regular when removed.
     var kind: IrParameterKind = IrParameterKind.Regular
-        set(value) {
-            if (field == value) return
-            field = value
-
-            // When a parameter is already in a function, changing its kind e.g. from regular parameter to
-            // a receiver will make it not appear in valueParameters anymore, so it and subsequent parameters
-            // will have different index in that list. We try to update it.
-            // This only affects old-API index, new API is alright.
-            (_parent as? IrFunction)?.reindexValueParameters()
-        }
 
     abstract var varargElementType: IrType?
 

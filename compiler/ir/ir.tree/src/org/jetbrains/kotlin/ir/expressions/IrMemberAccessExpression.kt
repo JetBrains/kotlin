@@ -111,10 +111,10 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
                     is IrLocalDelegatedPropertyReference -> getter.owner
                     else -> error("Unexpected reference to a property from $this")
                 }
-                @OptIn(DeprecatedForRemovalCompilerApi::class)
                 if (accessor != null) {
-                    hasDispatchReceiver = accessor.dispatchReceiverParameter != null
-                    hasExtensionReceiver = accessor.extensionReceiverParameter != null
+                    val shape = accessor.getShapeOfParameters()
+                    hasDispatchReceiver = shape.hasDispatchReceiver
+                    hasExtensionReceiver = shape.hasExtensionReceiver
                 } else {
                     val realProperty = target.resolveFakeOverrideMaybeAbstractOrFail()
                     hasDispatchReceiver = !realProperty.backingField!!.isStatic

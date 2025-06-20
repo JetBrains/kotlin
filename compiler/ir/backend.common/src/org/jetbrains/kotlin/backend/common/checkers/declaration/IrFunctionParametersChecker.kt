@@ -15,17 +15,10 @@ internal object IrFunctionParametersChecker : IrFunctionChecker {
         declaration: IrFunction,
         context: CheckerContext,
     ) {
-        @OptIn(DeprecatedForRemovalCompilerApi::class)
-        for ((i, param) in declaration.valueParameters.withIndex()) {
-            if (param.indexInOldValueParameters != i) {
-                context.error(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")
-            }
-        }
-
         var lastKind: IrParameterKind? = null
         for ((i, param) in declaration.parameters.withIndex()) {
             if (param.indexInParameters != i) {
-                context.error(declaration, "Inconsistent index (new API) of value parameter ${param.indexInParameters} != $i")
+                context.error(declaration, "Inconsistent index of parameter ${param.indexInParameters} != $i")
             }
 
             val kind = param.kind
