@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.klib
 
+import org.jetbrains.kotlin.codegen.ModuleInfo.CompilerCase
+
 /**
  * At the moment, only two compiler editions are supported:
  * [CURRENT] - the compiler that was just built from fresh sources.
@@ -26,15 +28,31 @@ enum class KlibCompilerEdition(
  * and it works.
  * For `Fw*` = `Forward*` cases we check that the klib built with older compiler can be used in runtime.
  */
-enum class KlibCompilerChangeScenario(
-    val bottomV1: KlibCompilerEdition,
-    val bottomV2: KlibCompilerEdition,
-    val intermediate: KlibCompilerEdition,
-) {
-    NoChange(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithCurrent(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CURRENT),
-    BwLatestWithLatest(KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM),
-    FwLatest(KlibCompilerEdition.CURRENT, KlibCompilerEdition.CUSTOM, KlibCompilerEdition.CURRENT);
+enum class KlibCompilerChangeScenario {
+    NoChange {
+        override fun get(alias: String) = KlibCompilerEdition.CURRENT
+    },
 
-    override fun toString() = "${this.name}: [$bottomV1 -> $bottomV2, $intermediate]"
+    BwLatestWithCurrent {
+        override fun get(alias: String) = when (CompilerCase.valueOf(alias)) {
+            CompilerCase.BOTTOM_V1 -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    },
+
+    BwLatestWithLatest {
+        override fun get(alias: String) = when (CompilerCase.valueOf(alias)) {
+            CompilerCase.BOTTOM_V1, CompilerCase.INTERMEDIATE -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    },
+
+    FwLatest {
+        override fun get(alias: String) = when (CompilerCase.valueOf(alias)) {
+            CompilerCase.BOTTOM_V2 -> KlibCompilerEdition.CUSTOM
+            else -> KlibCompilerEdition.CURRENT
+        }
+    };
+
+    abstract operator fun get(alias: String): KlibCompilerEdition
 }

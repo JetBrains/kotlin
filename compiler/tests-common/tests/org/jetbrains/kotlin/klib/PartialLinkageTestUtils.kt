@@ -176,12 +176,7 @@ object PartialLinkageTestUtils {
                     val dependencies = Dependencies(regularDependencies, friendDependencies)
                     binaryDependencies = binaryDependencies.mergeWith(dependencies)
 
-                    val compilerEdition = when (moduleStep.compiler) {
-                        ModuleInfo.CompilerCase.BOTTOM_V1 -> compilerEditionChange.bottomV1
-                        ModuleInfo.CompilerCase.BOTTOM_V2 -> compilerEditionChange.bottomV2
-                        ModuleInfo.CompilerCase.INTERMEDIATE -> compilerEditionChange.intermediate
-                        ModuleInfo.CompilerCase.DEFAULT -> KlibCompilerEdition.CURRENT
-                    }
+                    val compilerEdition = compilerEditionChange[moduleStep.compiler.name]
 
                     buildKlib(
                         moduleInfo.moduleName,
