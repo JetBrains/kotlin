@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -76,10 +77,15 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                 ?.also { new -> variables[param] = new } ?: param
         }
 
+        val valueRemapper = VariableRemapper(variables)
+        for (parameter in parameters) {
+            parameter.defaultValue?.transformChildrenVoid(valueRemapper)
+        }
+
         val blockBody = body as? IrBlockBody
 
         if (blockBody != null && variables.isNotEmpty()) {
-            blockBody.transformChildren(VariableRemapper(variables), null)
+            blockBody.transformChildrenVoid(valueRemapper)
             blockBody.statements.addAll(0, parameters.mapNotNull {
                 irBuilder.createResolutionStatement(it, it.defaultValue?.expression)
             })
