@@ -193,7 +193,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
 
         val invokeCompiler = when (compilerEdition) {
-            LATEST_RELEASE -> releasedCompilerCall()
+            LATEST_RELEASE -> customCompilerCall()
             CURRENT -> currentCompilerCall()
         }
 
@@ -233,10 +233,10 @@ private class ModuleDetails(val name: ModuleName, val outputDir: File) {
     constructor(dependency: Dependency) : this(dependency.moduleName, dependency.libraryFile.parentFile)
 }
 
-private fun releasedCompilerCall(): (PrintStream, Array<String>) -> ExitCode {
-    val releasedCompiler = JsKlibTestSettings.releasedJsCompiler
+private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode {
+    val customCompiler = JsKlibTestSettings.customJsCompiler
 
-    val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, releasedCompiler.classLoader)
+    val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, customCompiler.classLoader)
     val entryPoint = compilerClass.getMethod(
         "execFullPathsInMessages",
         PrintStream::class.java,
@@ -253,7 +253,7 @@ private fun currentCompilerCall() = { printStream: PrintStream, args: Array<Stri
     K2JSCompiler().execFullPathsInMessages(printStream, args)
 }
 
-internal class ReleasedJsCompiler(private val jsHome: ReleasedJsArtifactsHome) {
+internal class CustomJsCompiler(private val jsHome: CustomJsCompilerArtifacts) {
     private var softClassLoader: SoftReference<URLClassLoader>? = null
     val classLoader: URLClassLoader
         get() {
@@ -265,7 +265,7 @@ internal class ReleasedJsCompiler(private val jsHome: ReleasedJsArtifactsHome) {
         }
 }
 
-private fun createClassLoader(jsHome: ReleasedJsArtifactsHome): URLClassLoader {
+private fun createClassLoader(jsHome: CustomJsCompilerArtifacts): URLClassLoader {
     val jsClassPath = setOf(
         jsHome.compilerEmbeddable,
         jsHome.baseStdLib,
@@ -277,24 +277,24 @@ private fun createClassLoader(jsHome: ReleasedJsArtifactsHome): URLClassLoader {
         .apply { setDefaultAssertionStatus(true) }
 }
 
-internal class ReleasedJsArtifactsHome(val dir: File, version: String) {
+internal class CustomJsCompilerArtifacts(val dir: File, version: String) {
     val compilerEmbeddable: File = dir.resolve("kotlin-compiler-embeddable-$version.jar")
     val baseStdLib: File = dir.resolve("kotlin-stdlib-$version.jar")
     val jsStdLib: File = dir.resolve("kotlin-stdlib-js-$version.klib")
 }
 
 internal object JsKlibTestSettings {
-    val releasedArtifactHome by lazy {
-        val location = System.getProperty("kotlin.internal.js.test.latestReleasedCompilerLocation")
-        val version = System.getProperty("kotlin.internal.js.test.latestReleasedCompilerVersion")
+    val customJsCompilerArtifacts by lazy {
+        val location = System.getProperty("kotlin.internal.js.test.compat.customCompilerArtifactsDir")
+        requireNotNull(location) { "Custom compiler location is not specified" }
 
-        requireNotNull(location) { "Released compiler location is not specified" }
-        requireNotNull(version) { "Released compiler version is not specified" }
+        val version = System.getProperty("kotlin.internal.js.test.compat.customCompilerVersion")
+        requireNotNull(version) { "Custom compiler version is not specified" }
 
-        ReleasedJsArtifactsHome(File(location), version)
+        CustomJsCompilerArtifacts(File(location), version)
     }
 
-    val releasedJsCompiler by lazy {
-        ReleasedJsCompiler(releasedArtifactHome)
+    val customJsCompiler by lazy {
+        CustomJsCompiler(customJsCompilerArtifacts)
     }
 }

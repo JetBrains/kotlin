@@ -14,23 +14,23 @@ dependencies {
     testImplementation(projectTests(":js:js.tests"))
 }
 
-val latestReleasedCompiler = findProperty("kotlin.internal.js.test.latestReleasedCompilerVersion") as String
-val releasedCompiler: Configuration by configurations.creating
+val customCompilerVersion = findProperty("kotlin.internal.js.test.compat.customCompilerVersion") as String
+val customCompilerArtifacts: Configuration by configurations.creating
 
 dependencies {
-    releasedCompiler("org.jetbrains.kotlin:kotlin-compiler-embeddable:$latestReleasedCompiler")
-    releasedCompiler("org.jetbrains.kotlin:kotlin-stdlib-js:$latestReleasedCompiler") {
+    customCompilerArtifacts("org.jetbrains.kotlin:kotlin-compiler-embeddable:$customCompilerVersion")
+    customCompilerArtifacts("org.jetbrains.kotlin:kotlin-stdlib-js:$customCompilerVersion") {
         attributes {
             attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         }
     }
 }
 
-val releasedCompilerArtifactsTarget: Provider<Directory> = layout.buildDirectory.dir("releaseCompiler$latestReleasedCompiler")
+val customCompilerArtifactsDir: Provider<Directory> = layout.buildDirectory.dir("customCompiler$customCompilerVersion")
 
-val releasedCompilerDist: TaskProvider<Sync> by tasks.registering(Sync::class) {
-    from(releasedCompiler)
-    into(releasedCompilerArtifactsTarget)
+val downloadCustomCompilerArtifacts: TaskProvider<Sync> by tasks.registering(Sync::class) {
+    from(customCompilerArtifacts)
+    into(customCompilerArtifactsDir)
 }
 
 optInToExperimentalCompilerApi()
@@ -55,9 +55,9 @@ fun Test.setUpJsBoxTests() {
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(releasedCompilerDist)
-    systemProperty("kotlin.internal.js.test.latestReleasedCompilerLocation", releasedCompilerArtifactsTarget.get().asFile.absolutePath)
-    systemProperty("kotlin.internal.js.test.latestReleasedCompilerVersion", latestReleasedCompiler)
+    dependsOn(downloadCustomCompilerArtifacts)
+    systemProperty("kotlin.internal.js.test.compat.customCompilerArtifactsDir", customCompilerArtifactsDir.get().asFile.absolutePath)
+    systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", customCompilerVersion)
 
     setUpJsBoxTests()
     useJUnitPlatform()
