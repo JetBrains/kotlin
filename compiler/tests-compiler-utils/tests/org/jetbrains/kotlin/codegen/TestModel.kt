@@ -75,7 +75,7 @@ class ModuleInfo(val moduleName: String) {
         val expectedFileStats: Map<String, Set<String>>,
         val expectedDTS: Set<String>,
         val rebuildKlib: Boolean,
-        val compiler: CompilerCase,
+        val compilerCodename: String?,
         val cliArguments: List<String>,
     )
 
@@ -103,7 +103,7 @@ private const val MODIFICATION_UPDATE = "U"
 private const val MODIFICATION_DELETE = "D"
 private const val EXPECTED_DTS_LIST = "expected dts"
 private const val REBUILD_KLIB = "rebuild klib"
-private const val COMPILER = "compiler"
+private const val COMPILER_CODENAME = "compiler"
 private const val COMPILER_ARGUMENTS = "arguments"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
@@ -303,7 +303,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
         val modifications = mutableListOf<ModuleInfo.Modification>()
         val expectedDTS = mutableSetOf<String>()
         var rebuildKlib = true
-        var compiler = ModuleInfo.CompilerCase.DEFAULT
+        var compilerCodename: String? = null
         val arguments = mutableListOf<String>()
 
         loop { line ->
@@ -340,8 +340,8 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                     REBUILD_KLIB -> getOpArgs().singleOrNull()?.toBooleanStrictOrNull()?.let {
                         rebuildKlib = it
                     } ?: error(diagnosticMessage("$op expects true or false", line))
-                    COMPILER -> getOpArgs().singleOrNull()?.let { ModuleInfo.CompilerCase.valueOf(it) }?.let {
-                        compiler = it
+                    COMPILER_CODENAME -> getOpArgs().singleOrNull()?.let {
+                        compilerCodename = it
                     } ?: error(diagnosticMessage("$op expects values from CompilerCase enum", line))
                     COMPILER_ARGUMENTS -> arguments += getOpArgs()
                     else -> error(diagnosticMessage("Unknown op $op", line))
@@ -367,7 +367,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                 expectedFileStats = expectedFileStats,
                 expectedDTS = expectedDTS,
                 rebuildKlib = rebuildKlib,
-                compiler = compiler,
+                compilerCodename = compilerCodename,
                 cliArguments = arguments,
             )
         }
