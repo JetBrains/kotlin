@@ -21,7 +21,6 @@ object PartialLinkageTestUtils {
         val stdlibFile: File
         val testModeConstructorParameters: Map<String, String>
         val targetBackend: TargetBackend
-        val isK2: Boolean
 
         // Customize the source code of a module before compiling it to a KLIB.
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
@@ -47,8 +46,7 @@ object PartialLinkageTestUtils {
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
             if (projectInfo.muted) return true
             val compatibleBackends = generateSequence(targetBackend) { if (it == TargetBackend.ANY) null else it.compatibleWith }.toSet()
-            val ignoredBackends = if (isK2) projectInfo.ignoreK2Backends else projectInfo.ignoreK1Backends
-            return ignoredBackends.intersect(compatibleBackends).isNotEmpty()
+            return projectInfo.ignoreBackends.intersect(compatibleBackends).isNotEmpty()
         }
 
         // How to handle the test that is known to be ignored.

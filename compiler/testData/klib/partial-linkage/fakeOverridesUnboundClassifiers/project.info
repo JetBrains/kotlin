@@ -1,5 +1,3 @@
-IGNORE_BACKEND_K1: NATIVE
-
 MODULES: lib1, lib2, main
 
 STEP 0:
