@@ -131,10 +131,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    protected fun updateTargetSymbol() {
-        initializeTargetShapeFromSymbol()
-    }
-
     private fun ensureTargetShapeInitialized() {
         if (!targetParametersShapeInitialized) {
             initializeTargetShapeFromSymbol()

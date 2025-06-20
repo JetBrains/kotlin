@@ -26,21 +26,13 @@ class IrConstructorCallImpl internal constructor(
     override var endOffset: Int,
     override var type: IrType,
     override var origin: IrStatementOrigin?,
-    symbol: IrConstructorSymbol,
+    override var symbol: IrConstructorSymbol,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
 ) : IrConstructorCall() {
     override var attributeOwnerId: IrElement = this
 
     override val typeArguments: MutableList<IrType?> = ArrayList(0)
-
-    override var symbol: IrConstructorSymbol = symbol
-        set(value) {
-            if (field !== value) {
-                field = value
-                updateTargetSymbol()
-            }
-        }
 
     companion object
 }
