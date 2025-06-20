@@ -21,6 +21,7 @@ class UnitStatsSerializationTest {
     fun validateAllProperties() {
         val moduleStats = UnitStats(
             name = "all_properties",
+            outputKind = null,
             platform = PlatformType.Native,
             compilerType = CompilerType.K1andK2,
             hasErrors = true,

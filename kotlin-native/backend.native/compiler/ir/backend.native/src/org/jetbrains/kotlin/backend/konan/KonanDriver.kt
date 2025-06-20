@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import java.util.*
 
@@ -138,6 +139,16 @@ class KonanDriver(
 
         ensureModuleName(konanConfig)
 
+        val sourcesFiles = environment.getSourceFiles()
+        performanceManager?.apply {
+            targetDescription = konanConfig.moduleId
+            this.outputKind = konanConfig.produce.name
+            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
+            // Finishing initialization phase before cache setup. Otherwise, cache building time will be counted as initialization phase.
+            // Since cache builders use PerformanceManager to report precise phases, the only timing we lose is "calculating what to cache".
+            notifyPhaseFinished(PhaseType.Initialization)
+        }
+
         val cacheBuilder = CacheBuilder(konanConfig, compilationSpawner)
         if (cacheBuilder.needToBuild()) {
             cacheBuilder.build()
@@ -146,15 +157,6 @@ class KonanDriver(
 
         if (!konanConfig.produce.isHeaderCache) {
             konanConfig.cacheSupport.checkConsistency()
-        }
-
-        val sourcesFiles = environment.getSourceFiles()
-        performanceManager?.apply {
-            targetDescription = "${konanConfig.moduleId}-${konanConfig.produce}"
-            addSourcesStats(sourcesFiles.size, environment.countLinesOfCode(sourcesFiles))
-            // there's a chance `cacheBuilder.build()` already finishes this phase at the beginning of spawned `runKonanDriver()`
-            @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-            notifyCurrentPhaseFinishedIfNeeded()
         }
 
         DynamicCompilerDriver(performanceManager).run(konanConfig, environment)
