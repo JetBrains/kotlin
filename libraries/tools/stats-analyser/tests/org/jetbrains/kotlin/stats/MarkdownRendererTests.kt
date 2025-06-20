@@ -88,27 +88,27 @@ class MarkdownRendererTests {
 * Files count: 6
 * Lines count: 768
 
-# Total time
+# Average time
 
 | Phase                         |          Absolute |              User |               Cpu |
 | ----------------------------- | ----------------: | ----------------: | ----------------: |
-| INIT                          |   10.00% (600 ms) |   10.00% (450 ms) |   10.00% (750 ms) |
-| ANALYZE                       |  40.00% (2400 ms) |  40.00% (1800 ms) |  40.00% (3000 ms) |
-| TRANSLATION to IR             |  20.00% (1200 ms) |   20.00% (900 ms) |  20.00% (1500 ms) |
-| IR PRE-LOWERING               |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
-| IR SERIALIZATION              |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
-| KLIB WRITING                  |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
-| IR LOWERING                   |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
-| BACKEND                       |   16.00% (960 ms) |   16.00% (720 ms) |  16.00% (1200 ms) |
+| INIT                          |   10.00% (200 ms) |   10.00% (150 ms) |   10.00% (250 ms) |
+| ANALYZE                       |   40.00% (800 ms) |   40.00% (600 ms) |  40.00% (1000 ms) |
+| TRANSLATION to IR             |   20.00% (400 ms) |   20.00% (300 ms) |   20.00% (500 ms) |
+| IR PRE-LOWERING               |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| IR SERIALIZATION              |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| KLIB WRITING                  |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| IR LOWERING                   |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| BACKEND                       |   16.00% (320 ms) |   16.00% (240 ms) |   16.00% (400 ms) |
 |                               |                   |                   |                   |
-| Find Java class               |    4.00% (240 ms) |    4.00% (180 ms) |    4.00% (300 ms) |
-| Binary class from Kotlin file |    6.00% (360 ms) |    6.00% (270 ms) |    6.00% (450 ms) |
+| Find Java class               |     4.00% (80 ms) |     4.00% (60 ms) |    4.00% (100 ms) |
+| Binary class from Kotlin file |    6.00% (120 ms) |     6.00% (90 ms) |    6.00% (150 ms) |
 |                               |                   |                   |                   |
-| TOTAL                         | 100.00% (6000 ms) | 100.00% (4500 ms) | 100.00% (7500 ms) |
+| TOTAL                         | 100.00% (2000 ms) | 100.00% (1500 ms) | 100.00% (2500 ms) |
 
-# System stats
+# System stats (Average)
 
-* JIT time: 6 ms
+* JIT time: 2 ms
 * GC stats:
   * gc-1: 100 ms (1 collections)
   * gc-2: 200 ms (2 collections)
