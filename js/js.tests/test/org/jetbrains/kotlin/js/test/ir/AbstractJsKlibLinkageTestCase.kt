@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
-import org.jetbrains.kotlin.klib.KlibCompilerEdition.LATEST_RELEASE
+import org.jetbrains.kotlin.klib.KlibCompilerEdition.CUSTOM
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
@@ -193,7 +193,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
 
         val invokeCompiler = when (compilerEdition) {
-            LATEST_RELEASE -> customCompilerCall()
+            CUSTOM -> customCompilerCall()
             CURRENT -> currentCompilerCall()
         }
 
