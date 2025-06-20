@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArgum
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
@@ -100,6 +99,17 @@ internal class KTypeImpl(
         }
     }
 
+    private fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = null): KTypeProjection {
+        if (isStarProjection) return KTypeProjection.STAR
+
+        val result = KTypeImpl(type, computeJavaType)
+        return when (projectionKind) {
+            Variance.INVARIANT -> KTypeProjection.invariant(result)
+            Variance.IN_VARIANCE -> KTypeProjection.contravariant(result)
+            Variance.OUT_VARIANCE -> KTypeProjection.covariant(result)
+        }
+    }
+
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 
@@ -135,13 +145,19 @@ internal class KTypeImpl(
         get() {
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             if (!JavaToKotlinClassMapper.isMutable(classDescriptor)) return null
-            return MutableCollectionKClass(
-                classifier as KClass<*>,
-                classDescriptor.fqNameSafe.asString(),
-                classDescriptor.typeConstructor.supertypes.map(::KTypeImpl)
-            ) { container ->
-                classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
+            if (useK1Implementation) {
+                return MutableCollectionKClass(
+                    classifier as KClass<*>,
+                    classDescriptor.fqNameSafe.asString(),
+                    { container ->
+                        classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
+                    },
+                    {
+                        classDescriptor.typeConstructor.supertypes.map(::KTypeImpl)
+                    },
+                )
             }
+            return getMutableCollectionKClass(classDescriptor.fqNameSafe, classifier as KClass<*>)
         }
 
     override val isSuspendFunctionType: Boolean
@@ -171,24 +187,4 @@ internal class KTypeImpl(
         if (useK1Implementation) {
             (31 * ((31 * type.hashCode()) + classifier.hashCode())) + arguments.hashCode()
         } else super.hashCode()
-}
-
-internal fun TypeProjection.toKTypeProjection(computeJavaType: (() -> Type)? = null): KTypeProjection {
-    if (isStarProjection) return KTypeProjection.STAR
-
-    val type = type
-    val result = if (type is NewCapturedType) {
-        CapturedKType(
-            type.lowerType?.let(::KTypeImpl),
-            CapturedKTypeConstructor(type.constructor.projection.toKTypeProjection(), type.constructor),
-            type.isMarkedNullable,
-        )
-    } else {
-        KTypeImpl(type, computeJavaType)
-    }
-    return when (projectionKind) {
-        Variance.INVARIANT -> KTypeProjection.invariant(result)
-        Variance.IN_VARIANCE -> KTypeProjection.contravariant(result)
-        Variance.OUT_VARIANCE -> KTypeProjection.covariant(result)
-    }
 }

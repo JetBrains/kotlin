@@ -10,17 +10,17 @@ package test;
 
 public interface B<B1, B2> extends A<B2, B1> {}
 
-// FILE: test/C.java
+// FILE: test/Test1.java
 package test;
 
-public class C<T> implements B<Object, T> {}
+public class Test1<T> implements B<Object, T> {}
 
-// FILE: test/D.java
+// FILE: test/Test2.java
 package test;
 
 import java.util.List;
 
-public class D<U> implements B<U, List<U>> {}
+public class Test2<U> implements B<U, List<U>> {}
 
 // FILE: box.kt
 package test
@@ -28,15 +28,22 @@ package test
 import kotlin.reflect.full.allSupertypes
 import kotlin.test.assertEquals
 
+class Test3<V> : B<V?, V & Any>
+
 fun box(): String {
     assertEquals(
         "[test.B<kotlin.Any!, T!>, test.A<T!, kotlin.Any!>, kotlin.Any]",
-        C::class.allSupertypes.toString(),
+        Test1::class.allSupertypes.toString(),
     )
 
     assertEquals(
         "[test.B<U!, kotlin.collections.(Mutable)List<U!>!>, test.A<kotlin.collections.(Mutable)List<U!>!, U!>, kotlin.Any]",
-        D::class.allSupertypes.toString(),
+        Test2::class.allSupertypes.toString(),
+    )
+
+    assertEquals(
+        "[test.B<V?, V & Any>, test.A<(V & Any..V?), V?>, kotlin.Any]",
+        Test3::class.allSupertypes.toString(),
     )
 
     return "OK"

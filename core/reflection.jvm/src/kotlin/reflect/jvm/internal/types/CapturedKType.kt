@@ -5,12 +5,9 @@
 
 package kotlin.reflect.jvm.internal.types
 
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import kotlin.reflect.*
-import kotlin.reflect.full.toDescriptorTypeProjection
-import kotlin.reflect.jvm.internal.KTypeParameterImpl
 
 // Based on NewCapturedType but greatly simplified.
 internal class CapturedKType(
@@ -34,29 +31,8 @@ internal class CapturedKType(
     override fun toString(): String = typeConstructor.toString()
 }
 
-// Currently, still depends on descriptor-based NewCapturedTypeConstructor to ensure that captured types do not become unequal after
-// substitution, but it will be removed in a subsequent commit.
-internal class CapturedKTypeConstructor(
-    val projection: KTypeProjection,
-    val kotlinTypeConstructor: NewCapturedTypeConstructor,
-) : CapturedTypeConstructorMarker {
-    constructor(projection: KTypeProjection, typeParameter: KTypeParameter) : this(
-        projection,
-        NewCapturedTypeConstructor(
-            projection.toDescriptorTypeProjection(
-                (typeParameter as? KTypeParameterImpl)?.descriptor
-                    ?: error("Captured type should have a type parameter: $projection ($typeParameter)")
-            )
-        )
-    )
-
+internal class CapturedKTypeConstructor(val projection: KTypeProjection) : CapturedTypeConstructorMarker {
     lateinit var supertypes: List<KType>
-
-    override fun equals(other: Any?): Boolean =
-        other is CapturedKTypeConstructor && kotlinTypeConstructor == other.kotlinTypeConstructor
-
-    override fun hashCode(): Int =
-        kotlinTypeConstructor.hashCode()
 
     override fun toString(): String = "CapturedType($projection)"
 }
@@ -70,10 +46,10 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
     val parameters = klass.allTypeParameters()
     if (parameters.size != arguments.size) return null
 
-    val capturedArguments = parameters.zip(arguments).map { (parameter, projection) ->
+    val capturedArguments = arguments.map { projection ->
         if (projection.variance == KVariance.INVARIANT) return@map projection
         val lowerType = projection.type.takeIf { projection.variance == KVariance.IN }
-        KTypeProjection.invariant(CapturedKType(lowerType, CapturedKTypeConstructor(projection, parameter), isMarkedNullable = false))
+        KTypeProjection.invariant(CapturedKType(lowerType, CapturedKTypeConstructor(projection), isMarkedNullable = false))
     }
 
     val substitutor = KTypeSubstitutor.create(klass, capturedArguments)

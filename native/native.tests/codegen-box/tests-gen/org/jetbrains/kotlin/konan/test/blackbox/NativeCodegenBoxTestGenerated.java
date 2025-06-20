@@ -57881,6 +57881,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           }
 
           @Test
+          @TestMetadata("annotations.kt")
+          public void testAnnotations() {
+            runTest("compiler/testData/codegen/box/reflection/types/createType/annotations.kt");
+          }
+
+          @Test
           @TestMetadata("equality.kt")
           public void testEquality() {
             runTest("compiler/testData/codegen/box/reflection/types/createType/equality.kt");

@@ -68,8 +68,11 @@ internal class KTypeSubstitutor(private val substitution: Map<KTypeParameter, KT
         val EMPTY = KTypeSubstitutor(emptyMap())
 
         fun create(type: KType): KTypeSubstitutor {
-            val classifier = type.classifier
-            return if (classifier is KClass<*>) create(classifier, type.arguments) else EMPTY
+            val parameters = with(ReflectTypeSystemContext) {
+                val classifier = (type as AbstractKType).typeConstructor()
+                List(classifier.parametersCount()) { classifier.getParameter(it) as KTypeParameter }
+            }
+            return if (parameters.isNotEmpty()) KTypeSubstitutor(parameters.zip(type.arguments).toMap()) else EMPTY
         }
 
         fun create(klass: KClass<*>, arguments: List<KTypeProjection>): KTypeSubstitutor =

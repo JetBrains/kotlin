@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.compact
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -55,7 +56,7 @@ import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
 internal class KClassImpl<T : Any>(
     override val jClass: Class<T>,
-) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KTypeParameterOwnerImpl {
+) : KDeclarationContainerImpl(), KClass<T>, KTypeParameterOwnerImpl, TypeConstructorMarker {
     inner class Data : KDeclarationContainerImpl.Data() {
         val kmClass: KmClass? by lazy(PUBLICATION) {
             (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
@@ -222,7 +223,7 @@ internal class KClassImpl<T : Any>(
 
     val data = lazy(PUBLICATION) { Data() }
 
-    override val descriptor: ClassDescriptor get() = data.value.descriptor
+    val descriptor: ClassDescriptor get() = data.value.descriptor
 
     private val kmClass: KmClass? get() = data.value.kmClass
 

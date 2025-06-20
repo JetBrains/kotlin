@@ -5,11 +5,8 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import kotlin.reflect.KClassifier
 
-internal class KTypeAliasImpl(val fqName: FqName) : KClassifier, KClassifierImpl {
-    override val descriptor: ClassifierDescriptor
-        get() = error("Cannot load descriptor of a type alias: $fqName")
-}
+internal class KTypeAliasImpl(val fqName: FqName) : KClassifier, TypeConstructorMarker
