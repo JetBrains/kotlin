@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ReleasedCompiler
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomNativeCompiler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withCustomCompiler
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -62,15 +62,15 @@ abstract class AbstractNativeKlibCompatibilityTest : AbstractKlibLinkageTest() {
         val testCase = createTestCase(moduleName, moduleSourceDir, compilerArgs)
 
         val compilation = when (compilerEdition) {
-            LATEST_RELEASE -> releasedCompilation(testCase, klibArtifact, dependencies)
-            CURRENT -> currentCompilation(testCase, klibArtifact, dependencies)
+            LATEST_RELEASE -> compilationByCustomCompiler(testCase, klibArtifact, dependencies)
+            CURRENT -> compilationByCurrentCompiler(testCase, klibArtifact, dependencies)
         }
 
         compilation.result.assertSuccess() // <-- trigger compilation
         producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
     }
 
-    private fun currentCompilation(
+    private fun compilationByCurrentCompiler(
         testCase: TestCase,
         klibArtifact: KLIB,
         dependencies: Dependencies,
@@ -82,20 +82,20 @@ abstract class AbstractNativeKlibCompatibilityTest : AbstractKlibLinkageTest() {
         expectedArtifact = klibArtifact
     )
 
-    private fun releasedCompilation(
+    private fun compilationByCustomCompiler(
         testCase: TestCase,
         klibArtifact: KLIB,
         dependencies: Dependencies,
     ): LibraryCompilation {
-        val releasedCompiler = testRunSettings.get<ReleasedCompiler>()
+        val customCompiler = testRunSettings.get<CustomNativeCompiler>()
 
         val customDeps = Dependencies(
-            dependencies.regularDependencies.replaceStdlibWithBundled(releasedCompiler.nativeHome),
+            dependencies.regularDependencies.replaceStdlibWithBundled(customCompiler.nativeHome),
             dependencies.friendDependencies
         )
 
         return LibraryCompilation(
-            settings = testRunSettings.withCustomCompiler(releasedCompiler),
+            settings = testRunSettings.withCustomCompiler(customCompiler),
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             dependencies = createLibraryDependencies(customDeps),
