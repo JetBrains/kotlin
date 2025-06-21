@@ -26,7 +26,7 @@ class IrLazyValueParameter(
     override var startOffset: Int,
     override var endOffset: Int,
     override var origin: IrDeclarationOrigin,
-    override var kind: IrParameterKind,
+    kind: IrParameterKind,
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
     override var name: Name,
@@ -38,7 +38,7 @@ class IrLazyValueParameter(
     override var isAssignable: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-) : IrValueParameter(), Psi2IrLazyDeclarationBase {
+) : IrValueParameter(kind), Psi2IrLazyDeclarationBase {
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

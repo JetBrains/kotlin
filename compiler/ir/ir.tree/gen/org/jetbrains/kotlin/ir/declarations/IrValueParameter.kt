@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueParameter]
  */
-abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
+abstract class IrValueParameter(
+    var kind: IrParameterKind
+) : IrDeclarationBase(), IrValueDeclaration {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ParameterDescriptor
-
-    abstract var kind: IrParameterKind
 
     abstract var isAssignable: Boolean
 
