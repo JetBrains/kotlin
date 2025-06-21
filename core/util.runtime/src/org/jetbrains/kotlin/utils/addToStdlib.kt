@@ -407,8 +407,24 @@ inline fun <T, S> MutableList<T>.assignFrom(other: Iterable<S>, transform: (S) -
     other.mapTo(this, transform)
 }
 
+inline fun <T, S> MutableList<T>.assignFrom(other: Collection<S>, transform: (S) -> T) {
+    clear()
+    if (this is ArrayList<*>) {
+        ensureCapacity(other.size)
+    }
+    other.mapTo(this, transform)
+}
+
 fun <T> MutableList<T>.assignFrom(other: Iterable<T>) {
     assignFrom(other) { it }
+}
+
+fun <T> MutableList<T>.assignFrom(other: Collection<T>) {
+    clear()
+    if (this is ArrayList<*>) {
+        ensureCapacity(other.size)
+    }
+    addAll(other)
 }
 
 fun <T : Any> List<T>.plusIfNotNull(element: T?): List<T> = when (element) {

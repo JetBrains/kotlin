@@ -210,7 +210,8 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
                         println()
                     }
                     field is ListField && field.mutability == ListField.Mutability.MutableList -> {
-                        print("${element.visitorParameterName}.${field.name}.mapTo(${field.name}) { it")
+                        addImport(ArbitraryImportable("org.jetbrains.kotlin.utils.addToStdlib", "assignFrom"))
+                        print("${element.visitorParameterName}.${field.name}.assignFrom(${field.name}) { it")
                         copyValue(field)
                         println(" }")
                     }
