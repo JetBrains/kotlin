@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.function]
@@ -34,16 +35,26 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
 
     abstract var body: IrBody?
 
-    var parameters: List<IrValueParameter> = emptyList()
-        @OptIn(DelicateIrParameterIndexSetter::class)
+    private val _parameters: MutableList<IrValueParameter> = ArrayList()
+
+    /**
+     * All value parameters.
+     *
+     * Parameters must follow this order:
+     *
+     * [[dispatch receiver, context parameters, extension receiver, regular parameters]].
+     */
+    @OptIn(DelicateIrParameterIndexSetter::class)
+    var parameters: List<IrValueParameter>
+        get() = _parameters
         set(value) {
-            for (parameter in field) {
+            for (parameter in _parameters) {
                 parameter.indexInParameters = -1
             }
             for ((index, parameter) in value.withIndex()) {
                 parameter.indexInParameters = index
             }
-            field = value
+            _parameters.assignFrom(value.toList())
         }
 
     /**
