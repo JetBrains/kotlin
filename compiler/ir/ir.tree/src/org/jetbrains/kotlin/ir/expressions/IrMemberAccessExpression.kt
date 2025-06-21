@@ -195,22 +195,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         }
     }
 
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments.size")
-    val typeArgumentsCount: Int
-        get() = typeArguments.size
-
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments[index]")
-    fun getTypeArgument(index: Int): IrType? {
-        checkArgumentSlotAccess("type", index, typeArguments.size)
-        return typeArguments[index]
-    }
-
-    @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20, replaceWith = "typeArguments[index] = value")
-    fun putTypeArgument(index: Int, type: IrType?) {
-        checkArgumentSlotAccess("type", index, typeArguments.size)
-        typeArguments[index] = type
-    }
-
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         arguments.forEach { it?.accept(visitor, data) }
