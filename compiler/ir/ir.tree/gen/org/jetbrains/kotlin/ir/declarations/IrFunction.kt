@@ -50,7 +50,7 @@ sealed class IrFunction : IrDeclarationBase(), IrPossiblyExternalDeclaration, Ir
      * The first parameter of kind [IrParameterKind.DispatchReceiver] in [parameters], if present.
      */
     val dispatchReceiverParameter: IrValueParameter?
-        get() = parameters.firstOrNull { it.kind == IrParameterKind.DispatchReceiver }
+        get() = parameters.firstOrNull()?.takeIf { it.kind == IrParameterKind.DispatchReceiver }
 
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
