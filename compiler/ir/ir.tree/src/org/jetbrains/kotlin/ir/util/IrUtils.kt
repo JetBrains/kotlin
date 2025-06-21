@@ -210,7 +210,7 @@ fun IrFunction.getShapeOfParameters(): FunctionParameterShape {
  * [IrFunction.parameters], except [IrFunction.dispatchReceiverParameter], if present.
  */
 val IrFunction.nonDispatchParameters: List<IrValueParameter>
-    get() = parameters.filterTo(ArrayList(parameters.size)) { it.kind != IrParameterKind.DispatchReceiver }
+    get() = if (dispatchReceiverParameter != null) parameters.drop(1) else parameters
 
 /**
  * [IrFunctionAccessExpression.arguments], except the argument for the dispatch receiver, the target function has one.
