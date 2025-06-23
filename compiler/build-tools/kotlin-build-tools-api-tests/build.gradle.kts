@@ -70,7 +70,8 @@ val businessLogicTestSuits = setOf(
     "testEscapableCharacters",
     "testInputChangesTracking",
     "testCrossModuleIncrementalChanges",
-    "testFirRunner"
+    "testFirRunner",
+    "testV2",
 )
 
 testing {
@@ -130,6 +131,11 @@ testing {
         named<JvmTestSuite>("testEscapableCharacters") {
             configurations.named(sources.runtimeClasspathConfigurationName) {
                 testSymlinkTransformation.resolveAgainstSymlinkedArtifacts(this)
+            }
+        }
+        named<JvmTestSuite>("testV2") {
+            dependencies {
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
     }
