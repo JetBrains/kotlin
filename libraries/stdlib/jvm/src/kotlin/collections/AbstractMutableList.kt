@@ -24,6 +24,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
      * @return the element previously at the specified position.
      */
+    @IgnorableReturnValue
     abstract override fun set(index: Int, element: E): E
 
     /**
