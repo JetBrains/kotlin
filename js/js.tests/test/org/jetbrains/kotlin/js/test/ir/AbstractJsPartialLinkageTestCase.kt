@@ -13,7 +13,7 @@ abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTe
 abstract class AbstractJsPartialLinkageNoICES6TestCase : AbstractJsPartialLinkageTestCase(CompilerType.NO_IC_WITH_ES6)
 abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.WITH_IC)
 
-abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsKlibLinkageTestCase(compilerType) {
+abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsCompilerInvocationTest(compilerType) {
     // The entry point to generated test classes.
     fun runTest(@TestDataFile testPath: String) = KlibCompilerInvocationTestUtils.runTest(
         testConfiguration = JsTestConfiguration(testPath),
