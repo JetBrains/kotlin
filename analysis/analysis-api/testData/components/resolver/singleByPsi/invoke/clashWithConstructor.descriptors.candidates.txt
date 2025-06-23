@@ -1,0 +1,56 @@
+KtCallExpression(132,142): 'Foo(param)'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {
+        param -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Foo
+          isSafeNavigation = false
+          type = Foo.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo
+          symbol = /Foo.Companion.invoke(<dispatch receiver>: Foo.Companion, param: kotlin.Int): Foo
+          valueParameters = [
+            KaVariableSignature:
+              name = param
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = param: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Foo.Companion.invoke
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo
+          symbol = <constructor>(): Foo
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public constructor Foo() defined in Foo>
+    isInBestCandidates = false

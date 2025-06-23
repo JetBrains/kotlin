@@ -1,0 +1,2 @@
+KtCallExpression(132,142): 'Foo(param)'
+  NO_CANDIDATES

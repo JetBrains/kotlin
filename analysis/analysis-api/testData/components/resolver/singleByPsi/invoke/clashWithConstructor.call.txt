@@ -1,0 +1,36 @@
+KtCallExpression(132,142): 'Foo(param)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      argumentMapping = {
+        param -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = Foo
+          isSafeNavigation = false
+          type = Foo.Companion
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Foo
+          symbol = /Foo.Companion.invoke(<dispatch receiver>: Foo.Companion, param: kotlin.Int): Foo
+          valueParameters = [
+            KaVariableSignature:
+              name = param
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = param: kotlin.Int
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /Foo.Companion.invoke
+      typeArgumentsMapping = {}

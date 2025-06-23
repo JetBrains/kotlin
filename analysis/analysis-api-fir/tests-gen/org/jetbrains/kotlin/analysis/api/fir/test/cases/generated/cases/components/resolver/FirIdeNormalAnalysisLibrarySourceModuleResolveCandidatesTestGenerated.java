@@ -2816,6 +2816,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("clashWithConstructor.kt")
+    public void testClashWithConstructor() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/clashWithConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("functionClash.kt")
     public void testFunctionClash() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/functionClash.kt");

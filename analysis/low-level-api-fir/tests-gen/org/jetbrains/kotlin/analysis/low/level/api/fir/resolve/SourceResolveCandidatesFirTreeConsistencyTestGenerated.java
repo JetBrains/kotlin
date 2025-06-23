@@ -2876,6 +2876,12 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("clashWithConstructor.kt")
+    public void testClashWithConstructor() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/clashWithConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("functionClash.kt")
     public void testFunctionClash() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/functionClash.kt");
