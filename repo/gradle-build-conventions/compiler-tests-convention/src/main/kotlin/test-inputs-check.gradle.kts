@@ -6,6 +6,7 @@ import org.gradle.internal.os.OperatingSystem
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
 tasks.withType<Test>().names.forEach { taskName ->
     tasks.named<Test>(taskName) {
+        ignoreFailures = false
         val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
 
         // Disable checks on windows until we fix KTI-2322
@@ -136,7 +137,8 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "$konanDataDir/-", "read,write,delete,execute";""",
                                         """permission java.io.FilePermission "$konanDataDir", "read";""",
                                         """permission java.io.FilePermission "/bin/sh", "execute";""",
-                                        """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""" // DependencyDownloader.kt
+                                        """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
+                                        """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     )
                                     if (nativeHome.isPresent) {
                                         konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
