@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -56,11 +57,13 @@ internal fun KaSession.jvmExposeBoxedMode(callableSymbol: KaCallableSymbol): Jvm
     }
 
     val module = containingClass?.containingModule ?: callableSymbol.containingModule
-    return if (module is KaSourceModule && module.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)) {
-        JvmExposeBoxedMode.IMPLICIT
-    } else {
-        JvmExposeBoxedMode.NONE
+    val isFeatureEnabled = when (module) {
+        is KaSourceModule -> module.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+        is KaScriptModule -> module.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitJvmExposeBoxed)
+        else -> false
     }
+
+    return if (isFeatureEnabled) JvmExposeBoxedMode.IMPLICIT else JvmExposeBoxedMode.NONE
 }
 
 internal class MethodGenerationResult(val isRegularMethodRequired: Boolean, val isBoxedMethodRequired: Boolean) {
