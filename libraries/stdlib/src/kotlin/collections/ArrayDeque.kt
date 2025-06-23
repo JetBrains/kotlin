@@ -43,7 +43,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
      * Constructs a deque that contains the same elements as the specified [elements] collection in the same order.
      */
     public constructor(elements: Collection<E>) {
-        elementData = elements.toTypedArray()
+        elementData = elements.toArray()
         size = elementData.size
         if (elementData.isEmpty()) elementData = emptyElementData
     }
