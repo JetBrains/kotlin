@@ -37,23 +37,6 @@ object KlibCompilerInvocationTestUtils {
         // Customize the source code of a module before compiling it to a KLIB.
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
 
-        // Build a KLIB from a module.
-        fun buildKlib(
-            moduleName: String,
-            buildDirs: ModuleBuildDirs,
-            dependencies: Dependencies,
-            klibFile: File,
-            compilerEdition: KlibCompilerEdition,
-            compilerArguments: List<String>,
-        )
-
-        // Build a binary (executable) file given the main KLIB and the rest of dependencies.
-        fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies)
-
-        // Take measures if the build directory is non-empty before the compilation
-        // (ex: backup the previously generated artifacts stored in the build directory).
-        fun onNonEmptyBuildDirectory(directory: File)
-
         // A way to check if a test is ignored or not. Override this function if necessary.
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
             if (projectInfo.muted) return true
@@ -63,6 +46,27 @@ object KlibCompilerInvocationTestUtils {
 
         // How to handle the test that is known to be ignored.
         fun onIgnoredTest()
+    }
+
+    interface ArtifactBuilder {
+        /** Build a KLIB from a module. */
+        fun buildKlib(
+            moduleName: String,
+            buildDirs: ModuleBuildDirs,
+            dependencies: Dependencies,
+            klibFile: File,
+            compilerEdition: KlibCompilerEdition,
+            compilerArguments: List<String>,
+        )
+
+        /** Build a binary (executable) file given the main KLIB and the rest of dependencies. */
+        fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies)
+
+        /**
+         * Take measures if the build directory is non-empty before the compilation
+         * (ex: backup the previously generated artifacts stored in the build directory).
+         */
+        fun onNonEmptyBuildDirectory(directory: File)
     }
 
     data class Dependency(val moduleName: String, val libraryFile: File)
@@ -97,6 +101,7 @@ object KlibCompilerInvocationTestUtils {
 
     fun runTest(
         testConfiguration: TestConfiguration,
+        artifactBuilder: ArtifactBuilder,
         compilerEditionChange: KlibCompilerChangeScenario,
     ) =
         with(testConfiguration) {
@@ -166,7 +171,7 @@ object KlibCompilerInvocationTestUtils {
                     }
 
                     if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
-                        onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
+                        artifactBuilder.onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
 
                     val regularDependencies = hashSetOf<Dependency>()
                     val friendDependencies = hashSetOf<Dependency>()
@@ -188,7 +193,7 @@ object KlibCompilerInvocationTestUtils {
 
                     val compilerEdition = compilerEditionChange.getCompilerEditionForKlib(moduleStep.compilerCodename)
 
-                    buildKlib(
+                    artifactBuilder.buildKlib(
                         moduleInfo.moduleName,
                         moduleBuildDirs,
                         dependencies,
@@ -202,7 +207,7 @@ object KlibCompilerInvocationTestUtils {
             val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
             val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
 
-            buildBinaryAndRun(mainModuleDependency, binaryDependencies)
+            artifactBuilder.buildBinaryAndRun(mainModuleDependency, binaryDependencies)
         }
 
     private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {

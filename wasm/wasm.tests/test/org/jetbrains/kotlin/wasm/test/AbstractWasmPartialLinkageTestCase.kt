@@ -41,9 +41,12 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         buildDir.deleteRecursively()
     }
 
-    private inner class WasmTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
+    class WasmTestConfiguration(
+        testPath: String,
+        override val buildDir: File,
+        val compilerType: CompilerType,
+    ) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
-        override val buildDir: File get() = this@AbstractWasmPartialLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isWasm" to "true")
         override val targetBackend get() = TargetBackend.WASM
@@ -55,34 +58,42 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
             }
         }
 
-        override fun buildKlib(
-            moduleName: String,
-            buildDirs: ModuleBuildDirs,
-            dependencies: Dependencies,
-            klibFile: File,
-            compilerEdition: KlibCompilerEdition,
-            compilerArguments: List<String>
-        ) = this@AbstractWasmPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerArguments)
-
-        override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
-            this@AbstractWasmPartialLinkageTestCase.buildBinaryAndRun(mainModule, otherDependencies)
-
-        override fun onNonEmptyBuildDirectory(directory: File) {
-            directory.listFiles()?.forEach(File::deleteRecursively)
-        }
-
         override fun onIgnoredTest() {
             /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
+        }
+
+        companion object {
+            private const val BOX_FUN_FQN = "box"
         }
     }
 
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) = KlibCompilerInvocationTestUtils.runTest(
-        testConfiguration = WasmTestConfiguration(testPath),
-        compilerEditionChange = KlibCompilerChangeScenario.NoChange,
-    )
+    fun runTest(@TestDataFile testPath: String) {
+        val configuration = WasmTestConfiguration(
+            testPath = testPath,
+            buildDir = buildDir,
+            compilerType = compilerType,
+        )
 
-    fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File, compilerArguments: List<String>) {
+        KlibCompilerInvocationTestUtils.runTest(
+            testConfiguration = configuration,
+            artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
+            compilerEditionChange = KlibCompilerChangeScenario.NoChange,
+        )
+    }
+}
+
+internal class WasmCompilerInvocationTestArtifactBuilder(
+    private val configuration: AbstractWasmPartialLinkageTestCase.WasmTestConfiguration,
+) : KlibCompilerInvocationTestUtils.ArtifactBuilder {
+    override fun buildKlib(
+        moduleName: String,
+        buildDirs: ModuleBuildDirs,
+        dependencies: Dependencies,
+        klibFile: File,
+        compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
+    ) {
         val kotlinSourceFilePaths = mutableListOf<String>()
 
         buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
@@ -116,8 +127,11 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         )
     }
 
-    private fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {
-        val binariesDir: File = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
+    override fun buildBinaryAndRun(
+        mainModule: Dependency,
+        otherDependencies: Dependencies,
+    ) {
+        val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
         runCompilerViaCLI(
             listOf(
@@ -133,8 +147,8 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
                 K2JSCompilerArguments::wasm.cliArgument,
             ),
             listOf(
-                K2JSCompilerArguments::cacheDirectory.cliArgument(buildDir.resolve("libs-cache").absolutePath),
-            ).takeIf { compilerType.useIc },
+                K2JSCompilerArguments::cacheDirectory.cliArgument( configuration.buildDir.resolve("libs-cache").absolutePath),
+            ).takeIf { configuration.compilerType.useIc },
             otherDependencies.toCompilerArgs(),
         )
 
@@ -197,8 +211,11 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
             )
     }
 
+    override fun onNonEmptyBuildDirectory(directory: File) {
+        directory.listFiles()?.forEach(File::deleteRecursively)
+    }
+
     companion object {
         private const val BIN_DIR_NAME = "_bins_wasm"
-        private const val BOX_FUN_FQN = "box"
     }
 }
