@@ -7554,6 +7554,12 @@ public class IrBlackBoxInlineCodegenWithIrInlinerTestGenerated extends AbstractI
         }
 
         @Test
+        @TestMetadata("syntheticAccessorDefaultValues.kt")
+        public void testSyntheticAccessorDefaultValues() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorDefaultValues.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
         public void testUsePrivateTopLevelConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
