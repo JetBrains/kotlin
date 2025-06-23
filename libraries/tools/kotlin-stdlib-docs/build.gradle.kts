@@ -84,7 +84,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
         val moduleDirName = "kotlin-stdlib"
         with(pluginsMapConfiguration) {
             put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-            put("org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.CompilerDescriptorAnalysisPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }" }""")
         }
         if (isLatest) {
@@ -219,6 +218,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceLinksFromRoot()
             }
         }
+        fixIntersectedSourceRootsAndSamples(dokkaSourceSets, "stdlib")
     }
 
 fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
@@ -409,6 +409,7 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceLinksFromRoot()
             }
         }
+        fixIntersectedSourceRootsAndSamples(dokkaSourceSets, "kotlin.test")
     }
 
 
@@ -488,5 +489,113 @@ run {
             latestAll.configure { dependsOn(versionAll) }
         }
         buildAllVersions.configure { dependsOn(versionStdlib, versionTest, versionAll) }
+    }
+}
+
+/**
+ * The Dokka K2 does not support intersecting source or sample roots
+ * https://github.com/Kotlin/dokka/issues/3701
+ *
+ * As a workaround, the intersecting roots may be copied and source links should be fixed
+ *
+ * This function detects such source and sample roots, copy them and fix source links.
+ * It should be called after all other configurations
+ */
+fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
+    dokkaSourceSets: NamedDomainObjectContainer<GradleDokkaSourceSetBuilder>,
+    libraryName: String
+) {
+    val kotlin_library_dir = file("$kotlin_root/libraries/$libraryName")
+
+    fun intersectOfNormalizedPaths(normalizedPaths: Set<File>, normalizedPaths2: Set<File>): Set<File> {
+        val result = mutableSetOf<File>()
+        for (p1 in normalizedPaths) {
+            for (p2 in normalizedPaths2) {
+                if (p1.startsWith(p2) || p2.startsWith(p1)) {
+                    result.add(p1)
+                    result.add(p2)
+                }
+            }
+        }
+        return result
+    }
+
+    fun Set<File>.normalize() = mapTo(mutableSetOf()) { it.normalize() }
+    fun intersect(paths: Set<File>, paths2: Set<File>): Set<File> = intersectOfNormalizedPaths(paths.normalize(), paths2.normalize())
+
+    val sourceSets = dokkaSourceSets.toList()
+    val temporaryDirectory = buildDir.resolve("temporary_dokka_source_sets/$libraryName/").toPath()
+
+    val replacementsSources = mutableMapOf<String, MutableMap<File, File>>()
+    val replacementsSamples = mutableMapOf<String, MutableMap<File, File>>()
+
+    for (i in sourceSets.indices) {
+        for (j in i + 1 until sourceSets.size) {
+            intersect(
+                sourceSets[i].sourceRoots.toSet(),
+                sourceSets[j].sourceRoots.toSet()
+            ).forEach {
+                val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                replacementsSources.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
+                replacementsSources.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[j].name).resolve(relativePath).toFile()
+            }
+
+            intersect(
+                sourceSets[i].samples.toSet(),
+                sourceSets[j].samples.toSet()
+            ).forEach {
+                val relativePath = kotlin_library_dir.toPath().relativize(it.toPath())
+                replacementsSamples.getOrPut(sourceSets[i].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[i].name).resolve(relativePath).toFile()
+                replacementsSamples.getOrPut(sourceSets[j].name, ::mutableMapOf)[it] =
+                    temporaryDirectory.resolve(sourceSets[j].name).resolve(relativePath).toFile()
+            }
+        }
+    }
+    replacementsSamples.forEach { (sourceSetName, replacements) ->
+        val sourceSet = dokkaSourceSets[sourceSetName]
+
+        // replace samples here
+        sourceSet.samples.setFrom(sourceSet.samples.map { replacements[it] ?: it })
+        sourceSet.samples.forEach { println(it) }
+    }
+
+    val kotlin_library_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/$libraryName"
+    replacementsSources.forEach { (sourceSetName, replacements) ->
+        val sourceSet = dokkaSourceSets[sourceSetName]
+        // replace sourceRoots here
+        sourceSet.sourceRoots.setFrom(sourceSet.sourceRoots.map { replacements[it] ?: it })
+
+        replacements.forEach { (original, replacement) ->
+            // setup source-links
+            sourceSet.sourceLink {
+                remoteUrl.set(URL("$kotlin_library_url/${kotlin_library_dir.toPath().relativize(original.toPath())}"))
+                localDirectory.set(replacement)
+                remoteLineSuffix.set("#L")
+            }
+        }
+
+        // The order of source links is important
+        // source links to temporary directories should have higher priority
+        sourceSet.sourceLinks.set(sourceSet.sourceLinks.get().reversed())
+
+        // work with files
+        doFirst {
+            temporaryDirectory.toFile().deleteRecursively()
+            replacementsSamples.forEach { (_, replacements) ->
+                replacements.forEach { (original, replacement) ->
+                    // copy files
+                    original.copyRecursively(replacement, overwrite = true)
+                }
+            }
+            replacementsSources.forEach { (_, replacements) ->
+                replacements.forEach { (original, replacement) ->
+                    // copy files
+                    original.copyRecursively(replacement, overwrite = true)
+                }
+            }
+        }
     }
 }
