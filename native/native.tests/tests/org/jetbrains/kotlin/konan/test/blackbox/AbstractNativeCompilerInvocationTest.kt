@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.opentest4j.TestAbortedException
 import java.io.File
 
-abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeCompilerInvocationTest : AbstractNativeSimpleTest() {
     protected inner class NativeTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
-        override val buildDir get() = this@AbstractKlibLinkageTest.buildDir
-        override val stdlibFile get() = this@AbstractKlibLinkageTest.stdlibFile
+        override val buildDir get() = this@AbstractNativeCompilerInvocationTest.buildDir
+        override val stdlibFile get() = this@AbstractNativeCompilerInvocationTest.stdlibFile
         override val targetBackend get() = TargetBackend.NATIVE
 
         override val testModeConstructorParameters = buildMap {
@@ -60,7 +60,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
             compilerArguments: List<String>,
-        ) = this@AbstractKlibLinkageTest.buildKlib(
+        ) = this@AbstractNativeCompilerInvocationTest.buildKlib(
             moduleName,
             buildDirs.sourceDir,
             dependencies,
@@ -71,7 +71,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
 
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
-            this@AbstractKlibLinkageTest.buildBinaryAndRun(mainModule, otherDependencies)
+            this@AbstractNativeCompilerInvocationTest.buildBinaryAndRun(mainModule, otherDependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 

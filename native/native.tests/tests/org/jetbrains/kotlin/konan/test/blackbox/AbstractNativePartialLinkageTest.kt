@@ -7,21 +7,15 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
-import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
-import java.io.File
 
 @Tag("partial-linkage")
 @UsePartialLinkage(UsePartialLinkage.Mode.DEFAULT)
-abstract class AbstractNativePartialLinkageTest : AbstractKlibLinkageTest() {
+abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocationTest() {
 
     // The entry point to generated test classes.
     protected fun runTest(@TestDataFile testPath: String) {
