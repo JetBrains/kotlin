@@ -283,7 +283,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     private val metaAnnotationsFromPlugins: Set<AnnotationFqn> = session.registeredPluginAnnotations.metaAnnotations
 
     protected open val shouldRecordIntoPredicateBasedProvider: Boolean
-        get() = true
+        get() = session.registeredPluginAnnotations.hasRegisteredAnnotations
 
     @PrivateForInline
     val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
