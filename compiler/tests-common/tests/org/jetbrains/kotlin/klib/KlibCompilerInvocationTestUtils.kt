@@ -6,15 +6,27 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
 import java.io.File
 
-object PartialLinkageTestUtils {
+/**
+ * Utilities for building tests with repetitive KLIB-based compiler invocations.
+ *
+ * Examples:
+ * - Partial linkage tests:
+ *   - Build multiple KLIBs with dependencies between some of them
+ *   - Rebuild and substitute some of those KLIBs
+ *   - Finally, build a binary and run it
+ * - KLIB compatibility tests:
+ *   - Build KLIBs with one [KlibCompilerEdition]
+ *   - Then build a binary with another [KlibCompilerEdition]
+ */
+object KlibCompilerInvocationTestUtils {
     interface TestConfiguration {
         val testDir: File
         val buildDir: File

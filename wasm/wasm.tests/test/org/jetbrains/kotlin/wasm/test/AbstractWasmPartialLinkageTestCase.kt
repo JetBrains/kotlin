@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
@@ -41,7 +41,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         buildDir.deleteRecursively()
     }
 
-    private inner class WasmTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
+    private inner class WasmTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
         override val buildDir: File get() = this@AbstractWasmPartialLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
@@ -77,7 +77,7 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
     }
 
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(
+    fun runTest(@TestDataFile testPath: String) = KlibCompilerInvocationTestUtils.runTest(
         testConfiguration = WasmTestConfiguration(testPath),
         compilerEditionChange = KlibCompilerChangeScenario.NoChange,
     )
