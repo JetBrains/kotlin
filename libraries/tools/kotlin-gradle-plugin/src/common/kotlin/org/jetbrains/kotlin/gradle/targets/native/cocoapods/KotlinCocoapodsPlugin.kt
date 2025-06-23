@@ -271,12 +271,27 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun reportDeprecatedPropertiesUsage(project: Project) {
-        listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
-            .filter { project.findProperty(it) != null }
-            .takeIf { it.isNotEmpty() }
-            ?.let {
-                project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(it))
+        val deprecatedProperties = listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
+
+        // Create a list of providers for the deprecated properties
+        val propertyProviders: List<Provider<String>> = deprecatedProperties.map { propertyName ->
+            project.providers.gradleProperty(propertyName)
+        }
+
+        // Filter for providers that have a value defined
+        val presentProviders: List<Provider<String>> = propertyProviders.filter { it.isPresent }
+
+        // If any deprecated properties are present, report them.
+        if (presentProviders.isNotEmpty()) {
+            // We need the *names* of the properties, not their values, for the diagnostic.
+            // To find the names of the present properties, we must unfortunately re-check.
+            // This avoids calling .get() on the providers, which could be expensive or fail.
+            val presentPropertyNames = deprecatedProperties.filter { propertyName ->
+                project.providers.gradleProperty(propertyName).isPresent
             }
+
+            project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(presentPropertyNames))
+        }
     }
 
     private fun createInterops(
