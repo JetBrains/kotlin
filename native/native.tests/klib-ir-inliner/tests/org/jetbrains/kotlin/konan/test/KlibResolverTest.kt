@@ -686,11 +686,16 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         }
 
         private inline fun expectFailingAsNotFound(dependencyNameInError: String, block: () -> Unit) {
+            val normalizedDependencyNameInError = dependencyNameInError.replace('/', File.separatorChar)
+
             try {
                 block()
-                fail("Normally should not get here")
+                fail { "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". But was successful." }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$dependencyNameInError\""))
+                assertTrue(cte.reason.contains("error: KLIB resolver: Could not find \"$normalizedDependencyNameInError\"")) {
+                    "The test was expected to fail with the error due to unresolved KLIB \"$dependencyNameInError\". " +
+                            "But the actual error message is (${cte.reason.toByteArray().size} bytes, ${cte.reason.lineSequence().count()} lines):\n${cte.reason}"
+                }
             }
         }
 
