@@ -203,11 +203,12 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
             this is FirConstructor -> {
                 val classSymbol = this.getContainingClassSymbol()
-                if (
-                    classSymbol is FirRegularClassSymbol
-                    && (classSymbol.isEnumClass || classSymbol.isSealed)
-                ) {
-                    Visibilities.Private
+                if (classSymbol is FirRegularClassSymbol) {
+                    when {
+                        classSymbol.isSealed -> Visibilities.Protected
+                        classSymbol.isEnumClass -> Visibilities.Private
+                        else -> defaultVisibility
+                    }
                 } else {
                     defaultVisibility
                 }
