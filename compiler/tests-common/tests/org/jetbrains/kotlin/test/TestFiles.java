@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -46,7 +47,7 @@ public class TestFiles {
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     // Must be same as in AdditionalDiagnosticsSourceFilesProvider.directiveToFileMap
-    private static final String checkTypeWithExact = "compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt";
+    private static final String checkTypeWithExact = ForTestCompileRuntime.transformTestDataPath("compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt").getPath();
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
