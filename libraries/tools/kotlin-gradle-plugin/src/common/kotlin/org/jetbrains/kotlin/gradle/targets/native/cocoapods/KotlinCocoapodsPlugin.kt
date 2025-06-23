@@ -21,6 +21,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.daemon.common.trimQuotes
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.addExtension
@@ -271,12 +272,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun reportDeprecatedPropertiesUsage(project: Project) {
-        listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
-            .filter { project.findProperty(it) != null }
-            .takeIf { it.isNotEmpty() }
-            ?.let {
-                project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(it))
-            }
+        val deprecatedProperties = listOf(CFLAGS_PROPERTY, FRAMEWORK_PATHS_PROPERTY, HEADER_PATHS_PROPERTY)
+
+        val presentPropertyNames = deprecatedProperties.filter { propertyName ->
+            project.propertiesService.flatMap { it.property(propertyName, project) }.orNull != null
+        }
+
+        if (presentPropertyNames.isNotEmpty()) {
+            project.reportDiagnostic(CocoapodsPluginDiagnostics.DeprecatedPropertiesUsed(presentPropertyNames))
+        }
     }
 
     private fun createInterops(
