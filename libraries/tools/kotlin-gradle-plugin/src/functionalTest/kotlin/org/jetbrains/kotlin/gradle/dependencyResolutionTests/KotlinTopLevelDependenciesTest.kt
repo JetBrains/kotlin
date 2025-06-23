@@ -11,7 +11,14 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleComponent
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.GradleMetadataComponent.Variant
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.MavenComponent
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.generateMockRepository
+import org.jetbrains.kotlin.gradle.unitTests.uklibs.jvmRuntimeAttributes
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -125,51 +132,99 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
         }
     }
 
+    private fun jvmComponent(module: String): GradleComponent {
+        val gradleComponentMetadata = GradleMetadataComponent.Component(
+            group = "test",
+            module = module,
+            version = "1.0",
+        )
+        val mavenComponentMetadata = MavenComponent(
+            gradleComponentMetadata.group, gradleComponentMetadata.module, gradleComponentMetadata.version,
+            packaging = null,
+            dependencies = listOf(),
+            true,
+        )
+        val jvmRuntimeVariant = Variant(
+            name = "jvmRuntimeElements",
+            attributes = jvmRuntimeAttributes,
+            files = listOf(
+                GradleMetadataComponent.MockVariantFile(
+                    artifactId = module,
+                    version = "1.0",
+                    extension = "jar",
+                )
+            ),
+            dependencies = listOf()
+        )
+        return GradleComponent(
+            GradleMetadataComponent(
+                component = gradleComponentMetadata,
+                variants = listOf(jvmRuntimeVariant),
+            ),
+            mavenComponentMetadata,
+        )
+    }
+
     @Test
     fun topLevelDependenciesAreCorrectlyPropagatedToResolvableConfigurationsInCompilation() {
-        val repoRoot = tempFolder.newFolder()
+        val repo = generateMockRepository(
+            tempFolder,
+            listOf(
+                jvmComponent("top-level-api"),
+                jvmComponent("top-level-implementation"),
+                jvmComponent("top-level-compileOnly"),
+                jvmComponent("top-level-runtimeOnly"),
+                jvmComponent("top-level-test-implementation"),
+                jvmComponent("top-level-test-compileOnly"),
+                jvmComponent("top-level-test-runtimeOnly"),
+            )
+        )
         val project = buildProjectWithMPP(preApplyCode = {
             enableDefaultStdlibDependency(false)
             enableDefaultJsDomApiDependency(false)
         }) {
-            val dsl = SourceSetDependenciesDsl(project)
             project.defaultTargets()
+            project.repositories.maven(repo)
             project.kotlin {
                 dependencies {
-                    with(dsl) {
-                        api(mockedDependency("top-level-api", "1.0"))
-                        implementation(mockedDependency("top-level-implementation", "1.0"))
-                        compileOnly(mockedDependency("top-level-compileOnly", "1.0"))
-                        runtimeOnly(mockedDependency("top-level-runtimeOnly", "1.0"))
+                    api("test:top-level-api:1.0")
+                    implementation("test:top-level-implementation:1.0")
+                    compileOnly("test:top-level-compileOnly:1.0")
+                    runtimeOnly("test:top-level-runtimeOnly:1.0")
 
-                        testImplementation(mockedDependency("top-level-test-implementation", "1.0"))
-                        testCompileOnly(mockedDependency("top-level-test-compileOnly", "1.0"))
-                        testRuntimeOnly(mockedDependency("top-level-test-runtimeOnly", "1.0"))
-                    }
+                    testImplementation("test:top-level-test-implementation:1.0")
+                    testCompileOnly("test:top-level-test-compileOnly:1.0")
+                    testRuntimeOnly("test:top-level-test-runtimeOnly:1.0")
                 }
             }
-            dsl.mavenRepositoryMock.applyToProject(project, repoRoot)
         }.evaluate()
 
-        val resolvedPerConfigurationComponents: MutableMap<String, MutableSet<String>> = mutableMapOf()
+        val resolvedPerConfigurationComponents: MutableMap<String, Set<String>> = mutableMapOf()
         project.multiplatformExtension.targets
             .filter { it.platformType != KotlinPlatformType.common }
             .forEach { target ->
                 target.compilations.forEach { compilation ->
-                    project.configurations.getByName(
-                        compilation.compileDependencyConfigurationName
-                    ).incoming.resolutionResult.allComponents.forEach { component ->
-                        resolvedPerConfigurationComponents.getOrPut(compilation.compileDependencyConfigurationName, { mutableSetOf() })
-                            .add(component.id.displayName)
-                        compilation.runtimeDependencyConfigurationName?.let { runtimeConfiguration ->
-                            resolvedPerConfigurationComponents.getOrPut(runtimeConfiguration, { mutableSetOf() })
-                                .add(component.id.displayName)
-                        }
+                    val compileClasspath = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+                    // Make sure resolution doesn't fail
+                    compileClasspath.resolve()
+                    resolvedPerConfigurationComponents[compilation.compileDependencyConfigurationName] = compileClasspath
+                        .incoming.resolutionResult.allComponents.map { component ->
+                            component.id.displayName
+                        }.toSet()
+
+                    compilation.runtimeDependencyConfigurationName?.let { runtimeConfiguration ->
+                        val runtimeClasspath = project.configurations.getByName(runtimeConfiguration)
+                        // Make sure resolution doesn't fail
+                        runtimeClasspath.resolve()
+                        resolvedPerConfigurationComponents[runtimeConfiguration] = runtimeClasspath
+                            .incoming.resolutionResult.allComponents.map { component ->
+                                component.id.displayName
+                            }.toSet()
                     }
                 }
             }
 
-        assertEquals(
+        assertEquals<PrettyPrint<Map<String, Set<String>>>>(
             mutableMapOf(
                 "jsCompileClasspath" to mutableSetOf(
                     "root project :",
@@ -180,8 +235,8 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 "jsRuntimeClasspath" to mutableSetOf(
                     "root project :",
                     "test:top-level-api:1.0",
-                    "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
+                    "test:top-level-runtimeOnly:1.0",
                 ),
                 "jsTestCompileClasspath" to mutableSetOf(
                     "root project :",
@@ -194,10 +249,10 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 "jsTestRuntimeClasspath" to mutableSetOf(
                     "root project :",
                     "test:top-level-api:1.0",
-                    "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
-                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-runtimeOnly:1.0",
                     "test:top-level-test-implementation:1.0",
+                    "test:top-level-test-runtimeOnly:1.0",
                 ),
                 "jvmCompileClasspath" to mutableSetOf(
                     "root project :",
@@ -208,8 +263,8 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 "jvmRuntimeClasspath" to mutableSetOf(
                     "root project :",
                     "test:top-level-api:1.0",
-                    "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
+                    "test:top-level-runtimeOnly:1.0",
                 ),
                 "jvmTestCompileClasspath" to mutableSetOf(
                     "root project :",
@@ -222,10 +277,10 @@ class KotlinTopLevelDependenciesTest : SourceSetDependenciesResolution() {
                 "jvmTestRuntimeClasspath" to mutableSetOf(
                     "root project :",
                     "test:top-level-api:1.0",
-                    "test:top-level-compileOnly:1.0",
                     "test:top-level-implementation:1.0",
-                    "test:top-level-test-compileOnly:1.0",
+                    "test:top-level-runtimeOnly:1.0",
                     "test:top-level-test-implementation:1.0",
+                    "test:top-level-test-runtimeOnly:1.0",
                 ),
                 "linuxX64CompileKlibraries" to mutableSetOf(
                     "root project :",
