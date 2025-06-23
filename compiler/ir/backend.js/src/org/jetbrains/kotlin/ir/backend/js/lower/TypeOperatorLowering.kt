@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.interfaceId
+import org.jetbrains.kotlin.ir.backend.js.interfaceUsedAsTypeOperand
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
@@ -21,7 +23,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
@@ -45,7 +49,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val eqeq = context.irBuiltIns.eqeqSymbol
     private val booleanNot = context.irBuiltIns.booleanNotSymbol
 
-    private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
+    private val jsIsInterfaceIntrinsicSymbol get() = context.intrinsics.jsIsInterfaceIntrinsicSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
     private val isSuspendFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
 
@@ -258,8 +262,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)
-                    toType.isComparable() -> generateComparableCheck(argument)
-                    toType.isCharSequence() -> generateCharSequenceCheck(argument)
+                    toType.isComparable() -> generateComparableCheck(argument, toType)
+                    toType.isCharSequence() -> generateCharSequenceCheck(argument, toType)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
@@ -344,11 +348,15 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             private fun generateNumberCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(context.intrinsics.isNumberSymbol).apply { arguments[0] = argument }
 
-            private fun generateComparableCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { arguments[0] = argument }
+            private fun generateComparableCheck(argument: IrExpression, toType: IrType): IrCall {
+                assignInterfaceIdIfNeeded(toType)
+                return JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { arguments[0] = argument }
+            }
 
-            private fun generateCharSequenceCheck(argument: IrExpression) =
-                JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { arguments[0] = argument }
+            private fun generateCharSequenceCheck(argument: IrExpression, toType: IrType): IrCall {
+                assignInterfaceIdIfNeeded(toType)
+                return JsIrBuilder.buildCall(context.intrinsics.isCharSequenceSymbol).apply { arguments[0] = argument }
+            }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
@@ -356,11 +364,18 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             }
 
             private fun generateInterfaceCheck(argument: IrExpression, toType: IrType): IrExpression {
-                val irType = wrapTypeReference(toType)
-                return JsIrBuilder.buildCall(isInterfaceSymbol).apply {
+                assignInterfaceIdIfNeeded(toType)
+                return JsIrBuilder.buildCall(jsIsInterfaceIntrinsicSymbol).apply {
+                    typeArguments[0] = toType
                     arguments[0] = argument
-                    arguments[1] = irType
                 }
+            }
+
+            private fun assignInterfaceIdIfNeeded(toType: IrType) {
+                if (!context.supportsInterfaceMetadataStripping) return
+                val klass = toType.classOrFail.owner
+                klass.interfaceUsedAsTypeOperand = true
+                context.getInterfaceId(toType.classOrFail.owner)
             }
 
             private fun generateIsExternalObject(argument: IrExpression, toType: IrType): IrExpression {

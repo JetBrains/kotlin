@@ -119,3 +119,6 @@ fun IrConstructorCall.associatedObject(): IrClass? {
     val klass = ((arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
     return if (klass.isObject) klass else null
 }
+
+internal val IrClass.hasAssociatedObjects: Boolean
+    get() = annotations.any { it.associatedObject() != null }

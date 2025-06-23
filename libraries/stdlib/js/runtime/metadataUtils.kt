@@ -37,6 +37,7 @@ internal const val METADATA_KIND_INTERFACE = "interface"
 internal const val METADATA_KIND_OBJECT = "object"
 internal const val METADATA_KIND_CLASS = "class"
 
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataFor(
     kind: String,
     ctor: Ctor,
@@ -48,6 +49,81 @@ internal fun initMetadataFor(
     associatedObjectKey: Number?,
     associatedObjects: dynamic
 ) {
+    initMetadataWithDynamicInterfaceMask(
+        kind,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
+}
+
+private fun initMetadataWithDynamicInterfaceMask(
+    kind: String,
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadata(
+        kind,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects,
+        getInterfaceMask = ::implement,
+    )
+}
+
+private fun initMetadataWithStaticInterfaceMask(
+    kind: String,
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadata(
+        kind,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects,
+        getInterfaceMask = { it.toBitMask() },
+    )
+}
+
+private inline fun <Interfaces : Any> initMetadata(
+    kind: String,
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Interfaces?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic,
+    getInterfaceMask: (Interfaces) -> BitMask,
+) {
     if (parent != null) {
         js("""
           ctor.prototype = Object.create(parent.prototype)
@@ -57,13 +133,13 @@ internal fun initMetadataFor(
 
     val metadata = createMetadata(kind, name, defaultConstructor, associatedObjectKey, associatedObjects, suspendArity)
     ctor.`$metadata$` = metadata
-
     if (interfaces != null) {
         val receiver = if (metadata.iid != VOID) ctor else ctor.prototype
-        receiver.`$imask$` = implement(interfaces)
+        receiver.`$imask$` = getInterfaceMask(interfaces)
     }
 }
 
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForClass(
     ctor: Ctor,
     name: String?,
@@ -74,10 +150,65 @@ internal fun initMetadataForClass(
     associatedObjectKey: Number?,
     associatedObjects: dynamic
 ) {
-    val kind = METADATA_KIND_CLASS
-    initMetadataFor(kind, ctor, name, defaultConstructor, parent, interfaces, suspendArity, associatedObjectKey, associatedObjects)
+    initMetadataForClassWithDynamicInterfaceMask(
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
 }
 
+internal fun initMetadataForClassWithDynamicInterfaceMask(
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadataWithDynamicInterfaceMask(
+        METADATA_KIND_CLASS,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects,
+    )
+}
+
+internal fun initMetadataForClassWithStaticInterfaceMask(
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadataWithStaticInterfaceMask(
+        METADATA_KIND_CLASS,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects,
+    )
+}
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForObject(
     ctor: Ctor,
     name: String?,
@@ -88,10 +219,68 @@ internal fun initMetadataForObject(
     associatedObjectKey: Number?,
     associatedObjects: dynamic
 ) {
-    val kind = METADATA_KIND_OBJECT
-    initMetadataFor(kind, ctor, name, defaultConstructor, parent, interfaces, suspendArity, associatedObjectKey, associatedObjects)
+    initMetadataForObjectWithDynamicInterfaceMask(
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
 }
 
+internal fun initMetadataForObjectWithDynamicInterfaceMask(
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadataWithDynamicInterfaceMask(
+        METADATA_KIND_OBJECT,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
+}
+
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForObjectWithStaticInterfaceMask(
+    ctor: Ctor,
+    name: String?,
+    defaultConstructor: dynamic,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+    associatedObjectKey: Number?,
+    associatedObjects: dynamic
+) {
+    initMetadataWithStaticInterfaceMask(
+        METADATA_KIND_OBJECT,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
+}
+
+// We only emit metadata for interfaces when the interface mask is generated dynamically, so
+// this function doesn't need the "dynamic" and "static" versions.
+@Suppress("unused") // usages are generated by the compiler
 internal fun initMetadataForInterface(
     ctor: Ctor,
     name: String?,
@@ -102,24 +291,141 @@ internal fun initMetadataForInterface(
     associatedObjectKey: Number?,
     associatedObjects: dynamic
 ) {
-    val kind = METADATA_KIND_INTERFACE
-    initMetadataFor(kind, ctor, name, defaultConstructor, parent, interfaces, suspendArity, associatedObjectKey, associatedObjects)
+    initMetadataWithDynamicInterfaceMask(
+        METADATA_KIND_INTERFACE,
+        ctor,
+        name,
+        defaultConstructor,
+        parent,
+        interfaces,
+        suspendArity,
+        associatedObjectKey,
+        associatedObjects
+    )
 }
 
+internal external interface InterfaceIdMetadata {
+    val name: String
+    val associatedObjects: dynamic
+}
+
+// The metadata of interfaces that were used in reflection at least once
+@Suppress("MUST_BE_INITIALIZED")
+private var interfaceIdMetadata: dynamic
+
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForInterfaceId(id: Int, name: String, associatedObjects: dynamic) {
+    if (interfaceIdMetadata === VOID) {
+        interfaceIdMetadata = js("{}")
+    }
+    interfaceIdMetadata[id] = js(
+        """
+        {
+            name: name,
+            associatedObjects: associatedObjects
+        }
+        """
+    )
+}
+
+internal fun getInterfaceIdMetadata(interfaceId: Int): InterfaceIdMetadata? {
+    if (interfaceIdMetadata == null) return null
+    return interfaceIdMetadata[interfaceId]
+}
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForLambda(ctor: Ctor, parent: Ctor?, interfaces: Array<dynamic>?, suspendArity: Array<Int>?) {
-    initMetadataForClass(ctor, "Lambda", VOID, parent, interfaces, suspendArity, VOID, VOID)
+    initMetadataForLambdaWithDynamicInterfaceMask(ctor, parent, interfaces, suspendArity)
 }
 
+internal fun initMetadataForLambdaWithDynamicInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithDynamicInterfaceMask(ctor, "Lambda", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForLambdaWithStaticInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithStaticInterfaceMask(ctor, "Lambda", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForFunctionReference(ctor: Ctor, parent: Ctor?, interfaces: Array<dynamic>?, suspendArity: Array<Int>?) {
-    initMetadataForClass(ctor, "FunctionReference", VOID, parent, interfaces, suspendArity, VOID, VOID)
+    initMetadataForFunctionReferenceWithDynamicInterfaceMask(ctor, parent, interfaces, suspendArity)
 }
 
+internal fun initMetadataForFunctionReferenceWithDynamicInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithDynamicInterfaceMask(ctor, "FunctionReference", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForFunctionReferenceWithStaticInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithStaticInterfaceMask(ctor, "FunctionReference", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForCoroutine(ctor: Ctor, parent: Ctor?, interfaces: Array<dynamic>?, suspendArity: Array<Int>?) {
-    initMetadataForClass(ctor, "Coroutine", VOID, parent, interfaces, suspendArity, VOID, VOID)
+    initMetadataForCoroutineWithDynamicInterfaceMask(ctor, parent, interfaces, suspendArity)
 }
 
+internal fun initMetadataForCoroutineWithDynamicInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithDynamicInterfaceMask(ctor, "Coroutine", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForCoroutineWithStaticInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForClassWithStaticInterfaceMask(ctor, "Coroutine", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "TODO: Remove this after bootstrap advance")
 internal fun initMetadataForCompanion(ctor: Ctor, parent: Ctor?, interfaces: Array<dynamic>?, suspendArity: Array<Int>?) {
-    initMetadataForObject(ctor, "Companion", VOID, parent, interfaces, suspendArity, VOID, VOID)
+    initMetadataForCompanionWithDynamicInterfaceMask(ctor, parent, interfaces, suspendArity)
+}
+
+internal fun initMetadataForCompanionWithDynamicInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<dynamic>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForObjectWithDynamicInterfaceMask(ctor, "Companion", VOID, parent, interfaces, suspendArity, VOID, VOID)
+}
+@Suppress("unused") // usages are generated by the compiler
+internal fun initMetadataForCompanionWithStaticInterfaceMask(
+    ctor: Ctor,
+    parent: Ctor?,
+    interfaces: Array<Int>?,
+    suspendArity: Array<Int>?,
+) {
+    initMetadataForObjectWithStaticInterfaceMask(ctor, "Companion", VOID, parent, interfaces, suspendArity, VOID, VOID)
 }
 
 // Seems like we need to disable this check if variables are used inside js annotation

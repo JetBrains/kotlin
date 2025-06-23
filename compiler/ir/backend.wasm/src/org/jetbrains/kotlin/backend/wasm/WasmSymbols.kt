@@ -45,6 +45,7 @@ class WasmSymbols(
     internal inner class WasmReflectionSymbols : ReflectionSymbols {
         override val createKType: IrSimpleFunctionSymbol = getInternalFunction("createKType")
         override val getKClass: IrSimpleFunctionSymbol = getInternalFunction("getKClass")
+        override val getKClassForInterfaceId: IrSimpleFunctionSymbol get() = error("Not supported in Wasm")
         override val getKClassFromExpression: IrSimpleFunctionSymbol = getInternalFunction("getKClassFromExpression")
         override val createDynamicKType: IrSimpleFunctionSymbol get() = error("Dynamic type is not supported by Wasm")
         override val createKTypeParameter: IrSimpleFunctionSymbol = getInternalFunction("createKTypeParameter")

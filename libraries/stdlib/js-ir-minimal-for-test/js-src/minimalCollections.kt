@@ -26,3 +26,7 @@ public fun LongArray?.contentToString(): String {
 public fun <T> Array<out T>?.contentToString(): String {
     TODO("Not implemented in reduced runtime")
 }
+
+public fun IntArray.toTypedArray(): Array<Int> {
+    return js("[]").slice.call(this)
+}

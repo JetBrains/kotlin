@@ -13,11 +13,6 @@ internal abstract class KClassImpl<T : Any> : KClass<T> {
     override val qualifiedName: String?
         get() = TODO()
 
-    @ExperimentalStdlibApi
-    @SinceKotlin("2.2")
-    override val isInterface: Boolean
-        get() = jClass.asDynamic().`$metadata$`.unsafeCast<Metadata?>()?.kind == METADATA_KIND_INTERFACE
-
     override fun equals(other: Any?): Boolean {
         return when (other) {
             // NothingKClassImpl doesn't provide the jClass property; therefore, process it separately.
@@ -39,6 +34,11 @@ internal abstract class KClassImpl<T : Any> : KClass<T> {
 
 internal class SimpleKClassImpl<T : Any>(override val jClass: JsClass<T>) : KClassImpl<T>() {
     override val simpleName: String? = jClass.asDynamic().`$metadata$`?.simpleName.unsafeCast<String?>()
+
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    override val isInterface: Boolean
+        get() = false
 
     override fun isInstance(value: Any?): Boolean {
         return jsIsType(value, jClass)
@@ -84,4 +84,46 @@ internal object NothingKClassImpl : KClassImpl<Nothing>() {
     override fun equals(other: Any?): Boolean = other === this
 
     override fun hashCode(): Int = 0
+}
+
+internal class InterfaceKClass<T : Any>(val interfaceId: Int) : KClassImpl<T>() {
+    override val jClass: JsClass<T> = initJsClass()
+
+    private fun initJsClass(): JsClass<T> {
+        // kotlinx-serialization relies on the presence of JsClass in KClass instances that represent interfaces,
+        // as well as `$metadata$`:
+        // https://github.com/Kotlin/kotlinx.serialization/blob/4667a1891a925dc9e3e10490c274a875b0be4da6/core/jsMain/src/kotlinx/serialization/internal/Platform.kt#L81
+        // This is why we have to generate this, even though the concept of interfaces having a "constructor" is senseless.
+        //
+        // Hopefully, by the time you are reading this, kotlinx-serialization has already removed that hack, but in any case,
+        // we don't want to break the clients of its older versions who decided to upgrade their Kotlin.
+        val constructor = js("function InterfaceConstructor() {}")
+        val interfaceName = simpleName ?: "Interface$interfaceId"
+
+        // Note: we cannot just do `constructor.name = interfaceName` here, because function names are not writable.
+        js("Object.defineProperty(constructor, 'name', {value: interfaceName})")
+
+        constructor.`$metadata$` = createMetadata(METADATA_KIND_INTERFACE, interfaceName, VOID, VOID, VOID, VOID)
+        return constructor.unsafeCast<JsClass<T>>()
+    }
+
+    override val simpleName: String?
+        get() = getInterfaceIdMetadata(interfaceId)?.name
+
+    override val qualifiedName: String
+        get() = throw UnsupportedOperationException("InterfaceKClass doesn't support qualifiedName")
+
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    override val isInterface: Boolean
+        get() = true
+
+    override fun isInstance(value: Any?): Boolean =
+        value?.let { isInterfaceImpl(it, interfaceId) } ?: false
+
+    override fun equals(other: Any?): Boolean = interfaceId == (other as? InterfaceKClass<*>)?.interfaceId
+
+    override fun hashCode(): Int = interfaceId
+
+    override fun toString(): String = "class $simpleName"
 }

@@ -122,6 +122,17 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
         if (primitiveKClass != null)
             return primitiveKClass
 
+        val klass = typeArgument.classOrNull?.owner
+        if (klass?.isInterface == true && context.supportsInterfaceMetadataStripping) {
+            klass.interfaceUsedInReflection = true
+            context.getInterfaceId(klass)
+            return JsIrBuilder.buildCall(reflectionSymbols.getKClassForInterfaceId, returnType, listOf(typeArgument)).apply {
+                arguments[0] = JsIrBuilder.buildCall(context.intrinsics.jsInterfaceIdIntrinsic).apply {
+                    typeArguments[0] = typeArgument
+                }
+            }
+        }
+
         return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, listOf(typeArgument))
             .apply {
                 arguments[0] = callGetClassByType(typeArgument)
@@ -281,4 +292,3 @@ abstract class ClassReferenceLowering<Context : JsCommonBackendContext>(val cont
         })
     }
 }
-
