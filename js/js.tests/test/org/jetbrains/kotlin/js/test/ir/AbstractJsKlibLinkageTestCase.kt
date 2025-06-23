@@ -37,7 +37,6 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
 
     private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
 
-
     @AfterEach
     fun clearArtifacts() {
         buildDir.deleteRecursively()
@@ -94,14 +93,37 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         }
     }
 
-    protected abstract fun buildKlib(
+    private fun buildKlib(
         moduleName: String,
         buildDirs: ModuleBuildDirs,
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
-    )
+    ) {
+        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
+        val kotlinSourceFilePaths = composeSourceFile(buildDirs)
+
+        // Build KLIB:
+        runCompilerViaCLI(
+            listOf(
+                K2JSCompilerArguments::irProduceKlibFile.cliArgument,
+                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
+                // Halt on any unexpected warning.
+                K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
+                // Tests suppress the INVISIBLE_REFERENCE check.
+                // However, JS doesn't produce the INVISIBLE_REFERENCE error;
+                // As result, it triggers a suppression error warning about the redundant suppression.
+                // This flag is used to disable the warning.
+                K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
+            ),
+            dependencies.toCompilerArgs(),
+            compilerArguments,
+            kotlinSourceFilePaths
+        )
+    }
 
     protected fun composeSourceFile(buildDirs: ModuleBuildDirs): MutableList<String> {
         val kotlinSourceFilePaths = mutableListOf<String>()
