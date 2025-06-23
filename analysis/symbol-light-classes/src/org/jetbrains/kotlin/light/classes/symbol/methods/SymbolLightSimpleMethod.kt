@@ -165,7 +165,7 @@ internal class SymbolLightSimpleMethod private constructor(
                                     functionSymbol.isSuspend -> { // Any?
                                         NullabilityAnnotation.NULLABLE
                                     }
-                                    forceBoxedReturnType(functionSymbol) -> {
+                                    shouldEnforceBoxedReturnType(functionSymbol) -> {
                                         NullabilityAnnotation.NON_NULLABLE
                                     }
                                     else -> {
@@ -194,7 +194,7 @@ internal class SymbolLightSimpleMethod private constructor(
     }
 
     // Inspired by KotlinTypeMapper#forceBoxedReturnType
-    private fun KaSession.forceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
+    private fun KaSession.shouldEnforceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
         val returnType = functionSymbol.returnType
         // 'invoke' methods for lambdas, function literals, and callable references
         // implicitly override generic 'invoke' from a corresponding base class.
@@ -226,7 +226,7 @@ internal class SymbolLightSimpleMethod private constructor(
                 functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiTypes.voidType()
             }
 
-            val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
+            val typeMappingMode = if (shouldEnforceBoxedReturnType(functionSymbol))
                 KaTypeMappingMode.RETURN_TYPE_BOXED
             else
                 KaTypeMappingMode.RETURN_TYPE

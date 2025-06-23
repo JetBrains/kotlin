@@ -203,7 +203,7 @@ internal class SymbolLightAccessorMethod private constructor(
                         if (nullabilityApplicable) {
                             withPropertySymbol { propertySymbol ->
                                 when {
-                                    propertySymbol.isLateInit || forceBoxedReturnType(propertySymbol) -> NullabilityAnnotation.NON_NULLABLE
+                                    propertySymbol.isLateInit || shouldEnforceBoxedReturnType(propertySymbol) -> NullabilityAnnotation.NON_NULLABLE
                                     else -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
                                 }
                             }
@@ -233,7 +233,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, containingPropertyDeclaration)
 
-    private fun KaSession.forceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
+    private fun KaSession.shouldEnforceBoxedReturnType(propertySymbol: KaPropertySymbol): Boolean {
         return isJvmExposedBoxed && typeForValueClass(propertySymbol.returnType) ||
                 propertySymbol.returnType.isPrimitiveBacked &&
                 propertySymbol.allOverriddenSymbols.any { overriddenSymbol ->
@@ -247,7 +247,7 @@ internal class SymbolLightAccessorMethod private constructor(
         withPropertySymbol { propertySymbol ->
             val ktType = propertySymbol.returnType
 
-            val typeMappingMode = if (forceBoxedReturnType(propertySymbol))
+            val typeMappingMode = if (shouldEnforceBoxedReturnType(propertySymbol))
                 KaTypeMappingMode.RETURN_TYPE_BOXED
             else
                 KaTypeMappingMode.RETURN_TYPE
