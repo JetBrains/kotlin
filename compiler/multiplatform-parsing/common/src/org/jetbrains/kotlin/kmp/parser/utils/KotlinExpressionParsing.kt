@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHEN_KEYWORD
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHILE_KEYWORD
 import org.jetbrains.kotlin.kmp.parser.BinaryOperationPrecedence
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FIRST
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FOLLOW
 
 internal open class KotlinExpressionParsing(
     builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -151,49 +153,6 @@ internal open class KotlinExpressionParsing(
             KtTokens.COLON
         )
 
-        val EXPRESSION_FIRST: SyntaxElementTypeSet = syntaxElementTypeSetOf( // Prefix
-            KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS,
-            KtTokens.EXCL, KtTokens.EXCLEXCL,  // Joining complex tokens makes it necessary to put EXCLEXCL here
-            // Atomic
-
-            KtTokens.COLONCOLON,  // callable reference
-
-            KtTokens.LPAR,  // parenthesized
-            // literal constant
-
-            TRUE_KEYWORD, FALSE_KEYWORD,
-            KtTokens.INTERPOLATION_PREFIX, KtTokens.OPEN_QUOTE,
-            KtTokens.INTEGER_LITERAL, KtTokens.CHARACTER_LITERAL, KtTokens.FLOAT_LITERAL,
-            NULL_KEYWORD,
-
-            KtTokens.LBRACE,  // functionLiteral
-            FUN_MODIFIER,  // expression function
-
-            THIS_KEYWORD,  // this
-            SUPER_KEYWORD,  // super
-
-            IF_KEYWORD,  // if
-            WHEN_KEYWORD,  // when
-            TRY_KEYWORD,  // try
-            OBJECT_KEYWORD,  // object
-            // jump
-
-            THROW_KEYWORD,
-            RETURN_KEYWORD,
-            CONTINUE_KEYWORD,
-            BREAK_KEYWORD,  // loop
-
-            FOR_KEYWORD,
-            WHILE_KEYWORD,
-            DO_KEYWORD,
-
-            KtTokens.IDENTIFIER,  // SimpleName
-
-            KtTokens.AT,  // Just for better recovery and maybe for annotations
-
-            KtTokens.LBRACKET // Collection literal expression
-        )
-
         val STATEMENT_FIRST: SyntaxElementTypeSet = EXPRESSION_FIRST +
                 syntaxElementTypeSetOf( // declaration
                     FUN_MODIFIER,
@@ -207,10 +166,6 @@ internal open class KotlinExpressionParsing(
 
         private val STATEMENT_NEW_LINE_QUICK_RECOVERY_SET: SyntaxElementTypeSet =
             STATEMENT_FIRST.intersect(KtTokens.HARD_KEYWORDS_AND_MODIFIERS - IN_MODIFIER) + KtTokens.EOL_OR_SEMICOLON
-
-        val EXPRESSION_FOLLOW: SyntaxElementTypeSet = syntaxElementTypeSetOf(
-            KtTokens.EOL_OR_SEMICOLON, KtTokens.ARROW, KtTokens.COMMA, KtTokens.RBRACE, KtTokens.RPAR, KtTokens.RBRACKET
-        )
 
         private val ALLOW_NEWLINE_OPERATIONS = syntaxElementTypeSetOf(
             KtTokens.DOT, KtTokens.SAFE_ACCESS,

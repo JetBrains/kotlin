@@ -13,7 +13,24 @@ import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.WhitespacesBinders
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.BREAK_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.CONTINUE_KEYWORD
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.CONTRACT_MODIFIER
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.DO_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.FALSE_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.FOR_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.FUN_MODIFIER
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.IF_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.NULL_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.OBJECT_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.RETURN_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.SUPER_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.THIS_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.THROW_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.TRUE_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.TRY_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHEN_KEYWORD
+import org.jetbrains.kotlin.kmp.lexer.KtTokens.WHILE_KEYWORD
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 
 internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwareSyntaxBuilder, isTopLevel: Boolean, isLazy: Boolean) :
@@ -153,8 +170,55 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             return KotlinParsing(SemanticWhitespaceAwareSyntaxBuilderForByClause(builder), false, isLazy)
         }
 
+        val EXPRESSION_FIRST: SyntaxElementTypeSet = syntaxElementTypeSetOf( // Prefix
+            KtTokens.MINUS, KtTokens.PLUS, KtTokens.MINUSMINUS, KtTokens.PLUSPLUS,
+            KtTokens.EXCL, KtTokens.EXCLEXCL,  // Joining complex tokens makes it necessary to put EXCLEXCL here
+            // Atomic
+
+            KtTokens.COLONCOLON,  // callable reference
+
+            KtTokens.LPAR,  // parenthesized
+            // literal constant
+
+            TRUE_KEYWORD, FALSE_KEYWORD,
+            KtTokens.INTERPOLATION_PREFIX, KtTokens.OPEN_QUOTE,
+            KtTokens.INTEGER_LITERAL, KtTokens.CHARACTER_LITERAL, KtTokens.FLOAT_LITERAL,
+            NULL_KEYWORD,
+
+            KtTokens.LBRACE,  // functionLiteral
+            FUN_MODIFIER,  // expression function
+
+            THIS_KEYWORD,  // this
+            SUPER_KEYWORD,  // super
+
+            IF_KEYWORD,  // if
+            WHEN_KEYWORD,  // when
+            TRY_KEYWORD,  // try
+            OBJECT_KEYWORD,  // object
+            // jump
+
+            THROW_KEYWORD,
+            RETURN_KEYWORD,
+            CONTINUE_KEYWORD,
+            BREAK_KEYWORD,  // loop
+
+            FOR_KEYWORD,
+            WHILE_KEYWORD,
+            DO_KEYWORD,
+
+            KtTokens.IDENTIFIER,  // SimpleName
+
+            KtTokens.AT,  // Just for better recovery and maybe for annotations
+
+            KtTokens.LBRACKET // Collection literal expression
+        )
+
+        val EXPRESSION_FOLLOW: SyntaxElementTypeSet = syntaxElementTypeSetOf(
+            KtTokens.EOL_OR_SEMICOLON, KtTokens.ARROW, KtTokens.COMMA, KtTokens.RBRACE, KtTokens.RPAR, KtTokens.RBRACKET
+        )
+
         private val USER_TYPE_NAME_RECOVERY_SET: SyntaxElementTypeSet =
-            KotlinExpressionParsing.EXPRESSION_FIRST + KotlinExpressionParsing.EXPRESSION_FOLLOW + DECLARATION_FIRST
+            EXPRESSION_FIRST + EXPRESSION_FOLLOW + DECLARATION_FIRST
 
         private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
 
