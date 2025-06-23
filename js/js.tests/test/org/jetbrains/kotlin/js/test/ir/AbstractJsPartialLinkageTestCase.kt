@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.ir
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -20,7 +21,10 @@ abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkage
 
 abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsKlibLinkageTestCase(compilerType) {
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(JsTestConfiguration(testPath))
+    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(
+        testConfiguration = JsTestConfiguration(testPath),
+        compilerEditionChange = KlibCompilerChangeScenario.NoChange,
+    )
 
     override fun buildKlib(
         moduleName: String,

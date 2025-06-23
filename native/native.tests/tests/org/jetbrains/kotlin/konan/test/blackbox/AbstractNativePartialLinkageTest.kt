@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -29,7 +30,11 @@ abstract class AbstractNativePartialLinkageTest : AbstractKlibLinkageTest() {
         // we have to significantly increase timeouts to make such configurations pass.
         // So let's just disable them instead of wasting CI times.
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
-        PartialLinkageTestUtils.runTest(NativeTestConfiguration(testPath))
+
+        PartialLinkageTestUtils.runTest(
+            testConfiguration = NativeTestConfiguration(testPath),
+            compilerEditionChange = KlibCompilerChangeScenario.NoChange,
+        )
     }
 
     override fun buildKlib(

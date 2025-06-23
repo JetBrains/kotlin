@@ -85,7 +85,7 @@ object PartialLinkageTestUtils {
 
     fun runTest(
         testConfiguration: TestConfiguration,
-        compilerEditionChange: KlibCompilerChangeScenario = KlibCompilerChangeScenario.NoChange,
+        compilerEditionChange: KlibCompilerChangeScenario,
     ) =
         with(testConfiguration) {
             val projectName = testDir.name
