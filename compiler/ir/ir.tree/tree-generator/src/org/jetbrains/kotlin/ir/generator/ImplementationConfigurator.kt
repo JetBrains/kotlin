@@ -405,6 +405,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(localDelegatedPropertyReference) {
             recordTargetShapeOnSymbolChange()
         }
+
+        allImplOf(richCallableReference) {
+            default("boundValues", "ArrayList(0)")
+        }
     }
 
     private fun ImplementationContext.recordTargetShapeOnSymbolChange() {
