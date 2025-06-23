@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CUSTOM
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
@@ -43,7 +43,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
         buildDir.deleteRecursively()
     }
 
-    protected inner class JsTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
+    protected inner class JsTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
         override val buildDir: File get() = this@AbstractJsKlibLinkageTestCase.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile

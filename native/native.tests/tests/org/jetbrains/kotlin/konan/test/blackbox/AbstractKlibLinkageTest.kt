@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
@@ -23,13 +22,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.test.TargetBackend
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import org.opentest4j.TestAbortedException
 import java.io.File
 
 abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
-    protected inner class NativeTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
+    protected inner class NativeTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
         override val buildDir get() = this@AbstractKlibLinkageTest.buildDir
         override val stdlibFile get() = this@AbstractKlibLinkageTest.stdlibFile
@@ -89,7 +86,7 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
     internal val producedKlibs = linkedSetOf<ProducedKlib>() // IMPORTANT: The order makes sense!
 
     private val executableArtifact: Executable by lazy {
-        val (_, outputDir) = PartialLinkageTestUtils.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
+        val (_, outputDir) = KlibCompilerInvocationTestUtils.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
         val executableFile = outputDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
         Executable(executableFile)
     }
