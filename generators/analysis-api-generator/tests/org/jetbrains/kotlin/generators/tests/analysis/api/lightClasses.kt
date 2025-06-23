@@ -76,16 +76,26 @@ private fun TestGroupSuite.generateCompilerTestDataBasedLightClassesTests() {
     }
 }
 
+private fun lightClassesTestsInit(
+    path: String,
+    isLibrary: Boolean,
+    isScript: Boolean,
+): TestGroup.TestClass.() -> Unit = {
+    model(
+        relativeRootPath = path,
+        excludeDirs = if (isLibrary) listOf("compilationErrors") else emptyList(),
+        pattern = if (isScript) TestGeneratorUtil.KTS else TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME,
+    )
+}
+
 private fun lightClassesByPsiTestsInit(
     isLibrary: Boolean = false,
     isScript: Boolean = false,
-): TestGroup.TestClass.() -> Unit = {
-    model(
-        relativeRootPath = "asJava/lightClasses/lightClassByPsi",
-        excludeDirs = if (isLibrary) listOf("compilationErrors") else emptyList(),
-        pattern = if (isScript) TestGeneratorUtil.KTS else TestGeneratorUtil.KT,
-    )
-}
+): TestGroup.TestClass.() -> Unit = lightClassesTestsInit(
+    path = "asJava/lightClasses/lightClassByPsi",
+    isLibrary = isLibrary,
+    isScript = isScript,
+)
 
 private fun TestGroup.lightClassesByPsiTests() {
     val sourceModelInit = lightClassesByPsiTestsInit()
@@ -108,21 +118,18 @@ private fun TestGroup.lightClassesByPsiTests() {
     testClass<AbstractScriptSymbolLightClassesEqualityByPsiForSourceTest>(init = scriptModelInit)
 }
 
-private fun TestGroup.lightClassesByFqNameTests() {
-    val sourceModelInit: TestGroup.TestClass.() -> Unit = {
-        model(
-            "asJava/lightClasses/lightClassByFqName",
-            pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
-        )
-    }
+private fun lightClassesByFqNameTestsInit(
+    isLibrary: Boolean = false,
+    isScript: Boolean = false,
+): TestGroup.TestClass.() -> Unit = lightClassesTestsInit(
+    path = "asJava/lightClasses/lightClassByFqName",
+    isLibrary = isLibrary,
+    isScript = isScript,
+)
 
-    val libraryModelInit: TestGroup.TestClass.() -> Unit = {
-        model(
-            "asJava/lightClasses/lightClassByFqName",
-            excludeDirs = listOf("compilationErrors"),
-            pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
-        )
-    }
+private fun TestGroup.lightClassesByFqNameTests() {
+    val sourceModelInit = lightClassesByFqNameTestsInit()
+    val libraryModelInit = lightClassesByFqNameTestsInit(isLibrary = true)
 
     testClass<AbstractSymbolLightClassesByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForSourceTest>(init = sourceModelInit)

@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbolLightClassesByPsiForSourceTest {
   @Test
   public void testAllFilesPresentInLightClassByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
   }
 
   @Test
@@ -462,7 +462,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   public class Facades {
     @Test
     public void testAllFilesPresentInFacades() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -574,7 +574,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   public class JvmExposeBoxed {
     @Test
     public void testAllFilesPresentInJvmExposeBoxed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @Test
@@ -787,7 +787,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     public class Directive {
       @Test
       public void testAllFilesPresentInDirective() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1037,7 +1037,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     public class FeatureInteraction {
       @Test
       public void testAllFilesPresentInFeatureInteraction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Test
@@ -1269,7 +1269,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     public class Inherit {
       @Test
       public void testAllFilesPresentInInherit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
       }
 
       @Nested
@@ -1284,7 +1284,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
 
         @Test
         public void testAllFilesPresentInChild() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @Test
@@ -1308,7 +1308,7 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   public class Scripts {
     @Test
     public void testAllFilesPresentInScripts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
   }
 }
