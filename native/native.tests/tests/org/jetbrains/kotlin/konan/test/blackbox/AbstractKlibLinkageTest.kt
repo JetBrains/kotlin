@@ -96,14 +96,32 @@ abstract class AbstractKlibLinkageTest : AbstractNativeSimpleTest() {
         moduleSourceDir.resolve(LAUNCHER_FILE_NAME).writeText(generateBoxFunctionLauncher("box"))
     }
 
-    abstract fun buildKlib(
+    private fun buildKlib(
         moduleName: String,
         moduleSourceDir: File,
         dependencies: Dependencies,
         klibFile: File,
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
-    )
+    ) {
+        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
+        val klibArtifact = KLIB(klibFile)
+
+        val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS.plusCompilerArgs(compilerArguments))
+
+        val compilation = LibraryCompilation(
+            settings = testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            dependencies = createLibraryDependencies(dependencies),
+            expectedArtifact = klibArtifact
+        )
+
+        compilation.result.assertSuccess() // <-- trigger compilation
+
+        producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
+    }
 
     internal fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {
         val cacheDependencies = if (useStaticCacheForUserLibraries) {
