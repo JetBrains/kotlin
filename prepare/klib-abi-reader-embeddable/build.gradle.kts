@@ -10,8 +10,6 @@ plugins {
 
 val jarBaseName = the<BasePluginExtension>().archivesName
 
-val localPackagesToRelocate = listOf<String>()
-
 val proguardLibraryJars by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
@@ -35,12 +33,23 @@ dependencies {
         isTransitive = true
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
     }
+    embedded(project(":core:compiler.common.native")) { isTransitive = false }
+    embedded(project(":compiler:frontend")) {
+        isTransitive = true
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+    }
+    embedded(project(":compiler:cli-common")) { isTransitive = false }
+    embedded(project(":compiler:config.jvm")) { isTransitive = false }
+    embedded(libs.guava)
+    embedded(intellijCore())
+    embedded(libs.intellij.fastutil)
+    embedded(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    //proguardLibraryJars(project(":kotlin-compiler"))
+    //proguardLibraryJars(intellijCore())
 
-    relocatedJarContents(mainSourceSet.output)
+    //relocatedJarContents(mainSourceSet.output)
 }
 
 publish()
@@ -48,16 +57,13 @@ publish()
 noDefaultJar()
 
 val relocatedJar by task<ShadowJar> {
-    configurations = listOf(relocatedJarContents)
+    configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
 
-    // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
-    from("jar-resources")
-
     if (kotlinBuildProperties.relocation) {
-        (packagesToRelocate + localPackagesToRelocate).forEach {
+        packagesToRelocate.forEach {
             relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }
@@ -67,7 +73,7 @@ val proguard by task<CacheableProguardTask> {
     dependsOn(relocatedJar)
     configuration("klib-abi-reader.pro")
 
-    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**"), relocatedJar.get().outputs.files)
 
     outjars(layout.buildDirectory.file(jarBaseName.map { "libs/$it-$version-after-proguard.jar" }))
 
