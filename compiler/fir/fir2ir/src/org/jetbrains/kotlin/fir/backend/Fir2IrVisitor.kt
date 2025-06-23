@@ -79,14 +79,14 @@ class Fir2IrVisitor(
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>() {
-    private val memberGenerator = ClassMemberGenerator(c, this, conversionScope)
+    private val cleaner: FirDeclarationsContentCleaner = FirDeclarationsContentCleaner.create()
+    private val memberGenerator = ClassMemberGenerator(c, this, conversionScope, cleaner)
 
     private val operatorGenerator = OperatorExpressionGenerator(c, this, conversionScope)
-
     private var _annotationMode: Boolean = false
+
     val annotationMode: Boolean
         get() = _annotationMode
-
     private val unitType: ConeClassLikeType = session.builtinTypes.unitType.coneType
 
     internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
@@ -124,6 +124,7 @@ class Fir2IrVisitor(
             annotationGenerator.generate(this, file)
             metadata = FirMetadataSource.File(file)
         }
+        cleaner.cleanFile(file)
         return irFile
     }
 
@@ -200,6 +201,7 @@ class Fir2IrVisitor(
                 irEnumEntry
             }
         }
+        cleaner.cleanEnumEntry(enumEntry)
         return irEnumEntry
     }
 
@@ -223,6 +225,7 @@ class Fir2IrVisitor(
         conversionScope.withParent(irClass) {
             memberGenerator.convertClassContent(irClass, regularClass)
         }
+        cleaner.cleanClass(regularClass)
         return irClass
     }
 
@@ -439,6 +442,8 @@ class Fir2IrVisitor(
                     )
                 )
             )
+        }.also {
+            cleaner.cleanAnonymousObject(anonymousObject)
         }
     }
 
@@ -449,6 +454,8 @@ class Fir2IrVisitor(
         val irConstructor = declarationStorage.getCachedIrConstructorSymbol(constructor)!!.owner
         return conversionScope.withFunction(irConstructor) {
             memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
+        }.also {
+            cleaner.cleanConstructor(constructor)
         }
     }
 
@@ -464,6 +471,7 @@ class Fir2IrVisitor(
                 else convertToIrBlockBody(anonymousInitializer.body!!)
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
+        cleaner.cleanAnonymousInitializer(anonymousInitializer)
         return irAnonymousInitializer
     }
 
@@ -480,6 +488,8 @@ class Fir2IrVisitor(
             memberGenerator.convertFunctionContent(
                 irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
             )
+        }.also {
+            cleaner.cleanSimpleFunction(simpleFunction)
         }
     }
 
@@ -509,6 +519,8 @@ class Fir2IrVisitor(
                 if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) IrStatementOrigin.LAMBDA
                 else IrStatementOrigin.ANONYMOUS_FUNCTION
             )
+        }.also {
+            cleaner.cleanAnonymousFunction(anonymousFunction)
         }
     }
 
@@ -569,6 +581,8 @@ class Fir2IrVisitor(
             )
         return conversionScope.withProperty(irProperty, property) {
             memberGenerator.convertPropertyContent(irProperty, property)
+        }.also {
+            cleaner.cleanProperty(property)
         }
     }
 
