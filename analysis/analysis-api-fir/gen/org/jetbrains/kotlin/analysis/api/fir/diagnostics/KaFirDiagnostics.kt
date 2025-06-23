@@ -2225,7 +2225,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MutablePropertyWithCapturedType::class
     }
 
-    interface UnsupportedReflectionApi : KaFirDiagnostic<PsiElement> {
+    interface UnsupportedReflectionApi : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = UnsupportedReflectionApi::class
         val unsupportedReflectionAPI: String
     }

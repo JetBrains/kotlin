@@ -3150,7 +3150,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.UNSUPPORTED_REFLECTION_API) { firDiagnostic ->
+    add(FirWebCommonErrors.UNSUPPORTED_REFLECTION_API) { firDiagnostic ->
         UnsupportedReflectionApiImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,

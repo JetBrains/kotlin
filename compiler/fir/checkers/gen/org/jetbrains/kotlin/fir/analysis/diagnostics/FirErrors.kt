@@ -582,7 +582,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MUTABLE_PROPERTY_WITH_CAPTURED_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val UNSUPPORTED_REFLECTION_API: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNSUPPORTED_REFLECTION_API", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // overrides
     val NOTHING_TO_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, List<FirCallableSymbol<*>>> = KtDiagnosticFactory2("NOTHING_TO_OVERRIDE", ERROR, SourceElementPositioningStrategies.OVERRIDE_MODIFIER, KtModifierListOwner::class, getRendererFactory())

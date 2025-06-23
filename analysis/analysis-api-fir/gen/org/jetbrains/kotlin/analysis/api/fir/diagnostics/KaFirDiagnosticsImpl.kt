@@ -2676,7 +2676,7 @@ internal class UnsupportedReflectionApiImpl(
     override val unsupportedReflectionAPI: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedReflectionApi
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedReflectionApi
 
 internal class NothingToOverrideImpl(
     override val declaration: KaCallableSymbol,

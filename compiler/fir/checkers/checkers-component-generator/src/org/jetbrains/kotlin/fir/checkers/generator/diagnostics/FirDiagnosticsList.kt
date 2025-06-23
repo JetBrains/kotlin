@@ -1070,9 +1070,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS by error<KtElement>()
         val MUTABLE_PROPERTY_WITH_CAPTURED_TYPE by warning<PsiElement>()
-        val UNSUPPORTED_REFLECTION_API by error<PsiElement>() {
-            parameter<String>("unsupportedReflectionAPI")
-        }
     }
 
     val OVERRIDES by object : DiagnosticGroup("overrides") {
