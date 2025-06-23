@@ -1,3 +1,3 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.8.0" apply false
+    id("org.jetbrains.kotlin.jvm") version "2.1.20" apply false
 }
