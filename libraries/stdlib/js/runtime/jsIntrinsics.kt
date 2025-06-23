@@ -206,6 +206,23 @@ internal fun <reified T : Any> jsNewAnonymousClass(superClass: JsClass<T>): JsCl
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
 internal fun <reified T : Any> jsClassIntrinsic(): JsClass<T>
 
+@JsIntrinsic
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
+internal fun <reified T : Any> jsIsInterfaceIntrinsic(obj: dynamic): Boolean
+
+// Although we could directly use an integer constant in IR instead of calling this intrinsic,
+// this wouldn't preserve the information about which interfaces are actually used, which would result in DCE
+// removing such interfaces from IrClass.superTypes, which we use to generate the interface mask.
+//
+// So we must always use this intrinsic.
+@JsIntrinsic
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
+internal fun <reified T : Any> jsInterfaceIdIntrinsic(): Int
+
+@JsIntrinsic
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
+internal fun <reified T : Any> jsInterfaceMaskForPropertyRefIntrinsic(): Array<Int>?
+
 // Returns true if the specified property is in the specified object or its prototype chain.
 @JsIntrinsic
 internal fun jsInIntrinsic(lhs: Any?, rhs: Any): Boolean

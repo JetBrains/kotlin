@@ -8,14 +8,19 @@ import kotlin.reflect.js.internal.*
 
 @PublishedApi
 internal fun <T : Annotation> KClass<*>.findAssociatedObject(annotationClass: KClass<T>): Any? {
-    return if (this is KClassImpl<*> && annotationClass is KClassImpl<T>) {
-        val key = getAssociatedObjectId(annotationClass.jClass.asDynamic()) ?: return null
-        val map = jClass.asDynamic().`$metadata$`?.associatedObjects ?: return null
-        val factory = map[key] ?: return null
-        return factory()
-    } else {
-        null
+    if (annotationClass !is KClassImpl<T>) return null
+    val key = getAssociatedObjectId(annotationClass.jClass.asDynamic()) ?: return null
+    val map = when (this) {
+        is KClassImpl<*> -> {
+            jClass.asDynamic().`$metadata$`?.associatedObjects ?: return null
+        }
+        is InterfaceKClass -> {
+            getInterfaceIdMetadata(interfaceId)?.associatedObjects ?: return null
+        }
+        else -> return null
     }
+    val factory = map[key] ?: return null
+    return factory()
 }
 
 internal fun getAssociatedObjectId(annotationClass: dynamic): Int? =

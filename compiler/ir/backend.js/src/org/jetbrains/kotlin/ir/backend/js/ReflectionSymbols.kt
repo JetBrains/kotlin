@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 interface ReflectionSymbols {
     val getKClassFromExpression: IrSimpleFunctionSymbol
     val getKClass: IrSimpleFunctionSymbol
+    val getKClassForInterfaceId: IrSimpleFunctionSymbol
     val createKType: IrSimpleFunctionSymbol
     val createDynamicKType: IrSimpleFunctionSymbol
     val createKTypeParameter: IrSimpleFunctionSymbol

@@ -222,11 +222,11 @@ class JsIrBackendContext(
         throwableConstructors.single { it.owner.parameters.size == 2 }
     }
 
-    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let {
+    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef2")).single().let {
         symbolTable.descriptorExtension.referenceSimpleFunction(it)
     }
     val klocalDelegateBuilder =
-        getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let {
+        getFunctions(FqName("kotlin.js.getLocalDelegateReference2")).single().let {
             symbolTable.descriptorExtension.referenceSimpleFunction(it)
         }
     val throwLinkageErrorInCallableNameSymbol = getFunctions(FqName("kotlin.js.throwLinkageErrorInCallableName")).single().let {
@@ -332,6 +332,61 @@ class JsIrBackendContext(
         irBuiltIns,
         configuration.messageCollector
     )
+
+    /**
+     * We try to eliminate interface metadata as much as possible in the generated JS code.
+     *
+     * Generally, we are able to completely eliminate any traces of an interface from the final artifact,
+     * provided that the interface does not participate in reflection (i.e. there are no `MyInterface::class` expressions), has
+     * no associated objects, and is never cast to (including `is`-checks). Let's call such an interface _ethereal_, and all the other
+     * interfaces _real_.
+     *
+     * At runtime, _real_ interfaces are always represented by an integer we call _interface ID_. However, depending on certain factors,
+     * that interface ID may be complimented with more runtime information.
+     *
+     * We use the following logic for deciding which parts of interface metadata to emit:
+     * #### Without incremental compilation
+     * - If an interface is _real_, we assign that interface a unique identifier **at compile time**.
+     *   For classes that implement this interface, we generate an `initMetadataForClassWithStaticInterfaceMask` call,
+     *   to which we pass an array of integers (also generated at compile time) that represents a bit mask of all the _real_ interfaces that
+     *   it implements. In the bit mask, the N-th bit is set iff the class implements the interface whose _interface ID_ equals to N.
+     * - `is`-checks for such interfaces are lowered into `kotlin.js.isInterfaceImpl` calls, where we pass the corresponding interface ID as
+     *   an integer literal.
+     * - If the interface participates in reflection or has associated objects,
+     *   then for such interface we additionally generate an `initMetadataForInterfaceId` call, to which we pass the interface ID as
+     *   an integer literal, the interface name (if the interface participates in reflection) and a map of its associated objects
+     *   (if there are any). The interface metadata is stored in a global map.
+     *   `MyInterface::class` expressions are lowered into `kotlin.js.getKClassForInterfaceId` calls.
+     * #### With incremental compilation
+     * If an interface is _real_, then for classes implementing this interface we generate
+     * an `initMetadataForClassWithDynamicInterfaceMask` call, to which we pass an array of _interface constructors_ instead of a bit mask.
+     * An interface constructor is just a JS function with empty body which also has a `$metadata$` property, where the interface runtime
+     * metadata is stored.
+     *
+     * For the interface itself we generate an `initMetadataForInterface` call. This function will generate an interface ID for this
+     * interface at runtime, and store the interface ID and other metadata in the interface constructor's `$metadata$` property.
+     *
+     * **Q:** Why do we use different logic for when incremental compilation is enabled and for when it's not?
+     * **A:** Because we can only ensure the uniqueness of interface IDs generated at compile time if the current compiler invocation operates on
+     * the whole world, which is not the case for incremental compilation.
+     */
+    internal val supportsInterfaceMetadataStripping: Boolean
+        get() = !incrementalCacheEnabled
+
+    private var nextInterfaceId = 0
+
+    internal fun getInterfaceId(iface: IrClass): Int {
+        if (!supportsInterfaceMetadataStripping) {
+            compilationException("Interface metadata stripping is not supported", iface)
+        }
+        if (!iface.isInterface) {
+            compilationException("Type is not an interface", iface)
+        }
+        iface.interfaceId?.let { return it }
+        return nextInterfaceId++.also {
+            iface.interfaceId = it
+        }
+    }
 
     internal var nextAssociatedObjectKey = 0
 }

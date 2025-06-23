@@ -6,18 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
-import org.jetbrains.kotlin.ir.backend.js.utils.findDefaultConstructorForReflection
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrCall
 
 /**
  * Whether the class's ES6 constructor requires an additional `box` value parameter.
@@ -89,3 +81,26 @@ var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false
  * We perform it on the JS AST optimization phase in [org.jetbrains.kotlin.js.inline.clean.MoveTemporaryVariableDeclarationToAssignment]
  */
 internal var IrVariable.wasMovedFromItsDeclarationPlace: Boolean by irFlag(copyByDefault = false)
+
+/**
+ * A unique numeric identifier that we generate for this interface at compile time, provided that
+ * [JsIrBackendContext.supportsInterfaceMetadataStripping] is `true`.
+ *
+ * @see JsIrBackendContext.supportsInterfaceMetadataStripping
+ */
+internal var IrClass.interfaceId: Int? by irAttribute(copyByDefault = false)
+
+/**
+ * Whether this interface was used as a type operand at least once.
+ *
+ * @see JsIrBackendContext.supportsInterfaceMetadataStripping
+ */
+internal var IrClass.interfaceUsedAsTypeOperand: Boolean by irFlag(copyByDefault = false)
+
+/**
+ * Whether this interface was used in reflection at least once, i.e. there exists at least one `::class` expression whose operand
+ * is this interface.
+ *
+ * @see JsIrBackendContext.supportsInterfaceMetadataStripping
+ */
+internal var IrClass.interfaceUsedInReflection: Boolean by irFlag(copyByDefault = false)

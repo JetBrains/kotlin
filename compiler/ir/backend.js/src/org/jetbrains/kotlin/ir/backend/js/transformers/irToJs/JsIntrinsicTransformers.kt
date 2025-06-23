@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.interfaceId
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
@@ -21,12 +22,15 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.toSmartList
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
 private typealias IntrinsicMap = MutableMap<IrSymbol, IrCallTransformer<*>>
@@ -112,6 +116,71 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                         "Type argument of jsClass must be statically known class",
                         typeArgument
                     )
+            }
+
+            add(intrinsics.jsIsInterfaceIntrinsicSymbol) { call, context ->
+                val typeArgument = call.typeArguments[0]
+                    ?: compilationException(
+                        "Type argument of jsIsInterfaceIntrinsic must be a statically known interface",
+                        call
+                    )
+                val argument = translateCallArguments(call, context)[0]
+                if (backendContext.supportsInterfaceMetadataStripping) {
+
+                    // For interfaces like `Comparable` and `CharSequence` we have the `isComparable` and `isCharSequence`
+                    // functions in the standard library, which delegate to this intrinsic. The compiler lowers
+                    // is-checks for `Comparable` and `CharSequence` to calls to these functions.
+                    //
+                    // However, if there are no is-checks for these interfaces, they never get assigned an ID, but call to this intrinsic
+                    // in the standard library still must be compiled. Hence, we use -1 here, but really this code will never be executed.
+                    val interfaceId = typeArgument.classOrNull?.owner?.interfaceId ?: -1
+
+                    val isInterfaceImplName = context.getNameForStaticFunction(intrinsics.isInterfaceImplSymbol.owner)
+                    JsInvocation(JsNameRef(isInterfaceImplName), listOf(argument, JsIntLiteral(interfaceId)))
+                } else {
+                    val classRef = typeArgument.getClassRef(context.staticContext)
+                    val isInterfaceName = context.getNameForStaticFunction(intrinsics.isInterfaceSymbol.owner)
+                    JsInvocation(JsNameRef(isInterfaceName), listOf(argument, classRef))
+                }
+            }
+
+            add(intrinsics.jsInterfaceIdIntrinsic) { call, context ->
+                val typeArgument = call.typeArguments[0]
+                    ?: compilationException(
+                        "Type argument of jsInterfaceIdIntrinsic must be a statically known interface",
+                        call
+                    )
+                if (backendContext.supportsInterfaceMetadataStripping) {
+                    val interfaceId = typeArgument.classOrNull?.owner?.interfaceId
+                        ?: compilationException("Missing interface ID", typeArgument)
+                    JsIntLiteral(interfaceId)
+                } else {
+                    val classRef = typeArgument.getClassRef(context.staticContext)
+                    JsNameRef("iid", JsNameRef($$"$metadata$", classRef))
+                }
+            }
+
+            add(intrinsics.jsInterfaceMaskForPropertyRefIntrinsic) { call, context ->
+                val typeArgument = call.typeArguments[0]
+                    ?: compilationException(
+                        "Type argument of jsInterfaceMaskIntrinsic must be a statically known interface",
+                        call
+                    )
+                if (backendContext.supportsInterfaceMetadataStripping) {
+                    val bitMask = interfacesBitMask(listOf(typeArgument.classOrFail.owner))
+                    if (bitMask.isEmpty()) return@add context.voidRef()
+                    JsArrayLiteral(
+                        bitMask
+                            .map(::JsIntLiteral)
+                            .toSmartList()
+                    )
+                } else {
+                    val classRef = typeArgument.getClassRef(context.staticContext)
+                    JsInvocation(
+                        JsNameRef(context.getNameForStaticFunction(intrinsics.getInterfaceMaskForPropertyRefSymbol.owner)),
+                        classRef,
+                    )
+                }
             }
 
             add(intrinsics.jsNewTarget) { _, _ ->
@@ -298,8 +367,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.void.owner.getter!!.symbol) { _, context ->
-                val backingField = context.getNameForField(intrinsics.void.owner.backingField!!)
-                JsNameRef(backingField)
+                context.voidRef()
             }
 
             add(intrinsics.suspendOrReturnFunctionSymbol) { call, context ->
@@ -321,6 +389,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
     @Suppress("UNCHECKED_CAST")
     operator fun get(symbol: IrConstructorSymbol): IrCallTransformer<IrConstructorCall>? =
         transformers[symbol] as IrCallTransformer<IrConstructorCall>?
+}
+
+private fun JsGenerationContext.voidRef(): JsNameRef {
+    val backingField = getNameForField(staticContext.backendContext.intrinsics.void.owner.backingField!!)
+    return JsNameRef(backingField)
 }
 
 private fun translateDispatchArgument(
