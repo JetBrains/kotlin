@@ -130,16 +130,20 @@ private fun lightClassesByFqNameTestsInit(
 private fun TestGroup.lightClassesByFqNameTests() {
     val sourceModelInit = lightClassesByFqNameTestsInit()
     val libraryModelInit = lightClassesByFqNameTestsInit(isLibrary = true)
+    val scriptModelInit = lightClassesByFqNameTestsInit(isScript = true)
 
     testClass<AbstractSymbolLightClassesByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForSourceTest>(init = sourceModelInit)
+    testClass<AbstractScriptSymbolLightClassesByFqNameForSourceTest>(init = scriptModelInit)
 
     testClass<AbstractSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
     testClass<AbstractJsSymbolLightClassesByFqNameForLibraryTest>(init = libraryModelInit)
 
     testClass<AbstractSymbolLightClassesParentingByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesParentingByFqNameForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractScriptSymbolLightClassesParentingByFqNameForSourceTest>(init = scriptModelInit)
 
     testClass<AbstractSymbolLightClassesEqualityByFqNameForSourceTest>(init = sourceModelInit)
     testClass<AbstractSymbolLightClassesEqualityByFqNameForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractScriptSymbolLightClassesEqualityByFqNameForSourceTest>(init = scriptModelInit)
 }

@@ -149,7 +149,10 @@ abstract class AbstractSymbolLightClassesTestBase(
 
     protected fun findLightClass(fqname: String, ktFile: KtFile): PsiClass? {
         val project = ktFile.project
-        return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project) ?: findLightClass(fqname, project)
+        return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project)
+            ?: findLightClass(fqname, project)
+            // TODO: KT-78534 JavaElementFinder: support script search
+            ?: ktFile.script?.takeIf { it.fqName.asString() == fqname }?.toLightClass()
     }
 
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
