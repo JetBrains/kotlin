@@ -1346,6 +1346,11 @@ public class CliTestGenerated extends AbstractCliTest {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
     }
 
+    @TestMetadata("annotatedParameterWithoutName.args")
+    public void testAnnotatedParameterWithoutName() {
+      runTest("compiler/testData/cli/jvm/annotatedParameterWithoutName.args");
+    }
+
     @TestMetadata("annotationDefaultTargetFirstOnly.args")
     public void testAnnotationDefaultTargetFirstOnly() {
       runTest("compiler/testData/cli/jvm/annotationDefaultTargetFirstOnly.args");
