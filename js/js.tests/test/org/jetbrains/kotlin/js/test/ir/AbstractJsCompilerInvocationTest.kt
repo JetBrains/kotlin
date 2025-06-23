@@ -28,7 +28,7 @@ import java.net.URLClassLoader
 import kotlin.io.path.createTempDirectory
 
 
-abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: CompilerType) {
+abstract class AbstractJsCompilerInvocationTest(protected val compilerType: CompilerType) {
     enum class CompilerType(val es6Mode: Boolean, val useIc: Boolean) {
         NO_IC(es6Mode = false, useIc = false),
         NO_IC_WITH_ES6(es6Mode = true, useIc = false),
@@ -44,7 +44,7 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
 
     protected inner class JsTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
-        override val buildDir: File get() = this@AbstractJsKlibLinkageTestCase.buildDir
+        override val buildDir: File get() = this@AbstractJsCompilerInvocationTest.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isJs" to "true")
         override val targetBackend
@@ -62,10 +62,10 @@ abstract class AbstractJsKlibLinkageTestCase(protected val compilerType: Compile
             klibFile: File,
             compilerEdition: KlibCompilerEdition,
             compilerArguments: List<String>,
-        ) = this@AbstractJsKlibLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerEdition, compilerArguments)
+        ) = this@AbstractJsCompilerInvocationTest.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerEdition, compilerArguments)
 
         override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
-            this@AbstractJsKlibLinkageTestCase.buildBinaryAndRun(mainModule, otherDependencies)
+            this@AbstractJsCompilerInvocationTest.buildBinaryAndRun(mainModule, otherDependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) {
             directory.listFiles()?.forEach(File::deleteRecursively)
