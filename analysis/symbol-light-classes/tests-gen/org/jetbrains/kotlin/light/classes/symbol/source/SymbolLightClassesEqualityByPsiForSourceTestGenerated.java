@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends AbstractSymbolLightClassesEqualityByPsiForSourceTest {
   @Test
   public void testAllFilesPresentInLightClassByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
   }
 
   @Test
@@ -462,7 +462,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   public class Facades {
     @Test
     public void testAllFilesPresentInFacades() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/facades"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -574,7 +574,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   public class JvmExposeBoxed {
     @Test
     public void testAllFilesPresentInJvmExposeBoxed() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -746,12 +746,6 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
-    @TestMetadata("script.kts")
-    public void testScript() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/script.kts");
-    }
-
-    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");
@@ -793,7 +787,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     public class Directive {
       @Test
       public void testAllFilesPresentInDirective() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -941,12 +935,6 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       }
 
       @Test
-      @TestMetadata("script.kts")
-      public void testScript() {
-        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/script.kts");
-      }
-
-      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/simple.kt");
@@ -1049,7 +1037,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     public class FeatureInteraction {
       @Test
       public void testAllFilesPresentInFeatureInteraction() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/featureInteraction"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Test
@@ -1281,7 +1269,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     public class Inherit {
       @Test
       public void testAllFilesPresentInInherit() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
       }
 
       @Nested
@@ -1296,7 +1284,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
 
         @Test
         public void testAllFilesPresentInChild() {
-          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/inherit/child"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -1320,25 +1308,7 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
   public class Scripts {
     @Test
     public void testAllFilesPresentInScripts() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("FunsPropsAndFields.kts")
-    public void testFunsPropsAndFields() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/FunsPropsAndFields.kts");
-    }
-
-    @Test
-    @TestMetadata("HelloWorld.kts")
-    public void testHelloWorld() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/HelloWorld.kts");
-    }
-
-    @Test
-    @TestMetadata("InnerClasses.kts")
-    public void testInnerClasses() {
-      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/InnerClasses.kts");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
   }
 }

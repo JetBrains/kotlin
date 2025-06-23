@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJsSymbolLightClassesByPsiForLibraryTest {
   @Test
   public void testAllFilesPresentInLightClassByPsi() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "compilationErrors");
   }
 
   @Test
