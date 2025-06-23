@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirMemberPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 
@@ -72,8 +73,11 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     configure: (FirVariable) -> Unit = {}
 ): FirVariable = with(c) {
     buildProperty {
-        symbol = if (forceLocal) FirPropertySymbol(entry.name) else FirPropertySymbol(callableIdForName(entry.name))
         val localEntries = forceLocal || context.inLocalContext
+        symbol = when {
+            localEntries -> FirLocalPropertySymbol(entry.name)
+            else -> FirMemberPropertySymbol(callableIdForName(entry.name))
+        }
         withContainerSymbol(symbol, localEntries) {
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source

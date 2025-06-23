@@ -23,28 +23,28 @@ owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnA
 context -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnArgument
 
 @A()
-owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
-context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
-context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+owner -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
 
 @A()
-owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
-context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
-context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+owner -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
 
 @A()
-owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
-context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
-context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+owner -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
 
 @A()
-owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
-context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
-context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+owner -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
 
 @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#)
 owner -> FirRegularClassSymbol A

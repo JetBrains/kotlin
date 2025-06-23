@@ -1,26 +1,26 @@
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol util/left
-  anchor -> [FirPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  anchor -> [FirMemberPropertySymbol util/left]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-destructEntryWithType.kts>

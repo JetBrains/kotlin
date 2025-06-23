@@ -24,8 +24,8 @@ context -> FirNamedFunctionSymbol /foo
 
 @Ann()
 owner -> FirNamedFunctionSymbol /bar
-context -> FirPropertySymbol <local>/x from FirNamedFunctionSymbol /bar
+context -> FirLocalPropertySymbol <local>/x from FirNamedFunctionSymbol /bar
 
 @Ann()
 owner -> FirNamedFunctionSymbol /bar
-context -> FirPropertySymbol <local>/y from FirNamedFunctionSymbol /bar
+context -> FirLocalPropertySymbol <local>/y from FirNamedFunctionSymbol /bar

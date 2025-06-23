@@ -181,7 +181,7 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirProperty(
-                    FirPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
+                    FirMemberPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
                     session,

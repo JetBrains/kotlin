@@ -776,7 +776,7 @@ open class PsiRawFirBuilder(
             }
 
             val propertyName = nameAsSafeName
-            val propertySymbol = FirPropertySymbol(callableIdForName(propertyName))
+            val propertySymbol = FirMemberPropertySymbol(callableIdForName(propertyName))
             withContainerSymbol(propertySymbol) {
                 val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
                 val parameterAnnotations = mutableListOf<FirAnnotationCall>()
@@ -2306,9 +2306,9 @@ open class PsiRawFirBuilder(
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {
-                FirPropertySymbol(propertyName)
+                FirLocalPropertySymbol(propertyName)
             } else {
-                FirPropertySymbol(callableIdForName(propertyName))
+                FirMemberPropertySymbol(callableIdForName(propertyName))
             }
 
             withContainerSymbol(propertySymbol, isLocal) {
@@ -2817,7 +2817,7 @@ open class PsiRawFirBuilder(
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                             isLocal = true
                             this.name = name
-                            symbol = FirPropertySymbol(CallableId(name))
+                            symbol = FirLocalPropertySymbol(name)
                             for (annotationEntry in ktParameter.annotationEntries) {
                                 this.annotations += annotationEntry.convert<FirAnnotation>()
                             }
@@ -2878,7 +2878,7 @@ open class PsiRawFirBuilder(
                         initializer = subjectExpression
                         delegate = null
                         isVar = false
-                        symbol = FirPropertySymbol(name)
+                        symbol = FirLocalPropertySymbol(name)
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
@@ -2902,7 +2902,7 @@ open class PsiRawFirBuilder(
                     initializer = subjectExpression
                     delegate = null
                     isVar = false
-                    symbol = FirPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol(name)
                     isLocal = true
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 }

@@ -1,35 +1,35 @@
 @FIELD:Ann()
-owner -> FirPropertySymbol /x
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /x
+owner -> FirMemberPropertySymbol /x
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /x
 
 @PROPERTY:Ann()
-owner -> FirPropertySymbol /y
-context -> FirPropertySymbol /y
+owner -> FirMemberPropertySymbol /y
+context -> FirMemberPropertySymbol /y
 
 @Ann()
-owner -> FirPropertySymbol /z
-context -> FirPropertySymbol /z
+owner -> FirMemberPropertySymbol /z
+context -> FirMemberPropertySymbol /z
 
 @CONSTRUCTOR_PARAMETER:Ann()
 owner -> FirConstructorSymbol /Some.Some
 context -> FirValueParameterSymbol <local>/z from FirConstructorSymbol /Some.Some
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /Some.x
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Some.x
+owner -> FirMemberPropertySymbol /Some.x
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /Some.x
 
 @PROPERTY:Ann()
-owner -> FirPropertySymbol /Some.y
-context -> FirPropertySymbol /Some.y
+owner -> FirMemberPropertySymbol /Some.y
+context -> FirMemberPropertySymbol /Some.y
 
 @FIELD:Ann()
-owner -> FirPropertySymbol /Some.a
-context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Some.a
+owner -> FirMemberPropertySymbol /Some.a
+context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /Some.a
 
 @PROPERTY:Ann()
-owner -> FirPropertySymbol /Some.b
-context -> FirPropertySymbol /Some.b
+owner -> FirMemberPropertySymbol /Some.b
+context -> FirMemberPropertySymbol /Some.b
 
 @Ann()
-owner -> FirPropertySymbol /Some.c
-context -> FirPropertySymbol /Some.c
+owner -> FirMemberPropertySymbol /Some.c
+context -> FirMemberPropertySymbol /Some.c
