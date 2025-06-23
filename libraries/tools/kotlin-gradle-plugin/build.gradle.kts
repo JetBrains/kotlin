@@ -591,10 +591,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
 
         val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
-        doFirst {
-            if (mavenLocalRepo != null) {
-                systemProperty("maven.repo.local", mavenLocalRepo)
-            }
+        if (mavenLocalRepo != null) {
+            systemProperty("maven.repo.local", mavenLocalRepo)
         }
 
         systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)
