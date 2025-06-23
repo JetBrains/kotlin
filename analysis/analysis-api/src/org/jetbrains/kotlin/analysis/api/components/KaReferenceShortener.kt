@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -16,11 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtThisExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 
 /**
  * @property removeThis If set to `true`, reference shortener will detect redundant `this` qualifiers
@@ -121,6 +118,7 @@ public enum class ShortenStrategy {
 }
 
 @KaIdeApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaReferenceShortener : KaSessionComponent {
     /**
      * Collects possible references to shorten. By default, it shortens a fully-qualified members to the outermost class and does not
@@ -197,6 +195,7 @@ public data class ThisLabelToShortenInfo(
 )
 
 @KaIdeApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>

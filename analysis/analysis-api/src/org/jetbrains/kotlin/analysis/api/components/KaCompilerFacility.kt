@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -63,6 +64,7 @@ public sealed class KaCompilationResult {
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompiledFile {
     /**
      * The path of the compiled file relative to the root of the output directory.
@@ -124,6 +126,7 @@ public fun interface KaCompiledClassHandler {
 }
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilerFacility : KaSessionComponent {
     @KaExperimentalApi
     public companion object {

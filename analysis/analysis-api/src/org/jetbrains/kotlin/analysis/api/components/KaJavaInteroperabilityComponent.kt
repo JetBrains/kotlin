@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.org.objectweb.asm.Type
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaJavaInteroperabilityComponent : KaSessionComponent {
     /**
      * Converts the given [KaType] to a [PsiType] in the context of the [useSitePosition].

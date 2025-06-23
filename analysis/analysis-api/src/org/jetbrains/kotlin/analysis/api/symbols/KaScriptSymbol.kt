@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
  * declarations contained in it. The [KaScriptSymbol] is the [containingDeclaration][org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.containingDeclaration]
  * of its contained top-level declarations.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaScriptSymbol : KaDeclarationSymbol, KaNamedSymbol, KaDeclarationContainerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }

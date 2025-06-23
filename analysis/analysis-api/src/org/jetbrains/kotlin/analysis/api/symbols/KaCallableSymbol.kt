@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.CallableId
 /**
  * [KaCallableSymbol] represents callable declarations, such as functions and variables.
  */
-@OptIn(KaExperimentalApi::class)
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
 public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOwner {
     /**
      * The callable's [CallableId] if it exists, or `null` if the declaration is local.

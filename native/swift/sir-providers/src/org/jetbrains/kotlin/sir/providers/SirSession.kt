@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.sir.providers
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -296,10 +295,15 @@ public interface SirVisibilityChecker {
     public fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability
 }
 
+/**
+ * TODO: KT-78603 drop this [KaSession] inheritance as it is prohibited and can lead to unexpected problems
+ */
+@OptIn(KaImplementationDetail::class)
 public interface SirAndKaSession : KaSession, SirSession
 
 public inline fun <T> SirSession.withSessions(crossinline block: SirAndKaSession.() -> T): T {
     return analyze(this.useSiteModule) {
+        @OptIn(KaImplementationDetail::class)
         object : SirSession by this@withSessions, KaSession by this@analyze, SirAndKaSession {
             override val useSiteModule: KaModule get() = this@analyze.useSiteModule
         }.block()

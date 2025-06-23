@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.diagnostics
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import kotlin.reflect.KClass
 
@@ -22,6 +23,7 @@ public enum class KaSeverity {
 /**
  * A diagnostic message reported by the compiler checker.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDiagnostic : KaLifetimeOwner {
     public val diagnosticClass: KClass<*>
 
@@ -58,6 +60,7 @@ public interface KaDiagnostic : KaLifetimeOwner {
 /**
  * A [KaDiagnostic] reported on a [PsiElement] of type [PSI].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDiagnosticWithPsi<out PSI : PsiElement> : KaDiagnostic {
     /**
      * The PSI element that the diagnostic is reported on.

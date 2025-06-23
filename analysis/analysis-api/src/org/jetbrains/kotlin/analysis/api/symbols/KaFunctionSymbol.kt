@@ -47,6 +47,7 @@ public sealed class KaFunctionSymbol : KaCallableSymbol() {
  * Anonymous functions are always [local][KaSymbolLocation.LOCAL] and have no [callableId] (`null`).
  */
 @OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol(), KaContextParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.LOCAL }
     final override val callableId: CallableId? get() = withValidityAssertion { null }
@@ -81,6 +82,7 @@ public abstract class KaAnonymousFunctionSymbol : KaFunctionSymbol(), KaContextP
  * @see KaSymbolOrigin.SAM_CONSTRUCTOR
  */
 @OptIn(KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.TOP_LEVEL }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
@@ -93,6 +95,7 @@ public abstract class KaSamConstructorSymbol : KaFunctionSymbol(), KaNamedSymbol
  * function, a class method, or a named local function.
  */
 @OptIn(KaImplementationDetail::class, KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol, KaTypeParameterOwnerSymbol, KaContextParameterOwnerSymbol {
     /**
      * Whether the function is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions).
@@ -157,6 +160,7 @@ public abstract class KaNamedFunctionSymbol : KaFunctionSymbol(), KaNamedSymbol,
  * Constructors do not have a [callableId] (`null`) and cannot have a [receiverParameter] or [contextReceivers].
  */
 @OptIn(KaImplementationDetail::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaConstructorSymbol : KaFunctionSymbol(), KaTypeParameterOwnerSymbol {
     /**
      * Whether the constructor is the [primary constructor](https://kotlinlang.org/docs/classes.html#constructors) of the class. The primary

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeProvider : KaSessionComponent {
     /**
      * A [KaScope] containing *non-static* callable members (functions, properties, and constructors) and all classifier members
@@ -268,6 +270,7 @@ public interface KaScopeProvider : KaSessionComponent {
  *
  * @see KaScopeProvider.scopeContext
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeContext : KaLifetimeOwner {
     /**
      * The implicit receivers available at the context position.
@@ -301,6 +304,7 @@ public interface KaScopeContext : KaLifetimeOwner {
  * Represents a value which can be used implicitly inside a particular [KaScopeContext].
  */
 @KaExperimentalApi
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaScopeImplicitValue : KaLifetimeOwner {
     /**
      * The implicit value type.
@@ -317,6 +321,7 @@ public sealed interface KaScopeImplicitValue : KaLifetimeOwner {
  * Represents an implicit receiver available in a particular [KaScopeContext].
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeImplicitReceiverValue : KaScopeImplicitValue {
     /**
      * The implicit value owner.
@@ -328,6 +333,7 @@ public interface KaScopeImplicitReceiverValue : KaScopeImplicitValue {
  * Represents an implicit argument available in a particular [KaScopeContext].
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeImplicitArgumentValue : KaScopeImplicitValue {
     /**
      * The corresponding context parameter symbol which can be used
@@ -340,6 +346,7 @@ public interface KaScopeImplicitArgumentValue : KaScopeImplicitValue {
  * Represents an implicit receiver available in a particular context.
  */
 @OptIn(KaExperimentalApi::class)
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiver : KaScopeImplicitReceiverValue {
     override val type: KaType
     override val ownerSymbol: KaSymbol
@@ -364,12 +371,14 @@ public sealed interface KaScopeKind {
      */
     public val indexInTower: Int
 
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface LocalScope : KaScopeKind
 
     /**
      * Represents a [KaScope] for a type, which includes [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters)
      * of that type.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface TypeScope : KaScopeKind
 
     public sealed interface NonLocalScope : KaScopeKind
@@ -377,11 +386,13 @@ public sealed interface KaScopeKind {
     /**
      * Represents a [KaScope] containing type parameters.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface TypeParameterScope : NonLocalScope
 
     /**
      * Represents a [KaScope] containing declarations from a package.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface PackageMemberScope : NonLocalScope
 
     /**
@@ -392,35 +403,42 @@ public sealed interface KaScopeKind {
     /**
      * Represents a [KaScope] containing declarations from explicit non-star imports.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExplicitSimpleImportingScope : ImportingScope
 
     /**
      * Represents a [KaScope] containing declarations from explicit star imports.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ExplicitStarImportingScope : ImportingScope
 
     /**
      * Represents a [KaScope] containing declarations from non-star imports which are not declared explicitly and are added by default.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface DefaultSimpleImportingScope : ImportingScope
 
     /**
      * Represents a [KaScope] containing declarations from star imports which are not declared explicitly and are added by default.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface DefaultStarImportingScope : ImportingScope
 
     /**
      * Represents a [KaScope] containing the static members of a classifier.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface StaticMemberScope : NonLocalScope
 
     /**
      * Represents a [KaScope] containing the members of a script.
      */
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ScriptMemberScope : NonLocalScope
 }
 
 @KaIdeApi
+@OptIn(KaImplementationDetail::class)
 public object KaScopeKinds {
     @KaIdeApi
     public class LocalScope(override val indexInTower: Int) : KaScopeKind.LocalScope
@@ -456,6 +474,7 @@ public object KaScopeKinds {
 /**
  * A wrapper around a [KaScope] which is additionally positioned in the scope tower of a [KaScopeContext], represented by [KaScopeKind].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaScopeWithKind : KaLifetimeOwner {
     /**
      * The [KaScope] underlying this [KaScopeWithKind].
@@ -469,6 +488,7 @@ public interface KaScopeWithKind : KaLifetimeOwner {
 }
 
 @KaIdeApi
+@OptIn(KaImplementationDetail::class)
 public class KaScopeWithKindImpl(
     private val backingScope: KaScope,
     private val backingKind: KaScopeKind,

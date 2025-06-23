@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.swiftexport.standalone.klib
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.native.analysis.api.*
  * Mostly acts as a convenient wrapper around [readKlibDeclarationAddresses] for APIs built around [KaScope].
  * Some methods are not implemented, and it is OK for now.
  */
+@OptIn(KaImplementationDetail::class) // TODO: KT-78604 eliminate KaScope inheritance
 public class KlibScope(
     private val libraryModule: KaLibraryModule,
     private val analysisSession: KaSession,

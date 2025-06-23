@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
  *
  * @see org.jetbrains.kotlin.analysis.api.components.KaResolver.resolveToCallCandidates
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaCallCandidateInfo : KaLifetimeOwner {
     /**
      * The [KaCall] representing the call candidate.
@@ -40,6 +42,7 @@ public sealed interface KaCallCandidateInfo : KaLifetimeOwner {
  *
  * In other words, given the arguments and type arguments, the candidate *could* be called at that specific call site.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaApplicableCallCandidateInfo : KaCallCandidateInfo
 
 /**
@@ -52,6 +55,7 @@ public interface KaApplicableCallCandidateInfo : KaCallCandidateInfo
  *
  * In other words, given the arguments and type arguments, the candidate *could not* be called at that specific call site.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaInapplicableCallCandidateInfo : KaCallCandidateInfo {
     /**
      * The reason for the [candidate]'s missing applicability (e.g. argument type mismatch or no value for a parameter).

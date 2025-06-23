@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDataFlowProvider : KaSessionComponent {
     /**
      * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
@@ -43,6 +45,7 @@ public interface KaDataFlowProvider : KaSessionComponent {
 /**
  * Represents smart cast information for an expression.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSmartCastInfo : KaLifetimeOwner {
     /**
      * Whether the smart cast is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability).
@@ -59,6 +62,7 @@ public interface KaSmartCastInfo : KaLifetimeOwner {
  * Represents type information about an implicit receiver which has been smart-cast to a more specific type. An implicit smart cast is
  * applied to an implicit receiver, such as `substring()` called on an implicit `this` given an earlier smart cast `this is String`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
     /**
      * The receiver type with the smart cast applied.

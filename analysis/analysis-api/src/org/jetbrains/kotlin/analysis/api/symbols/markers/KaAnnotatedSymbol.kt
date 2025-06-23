@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.symbols.markers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
  *
  * @see KaAnnotated
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaAnnotatedSymbol : KaSymbol, KaAnnotated {
     override fun createPointer(): KaSymbolPointer<KaAnnotatedSymbol>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSubstitutorProvider : KaSessionComponent {
     /**
      * Creates a [KaSubstitutor] based on the given [mappings].
@@ -71,6 +72,7 @@ public inline fun KaSession.buildSubstitutor(
 }
 
 @KaExperimentalApi
+@OptIn(KaImplementationDetail::class)
 public class KaSubstitutorBuilder
 @KaImplementationDetail constructor(override val token: KaLifetimeToken) : KaLifetimeOwner {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()

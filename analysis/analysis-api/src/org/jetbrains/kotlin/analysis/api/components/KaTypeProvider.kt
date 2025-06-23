@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeProvider : KaSessionComponent {
     /**
      * [builtinTypes] provides [KaType] instances for built-in types.
@@ -255,6 +257,7 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaType.arrayElementType: KaType?
 }
 
+@SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaBuiltinTypes : KaLifetimeOwner {
     /** The [Int] class type. */
     public abstract val int: KaType

@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.resolution
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
+@OptIn(KaImplementationDetail::class)
 public sealed interface KaCall : KaLifetimeOwner
 
 /**
@@ -58,6 +60,7 @@ public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaCallableMemberC
 /**
  * A simple, direct call to a function, without any delegation or special syntax involved.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
     /**
      * Whether this function call is an [implicit invoke call](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) on a
@@ -76,6 +79,7 @@ public interface KaSimpleFunctionCall : KaFunctionCall<KaFunctionSymbol> {
  * fun foo() {}
  * ```
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaAnnotationCall : KaFunctionCall<KaConstructorSymbol>
 
 /**
@@ -95,6 +99,7 @@ public interface KaAnnotationCall : KaFunctionCall<KaConstructorSymbol>
  * }
  * ```
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDelegatedConstructorCall : KaFunctionCall<KaConstructorSymbol> {
     /**
      * Determines whether the constructor call is a [`super(...)`][Kind.SUPER_CALL] call or a [`this(...)`][Kind.THIS_CALL] call.
@@ -122,6 +127,7 @@ public sealed interface KaVariableAccessCall : KaCallableMemberCall<KaVariableSy
 /**
  * A simple read or write to a variable or property.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
     /**
      * The kind of access to the variable (read or write), alongside additional information.
@@ -132,6 +138,7 @@ public interface KaSimpleVariableAccessCall : KaVariableAccessCall {
 /**
  * A compound access of a [variable][KaCompoundVariableAccessCall] or an [array][KaCompoundArrayAccessCall].
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompoundAccessCall {
     /**
      * The corresponding [compound operation][KaCompoundOperation].
@@ -188,6 +195,7 @@ public interface KaCompoundAccessCall {
  * `m += "a"` is a simple `KaFunctionCall` to `MutableList.plusAssign`, not a `KaCompoundVariableAccessCall`. However, the dispatch receiver
  * of this call, `m`, is a simple read access represented as a `KaVariableAccessCall`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
     /**
      * Represents a symbol of the mutated variable.
@@ -242,6 +250,7 @@ public interface KaCompoundVariableAccessCall : KaCall, KaCompoundAccessCall {
  * The above call is represented as a simple `KaFunctionCall` to `MutableList.plusAssign`, with the dispatch receiver referencing the
  * expression `m["a"]`, which is again a simple `KaFunctionCall` to `ThrowingMap.get`.
  */
+@SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompoundArrayAccessCall : KaCall, KaCompoundAccessCall {
     /**
      * The arguments representing the indices in the [index access operator](https://kotlinlang.org/docs/operator-overloading.html#indexed-access-operator)
