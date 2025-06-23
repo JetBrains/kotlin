@@ -19,7 +19,7 @@ object WasmBaseExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirWasmDefinedExternallyCallChecker,
             FirWasmExternalRttiChecker,
-            FirWebReflectionAPICallChecker,
+            FirWebReflectionAPICallChecker(isWasm = true),
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

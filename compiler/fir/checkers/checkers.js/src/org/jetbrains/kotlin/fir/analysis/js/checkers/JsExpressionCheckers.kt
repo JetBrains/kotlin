@@ -21,7 +21,7 @@ object JsExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJsDefinedExternallyCallChecker,
             FirJsNativeRttiChecker,
-            FirWebReflectionAPICallChecker
+            FirWebReflectionAPICallChecker(isWasm = false),
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

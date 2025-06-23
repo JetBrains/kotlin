@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirWebReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
+class FirWebReflectionAPICallChecker(val isWasm: Boolean) : AbstractFirReflectionApiCallChecker() {
     context(context: CheckerContext)
     override fun isWholeReflectionApiAvailable(): Boolean {
         return false
@@ -36,6 +36,7 @@ object FirWebReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun report(source: KtSourceElement?) {
-        reporter.reportOn(source, FirWebCommonErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin JS/Wasm backends.")
+        val backend = if (isWasm) "Wasm" else "JS"
+        reporter.reportOn(source, FirWebCommonErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin/$backend.")
     }
 }
