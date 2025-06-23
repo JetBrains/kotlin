@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
@@ -278,15 +279,33 @@ abstract class FirDataFlowAnalyzer(
         // that the lower type bound is correct.
         val stabilityWithNoTargetTypes = variable.getStability(flow, targetTypes = null)
         val lowerTypes = typeStatement?.lowerTypes
-        return if (upperTypes?.isNotEmpty() == true || lowerTypes?.isNotEmpty() == true) {
+        val lowerTypesFromVariable = when (val unwrapped = flow.unwrapVariable(variable)) {
+            variable -> null // Stay conservative and don't infer anything for literal accesses to enums - only to variables aliasing them
+            else -> inferLowerTypesFromVariable(unwrapped)
+        }
+        return if (
+            upperTypes?.isNotEmpty() == true ||
+            lowerTypes?.isNotEmpty() == true ||
+            lowerTypesFromVariable?.isNotEmpty() == true
+        ) {
             SmartCastStatement(
                 upperTypes.orEmpty(), upperTypesStability,
-                lowerTypes.orEmpty(), stabilityWithNoTargetTypes,
+                lowerTypes.orEmpty() + lowerTypesFromVariable.orEmpty(), stabilityWithNoTargetTypes,
             )
         } else {
             null
         }
     }
+
+    private fun inferLowerTypesFromVariable(variable: DataFlowVariable): Set<DfaType>? {
+        val symbol = (variable as? RealVariable)?.symbol as? FirEnumEntrySymbol ?: return null
+        return inferLowerTypesFromSymbol(symbol)
+    }
+
+    private fun inferLowerTypesFromSymbol(symbol: FirEnumEntrySymbol): Set<DfaType>? =
+        with(components) { symbol.getComplementary() }
+            ?.takeIf { it.isNotEmpty() }
+            ?.mapTo(mutableSetOf(), DfaType::Symbol)
 
     data class SmartCastStatement(
         val upperTypes: Set<ConeKotlinType>,
@@ -722,13 +741,19 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
             }
 
-            val symbol = when (otherOperand) {
-                is FirPropertyAccessExpression -> otherOperand.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
-                is FirResolvedQualifier -> otherOperand.symbol?.takeIf { it.isSingleton() }
+            val symbol = when (val other = otherOperand.unwrapSmartcastExpression()) {
+                is FirPropertyAccessExpression -> other.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
+                is FirResolvedQualifier -> other.symbol?.takeIf { it.isSingleton() }
                 else -> null
             }
             if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
+            }
+            if (symbol is FirEnumEntrySymbol) {
+                val complementary = with(components) { symbol.getComplementary() }?.takeIf { it.isNotEmpty() }
+                if (complementary != null) {
+                    flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementary))
+                }
             }
         }
 
