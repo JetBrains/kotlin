@@ -47885,6 +47885,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
       }
 
       @Test
+      @TestMetadata("capturedLocalFunReflection.kt")
+      public void testCapturedLocalFunReflection() {
+        runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunReflection.kt");
+      }
+
+      @Test
       @TestMetadata("capturedLocalFunTwice.kt")
       public void testCapturedLocalFunTwice() {
         runTest("compiler/testData/codegen/boxInline/anonymousObject/capturedLocalFunTwice.kt");
