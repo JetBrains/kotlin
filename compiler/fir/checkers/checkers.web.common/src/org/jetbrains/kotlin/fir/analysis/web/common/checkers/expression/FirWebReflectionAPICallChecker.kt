@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
+object FirWebReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
     context(context: CheckerContext)
     override fun isWholeReflectionApiAvailable(): Boolean {
         return false
