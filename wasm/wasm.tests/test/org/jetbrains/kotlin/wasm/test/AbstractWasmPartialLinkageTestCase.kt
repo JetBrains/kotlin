@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -76,7 +77,10 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
     }
 
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(WasmTestConfiguration(testPath))
+    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(
+        testConfiguration = WasmTestConfiguration(testPath),
+        compilerEditionChange = KlibCompilerChangeScenario.NoChange,
+    )
 
     fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File, compilerArguments: List<String>) {
         val kotlinSourceFilePaths = mutableListOf<String>()
