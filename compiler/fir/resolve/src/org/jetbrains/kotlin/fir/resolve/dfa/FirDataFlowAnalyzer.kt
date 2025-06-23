@@ -276,15 +276,33 @@ abstract class FirDataFlowAnalyzer(
         // that the lower type bound is correct.
         val stabilityWithNoTargetTypes = variable.getStability(flow, targetTypes = null)
         val lowerTypes = typeStatement?.lowerTypes
-        return if (upperTypes?.isNotEmpty() == true || lowerTypes?.isNotEmpty() == true) {
+        val lowerTypesFromVariable = when (val unwrapped = flow.unwrapVariable(variable)) {
+            variable -> null // Stay conservative and don't infer anything for literal accesses to enums - only to variables aliasing them
+            else -> inferLowerTypesFromVariable(unwrapped)
+        }
+        return if (
+            upperTypes?.isNotEmpty() == true ||
+            lowerTypes?.isNotEmpty() == true ||
+            lowerTypesFromVariable?.isNotEmpty() == true
+        ) {
             SmartCastStatement(
                 upperTypes.orEmpty(), upperTypesStability,
-                lowerTypes.orEmpty(), stabilityWithNoTargetTypes,
+                lowerTypes.orEmpty() + lowerTypesFromVariable.orEmpty(), stabilityWithNoTargetTypes,
             )
         } else {
             null
         }
     }
+
+    private fun inferLowerTypesFromVariable(variable: DataFlowVariable): Set<DfaType>? {
+        val symbol = (variable as? RealVariable)?.symbol as? FirEnumEntrySymbol ?: return null
+        return inferLowerTypesFromSymbol(symbol)
+    }
+
+    private fun inferLowerTypesFromSymbol(symbol: FirEnumEntrySymbol): Set<DfaType>? =
+        with(components) { symbol.getComplementary() }
+            ?.takeIf { it.isNotEmpty() }
+            ?.mapTo(mutableSetOf(), DfaType::Symbol)
 
     data class SmartCastStatement(
         val upperTypes: Set<ConeKotlinType>,
@@ -713,12 +731,6 @@ abstract class FirDataFlowAnalyzer(
                 // If the object has a problematic `equals()`, it will be reported during `when` exhaustiveness analysis.
                 || this is FirRegularClassSymbol && classKind.isObject
 
-        fun FirEnumEntrySymbol.getComplementary() = resolvedReturnType
-            .toRegularClassSymbol(components.session)
-            ?.collectEnumEntries(components.session)
-            ?.filterNot { it == this }
-            .orEmpty()
-
         fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
             if (variable !is RealVariable) return
 
@@ -726,16 +738,19 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication((expressionVariable eq isEq) implies (variable typeEq otherOperand.resolvedType))
             }
 
-            val symbol = when (otherOperand) {
-                is FirPropertyAccessExpression -> otherOperand.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
-                is FirResolvedQualifier -> otherOperand.symbol?.takeIf { it.isSingleton() }
+            val symbol = when (val other = otherOperand.unwrapSmartcastExpression()) {
+                is FirPropertyAccessExpression -> other.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
+                is FirResolvedQualifier -> other.symbol?.takeIf { it.isSingleton() }
                 else -> null
             }
             if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
             }
             if (symbol is FirEnumEntrySymbol) {
-                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq symbol.getComplementary()))
+                val complementary = with(components) { symbol.getComplementary() }?.takeIf { it.isNotEmpty() }
+                if (complementary != null) {
+                    flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementary))
+                }
             }
         }
 

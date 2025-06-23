@@ -20,7 +20,7 @@ fun simpleVar(i: MyEnum): Int {
     if (x == MyEnum.A) return 1
     x = MyEnum.A
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
+    return when (x) {
         MyEnum.A -> 2
     }
 }
