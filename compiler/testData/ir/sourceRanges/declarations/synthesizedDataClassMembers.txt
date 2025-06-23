@@ -136,7 +136,7 @@
             @-1:-1..-1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
               @-1:-1..-1 CONST Boolean type=kotlin.Boolean value=false
         @-1:-1..-1 VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.C [val]
-          @-1:-1..-1 TYPE_OP type=<root>.C origin=CAST typeOperand=<root>.C
+          @-1:-1..-1 TYPE_OP type=<root>.C origin=IMPLICIT_CAST typeOperand=<root>.C
             @-1:-1..-1 GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
         @-1:-1..-1 WHEN type=kotlin.Unit origin=null
           @-1:-1..-1 BRANCH

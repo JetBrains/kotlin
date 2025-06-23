@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Counter'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Counter [val]
-          TYPE_OP type=<root>.Counter origin=CAST typeOperand=<root>.Counter
+          TYPE_OP type=<root>.Counter origin=IMPLICIT_CAST typeOperand=<root>.Counter
             GET_VAR 'other: kotlin.Any? declared in <root>.Counter.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CounterConfig'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.CounterConfig [val]
-          TYPE_OP type=<root>.CounterConfig origin=CAST typeOperand=<root>.CounterConfig
+          TYPE_OP type=<root>.CounterConfig origin=IMPLICIT_CAST typeOperand=<root>.CounterConfig
             GET_VAR 'other: kotlin.Any? declared in <root>.CounterConfig.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

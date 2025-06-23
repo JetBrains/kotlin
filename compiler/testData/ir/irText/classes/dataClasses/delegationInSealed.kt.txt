@@ -33,7 +33,7 @@ sealed class A : CharSequence {
       when {
         other !is B -> return false
       }
-      val tmp_0: B = other as B
+      val tmp_0: B = other /*as B */
       when {
         EQEQ(arg0 = <this>.#c, arg1 = tmp_0.#c).not() -> return false
       }
@@ -62,4 +62,3 @@ sealed class A : CharSequence {
   }
 
 }
-

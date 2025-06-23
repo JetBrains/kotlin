@@ -176,7 +176,7 @@ MODULE_FRAGMENT name:<lib2>
                 then: RETURN type=kotlin.Nothing from='lib2/SealedInterface.Object.equals|equals(kotlin.Any?){}[0]'
                   CONST Boolean type=kotlin.Boolean value=false
             VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:lib2.SealedInterface.Object [val]
-              TYPE_OP type=lib2.SealedInterface.Object origin=CAST typeOperand=lib2.SealedInterface.Object
+              TYPE_OP type=lib2.SealedInterface.Object origin=IMPLICIT_CAST typeOperand=lib2.SealedInterface.Object
                 GET_VAR 'other: kotlin.Any? declared in lib2.SealedInterface.Object.equals' type=kotlin.Any? origin=null
             RETURN type=kotlin.Nothing from='lib2/SealedInterface.Object.equals|equals(kotlin.Any?){}[0]'
               CONST Boolean type=kotlin.Boolean value=true

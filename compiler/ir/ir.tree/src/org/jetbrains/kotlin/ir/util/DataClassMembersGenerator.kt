@@ -147,7 +147,7 @@ abstract class DataClassMembersGenerator(
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
             }
             +irIfThenReturnFalse(irNotIs(irOther(), irType))
-            val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
+            val otherWithCast = irTemporary(irImplicitCast(irOther(), irType), "other_with_cast")
             for (property in properties) {
                 val arg1 = irGetProperty(irThis(), property)
                 val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)

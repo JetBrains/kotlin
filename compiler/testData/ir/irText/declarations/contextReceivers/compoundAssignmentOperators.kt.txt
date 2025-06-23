@@ -30,7 +30,7 @@ data class Result {
     when {
       other !is Result -> return false
     }
-    val tmp_0: Result = other as Result
+    val tmp_0: Result = other /*as Result */
     when {
       EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
@@ -140,4 +140,3 @@ operator fun Result.timesAssign(other: Result) {
     tmp_4.<set-i>(<set-?> = tmp_4.<get-i>().times(other = other.<get-i>()))
   }
 }
-

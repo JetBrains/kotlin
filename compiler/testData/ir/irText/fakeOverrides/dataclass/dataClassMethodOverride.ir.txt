@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/1.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A [val]
-          TYPE_OP type=<root>.A origin=CAST typeOperand=<root>.A
+          TYPE_OP type=<root>.A origin=IMPLICIT_CAST typeOperand=<root>.A
             GET_VAR 'other: kotlin.Any? declared in <root>.A.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/1.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.B [val]
-          TYPE_OP type=<root>.B origin=CAST typeOperand=<root>.B
+          TYPE_OP type=<root>.B origin=IMPLICIT_CAST typeOperand=<root>.B
             GET_VAR 'other: kotlin.Any? declared in <root>.B.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -265,7 +265,7 @@ FILE fqName:<root> fileName:/1.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.C'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.C [val]
-          TYPE_OP type=<root>.C origin=CAST typeOperand=<root>.C
+          TYPE_OP type=<root>.C origin=IMPLICIT_CAST typeOperand=<root>.C
             GET_VAR 'other: kotlin.Any? declared in <root>.C.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -364,7 +364,7 @@ FILE fqName:<root> fileName:/1.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.D'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:<root>.D [val]
-          TYPE_OP type=<root>.D origin=CAST typeOperand=<root>.D
+          TYPE_OP type=<root>.D origin=IMPLICIT_CAST typeOperand=<root>.D
             GET_VAR 'other: kotlin.Any? declared in <root>.D.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

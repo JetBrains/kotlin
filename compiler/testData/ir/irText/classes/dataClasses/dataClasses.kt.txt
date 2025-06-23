@@ -40,7 +40,7 @@ data class Test1 {
     when {
       other !is Test1 -> return false
     }
-    val tmp_0: Test1 = other as Test1
+    val tmp_0: Test1 = other /*as Test1 */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
     }
@@ -92,7 +92,7 @@ data class Test2 {
     when {
       other !is Test2 -> return false
     }
-    val tmp_1: Test2 = other as Test2
+    val tmp_1: Test2 = other /*as Test2 */
     when {
       EQEQ(arg0 = <this>.#x, arg1 = tmp_1.#x).not() -> return false
     }
@@ -162,7 +162,7 @@ data class Test3 {
     when {
       other !is Test3 -> return false
     }
-    val tmp_2: Test3 = other as Test3
+    val tmp_2: Test3 = other /*as Test3 */
     when {
       EQEQ(arg0 = <this>.#d, arg1 = tmp_2.#d).not() -> return false
     }
@@ -197,4 +197,3 @@ data class Test3 {
   }
 
 }
-

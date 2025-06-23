@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/MultiList.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Some<T of <root>.Some> [val]
-          TYPE_OP type=<root>.Some<T of <root>.Some> origin=CAST typeOperand=<root>.Some<T of <root>.Some>
+          TYPE_OP type=<root>.Some<T of <root>.Some> origin=IMPLICIT_CAST typeOperand=<root>.Some<T of <root>.Some>
             GET_VAR 'other: kotlin.Any? declared in <root>.Some.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

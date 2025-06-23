@@ -25,7 +25,7 @@ data class Counter {
     when {
       other !is Counter -> return false
     }
-    val tmp_0: Counter = other as Counter
+    val tmp_0: Counter = other /*as Counter */
     when {
       EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
@@ -68,7 +68,7 @@ data class CounterConfig {
     when {
       other !is CounterConfig -> return false
     }
-    val tmp_1: CounterConfig = other as CounterConfig
+    val tmp_1: CounterConfig = other /*as CounterConfig */
     when {
       EQEQ(arg0 = <this>.#max, arg1 = tmp_1.#max).not() -> return false
     }
@@ -143,4 +143,3 @@ operator fun Counter.iterator(): CounterIterator {
   }
 )
 }
-

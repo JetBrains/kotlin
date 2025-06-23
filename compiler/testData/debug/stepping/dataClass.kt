@@ -76,7 +76,6 @@ fun box() {
 // test.kt:1 equals
 // test.kt:1 equals
 // test.kt:1 equals
-// test.kt:1 equals
 // test.kt:16 box
 // test.kt:1 hashCode
 // test.kt:1 hashCode
@@ -128,7 +127,6 @@ fun box() {
 // test.kt:4 <init>
 // test.kt:4 <init>
 // test.kt:15 box
-// test.kt:1 protoOf.equals
 // test.kt:1 protoOf.equals
 // test.kt:1 protoOf.equals
 // test.kt:1 protoOf.equals

@@ -32,7 +32,7 @@ data class Pair<A : Any?, B : Any?> {
     when {
       other !is Pair<A, B> -> return false
     }
-    val tmp_0: Pair<A, B> = other as Pair<A, B>
+    val tmp_0: Pair<A, B> = other /*as Pair<A, B> */
     when {
       EQEQ(arg0 = <this>.#first, arg1 = tmp_0.#first).not() -> return false
     }
@@ -90,4 +90,3 @@ val <T : Any?> Pair<T, T>.min: T
       else -> <this>.<get-second>()
     }
   }
-
