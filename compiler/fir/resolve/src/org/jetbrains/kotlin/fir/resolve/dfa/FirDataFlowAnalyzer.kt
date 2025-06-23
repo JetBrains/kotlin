@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
@@ -712,6 +713,12 @@ abstract class FirDataFlowAnalyzer(
                 // If the object has a problematic `equals()`, it will be reported during `when` exhaustiveness analysis.
                 || this is FirRegularClassSymbol && classKind.isObject
 
+        fun FirEnumEntrySymbol.getComplementary() = resolvedReturnType
+            .toRegularClassSymbol(components.session)
+            ?.collectEnumEntries(components.session)
+            ?.filterNot { it == this }
+            .orEmpty()
+
         fun addEqualityImplications(variable: DataFlowVariable?, otherOperand: FirExpression) {
             if (variable !is RealVariable) return
 
@@ -726,6 +733,9 @@ abstract class FirDataFlowAnalyzer(
             }
             if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
+            }
+            if (symbol is FirEnumEntrySymbol) {
+                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq symbol.getComplementary()))
             }
         }
 
