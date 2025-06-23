@@ -27,17 +27,13 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
     private companion object {
-        private val OPERATION_TOKENS: TokenSet = run {
-            val tokenSets = buildList {
-                add(KtTokenSets.POSTFIX_OPERATIONS)
-                add(KtTokenSets.PREFIX_OPERATIONS)
-                for (precedence in BinaryOperationPrecedence.entries) {
-                    add(precedence.tokenSet)
-                }
+        private val OPERATION_TOKENS: TokenSet = TokenSet.create(*buildList {
+            addAll(KtTokenSets.POSTFIX_OPERATIONS.types)
+            addAll(KtTokenSets.PREFIX_OPERATIONS.types)
+            for (precedence in BinaryOperationPrecedence.entries) {
+                addAll(precedence.tokens)
             }
-
-            TokenSet.orSet(*tokenSets.toTypedArray())
-        }
+        }.toTypedArray())
     }
 
     override fun getReferencedNameElement() = findChildByType<PsiElement?>(OPERATION_TOKENS) ?: this

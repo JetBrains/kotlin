@@ -267,8 +267,7 @@ org.jetbrains.kotlin.lang.BinaryOperationPrecedence.INFIX
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.IN_OR_IS
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.MULTIPLICATIVE
 org.jetbrains.kotlin.lang.BinaryOperationPrecedence.RANGE
-org.jetbrains.kotlin.lang.BinaryOperationPrecedence.tokens
-org.jetbrains.kotlin.lang.BinaryOperationPrecedence:constructor(BinaryOperationPrecedence?, IElementType)
+org.jetbrains.kotlin.lang.BinaryOperationPrecedence.tokenSet
 org.jetbrains.kotlin.psi.BuilderByPattern
 org.jetbrains.kotlin.psi.BuilderByPattern.appendChildRange(PsiChildRange)
 org.jetbrains.kotlin.psi.BuilderByPattern.appendExpression(KtExpression?)

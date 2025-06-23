@@ -353,7 +353,7 @@ public final class org/jetbrains/kotlin/lang/BinaryOperationPrecedence : java/la
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getHigherPriority ()Lorg/jetbrains/kotlin/lang/BinaryOperationPrecedence;
 	public final fun getTokenSet ()Lcom/intellij/psi/tree/TokenSet;
-	public final fun getTokens ()Ljava/util/List;
+	public final fun getTokens ()[Lorg/jetbrains/kotlin/lexer/KtToken;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/lang/BinaryOperationPrecedence;
 	public static fun values ()[Lorg/jetbrains/kotlin/lang/BinaryOperationPrecedence;
 }

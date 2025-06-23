@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 import java.util.*;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
-import static org.jetbrains.kotlin.lang.BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP;
 import static org.jetbrains.kotlin.lang.BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.KotlinParsing.*;
