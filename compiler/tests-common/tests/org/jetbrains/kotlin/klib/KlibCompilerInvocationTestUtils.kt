@@ -70,7 +70,7 @@ object KlibCompilerInvocationTestUtils {
     class Dependencies(val regularDependencies: Set<Dependency>, val friendDependencies: Set<Dependency>) {
         init {
             regularDependencies.checkNoDuplicates("regular")
-            regularDependencies.checkNoDuplicates("friend")
+            friendDependencies.checkNoDuplicates("friend")
         }
 
         fun mergeWith(other: Dependencies): Dependencies =
