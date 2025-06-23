@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.util.triggerUnpackingKotlinNative
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.text.Regex.Companion.escape
@@ -60,6 +61,7 @@ class IdeSourcesAndDocumentationResolutionTest {
         }
 
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         fun resolveDependencySources(sourceSet: KotlinSourceSet): List<IdeaKotlinResolvedBinaryDependency> =
             project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)

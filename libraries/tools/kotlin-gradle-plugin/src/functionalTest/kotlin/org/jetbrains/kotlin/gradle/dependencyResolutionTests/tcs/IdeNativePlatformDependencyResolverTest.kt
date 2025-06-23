@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativePlatformDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.triggerUnpackingKotlinNative
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
@@ -28,10 +30,12 @@ class IdeNativePlatformDependencyResolverTest {
         // so it passes only after another test does the unpacking
         // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
         val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
         val kotlin = project.multiplatformExtension
         kotlin.applyDefaultHierarchyTemplate()
         kotlin.linuxX64()
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -77,10 +81,12 @@ class IdeNativePlatformDependencyResolverTest {
     @Test
     fun `test - non native source sets`() {
         val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
         kotlin.linuxX64()
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")

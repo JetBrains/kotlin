@@ -25,18 +25,11 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.configureDefaults
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
+import org.jetbrains.kotlin.gradle.util.triggerUnpackingKotlinNative
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.junit.Test
 
 class IdeStdlibResolutionTest {
-    // KT-77580
-    // When using K/N from local repo these tests don't unpack K/N to konan dir:
-    //   `test bamboo linux`
-    //   `test jvm+native shared simple project`
-    //   `test nativeShared`
-    //   `test single native target`
-    // so they pass only after another test does the unpacking
-    // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
 
     @Test
     fun `test single jvm target`() {
@@ -76,6 +69,7 @@ class IdeStdlibResolutionTest {
         kotlin.linuxX64("linux")
 
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), nativeStdlibDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), nativeStdlibDependency(kotlin))
@@ -123,6 +117,7 @@ class IdeStdlibResolutionTest {
         kotlin.linuxX64("linux")
 
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), stdlibCommonMainDependency(kotlin))
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), stdlibCommonMainDependency(kotlin))
@@ -183,6 +178,7 @@ class IdeStdlibResolutionTest {
         }
 
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         project.assertStdlibDependencies(linuxIntermediateMain, nativeStdlibDependency(kotlin))
         project.assertStdlibDependencies(linuxIntermediateTest, nativeStdlibDependency(kotlin))
@@ -215,6 +211,8 @@ class IdeStdlibResolutionTest {
         }
 
         project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
+        kotlin.linuxArm64().triggerUnpackingKotlinNative()
 
         project.assertStdlibDependencies(
             linuxSharedMain, listOf(nativeStdlibDependency(kotlin))

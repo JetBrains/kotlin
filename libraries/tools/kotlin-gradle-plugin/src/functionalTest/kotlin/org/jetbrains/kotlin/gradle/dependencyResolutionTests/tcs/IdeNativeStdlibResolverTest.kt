@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativeStdlibDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.triggerUnpackingKotlinNative
 import org.junit.Test
 
 class IdeNativeStdlibResolverTest {
-    // KT-77580
     // When using K/N from local repo these tests don't unpack K/N to konan dir
     // so they pass only after another test does the unpacking
     // e. g. MultiplatformSecondaryOutgoingVariantsTest.checkNonPackedKlibApiVariantResolved
@@ -24,9 +24,13 @@ class IdeNativeStdlibResolverTest {
     @Test
     fun `test single linux target`() {
         val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
         val kotlin = project.multiplatformExtension
 
         kotlin.linuxX64()
+
+        project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -44,10 +48,14 @@ class IdeNativeStdlibResolverTest {
     @Test
     fun `test shared non native target`() {
         val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
         val kotlin = project.multiplatformExtension
 
         kotlin.linuxX64()
         kotlin.jvm()
+
+        project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
@@ -61,6 +69,7 @@ class IdeNativeStdlibResolverTest {
     @Test
     fun `test shared native target`() {
         val project = buildProjectWithMPP()
+        project.repositories.mavenLocal()
         val kotlin = project.multiplatformExtension
 
         kotlin.linuxX64()
@@ -83,6 +92,9 @@ class IdeNativeStdlibResolverTest {
             linuxArm64Main.dependsOn(linuxTest)
             linuxX64Main.dependsOn(linuxTest)
         }
+
+        project.evaluate()
+        kotlin.linuxX64().triggerUnpackingKotlinNative()
 
         val stdlibCoordinates = binaryCoordinates("org.jetbrains.kotlin.native:stdlib:${project.nativeProperties.kotlinNativeVersion.get()}")
 

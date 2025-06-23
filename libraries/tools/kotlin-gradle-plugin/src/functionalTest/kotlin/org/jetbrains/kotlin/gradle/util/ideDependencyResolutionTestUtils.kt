@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
 
 /**
  * Legacy -jdk8 and -jdk7 dependencies:
@@ -21,3 +24,7 @@ fun legacyStdlibJdkDependencies(version: String = "1.8.0") = listOf(
     binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"),
     binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"),
 )
+
+fun KotlinNativeTarget.triggerUnpackingKotlinNative() {
+    compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileDependencyFiles.files
+}
