@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     context(reporter: DiagnosticReporter, context: CheckerContext)
@@ -58,7 +59,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind
         private val data: VariableInitializationInfoData,
         private val isForInitialization: Boolean,
     ) : ControlFlowGraphVisitorVoid() {
-        private val declaredIn = hashMapOf<FirPropertySymbol, ControlFlowGraph>()
+        private val declaredIn = openAddressHashTable<FirPropertySymbol, ControlFlowGraph>()
         private val reassigned = mutableSetOf<FirPropertySymbol>()
 
         override fun visitNode(node: CFGNode<*>) {}

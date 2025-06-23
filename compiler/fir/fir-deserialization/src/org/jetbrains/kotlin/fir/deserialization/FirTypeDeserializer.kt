@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.openAddressHashTable
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 class FirTypeDeserializer(
@@ -61,7 +62,7 @@ class FirTypeDeserializer(
 
     init {
         if (typeParameterProtos.isNotEmpty()) {
-            typeParameterNames = hashMapOf()
+            typeParameterNames = openAddressHashTable()
             val result = typeParameterDescriptors as LinkedHashMap<Int, FirTypeParameterSymbol>
             val builders = mutableListOf<FirTypeParameterBuilder>()
             for (proto in typeParameterProtos) {

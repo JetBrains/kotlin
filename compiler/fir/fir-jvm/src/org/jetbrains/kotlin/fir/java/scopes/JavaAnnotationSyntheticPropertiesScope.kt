@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 class JavaAnnotationSyntheticPropertiesScope(
     private val session: FirSession,
@@ -33,7 +34,7 @@ class JavaAnnotationSyntheticPropertiesScope(
 ) : FirDelegatingTypeScope(delegateScope) {
     private val classId: ClassId = owner.classId
     private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
-    private val syntheticPropertiesCache = hashMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
+    private val syntheticPropertiesCache = openAddressHashTable<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name in names) return

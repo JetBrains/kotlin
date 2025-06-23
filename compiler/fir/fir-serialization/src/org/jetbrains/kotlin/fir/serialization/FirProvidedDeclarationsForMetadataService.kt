@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 
 /**
@@ -71,9 +72,9 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
 }
 
 private class FirProvidedDeclarationsForMetadataServiceImpl(private val session: FirSession) : FirProvidedDeclarationsForMetadataService() {
-    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> = hashMapOf()
+    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> = openAddressHashTable()
 
-    private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> = hashMapOf()
+    private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> = openAddressHashTable()
 
     override fun registerDeclaration(declaration: FirCallableDeclaration) {
         val containingClass = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)?.fir

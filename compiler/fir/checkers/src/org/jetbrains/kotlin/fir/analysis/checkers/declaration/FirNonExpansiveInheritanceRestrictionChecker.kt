@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.util.openAddressHashTable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -152,9 +153,9 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
     private data class ExpansiveEdge<out T>(val from: T, val to: T)
 
-    private class Graph<T> {
+    private class Graph<T : Any> {
         val expansiveEdges = SmartSet.create<ExpansiveEdge<T>>()
-        private val edgeLists = hashMapOf<T, MutableSet<T>>()
+        private val edgeLists = openAddressHashTable<T, MutableSet<T>>()
 
         fun addEdge(from: T, to: T, expansive: Boolean = false) {
             edgeLists.getOrPut(from) { SmartSet.create() }.add(to)

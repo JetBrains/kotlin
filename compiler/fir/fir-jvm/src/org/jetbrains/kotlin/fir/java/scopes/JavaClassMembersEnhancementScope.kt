@@ -15,14 +15,15 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 class JavaClassMembersEnhancementScope(
     session: FirSession,
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirDelegatingTypeScope(useSiteMemberScope) {
-    private val enhancedToOriginalFunctions = hashMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
-    private val enhancedToOriginalProperties = hashMapOf<FirPropertySymbol, FirPropertySymbol>()
+    private val enhancedToOriginalFunctions = openAddressHashTable<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
+    private val enhancedToOriginalProperties = openAddressHashTable<FirPropertySymbol, FirPropertySymbol>()
 
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         overriddenMembers()

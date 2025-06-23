@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
     object Regular : FirValueClassDeclarationChecker(MppCheckerKind.Platform) {
@@ -91,7 +92,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         var primaryConstructor: FirConstructorSymbol? = null
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
-        val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
+        val primaryConstructorPropertiesByName = openAddressHashTable<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
         val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 

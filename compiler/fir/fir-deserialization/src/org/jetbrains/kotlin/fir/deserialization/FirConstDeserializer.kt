@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.openAddressHashTable
 
 open class FirConstDeserializer(
     private val protocol: SerializerExtensionProtocol
 ) {
-    protected val constantCache: MutableMap<CallableId, FirExpression> = hashMapOf()
+    protected val constantCache: MutableMap<CallableId, FirExpression> = openAddressHashTable()
 
     open fun loadConstant(
         propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver, isUnsigned: Boolean,
