@@ -1402,6 +1402,18 @@ public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNat
       }
 
       @Test
+      @TestMetadata("syntheticAccessorDefaultValues.kt")
+      public void testSyntheticAccessorDefaultValues() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorDefaultValues.kt");
+      }
+
+      @Test
+      @TestMetadata("syntheticAccessorTypeParameters.kt")
+      public void testSyntheticAccessorTypeParameters() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/syntheticAccessorTypeParameters.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateTopLevelConstValFromInternalInline.kt")
       public void testUsePrivateTopLevelConstValFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");

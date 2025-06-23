@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
@@ -793,19 +794,35 @@ fun IrValueParameter.copyTo(
         irFunction.classIfConstructor,
         remapTypeMap
     ),
-    varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
+    varargElementType: IrType? = this.varargElementType?.remapTypeParameters(
+        (parent as IrTypeParametersContainer).classIfConstructor,
+        irFunction.classIfConstructor,
+        remapTypeMap
+    ),
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline,
     isAssignable: Boolean = this.isAssignable,
     kind: IrParameterKind = this.kind,
+    remapDefaultValueSymbolMap: Map<IrValueParameterSymbol, IrValueParameterSymbol> = mapOf(),
 ): IrValueParameter {
     val symbol = IrValueParameterSymbolImpl()
     val defaultValueCopy = defaultValue?.let { originalDefault ->
         factory.createExpressionBody(
             startOffset = originalDefault.startOffset,
             endOffset = originalDefault.endOffset,
-            expression = originalDefault.expression.deepCopyWithSymbols(irFunction),
+            expression = originalDefault.expression.run {
+                val symbolRemapper = object : DeepCopySymbolRemapper() {
+                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
+                        remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
+
+                    override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
+                        remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
+                }
+                acceptVoid(symbolRemapper)
+                transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(irFunction)
+            },
         )
     }
     return factory.createValueParameter(
@@ -929,6 +946,8 @@ fun IrFunction.copyValueParametersToStatic(
     val target = this
     assert(target.parameters.isEmpty())
 
+    val parameterMapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
     target.parameters += source.parameters.map { param ->
         val name = when (param.kind) {
             IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
@@ -943,19 +962,24 @@ fun IrFunction.copyValueParametersToStatic(
             assert(dispatchReceiverType!!.isSubtypeOfClass(param.type.classOrNull!!)) {
                 "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${param.type.render()}"
             }
-            dispatchReceiverType.remapTypeParameters(
-                (param.parent as IrTypeParametersContainer).classIfConstructor,
-                target.classIfConstructor
-            )
+            dispatchReceiverType
         } else param.type
 
+        val remappedType = type.remapTypeParameters(
+            (param.parent as IrTypeParametersContainer).classIfConstructor,
+            target.classIfConstructor
+        )
         param.copyTo(
             target,
             origin = origin,
-            type = type,
+            type = remappedType,
             name = name,
             kind = IrParameterKind.Regular,
-        )
+            remapTypeMap = typeParameterMapping,
+            remapDefaultValueSymbolMap = parameterMapping,
+        ).also {
+            parameterMapping[param.symbol] = it.symbol
+        }
     }
 }
 
