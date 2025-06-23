@@ -23,12 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.*
@@ -45,7 +40,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -53,7 +48,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.UNWRAPPABLE_TOKEN_TYPES
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
@@ -867,7 +861,7 @@ class LightTreeRawFirExpressionBuilder(
                         name = variable.name
                         initializer = variable.initializer
                         isVar = false
-                        symbol = FirPropertySymbol(variable.name)
+                        symbol = FirLocalPropertySymbol(variable.name)
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = variable.receiverParameter?.let { receiverParameter ->
@@ -899,7 +893,7 @@ class LightTreeRawFirExpressionBuilder(
                 this.name = name
                 initializer = subjectExpression
                 isVar = false
-                symbol = FirPropertySymbol(name)
+                symbol = FirLocalPropertySymbol(name)
                 isLocal = true
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             }
@@ -1408,7 +1402,7 @@ class LightTreeRawFirExpressionBuilder(
                         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                         isLocal = true
                         this.name = parameter.name
-                        symbol = FirPropertySymbol(CallableId(name))
+                        symbol = FirLocalPropertySymbol(name)
                         annotations += parameter.annotations
                     }.also {
                         it.isCatchParameter = true

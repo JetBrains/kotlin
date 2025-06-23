@@ -12,13 +12,9 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.firstFunctionCallInBlockHasLambdaArgumentWithLabel
 import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
@@ -1396,9 +1392,9 @@ class LightTreeRawFirDeclarationBuilder(
             else -> identifier.nameAsSafeName()
         }
         val propertySymbol = if (isLocal) {
-            FirPropertySymbol(propertyName)
+            FirLocalPropertySymbol(propertyName)
         } else {
-            FirPropertySymbol(callableIdForName(propertyName))
+            FirMemberPropertySymbol(callableIdForName(propertyName))
         }
 
         withContainerSymbol(propertySymbol, isLocal) {

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -288,7 +287,7 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         moduleData = property.moduleData
         origin = FirDeclarationOrigin.Source
 
-        val newPropertySymbol = FirPropertySymbol(property.symbol.callableId)
+        val newPropertySymbol = FirMemberPropertySymbol(property.symbol.callableId)
         symbol = newPropertySymbol
         returnTypeRef = property.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = true)
         receiverParameter = property.receiverParameter?.let { receiverParameter ->

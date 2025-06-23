@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,7 +27,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirMemberPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -100,7 +100,7 @@ class FirScriptConfiguratorExtensionImpl(
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
-                            symbol = FirPropertySymbol(name)
+                            symbol = FirLocalPropertySymbol(name)
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             isLocal = true
                             isVar = false
@@ -131,7 +131,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
                     name = Name.identifier(propertyName)
-                    symbol = FirPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol(name)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
@@ -147,7 +147,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
                     name = Name.identifier(it)
-                    symbol = FirPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol(name)
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
@@ -177,7 +177,7 @@ class FirScriptConfiguratorExtensionImpl(
                 declarations.add(
                     buildProperty {
                         this.name = Name.identifier(resultFieldName)
-                        this.symbol = FirPropertySymbol(CallableId(context.packageFqName, this.name))
+                        this.symbol = FirMemberPropertySymbol(CallableId(context.packageFqName, this.name))
                         source = lastScriptBlock?.source
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty

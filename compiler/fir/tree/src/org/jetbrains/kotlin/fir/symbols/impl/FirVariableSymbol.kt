@@ -52,7 +52,7 @@ sealed class FirVariableSymbol<out E : FirVariable>(override val callableId: Cal
         get() = fir.isVar
 }
 
-open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId), PropertySymbolMarker {
+sealed class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId), PropertySymbolMarker {
     // TODO: should we use this constructor for local variables?
     constructor(name: Name) : this(CallableId(name))
 
@@ -96,11 +96,14 @@ open class FirPropertySymbol(callableId: CallableId) : FirVariableSymbol<FirProp
     }
 }
 
+class FirLocalPropertySymbol(name: Name) : FirPropertySymbol(name)
+open class FirMemberPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId)
+
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>,
     override val containsMultipleNonSubsumed: Boolean,
-) : FirPropertySymbol(callableId), FirIntersectionCallableSymbol
+) : FirMemberPropertySymbol(callableId), FirIntersectionCallableSymbol
 
 class FirIntersectionOverrideFieldSymbol(
     callableId: CallableId,

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusWithLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.symbols.impl.FirMemberPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
@@ -242,7 +242,7 @@ fun generateEntriesGetter(
             isExpect = makeExpect
         }
 
-        symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
+        symbol = FirMemberPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
         resolvePhase = classResolvePhase
         getter = FirDefaultPropertyGetter(
             source = sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
