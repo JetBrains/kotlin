@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -177,26 +178,23 @@ internal class JsUsefulDeclarationProcessor(
 
         if (!irClass.containsMetadata()) return
 
-        when {
-            irClass.isObject -> {
-                context.intrinsics.initMetadataForCompanionSymbol.owner.enqueue(irClass, "object metadata")
-                context.intrinsics.initMetadataForObjectSymbol.owner.enqueue(irClass, "companion object metadata")
-            }
-
-            irClass.isInterface -> {
-                context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
-                context.intrinsics.initMetadataForInterfaceSymbol.owner.enqueue(irClass, "interface metadata")
-            }
-
-            else -> {
-                context.intrinsics.initMetadataForClassSymbol.owner.enqueue(irClass, "class metadata")
-                context.intrinsics.initMetadataForLambdaSymbol.owner.enqueue(irClass, "lambda metadata")
-                context.intrinsics.initMetadataForCoroutineSymbol.owner.enqueue(irClass, "coroutine metadata")
-                context.intrinsics.initMetadataForFunctionReferenceSymbol.owner.enqueue(irClass, "function reference metadata")
-            }
+        val metadataKinds = when {
+            irClass.isObject -> listOf(RuntimeMetadataKind.COMPANION_OBJECT, RuntimeMetadataKind.OBJECT)
+            irClass.isInterface -> listOf(RuntimeMetadataKind.INTERFACE)
+            else -> listOf(
+                RuntimeMetadataKind.CLASS,
+                RuntimeMetadataKind.LAMBDA,
+                RuntimeMetadataKind.COROUTINE,
+                RuntimeMetadataKind.FUNCTION_REFERENCE,
+            )
         }
 
-        context.intrinsics.initMetadataForSymbol.owner.enqueue(irClass, "metadata")
+        for (metadataKind in metadataKinds) {
+            context.intrinsics
+                .getInitMetadataSymbol(metadataKind)
+                ?.owner
+                ?.enqueue(irClass, "${metadataKind.name.lowercase().replace('_', ' ')} metadata")
+        }
 
         if (irClass.containsInterfaceDefaultImplementation()) {
             context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
