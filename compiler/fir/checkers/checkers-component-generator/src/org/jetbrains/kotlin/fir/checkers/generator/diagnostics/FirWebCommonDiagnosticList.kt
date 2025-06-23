@@ -54,4 +54,10 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
     val JSCODE by object : DiagnosticGroup("JsCode") {
         val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error<KtElement>()
     }
+
+    val REFLECTION by object : DiagnosticGroup("Reflection") {
+        val UNSUPPORTED_REFLECTION_API by error<KtElement>() {
+            parameter<String>("unsupportedReflectionAPI")
+        }
+    }
 }

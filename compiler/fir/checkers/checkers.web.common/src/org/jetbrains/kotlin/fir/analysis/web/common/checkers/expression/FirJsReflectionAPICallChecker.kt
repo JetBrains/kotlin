@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.AbstractFirReflectionApiCallChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -36,6 +36,6 @@ object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun report(source: KtSourceElement?) {
-        reporter.reportOn(source, FirErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin JS/Wasm backends.")
+        reporter.reportOn(source, FirWebCommonErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin JS/Wasm backends.")
     }
 }
