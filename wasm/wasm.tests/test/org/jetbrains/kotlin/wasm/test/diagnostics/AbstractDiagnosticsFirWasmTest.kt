@@ -57,7 +57,6 @@ abstract class AbstractFirWasmDiagnosticTestBase(
             ::CoroutineHelpersSourceFilesProvider,
         )
         useAdditionalService(::LibraryProvider)
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         facadeStep(::FirFrontendFacade)
 
