@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderEx
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 
@@ -35,7 +36,7 @@ abstract class KaBaseSession(
     visibilityChecker: KaVisibilityChecker,
     originalPsiProvider: KaOriginalPsiProvider,
     typeCreator: KaTypeCreator,
-    analysisScopeProvider: KaAnalysisScopeProvider,
+    analysisScopeProvider: KaBaseAnalysisScopeProviderEx,
     signatureSubstitutor: KaSignatureSubstitutor,
     resolveExtensionInfoProvider: KaResolveExtensionInfoProvider,
     compilerPluginGeneratedDeclarationsProvider: KaCompilerPluginGeneratedDeclarationsProvider,
@@ -64,7 +65,7 @@ abstract class KaBaseSession(
     KaVisibilityChecker by visibilityChecker,
     KaOriginalPsiProvider by originalPsiProvider,
     KaTypeCreator by typeCreator,
-    KaAnalysisScopeProvider by analysisScopeProvider,
+    KaBaseAnalysisScopeProviderEx by analysisScopeProvider,
     KaSignatureSubstitutor by signatureSubstitutor,
     KaResolveExtensionInfoProvider by resolveExtensionInfoProvider,
     KaCompilerPluginGeneratedDeclarationsProvider by compilerPluginGeneratedDeclarationsProvider,
