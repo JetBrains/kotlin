@@ -80,8 +80,7 @@ private fun lightClassesByPsiTestsInit(isLibrary: Boolean = false): TestGroup.Te
     model(
         relativeRootPath = "asJava/lightClasses/lightClassByPsi",
         // Compiled scripts are not yet supported
-        excludeDirs = if (isLibrary) listOf("scripts") else emptyList(),
-        pattern = TestGeneratorUtil.KT_OR_KTS
+        pattern = if (isLibrary) TestGeneratorUtil.KT else TestGeneratorUtil.KT_OR_KTS,
     )
 }
 

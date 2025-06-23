@@ -728,6 +728,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("script.kts")
+    public void testScript() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/script.kts");
+    }
+
+    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/simple.kt");
@@ -737,6 +743,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     @TestMetadata("suspend.kt")
     public void testSuspend() {
       runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/suspend.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendError.kt")
+    public void testSuspendError() {
+      runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/suspendError.kt");
     }
 
     @Test
@@ -893,9 +905,21 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
       }
 
       @Test
+      @TestMetadata("script.kts")
+      public void testScript() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/script.kts");
+      }
+
+      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/simple.kt");
+      }
+
+      @Test
+      @TestMetadata("suspend.kt")
+      public void testSuspend() {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/jvmExposeBoxed/directive/suspend.kt");
       }
 
       @Test
