@@ -6,13 +6,6 @@ plugins {
     id("generated-sources")
 }
 
-repositories {
-    maven {
-        name = "IntellijDependencies"
-        url = uri("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-    }
-}
-
 kotlin {
     jvm()
 
