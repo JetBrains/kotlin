@@ -353,7 +353,7 @@ class IrFakeOverrideBuilder(
 
         addedFakeOverrides.add(fakeOverride)
         strategy.linkFakeOverride(fakeOverride, compatibilityMode)
-        strategy.postProcessGeneratedFakeOverride(fakeOverride, currentClass)
+        strategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, currentClass)
     }
 
     private fun isReturnTypeIsSubtypeOfOtherReturnType(

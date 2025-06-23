@@ -1150,7 +1150,10 @@ val IrFunction.allParameters: List<IrValueParameter>
 
 private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrategy.BindToPrivateSymbols(
     friendModules = emptyMap(), // TODO: this is probably not correct. Should be fixed by KT-61384. But it's not important for current usages
-)
+) {
+    override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
+    }
+}
 
 fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,

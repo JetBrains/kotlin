@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
-    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
 
     /**
@@ -76,9 +75,7 @@ abstract class FakeOverrideBuilderStrategy(
      *
      * It can modify the created fake override, if needed.
      */
-    fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
-        unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
-    }
+    abstract fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass)
 
     /**
      * Create a symbol for the fake override.
@@ -158,11 +155,7 @@ abstract class FakeOverrideBuilderStrategy(
 
     abstract class BindToPrivateSymbols(
         friendModules: Map<String, Collection<String>>,
-        unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy = IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
-    ) : FakeOverrideBuilderStrategy(
-        friendModules = friendModules,
-        unimplementedOverridesStrategy
-    ) {
+    ) : FakeOverrideBuilderStrategy(friendModules) {
         override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, manglerCompatibleMode: Boolean) {
             function.acquireSymbol(IrSimpleFunctionSymbolImpl())
         }
