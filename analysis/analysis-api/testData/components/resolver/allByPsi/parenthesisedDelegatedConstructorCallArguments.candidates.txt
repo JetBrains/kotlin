@@ -74,7 +74,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -110,7 +110,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -154,7 +154,7 @@ KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -199,7 +199,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -235,7 +235,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -279,7 +279,7 @@ KtConstructorDelegationReferenceExpression(61,65): 'this'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -387,7 +387,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -423,7 +423,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -467,7 +467,7 @@ KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -512,7 +512,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -548,7 +548,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -592,7 +592,7 @@ KtConstructorDelegationReferenceExpression(111,115): 'this'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        i -> (KaVariableSignature:
+        (((i))) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = T
@@ -718,7 +718,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -754,7 +754,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -798,7 +798,7 @@ KtConstructorDelegationCall(177,189): 'super(((1)))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -843,7 +843,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -879,7 +879,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -923,7 +923,7 @@ KtConstructorDelegationReferenceExpression(177,182): 'super'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        1 -> (KaVariableSignature:
+        ((1)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1001,7 +1001,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1037,7 +1037,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1081,7 +1081,7 @@ KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1126,7 +1126,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaApplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1162,7 +1162,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int
@@ -1206,7 +1206,7 @@ KtConstructorDelegationReferenceExpression(221,226): 'super'
   KaInapplicableCallCandidateInfo:
     candidate = KaDelegatedConstructorCall:
       argumentMapping = {
-        value -> (KaVariableSignature:
+        ((value)) -> (KaVariableSignature:
           name = i
           receiverType = null
           returnType = kotlin.Int

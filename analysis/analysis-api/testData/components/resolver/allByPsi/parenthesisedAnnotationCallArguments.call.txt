@@ -110,7 +110,7 @@ KtAnnotationEntry(167,183): '@MyAnno((("A")))'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -143,7 +143,7 @@ KtConstructorCalleeExpression(168,174): 'MyAnno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -215,7 +215,7 @@ KtAnnotationEntry(199,223): '@MyAnno(value = (("A")))'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -248,7 +248,7 @@ KtConstructorCalleeExpression(200,206): 'MyAnno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -326,7 +326,7 @@ KtAnnotationEntry(239,269): '@MyAnno((((("A")) as String)))'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        (("A")) as String -> (KaVariableSignature:
+        (((("A")) as String)) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -359,7 +359,7 @@ KtConstructorCalleeExpression(240,246): 'MyAnno'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        (("A")) as String -> (KaVariableSignature:
+        (((("A")) as String)) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -452,7 +452,7 @@ KtAnnotationEntry(285,341): '@MyAnnoVararg((("A")), "B", *((arrayOf("A", "B", "C
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -499,7 +499,7 @@ KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        (("A")) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.String
@@ -826,7 +826,7 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        ("A") -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.String
@@ -869,7 +869,7 @@ KtNameReferenceExpression(381,388): 'arrayOf'
   KaSuccessCallInfo:
     call = KaSimpleFunctionCall:
       argumentMapping = {
-        "A" -> (KaVariableSignature:
+        ("A") -> (KaVariableSignature:
           name = elements
           receiverType = null
           returnType = kotlin.String
@@ -948,7 +948,7 @@ KtAnnotationEntry(419,453): '@MyAnnoKClass((((String::class))))'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        String::class -> (KaVariableSignature:
+        (((String::class))) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.reflect.KClass<*>
@@ -981,7 +981,7 @@ KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
   KaSuccessCallInfo:
     call = KaAnnotationCall:
       argumentMapping = {
-        String::class -> (KaVariableSignature:
+        (((String::class))) -> (KaVariableSignature:
           name = value
           receiverType = null
           returnType = kotlin.reflect.KClass<*>
