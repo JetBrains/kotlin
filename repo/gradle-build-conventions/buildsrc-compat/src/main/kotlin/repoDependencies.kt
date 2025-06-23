@@ -15,6 +15,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import java.io.File
 
 private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
@@ -112,6 +113,7 @@ fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any 
 }
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
+fun KotlinDependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 
 enum class JpsDepScope {
     COMPILE, TEST, RUNTIME, PROVIDED
