@@ -116,15 +116,25 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
 
     // RTTI:
-    val implementSymbol = getInternalFunction("implement")
-    val initMetadataForSymbol = getInternalFunction("initMetadataFor")
-    val initMetadataForClassSymbol = getInternalFunction("initMetadataForClass")
-    val initMetadataForObjectSymbol = getInternalFunction("initMetadataForObject")
-    val initMetadataForInterfaceSymbol = getInternalFunction("initMetadataForInterface")
-    val initMetadataForLambdaSymbol = getInternalFunction("initMetadataForLambda")
-    val initMetadataForCoroutineSymbol = getInternalFunction("initMetadataForCoroutine")
-    val initMetadataForFunctionReferenceSymbol = getInternalFunction("initMetadataForFunctionReference")
-    val initMetadataForCompanionSymbol = getInternalFunction("initMetadataForCompanion")
+    enum class RuntimeMetadataKind(val namePart: String, val isSpecial: Boolean = false) {
+        CLASS("Class"),
+        OBJECT("Object"),
+        INTERFACE("Interface"),
+        LAMBDA("Lambda", isSpecial = true),
+        COROUTINE("Coroutine", isSpecial = true),
+        FUNCTION_REFERENCE("FunctionReference", isSpecial = true),
+        COMPANION_OBJECT("Companion", isSpecial = true)
+    }
+
+    private val initMetadataSymbols: Map<RuntimeMetadataKind, IrSimpleFunctionSymbol> = buildMap {
+        for (kind in RuntimeMetadataKind.entries) {
+            put(kind, getInternalFunction("initMetadataFor${kind.namePart}"))
+        }
+    }
+
+    fun getInitMetadataSymbol(kind: RuntimeMetadataKind): IrSimpleFunctionSymbol? =
+        initMetadataSymbols[kind]
+
     val makeAssociatedObjectMapES5 = getInternalInRootPackage("makeAssociatedObjectMapES5")!!
     val getAssociatedObjectId = getInternalInRootPackage("getAssociatedObjectId")!!
     val nextAssociatedObjectId = getInternalFunction("nextAssociatedObjectId")

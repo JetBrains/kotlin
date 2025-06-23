@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenEnumProperty
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isClass
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
@@ -415,23 +419,42 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val associatedObjects = generateAssociatedObjects()
         val suspendArity = generateSuspendArity()
 
+        var metadataKind: RuntimeMetadataKind? = null
         if (defaultConstructor == null && associatedObjectKey == null && associatedObjects == null) {
-            val initSpecialMetadata = getSpecialInitMetadata(name)
-            if (initSpecialMetadata != null) {
-                return initSpecialMetadata.invokeWithoutNullArgs(ctor, parent, interfaces, suspendArity)
+            metadataKind = when {
+                irClass.isCompanion && name?.value == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString() -> RuntimeMetadataKind.COMPANION_OBJECT
+                !irClass.isClass -> null
+                irClass.origin == WebCallableReferenceLowering.LAMBDA_IMPL -> RuntimeMetadataKind.LAMBDA
+                irClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL -> RuntimeMetadataKind.FUNCTION_REFERENCE
+                irClass.origin == AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL -> RuntimeMetadataKind.COROUTINE
+                else -> null
             }
         }
 
-        return getInitMetadata().invokeWithoutNullArgs(
-            ctor,
-            name,
-            defaultConstructor,
-            parent,
-            interfaces,
-            suspendArity,
-            associatedObjectKey,
-            associatedObjects
-        )
+        if (metadataKind == null) {
+            metadataKind = when {
+                irClass.isInterface -> RuntimeMetadataKind.INTERFACE
+                irClass.isObject -> RuntimeMetadataKind.OBJECT
+                else -> RuntimeMetadataKind.CLASS
+            }
+        }
+
+        val initMetadataSymbol = backendContext.intrinsics.getInitMetadataSymbol(metadataKind)!!
+
+        return if (metadataKind.isSpecial) {
+            initMetadataSymbol.invokeWithoutNullArgs(ctor, parent, interfaces, suspendArity)
+        } else {
+            initMetadataSymbol.invokeWithoutNullArgs(
+                ctor,
+                name,
+                defaultConstructor,
+                parent,
+                interfaces,
+                suspendArity,
+                associatedObjectKey,
+                associatedObjects
+            )
+        }
     }
 
     private fun IrType.asConstructorRef(): JsExpression? {
@@ -446,36 +469,6 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSimpleName(): JsStringLiteral? {
         return irClass.name.takeIf { !it.isSpecial }?.let { JsStringLiteral(it.identifier) }
-    }
-
-    private fun getInitMetadata(): IrSimpleFunctionSymbol {
-        return with(backendContext.intrinsics) {
-            when {
-                irClass.isInterface -> initMetadataForInterfaceSymbol
-                irClass.isObject -> initMetadataForObjectSymbol
-                else -> initMetadataForClassSymbol
-            }
-        }
-    }
-
-    private fun getSpecialInitMetadata(name: JsStringLiteral?): IrSimpleFunctionSymbol? {
-        if (irClass.isCompanion && name?.value == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()) {
-            return backendContext.intrinsics.initMetadataForCompanionSymbol
-        }
-        if (irClass.isClass) {
-            when (irClass.origin) {
-                WebCallableReferenceLowering.LAMBDA_IMPL -> {
-                    return backendContext.intrinsics.initMetadataForLambdaSymbol
-                }
-                WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL -> {
-                    return backendContext.intrinsics.initMetadataForFunctionReferenceSymbol
-                }
-                AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL -> {
-                    return backendContext.intrinsics.initMetadataForCoroutineSymbol
-                }
-            }
-        }
-        return null
     }
 
     private fun IrSimpleFunctionSymbol.invokeWithoutNullArgs(vararg arguments: JsExpression?): JsStatement {
