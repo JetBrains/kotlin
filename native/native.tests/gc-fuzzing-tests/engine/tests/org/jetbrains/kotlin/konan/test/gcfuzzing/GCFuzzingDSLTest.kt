@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.gcfuzzing.dsl.*
-import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.dslGeneratedDir
-import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.runDSL
+import org.jetbrains.kotlin.konan.test.gcfuzzing.execution.*
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Test
@@ -40,10 +39,11 @@ private fun assertDirectoriesEqual(expected: java.io.File, actual: java.io.File)
 @EnforcedProperty(property = ClassLevelProperty.EXECUTION_TIMEOUT, propertyValue = "1m")
 class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     private val testDataDir =
-        ForTestCompileRuntime.transformTestDataPath("native/native.tests/gc-fuzzing-tests/testData/gcFuzzingDSLTest").absoluteFile
+        ForTestCompileRuntime.transformTestDataPath("native/native.tests/gc-fuzzing-tests/engine/testData/gcFuzzingDSLTest").absoluteFile
 
     private fun runTest(name: String, program: Program) {
         val output = program.translate()
+        val dslGeneratedDir = resolveDslDir(name)
         output.save(dslGeneratedDir)
         val goldenDataDir = testDataDir.resolve(name)
         assertDirectoriesEqual(goldenDataDir, dslGeneratedDir)

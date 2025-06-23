@@ -871,7 +871,7 @@ tasks {
         dependsOn(":native:native.tests:cli-tests:check")
         dependsOn(":native:native.tests:codegen-box:check")
         dependsOn(":native:native.tests:driver:check")
-        dependsOn(":native:native.tests:gc-fuzzing-tests:check")
+        dependsOn(":native:native.tests:gc-fuzzing-tests:engine:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
         dependsOn(":native:native.tests:litmus-tests:check")

@@ -30,18 +30,20 @@ import org.junit.jupiter.api.Assumptions
 import java.io.File
 import kotlin.time.Duration
 
-val AbstractNativeSimpleTest.dslGeneratedDir: File
-    get() = buildDir.resolve("generated")
+fun AbstractNativeSimpleTest.resolveTestBuildDir(testName: String): File = buildDir.resolve(testName)
+fun AbstractNativeSimpleTest.resolveDslDir(testName: String): File = resolveTestBuildDir(testName).resolve("generated")
 
 fun AbstractNativeSimpleTest.runDSL(
     testName: String,
     dslOutput: Output,
     executionTimeout: Duration
 ) {
+    val baseDir = resolveTestBuildDir(testName)
+    val dslGeneratedDir = resolveDslDir(testName)
     Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
     val cinterop = cinteropToLibrary(
         dslGeneratedDir.resolve(dslOutput.cinterop.defFilename),
-        buildDir,
+        baseDir,
         freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = dslOutput.cinterop.args),
     ).assertSuccess()
     val objcFrameworkTestCase = generateObjCFrameworkTestCase(
@@ -60,14 +62,20 @@ fun AbstractNativeSimpleTest.runDSL(
             fileCheckMatcher = null,
         )
     )
-    val objCFramework = TestCompilationFactory().testCaseToObjCFrameworkCompilation(objcFrameworkTestCase, testRunSettings).result.assertSuccess()
+    val objCFramework = TestCompilationFactory()
+        .testCaseToObjCFrameworkCompilation(
+            objcFrameworkTestCase,
+            testRunSettings,
+            buildDir = baseDir
+        )
+        .result.assertSuccess()
     codesign(objCFramework.resultingArtifact.frameworkDir.absolutePath)
     val finalExecutable = compileWithClang(
         sourceFiles = listOf(dslGeneratedDir.resolve(dslOutput.objc.filename)),
-        outputFile = buildDir.resolve("main.exe"),
+        outputFile = baseDir.resolve("main.exe"),
         additionalClangFlags = dslOutput.objc.args + listOf("-framework", dslOutput.kotlin.frameworkName),
-        frameworkDirectories = listOf(buildDir),
-        includeDirectories = listOf(buildDir.resolve("${dslOutput.kotlin.frameworkName}.framework").resolve("Headers"))
+        frameworkDirectories = listOf(baseDir),
+        includeDirectories = listOf(baseDir.resolve("${dslOutput.kotlin.frameworkName}.framework").resolve("Headers"))
     ).assertSuccess()
     val testExecutable = TestExecutable(
         finalExecutable.resultingArtifact,

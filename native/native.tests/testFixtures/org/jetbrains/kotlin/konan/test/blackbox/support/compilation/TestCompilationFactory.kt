@@ -124,6 +124,7 @@ class TestCompilationFactory {
         testCase: TestCase,
         settings: Settings,
         exportedLibraries: Iterable<KLIB> = emptyList(),
+        buildDir: File? = null,
     ): ObjCFrameworkCompilation {
         val cacheKey = ObjCFrameworkCacheKey(testCase.rootModules)
         cachedObjCFrameworkCompilations[cacheKey]?.let { return it }
@@ -143,7 +144,7 @@ class TestCompilationFactory {
                 dependencies = dependencies,
                 exportedLibraries = exportedLibraries,
                 expectedArtifact = ObjCFramework(
-                    settings.get<Binaries>().testBinariesDir,
+                    buildDir ?: settings.get<Binaries>().testBinariesDir,
                     testCase.nominalPackageName.compressedPackageName
                 )
             )

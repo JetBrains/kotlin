@@ -759,6 +759,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ':native:native.tests:codegen-box',
             ":native:native.tests:driver",
             ":native:native.tests:gc-fuzzing-tests",
+            ":native:native.tests:gc-fuzzing-tests:engine",
             ":native:native.tests:stress",
             ":native:native.tests:klib-ir-inliner",
             ":native:native.tests:klib-compatibility",

@@ -4,10 +4,10 @@ _**NOTE**: This is a work-in-progress._
 
 ## Quick look
 
-The language, which the fuzzer generates is defined in [DSL.kt](./tests/org/jetbrains/kotlin/konan/test/gcfuzzing/dsl/DSL.kt).
+The language which the fuzzer generates is defined in [DSL.kt](./engine/testFixtures/org/jetbrains/kotlin/konan/test/gcfuzzing/dsl/DSL.kt).
 
-Examples of the programs in that language are in [GCFuzzingDSLTest.kt](./tests/org/jetbrains/kotlin/konan/test/gcfuzzing/GCFuzzingDSLTest.kt) and the
-expected Kotlin+ObjC sources are [here](./testData/gcFuzzingDSLTest).
+Examples of the programs in that language are in [GCFuzzingDSLTest.kt](./engine/tests/org/jetbrains/kotlin/konan/test/gcfuzzing/GCFuzzingDSLTest.kt) and the
+expected Kotlin+ObjC sources are [here](./engine/testData/gcFuzzingDSLTest).
 
 ## DSL
 
