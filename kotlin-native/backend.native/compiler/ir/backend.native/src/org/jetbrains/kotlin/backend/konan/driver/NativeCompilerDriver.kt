@@ -134,6 +134,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             }
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
+                // Child performance manager is needed since otherwise the phase ordering is broken
                 PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
                     it?.notifyPhaseFinished(PhaseType.Initialization)
 
@@ -176,6 +177,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         }
         val headerKlibPath = config.headerKlibPath
         if (!headerKlibPath.isNullOrEmpty()) {
+            // Child performance manager is needed since otherwise the phase ordering is broken
             PerformanceManagerImpl.createAndEnableChildIfNeeded(performanceManager).let {
                 it?.notifyPhaseFinished(PhaseType.Initialization)
 
