@@ -46,16 +46,19 @@ abstract class AbstractJsCompilerInvocationTest(protected val compilerType: Comp
         WITH_IC(es6Mode = false, useIc = true),
     }
 
-    private val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
+    protected val buildDir: File = createTempDirectory().toRealPath().toFile().also { it.mkdirs() }
 
     @AfterEach
     fun clearArtifacts() {
         buildDir.deleteRecursively()
     }
 
-    protected inner class JsTestConfiguration(testPath: String) : KlibCompilerInvocationTestUtils.TestConfiguration {
+    class JsTestConfiguration(
+        testPath: String,
+        override val buildDir: File,
+        val compilerType: CompilerType,
+    ) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
-        override val buildDir: File get() = this@AbstractJsCompilerInvocationTest.buildDir
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
         override val testModeConstructorParameters = mapOf("isJs" to "true")
         override val targetBackend
@@ -66,197 +69,30 @@ abstract class AbstractJsCompilerInvocationTest(protected val compilerType: Comp
                 customizeMainModuleSources(moduleSourceDir)
         }
 
-        override fun buildKlib(
-            moduleName: String,
-            buildDirs: ModuleBuildDirs,
-            dependencies: Dependencies,
-            klibFile: File,
-            compilerEdition: KlibCompilerEdition,
-            compilerArguments: List<String>,
-        ) = this@AbstractJsCompilerInvocationTest.buildKlib(moduleName, buildDirs, dependencies, klibFile, compilerEdition, compilerArguments)
-
-        override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
-            this@AbstractJsCompilerInvocationTest.buildBinaryAndRun(mainModule, otherDependencies)
-
-        override fun onNonEmptyBuildDirectory(directory: File) {
-            directory.listFiles()?.forEach(File::deleteRecursively)
-        }
-
         override fun onIgnoredTest() {
             /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
         }
-    }
 
-    private fun customizeMainModuleSources(moduleSourceDir: File) {
-        // Add the @JsExport annotation to make the box function visible to Node.
-        moduleSourceDir.walkTopDown().forEach { file ->
-            if (file.extension == "kt") {
-                var modified = false
-                val lines = file.readLines().map { line ->
-                    if (line.startsWith("fun $BOX_FUN_FQN()")) {
-                        modified = true
-                        "@OptIn(ExperimentalJsExport::class) @JsExport $line"
-                    } else
-                        line
-                }
-                if (modified) file.writeText(lines.joinToString("\n"))
-            }
-        }
-    }
-
-    private fun buildKlib(
-        moduleName: String,
-        buildDirs: ModuleBuildDirs,
-        dependencies: Dependencies,
-        klibFile: File,
-        compilerEdition: KlibCompilerEdition,
-        compilerArguments: List<String>,
-    ) {
-        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
-
-        val kotlinSourceFilePaths = composeSourceFile(buildDirs)
-
-        // Build KLIB:
-        runCompilerViaCLI(
-            listOf(
-                K2JSCompilerArguments::irProduceKlibFile.cliArgument,
-                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
-                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
-                // Halt on any unexpected warning.
-                K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
-                // Tests suppress the INVISIBLE_REFERENCE check.
-                // However, JS doesn't produce the INVISIBLE_REFERENCE error;
-                // As result, it triggers a suppression error warning about the redundant suppression.
-                // This flag is used to disable the warning.
-                K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
-            ),
-            dependencies.toCompilerArgs(),
-            compilerArguments,
-            kotlinSourceFilePaths
-        )
-    }
-
-    protected fun composeSourceFile(buildDirs: ModuleBuildDirs): MutableList<String> {
-        val kotlinSourceFilePaths = mutableListOf<String>()
-        buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
-            if (sourceFile.isFile) when (sourceFile.extension) {
-                "kt" -> kotlinSourceFilePaths += sourceFile.absolutePath
-                "js" -> {
-                    // This is needed to preserve *.js files from test data which are required for tests with `external` declarations:
-                    sourceFile.copyTo(buildDirs.outputDir.resolve(sourceFile.relativeTo(buildDirs.sourceDir)), overwrite = true)
+        private fun customizeMainModuleSources(moduleSourceDir: File) {
+            // Add the @JsExport annotation to make the box function visible to Node.
+            moduleSourceDir.walkTopDown().forEach { file ->
+                if (file.extension == "kt") {
+                    var modified = false
+                    val lines = file.readLines().map { line ->
+                        if (line.startsWith("fun $BOX_FUN_FQN()")) {
+                            modified = true
+                            "@OptIn(ExperimentalJsExport::class) @JsExport $line"
+                        } else
+                            line
+                    }
+                    if (modified) file.writeText(lines.joinToString("\n"))
                 }
             }
         }
-        return kotlinSourceFilePaths
-    }
 
-    private fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {
-        // The modules in `Dependencies.regularDependencies` are already in topological order.
-        // It is important to pass the provided and the produced JS files to Node in exactly the same order.
-        val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {
-            otherDependencies.regularDependencies.mapTo(this, ::ModuleDetails)
-            this += ModuleDetails(mainModule)
+        companion object {
+            private const val BOX_FUN_FQN = "box"
         }
-        val knownModuleNames: Set<ModuleName> = knownModulesInTopologicalOrder.mapTo(hashSetOf(), ModuleDetails::name)
-
-        val binariesDir: File = File(buildDir, BIN_DIR_NAME).also { it.mkdirs() }
-
-        runCompilerViaCLI(
-            listOf(
-                K2JSCompilerArguments::irProduceJs.cliArgument,
-                K2JSCompilerArguments::irPerModule.cliArgument,
-                K2JSCompilerArguments::moduleKind.cliArgument, "plain",
-                K2JSCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
-                K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
-                K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
-                // IMPORTANT: Omitting PL arguments here. The default PL mode should be in effect.
-                // "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=INFO",
-                K2JSCompilerArguments::allWarningsAsErrors.cliArgument
-            ),
-            listOf(
-                K2JSCompilerArguments::cacheDirectory.cliArgument,
-                buildDir.resolve("libs-cache").absolutePath
-            ).takeIf { compilerType.useIc },
-            otherDependencies.toCompilerArgs(),
-            listOf(K2JSCompilerArguments::useEsClasses.cliArgument).takeIf { compilerType.es6Mode }
-        )
-
-        // All JS files produced during the compiler call.
-        val producedBinaries: Map<ModuleName, File> = binariesDir.walkTopDown()
-            .filter { binaryFile -> binaryFile.extension == "js" }
-            .associateBy { binaryFile -> binaryFile.guessModuleName() }
-
-        val unexpectedModuleNames = producedBinaries.keys - knownModuleNames
-        check(unexpectedModuleNames.isEmpty()) { "Unexpected module names: $unexpectedModuleNames" }
-
-        val allBinaries: List<File> = buildList {
-            knownModulesInTopologicalOrder.forEach { moduleDetails ->
-                // A set of JS files directly out of test data (aka "external" JS files) to be used immediately in the application:
-                val providedBinaries: List<File> = moduleDetails.outputDir.listFiles()?.filter { it.extension == "js" }.orEmpty()
-                addAll(providedBinaries)
-
-                // A JS file produced by the compiler for the given module:
-                val producedBinary: File? = producedBinaries[moduleDetails.name]
-                producedBinary?.let(::add)
-            }
-        }
-
-        executeAndCheckBinaries(MAIN_MODULE_NAME, allBinaries)
-    }
-
-    private fun File.guessModuleName(): String {
-        return when {
-            extension != "js" -> error("Not a JS file: $this")
-            name.startsWith("kotlin-") && "stdlib" in name -> "stdlib"
-            else -> nameWithoutExtension.removePrefix("kotlin_")
-        }
-    }
-
-    protected fun Dependencies.toCompilerArgs(): List<String> = buildList {
-        if (regularDependencies.isNotEmpty()) {
-            this += K2JSCompilerArguments::libraries.cliArgument
-            this += regularDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath }
-        }
-        if (friendDependencies.isNotEmpty()) {
-            this += K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath })
-        }
-    }
-
-    protected fun runCompilerViaCLI(vararg compilerArgs: List<String?>?, compilerEdition: KlibCompilerEdition = CURRENT) {
-        val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
-
-        val invokeCompiler = when (compilerEdition) {
-            CUSTOM -> customCompilerCall()
-            CURRENT -> currentCompilerCall()
-        }
-
-        val compilerXmlOutput = ByteArrayOutputStream()
-        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
-            invokeCompiler(printStream, allCompilerArgs)
-        }
-
-        if (exitCode != ExitCode.OK)
-            throw AssertionError(
-                buildString {
-                    appendLine("Compiler ($compilerEdition) failure.")
-                    appendLine("Exit code = $exitCode.")
-                    appendLine("Compiler arguments: ${allCompilerArgs.joinToString(separator = ", ")}")
-                    appendLine("Compiler messages:")
-                    appendLine("==========")
-                    appendLine(compilerXmlOutput.toString(Charsets.UTF_8.name()))
-                    appendLine("==========")
-                }
-            )
-    }
-
-    private fun executeAndCheckBinaries(mainModuleName: String, dependencies: Collection<File>) {
-        val filePaths = dependencies.map { it.canonicalPath }
-        V8JsTestChecker.check(filePaths, mainModuleName, null, BOX_FUN_FQN, "OK", withModuleSystem = false)
-    }
-
-    companion object {
-        private const val BIN_DIR_NAME = "_bins_js"
-        private const val BOX_FUN_FQN = "box"
     }
 }
 
@@ -329,5 +165,174 @@ internal object JsKlibTestSettings {
 
     val customJsCompiler by lazy {
         CustomJsCompiler(customJsCompilerArtifacts)
+    }
+}
+
+internal class JsCompilerInvocationTestArtifactBuilder(
+    private val configuration: AbstractJsCompilerInvocationTest.JsTestConfiguration,
+) : KlibCompilerInvocationTestUtils.ArtifactBuilder {
+    override fun buildKlib(
+        moduleName: String,
+        buildDirs: ModuleBuildDirs,
+        dependencies: Dependencies,
+        klibFile: File,
+        compilerEdition: KlibCompilerEdition,
+        compilerArguments: List<String>,
+    ) {
+        require(compilerEdition == CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
+        val kotlinSourceFilePaths = composeSourceFile(buildDirs)
+
+        // Build KLIB:
+        runCompilerViaCLI(
+            listOf(
+                K2JSCompilerArguments::irProduceKlibFile.cliArgument,
+                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
+                // Halt on any unexpected warning.
+                K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
+                // Tests suppress the INVISIBLE_REFERENCE check.
+                // However, JS doesn't produce the INVISIBLE_REFERENCE error;
+                // As result, it triggers a suppression error warning about the redundant suppression.
+                // This flag is used to disable the warning.
+                K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
+            ),
+            dependencies.toCompilerArgs(),
+            compilerArguments,
+            kotlinSourceFilePaths
+        )
+    }
+
+    private fun composeSourceFile(buildDirs: ModuleBuildDirs): MutableList<String> {
+        val kotlinSourceFilePaths = mutableListOf<String>()
+        buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
+            if (sourceFile.isFile) when (sourceFile.extension) {
+                "kt" -> kotlinSourceFilePaths += sourceFile.absolutePath
+                "js" -> {
+                    // This is needed to preserve *.js files from test data which are required for tests with `external` declarations:
+                    sourceFile.copyTo(buildDirs.outputDir.resolve(sourceFile.relativeTo(buildDirs.sourceDir)), overwrite = true)
+                }
+            }
+        }
+        return kotlinSourceFilePaths
+    }
+
+    override fun buildBinaryAndRun(
+        mainModule: Dependency,
+        otherDependencies: Dependencies,
+    ) {
+        // The modules in `Dependencies.regularDependencies` are already in topological order.
+        // It is important to pass the provided and the produced JS files to Node in exactly the same order.
+        val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {
+            otherDependencies.regularDependencies.mapTo(this, ::ModuleDetails)
+            this += ModuleDetails(mainModule)
+        }
+        val knownModuleNames: Set<ModuleName> = knownModulesInTopologicalOrder.mapTo(hashSetOf(), ModuleDetails::name)
+
+        val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
+
+        runCompilerViaCLI(
+            listOf(
+                K2JSCompilerArguments::irProduceJs.cliArgument,
+                K2JSCompilerArguments::irPerModule.cliArgument,
+                K2JSCompilerArguments::moduleKind.cliArgument, "plain",
+                K2JSCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
+                K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
+                // IMPORTANT: Omitting PL arguments here. The default PL mode should be in effect.
+                // "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=INFO",
+                K2JSCompilerArguments::allWarningsAsErrors.cliArgument
+            ),
+            listOf(
+                K2JSCompilerArguments::cacheDirectory.cliArgument,
+                configuration.buildDir.resolve("libs-cache").absolutePath
+            ).takeIf { configuration.compilerType.useIc },
+            otherDependencies.toCompilerArgs(),
+            listOf(K2JSCompilerArguments::useEsClasses.cliArgument).takeIf { configuration.compilerType.es6Mode }
+        )
+
+        // All JS files produced during the compiler call.
+        val producedBinaries: Map<ModuleName, File> = binariesDir.walkTopDown()
+            .filter { binaryFile -> binaryFile.extension == "js" }
+            .associateBy { binaryFile -> binaryFile.guessModuleName() }
+
+        val unexpectedModuleNames = producedBinaries.keys - knownModuleNames
+        check(unexpectedModuleNames.isEmpty()) { "Unexpected module names: $unexpectedModuleNames" }
+
+        val allBinaries: List<File> = buildList {
+            knownModulesInTopologicalOrder.forEach { moduleDetails ->
+                // A set of JS files directly out of test data (aka "external" JS files) to be used immediately in the application:
+                val providedBinaries: List<File> = moduleDetails.outputDir.listFiles()?.filter { it.extension == "js" }.orEmpty()
+                addAll(providedBinaries)
+
+                // A JS file produced by the compiler for the given module:
+                val producedBinary: File? = producedBinaries[moduleDetails.name]
+                producedBinary?.let(::add)
+            }
+        }
+
+        executeAndCheckBinaries(MAIN_MODULE_NAME, allBinaries)
+    }
+
+    private fun Dependencies.toCompilerArgs(): List<String> = buildList {
+        if (regularDependencies.isNotEmpty()) {
+            this += K2JSCompilerArguments::libraries.cliArgument
+            this += regularDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath }
+        }
+        if (friendDependencies.isNotEmpty()) {
+            this += K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator) { it.libraryFile.absolutePath })
+        }
+    }
+
+    private fun runCompilerViaCLI(vararg compilerArgs: List<String?>?, compilerEdition: KlibCompilerEdition = CURRENT) {
+        val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
+
+        val invokeCompiler = when (compilerEdition) {
+            CUSTOM -> customCompilerCall()
+            CURRENT -> currentCompilerCall()
+        }
+
+        val compilerXmlOutput = ByteArrayOutputStream()
+        val exitCode = PrintStream(compilerXmlOutput).use { printStream ->
+            invokeCompiler(printStream, allCompilerArgs)
+        }
+
+        if (exitCode != ExitCode.OK)
+            throw AssertionError(
+                buildString {
+                    appendLine("Compiler ($compilerEdition) failure.")
+                    appendLine("Exit code = $exitCode.")
+                    appendLine("Compiler arguments: ${allCompilerArgs.joinToString(separator = ", ")}")
+                    appendLine("Compiler messages:")
+                    appendLine("==========")
+                    appendLine(compilerXmlOutput.toString(Charsets.UTF_8.name()))
+                    appendLine("==========")
+                }
+            )
+    }
+
+    private fun File.guessModuleName(): String {
+        return when {
+            extension != "js" -> error("Not a JS file: $this")
+            name.startsWith("kotlin-") && "stdlib" in name -> "stdlib"
+            else -> nameWithoutExtension.removePrefix("kotlin_")
+        }
+    }
+
+    private fun executeAndCheckBinaries(mainModuleName: String, dependencies: Collection<File>) {
+        val filePaths = dependencies.map { it.canonicalPath }
+        V8JsTestChecker.check(
+            filePaths, mainModuleName, null,
+            BOX_FUN_FQN, "OK", withModuleSystem = false
+        )
+    }
+
+    override fun onNonEmptyBuildDirectory(directory: File) {
+        directory.listFiles()?.forEach(File::deleteRecursively)
+    }
+
+    companion object {
+        private const val BIN_DIR_NAME = "_bins_js"
+        private const val BOX_FUN_FQN = "box"
     }
 }
