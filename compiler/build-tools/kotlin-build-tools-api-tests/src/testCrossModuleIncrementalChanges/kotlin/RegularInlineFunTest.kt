@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
@@ -20,8 +21,8 @@ class RegularInlineFunTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("When regular inline function changes, its call site is recompiled")
     @TestMetadata("ic-scenarios/regular-inline-fun/basic-change/lib")
-    fun testBasicCase(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        scenario(strategyConfig) {
+    fun testBasicCase(projectSpec: ProjectSpec) {
+        scenario(projectSpec) {
             val lib = module("ic-scenarios/regular-inline-fun/basic-change/lib")
             val app = module(
                 "ic-scenarios/regular-inline-fun/basic-change/app",

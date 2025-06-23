@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.ProjectSpec
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -21,23 +22,23 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     @DisplayName("IC works with the externally tracked changes, similarly to Gradle")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun multiModuleExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        runMultiModuleTest(strategyConfig, useTrackedModules = false)
+    fun multiModuleExternallyTracked(projectSpec: ProjectSpec) {
+        runMultiModuleTest(projectSpec, useTrackedModules = false)
     }
 
     @DisplayName("IC works with the changes tracking via our internal machinery, similarly to Maven")
     @DefaultStrategyAgnosticCompilationTest
     @TestMetadata("jvm-module-1")
-    fun multiModuleInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+    fun multiModuleInternallyTracked(projectSpec: ProjectSpec) {
         Assumptions.assumeTrue(
-            compilerVersion >= KotlinToolingVersion(2, 1, 20, "Beta1"),
-            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is $compilerVersion"
+            projectSpec.compilerVersion >= KotlinToolingVersion(2, 1, 20, "Beta1"),
+            "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${projectSpec.compilerVersion}"
         )
-        runMultiModuleTest(strategyConfig, useTrackedModules = true)
+        runMultiModuleTest(projectSpec, useTrackedModules = true)
     }
 
-    private fun runMultiModuleTest(strategyConfig: CompilerExecutionStrategyConfiguration, useTrackedModules: Boolean) {
-        scenario(strategyConfig) {
+    private fun runMultiModuleTest(projectSpec: ProjectSpec, useTrackedModules: Boolean) {
+        scenario(projectSpec) {
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")
             } else {

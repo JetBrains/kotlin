@@ -3,6 +3,7 @@
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
+import kotlin.Boolean
 import kotlin.OptIn
 import kotlin.String
 import kotlin.Suppress
@@ -94,6 +95,8 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
   override operator fun <V> `set`(key: JvmCompilerArguments.JvmCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  public operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {

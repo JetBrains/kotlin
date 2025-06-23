@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.IncrementalJvmCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module.Companion.EXECUTION_TIMEOUT_SECONDS
+import org.jetbrains.kotlin.buildtools.api.v2.enums.KotlinVersion
 import java.nio.file.Path
 
 interface Module : Dependency {
+    data class Overrides(
+        var keepIncrementalCompilationCachesInMemory: Boolean? = null,
+        var useFirIc: Boolean? = null,
+        var useFirRunner: Boolean? = null,
+        var languageVersion: KotlinVersion? = null,
+    )
+
+    val overrides: Overrides
     val project: Project
     val moduleName: String
-
-    /**
-     * Compiler arguments in the format of the Kotlin compiler CLI
-     */
-    val additionalCompilationArguments: List<String>
 
     /**
      * Directory containing all the source (.kt) files of the module
@@ -47,22 +48,15 @@ interface Module : Dependency {
      */
     val icCachesDir: Path
 
-    val defaultStrategyConfig: CompilerExecutionStrategyConfiguration
-
     fun compile(
-        strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
         assertions: CompilationOutcome.(Module) -> Unit = {},
     ): CompilationResult
 
     fun compileIncrementally(
         sourcesChanges: SourcesChanges,
-        strategyConfig: CompilerExecutionStrategyConfiguration = defaultStrategyConfig,
         forceOutput: LogLevel? = null,
         forceNonIncrementalCompilation: Boolean = false,
-        compilationConfigAction: (JvmCompilationConfiguration) -> Unit = {},
-        incrementalCompilationConfigAction: (IncrementalJvmCompilationConfiguration<*>) -> Unit = {},
         assertions: CompilationOutcome.(module: Module) -> Unit = {},
     ): CompilationResult
 
