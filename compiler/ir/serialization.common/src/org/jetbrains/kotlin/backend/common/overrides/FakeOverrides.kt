@@ -124,7 +124,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
                  * This is done to mimic jvm behaviour.
                  */
 
-                runIf(nonAbstractOverrides.none { it.parentClassOrNull?.isInterface == false }) {
+                runIf(nonAbstractOverrides.all { it.parentAsClass.isInterface }) {
                     PartiallyLinkedDeclarationOrigin.AMBIGUOUS_NON_OVERRIDDEN_CALLABLE_MEMBER
                 }
             }
