@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,26 +76,36 @@ private fun TestGroupSuite.generateCompilerTestDataBasedLightClassesTests() {
     }
 }
 
-private fun lightClassesByPsiTestsInit(isLibrary: Boolean = false): TestGroup.TestClass.() -> Unit = {
+private fun lightClassesByPsiTestsInit(
+    isLibrary: Boolean = false,
+    isScript: Boolean = false,
+): TestGroup.TestClass.() -> Unit = {
     model(
         relativeRootPath = "asJava/lightClasses/lightClassByPsi",
-        // Compiled scripts are not yet supported
-        pattern = if (isLibrary) TestGeneratorUtil.KT else TestGeneratorUtil.KT_OR_KTS,
+        excludeDirs = if (isLibrary) listOf("compilationErrors") else emptyList(),
+        pattern = if (isScript) TestGeneratorUtil.KTS else TestGeneratorUtil.KT,
     )
 }
 
 private fun TestGroup.lightClassesByPsiTests() {
-    testClass<AbstractSymbolLightClassesByPsiForSourceTest>(init = lightClassesByPsiTestsInit())
-    testClass<AbstractJsSymbolLightClassesByPsiForSourceTest>(init = lightClassesByPsiTestsInit())
+    val sourceModelInit = lightClassesByPsiTestsInit()
+    val libraryModelInit = lightClassesByPsiTestsInit(isLibrary = true)
+    val scriptModelInit = lightClassesByPsiTestsInit(isScript = true)
 
-    testClass<AbstractSymbolLightClassesByPsiForLibraryTest>(init = lightClassesByPsiTestsInit(isLibrary = true))
-    testClass<AbstractJsSymbolLightClassesByPsiForLibraryTest>(init = lightClassesByPsiTestsInit(isLibrary = true))
+    testClass<AbstractSymbolLightClassesByPsiForSourceTest>(init = sourceModelInit)
+    testClass<AbstractJsSymbolLightClassesByPsiForSourceTest>(init = sourceModelInit)
+    testClass<AbstractScriptSymbolLightClassesByPsiForSourceTest>(init = scriptModelInit)
 
-    testClass<AbstractSymbolLightClassesParentingByPsiForSourceTest>(init = lightClassesByPsiTestsInit())
-    testClass<AbstractSymbolLightClassesParentingByPsiForLibraryTest>(init = lightClassesByPsiTestsInit(isLibrary = true))
+    testClass<AbstractSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractJsSymbolLightClassesByPsiForLibraryTest>(init = libraryModelInit)
 
-    testClass<AbstractSymbolLightClassesEqualityByPsiForSourceTest>(init = lightClassesByPsiTestsInit())
-    testClass<AbstractSymbolLightClassesEqualityByPsiForLibraryTest>(init = lightClassesByPsiTestsInit(isLibrary = true))
+    testClass<AbstractSymbolLightClassesParentingByPsiForSourceTest>(init = sourceModelInit)
+    testClass<AbstractSymbolLightClassesParentingByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractScriptSymbolLightClassesParentingByPsiForSourceTest>(init = scriptModelInit)
+
+    testClass<AbstractSymbolLightClassesEqualityByPsiForSourceTest>(init = sourceModelInit)
+    testClass<AbstractSymbolLightClassesEqualityByPsiForLibraryTest>(init = libraryModelInit)
+    testClass<AbstractScriptSymbolLightClassesEqualityByPsiForSourceTest>(init = scriptModelInit)
 }
 
 private fun TestGroup.lightClassesByFqNameTests() {
