@@ -1,9 +1,7 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:OptIn(KaPlatformInterface::class)
 
 package org.jetbrains.kotlin.analysis.api.projectStructure
 
@@ -42,6 +40,7 @@ import java.nio.file.Path
  * an isolated function or property body), the resulting cache invalidation occurs on the level of a module and its dependents. While
  * modification handling overall is an Analysis API *platform* topic, it is important to establish this basic fact.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaModule {
     /**
      * The module's regular dependencies. Regular dependencies allow the current module to use symbols from the dependency module.
@@ -143,6 +142,7 @@ public val KaModule.isResolvable: Boolean
  * module are actually different [KaSourceModule]s. To allow a test source module to use the internal declarations from the production
  * source module, the test source module defines a [friend dependency][directFriendDependencies] on the production source module.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaSourceModule : KaModule {
     /**
      * The name of the module.
@@ -192,6 +192,7 @@ public interface KaSourceModule : KaModule {
  * [KaLibraryModule] (this has been fixed with 2.x stdlibs). Such a library module has the JVM target platform, and we need to exclude
  * `.kotlin_metadata` files from the content scope.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibraryModule : KaModule {
     /**
      * The name of the library.
@@ -234,6 +235,7 @@ public interface KaLibraryModule : KaModule {
     @KaExperimentalApi
     override val moduleDescription: String
         get() {
+            @OptIn(KaPlatformInterface::class)
             val label = if (isSdk) "SDK" else "Library"
             return "$label $libraryName"
         }
@@ -248,6 +250,7 @@ public interface KaLibraryModule : KaModule {
  * The library source module's dependencies must be the same as its [binaryLibrary]'s dependencies. In particular, the library source module
  * must also depend on a single [KaLibraryFallbackDependenciesModule] if its exact dependencies are unknown.
  */
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaLibrarySourceModule : KaModule {
     /**
      * The name of the library sources.
@@ -324,6 +327,7 @@ public interface KaBuiltinsModule : KaModule {
  * A module for a Kotlin script file.
  */
 @KaExperimentalApi
+@SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaScriptModule : KaModule {
     /**
      * The [KtFile] which contains the Kotlin script.
@@ -401,6 +405,7 @@ public interface KaDanglingFileModule : KaModule {
  * Whether the dangling file module supports partial invalidation on PSI modifications. The sessions for such modules can be cached for a
  * longer time.
  */
+@OptIn(KaPlatformInterface::class)
 public val KaDanglingFileModule.isStable: Boolean
     get() = files.all { it.isPhysical && it.viewProvider.isEventSystemEnabled }
 
