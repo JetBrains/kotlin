@@ -39,67 +39,6 @@ class AtomicfuJvmIrTransformer(
     }
 
     private inner class JvmAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
-        override fun createAtomicHandler(
-            atomicfuProperty: IrProperty,
-            parentContainer: IrDeclarationContainer
-        ): AtomicHandler<IrProperty>? {
-            val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
-            return when {
-                atomicfuProperty.isNotDelegatedAtomic() -> {
-                    if (isTopLevel) {
-                        buildBoxedAtomic(atomicfuProperty, parentContainer)
-                    } else {
-                        createAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)
-                    }
-                }
-                atomicfuProperty.isAtomicArray() -> {
-                    createAtomicArray(atomicfuProperty, parentContainer)
-                }
-                else -> null
-            }
-        }
-
-        /**
-         * Creates a [BoxedAtomic] updater to replace a top-level atomicfu property on JVM:
-         * builds a property of Java boxed atomic type: java.util.concurrent.atomic.Atomic(Integer|Long|Boolean|Reference).
-         */
-        private fun buildBoxedAtomic(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): BoxedAtomic {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val atomicArrayField = irBoxedAtomicField(atomicfuProperty, parentContainer)
-                val atomicArrayProperty = buildPropertyWithAccessors(
-                    atomicArrayField,
-                    atomicfuProperty.visibility,
-                    isVar = false,
-                    isStatic = parentContainer is IrFile,
-                    parentContainer
-                )
-                return BoxedAtomic(atomicArrayProperty)
-            }
-        }
-
-        /**
-         * Creates an [AtomicFieldUpdater] to replace an in-class atomicfu property on JVM:
-         * builds a volatile property of the type corresponding to the type of the atomic property, plus a Java atomic field updater:
-         * java.util.concurrent.atomic.Atomic(Integer|Long|Reference)FieldUpdater.
-         *
-         * Note that as there is no AtomicBooleanFieldUpdater in Java, AtomicBoolean is relpaced with a Volatile Int property
-         * and updated with j.u.c.a.AtomicIntegerFieldUpdater.
-         */
-        private fun createAtomicFieldUpdater(atomicfuProperty: IrProperty, parentClass: IrClass): AtomicFieldUpdater {
-            with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
-                val volatilePropertyHandler = createVolatileProperty(atomicfuProperty, parentClass)
-                val atomicUpdaterField = irJavaAtomicFieldUpdater(volatilePropertyHandler.declaration.backingField!!, parentClass)
-                val atomicUpdaterProperty = buildPropertyWithAccessors(
-                    atomicUpdaterField,
-                    atomicfuProperty.visibility,
-                    isVar = false,
-                    isStatic = true,
-                    parentClass
-                )
-                return AtomicFieldUpdater(volatilePropertyHandler, atomicUpdaterProperty)
-            }
-        }
-
         override fun IrProperty.delegateToTransformedProperty(originalDelegate: IrProperty) {
             val volatileProperty = atomicfuPropertyToVolatile[originalDelegate]
             // On JVM there are 2 options:
@@ -233,6 +172,28 @@ class AtomicfuJvmIrTransformer(
                 addValueParameter(INDEX, irBuiltIns.intType)
             }
             else -> error("Unexpected atomic handler type for JVM backend: $atomicHandlerType")
+        }
+    }
+
+    override fun createAtomicHandler(
+        atomicfuProperty: IrProperty,
+        parentContainer: IrDeclarationContainer
+    ): AtomicHandler<IrProperty>? {
+        val isTopLevel = parentContainer is IrFile || (parentContainer is IrClass && parentContainer.kind == ClassKind.OBJECT)
+        with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
+            return when {
+                atomicfuProperty.isNotDelegatedAtomic() -> {
+                    if (isTopLevel) {
+                        buildBoxedAtomic(atomicfuProperty, parentContainer)
+                    } else {
+                        buildAtomicFieldUpdater(atomicfuProperty, parentContainer as IrClass)
+                    }
+                }
+                atomicfuProperty.isAtomicArray() -> {
+                    createAtomicArray(atomicfuProperty, parentContainer)
+                }
+                else -> null
+            }
         }
     }
 }

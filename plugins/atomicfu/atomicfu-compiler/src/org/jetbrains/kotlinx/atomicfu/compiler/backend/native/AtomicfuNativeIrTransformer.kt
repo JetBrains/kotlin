@@ -36,34 +36,6 @@ class AtomicfuNativeIrTransformer(
 
     private inner class NativeAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
 
-        override fun createAtomicHandler(
-            atomicfuProperty: IrProperty,
-            parentContainer: IrDeclarationContainer
-        ): AtomicHandler<IrProperty>? =
-            when {
-                atomicfuProperty.isNotDelegatedAtomic() -> {
-                    /**
-                     * Creates an [VolatilePropertyReference] updater to replace an atomicfu property on Native:
-                     * on Native all atomic operations on atomicfu properties are delegated to atomic intrinsics
-                     * invoked on the volatile property reference (declared in kotlin.concurrent package), e.g.:
-                     * ```
-                     * private val a = atomic(0)
-                     * a.compareAndSet(0, 56)
-                     * ```
-                     * is replaced with:
-                     * ```
-                     * @Volatile var a: Int = 0
-                     * ::a.compareAndSetField
-                     *```
-                     */
-                    createVolatileProperty(atomicfuProperty, parentContainer)
-                }
-                atomicfuProperty.isAtomicArray() -> {
-                    createAtomicArray(atomicfuProperty, parentContainer)
-                }
-                else -> null
-            }
-
         override fun IrProperty.delegateToTransformedProperty(originalDelegate: IrProperty) {
             val volatileProperty = atomicfuPropertyToVolatile[originalDelegate]
             requireNotNull(volatileProperty) { "The property ${originalDelegate.atomicfuRender()} is expected to be already replaced with a corresponding volatile property, but none was found." }
@@ -130,6 +102,36 @@ class AtomicfuNativeIrTransformer(
             }
 
     }
+
+    override fun createAtomicHandler(
+        atomicfuProperty: IrProperty,
+        parentContainer: IrDeclarationContainer
+    ): AtomicHandler<IrProperty>? =
+        with(atomicfuSymbols.createBuilder(atomicfuProperty.symbol)) {
+            when {
+                atomicfuProperty.isNotDelegatedAtomic() -> {
+                    /**
+                     * Creates an [VolatilePropertyReference] updater to replace an atomicfu property on Native:
+                     * on Native all atomic operations on atomicfu properties are delegated to atomic intrinsics
+                     * invoked on the volatile property reference (declared in kotlin.concurrent package), e.g.:
+                     * ```
+                     * private val a = atomic(0)
+                     * a.compareAndSet(0, 56)
+                     * ```
+                     * is replaced with:
+                     * ```
+                     * @Volatile var a: Int = 0
+                     * ::a.compareAndSetField
+                     *```
+                     */
+                    createVolatileProperty(atomicfuProperty, parentContainer)
+                }
+                atomicfuProperty.isAtomicArray() -> {
+                    createAtomicArray(atomicfuProperty, parentContainer)
+                }
+                else -> null
+            }
+        }
 
     override fun IrFunction.checkAtomicHandlerValueParameters(atomicHandlerType: AtomicHandlerType, valueType: IrType): Boolean =
         when (atomicHandlerType) {
