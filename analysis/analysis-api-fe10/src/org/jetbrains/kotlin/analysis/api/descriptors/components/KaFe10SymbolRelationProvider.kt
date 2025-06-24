@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.OverloadChecker
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.denotedClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
@@ -260,6 +262,12 @@ internal class KaFe10SymbolRelationProvider(
             return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
                 .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassSymbol }
         }
+
+    override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean = withValidityAssertion {
+        val thisDescriptor = this.getDescriptor() ?: return false
+        val otherDescriptor = other.getDescriptor() ?: return false
+        !OverloadChecker(TypeSpecificityComparator.NONE).isOverloadable(thisDescriptor, otherDescriptor)
+    }
 }
 
 internal fun computeContainingSymbolOrSelf(symbol: KaSymbol, analysisSession: KaSession): KaSymbol = with(analysisSession) {
