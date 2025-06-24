@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78304
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 interface Consumer<T: Consumer<T>> {
     fun consume(item: T) {}

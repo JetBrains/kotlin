@@ -2219,6 +2219,22 @@ internal class UpperBoundViolatedDeprecationWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UpperBoundViolatedDeprecationWarning
 
+internal class UpperBoundViolatedInTypeOperatorOrParameterBoundsErrorImpl(
+    override val expectedUpperBound: KaType,
+    override val actualUpperBound: KaType,
+    override val extraMessage: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UpperBoundViolatedInTypeOperatorOrParameterBoundsError
+
+internal class UpperBoundViolatedInTypeOperatorOrParameterBoundsWarningImpl(
+    override val expectedUpperBound: KaType,
+    override val actualUpperBound: KaType,
+    override val extraMessage: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UpperBoundViolatedInTypeOperatorOrParameterBoundsWarning
+
 internal class UpperBoundViolatedInTypealiasExpansionImpl(
     override val expectedUpperBound: KaType,
     override val actualUpperBound: KaType,

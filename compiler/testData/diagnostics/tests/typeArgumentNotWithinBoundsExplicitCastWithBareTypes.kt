@@ -2,6 +2,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78304
 // DIAGNOSTICS: -UNCHECKED_CAST
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 open class FirDeclaration
 open class FirClassLikeDeclaration : FirDeclaration()

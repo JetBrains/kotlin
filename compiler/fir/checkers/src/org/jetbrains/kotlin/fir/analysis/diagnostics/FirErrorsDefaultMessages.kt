@@ -796,6 +796,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_DEPRECATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_DEPRECATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USAGE_IS_NOT_INLINABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_CALL_ON_NOT_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_CAST
@@ -1814,6 +1815,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             UPPER_BOUND_VIOLATED_DEPRECATION_WARNING,
             "Type argument is not within its bounds: must be subtype of ''{0}''. This will become an error in future releases.{2}",
+            RENDER_TYPE,
+            RENDER_TYPE,
+            OPTIONAL_SENTENCE,
+        )
+        map.put(
+            UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS,
+            "Type argument is not within its bounds: must be subtype of ''{0}''.{2}",
             RENDER_TYPE,
             RENDER_TYPE,
             OPTIONAL_SENTENCE,
