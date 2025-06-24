@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.appendConfigsFromDir
-import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin.Companion.kotlinNodeJsEnvSpec
@@ -49,11 +48,11 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
-import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
 import java.io.File
+import java.io.PrintWriter
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -103,7 +102,7 @@ class KotlinKarma internal constructor(
     private val config: KarmaConfig = KarmaConfig()
     private val requiredDependencies = mutableSetOf<RequiredKotlinJsDependency>()
 
-    private val configurators = mutableListOf<(KotlinTest) -> Unit>()
+    private val configurators = mutableListOf<() -> Unit>()
     private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
@@ -141,6 +140,7 @@ class KotlinKarma internal constructor(
     )
 
     val webpackConfig = KotlinWebpackConfig(
+        npmProjectDir = npmProjectDir.map { it.asFile },
         configDirectory = project.projectDir.resolve("webpack.config.d"),
         optimization = KotlinWebpackConfig.Optimization(
             runtimeChunk = null,
@@ -401,108 +401,34 @@ class KotlinKarma internal constructor(
         nodeJsArgs: MutableList<String>,
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
-        val file = task.inputFileProperty.getFile()
-        val fileString = file.toString()
-
         val modules = NpmProjectModules(npmToolingDir.getFile())
-
-        config.files.add(modules.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
-        if (!debug) {
-            if (platformType == KotlinPlatformType.wasm) {
-                config.files.add(
-                    createLoadWasm(npmProject.dir.getFile(), file).normalize().absolutePath
-                )
-
-                config.customContextFile = modules.require("kotlin-web-helpers/dist/static/context.html")
-                config.customDebugFile = modules.require("kotlin-web-helpers/dist/static/debug.html")
-            } else {
-                config.files.add(fileString)
-            }
-        } else {
-            config.singleRun = false
-
-            config.files.add(createDebuggerJs(fileString).normalize().absolutePath)
-
-            confJsWriters.add {
-                //language=ES6
-                it.appendLine(
-                    """
-                        if (!config.plugins) {
-                            config.plugins = config.plugins || [];
-                            config.plugins.push('karma-*'); // default
-                        }
-                        
-                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
-                    """.trimIndent()
-                )
-            }
-
-            config.frameworks.add("karma-kotlin-debug")
-        }
-
-        if (config.browsers.isEmpty()) {
-            error("No browsers configured for $task")
-        }
-
-        val clientSettings = TCServiceMessagesClientSettings(
-            task.name,
-            testNameSuffix = task.targetName,
-            prependSuiteName = true,
-            stackTraceParser = ::parseNodeJsStackTraceAsJvm,
-            ignoreOutOfRootNodes = true,
-        )
-
-        config.basePath = npmProjectDir.getFile().absolutePath
-
-        configurators.forEach {
-            it(task)
-        }
 
         val cliArgs = KotlinTestRunnerCliArgs(
             include = task.includePatterns,
             exclude = task.excludePatterns
         )
 
-        config.client.args.addAll(cliArgs.toList())
-
         val karmaConfJs = npmProject.dir.getFile().resolve("karma.conf.js")
-        karmaConfJs.printWriter().use { confWriter ->
-            envJsCollector.forEach { (envVar, value) ->
-                //language=JavaScript 1.8
-                confWriter.println("process.env.$envVar = $value")
-            }
 
-            confWriter.println()
-            confWriter.println("module.exports = function(config) {")
-            confWriter.println()
-
-            confWriter.print("config.set(")
-            GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create()
-                .toJson(config, confWriter)
-            confWriter.println(");")
-
-            confJsWriters.forEach { it(confWriter) }
-
-            confWriter.appendFromConfigDir()
-
-            confWriter.println()
-            confWriter.println("}")
-        }
+        writeConfig(
+            config,
+            task.inputFileProperty.getFile(),
+            modules,
+            task.name,
+            cliArgs,
+            karmaConfJs.printWriter(),
+            configurators,
+            confJsWriters,
+            envJsCollector,
+            platformType,
+            npmProject.dir.getFile(),
+            debug,
+        ) { it.appendFromConfigDir() }
 
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
-        val args = if (debug) {
-            nodeJsArgs + listOf(
-                modules.require("kotlin-web-helpers/dist/karma-debug-runner.js"),
-                karmaConfigAbsolutePath
-            )
-        } else {
-            nodeJsArgs +
-                    modules.require("karma/bin/karma") +
-                    listOf("start", karmaConfigAbsolutePath)
-        }
+        val args = nodeJsArgs +
+                modules.require("karma/bin/karma") +
+                listOf("start", karmaConfigAbsolutePath)
 
         if (isWasm) {
             launchOpts.environment.put(
@@ -518,6 +444,14 @@ class KotlinKarma internal constructor(
                 npmToolingDir.getFile().resolve("node_modules").normalize().absolutePath
             )
         }
+
+        val clientSettings = TCServiceMessagesClientSettings(
+            task.name,
+            testNameSuffix = task.targetName,
+            prependSuiteName = true,
+            stackTraceParser = ::parseNodeJsStackTraceAsJvm,
+            ignoreOutOfRootNodes = true,
+        )
 
         return object : JSServiceMessagesTestExecutionSpec(
             processLaunchOpts = launchOpts,
@@ -676,20 +610,6 @@ class KotlinKarma internal constructor(
         }
     }
 
-    private fun createDebuggerJs(
-        file: String,
-    ): File {
-        val adapterJs = npmProject.dir.getFile().resolve("debugger.js")
-        adapterJs.printWriter().use { writer ->
-            // It is necessary for debugger attaching (--inspect-brk analogue)
-            writer.println("debugger;")
-
-            writer.println("module.exports = require(${file.jsQuoted()})")
-        }
-
-        return adapterJs
-    }
-
     private fun Appendable.appendFromConfigDir() {
         if (!configDirectory.isDirectory) {
             return
@@ -748,6 +668,89 @@ internal fun createLoadWasm(npmProjectDir: File, file: File): File {
     }
 
     return loadJs
+}
+
+internal fun writeConfig(
+    config: KarmaConfig,
+    file: File,
+    modules: NpmProjectModules,
+    taskName: String,
+    cliArgs: KotlinTestRunnerCliArgs,
+    printWriter: PrintWriter,
+    configurators: List<() -> Unit>,
+    confJsWriters: List<(Appendable) -> Unit>,
+    envJsCollector: Map<String, String>,
+    platformType: KotlinPlatformType,
+    npmProjectDir: File,
+    debug: Boolean,
+    writerAction: (Appendable) -> Unit,
+) {
+    val fileString = file.toString()
+
+    config.files.add(modules.require("kotlin-web-helpers/dist/kotlin-test-karma-runner.js"))
+
+    if (debug) {
+        config.singleRun = false
+        config.autoWatch = true
+
+        config.browsers.clear()
+    }
+
+    if (platformType != KotlinPlatformType.wasm) {
+        config.files.add(fileString)
+    } else {
+
+        config.files.add(
+            createLoadWasm(npmProjectDir, file).normalize().absolutePath
+        )
+
+        config.customContextFile = modules.require("kotlin-web-helpers/dist/static/context.html")
+        config.customDebugFile = modules.require("kotlin-web-helpers/dist/static/debug.html")
+
+        if (debug) {
+            config.webpackCopy.add(
+                file.parentFile.resolve(file.nameWithoutExtension + ".wasm.map").absolutePath
+            )
+        }
+    }
+
+    if (config.browsers.isEmpty() && !debug) {
+        error("No browsers configured for $taskName")
+    }
+
+    config.basePath = npmProjectDir.absolutePath
+
+    configurators.forEach {
+        it()
+    }
+
+    config.client.args.addAll(cliArgs.toList())
+
+    printWriter.use { confWriter ->
+        envJsCollector.forEach { (envVar, value) ->
+            //language=JavaScript 1.8
+            confWriter.println("process.env.$envVar = $value")
+        }
+
+        confWriter.println()
+        confWriter.println("module.exports = function(config) {")
+        confWriter.println()
+
+        confWriter.print("config.set(")
+        GsonBuilder()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .create()
+            .toJson(config, confWriter)
+        confWriter.println(");")
+
+        confJsWriters.forEach { it(confWriter) }
+
+        writerAction(confWriter)
+
+        confWriter.println()
+        confWriter.println("}")
+    }
 }
 
 private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN|INFO|DEBUG|LOG) \\[.*]: ([\\w\\W]*)\$"
