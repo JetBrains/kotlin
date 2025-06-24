@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ private fun <T : Any?> foo(x: T, y: Box<T>): T
+internal inline fun bar(): String
+    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "OK")
+/* ACCESSOR declaration */ internal fun <T : Any?> access$foo$tAKt(x: T, y: Box<T>): T
+    /* TARGET use-site */ foo<T>(x = x, y = y)
+
+
+/* FILE package=<root> fileName=B.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "OK")

@@ -811,7 +811,7 @@ fun IrValueParameter.copyTo(
                         remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
                 }
                 acceptVoid(symbolRemapper)
-                val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
+                val typeRemapper = IrTypeParameterRemapper(remapTypeMap)
                 transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(irFunction)
             },
         )
@@ -958,13 +958,16 @@ fun IrFunction.copyValueParametersToStatic(
             )
         } else param.type
 
+        val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
+
         param.copyTo(
             target,
             origin = origin,
-            type = type,
+            type = type.remapTypeParameters(source.classIfConstructor, target.classIfConstructor),
             name = name,
             kind = IrParameterKind.Regular,
-            remapDefaultValueSymbolMap = parameterMapping
+            remapTypeMap = typeParameterMapping,
+            remapDefaultValueSymbolMap = parameterMapping,
         ).also {
             parameterMapping[param.symbol] = it.symbol
         }
