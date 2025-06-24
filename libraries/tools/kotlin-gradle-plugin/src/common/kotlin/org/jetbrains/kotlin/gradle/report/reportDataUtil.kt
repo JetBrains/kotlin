@@ -196,7 +196,7 @@ private fun collectTaskRecordTags(
 
 private fun getLanguageVersionTag(languageVersion: KotlinVersion): StatTag {
     return when {
-        languageVersion < KotlinVersion.KOTLIN_2_0 -> StatTag.KOTLIN_1
+        languageVersion < @Suppress("DEPRECATION") KotlinVersion.KOTLIN_2_0 -> StatTag.KOTLIN_1
         else -> StatTag.KOTLIN_2
     }
 }
