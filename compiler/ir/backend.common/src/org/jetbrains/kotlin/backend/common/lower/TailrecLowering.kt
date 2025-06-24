@@ -68,6 +68,7 @@ open class TailrecLowering(val context: LoweringContext) : BodyLoweringPass {
         get() = true
 
     open fun followFunctionReference(reference: IrFunctionReference): Boolean = false
+    open fun followFunctionReference(reference: IrRichFunctionReference): Boolean = false
 
     open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
         IrConstImpl.defaultValueForType(startOffset, endOffset, type)
@@ -143,6 +144,13 @@ private class BodyTransformer(
             return expression
         }
         return builder.at(expression).genTailCall(expression)
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        if (lowering.followFunctionReference(expression)) {
+            expression.invokeFunction.body?.transformChildrenVoid(this)
+        }
+        return super.visitRichFunctionReference(expression)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 sealed class IrInlinable
 class IrInvokable(val invokable: IrValueDeclaration) : IrInlinable()
@@ -152,6 +154,13 @@ fun IrExpression.isInlineLambdaBlock(): Boolean {
     val block = this as IrBlock
     val reference = block.statements.last() as? IrFunctionReference
     return reference?.origin == IrStatementOrigin.INLINE_LAMBDA
+}
+
+@OptIn(ExperimentalContracts::class)
+fun IrExpression.isInlineLambda(): Boolean {
+    contract { returns(true) implies (this@isInlineLambda is IrRichFunctionReference) }
+    if (!this.isLambda()) return false
+    return this.origin == IrStatementOrigin.INLINE_LAMBDA
 }
 
 fun IrFunction.isReifiable(): Boolean =

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.inlineCall
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.isLambdaBlock
 import org.jetbrains.kotlin.ir.util.isLambdaInlining
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -127,19 +128,8 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 visitAnonymousDeclaration(expression)
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) {
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
                 visitAnonymousDeclaration(expression)
-            }
-
-            override fun visitBlock(expression: IrBlock) {
-                if (expression.isLambdaBlock()) {
-                    val function = expression.statements.first()
-                    val reference = expression.statements.last() as IrFunctionReference
-                    containersStack += reference
-                    visitAnonymousDeclaration(function)
-                    containersStack.removeLast()
-                }
-                super.visitBlock(expression)
             }
 
             override fun visitGetValue(expression: IrGetValue) {
@@ -156,7 +146,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 if (expression.symbol == context.symbols.singleArgumentInlineFunction) {
                     when (val lambda = expression.arguments[0]) {
                         is IrFunctionExpression -> lambda.function.acceptVoid(this)
-                        else -> lambda?.acceptVoid(this) // for example IrFunctionReference
+                        else -> lambda?.acceptVoid(this) // for example IrRichFunctionReference
                     }
                     return
                 }
@@ -246,7 +236,7 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 checkAndSetUpCorrectAttributes(expression)
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) {
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
                 checkAndSetUpCorrectAttributes(expression)
             }
         })

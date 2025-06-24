@@ -13,20 +13,20 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.util.collectRealOverrides
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 /**
- * Computes the JVM signature of a given IrFunction. The function is passed as an IrFunctionReference
+ * Computes the JVM signature of a given IrFunction. The function is passed as an IrRichFunctionReference
  * to the single argument of the intrinsic.
  */
 object SignatureString : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val argument = generateSequence(expression.arguments[0] as IrStatement) { (it as? IrBlock)?.statements?.lastOrNull() }
-            .filterIsInstance<IrFunctionReference>().single()
+            .filterIsInstance<IrRawFunctionReference>().single()
         val function = argument.symbol.owner
         generateSignatureString(codegen.mv, function, codegen.classCodegen)
         return MaterialValue(codegen, AsmTypes.JAVA_STRING_TYPE, codegen.context.irBuiltIns.stringType)

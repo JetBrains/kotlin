@@ -260,7 +260,7 @@ private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {
 private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasInlined(inlinedElement: IrElement): IrDeclaration? {
     fun IrElement.unwrapInlineLambdaIfAny(): IrElement = when (this) {
         is IrBlock -> statements.lastOrNull()?.unwrapInlineLambdaIfAny() ?: this
-        is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA } ?: this
+        is IrRichFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA } ?: this
         else -> this
     }
 
@@ -277,11 +277,7 @@ private fun List<IrInlinedFunctionBlock>.extractDeclarationWhereGivenElementWasI
             }
 
             val originalActualArg = actualArg?.attributeOwnerId as? IrExpression
-            val extractedAnonymousFunction = if (originalActualArg?.isAdaptedFunctionReference() == true) {
-                (originalActualArg as IrBlock).statements.last() as IrFunctionReference
-            } else {
-                originalActualArg
-            }
+            val extractedAnonymousFunction = originalActualArg
 
             if (extractedAnonymousFunction?.attributeOwnerId == originalInlinedElement) {
                 return block.inlineDeclaration

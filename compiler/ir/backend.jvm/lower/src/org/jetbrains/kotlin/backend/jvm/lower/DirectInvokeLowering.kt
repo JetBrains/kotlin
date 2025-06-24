@@ -41,24 +41,22 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
             // TODO deal with type parameters somehow?
             // It seems we can't encounter them in the code written by user,
             // but this might be important later if we actually perform inlining and optimizations on IR.
-            receiver is IrFunctionReference && receiver.symbol.owner.typeParameters.isEmpty() ->
+            receiver is IrRichFunctionReference && receiver.invokeFunction.typeParameters.isEmpty() ->
                 visitFunctionReferenceInvoke(expression, receiver)
 
-            receiver is IrBlock -> receiver.asInlinableFunctionReference()
-                ?.let { reference -> visitLambdaInvoke(expression, reference) } ?: expression
+            receiver is IrRichFunctionReference -> visitLambdaInvoke(expression, receiver)
 
-            else ->
-                expression
+            else -> expression
         }
 
         result.transformChildrenVoid()
         return result
     }
 
-    private fun visitLambdaInvoke(expression: IrCall, reference: IrFunctionReference): IrExpression {
+    private fun visitLambdaInvoke(expression: IrCall, reference: IrRichFunctionReference): IrExpression {
         val scope = currentScope!!.scope
         val declarationParent = scope.getLocalDeclarationParent()
-        val function = reference.symbol.owner
+        val function = reference.invokeFunction
         if (expression.symbol.owner.parameters.none { it.kind == IrParameterKind.Regular }) {
             return function.inline(declarationParent)
         }
@@ -81,30 +79,18 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         }
     }
 
-    private fun visitFunctionReferenceInvoke(expression: IrCall, receiver: IrFunctionReference): IrExpression =
-        when (val irFun = receiver.symbol.owner) {
-            is IrSimpleFunction ->
-                IrCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, irFun.symbol,
-                    typeArgumentsCount = irFun.typeParameters.size
-                ).apply {
-                    copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
-                }
-
-            is IrConstructor ->
-                IrConstructorCallImpl(
-                    expression.startOffset, expression.endOffset, expression.type, irFun.symbol,
-                    typeArgumentsCount = irFun.typeParameters.size,
-                    constructorTypeArgumentsCount = 0
-                ).apply {
-                    copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
-                }
+    private fun visitFunctionReferenceInvoke(expression: IrCall, receiver: IrRichFunctionReference): IrExpression =
+        IrCallImpl(
+            expression.startOffset, expression.endOffset, expression.type, receiver.invokeFunction.symbol,
+            typeArgumentsCount = receiver.invokeFunction.typeParameters.size
+        ).apply {
+            copyReceiverAndValueArgumentsForDirectInvoke(receiver, expression)
         }
 
     private fun IrFunctionAccessExpression.copyReceiverAndValueArgumentsForDirectInvoke(
-        irFunRef: IrFunctionReference,
+        irFunRef: IrRichFunctionReference,
         irInvokeCall: IrFunctionAccessExpression
     ) {
-        arguments.assignFrom(irFunRef.arguments.filterNotNull() + irInvokeCall.nonDispatchArguments)
+        arguments.assignFrom(irFunRef.boundValues + irInvokeCall.nonDispatchArguments)
     }
 }

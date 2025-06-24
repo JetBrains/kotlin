@@ -39,14 +39,12 @@ class RestoreInlineLambda(val context: JvmBackendContext) : FileLoweringPass, Ir
         if (declaration.isInline) {
             for (parameter in declaration.parameters) {
                 if (parameter.isInlineParameter()) {
-                    val lambda = parameter.defaultValue?.expression as? IrBlock ?: continue
-                    val function = lambda.statements.first() as IrFunction
-                    val reference = lambda.statements.last() as IrFunctionReference
-                    val original = reference.attributeOwnerId as IrExpression
+                    val lambda = parameter.defaultValue?.expression as? IrRichFunctionReference ?: continue
+                    val original = lambda.attributeOwnerId as IrExpression
 
                     if (original is IrFunctionExpression) {
-                        function.origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                        reference.origin = original.origin
+                        lambda.invokeFunction.origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                        lambda.origin = original.origin
                     } else if (original is IrCallableReference<*>) {
                         parameter.defaultValue?.expression = original
                     }
@@ -57,15 +55,11 @@ class RestoreInlineLambda(val context: JvmBackendContext) : FileLoweringPass, Ir
         return super.visitFunction(declaration)
     }
 
-    override fun visitBlock(expression: IrBlock): IrExpression {
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         if (expression.origin == IrStatementOrigin.SUSPEND_CONVERSION) {
-            val function = expression.statements.first() as IrFunction
-            function.origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION
-
-            val possibleReference = expression.statements.last()
-            val reference = if (possibleReference is IrTypeOperatorCall) possibleReference.argument else possibleReference
-            (reference as IrFunctionReference).origin = expression.origin
+            expression.invokeFunction.origin = IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION
+            expression.origin = expression.origin
         }
-        return super.visitBlock(expression)
+        return super.visitRichFunctionReference(expression)
     }
 }

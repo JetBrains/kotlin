@@ -22,7 +22,7 @@ internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalCla
 
     override fun lower(irFile: IrFile) {
         irFile.findInlineLambdas(context as JvmBackendContext) { argument, _, _, scope ->
-            inlineLambdaToScope[argument.symbol.owner] = scope
+            inlineLambdaToScope[argument.invokeFunction] = scope
         }
         super.lower(irFile)
         inlineLambdaToScope.clear()

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrType
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 /**
  * There is some compiler info from IR inliner that may not be available in non-JVM backends due to serialization in KLIBs.
@@ -52,8 +54,17 @@ private fun IrDeclarationParent.isInlineFunction(): Boolean {
     return this.isInline || this.isInlineArrayConstructor()
 }
 
-fun IrExpression.isAdaptedFunctionReference() =
-    this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+@OptIn(ExperimentalContracts::class)
+fun IrExpression.isAdaptedFunctionReference(): Boolean {
+    contract { returns(true) implies (this@isAdaptedFunctionReference is IrRichFunctionReference) }
+    return this is IrRichFunctionReference && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+}
 
 fun IrExpression.isLambdaBlock() =
     this is IrBlock && this.origin == IrStatementOrigin.LAMBDA
+
+@OptIn(ExperimentalContracts::class)
+fun IrExpression.isLambda(): Boolean {
+    contract { returns(true) implies (this@isLambda is IrRichFunctionReference) }
+    return this is IrRichFunctionReference && this.origin == IrStatementOrigin.LAMBDA
+}

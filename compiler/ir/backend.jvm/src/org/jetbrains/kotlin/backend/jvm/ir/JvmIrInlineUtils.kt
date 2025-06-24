@@ -60,9 +60,9 @@ val IrDeclaration.isInPublicInlineScope: Boolean
 private val IrDeclaration.original: IrDeclaration
     get() = (this.attributeOwnerId as? IrDeclaration) ?: this
 
-fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
+fun IrStatement.unwrapInlineLambda(): IrRichFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
-    is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA }
+    is IrRichFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA }
     else -> null
 }
 
@@ -104,7 +104,7 @@ val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
     get() = when (val element = inlinedElement) {
         is IrFunction -> element
         is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
+        is IrRichFunctionReference -> element.invokeFunction
         is IrPropertyReference -> element.symbol.owner
         else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
     }

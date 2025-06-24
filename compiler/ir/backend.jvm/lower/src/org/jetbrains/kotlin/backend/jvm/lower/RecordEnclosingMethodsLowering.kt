@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
@@ -38,14 +38,14 @@ internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : 
                 when {
                     expression.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
                         val reference = expression.arguments[1]
-                        if (reference is IrFunctionReference && reference.origin.isLambda) {
-                            recordEnclosingMethodOverride(reference.symbol.owner, data)
+                        if (reference is IrRichFunctionReference && reference.origin.isLambda) {
+                            recordEnclosingMethodOverride(reference.invokeFunction, data)
                         }
                     }
                     expression.symbol.owner.isInlineFunctionCall(context) -> {
                         for (parameter in expression.symbol.owner.parameters) {
                             val lambda = expression.arguments[parameter]?.unwrapInlineLambda() ?: continue
-                            recordEnclosingMethodOverride(lambda.symbol.owner, data)
+                            recordEnclosingMethodOverride(lambda.invokeFunction, data)
                         }
                     }
                 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
@@ -203,9 +204,9 @@ private class SyntheticAccessorTransformer(
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
-        val implFunRef = call.arguments[1] as? IrFunctionReference
-            ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
-        val implFunSymbol = implFunRef.symbol
+        val implFunRef = call.arguments[1] as? IrRichFunctionReference
+            ?: throw AssertionError("'implMethodReference' is expected to be 'IrRichFunctionReference': ${call.dump()}")
+        val implFunSymbol = implFunRef.invokeFunction.symbol
 
         if (implFunSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
             return call
@@ -216,19 +217,19 @@ private class SyntheticAccessorTransformer(
                 implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
                 accessor.symbol,
                 accessor.typeParameters.size,
-                implFunRef.reflectionTarget, implFunRef.origin
+                implFunRef.reflectionTargetSymbol, implFunRef.origin
             )
 
-        accessorRef.copyTypeArgumentsFrom(implFunRef)
+//        accessorRef.copyTypeArgumentsFrom(implFunRef)
 
-        for (implArgIndex in implFunRef.arguments.indices) {
-            accessorRef.arguments[implArgIndex] = implFunRef.arguments[implArgIndex]
+        for (implArgIndex in implFunRef.boundValues.indices) {
+            accessorRef.arguments[implArgIndex] = implFunRef.boundValues[implArgIndex]
         }
         if (accessor is IrConstructor) {
-            accessorRef.arguments[implFunRef.arguments.size] = accessorGenerator.createAccessorMarkerArgument()
+            accessorRef.arguments[implFunRef.boundValues.size] = accessorGenerator.createAccessorMarkerArgument()
         }
 
-        call.arguments[1] = accessorRef
+        call.arguments[1] = UpgradeCallableReferences.convertReference(context, accessorRef, currentDeclarationParent!!)
         return call
     }
 
@@ -304,26 +305,6 @@ private class SyntheticAccessorTransformer(
             }
         }
         return super.visitConstructor(declaration)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val function = expression.symbol.owner
-
-        if (!expression.origin.isLambda && function is IrConstructor) {
-            val generatedAccessor = when {
-                accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(function) -> accessorGenerator.getSyntheticConstructorWithMangledParams(function)
-                accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(function) -> accessorGenerator.getSyntheticConstructorOfSealedClass(function)
-                else -> return super.visitFunctionReference(expression)
-            }
-            expression.transformChildrenVoid()
-            return IrFunctionReferenceImpl(
-                expression.startOffset, expression.endOffset, expression.type,
-                generatedAccessor.symbol, generatedAccessor.typeParameters.size,
-                generatedAccessor.symbol, expression.origin
-            )
-        }
-
-        return super.visitFunctionReference(expression)
     }
 
     override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {

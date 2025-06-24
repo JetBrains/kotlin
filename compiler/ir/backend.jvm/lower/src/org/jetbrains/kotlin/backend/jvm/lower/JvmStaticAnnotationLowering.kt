@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -123,7 +125,7 @@ class SingletonObjectJvmStaticTransformer(
     }
 }
 
-private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoid() {
+private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext) : IrElementTransformerVoidWithContext() {
     // TODO: would be nice to add a mode that *only* leaves static versions for all annotated methods, with nothing
     //  in companions - this would reduce the number of classes if the companion only has `@JvmStatic` declarations.
     private fun IrSimpleFunction.needsStaticProxy(): Boolean = when {
@@ -140,8 +142,8 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
         else -> !origin.isSynthetic
     }
 
-    override fun visitClass(declaration: IrClass): IrStatement =
-        super.visitClass(declaration).also {
+    override fun visitClassNew(declaration: IrClass): IrStatement =
+        super.visitClassNew(declaration).also {
             declaration.companionObject()?.declarations?.transformInPlace {
                 if (it is IrSimpleFunction && it.isJvmStaticDeclaration() && it.needsStaticProxy()) {
                     val (static, companionFun) = context.cachedDeclarations.getStaticAndCompanionDeclaration(it)
@@ -162,17 +164,17 @@ private class CompanionObjectJvmStaticTransformer(val context: JvmBackendContext
                 expression.makeStatic(context.irBuiltIns, staticProxy)
             }
             callee.symbol == context.symbols.indyLambdaMetafactoryIntrinsic -> {
-                val implFunRef = expression.arguments[1] as? IrFunctionReference
-                    ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${expression.dump()}")
-                val implFun = implFunRef.symbol.owner
-                if (implFunRef.dispatchReceiver != null && implFun is IrSimpleFunction && shouldReplaceWithStaticCall(implFun)) {
+                val implFunRef = expression.arguments[1] as? IrRichFunctionReference
+                    ?: throw AssertionError("'implMethodReference' is expected to be 'IrRichFunctionReference': ${expression.dump()}")
+                val implFun = implFunRef.invokeFunction
+                if (implFunRef.boundValues.isNotEmpty() && shouldReplaceWithStaticCall(implFun)) {
                     val (staticProxy, _) = context.cachedDeclarations.getStaticAndCompanionDeclaration(implFun)
                     expression.arguments[1] = IrFunctionReferenceImpl(
                         implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
                         staticProxy.symbol,
                         staticProxy.typeParameters.size,
-                        implFunRef.reflectionTarget, implFunRef.origin
-                    )
+                        implFunRef.reflectionTargetSymbol, implFunRef.origin
+                    ).let { UpgradeCallableReferences.convertReference(context, it, currentDeclarationParent!!) }
                 }
                 expression
             }

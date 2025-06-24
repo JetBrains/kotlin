@@ -258,7 +258,8 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 return newCall
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val callee = expression.symbol as? IrConstructorSymbol ?: return expression
@@ -266,7 +267,22 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 if (!parent.isInner) return expression
 
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
-                val newReflectionTarget = expression.reflectionTarget?.let { reflectionTarget ->
+
+                val newReference = expression.run {
+                    IrRawFunctionReferenceImpl(startOffset, endOffset, type, newCallee.symbol)
+                }
+                return newReference
+            }
+
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val callee = expression.reflectionTargetSymbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.isInner) return expression
+
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val newReflectionTarget = expression.reflectionTargetSymbol?.let { reflectionTarget ->
                     when (reflectionTarget) {
                         is IrConstructorSymbol -> innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
                         is IrSimpleFunctionSymbol -> null
@@ -279,12 +295,11 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                         endOffset,
                         type,
                         newCallee.symbol,
-                        typeArgumentsCount = typeArguments.size,
+                        typeArgumentsCount = 0,
                         reflectionTarget = newReflectionTarget?.symbol,
                         origin = origin
                     )
-                }
-                newReference.copyTypeAndValueArgumentsFrom(expression)
+                }.let({ UpgradeCallableReferences.convertReference(context, it, container as? IrDeclarationParent ?: container.parent) })
                 return newReference
             }
             // TODO callable references?

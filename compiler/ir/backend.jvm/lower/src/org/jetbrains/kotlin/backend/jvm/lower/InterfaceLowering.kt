@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -280,16 +280,25 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         )
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        val newFunction = removedFunctions[expression.symbol]?.owner
-        return super.visitFunctionReference(
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val newFunction = removedFunctions[expression.reflectionTargetSymbol]?.owner
+        return super.visitRichFunctionReference(
             if (newFunction != null) {
                 with(expression) {
-                    IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, newFunction.symbol, newFunction.typeParameters.size,
-                        expression.reflectionTarget, origin
+                    IrRichFunctionReferenceImpl(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        type = type,
+                        reflectionTargetSymbol = newFunction.symbol,
+                        overriddenFunctionSymbol = expression.overriddenFunctionSymbol,
+                        invokeFunction = expression.invokeFunction,
+                        hasUnitConversion = expression.hasUnitConversion,
+                        hasSuspendConversion = expression.hasSuspendConversion,
+                        hasVarargConversion = expression.hasVarargConversion,
+                        isRestrictedSuspension = expression.isRestrictedSuspension,
+                        origin = origin
                     ).apply {
-                        copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)
+//                        copyFromWithPlaceholderTypeArguments(expression, context.irBuiltIns)
                         copyAttributes(expression)
                     }
                 }

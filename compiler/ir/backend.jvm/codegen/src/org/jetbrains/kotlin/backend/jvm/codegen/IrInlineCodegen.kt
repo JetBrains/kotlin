@@ -120,7 +120,7 @@ class IrInlineCodegen(
                 irValueParameter.indexInParameters
             ).functionalArgument = lambdaInfo
             lambdaInfo.generateLambdaBody(sourceCompiler)
-            lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
+            lambdaInfo.reference.let { it.invokeFunction.parameters zip it.boundValues }.forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
                 val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo(), eraseType = false)
                 putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
@@ -447,13 +447,13 @@ class IrInlineCodegen(
 
 class IrExpressionLambdaImpl(
     codegen: ExpressionCodegen,
-    val reference: IrFunctionReference,
+    val reference: IrRichFunctionReference,
 ) : ExpressionLambda(), IrExpressionLambda {
-    override val nonRegularParametersCount: Int = (function.parameters zip reference.arguments)
-        .count { (parameter, argument) -> parameter.kind != IrParameterKind.Regular && argument == null }
+    override val nonRegularParametersCount: Int = (function.parameters.drop(reference.boundValues.size))
+        .count { parameter -> parameter.kind != IrParameterKind.Regular }
 
     val function: IrFunction
-        get() = reference.symbol.owner
+        get() = reference.invokeFunction
 
     override val hasDispatchReceiver: Boolean
         get() = false
@@ -472,10 +472,10 @@ class IrExpressionLambdaImpl(
 
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
-        val capturedParameters = reference.getArgumentsWithIr()
+        val capturedParameters = reference.invokeFunction.parameters
         val captureStart = nonRegularParametersCount
         val captureEnd = captureStart + capturedParameters.size
-        capturedVars = capturedParameters.mapIndexed { index, (parameter, _) ->
+        capturedVars = capturedParameters.mapIndexed { index, parameter ->
             val isSuspend = parameter.isInlineParameter() && parameter.type.isSuspendFunction()
             capturedParamDesc(parameter.name.asString(), asmMethod.argumentTypes[captureStart + index], isSuspend)
         }

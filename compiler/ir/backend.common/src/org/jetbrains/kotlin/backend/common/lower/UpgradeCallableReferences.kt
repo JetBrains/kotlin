@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.Int
 
 @PhaseDescription("UpgradeCallableReferences")
 open class UpgradeCallableReferences(
@@ -54,6 +56,24 @@ open class UpgradeCallableReferences(
                 type.classOrFail.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
             } ?: error("${type.render()} should have a single abstract method to be a type of function reference")
         }
+
+        fun convertReference(context: LoweringContext, irFunctionReference: IrFunctionReference, declarationParent: IrDeclarationParent): IrRichFunctionReference =
+            UpgradeCallableReferences(context).UpgradeTransformer()
+                .upgradeFunctionReference(irFunctionReference, declarationParent)
+
+        fun convertReference(
+            context: LoweringContext,
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            origin: IrStatementOrigin?,
+            symbol: IrFunctionSymbol,
+            reflectionTarget: IrFunctionSymbol?,
+            declarationParent: IrDeclarationParent
+        ): IrRichFunctionReference =
+            UpgradeCallableReferences(context).UpgradeTransformer()
+                .upgradeFunctionReference(
+                    IrFunctionReferenceImpl(startOffset, endOffset, type, symbol, 0, reflectionTarget, origin), declarationParent)
     }
 
 
@@ -218,6 +238,13 @@ open class UpgradeCallableReferences(
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
             if (!upgradeFunctionReferencesAndLambdas) return expression
+            return upgradeFunctionReference(expression, data)
+        }
+
+        fun upgradeFunctionReference(
+            expression: IrFunctionReference,
+            declarationParent: IrDeclarationParent,
+        ): IrRichFunctionReferenceImpl {
             val arguments = expression.getArgumentsWithIr()
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
@@ -225,7 +252,7 @@ open class UpgradeCallableReferences(
                 type = expression.type,
                 reflectionTargetSymbol = (expression.reflectionTarget ?: expression.symbol).takeUnless { expression.origin.isLambda },
                 overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type),
-                invokeFunction = expression.wrapFunction(arguments, data, expression.symbol.owner),
+                invokeFunction = expression.wrapFunction(arguments, declarationParent, expression.symbol.owner),
                 origin = expression.origin,
                 isRestrictedSuspension = expression.symbol.owner.isRestrictedSuspensionFunction(),
             ).apply {

@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 private var IrElement._localClassType: Type? by irAttribute(copyByDefault = true)
 // This sort of a hack for IR inliner case, where IrFunctionExpression stores and "shares" localClassType
-// between IrFunctionReferences that are lowered from this IrFunctionExpression, but linked to it via attributeOwnerId.
+// between IrRichFunctionReferences that are lowered from this IrFunctionExpression, but linked to it via attributeOwnerId.
 // It can be changed to simply store the attribute on the function reference itself when either:
 // - IR inliner (-Xserialize-ir) is dropped, or
 // - IrFunctionExpression is dropped (KT-74383).

@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -71,7 +71,7 @@ internal sealed class MetafactoryArgumentsResult {
 internal class LambdaMetafactoryArguments(
     val samMethod: IrSimpleFunction,
     val fakeInstanceMethod: IrSimpleFunction,
-    val implMethodReference: IrFunctionReference,
+    val implMethodReference: IrRichFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
     val shouldBeSerializable: Boolean,
 ) : MetafactoryArgumentsResult.Success()
@@ -88,7 +88,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
      * @see java.lang.invoke.LambdaMetafactory
      */
     fun getLambdaMetafactoryArguments(
-        reference: IrFunctionReference,
+        reference: IrRichFunctionReference,
         samType: IrType,
         plainLambda: Boolean,
         forceSerializability: Boolean,
@@ -125,7 +125,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             abiHazard = true
         }
 
-        val implFun = reference.symbol.owner
+        val implFun = reference.invokeFunction
 
         if (implFun.typeParameters.any { it.isReified }) {
             functionHazard = true
@@ -152,8 +152,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // It's possible to reference through a child class a method declared in a package-private base Java class.
         // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
         // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
-        if (implFun is IrSimpleFunction) {
-            val baseFun = findSuperDeclaration(implFun)
+        (reference.reflectionTargetSymbol?.owner as? IrSimpleFunction)?.let { sourceFun ->
+            val baseFun = findSuperDeclaration(sourceFun)
             val baseFunClass = baseFun.parent as? IrClass
             if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
                 functionHazard = true
@@ -254,7 +254,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
     }
 
     private fun getLambdaMetafactoryArgsOrNullInner(
-        reference: IrFunctionReference,
+        reference: IrRichFunctionReference,
         samMethod: IrSimpleFunction,
         samType: IrType,
         implFun: IrFunction,
@@ -363,9 +363,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
         implFun: IrFunction,
         fakeInstanceMethod: IrSimpleFunction,
         constraints: SignatureAdaptationConstraints,
-        reference: IrFunctionReference,
+        reference: IrRichFunctionReference,
     ): Boolean {
-        val implParameters = (implFun.parameters zip reference.arguments)
+        val implParameters = (implFun.parameters zip List(implFun.parameters.size) { reference.boundValues.getOrNull(it) })
             .mapNotNull { (implParameter, referenceArgument) -> if (referenceArgument == null) implParameter else null }
 
         val methodParameters = fakeInstanceMethod.nonDispatchParameters

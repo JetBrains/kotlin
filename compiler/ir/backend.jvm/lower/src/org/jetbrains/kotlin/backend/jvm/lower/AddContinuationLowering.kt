@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -57,20 +59,20 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
     }
 
     private fun addContinuationParameterToSuspendCalls(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             val functionStack = mutableListOf<IrFunction>()
 
-            override fun visitFunction(declaration: IrFunction): IrStatement {
+            override fun visitFunctionNew(declaration: IrFunction): IrStatement {
                 functionStack.push(declaration)
-                return super.visitFunction(declaration).also { functionStack.pop() }
+                return super.visitFunctionNew(declaration).also { functionStack.pop() }
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                val transformed = super.visitFunctionReference(expression) as IrFunctionReference
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                val transformed = super.visitRichFunctionReference(expression) as IrRichFunctionReference
                 // The only references not yet transformed into objects are inline lambdas; the continuation
                 // for those will be taken from the inline functions they are passed to, not the enclosing scope.
                 return transformed.retargetToSuspendView(context, null) {
-                    IrFunctionReferenceImpl.fromSymbolOwner(startOffset, endOffset, type, it, typeArguments.size, reflectionTarget, origin)
+                    IrRichFunctionReferenceImpl(startOffset, endOffset, type, reflectionTargetSymbol, overriddenFunctionSymbol, it.owner, origin, hasUnitConversion, hasSuspendConversion, hasVarargConversion, isRestrictedSuspension)
                 }
             }
 
@@ -487,6 +489,41 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
                         ?: throw AssertionError("${caller.render()}${caller.fileOrNull?.name?.let { " in file $it" } ?: ""} has no continuation; can't call ${owner.render()}")
                 )
             it.arguments[continuationParameter.indexInParameters] = continuation
+        }
+    }
+}
+
+private fun IrRichFunctionReference.retargetToSuspendView(
+    context: JvmBackendContext,
+    caller: IrFunction?,
+    copyWithTargetSymbol: IrRichFunctionReference.(IrSimpleFunctionSymbol) -> IrRichFunctionReference
+): IrRichFunctionReference {
+    // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
+    val owner = invokeFunction
+    if (!owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
+        || owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+        || owner.continuationParameter() != null
+    ) return this
+    val view = owner.suspendFunctionViewOrStub(context)
+    if (view == owner) return this
+
+    // While the new callee technically returns `<original type> | COROUTINE_SUSPENDED`, the latter case is handled
+    // by a method visitor so at an IR overview we don't need to consider it.
+    return copyWithTargetSymbol(view.symbol).also {
+        it.copyAttributes(this)
+        val continuationParameter = view.continuationParameter()!!
+        for (i in boundValues.indices) {
+            it.boundValues[i + if (i >= continuationParameter.indexInParameters) 1 else 0] = boundValues[i]
+        }
+        if (caller != null) {
+            val continuation = if (caller.origin == IrDeclarationOrigin.INLINE_LAMBDA)
+                IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, continuationParameter.type, JvmLoweredStatementOrigin.FAKE_CONTINUATION)
+            else
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
+                        ?: throw AssertionError("${caller.render()}${caller.fileOrNull?.name?.let { " in file $it" } ?: ""} has no continuation; can't call ${owner.render()}")
+                )
+            it.boundValues[continuationParameter.indexInParameters] = continuation
         }
     }
 }

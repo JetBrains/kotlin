@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -65,9 +65,8 @@ internal class FakeLocalVariablesForBytecodeInlinerLowering(
         declaration.addFakeLocalVariableForFun(declaration)
     }
 
-    override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
-        val lambda = argument.symbol.owner
-        lambda.addFakeLocalVariableForLambda(argument, callee)
+    override fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+        argument.invokeFunction.addFakeLocalVariableForLambda(argument, callee)
     }
 
     override fun IrFunction.addFakeLocalVariable(name: String) {

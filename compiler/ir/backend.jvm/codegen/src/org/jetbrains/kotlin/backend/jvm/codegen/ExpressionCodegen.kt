@@ -942,6 +942,15 @@ class ExpressionCodegen(
     override fun visitExpressionBody(body: IrExpressionBody, data: BlockInfo) =
         body.expression.accept(this, data)
 
+    override fun visitRichCallableReference(expression: IrRichCallableReference<*>, data: BlockInfo): PromisedValue {
+        return when (expression) {
+            is IrRichFunctionReference -> {
+                TODO()
+            }
+            is IrRichPropertyReference -> super.visitRichCallableReference(expression, data)
+        }
+    }
+
     override fun visitElement(element: IrElement, data: BlockInfo) =
         throw AssertionError(
             "Unexpected IR element found during code generation. Either code generation for it " +

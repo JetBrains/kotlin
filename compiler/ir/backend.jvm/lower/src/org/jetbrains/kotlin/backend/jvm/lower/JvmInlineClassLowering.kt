@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
@@ -245,7 +246,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         ).apply {
             buildReplacement(expression)
             copyAttributes(expression)
-        }
+        }.let { UpgradeCallableReferences.convertReference(context, it, currentDeclarationParent!!) }
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

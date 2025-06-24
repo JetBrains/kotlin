@@ -38,7 +38,7 @@ private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
             // References to inline functions don't count since they're not really *references* - the contents
             // of the inline function are copy-pasted into the `invoke` method, and may require a continuation.
             // (TODO: maybe the reference itself should be the continuation, just like lambdas?)
-            && (parentAsClass.attributeOwnerId as? IrFunctionReference)?.symbol?.owner?.isInline != true
+            && (parentAsClass.attributeOwnerId as? IrRichFunctionReference)?.invokeFunction?.isInline != true
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     isSuspend && this is IrSimpleFunction && (parent as? IrClass)?.functions?.any {

@@ -56,7 +56,7 @@ class CreateSeparateCallForInlinedLambdasLowering(val context: JvmBackendContext
     }
 
     private fun IrExpression.isInlinableExpression(): Boolean {
-        return this is IrFunctionExpression || this is IrFunctionReference || this is IrPropertyReference
+        return this is IrFunctionExpression || this is IrRichFunctionReference || this is IrPropertyReference
                 || this.isAdaptedFunctionReference() || this.isLambdaBlock()
     }
 }

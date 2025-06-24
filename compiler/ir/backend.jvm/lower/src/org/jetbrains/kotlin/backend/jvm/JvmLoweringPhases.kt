@@ -122,7 +122,20 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::SpecialAccessLowering,
 )
 
-val jvmLoweringPhases = createModulePhases(
+private val upgradeCallableReferences = makeIrModulePhase(
+    { ctx: JvmBackendContext ->
+        UpgradeCallableReferences(
+            ctx,
+            upgradeFunctionReferencesAndLambdas = true,
+            upgradePropertyReferences = false,
+            upgradeLocalDelegatedPropertyReferences = false,
+            upgradeSamConversions = false,
+        )
+    },
+    name = "UpgradeCallableReferences"
+)
+
+val jvmLoweringPhases = listOf(upgradeCallableReferences) + createModulePhases(
     ::ExternalPackageParentPatcherLowering,
     ::FragmentSharedVariablesLowering,
     ::JvmIrValidationBeforeLoweringPhase,

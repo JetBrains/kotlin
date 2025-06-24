@@ -480,9 +480,9 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
         val samMethodRef = call.arguments[0] as? IrRawFunctionReference
             ?: fail("'samMethodType' should be 'IrRawFunctionReference'")
-        val implFunRef = call.arguments[1] as? IrFunctionReference
-            ?: fail("'implMethodReference' is expected to be 'IrFunctionReference'")
-        val implFunSymbol = implFunRef.symbol
+        val implFunRef = call.arguments[1] as? IrRichFunctionReference
+            ?: fail("'implMethodReference' is expected to be 'IrRichFunctionReference'")
+        val implFunSymbol = implFunRef.invokeFunction.symbol
         val instanceMethodRef = call.arguments[2] as? IrRawFunctionReference
             ?: fail("'instantiatedMethodType' is expected to be 'IrRawFunctionReference'")
 
@@ -605,7 +605,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
     private fun wrapClosureInDynamicCall(
         erasedSamType: IrSimpleType,
         samMethod: IrSimpleFunction,
-        targetRef: IrFunctionReference
+        targetRef: IrRichFunctionReference
     ): IrCall {
         fun fail(message: String): Nothing =
             throw AssertionError("$message, targetRef:\n${targetRef.dump()}")
@@ -619,12 +619,11 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
         }.apply {
             parent = backendContext.symbols.kotlinJvmInternalInvokeDynamicPackage
 
-            val targetFun = targetRef.symbol.owner
+            val targetFun = targetRef.invokeFunction
 
             var syntheticParameterIndex = 0
 
-            var argumentStart = 0
-            parameters = (targetFun.parameters zip targetRef.arguments).mapNotNull { (parameter, argument) ->
+            parameters = (targetFun.parameters zip List(targetFun.parameters.size) { targetRef.boundValues.getOrNull(it) }).mapNotNull { (parameter, argument) ->
                 if (argument == null) return@mapNotNull null
                 val (newParameterType, newArgument) = when (parameter.kind) {
                     IrParameterKind.DispatchReceiver -> when (targetFun) {
@@ -635,18 +634,14 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
                         is IrConstructor -> {
                             // At this point, outer class instances in inner class constructors are represented as regular value parameters.
                             // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
-                            argumentStart++
                             targetFun.parameters[0].type to argument
                         }
                     }
                     IrParameterKind.Context, IrParameterKind.ExtensionReceiver -> {
-                        argumentStart++
                         parameter.type to argument
                     }
                     IrParameterKind.Regular -> {
-                        val capturedValueArgument = targetRef.arguments[argumentStart]
-                            ?: fail("Captured value argument #$argumentStart (${parameter.render()}) not provided")
-                        argumentStart++
+                        val capturedValueArgument = argument
                         parameter.type to capturedValueArgument
                     }
                 }

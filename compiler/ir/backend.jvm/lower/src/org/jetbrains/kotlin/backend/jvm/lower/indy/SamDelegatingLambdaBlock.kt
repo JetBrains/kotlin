@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.functions
@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal sealed class SamDelegatingLambdaBlock {
     abstract val block: IrContainerExpression
-    abstract val ref: IrFunctionReference
+    abstract val ref: IrRichFunctionReference
     abstract fun replaceRefWith(expression: IrExpression)
 }
 
 
 internal class RegularDelegatingLambdaBlock(
     override val block: IrContainerExpression,
-    override val ref: IrFunctionReference
+    override val ref: IrRichFunctionReference
 ) : SamDelegatingLambdaBlock() {
 
     override fun replaceRefWith(expression: IrExpression) {
@@ -50,7 +50,7 @@ internal class RegularDelegatingLambdaBlock(
 
 internal class NullableDelegatingLambdaBlock(
     override val block: IrContainerExpression,
-    override val ref: IrFunctionReference,
+    override val ref: IrRichFunctionReference,
     private val ifExpr: IrExpression,
     private val ifNotNullBlock: IrContainerExpression
 ) : SamDelegatingLambdaBlock() {
@@ -78,7 +78,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         scopeSymbol: IrSymbol,
         parent: IrDeclarationParent
     ): SamDelegatingLambdaBlock {
-        lateinit var ref: IrFunctionReference
+        lateinit var ref: IrRichFunctionReference
         val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
             //  {
             //      val tmp = <expression>
@@ -89,9 +89,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
 
             irBlock(origin = IrStatementOrigin.LAMBDA) {
                 val tmp = irTemporary(expression)
-                val lambda = createDelegatingLambda(expression, superType, tmp, parent)
-                    .also { +it }
-                ref = createDelegatingLambdaReference(expression, lambda)
+                val superMethod = getSamInterfaceMethod(superType)
+                val lambda = createDelegatingLambda(expression, superType, tmp, parent, superMethod)
+                ref = createDelegatingLambdaReference(expression, lambda, superMethod)
                     .also { +it }
             }
         }
@@ -105,7 +105,7 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         scopeSymbol: IrSymbol,
         parent: IrDeclarationParent
     ): SamDelegatingLambdaBlock {
-        lateinit var ref: IrFunctionReference
+        lateinit var ref: IrRichFunctionReference
         lateinit var ifExpr: IrExpression
         lateinit var ifNotNullBlock: IrContainerExpression
         val block = jvmContext.createJvmIrBuilder(scopeSymbol, expression).run {
@@ -123,9 +123,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
             irBlock(origin = IrStatementOrigin.LAMBDA) {
                 val tmp = irTemporary(expression)
                 ifNotNullBlock = irBlock {
-                    val lambda = createDelegatingLambda(expression, superType, tmp, parent)
-                        .also { +it }
-                    ref = createDelegatingLambdaReference(expression, lambda)
+                    val superMethod = getSamInterfaceMethod(superType)
+                    val lambda = createDelegatingLambda(expression, superType, tmp, parent, superMethod)
+                    ref = createDelegatingLambdaReference(expression, lambda, superMethod)
                         .also { +it }
                 }
                 ifExpr = irIfNull(expression.type, irGet(tmp), irNull(), ifNotNullBlock)
@@ -140,10 +140,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         expression: IrExpression,
         superType: IrType,
         tmp: IrVariable,
-        parent: IrDeclarationParent
+        parent: IrDeclarationParent,
+        superMethod: IrSimpleFunction,
     ): IrSimpleFunction {
-        val superMethod = superType.getClass()?.getSingleAbstractMethod()
-            ?: throw AssertionError("SAM type expected: ${superType.render()}")
         val effectiveValueParametersCount = superMethod.nonDispatchParameters.size
         val invocableFunctionClass =
             if (superMethod.isSuspend)
@@ -183,6 +182,9 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         }
     }
 
+    private fun getSamInterfaceMethod(superType: IrType): IrSimpleFunction = (superType.getClass()?.getSingleAbstractMethod()
+        ?: throw AssertionError("SAM type expected: ${superType.render()}"))
+
     private fun createLambdaValueParameters(
         superMethod: IrSimpleFunction,
         lambda: IrSimpleFunction,
@@ -198,14 +200,15 @@ internal class SamDelegatingLambdaBuilder(private val jvmContext: JvmBackendCont
         }
     }
 
-    private fun JvmIrBuilder.createDelegatingLambdaReference(expression: IrExpression, lambda: IrSimpleFunction): IrFunctionReference {
-        return IrFunctionReferenceImpl(
-            startOffset, endOffset,
-            expression.type,
-            lambda.symbol,
-            typeArgumentsCount = 0,
-            reflectionTarget = null,
-            origin = IrStatementOrigin.LAMBDA
+    private fun JvmIrBuilder.createDelegatingLambdaReference(expression: IrExpression, lambda: IrSimpleFunction, superMethod: IrSimpleFunction): IrRichFunctionReference {
+        return IrRichFunctionReferenceImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            type = expression.type,
+            invokeFunction = lambda,
+            reflectionTargetSymbol = null,
+            origin = IrStatementOrigin.LAMBDA,
+            overriddenFunctionSymbol = superMethod.symbol,
         )
     }
 

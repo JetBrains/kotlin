@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.inline.CommonInlineCallableReferenceToLambdaPhase
 import org.jetbrains.kotlin.ir.inline.InlineCallableReferenceToLambdaPhase
 
@@ -29,7 +29,7 @@ internal class JvmInlineCallableReferenceToLambdaWithDefaultsPhase(
     }
 
     // Don't transform a function reference if it is not an argument for an inline function
-    override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrElement {
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: IrDeclarationParent?): IrExpression {
         expression.transformChildren(this, data)
         return expression
     }

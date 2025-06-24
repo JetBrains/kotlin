@@ -152,9 +152,9 @@ private class RemoveDuplicatedInlinedLocalClassesTransformer(val context: JvmBac
         }
     }
 
-    override fun visitFunctionReference(expression: IrFunctionReference, data: Data): IrElement {
-        if (!visited.add(expression.symbol.owner)) return expression
-        expression.symbol.owner.accept(this, data)
-        return super.visitFunctionReference(expression, data)
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference, data: Data): IrExpression {
+        if (!visited.add(expression.invokeFunction)) return expression
+        expression.invokeFunction.accept(this, data)
+        return super.visitRichFunctionReference(expression, data)
     }
 }

@@ -119,24 +119,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             return irString("<v#$index>")
         }
         val getter = expression.getter ?: return irString(expression.field!!.owner.fakeGetterSignature)
-        // Work around for differences between `RuntimeTypeMapper.KotlinProperty` and the real Kotlin type mapper.
-        // Most notably, the runtime type mapper does not perform inline class name mangling. This is usually not
-        // a problem, since we will produce a getter signature as part of the Kotlin metadata, except when there
-        // is no getter method in the bytecode. In that case we need to avoid inline class mangling for the
-        // function reference used in the <signature-string> intrinsic.
-        //
-        // Note that we cannot compute the signature at this point, since we still need to mangle the names of
-        // private properties in multifile-part classes.
-        val needsDummySignature = getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
-                // Internal underlying vals of inline classes have no getter method
-                getter.owner.isInlineClassFieldGetter && getter.owner.visibility == DescriptorVisibilities.INTERNAL
-        val origin = if (needsDummySignature) InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE else null
-        val reference = IrFunctionReferenceImpl.fromSymbolOwner(
-            startOffset, endOffset, expression.type, getter, getter.owner.typeParameters.size, getter, origin
+        val reference = IrRawFunctionReferenceImpl(
+            startOffset, endOffset, expression.type, getter
         )
-        for ((index, parameter) in getter.owner.typeParameters.withIndex()) {
-            reference.typeArguments[index] = parameter.erasedUpperBound.defaultType
-        }
         return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }
     }
 

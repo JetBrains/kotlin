@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.ir.util.isFunctionInlining
+import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
@@ -29,8 +30,10 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.parameters) {
-                val lambda = expression.arguments[parameter.indexInParameters]?.unwrapInlineLambda() ?: continue
-                visitInlineLambda(lambda, function, parameter, data!!)
+                val reference = expression.arguments[parameter] as? IrRichFunctionReference ?: continue
+                if (reference.origin.isLambda) {
+                    visitInlineLambda(reference, function, parameter, data!!)
+                }
             }
         }
         return super.visitFunctionAccess(expression, data)
@@ -44,7 +47,7 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
      * @param parameter The parameter of [callee] to which the lambda is passed.
      * @param scope The declaration in scope of which [callee] is being called.
      */
-    abstract fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
+    abstract fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
 }
 
 /**
@@ -89,10 +92,10 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
      */
     private val privateInlineFunctionCallSites = mutableMapOf<IrFunction, Set<IrDeclaration>>()
 
-    override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
+    override fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
         // but these lambdas are effectively inline
-        inlineCallSites[argument.symbol.owner] =
+        inlineCallSites[argument.invokeFunction] =
             CallSite(scope, approximateToPackage = parameter.isCrossinline && !callee.isCoroutineIntrinsic())
     }
 
@@ -232,11 +235,11 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
  *   the parameter of that inline function to which the lambda is passed, and the scope in which the inline function is called.
  */
 inline fun IrFile.findInlineLambdas(
-    context: JvmBackendContext, crossinline onLambda: (IrFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
+    context: JvmBackendContext, crossinline onLambda: (IrRichFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
 ) = accept(
     object : IrInlineReferenceLocator(context) {
         override fun visitInlineLambda(
-            argument: IrFunctionReference,
+            argument: IrRichFunctionReference,
             callee: IrFunction,
             parameter: IrValueParameter,
             scope: IrDeclaration,
