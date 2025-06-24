@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.ImplementationStatus
 
 @SubclassOptInRequired(KaImplementationDetail::class)
@@ -215,6 +213,35 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @throws IllegalArgumentException if the given class is not a sealed class.
      */
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
+
+    /**
+     * Returns whether [this] declaration has a conflicting signature with [other] based on platform-specific checks from [targetPlatform].
+     *
+     * Note that it doesn't consider function names or their visibility, only their signatures.
+     * In other words, it calculates whether two functions would conflict with each other when named equally and positioned in the same scope.
+     *
+     * Example for JVM platform:
+     * ```kotlin
+     * fun foo(vararg x: Int) {}
+     *
+     * fun bar(x: IntArray) {}
+     * ```
+     *
+     * Two functions `foo` and `bar` have the same JVM signature (as vararg parameter is transformed into a regular `IntArray` parameter).
+     * However, these two functions can coexist on non-JVM platforms.
+     *
+     * ``kotlin
+     * fun foo() {}
+     *
+     * fun main() {
+     *     fun bar() {}
+     * }
+     * ```
+     *
+     * These two functions `foo` and `bar` have signatures, which are conflicting on every platform.
+     */
+    @KaIdeApi
+    public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean
 }
 
 /**
@@ -351,3 +378,13 @@ public fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> 
 context(context: KaSymbolRelationProvider)
 public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
     get() = with(context) { sealedClassInheritors }
+
+/**
+ * @see KaSymbolRelationProvider.hasConflictingSignatureWith
+ */
+@KaIdeApi
+@KaContextParameterApi
+context(context: KaSymbolRelationProvider)
+public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean {
+    return with(context) { hasConflictingSignatureWith(other, targetPlatform) }
+}
