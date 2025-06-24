@@ -3,10 +3,9 @@
 # We use a different compiler version to compile modules and Gradle Plugin
 # to be able to use Kotlin Language/API version 1.4 to be compatible with Gradle 7.
 # The logic leaves in build-logic/src/main/kotlin/dokkabuild/utils/gradleKotlinCompatibility.kt
-gradlePlugin-kotlin = "2.0.20"
+gradlePlugin-kotlin = "2.1.21"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
-gradlePlugin-android = "7.1.3"
-gradlePlugin-dokka = "1.9.20"
+gradlePlugin-android = "7.3.1"
 
 kotlinx-coroutines = "1.7.3"
 kotlinx-collections-immutable = "0.3.6"
