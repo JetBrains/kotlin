@@ -1,8 +1,12 @@
 [versions]
 
-# We use a different compiler version to compile modules and Gradle Plugin
-# to be able to use Kotlin Language/API version 1.4 to be compatible with Gradle 7.
-# The logic leaves in build-logic/src/main/kotlin/dokkabuild/utils/gradleKotlinCompatibility.kt
+# To be compatible with Gradle 7.x we need to compile modules and Gradle Plugin with Kotlin Language/API version 1.4.
+# For this we use Kotlin BTA (Build Tools API) with the custom compiler version of 2.0.21,
+# which is the latest Kotlin compiler version, which supports Kotlin Language/API version 1.4.
+# The logic lives in build-logic/src/main/kotlin/dokkabuild/utils/gradleKotlinCompatibility.kt
+bta-kotlin-compiler = "2.0.21"
+bta-kotlin-language = "1.4"
+
 gradlePlugin-kotlin = "2.1.21"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "7.3.1"
@@ -68,6 +72,12 @@ kotest = "5.6.2"
 eclipse-jgit = "5.13.3.202401111512-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
+
+# There should be no version in `kotlin-*` dependencies,
+# so that the version will be automatically provided by `coreLibrariesVersion` used in KGP
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 
 #### Kotlin Libs ####
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
