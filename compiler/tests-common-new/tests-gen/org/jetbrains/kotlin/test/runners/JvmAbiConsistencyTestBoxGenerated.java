@@ -10506,6 +10506,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("inlineAnonymousParameter.kt")
+    public void testInlineAnonymousParameter() {
+      runTest("compiler/testData/codegen/box/contextParameters/inlineAnonymousParameter.kt");
+    }
+
+    @Test
     @TestMetadata("inlineContextualReceiverLambda.kt")
     public void testInlineContextualReceiverLambda() {
       runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");

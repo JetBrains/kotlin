@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.UNDERSCORE_PARAMETER
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.io.StringWriter
+import kotlin.collections.get
 
 /**
  * Binds all arguments represented in the IR to the parameters of the accessed function.
@@ -1592,3 +1594,18 @@ val IrSimpleFunction.isTrivialGetter: Boolean
 
         return (receiver as? IrGetValue)?.symbol?.owner === this.dispatchReceiverParameter
     }
+
+
+private fun String.replaceInvalidChars(invalidChars: Set<Char>) =
+    invalidChars.fold(this) { acc, ch -> if (ch in acc) acc.replace(ch, '_') else acc }
+
+fun IrFunction.anonymousContextParameterName(parameter: IrValueParameter, invalidChars: Set<Char>): String? {
+    if (parameter.kind != IrParameterKind.Context || parameter.origin != UNDERSCORE_PARAMETER) return null
+    val contextParameterNames = parameters
+        .filter { it.kind == IrParameterKind.Context && it.origin == UNDERSCORE_PARAMETER }
+        .associateWith { it.type.erasedUpperBound.name.asString().replaceInvalidChars(invalidChars) }
+    val nameGroups = contextParameterNames.entries.groupBy({ it.value }, { it.key })
+    val baseName = contextParameterNames[parameter]
+    val currentNameGroup = nameGroups[baseName]!!
+    return if (currentNameGroup.size == 1) "\$context-$baseName" else "\$context-$baseName#${currentNameGroup.indexOf(parameter) + 1}"
+}

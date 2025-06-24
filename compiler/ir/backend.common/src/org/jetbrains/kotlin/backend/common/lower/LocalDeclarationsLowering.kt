@@ -135,6 +135,9 @@ open class LocalDeclarationsLowering(
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
 
+    open val invalidChars: Set<Char>
+        get() = emptySet()
+
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }
@@ -1151,7 +1154,10 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            val base = if (declaration.name.isSpecial) {
+            val baseAsContextParameter = (declaration as? IrValueParameter)?.let {
+                (declaration.parent as IrFunction).anonymousContextParameterName(declaration, invalidChars)
+            }
+            val base = baseAsContextParameter ?: if (declaration.name.isSpecial) {
                 declaration.name.asStringStripSpecialMarkers()
             } else {
                 declaration.name.asString()
