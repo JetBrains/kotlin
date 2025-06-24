@@ -7,9 +7,8 @@ package kotlin.reflect.js.internal
 
 import kotlin.reflect.*
 
-internal abstract class KClassImpl<T : Any>(
-    internal open val jClass: JsClass<T>
-) : KClass<T> {
+internal abstract class KClassImpl<T : Any> : KClass<T> {
+    internal abstract val jClass: JsClass<T>
 
     override val qualifiedName: String?
         get() = TODO()
@@ -38,7 +37,7 @@ internal abstract class KClassImpl<T : Any>(
     }
 }
 
-internal class SimpleKClassImpl<T : Any>(jClass: JsClass<T>) : KClassImpl<T>(jClass) {
+internal class SimpleKClassImpl<T : Any>(override val jClass: JsClass<T>) : KClassImpl<T>() {
     override val simpleName: String? = jClass.asDynamic().`$metadata$`?.simpleName.unsafeCast<String?>()
 
     override fun isInstance(value: Any?): Boolean {
@@ -47,10 +46,10 @@ internal class SimpleKClassImpl<T : Any>(jClass: JsClass<T>) : KClassImpl<T>(jCl
 }
 
 internal class PrimitiveKClassImpl<T : Any>(
-    jClass: JsClass<T>,
+    override val jClass: JsClass<T>,
     private val givenSimpleName: String,
     private val isInstanceFunction: (Any?) -> Boolean
-) : KClassImpl<T>(jClass) {
+) : KClassImpl<T>() {
 
     @ExperimentalStdlibApi
     @SinceKotlin("2.2")
@@ -69,7 +68,7 @@ internal class PrimitiveKClassImpl<T : Any>(
     }
 }
 
-internal object NothingKClassImpl : KClassImpl<Nothing>(js("Object")) {
+internal object NothingKClassImpl : KClassImpl<Nothing>() {
     override val simpleName: String = "Nothing"
 
     override fun isInstance(value: Any?): Boolean = false
