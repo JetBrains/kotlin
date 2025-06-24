@@ -36,6 +36,24 @@ var IrInlinedFunctionBlock.inlinedElement: IrElement? by irAttribute(copyByDefau
  */
 var IrDeclaration.sourceFileWhenInlined: IrFileEntry? by irAttribute(copyByDefault = true)
 
+/**
+ * Find the file entry where this declaration was originally defined.
+ *
+ * ### Limitations:
+ * * Returns null for declarations from other modules, expect for inlined functions.
+ * * Does not work for local declarations before they are extracted by [LocalDeclarationsLowering].
+ */
+tailrec fun IrDeclaration.getSourceFile(): IrFileEntry? {
+    sourceFileWhenInlined?.let {
+        return it
+    }
+    return when (val parent = parent) {
+        is IrFile -> parent.fileEntry
+        is IrExternalPackageFragment -> null
+        else -> (parent as IrDeclaration).getSourceFile()
+    }
+}
+
 var IrSimpleFunction.erasedTopLevelCopy: IrSimpleFunction? by irAttribute(copyByDefault = true)
 var IrFunction.originalOfErasedTopLevelCopy: IrFunction? by irAttribute(copyByDefault = true)
 
