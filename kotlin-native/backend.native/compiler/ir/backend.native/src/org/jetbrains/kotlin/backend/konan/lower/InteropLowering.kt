@@ -745,7 +745,7 @@ private class InteropTransformerPart2(
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
-        if (declaration.isKotlinObjCClass()) { // MyNSOpenGLView (codegen.cinterop.objc.kt55653)
+        if (declaration.isKotlinObjCClass()) {
             resetCounter()
             val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
