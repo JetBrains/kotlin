@@ -38,7 +38,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirProjectionsOnNonClassTypeArgumentChecker,
         FirDataClassCopyUsageWillBecomeInaccessibleChecker,
         FirIncompatibleProjectionsOnTypeArgumentChecker,
-        FirUpperBoundViolatedExpressionChecker,
+        FirUpperBoundViolatedQualifiedAccessExpressionChecker,
         FirTypeArgumentsNotAllowedExpressionChecker,
         FirTypeParameterInQualifiedAccessChecker,
         FirSealedClassConstructorCallChecker,
