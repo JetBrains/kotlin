@@ -61,12 +61,6 @@ object KlibCompilerInvocationTestUtils {
 
         /** Build a binary (executable) file given the main KLIB and the rest of dependencies. */
         fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies)
-
-        /**
-         * Take measures if the build directory is non-empty before the compilation
-         * (ex: backup the previously generated artifacts stored in the build directory).
-         */
-        fun onNonEmptyBuildDirectory(directory: File)
     }
 
     data class Dependency(val moduleName: String, val libraryFile: File)
@@ -170,8 +164,7 @@ object KlibCompilerInvocationTestUtils {
                         modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
                     }
 
-                    if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
-                        artifactBuilder.onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
+                    moduleBuildDirs.outputDir.listFiles()?.forEach(File::deleteRecursively)
 
                     val regularDependencies = hashSetOf<Dependency>()
                     val friendDependencies = hashSetOf<Dependency>()

@@ -163,19 +163,6 @@ class NativeCompilerInvocationTestArtifactBuilder(
         testRunner.runExecutableAndVerify(testCase, executable) // <-- run executable and verify
     }
 
-    override fun onNonEmptyBuildDirectory(directory: File) {
-        val filesToBackup = directory.listFiles()?.mapNotNull { file ->
-            if (file.isDirectory && file.name.startsWith(BACKED_UP_DIRECTORY_PREFIX)) null else file
-        }
-
-        if (!filesToBackup.isNullOrEmpty()) {
-            val backupDirectory = directory.resolve("$BACKED_UP_DIRECTORY_PREFIX${System.currentTimeMillis()}__")
-            backupDirectory.mkdirs()
-
-            filesToBackup.forEach { file -> file.renameTo(backupDirectory.resolve(file.name)) }
-        }
-    }
-
     private fun createTestCase(moduleName: String, moduleSourceDir: File?, compilerArgs: TestCompilerArgs): TestCase {
         // Note: Don't generate a module if there are no actual sources to compile.
         val module: TestModule.Exclusive? = moduleSourceDir?.let {
@@ -257,8 +244,6 @@ class NativeCompilerInvocationTestArtifactBuilder(
                 "-Werror" // Halt on any unexpected warning.
             )
         )
-
-        private const val BACKED_UP_DIRECTORY_PREFIX = "__backup-"
     }
 }
 
