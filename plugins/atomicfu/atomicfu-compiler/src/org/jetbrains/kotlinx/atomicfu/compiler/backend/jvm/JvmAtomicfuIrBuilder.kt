@@ -107,8 +107,7 @@ class JvmAtomicfuIrBuilder(
         val atomicfuField = requireNotNull(atomicProperty.backingField) {
             "The backing field of the atomic property ${atomicProperty.atomicfuRender()} declared in ${parentContainer.render()} should not be null." + CONSTRAINTS_MESSAGE
         }
-        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression ->
-            val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
+        return buildAndInitializeNewField(atomicfuField, parentContainer) { atomicFactoryCall: IrExpression? ->
             val valueType = atomicfuSymbols.atomicToPrimitiveType(atomicfuField.type as IrSimpleType)
             val atomicBoxType = atomicfuSymbols.javaAtomicBoxClassSymbol(valueType)
             context.irFactory.buildField {
@@ -119,9 +118,12 @@ class JvmAtomicfuIrBuilder(
                 visibility = DescriptorVisibilities.PRIVATE
                 origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
             }.apply {
-                this.initializer = context.irFactory.createExpressionBody(
-                    newJavaBoxedAtomic(atomicBoxType, listOf(initValue))
-                )
+                if (atomicFactoryCall != null) {
+                    val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
+                    this.initializer = context.irFactory.createExpressionBody(
+                        newJavaBoxedAtomic(atomicBoxType, listOf(initValue))
+                    )
+                }
                 this.annotations = annotations
                 this.parent = parentContainer
             }

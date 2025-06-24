@@ -367,7 +367,7 @@ abstract class AbstractAtomicfuTransformer(
                 if (receiverProperty is IrCall && receiverProperty.isArrayElementGetter())
                     (receiverProperty.dispatchReceiver as? IrCall)?.dispatchReceiver
                 else (receiverProperty as? IrCall)?.dispatchReceiver
-            val atomicHandler = getAtomicHandler(receiverProperty, data)
+            val atomicHandler = getOrBuildAtomicHandler(receiverProperty, data)
             val atomicHandlerExtraArg = atomicHandler.getAtomicHandlerExtraArg(dispatchReceiver, receiverProperty, data)
             val builder = atomicfuSymbols.createBuilder(expression.symbol).also {
                 it.startOffset = receiverProperty.startOffset
@@ -554,13 +554,24 @@ abstract class AbstractAtomicfuTransformer(
             return generateAtomicExtensionSignatureForAtomicHandler(atomicHandlerType, declaration)
         }
 
-        private fun getAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): AtomicHandler<*> =
+        private fun getOrBuildAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): AtomicHandler<*> =
             when {
                 atomicCallReceiver is IrCall -> {
                     val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
                     val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.arguments[0] as IrCall else atomicCallReceiver
                     val atomicProperty = getAtomicProperty.getCorrespondingProperty()
+                    /**
+                     * NOTE about JVM backend incremental compilation:
+                     * similar to the generated atomic extension functions, an atomic handler of a property may not be found
+                     * if a call is performed from another module
+                     * which depends on the module where declarations are generated from untransformed metadata (real transformed properties are not there).
+                     * This happens if the call is performed from the test module or in case of incremental compilation.
+                     *
+                     * We build a fake atomic handler here: the underlying property will not be initialized,
+                     * The call will be delegated to this atomic handler and resolved to the real transormed property during compilation.
+                     */
                     atomicfuPropertyToAtomicHandler[atomicProperty]
+                        ?: createAtomicHandler(atomicProperty, atomicProperty.parentDeclarationContainer)
                         ?: error("No atomic handler found for the atomic property ${atomicProperty.atomicfuRender()}, \n" +
                                          "these properties were registered: ${
                                              buildString {
