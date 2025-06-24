@@ -2122,6 +2122,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("typeArgumentNotWithinBoundsExplicitCast.kt")
+    public void testTypeArgumentNotWithinBoundsExplicitCast() {
+      runTest("compiler/testData/diagnostics/tests/typeArgumentNotWithinBoundsExplicitCast.kt");
+    }
+
+    @Test
     @TestMetadata("typeExposureAsABound.kt")
     public void testTypeExposureAsABound() {
       runTest("compiler/testData/diagnostics/tests/typeExposureAsABound.kt");
