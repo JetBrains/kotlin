@@ -118,9 +118,11 @@ private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberA
 
 private inline fun <R> KotlinStubs.scoped(block: () -> R): R {
     enterScope()
-    val result = block()
-    exitScope()
-    return result
+    return try {
+        block()
+    } finally {
+        exitScope()
+    }
 }
 
 internal fun KotlinStubs.generateCCall(
