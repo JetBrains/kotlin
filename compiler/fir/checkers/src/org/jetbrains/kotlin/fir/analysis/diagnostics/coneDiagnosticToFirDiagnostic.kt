@@ -187,6 +187,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
     is ConeSimpleDiagnostic -> when {
         (source?.kind as? KtFakeSourceElementKind)?.shouldIgnoreSimpleDiagnostic == true -> null
+        // Special handling of KT-75831 case
+        valueParameter?.name == SpecialNames.NO_NAME_PROVIDED && kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source, session)
     }
 

@@ -1,6 +1,3 @@
-compiler/testData/cli/jvm/annotatedParameterWithoutName.kt:5:9: error: an explicit type is required on a value parameter.
-fun foo(@Ann) = ""
-        ^^^^
 compiler/testData/cli/jvm/annotatedParameterWithoutName.kt:5:13: error: syntax error: Parameter name expected.
 fun foo(@Ann) = ""
             ^
