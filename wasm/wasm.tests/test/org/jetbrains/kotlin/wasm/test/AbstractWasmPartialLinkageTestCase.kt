@@ -78,14 +78,21 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
             artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
+            binaryRunner = WasmCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }
 }
 
+internal class WasmCompilerInvocationTestBinaryArtifact(
+    val jsFiles: List<File>,
+    val binariesDir: File,
+    val runnerFileName: String,
+) : KlibCompilerInvocationTestUtils.BinaryArtifact
+
 internal class WasmCompilerInvocationTestArtifactBuilder(
     private val configuration: AbstractWasmPartialLinkageTestCase.WasmTestConfiguration,
-) : KlibCompilerInvocationTestUtils.ArtifactBuilder {
+) : KlibCompilerInvocationTestUtils.ArtifactBuilder<WasmCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
         moduleName: String,
         buildDirs: ModuleBuildDirs,
@@ -127,10 +134,10 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         )
     }
 
-    override fun buildBinaryAndRun(
+    override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
-    ) {
+    ): WasmCompilerInvocationTestBinaryArtifact {
         val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
         runCompilerViaCLI(
@@ -169,8 +176,11 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         otherDependencies.regularDependencies.flatMapTo(additionalJsFiles) { getAdditionalJsFiles(it) }
         otherDependencies.friendDependencies.flatMapTo(additionalJsFiles) { getAdditionalJsFiles(it) }
 
-        val result = WasmVM.V8.run(runnerFileName, additionalJsFiles.map { it.absolutePath }, binariesDir)
-        check("OK" == result.trim())
+        return WasmCompilerInvocationTestBinaryArtifact(
+            jsFiles = additionalJsFiles,
+            binariesDir = binariesDir,
+            runnerFileName = runnerFileName,
+        )
     }
 
     private fun Dependencies.toCompilerArgs(): List<String> = buildList {
@@ -213,5 +223,18 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
 
     companion object {
         private const val BIN_DIR_NAME = "_bins_wasm"
+    }
+}
+
+internal object WasmCompilerInvocationTestBinaryRunner :
+    KlibCompilerInvocationTestUtils.BinaryRunner<WasmCompilerInvocationTestBinaryArtifact> {
+
+    override fun runBinary(binaryArtifact: WasmCompilerInvocationTestBinaryArtifact) {
+        val result = WasmVM.V8.run(
+            entryFile = binaryArtifact.runnerFileName,
+            jsFiles = binaryArtifact.jsFiles.map { it.absolutePath },
+            workingDirectory = binaryArtifact.binariesDir
+        )
+        check("OK" == result.trim())
     }
 }
