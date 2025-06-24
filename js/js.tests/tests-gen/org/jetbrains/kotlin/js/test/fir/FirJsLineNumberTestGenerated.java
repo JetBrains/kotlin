@@ -86,12 +86,6 @@ public class FirJsLineNumberTestGenerated extends AbstractFirJsLineNumberTest {
   }
 
   @Test
-  @TestMetadata("dataClass.kt")
-  public void testDataClass() {
-    runTest("js/js.translator/testData/lineNumbers/dataClass.kt");
-  }
-
-  @Test
   @TestMetadata("delegation.kt")
   public void testDelegation() {
     runTest("js/js.translator/testData/lineNumbers/delegation.kt");
