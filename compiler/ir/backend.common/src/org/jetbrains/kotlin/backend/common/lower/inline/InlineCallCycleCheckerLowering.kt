@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorCallExpressionImpl
@@ -25,9 +23,11 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
-import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-typealias CallNode = Pair<IrFunction, IrElement>
+// `callLocation` is either `IrBody` or `IrValueArgument`
+internal data class CallNode(val function: IrFunction, val callLocation: IrElement)
+
+internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
 
 @PhaseDescription("InlineCallCycleCheckerLowering")
 class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(val context: Context) : ModuleLoweringPass {
@@ -38,7 +38,7 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
         )
 
         val callsInInlineCycle = mutableSetOf<IrCall>()
-        val callGraph = mutableMapOf<CallNode, MutableSet<Pair<IrCall, CallNode>>>()
+        val callGraph = mutableMapOf<CallNode, MutableSet<CallEdge>>()
 
         irModule.accept(IrInlineCallGraphBuilder(callGraph), listOf())
         traverseCallGraph(callGraph, irDiagnosticReporter, callsInInlineCycle)
@@ -46,13 +46,13 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
     }
 
     private fun traverseCallGraph(
-        callGraph: MutableMap<CallNode, MutableSet<Pair<IrCall, CallNode>>>,
+        callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
         diagnosticReporter: IrDiagnosticReporter,
         callsInInlineCycle: MutableSet<IrCall>,
     ) {
         val visited = mutableSetOf<CallNode>()
         val completed = mutableSetOf<CallNode>()
-        val inlineCallsStack = mutableListOf<Pair<IrCall?, CallNode>>()
+        val inlineCallsStack = mutableListOf<CallEdge>()
 
         fun reportInlineCallCycle(element: IrCall?, callee: IrFunction) {
             if (element == null) return
@@ -63,15 +63,15 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
         fun CallNode.dfs(call: IrCall?) {
             if (visited.contains(this)) {
                 if (!completed.contains(this)) {
-                    reportInlineCallCycle(call, this.first)
+                    reportInlineCallCycle(call, this.function)
                     inlineCallsStack.takeLastWhile { (_, callNode) -> callNode != this }.forEach { (call, callNode) ->
-                        reportInlineCallCycle(call, callNode.first)
+                        reportInlineCallCycle(call, callNode.function)
                     }
                 }
                 return
             }
 
-            inlineCallsStack += Pair(call, this)
+            inlineCallsStack += CallEdge(call, this)
             visited += this
 
             callGraph[this]?.forEach { (call, node) -> node.dfs(call) }
@@ -85,48 +85,40 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
     }
 }
 
-class IrInlineCallGraphBuilder(
-    private val callGraph: MutableMap<CallNode, MutableSet<Pair<IrCall, CallNode>>>,
-) : IrVisitor<Unit, List<IrElement>>() {
-    override fun visitElement(element: IrElement, data: List<IrElement>) {
+
+internal class IrInlineCallGraphBuilder(
+    private val callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
+) : IrVisitor<Unit, List<CallNode>>() {
+    override fun visitElement(element: IrElement, data: List<CallNode>) {
         element.acceptChildren(this, data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: List<IrElement>) {
-        super.visitFunction(declaration, data + declaration)
+    override fun visitFunction(declaration: IrFunction, data: List<CallNode>) {
+        if (declaration.isInline) {
+            declaration.parameters.forEach { it.accept(this, data + CallNode(declaration, it)) }
+            declaration.body?.let { it.accept(this, data + CallNode(declaration, it)) }
+        } else {
+            super.visitFunction(declaration, data)
+        }
     }
 
-    override fun visitBody(body: IrBody, data: List<IrElement>) {
-        super.visitBody(body, data + body)
-    }
-
-    override fun visitValueParameter(declaration: IrValueParameter, data: List<IrElement>) {
-        super.visitValueParameter(declaration, data + declaration)
-    }
-
-    override fun visitCall(expression: IrCall, data: List<IrElement>) {
-        val inlineFunParents = data.filterIsInstanceAnd<IrFunction> { it.isInline }
-
+    override fun visitCall(expression: IrCall, data: List<CallNode>) {
         val callee = expression.symbol.owner
         if (!callee.isInline) return super.visitCall(expression, data)
 
-        inlineFunParents.forEach { addEdges(it, callee, expression, data) }
+        data.forEach { addEdges(it, expression, callee) }
 
         return super.visitCall(expression, data)
     }
 
-    private fun addEdges(caller: IrFunction, callee: IrFunction, call: IrCall, data: List<IrElement>) {
-        val callLocationIndex = data.indexOf(caller) + 1
+    private fun addEdges(callerNode: CallNode, call: IrCall, callee: IrFunction) {
+        val parametersUsingDefaultValues =
+            callee.parameters.filter { it.defaultValue != null && call.arguments[it] == null }
 
-        data.getOrNull(callLocationIndex)?.let { callLocation ->
-            val parametersUsingDefaultValues =
-                callee.parameters.filter { it.defaultValue != null && call.arguments[it] == null }
+        val callNodes =
+            (parametersUsingDefaultValues + callee.body).filterNotNull().map { CallEdge(call, CallNode(callee, it)) }
 
-            val callNodes =
-                (parametersUsingDefaultValues + callee.body).filterNotNull().map { Pair(call, Pair(callee, it)) }
-
-            callGraph.getOrPut(Pair(caller, callLocation)) { mutableSetOf() }.addAll(callNodes)
-        }
+        callGraph.getOrPut(callerNode) { mutableSetOf() }.addAll(callNodes)
     }
 }
 
