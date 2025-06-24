@@ -156,7 +156,7 @@ internal fun KotlinAndroidTarget.setUpMultiplatformResourcesAndAssets(
 ) {
     if (project.multiplatformExtensionOrNull == null) return
 
-    val legacyAgpVariant = compilation.androidVariant
+    val legacyAgpVariant = compilation.androidVariant ?: return
     val legacyAgpVariantName = getVariantName(legacyAgpVariant)
     project.multiplatformExtension.resourcesPublicationExtension?.subscribeOnPublishResources(this) { resources ->
         val copyResourcesTask = compilation.registerAssembleHierarchicalResourcesTaskProvider(

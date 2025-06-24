@@ -136,6 +136,6 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
     }
 
     private fun isAndroidMain(compilation: KotlinCompilation<*>): Boolean {
-        return compilation is KotlinJvmAndroidCompilation && compilation.androidVariant.type == AndroidVariantType.Main
+        return compilation is KotlinJvmAndroidCompilation && compilation.androidVariant?.type == AndroidVariantType.Main
     }
 }
