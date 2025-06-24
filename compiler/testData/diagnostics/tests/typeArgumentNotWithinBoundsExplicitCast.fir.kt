@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-78304
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 interface Consumer<T: Consumer<T>> {
     fun consume(item: T) {}
@@ -8,7 +9,7 @@ interface Consumer<T: Consumer<T>> {
 class Impl: Consumer<Impl>
 
 fun main() {
-    val e = Impl() <!UNCHECKED_CAST!>as Consumer<Any><!>
+    val e = Impl() <!UNCHECKED_CAST!>as Consumer<<!UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_ERROR!>Any<!>><!>
     e.consume(e)
 }
 
