@@ -52,7 +52,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryEl
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
-import org.jetbrains.kotlin.gradle.tasks.addPgpSignatureHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addPomValidationHelpers
+import org.jetbrains.kotlin.gradle.tasks.publishing.addSigningValidationHelpers
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -219,6 +221,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.maybeCreateCommonizerClasspathConfiguration()
         project.initSwiftExportClasspathConfigurations()
         project.addPgpSignatureHelpers()
+        project.addPomValidationHelpers()
+        project.addSigningValidationHelpers()
 
         project.createKotlinExtension(projectExtensionClass).apply {
             coreLibrariesVersion = pluginVersion
