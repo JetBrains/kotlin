@@ -459,4 +459,15 @@ internal class KaFirSymbolRelationProvider(
                 inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassSymbol }
             }
         }
+
+    override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean {
+        val thisFirSymbol = this.firSymbol
+        val otherFirSymbol = other.firSymbol
+
+        if (hasLowPriorityAnnotation(thisFirSymbol.resolvedAnnotationsWithClassIds) != hasLowPriorityAnnotation(otherFirSymbol.resolvedAnnotationsWithClassIds)) {
+            return false
+        }
+
+        return analysisSession.firSession.declarationOverloadabilityHelper.isConflicting(thisFirSymbol, otherFirSymbol, false)
+    }
 }
