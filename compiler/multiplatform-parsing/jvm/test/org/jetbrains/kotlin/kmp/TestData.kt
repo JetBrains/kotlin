@@ -9,21 +9,21 @@ object TestData {
     // ISSUE: KT-69975, KT-78229
     const val IDENTIFIER_WITH_BACKTICKS_IN_KDOC =
 """/**
- *                        // Resolved?
- * [`top level`]          // Expect: ✅; Actual: ❌
- * [top level]            // Expect: ❌; Actual: ❌
- * [O.with space]         // Expect: ❌; Actual: ❌
- * [O.`with space`]       // Expect: ✅; Actual: ❌
- * @see O.with space      // Expect: ❌; Actual: ❌
- * @see O.`with space`    // Expect: ✅; Actual: ❌
- * [O.]]                  // Expect: ❌; Actual: ❌
- * [O.`]`]                // Expect: ✅; Actual: ❌
- * @see O.]               // Expect: ❌; Actual: ❌
- * @see O.`]`             // Expect: ✅; Actual: ❌
- * [O.without_space]      // Expect: ✅; Actual: ✅
- * [O.`without_space`]    // Expect: ✅; Actual: ❌
- * @see O.without_space   // Expect: ✅; Actual: ✅
- * @see O.`without_space` // Expect: ✅; Actual: ❌
+ *
+ * [`top level`]
+ * [top level]
+ * [O.with space]
+ * [O.`with space`]
+ * @see O.with space
+ * @see O.`with space`
+ * [O.]]
+ * [O.`]`]
+ * @see O.]
+ * @see O.`]`
+ * [O.without_space]
+ * [O.`without_space`]
+ * @see O.without_space
+ * @see O.`without_space`
  */
 fun main() {
 }
