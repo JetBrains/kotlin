@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Original element before inlining. Useful only with IR
@@ -38,3 +39,8 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDef
 var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = true)
 
 var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
+/**
+ * A name that is going to be returned by `KFunction.name`, if it's different than `IrSimpleFunction.name`.
+ */
+var IrSimpleFunction.customNameInReflection: Name? by irAttribute(copyByDefault = false)

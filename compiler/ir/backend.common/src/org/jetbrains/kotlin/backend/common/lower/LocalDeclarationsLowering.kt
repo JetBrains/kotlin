@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
+import org.jetbrains.kotlin.backend.common.customNameInReflection
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -990,6 +991,7 @@ open class LocalDeclarationsLowering(
 
             newDeclaration.annotations = oldDeclaration.annotations
             newDeclaration.sourceFileWhenInlined = localFunctionContext.sourceFileWhenInlined
+            newDeclaration.customNameInReflection = oldDeclaration.name
 
             transformedDeclarations[oldDeclaration] = newDeclaration
         }
