@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object FirUpperBoundViolatedQualifiedAccessExpressionChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         // something that contains the type parameters
