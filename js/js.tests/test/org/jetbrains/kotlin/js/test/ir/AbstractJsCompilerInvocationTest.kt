@@ -327,10 +327,6 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         )
     }
 
-    override fun onNonEmptyBuildDirectory(directory: File) {
-        directory.listFiles()?.forEach(File::deleteRecursively)
-    }
-
     companion object {
         private const val BIN_DIR_NAME = "_bins_js"
         private const val BOX_FUN_FQN = "box"

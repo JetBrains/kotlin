@@ -211,10 +211,6 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
             )
     }
 
-    override fun onNonEmptyBuildDirectory(directory: File) {
-        directory.listFiles()?.forEach(File::deleteRecursively)
-    }
-
     companion object {
         private const val BIN_DIR_NAME = "_bins_wasm"
     }
