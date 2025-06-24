@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicArray
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.AtomicHandlerType
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.VolatilePropertyReference
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.atomicfuRender
 import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer.Companion.VOLATILE
 import org.jetbrains.kotlinx.atomicfu.compiler.diagnostic.AtomicfuErrorMessages.CONSTRAINTS_MESSAGE
@@ -148,7 +150,39 @@ abstract class AbstractAtomicfuIrBuilder(
         parentContainer: IrDeclarationContainer,
     ): IrField
 
-    fun irAtomicArrayField(
+    fun createVolatileProperty(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): VolatilePropertyReference {
+        val volatileField = buildVolatileField(atomicfuProperty, parentContainer)
+        val volatileProperty = buildPropertyWithAccessors(
+            volatileField,
+            atomicfuProperty.visibility,
+            isVar = true,
+            isStatic = false,
+            parentContainer
+        )
+        return VolatilePropertyReference(volatileProperty)
+    }
+
+    /**
+     * Creates an [AtomicArray] to replace an atomicfu array:
+     * On JVM: builds a Java atomic array: java.util.concurrent.atomic.Atomic(Integer|Long|Reference)Array.
+     *
+     * On Native: builds a Kotlin Native array: kotlin.concurrent.Atomic(Int|Long|*)Array.
+     *
+     * Generated only for JVM and Native.
+     */
+    fun createAtomicArray(atomicfuProperty: IrProperty, parentContainer: IrDeclarationContainer): AtomicArray {
+        val atomicArrayField = irAtomicArrayField(atomicfuProperty, parentContainer)
+        val atomicArrayProperty = buildPropertyWithAccessors(
+            atomicArrayField,
+            atomicfuProperty.visibility,
+            isVar = false,
+            isStatic = parentContainer is IrFile,
+            parentContainer
+        )
+        return AtomicArray(atomicArrayProperty)
+    }
+
+    private fun irAtomicArrayField(
         atomicfuProperty: IrProperty,
         parentContainer: IrDeclarationContainer
     ): IrField {
