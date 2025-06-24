@@ -42,8 +42,6 @@ object NativeRuntimeNames {
         val symbolNameClassId = ClassId(kotlinNativePackage, Name.identifier("SymbolName"))
         val cNameClassId = ClassId(kotlinNativePackage, Name.identifier("CName"))
         val exportedBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportedBridge"))
-        val cToKotlinBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("CToKotlinBridge"))
-        val kotlinToCBridgeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("KotlinToCBridge"))
         val exportForCppRuntimeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCppRuntime"))
         val exportForCompilerClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCompiler"))
         val exportTypeInfoClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportTypeInfo"))
