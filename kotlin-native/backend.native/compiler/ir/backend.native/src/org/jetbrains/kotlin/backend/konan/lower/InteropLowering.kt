@@ -571,11 +571,6 @@ private class InteropTransformerPart1(
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
     ): IrExpression = generateExpressionWithStubs(call) {
-//        if (method.parent !is IrClass) {
-//            // Category-provided.
-//            generationState.dependenciesTracker.add(method)
-//        }
-
         this.generateObjCCall(
                 this@genLoweredObjCMethodCall,
                 method,
@@ -838,11 +833,6 @@ private class InteropTransformerPart2(
     private fun generateCCall(expression: IrCall): IrExpression {
         val function = expression.symbol.owner
 
-        //generationState.dependenciesTracker.add(function)
-//        val packageFragment = function.getPackageFragment()
-//        val library = (packageFragment.llvmSymbolOrigin as? DeserializedKlibModuleOrigin)?.library
-        //println("ZZZ: ${function.dump()}")
-        //println("isCInteropLibrary = ${library?.isCInteropLibrary()}")
         val exceptionMode = ForeignExceptionMode.byValue(
                 function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
         )
