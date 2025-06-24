@@ -36,6 +36,6 @@ public external fun detachObjCObject(obj: ObjCObject)
 @TypedIntrinsic(IntrinsicType.BLOCK_PTR_TO_FUNCTION_OBJECT)
 public external inline fun <reified R : Function<*>> convertBlockPtrToKotlinFunction(blockPtr: NativePtr): R
 
-@InternalForKotlinNative
 @TypedIntrinsic(IntrinsicType.IDENTITY)
-public external fun <T> interopCallMarker(arg: T): T
+@PublishedApi
+internal external fun <T> interopCallMarker(arg: T): T
