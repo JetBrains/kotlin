@@ -68,12 +68,16 @@ private val KotlinCompilation<*>.allOwnedConfigurationsNames
         )
 
         val implementationSpecificConfigurations = when (this) {
-            is KotlinJvmAndroidCompilation -> listOfNotNull(
-                "${androidVariant.name}ApiElements",
-                "${androidVariant.name}RuntimeElements",
-                androidVariant.compileConfiguration.name,
-                androidVariant.runtimeConfiguration.name
-            )
+            is KotlinJvmAndroidCompilation -> {
+                androidVariant?.let {
+                    listOf(
+                        "${it.name}ApiElements",
+                        "${it.name}RuntimeElements",
+                        it.compileConfiguration.name,
+                        it.runtimeConfiguration.name
+                    )
+                } ?: emptyList()
+            }
             is KotlinJsIrCompilation -> listOfNotNull(npmAggregatedConfigurationName, publicPackageJsonConfigurationName)
             else -> emptyList()
         }
