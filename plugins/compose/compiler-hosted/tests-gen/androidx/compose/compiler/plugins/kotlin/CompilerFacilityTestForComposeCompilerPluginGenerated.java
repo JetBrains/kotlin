@@ -54,6 +54,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("funInterface.kt")
+  public void testFunInterface() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/funInterface.kt");
+  }
+
+  @Test
   @TestMetadata("inlineFuncInDependencyOfDependency.kt")
   public void testInlineFuncInDependencyOfDependency() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/inlineFuncInDependencyOfDependency.kt");
@@ -75,6 +81,18 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   @TestMetadata("interfaceDelegation.kt")
   public void testInterfaceDelegation() {
     runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceDelegation.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceWithFakeOverride.kt")
+  public void testInterfaceWithFakeOverride() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/interfaceWithFakeOverride.kt");
+  }
+
+  @Test
+  @TestMetadata("javaSam.kt")
+  public void testJavaSam() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/javaSam.kt");
   }
 
   @Test
