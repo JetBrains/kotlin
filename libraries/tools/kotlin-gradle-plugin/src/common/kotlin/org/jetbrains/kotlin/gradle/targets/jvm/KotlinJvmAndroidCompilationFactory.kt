@@ -6,6 +6,8 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier.Property
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.sourceSetTreeClassifier
@@ -46,7 +48,11 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
     )
 
     override fun create(name: String): KotlinJvmAndroidCompilation {
-        return project.objects.newInstance(itemClass, compilationImplFactory.create(target, name), variant).also { compilation ->
+        return project.objects.KotlinJvmAndroidCompilation(
+            compilationImplFactory.create(target, name),
+            variant,
+            variant.javaCompileProvider
+        ).also { compilation ->
             configureSourceSetTreeClassifier(compilation)
         }
     }
@@ -56,6 +62,47 @@ class KotlinJvmAndroidCompilationFactory internal constructor(
             AndroidVariantType.Main -> Property(target.mainVariant.sourceSetTree)
             AndroidVariantType.UnitTest -> Property(target.unitTestVariant.sourceSetTree)
             AndroidVariantType.InstrumentedTest -> Property(target.instrumentedTestVariant.sourceSetTree)
+            AndroidVariantType.Unknown -> KotlinSourceSetTreeClassifier.None
+        }
+    }
+}
+
+internal class KotlinJvmAgpCompilationFactory(
+    private val androidVariantJavaCompileTask: TaskProvider<JavaCompile>,
+    private val androidVariantType: AndroidVariantType,
+    override val target: KotlinAndroidTarget,
+) : KotlinCompilationFactory<KotlinJvmAndroidCompilation> {
+
+    private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
+        compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
+        compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
+            friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver.composite(
+                DefaultKotlinCompilationFriendPathsResolver.DefaultFriendArtifactResolver,
+                DefaultKotlinCompilationFriendPathsResolver.AdditionalAndroidFriendArtifactResolver
+            )
+        ),
+        compilationAssociator = KotlinAndroidCompilationAssociator,
+        preConfigureAction = KotlinCompilationLanguageSettingsConfigurator
+    )
+
+    override val itemClass: Class<KotlinJvmAndroidCompilation>
+        get() = KotlinJvmAndroidCompilation::class.java
+
+    override fun create(name: String): KotlinJvmAndroidCompilation {
+        return project.objects.KotlinJvmAndroidCompilation(
+            compilationImplFactory.create(target, name),
+            null,
+            androidVariantJavaCompileTask,
+        ).also { compilation ->
+            configureSourceSetTreeClassifier(compilation)
+        }
+    }
+
+    private fun configureSourceSetTreeClassifier(compilation: KotlinJvmAndroidCompilation) {
+        compilation.sourceSetTreeClassifier = when (androidVariantType) {
+            AndroidVariantType.Main -> Property(compilation.target.mainVariant.sourceSetTree)
+            AndroidVariantType.UnitTest -> Property(compilation.target.unitTestVariant.sourceSetTree)
+            AndroidVariantType.InstrumentedTest -> Property(compilation.target.instrumentedTestVariant.sourceSetTree)
             AndroidVariantType.Unknown -> KotlinSourceSetTreeClassifier.None
         }
     }
