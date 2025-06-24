@@ -140,7 +140,7 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
 
     val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
     val isMainAndroidCompilation = androidCompilation?.let {
-        val variant = it.androidVariant
+        @Suppress("DEPRECATION") val variant = it.androidVariant
         variant != null && getTestedVariantData(variant) == null
     } == true
 

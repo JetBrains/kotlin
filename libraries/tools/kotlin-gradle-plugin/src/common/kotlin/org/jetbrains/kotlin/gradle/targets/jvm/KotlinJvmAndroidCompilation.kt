@@ -35,6 +35,7 @@ internal fun ObjectFactory.KotlinJvmAndroidCompilation(
 open class KotlinJvmAndroidCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     javaCompileTaskProvider: TaskProvider<JavaCompile>,
+    @Deprecated("Deprecated Android Gradle Plugin type which is not available in Kotlin built-in into AGP")
     val androidVariant: DeprecatedAndroidBaseVariant?,
 ) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinAnyOptionsDeprecated>(compilation) {
 

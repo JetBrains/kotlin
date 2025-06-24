@@ -67,7 +67,7 @@ private val KotlinCompilation<*>.allOwnedConfigurationsNames
             internal.configurations.hostSpecificMetadataConfiguration?.name,
         )
 
-        val implementationSpecificConfigurations = when (this) {
+        @Suppress("DEPRECATION") val implementationSpecificConfigurations = when (this) {
             is KotlinJvmAndroidCompilation -> {
                 androidVariant?.let {
                     listOf(

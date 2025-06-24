@@ -284,6 +284,7 @@ class KotlinCompileApiTest {
 
         assertEquals(androidExtension.target, compilation.target)
         assertEquals(javaCompileTask, compilation.compileJavaTaskProvider)
+        @Suppress("DEPRECATION")
         assertNull(compilation.androidVariant)
         assertEquals("main", compilation.name)
         assertEquals(kotlinCompileTask, compilation.compileTaskProvider)
