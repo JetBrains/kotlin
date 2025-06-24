@@ -38,3 +38,5 @@ var IrSimpleFunction.suspendFunction: IrSimpleFunction? by irAttribute(copyByDef
 var IrFunction.defaultArgumentsOriginalFunction: IrFunction? by irAttribute(copyByDefault = true)
 
 var IrConstructor.capturedConstructor: IrConstructor? by irAttribute(copyByDefault = false)
+
+var IrSimpleFunction.originalLocalFunctionBeforeLifting: IrSimpleFunction? by irAttribute(copyByDefault = false)
