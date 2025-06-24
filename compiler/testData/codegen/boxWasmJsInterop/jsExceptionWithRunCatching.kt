@@ -1,4 +1,3 @@
-// USE_JS_TAG
 // TARGET_BACKEND: WASM
 
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
