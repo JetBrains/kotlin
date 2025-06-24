@@ -32,3 +32,6 @@
 # This is needed because otherwise ProGuard strips generic signature of this class (even though we pass `-keepattributes Signature` above)
 # See KT-23962 and https://sourceforge.net/p/proguard/bugs/482/
 -keep class kotlin.reflect.jvm.internal.impl.protobuf.GeneratedMessageLite$ExtendableMessageOrBuilder
+
+# Required for protobuf java lite mode since v3.9.0: https://github.com/protocolbuffers/protobuf/issues/6463
+-keepclassmembers class * extends kotlin.reflect.jvm.internal.impl.protobuf.AbstractMessageLite { <fields>; }
