@@ -271,8 +271,10 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         project.evaluate()
 
         kotlin.androidTarget().compilations.all { compilation ->
+            val androidVariant = compilation.androidVariant
+                ?: throw IllegalStateException("'androidVariant' is 'null' for ${compilation.name} compilation")
             val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming
-                .defaultKotlinSourceSetName(kotlin.androidTarget(), compilation.androidVariant)
+                .defaultKotlinSourceSetName(kotlin.androidTarget(), androidVariant)
 
             assertNotNull(
                 defaultKotlinSourceSetName,
