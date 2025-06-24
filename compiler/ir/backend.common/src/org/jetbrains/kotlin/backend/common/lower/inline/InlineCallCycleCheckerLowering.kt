@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
-// `callLocation` is either `IrBody` or `IrValueArgument`
+// `callLocation` is either `IrBody` or `IrValueParameter`
 internal data class CallNode(val function: IrFunction, val callLocation: IrElement)
 
 internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
@@ -40,7 +40,7 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
         val callsInInlineCycle = mutableSetOf<IrCall>()
         val callGraph = mutableMapOf<CallNode, MutableSet<CallEdge>>()
 
-        irModule.accept(IrInlineCallGraphBuilder(callGraph), listOf())
+        irModule.accept(IrInlineCallGraphBuilder(callGraph), null)
         traverseCallGraph(callGraph, irDiagnosticReporter, callsInInlineCycle)
         irModule.accept(IrInlineCallCycleRemover(callsInInlineCycle), null)
     }
@@ -88,32 +88,37 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
 
 internal class IrInlineCallGraphBuilder(
     private val callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
-) : IrVisitor<Unit, List<CallNode>>() {
-    override fun visitElement(element: IrElement, data: List<CallNode>) {
+) : IrVisitor<Unit, CallNode?>() {
+    override fun visitElement(element: IrElement, data: CallNode?) {
         element.acceptChildren(this, data)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: List<CallNode>) {
+    override fun visitFunction(declaration: IrFunction, data: CallNode?) {
         if (declaration.isInline) {
-            declaration.parameters.forEach { it.accept(this, data + CallNode(declaration, it)) }
-            declaration.body?.let { it.accept(this, data + CallNode(declaration, it)) }
+            if (data != null) {
+                addEdges(data, null, declaration)
+            }
+
+            declaration.parameters.forEach { it.accept(this, CallNode(declaration, it)) }
+            declaration.body?.let { it.accept(this, CallNode(declaration, it)) }
+
         } else {
             super.visitFunction(declaration, data)
         }
     }
 
-    override fun visitCall(expression: IrCall, data: List<CallNode>) {
+    override fun visitCall(expression: IrCall, data: CallNode?) {
         val callee = expression.symbol.owner
         if (!callee.isInline) return super.visitCall(expression, data)
 
-        data.forEach { addEdges(it, expression, callee) }
+        data?.let { addEdges(it, expression, callee) }
 
         return super.visitCall(expression, data)
     }
 
-    private fun addEdges(callerNode: CallNode, call: IrCall, callee: IrFunction) {
+    private fun addEdges(callerNode: CallNode, call: IrCall?, callee: IrFunction) {
         val parametersUsingDefaultValues =
-            callee.parameters.filter { it.defaultValue != null && call.arguments[it] == null }
+            callee.parameters.filter { it.defaultValue != null && call?.arguments[it] == null }
 
         val callNodes =
             (parametersUsingDefaultValues + callee.body).filterNotNull().map { CallEdge(call, CallNode(callee, it)) }
