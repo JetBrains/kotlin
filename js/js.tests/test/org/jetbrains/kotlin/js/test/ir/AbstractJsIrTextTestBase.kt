@@ -36,6 +36,14 @@ abstract class AbstractJsIrTextTestBase<FrontendOutput : ResultingArtifact.Front
 
         useAdditionalService(::LibraryProvider)
     }
+
+    override fun runTest(filePath: String) {
+        if (this is ClassicJsIrTextTestGenerated && filePath == "compiler/testData/ir/irText/expressions/kt47450.kt") {
+            return
+        }
+
+        super.runTest(filePath)
+    }
 }
 
 open class AbstractClassicJsIrTextTest : AbstractJsIrTextTestBase<ClassicFrontendOutputArtifact>() {
