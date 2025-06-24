@@ -55,9 +55,9 @@ class JsGenerationContext(
         )
     }
 
-    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null): JsGenerationContext {
+    fun newDeclaration(func: IrFunction? = null, localNames: LocalNameGenerator? = null, fileEntry: IrFileEntry = currentFileEntry): JsGenerationContext {
         return JsGenerationContext(
-            currentFileEntry = currentFileEntry,
+            currentFileEntry = fileEntry,
             currentFunction = func,
             currentInlineFunction = currentInlineFunction,
             staticContext = staticContext,
