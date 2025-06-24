@@ -124,13 +124,14 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     return t
 }
 
+@OptIn(ExperimentalContextParameters::class)
 private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Function.Builder {
     val t = ProtoBuf.Function.newBuilder()
     t.addAllTypeParameter(kmFunction.typeParameters.map { writeTypeParameter(it).build() })
     kmFunction.receiverParameterType?.let { t.receiverType = writeType(it).build() }
 
-    @OptIn(ExperimentalContextReceivers::class)
-    t.addAllContextReceiverType(kmFunction.contextReceiverTypes.map { writeType(it).build() })
+    t.addAllContextParameter(kmFunction.contextParameters.map { writeValueParameter(it).build() })
+    t.addAllContextReceiverType(kmFunction.contextParameters.map { writeType(it.type).build() })
     t.addAllValueParameter(kmFunction.valueParameters.map { writeValueParameter(it).build() })
     t.returnType = writeType(kmFunction.returnType).build()
     t.addAllVersionRequirement(kmFunction.versionRequirements.mapNotNull(::writeVersionRequirement))
@@ -149,7 +150,7 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     return t
 }
 
-
+@OptIn(ExperimentalContextParameters::class)
 public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property.Builder {
     val t = ProtoBuf.Property.newBuilder()
 
@@ -158,8 +159,9 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
     }
     kmProperty.receiverParameterType?.let { t.receiverType = writeType(it).build() }
 
-    @OptIn(ExperimentalContextReceivers::class)
-    t.addAllContextReceiverType(kmProperty.contextReceiverTypes.map { writeType(it).build() })
+    t.addAllContextParameter(kmProperty.contextParameters.map { writeValueParameter(it).build() })
+    t.addAllContextReceiverType(kmProperty.contextParameters.map { writeType(it.type).build() })
+
     kmProperty.setterParameter?.let { t.setterValueParameter = writeValueParameter(it).build() }
     t.returnType = writeType(kmProperty.returnType).build()
     t.addAllVersionRequirement(kmProperty.versionRequirements.mapNotNull { writeVersionRequirement(it) })
@@ -367,7 +369,7 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
         kmClass.inlineClassUnderlyingPropertyName?.let { t.inlineClassUnderlyingPropertyName = c[it] }
         kmClass.inlineClassUnderlyingType?.let { t.inlineClassUnderlyingType = c.writeType(it).build() }
 
-        @OptIn(ExperimentalContextReceivers::class)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         t.addAllContextReceiverType(kmClass.contextReceiverTypes.map { c.writeType(it).build() })
 
         t.addAllVersionRequirement(kmClass.versionRequirements.mapNotNull { c.writeVersionRequirement(it) })

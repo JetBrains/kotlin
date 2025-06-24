@@ -5,8 +5,13 @@
 
 package kotlin.metadata
 
+internal const val CtxReceiversDeprecated =
+    "Context receivers feature is superseded with context parameters. Please use context parameters API instead. See documentation for details."
+
 /**
  * Marks an API related to the Kotlin's [context receivers](https://github.com/Kotlin/KEEP/blob/master/proposals/context-receivers.md) experimental feature.
+ * This feature is superseded by context parameters.
+ * Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
  *
  * Marked API reflects metadata written by this feature, and can be changed or removed as development continues.
  * Therefore, it does not provide any compatibility guarantees.

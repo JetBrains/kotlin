@@ -27,7 +27,7 @@ public final class C : kotlin/Any {
   public constructor()
 
   // signature: f(LB;)V
-  context(B)
+  context(B: B)
   public final fun f(): kotlin/Unit
 
   // module name: test-module
@@ -37,11 +37,11 @@ public final class C : kotlin/Any {
 package {
 
   // signature: g(LA;)V
-  context(A)
+  context(A: A)
   public final fun g(): kotlin/Unit
 
   // getter: getH(LB;)I
-  context(B)
+  context(B: B)
   public final val h: kotlin/Int
     public final /* non-default */ get
 

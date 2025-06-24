@@ -3,37 +3,44 @@
 public abstract interface A : kotlin/Any {
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // B.class
 // ------------------------------------------
 public abstract interface B : kotlin/Any {
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // C.class
 // ------------------------------------------
-context(A)
 public final class C : kotlin/Any {
 
-  // signature: <init>(LA;)V
+  // signature: <init>()V
   public constructor()
 
-  // signature: f(LB;)V
-  context(_: B)
+  // signature: f(LA;LB;)V
+  context(x: A, y: B)
   public final fun f(): kotlin/Unit
 
   // module name: test-module
 }
-// ContextReceiversKt.class
+// ContextParametersKt.class
 // ------------------------------------------
 package {
 
   // signature: g(LA;)V
-  context(_: A)
+  context(x: A)
   public final fun g(): kotlin/Unit
 
   // getter: getH(LB;)I
-  context(_: B)
+  context(y: B)
   public final val h: kotlin/Int
     public final /* non-default */ get
 
@@ -43,6 +50,6 @@ package {
 // ------------------------------------------
 module {
   package <root> {
-    ContextReceiversKt
+    ContextParametersKt
   }
 }

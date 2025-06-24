@@ -606,7 +606,6 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
     private fun compareClasses(
         classContext: Context,
         classA: KmClass,
@@ -618,6 +617,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
         compareOrderInsensitiveTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         compareOrderSensitiveTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
 
         compareNullableEntities(
@@ -671,7 +671,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    @OptIn(ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContextParameters::class)
     @Suppress("DuplicatedCode")
     private fun compareProperties(
         propertyContext: Context,
@@ -703,8 +703,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
         compareOrderSensitiveTypeLists(
             containerContext = propertyContext,
-            typeListA = propertyA.contextReceiverTypes,
-            typeListB = propertyB.contextReceiverTypes,
+            typeListA = propertyA.contextParameters.map { it.type },
+            typeListB = propertyB.contextParameters.map { it.type },
             typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
@@ -726,7 +726,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
-    @OptIn(ExperimentalContracts::class, ExperimentalContextReceivers::class)
+    @OptIn(ExperimentalContracts::class, ExperimentalContextParameters::class)
     @Suppress("DuplicatedCode")
     private fun compareFunctions(
         functionContext: Context,
@@ -747,8 +747,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
         compareOrderSensitiveTypeLists(
             containerContext = functionContext,
-            typeListA = functionA.contextReceiverTypes,
-            typeListB = functionB.contextReceiverTypes,
+            typeListA = functionA.contextParameters.map { it.type },
+            typeListB = functionB.contextParameters.map { it.type },
             typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(

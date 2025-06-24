@@ -57,9 +57,9 @@ private val allConstructorMetadataCheckers = listOf(
 private val allFunctionMetadataCheckers = listOf(
     functionMetadataPropertyChecker("lambdaClassOriginName") { it.lambdaClassOriginName.toString() },
     functionMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
-    functionMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
-        it.contextReceiverTypes.stringifyTypeListSorted()
+    functionMetadataPropertyChecker("contextParametersTypes") {
+        @OptIn(ExperimentalContextParameters::class)
+        it.contextParameters.map { it.type }.stringifyTypeListSorted()
     },
     functionMetadataPropertyChecker("modifiers") { printFunctionModifiers(it) },
     functionMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
@@ -81,9 +81,9 @@ private val allPropertyMetadataCheckers = listOf(
     propertyMetadataPropertyChecker("syntheticMethodForAnnotations") { it.syntheticMethodForAnnotations?.toString() ?: PROPERTY_VAL_STUB },
     propertyMetadataPropertyChecker("syntheticMethodForDelegate") { it.syntheticMethodForDelegate?.toString() ?: PROPERTY_VAL_STUB },
     propertyMetadataPropertyChecker("isMovedFromInterfaceCompanion") { it.isMovedFromInterfaceCompanion.toString() },
-    propertyMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
-        it.contextReceiverTypes.stringifyTypeListSorted()
+    propertyMetadataPropertyChecker("contextParametersTypes") {
+        @OptIn(ExperimentalContextParameters::class)
+        it.contextParameters.map { it.type }.stringifyTypeListSorted()
     },
     propertyMetadataPropertyChecker("modifiers") { printPropertyModifiers(it) },
     propertyMetadataPropertyChecker("isVar") { it.isVar.toString() },
@@ -141,7 +141,7 @@ private val allClassMetadataCheckers = listOf(
         it.kmClass.inlineClassUnderlyingType?.let(::printType) ?: "---"
     },
     classMetadataPropertyChecker("contextReceiverTypes") {
-        @OptIn(ExperimentalContextReceivers::class)
+        @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         it.kmClass.contextReceiverTypes.stringifyTypeListSorted()
     },
     classMetadataPropertyChecker("versionRequirements") { it.kmClass.versionRequirements.stringifyRelevantRequirements() }
