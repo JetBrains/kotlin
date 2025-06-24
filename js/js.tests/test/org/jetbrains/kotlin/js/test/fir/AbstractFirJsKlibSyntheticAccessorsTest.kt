@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
-import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
@@ -39,24 +35,10 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
-
-// TODO KT-77493: Drop this facade and use JsIrDeserializerFacade instead,
-//  after all tests for invisible references would be migrated to diagnostic tests
-class JsIrDeserializerWithPLFacade(testServices: TestServices): JsIrDeserializerFacade(testServices) {
-    override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): IrBackendInput? {
-        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
-        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
-        return super.transform(module, inputArtifact)
-    }
-}
 
 open class AbstractFirJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JS_IR) {
     val targetFrontend = FrontendKinds.FIR
@@ -70,7 +52,7 @@ open class AbstractFirJsKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTa
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirKlibSerializerCliWebFacade
     val deserializerFacade: Constructor<org.jetbrains.kotlin.test.model.DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
-        get() = ::JsIrDeserializerWithPLFacade
+        get() = ::JsIrDeserializerFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         commonConfigurationForDumpSyntheticAccessorsTest(
