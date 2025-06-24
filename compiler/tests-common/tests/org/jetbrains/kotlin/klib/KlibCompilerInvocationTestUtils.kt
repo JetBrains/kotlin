@@ -48,7 +48,9 @@ object KlibCompilerInvocationTestUtils {
         fun onIgnoredTest()
     }
 
-    interface ArtifactBuilder {
+    interface BinaryArtifact
+
+    interface ArtifactBuilder<BA : BinaryArtifact> {
         /** Build a KLIB from a module. */
         fun buildKlib(
             moduleName: String,
@@ -60,7 +62,11 @@ object KlibCompilerInvocationTestUtils {
         )
 
         /** Build a binary (executable) file given the main KLIB and the rest of dependencies. */
-        fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies)
+        fun buildBinary(mainModule: Dependency, otherDependencies: Dependencies): BA
+    }
+
+    interface BinaryRunner<BA : BinaryArtifact> {
+        fun runBinary(binaryArtifact: BA)
     }
 
     data class Dependency(val moduleName: String, val libraryFile: File)
@@ -93,9 +99,10 @@ object KlibCompilerInvocationTestUtils {
         }
     }
 
-    fun runTest(
+    fun <BA : BinaryArtifact> runTest(
         testConfiguration: TestConfiguration,
-        artifactBuilder: ArtifactBuilder,
+        artifactBuilder: ArtifactBuilder<BA>,
+        binaryRunner: BinaryRunner<BA>,
         compilerEditionChange: KlibCompilerChangeScenario,
     ) =
         with(testConfiguration) {
@@ -200,7 +207,8 @@ object KlibCompilerInvocationTestUtils {
             val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
             val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
 
-            artifactBuilder.buildBinaryAndRun(mainModuleDependency, binaryDependencies)
+            val binaryArtifact = artifactBuilder.buildBinary(mainModuleDependency, binaryDependencies)
+            binaryRunner.runBinary(binaryArtifact)
         }
 
     private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {

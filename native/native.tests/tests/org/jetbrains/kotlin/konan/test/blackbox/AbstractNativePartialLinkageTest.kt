@@ -31,6 +31,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocati
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
             artifactBuilder = artifactBuilder,
+            binaryRunner = this,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }

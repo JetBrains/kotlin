@@ -27,7 +27,13 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.opentest4j.TestAbortedException
 import java.io.File
 
-abstract class AbstractNativeCompilerInvocationTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeCompilerInvocationTest :
+    AbstractNativeSimpleTest(),
+    KlibCompilerInvocationTestUtils.BinaryRunner<NativeCompilerInvocationTestBinaryArtifact> {
+
+    final override fun runBinary(binaryArtifact: NativeCompilerInvocationTestBinaryArtifact) =
+        with(binaryArtifact) { runExecutableAndVerify(testCase, executable) }
+
     class NativeTestConfiguration(testPath: String, private val settings: Settings) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
         override val buildDir get() = settings.get<Binaries>().testBinariesDir
@@ -64,11 +70,16 @@ abstract class AbstractNativeCompilerInvocationTest : AbstractNativeSimpleTest()
     }
 }
 
+class NativeCompilerInvocationTestBinaryArtifact(
+    val testCase: TestCase,
+    val executable: TestExecutable,
+) : KlibCompilerInvocationTestUtils.BinaryArtifact
+
 class NativeCompilerInvocationTestArtifactBuilder(
     // TODO: Don't pass test runner instance here. Pass just Settings. Extract running the binary into a separate component.
     private val testRunner: AbstractNativeCompilerInvocationTest,
     private val configuration: AbstractNativeCompilerInvocationTest.NativeTestConfiguration
-) : KlibCompilerInvocationTestUtils.ArtifactBuilder {
+) : KlibCompilerInvocationTestUtils.ArtifactBuilder<NativeCompilerInvocationTestBinaryArtifact> {
     private val settings get() = testRunner.testRunSettings
 
     private class ProducedKlib(val moduleName: String, val klibArtifact: KLIB, val dependencies: Dependencies) {
@@ -114,10 +125,10 @@ class NativeCompilerInvocationTestArtifactBuilder(
         producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
     }
 
-    override fun buildBinaryAndRun(
+    override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
-    ) {
+    ): NativeCompilerInvocationTestBinaryArtifact {
         val cacheDependencies = if (settings.get<CacheMode>().useStaticCacheForUserLibraries) {
             producedKlibs.map { producedKlib ->
                 buildCacheForKlib(producedKlib)
@@ -148,7 +159,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
         val compilationResult = compilation.result.assertSuccess() // <-- trigger compilation
         val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
 
-        testRunner.runExecutableAndVerify(testCase, executable) // <-- run executable and verify
+        return NativeCompilerInvocationTestBinaryArtifact(testCase, executable)
     }
 
     private fun createTestCase(moduleName: String, moduleSourceDir: File?, compilerArgs: TestCompilerArgs): TestCase {
@@ -234,4 +245,3 @@ class NativeCompilerInvocationTestArtifactBuilder(
         )
     }
 }
-

@@ -26,6 +26,7 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
             artifactBuilder = artifactBuilder,
+            binaryRunner = JsCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }
