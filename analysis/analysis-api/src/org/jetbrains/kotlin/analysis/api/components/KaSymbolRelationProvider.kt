@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -211,4 +212,32 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @throws IllegalArgumentException if the given class is not a sealed class.
      */
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
+
+    /**
+     * Returns whether [this] declaration has a conflicting JVM signature with [other].
+     *
+     * Note that it doesn't consider function names or their visibility, only their signatures.
+     * In other words, it calculates whether two functions would conflict with each other when named equally and positioned in the same scope.
+     *
+     * Example:
+     * ```kotlin
+     * fun foo(vararg x: Int) {}
+     *
+     * fun bar(x: IntArray) {}
+     * ```
+     *
+     * Two functions `foo` and `bar` have the same JVM signature (as vararg parameter is transformed into a regular `IntArray` parameter).
+     *
+     * ``kotlin
+     * fun foo() {}
+     *
+     * fun main() {
+     *     fun bar() {}
+     * }
+     * ```
+     *
+     * These two functions `foo` and `bar` also have conflicting signatures.
+     */
+    @KaIdeApi
+    public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean
 }
