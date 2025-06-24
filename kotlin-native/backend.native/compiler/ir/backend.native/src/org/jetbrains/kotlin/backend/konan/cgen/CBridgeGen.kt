@@ -109,7 +109,7 @@ private fun KotlinToCCallBuilder.addArgument(
 
 private fun KotlinToCCallBuilder.buildKotlinBridgeCall(transformCall: (IrMemberAccessExpression<*>) -> IrExpression = { it }): IrExpression =
         bridgeCallBuilder.build(
-                bridgeBuilder.buildKotlinBridge().also {
+                bridgeBuilder.getKotlinBridge().also {
                     this.stubs.addKotlin(it)
                 },
                 transformCall
@@ -303,7 +303,7 @@ private fun KotlinToCCallBuilder.emitCBridge() {
 private fun KotlinToCCallBuilder.finishBuilding(libraryName: String): IrSimpleFunction {
     emitCBridge()
 
-    val bridge = bridgeBuilder.buildKotlinBridge()
+    val bridge = bridgeBuilder.getKotlinBridge()
 
     val allC = stubs.getC()
 
@@ -519,7 +519,7 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
         returnValue(kotlinCall)
     }
 
-    val kotlinBridge = bridgeBuilder.buildKotlinBridge()
+    val kotlinBridge = bridgeBuilder.getKotlinBridge()
     kotlinBridge.body = bridgeBuilder.kotlinIrBuilder.irBlockBody {
         kotlinBridgeStatements.forEach { +it }
     }
