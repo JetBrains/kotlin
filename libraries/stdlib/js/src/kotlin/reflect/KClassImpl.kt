@@ -21,10 +21,9 @@ internal abstract class KClassImpl<T : Any>(
 
     override fun equals(other: Any?): Boolean {
         return when (other) {
-            // NothingKClassImpl and ErrorKClass don't provide the jClass property; therefore, process them separately.
-            // This can't be neither NothingKClassImpl nor ErrorKClass because they overload equals.
+            // NothingKClassImpl doesn't provide the jClass property; therefore, process it separately.
+            // This can't be NothingKClassImpl because it overload equals.
             is NothingKClassImpl -> false
-            is ErrorKClass -> false
             is KClassImpl<*> -> jClass == other.jClass
             else -> false
         }
@@ -82,21 +81,6 @@ internal object NothingKClassImpl : KClassImpl<Nothing>(js("Object")) {
 
     override val jClass: JsClass<Nothing>
         get() = throw UnsupportedOperationException("There's no native JS class for Nothing type")
-
-    override fun equals(other: Any?): Boolean = other === this
-
-    override fun hashCode(): Int = 0
-}
-
-internal class ErrorKClass : KClass<Nothing> {
-    override val simpleName: String? get() = error("Unknown simpleName for ErrorKClass")
-    override val qualifiedName: String? get() = error("Unknown qualifiedName for ErrorKClass")
-
-    override fun isInstance(value: Any?): Boolean = error("Can's check isInstance on ErrorKClass")
-
-    @ExperimentalStdlibApi
-    override val isInterface: Boolean
-        get() = false
 
     override fun equals(other: Any?): Boolean = other === this
 
