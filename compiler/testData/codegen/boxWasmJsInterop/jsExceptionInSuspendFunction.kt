@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // TARGET_BACKEND: WASM
-// USE_JS_TAG
 
 import helpers.*
 import kotlin.coroutines.*
