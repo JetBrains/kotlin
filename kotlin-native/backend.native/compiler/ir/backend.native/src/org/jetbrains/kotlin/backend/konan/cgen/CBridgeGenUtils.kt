@@ -170,7 +170,7 @@ internal class KotlinCBridgeBuilder(
 
     fun buildCSignature(name: String): String = cBridgeBuilder.buildSignature(name, stubs.language)
 
-    fun buildKotlinBridge() = kotlinBridgeBuilder.build()
+    fun getKotlinBridge() = kotlinBridgeBuilder.build()
 }
 
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
