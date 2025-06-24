@@ -334,7 +334,7 @@ public abstract class KaFunctionType : KaClassType(), KaContextReceiversOwner {
  * Represents a function value parameter
  */
 @KaExperimentalApi
-public abstract class KaFunctionValueParameter {
+public abstract class KaFunctionValueParameter : KaLifetimeOwner {
     /**
      * Type of the parameter
      */
