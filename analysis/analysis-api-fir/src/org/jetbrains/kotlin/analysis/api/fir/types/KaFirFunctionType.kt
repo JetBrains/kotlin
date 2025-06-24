@@ -104,23 +104,21 @@ internal class KaFirFunctionType(
 
     override val parameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion {
-            buildList {
-                parameterTypes.mapIndexedTo(this) { index, parameterType ->
-                    val parameterConeType = (parameterType as? KaFirType)?.coneType
+            parameterTypes.map { parameterType ->
+                val parameterConeType = (parameterType as? KaFirType)?.coneType
 
-                    // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
-                    // as parameter names can be explicitly provided via @ParameterName annotations.
-                    parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
+                // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
+                // as parameter names can be explicitly provided via @ParameterName annotations.
+                parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
 
-                    // TODO: Replace with just `parameterConeType.parameterName` after KT-77401
-                    val parameterNameAnnotation = parameterConeType?.parameterNameAnnotation
-                    val nameArgument = parameterNameAnnotation?.argumentMapping?.mapping[StandardNames.NAME]
-                    val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument, builder.rootSession)?.value as? String)?.let {
-                        Name.identifier(it)
-                    }
-
-                    KaBaseFunctionValueParameter(name, parameterType)
+                // TODO: Replace with just `parameterConeType.parameterName` after KT-77401
+                val parameterNameAnnotation = parameterConeType?.parameterNameAnnotation
+                val nameArgument = parameterNameAnnotation?.argumentMapping?.mapping[StandardNames.NAME]
+                val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument, builder.rootSession)?.value as? String)?.let {
+                    Name.identifier(it)
                 }
+
+                KaBaseFunctionValueParameter(name, parameterType)
             }
         }
 
