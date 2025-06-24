@@ -176,7 +176,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val androidVariantData: DeprecatedAndroidBaseVariant? = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 
         val sourceSetName = if (androidVariantData != null) {

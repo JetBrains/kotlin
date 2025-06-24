@@ -209,6 +209,7 @@ internal class AndroidProjectHandler(
         @Suppress("DEPRECATION_ERROR")
         compilation.addSourceSet(defaultSourceSet)
 
+        @Suppress("DEPRECATION")
         compilation.androidVariant?.forEachKotlinSourceSet(project) { kotlinSourceSet ->
             @Suppress("DEPRECATION_ERROR")
             compilation.addSourceSet(kotlinSourceSet)

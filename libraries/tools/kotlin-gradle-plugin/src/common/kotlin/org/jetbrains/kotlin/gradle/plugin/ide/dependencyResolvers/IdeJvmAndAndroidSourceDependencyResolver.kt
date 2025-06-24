@@ -136,6 +136,7 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
     }
 
     private fun isAndroidMain(compilation: KotlinCompilation<*>): Boolean {
+        @Suppress("DEPRECATION")
         return compilation is KotlinJvmAndroidCompilation && compilation.androidVariant?.type == AndroidVariantType.Main
     }
 }
