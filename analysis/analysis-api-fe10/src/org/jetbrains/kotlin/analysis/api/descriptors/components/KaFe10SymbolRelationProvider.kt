@@ -35,13 +35,18 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.asNioPath
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.OverloadChecker
+import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
+import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.denotedClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparatorDelegate
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
@@ -259,6 +264,24 @@ internal class KaFe10SymbolRelationProvider(
 
             return inheritorsProvider.computeSealedSubclasses(classDescriptor, allowInDifferentFiles)
                 .mapNotNull { it.toKtClassifierSymbol(analysisContext) as? KaNamedClassSymbol }
+        }
+
+    override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean =
+        withValidityAssertion {
+            val thisDescriptor = getDescriptor() ?: return false
+            val otherDescriptor = other.getDescriptor() ?: return false
+
+            val typeSpecificityComparator = when {
+                targetPlatform.isJvm() -> JvmTypeSpecificityComparatorDelegate(
+                    ClassicTypeSystemContextForCS(
+                        analysisContext.builtIns,
+                        analysisContext.kotlinTypeRefiner
+                    )
+                )
+                else -> TypeSpecificityComparator.NONE
+            }
+
+            !OverloadChecker(typeSpecificityComparator).isOverloadable(thisDescriptor, otherDescriptor)
         }
 }
 

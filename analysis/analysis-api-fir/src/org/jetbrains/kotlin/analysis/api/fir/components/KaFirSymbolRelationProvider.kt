@@ -31,16 +31,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.BothWays
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -49,9 +49,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -458,6 +459,57 @@ internal class KaFirSymbolRelationProvider(
 
             return with(analysisSession) {
                 inheritorClassIds.mapNotNull { findClass(it) as? KaNamedClassSymbol }
+            }
+        }
+
+    override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol, targetPlatform: TargetPlatform): Boolean =
+        withValidityAssertion {
+            val thisFirSymbol = firSymbol
+            val otherFirSymbol = other.firSymbol
+
+            val thisHasLowPriority = hasLowPriorityAnnotation(thisFirSymbol.resolvedAnnotationsWithClassIds)
+            val otherHasLowPriority = hasLowPriorityAnnotation(otherFirSymbol.resolvedAnnotationsWithClassIds)
+            if (thisHasLowPriority != otherHasLowPriority) {
+                return false
+            }
+
+            /**
+             * [FirDeclarationOverloadabilityHelper] performs signature comparison only from JVM platform perspective.
+             * However, as the API needs to be more generic than that, here we perform manual signature comparison
+             * before calling [FirDeclarationOverloadabilityHelper].
+             * This is done to handle cases which are considered conflicting on JVM but completely valid on other platforms:
+             * - Overloads by type parameters
+             * ```kotlin
+             * fun <T> foo() // Conflicting on JVM, valid on other platforms
+             * fun foo()
+             * ```
+             * - Overloads by vararg/array parameters
+             * ```kotlin
+             * fun foo(vararg ints: Int) // Conflicting on JVM, valid on other platforms
+             * fun foo(ints: IntArray)
+             * ```
+             */
+            if (!targetPlatform.isJvm()) {
+                if (thisFirSymbol.typeParameterSymbols.isEmpty() != otherFirSymbol.typeParameterSymbols.isEmpty()) {
+                    return false
+                }
+
+                val thisVarargParameterPosition = valueParameters.indexOfFirst { it.isVararg }
+                val otherVarargParameterPosition = other.valueParameters.indexOfFirst { it.isVararg }
+                if (thisVarargParameterPosition != otherVarargParameterPosition) {
+                    return false
+                }
+            }
+
+            val overloadabilityHelper = analysisSession.firSession.declarationOverloadabilityHelper
+
+            return if (analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+                return overloadabilityHelper.getContextParameterShadowing(thisFirSymbol, otherFirSymbol) == BothWays
+            } else {
+                overloadabilityHelper.isConflicting(
+                    thisFirSymbol,
+                    otherFirSymbol,
+                )
             }
         }
 }
