@@ -121,10 +121,13 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
 
         fun comeUpWithUniqueNamesAndRegisterBridges(bridges: List<Bridge>) {
             val bridgesContainerIndex = generationState.fileLowerState.getCStubIndex()
-            val mapping = bridges.associate {
-                val name = it.function.name.asString()
-                name to "${uniquePrefix}${bridgesContainerIndex + 1}_${name.extractIdentifier()}"
-            }.toMutableMap()
+            val mapping = mutableMapOf<String, String>()
+
+            fun getUniqueIdentifier(placeHolder: String) = mapping.getOrPut(placeHolder) {
+                "${uniquePrefix}${bridgesContainerIndex + 1}_${placeHolder.extractIdentifier()}"
+            }
+
+            bridges.forEach { getUniqueIdentifier(it.function.name.asString()) }
 
             fun fixUpAllPlaceHolders(snippet: String): String = buildString {
                 var index = 0
@@ -137,9 +140,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                             placeHolderStart = index++
                         } else {
                             val placeHolder = snippet.substring(placeHolderStart, index + 1)
-                            val identifier = mapping.getOrPut(placeHolder) {
-                                "${uniquePrefix}${bridgesContainerIndex + 1}_${placeHolder.extractIdentifier()}"
-                            }
+                            val identifier = getUniqueIdentifier(placeHolder)
                             append(identifier)
                             ++index
                             state = 0
