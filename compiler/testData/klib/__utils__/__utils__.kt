@@ -145,7 +145,7 @@ private class GeneralIrLinkageError(private val expectedMessageWithoutHashes: St
             TestMismatchedExpectation(expectedMessageWithoutHashes, errorMessage)
 
     companion object {
-        val SIGNATURE_WITH_HASH = Regex("(symbol '/[\\da-zA-Z.<>_\\-]+)(\\|\\S+)'")
+        val SIGNATURE_WITH_HASH = Regex("(symbol '[\\da-zA-Z.<>_\\-]*/[\\da-zA-Z.<>_\\-]+)(\\|\\S+)'")
     }
 }
 
