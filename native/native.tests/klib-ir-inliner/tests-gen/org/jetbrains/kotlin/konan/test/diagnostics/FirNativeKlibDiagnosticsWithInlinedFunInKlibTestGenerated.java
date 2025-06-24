@@ -702,6 +702,12 @@ public class FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("defaultValuesCycle.kt")
+    public void testDefaultValuesCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/defaultValuesCycle.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInlineCycle.kt")
     public void testIndirectInlineCycle() {
       runTest("compiler/testData/diagnostics/inlineCallCycle/indirectInlineCycle.kt");
@@ -711,6 +717,12 @@ public class FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated extends A
     @TestMetadata("inlineCycle.kt")
     public void testInlineCycle() {
       runTest("compiler/testData/diagnostics/inlineCallCycle/inlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("localInlineFunctionCycle.kt")
+    public void testLocalInlineFunctionCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/localInlineFunctionCycle.kt");
     }
 
     @Test
