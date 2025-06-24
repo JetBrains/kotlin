@@ -1,5 +1,4 @@
 // TARGET_BACKEND: WASM
-// USE_JS_TAG
 
 val TEST_JS_STRING = "Test".toJsString()
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
