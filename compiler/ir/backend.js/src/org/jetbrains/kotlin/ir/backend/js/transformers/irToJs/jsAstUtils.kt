@@ -127,7 +127,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
             declaration.parentClassOrNull?.thisReceiver?.acceptVoid(it)
         }
 
-    val functionContext = context.newDeclaration(declaration, localNameGenerator)
+    val functionContext = context.newDeclaration(
+        declaration,
+        localNameGenerator,
+        declaration.sourceFileWhenInlined ?: context.currentFileEntry
+    )
 
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
