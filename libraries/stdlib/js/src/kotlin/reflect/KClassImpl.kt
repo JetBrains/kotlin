@@ -14,6 +14,11 @@ internal abstract class KClassImpl<T : Any>(
     override val qualifiedName: String?
         get() = TODO()
 
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    override val isInterface: Boolean
+        get() = jClass.asDynamic().`$metadata$`.unsafeCast<Metadata?>()?.kind == METADATA_KIND_INTERFACE
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             // NothingKClassImpl and ErrorKClass don't provide the jClass property; therefore, process them separately.
@@ -47,6 +52,12 @@ internal class PrimitiveKClassImpl<T : Any>(
     private val givenSimpleName: String,
     private val isInstanceFunction: (Any?) -> Boolean
 ) : KClassImpl<T>(jClass) {
+
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    override val isInterface: Boolean
+        get() = false
+
     override fun equals(other: Any?): Boolean {
         if (other !is PrimitiveKClassImpl<*>) return false
         return super.equals(other) && givenSimpleName == other.givenSimpleName
@@ -64,6 +75,11 @@ internal object NothingKClassImpl : KClassImpl<Nothing>(js("Object")) {
 
     override fun isInstance(value: Any?): Boolean = false
 
+    @ExperimentalStdlibApi
+    @SinceKotlin("2.2")
+    override val isInterface: Boolean
+        get() = false
+
     override val jClass: JsClass<Nothing>
         get() = throw UnsupportedOperationException("There's no native JS class for Nothing type")
 
@@ -77,6 +93,10 @@ internal class ErrorKClass : KClass<Nothing> {
     override val qualifiedName: String? get() = error("Unknown qualifiedName for ErrorKClass")
 
     override fun isInstance(value: Any?): Boolean = error("Can's check isInstance on ErrorKClass")
+
+    @ExperimentalStdlibApi
+    override val isInterface: Boolean
+        get() = false
 
     override fun equals(other: Any?): Boolean = other === this
 

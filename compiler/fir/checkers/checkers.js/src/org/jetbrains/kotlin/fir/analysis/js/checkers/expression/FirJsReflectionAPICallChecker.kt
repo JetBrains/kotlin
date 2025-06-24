@@ -23,6 +23,11 @@ object FirJsReflectionAPICallChecker : AbstractFirReflectionApiCallChecker() {
     }
 
     context(context: CheckerContext)
+    override fun isAllowedKClassMember(name: Name): Boolean {
+        return super.isAllowedKClassMember(name) || name == K_CLASS_IS_INTERFACE_NAME
+    }
+
+    context(context: CheckerContext)
     override fun isAllowedReflectionApi(name: Name, containingClassId: ClassId): Boolean {
         return super.isAllowedReflectionApi(name, containingClassId) ||
                 containingClassId in StandardClassIds.Annotations.associatedObjectAnnotations ||

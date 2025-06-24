@@ -13826,6 +13826,10 @@ abstract interface <#A: kotlin/Any> kotlin.reflect/KClass : kotlin.reflect/KClas
     abstract fun equals(kotlin/Any?): kotlin/Boolean // kotlin.reflect/KClass.equals|equals(kotlin.Any?){}[0]
     abstract fun hashCode(): kotlin/Int // kotlin.reflect/KClass.hashCode|hashCode(){}[0]
     abstract fun isInstance(kotlin/Any?): kotlin/Boolean // kotlin.reflect/KClass.isInstance|isInstance(kotlin.Any?){}[0]
+
+    // Targets: [js]
+    abstract val isInterface // kotlin.reflect/KClass.isInterface|{}isInterface[0]
+        abstract fun <get-isInterface>(): kotlin/Boolean // kotlin.reflect/KClass.isInterface.<get-isInterface>|<get-isInterface>(){}[0]
 }
 
 // Targets: [js, wasmJs, wasmWasi]

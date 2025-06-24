@@ -147,9 +147,6 @@ internal fun createMetadata(
 }
 
 internal external interface Metadata {
-    // TODO: This field can be used from user libs, e.g. kotlinx.serialization:
-    //  https://github.com/Kotlin/kotlinx.serialization/blob/b8de86f0e351f1099d2afb03ff92e2ef6256cbc7/core/jsMain/src/kotlinx/serialization/internal/Platform.kt#L74
-    //  This must be reworked
     val kind: String
     // This field gives fast access to the prototype of metadata owner (Object.getPrototypeOf())
     // Can be pre-initialized or lazy initialized and then should be immutable
