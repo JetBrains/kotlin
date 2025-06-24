@@ -26,11 +26,12 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocati
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
         val configuration = NativeTestConfiguration(testPath, settings = testRunSettings)
-        val artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(testRunner = this, configuration = configuration)
+        val artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(configuration = configuration)
 
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
             artifactBuilder = artifactBuilder,
+            binaryRunner = this,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }

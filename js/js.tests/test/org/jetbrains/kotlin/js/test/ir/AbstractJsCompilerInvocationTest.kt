@@ -168,9 +168,15 @@ internal object JsKlibTestSettings {
     }
 }
 
+internal class JsCompilerInvocationTestBinaryArtifact(
+    val mainModuleName: String,
+    val boxFunctionFqName: String,
+    val jsFiles: List<File>,
+) : KlibCompilerInvocationTestUtils.BinaryArtifact
+
 internal class JsCompilerInvocationTestArtifactBuilder(
     private val configuration: AbstractJsCompilerInvocationTest.JsTestConfiguration,
-) : KlibCompilerInvocationTestUtils.ArtifactBuilder {
+) : KlibCompilerInvocationTestUtils.ArtifactBuilder<JsCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
         moduleName: String,
         buildDirs: ModuleBuildDirs,
@@ -217,10 +223,10 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         return kotlinSourceFilePaths
     }
 
-    override fun buildBinaryAndRun(
+    override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
-    ) {
+    ): JsCompilerInvocationTestBinaryArtifact {
         // The modules in `Dependencies.regularDependencies` are already in topological order.
         // It is important to pass the provided and the produced JS files to Node in exactly the same order.
         val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {
@@ -271,7 +277,11 @@ internal class JsCompilerInvocationTestArtifactBuilder(
             }
         }
 
-        executeAndCheckBinaries(MAIN_MODULE_NAME, allBinaries)
+        return JsCompilerInvocationTestBinaryArtifact(
+            mainModuleName = MAIN_MODULE_NAME,
+            boxFunctionFqName = BOX_FUN_FQN,
+            jsFiles = allBinaries,
+        )
     }
 
     private fun Dependencies.toCompilerArgs(): List<String> = buildList {
@@ -319,16 +329,20 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         }
     }
 
-    private fun executeAndCheckBinaries(mainModuleName: String, dependencies: Collection<File>) {
-        val filePaths = dependencies.map { it.canonicalPath }
-        V8JsTestChecker.check(
-            filePaths, mainModuleName, null,
-            BOX_FUN_FQN, "OK", withModuleSystem = false
-        )
-    }
-
     companion object {
         private const val BIN_DIR_NAME = "_bins_js"
         private const val BOX_FUN_FQN = "box"
+    }
+}
+
+internal object JsCompilerInvocationTestBinaryRunner :
+    KlibCompilerInvocationTestUtils.BinaryRunner<JsCompilerInvocationTestBinaryArtifact> {
+
+    override fun runBinary(binaryArtifact: JsCompilerInvocationTestBinaryArtifact) {
+        val filePaths = binaryArtifact.jsFiles.map { it.canonicalPath }
+        V8JsTestChecker.check(
+            filePaths, binaryArtifact.mainModuleName, null,
+            binaryArtifact.boxFunctionFqName, "OK", withModuleSystem = false,
+        )
     }
 }
