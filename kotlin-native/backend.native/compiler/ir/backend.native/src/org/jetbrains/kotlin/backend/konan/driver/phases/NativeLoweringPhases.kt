@@ -203,6 +203,11 @@ private val initializersPhase = createFileLoweringPhase(
         prerequisite = setOf(enumConstructorsPhase)
 )
 
+private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
+        lowering = ::InteropBridgesNameInventor,
+        name = "InventNameForInteropBridges",
+)
+
 private val localFunctionsPhase = createFileLoweringPhase(
         op = { context, irFile ->
             LocalDelegatedPropertiesLowering().lower(irFile)
@@ -210,7 +215,7 @@ private val localFunctionsPhase = createFileLoweringPhase(
             LocalClassPopupLowering(context).lower(irFile)
         },
         name = "LocalFunctions",
-        prerequisite = setOf(sharedVariablesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
+        prerequisite = setOf(sharedVariablesPhase, inventNamesForInteropBridgesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
 )
 
 private val tailrecPhase = createFileLoweringPhase(
@@ -372,11 +377,6 @@ private val interopPhase = createFileLoweringPhase(
         },
         name = "Interop",
         prerequisite = setOf(extractLocalClassesFromInlineBodies)
-)
-
-private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
-        lowering = ::InteropBridgesNameInventor,
-        name = "InventNameForInteropBridges",
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
