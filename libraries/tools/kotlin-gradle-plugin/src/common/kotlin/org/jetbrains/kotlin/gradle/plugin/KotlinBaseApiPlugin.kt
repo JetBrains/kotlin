@@ -10,11 +10,16 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAgpCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTargetForJvm
+import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
@@ -196,5 +201,50 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         return myProject.registerTask(taskName, KaptWithoutKotlincTask::class.java, emptyList()).also {
             kaptTaskConfiguration.execute(it)
         }
+    }
+
+    // Required for AGP/Built-in Kotlin integration
+    // ABI preferably should not change
+    /**
+     * Creates a Kotlin Android compilation instance for a specified Android variant.
+     *
+     * Usage example:
+     * ```
+     * val androidExtension = apiPlugin.createKotlinAndroidExtension()
+     * project.extensions.add("kotlin", androidExtension)
+     * val compilation = apiPlugin.createKotlinAndroidCompilation(
+     *     variant.name,
+     *     androidExtension.target as KotlinAndroidTarget,
+     *     variant.javaCompileTask,
+     *     AndroidVariantType.Main
+     * )
+     * // Kotlin compile task is not auto-created by compilation and has to be created manually
+     * val kotlinCompileTask = apiPlugin.registerKotlinJvmCompileTask(
+     *     compilation.compileKotlinTaskName,
+     *     plugin.createCompilerJvmOptions(),
+     *     project.provider { ExplicitApiMode.Disabled }
+     * )
+     * ```
+     *
+     * @param name the name of the compilation. Usually should be the same as a variant name.
+     * @param androidTarget the target associated with the Android project where the compilation is being created.
+     * @param androidVariantJavaCompileTask the Java compile task associated with the given Android variant.
+     * @param androidVariantType the type of the Android variant (e.g., main code, test code, etc).
+     * @return a new instance of [KotlinJvmAndroidCompilation] configured for the specified parameters.
+     */
+    @InternalKotlinGradlePluginApi
+    fun createKotlinAndroidCompilation(
+        name: String,
+        androidTarget: KotlinAndroidTarget,
+        androidVariantJavaCompileTask: TaskProvider<JavaCompile>,
+        androidVariantType: AndroidVariantType,
+    ): KotlinJvmAndroidCompilation {
+        val compilationFactory = KotlinJvmAgpCompilationFactory(
+            androidVariantJavaCompileTask,
+            androidVariantType,
+            androidTarget,
+        )
+
+        return compilationFactory.create(name)
     }
 }

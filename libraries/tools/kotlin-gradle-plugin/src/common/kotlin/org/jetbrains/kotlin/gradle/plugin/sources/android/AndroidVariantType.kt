@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.utils.*
 
 @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
@@ -23,18 +24,21 @@ internal val AndroidBaseSourceSetName.variantType: AndroidVariantType
         AndroidBaseSourceSetName.AndroidTest -> AndroidVariantType.InstrumentedTest
     }
 
-internal enum class AndroidVariantType {
+// Required for AGP/Built-in Kotlin integration
+// ABI preferably should not change
+@InternalKotlinGradlePluginApi
+enum class AndroidVariantType {
     Main, UnitTest, InstrumentedTest, Unknown;
-
-    /**
-     * Every known type of Android variant has a 'base source set', which
-     * participates in all variants of sad type (main, test, androidTest, ...)
-     */
-    val androidBaseSourceSetName: AndroidBaseSourceSetName?
-        get() = when (this) {
-            Main -> AndroidBaseSourceSetName.Main
-            UnitTest -> AndroidBaseSourceSetName.Test
-            InstrumentedTest -> AndroidBaseSourceSetName.AndroidTest
-            Unknown -> null
-        }
 }
+
+/**
+ * Every known type of Android variant has a 'base source set', which
+ * participates in all variants of a said type (main, test, androidTest, ...)
+ */
+internal val AndroidVariantType.androidBaseSourceSetName: AndroidBaseSourceSetName?
+    get() = when (this) {
+        AndroidVariantType.Main -> AndroidBaseSourceSetName.Main
+        AndroidVariantType.UnitTest -> AndroidBaseSourceSetName.Test
+        AndroidVariantType.InstrumentedTest -> AndroidBaseSourceSetName.AndroidTest
+        AndroidVariantType.Unknown -> null
+    }
