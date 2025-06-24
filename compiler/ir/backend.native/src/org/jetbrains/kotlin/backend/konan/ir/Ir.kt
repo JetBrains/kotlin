@@ -74,7 +74,10 @@ private object ClassIds {
 
     // Interop classes
     private val String.interopClassId get() = ClassId(InteropFqNames.packageName, Name.identifier(this))
+    private val String.interopInternalClassId get() = ClassId(InteropFqNames.internalPackageName, Name.identifier(this))
 
+    val cToKotlinBridge = InteropFqNames.cToKotlinBridgeName.interopInternalClassId
+    val kotlinToCBridge = InteropFqNames.kotlinToCBridgeName.interopInternalClassId
     val nativePointed = InteropFqNames.nativePointedName.interopClassId
     val interopCPointer = InteropFqNames.cPointerName.interopClassId
     val interopCPointed = InteropFqNames.cPointedName.interopClassId
@@ -372,8 +375,8 @@ class KonanSymbols(
     val filterExceptions = ClassIds.filterExceptions.classSymbol()
     val exportForCppRuntime = ClassIds.exportForCppRuntime.classSymbol()
     val typedIntrinsic = ClassIds.typedIntrinsic.classSymbol()
-    val cToKotlinBridge = symbolFinder.topLevelClass(NativeRuntimeNames.Annotations.cToKotlinBridgeClassId)
-    val kotlinToCBridge = symbolFinder.topLevelClass(NativeRuntimeNames.Annotations.kotlinToCBridgeClassId)
+    val cToKotlinBridge = ClassIds.cToKotlinBridge.classSymbol()
+    val kotlinToCBridge = ClassIds.kotlinToCBridge.classSymbol()
     val interopCallMarker = symbolFinder.topLevelFunction(RuntimeNames.kotlinxCInteropInternalPackageName, "interopCallMarker")
 
     val objCMethodImp = ClassIds.objCMethodImp.classSymbol()
