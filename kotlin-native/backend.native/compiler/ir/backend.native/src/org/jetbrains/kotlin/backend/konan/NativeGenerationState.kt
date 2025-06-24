@@ -33,9 +33,6 @@ internal class FileLowerState {
     fun getFunctionReferenceImplUniqueName(prefix: String) =
             "$prefix${functionReferenceCount++}"
 
-    fun getCStubUniqueName(prefix: String) =
-            "$prefix${cStubCount++}"
-
     fun getCStubIndex() = cStubCount++
 }
 
