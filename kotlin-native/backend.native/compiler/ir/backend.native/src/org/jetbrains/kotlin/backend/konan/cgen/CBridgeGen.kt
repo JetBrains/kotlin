@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.collections.plus
 
 internal interface KotlinStubs {
     val irBuiltIns: IrBuiltIns
