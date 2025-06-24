@@ -29,16 +29,6 @@ object KlibBasedCompilerTestDirectives : SimpleDirectivesContainer() {
         """
     )
 
-    val SKIP_UNBOUND_IR_SERIALIZATION by directive(
-        """
-            This is a directive to skip some test data files in unbound IR serialization tests
-            (see `AbstractNativeUnboundIrSerializationTest` and generated subclasses).
-
-            Some tests use exposure of private types from internal inline functions. This is already a compiler
-            warning in 2.1.0 (KT-69681), but soon will become a compiler error (KT-70916).
-        """.trimIndent()
-    )
-
     val SKIP_IR_DESERIALIZATION_CHECKS by directive(
         description = """
         Skips ${SerializedIrDumpHandler::class}, when running a test against the deserialized IR

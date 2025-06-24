@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.*
-import org.jetbrains.kotlin.konan.test.inlining.AbstractNativeUnboundIrSerializationTest
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
 import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
@@ -108,24 +107,6 @@ fun main() {
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
                 model("nativeTests/specialBackendChecks")
                 model("testsWithAnyBackend")
-            }
-        }
-
-        // New frontend test infrastructure tests
-        testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData") {
-            testClass<AbstractNativeUnboundIrSerializationTest>(
-                suiteTestClassName = "NativeUnboundIrSerializationTestGenerated",
-                annotations = listOf(klib())
-            ) {
-                /*
-                 * Note: "all-files" tests are consciously not generated to have a more clear picture of test coverage:
-                 * - Some test data files don't have inline functions. There is basically nothing to test in them.
-                 *   So, such tests end up in "ignored" (gray) state.
-                 * - The tests that fail are "failed" (red).
-                 * - Successful tests (with really processed inline functions) are "successful" (green).
-                 */
-                model("codegen/box", skipTestAllFilesCheck = true, excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
-                model("codegen/boxInline", skipTestAllFilesCheck = true, nativeTestInNonNativeTestInfra = true)
             }
         }
 
