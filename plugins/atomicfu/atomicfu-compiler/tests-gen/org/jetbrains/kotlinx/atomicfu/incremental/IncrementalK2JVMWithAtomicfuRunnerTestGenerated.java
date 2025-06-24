@@ -34,4 +34,9 @@ public class IncrementalK2JVMWithAtomicfuRunnerTestGenerated extends AbstractInc
   public void testAtomicExtension() {
     runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/atomicExtension/");
   }
+
+  @TestMetadata("atomicHandler")
+  public void testAtomicHandler() {
+    runTest("plugins/atomicfu/atomicfu-compiler/testData/projects/atomicHandler/");
+  }
 }
