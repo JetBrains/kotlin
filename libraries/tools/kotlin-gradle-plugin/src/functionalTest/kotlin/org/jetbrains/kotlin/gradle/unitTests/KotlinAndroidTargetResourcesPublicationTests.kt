@@ -49,7 +49,7 @@ class KotlinAndroidTargetResourcesPublicationTests {
         project.publishFakeResources(project.multiplatformExtension.androidTarget())
         project.publishFakeAssets(project.multiplatformExtension.androidTarget())
 
-        val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
             .compilations.getByName("release")
             .androidVariant?.sourceSets ?: throw IllegalStateException("Android variant for 'release' compilation is 'null'")
         val actualResourcesDirectories = androidVariantSourceSets.flatMapTo(linkedSetOf()) { it.resourcesDirectories }
@@ -76,7 +76,7 @@ class KotlinAndroidTargetResourcesPublicationTests {
         project.evaluate()
         project.publishFakeResources(project.multiplatformExtension.androidTarget())
 
-        val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val androidVariantSourceSets = project.multiplatformExtension.androidTarget()
             .compilations.getByName("demoRelease")
             .androidVariant?.sourceSets ?: throw IllegalStateException("Android variant for 'demoRelease' compilation is 'null'")
         val actualResourcesDirectories = androidVariantSourceSets.flatMapTo(linkedSetOf()) {
@@ -100,7 +100,7 @@ class KotlinAndroidTargetResourcesPublicationTests {
 
         project.evaluate()
 
-        val actualSourcesDirectories = project.multiplatformExtension.androidTarget()
+        @Suppress("DEPRECATION") val actualSourcesDirectories = project.multiplatformExtension.androidTarget()
             .compilations.getByName("release")
             .androidVariant?.sourceSets?.flatMapTo(linkedSetOf()) { it.resourcesDirectories }
             ?: throw IllegalStateException("Android variant for 'release' compilation is 'null'")
