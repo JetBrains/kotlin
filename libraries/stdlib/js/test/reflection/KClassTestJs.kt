@@ -8,6 +8,18 @@ package test.reflection
 import kotlin.test.*
 
 class KClassTestJs {
+
+    @Test
+    fun testQualifiedName() {
+        @Suppress("UNSUPPORTED")
+        assertFailsWith<NotImplementedError> { KClassTestJs::class.qualifiedName }
+    }
+
+    @Test
+    fun testNothing() {
+        assertFailsWith<UnsupportedOperationException> { Nothing::class.js }
+    }
+
     private interface I
 
     @Test
