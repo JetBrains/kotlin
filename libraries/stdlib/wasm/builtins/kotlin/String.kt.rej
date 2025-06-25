@@ -1,0 +1,22 @@
+--- libraries/stdlib/wasm/builtins/kotlin/String.kt	(revision Before)
++++ libraries/stdlib/wasm/builtins/kotlin/String.kt	(revision After)
+@@ -13,9 +13,11 @@
+  * implemented as instances of this class.
+  */
+ public actual class String internal @WasmPrimitiveConstructor constructor(
++    @PublishedApi
+     internal var leftIfInSum: String?,
+     @kotlin.internal.IntrinsicConstEvaluation
+     public actual override val length: Int,
++    @PublishedApi
+     internal var _chars: WasmCharArray,
+ ) : Comparable<String>, CharSequence {
+     internal var _hashCode: Int = 0
+@@ -62,6 +64,7 @@
+         leftIfInSum = null
+     }
+ 
++    @PublishedApi
+     internal val chars: WasmCharArray get() {
+         if (leftIfInSum != null) {
+             foldChars()
