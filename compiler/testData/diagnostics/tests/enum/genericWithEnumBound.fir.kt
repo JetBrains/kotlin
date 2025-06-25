@@ -15,7 +15,7 @@ enum class CorrectTypeEnum(override val value: String) : MyInterface {
     CorrectEnum2("2"),
 }
 
-fun <T : Enum<out MyInterface>> myFunction(arg: T) {}
+fun <T : Enum<<!UPPER_BOUND_VIOLATED!>out MyInterface<!>>> myFunction(arg: T) {}
 
 class MyClass<T : Enum<<!UPPER_BOUND_VIOLATED!>out MyInterface<!>>>(val arg: T)
 
