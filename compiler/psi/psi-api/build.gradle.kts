@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 dependencies {
@@ -17,4 +18,10 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+apiValidation {
+    nonPublicMarkers += listOf(
+        "org.jetbrains.kotlin.psi.KtImplementationDetail",
+    )
 }
