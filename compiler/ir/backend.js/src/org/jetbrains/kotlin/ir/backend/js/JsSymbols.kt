@@ -88,8 +88,6 @@ class JsSymbols(
 
     override val coroutineContextGetter = coroutineSymbols.coroutineContextGetter
 
-    override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
-
     override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
 
     override val returnIfSuspended = symbolFinder.topLevelFunction(BASE_INTERNAL_PACKAGE, "returnIfSuspended")
@@ -150,8 +148,6 @@ class JsSymbols(
                 call.symbol == intrinsics.jsUnboxIntrinsic
 
     companion object {
-        // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
-        private const val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
         private const val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
     }
 }

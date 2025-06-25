@@ -181,7 +181,6 @@ private object CallableIds {
     val isSubtype = "isSubtype".internalCallableId
     val getContinuation = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("getContinuation"))
     val returnIfSuspended = CallableId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier("returnIfSuspended"))
-    val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".internalCallableId
     val getCoroutineContext = "getCoroutineContext".internalCallableId
     val saveCoroutineState = "saveCoroutineState".internalCallableId
     val restoreCoroutineState = "restoreCoroutineState".internalCallableId
@@ -610,8 +609,6 @@ class KonanSymbols(
     override val continuationClass = ClassIds.continuation.classSymbol()
 
     override val returnIfSuspended by CallableIds.returnIfSuspended.functionSymbol { !it.isExpect }
-
-    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
 
     override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
 

@@ -9088,6 +9088,7 @@ final inline fun kotlin/ushortArrayOf(kotlin/UShortArray...): kotlin/UShortArray
 final suspend fun <#A: kotlin/Any?> kotlin.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
 final suspend fun <#A: kotlin/Any?> kotlin.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturnInternal(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturnInternal|suspendCoroutineUninterceptedOrReturnInternal(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines/suspendCoroutine(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Unit>): #A // kotlin.coroutines/suspendCoroutine|suspendCoroutine(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
@@ -13772,9 +13773,6 @@ final inline fun kotlin/assert(kotlin/Boolean) // kotlin/assert|assert(kotlin.Bo
 
 // Targets: [native]
 final inline fun kotlin/assert(kotlin/Boolean, kotlin/Function0<kotlin/Any>) // kotlin/assert|assert(kotlin.Boolean;kotlin.Function0<kotlin.Any>){}[0]
-
-// Targets: [native]
-final suspend inline fun <#A: kotlin/Any?> kotlin.native.internal/suspendCoroutineUninterceptedOrReturn(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.native.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final suspend inline fun kotlin.native.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.native.internal/getCoroutineContext|getCoroutineContext(){}[0]

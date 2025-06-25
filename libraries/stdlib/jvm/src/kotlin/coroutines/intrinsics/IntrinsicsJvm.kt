@@ -267,3 +267,7 @@ private fun <T> createSimpleCoroutineForSuspendFunction(
             }
         }
 }
+
+@PublishedApi
+internal actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturnInternal(crossinline block: (Continuation<T>) -> Any?): T =
+    error("not implemented")

@@ -261,9 +261,6 @@ class JvmSymbols(
     override val coroutineContextGetter: IrSimpleFunctionSymbol
         get() = error("not implemented")
 
-    override val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
-        get() = error("not implemented")
-
     override val coroutineGetContext: IrSimpleFunctionSymbol
         get() = error("not implemented")
 
