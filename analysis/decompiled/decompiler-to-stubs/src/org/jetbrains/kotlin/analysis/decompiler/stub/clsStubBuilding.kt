@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.stub
 
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
@@ -211,7 +210,7 @@ fun createModifierListStub(
 
     val regularMask = ModifierMaskUtils.computeMask { it in modifiers }
 
-    @OptIn(IntellijInternalApi::class)
+    @OptIn(KtImplementationDetail::class)
     val specialMask = ModifierMaskUtils.computeMaskForSpecialFlags { flag ->
         when (flag) {
             KotlinModifierListStub.SpecialFlag.MustUseReturnValue -> mustUseReturnValue

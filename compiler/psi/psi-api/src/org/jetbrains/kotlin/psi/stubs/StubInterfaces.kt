@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi.stubs
 
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
@@ -106,11 +105,11 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     /**
      * Whether the modifier list has a [SpecialFlag].
      */
-    @IntellijInternalApi
+    @KtImplementationDetail
     fun hasSpecialFlag(flag: SpecialFlag): Boolean
 
     /** Represents special flags that are common for many declarations */
-    @IntellijInternalApi
+    @KtImplementationDetail
     enum class SpecialFlag {
         /**
          * Whether the return type of the modifier list owner must be checked.

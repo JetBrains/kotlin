@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.openapi.util.IntellijInternalApi
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.MODIFIER_KEYWORDS_ARRAY
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 
 object ModifierMaskUtils {
     init {
-        @OptIn(IntellijInternalApi::class)
+        @OptIn(KtImplementationDetail::class)
         assert(MODIFIER_KEYWORDS_ARRAY.size + KotlinModifierListStub.SpecialFlag.entries.size <= 64) {
             "Current implementation depends on the ability to represent modifier list as bit mask"
         }
@@ -34,7 +34,7 @@ object ModifierMaskUtils {
         return mask
     }
 
-    @IntellijInternalApi
+    @KtImplementationDetail
     fun computeMaskForSpecialFlags(hasModifier: (KotlinModifierListStub.SpecialFlag) -> Boolean): Long {
         val specialFlagOffset = MODIFIER_KEYWORDS_ARRAY.size
         var mask = 0L
@@ -55,7 +55,7 @@ object ModifierMaskUtils {
     }
 
     @JvmStatic
-    @IntellijInternalApi
+    @KtImplementationDetail
     fun maskHasSpecialFlag(mask: Long, flag: KotlinModifierListStub.SpecialFlag): Boolean {
         val specialFlagOffset = MODIFIER_KEYWORDS_ARRAY.size
         return maskHas(mask, specialFlagOffset + flag.ordinal)
@@ -84,7 +84,7 @@ object ModifierMaskUtils {
             }
         }
 
-        @OptIn(IntellijInternalApi::class)
+        @OptIn(KtImplementationDetail::class)
         for (specialFlag in KotlinModifierListStub.SpecialFlag.entries) {
             if (maskHasSpecialFlag(mask, specialFlag)) {
                 renderFlag(specialFlag.name)

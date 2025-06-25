@@ -4050,14 +4050,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportDirec
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinModifierListStub : com/intellij/psi/stubs/StubElement {
 	public abstract fun hasModifier (Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;)Z
-	public abstract fun hasSpecialFlag (Lorg/jetbrains/kotlin/psi/stubs/KotlinModifierListStub$SpecialFlag;)Z
-}
-
-public final class org/jetbrains/kotlin/psi/stubs/KotlinModifierListStub$SpecialFlag : java/lang/Enum {
-	public static final field MustUseReturnValue Lorg/jetbrains/kotlin/psi/stubs/KotlinModifierListStub$SpecialFlag;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/psi/stubs/KotlinModifierListStub$SpecialFlag;
-	public static fun values ()[Lorg/jetbrains/kotlin/psi/stubs/KotlinModifierListStub$SpecialFlag;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinNameReferenceExpressionStub : com/intellij/psi/stubs/StubElement {
