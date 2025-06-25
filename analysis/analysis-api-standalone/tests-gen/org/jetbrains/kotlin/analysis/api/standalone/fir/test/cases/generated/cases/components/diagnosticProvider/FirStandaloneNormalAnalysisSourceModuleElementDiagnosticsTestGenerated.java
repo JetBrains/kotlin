@@ -64,6 +64,12 @@ public class FirStandaloneNormalAnalysisSourceModuleElementDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("delegatedClassComplex.kt")
+  public void testDelegatedClassComplex() {
+    runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/delegatedClassComplex.kt");
+  }
+
+  @Test
   @TestMetadata("fileWithFunctionWithImplicitType.kt")
   public void testFileWithFunctionWithImplicitType() {
     runTest("analysis/analysis-api/testData/components/diagnosticsProvider/elementDiagnostics/fileWithFunctionWithImplicitType.kt");
