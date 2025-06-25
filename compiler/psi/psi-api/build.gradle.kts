@@ -13,15 +13,26 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     compileOnly(libs.intellij.fastutil)
+
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
 apiValidation {
     nonPublicMarkers += listOf(
         "org.jetbrains.kotlin.psi.KtImplementationDetail",
     )
+}
+
+testsJar()
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    workingDir = rootDir
+    useJUnitPlatform()
 }

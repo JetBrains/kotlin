@@ -19,6 +19,7 @@ tasks.register("analysisAllTests") {
         ":analysis:symbol-light-classes:test",
         ":analysis:analysis-tools:analysis-api-kdoc-coverage-test:test",
         ":compiler:psi:psi-api:apiCheck",
+        ":compiler:psi:psi-api:test",
     )
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {

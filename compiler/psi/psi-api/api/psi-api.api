@@ -1,7 +1,3 @@
-public final class org/jetbrains/kotlin/KotlinElementTypeProvider$Companion {
-	public final fun getInstance ()Lorg/jetbrains/kotlin/KotlinElementTypeProvider;
-}
-
 public class org/jetbrains/kotlin/KtNodeType : com/intellij/psi/tree/IElementType {
 	public fun <init> (Ljava/lang/String;Ljava/lang/Class;)V
 	public fun createPsi (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElement;
