@@ -16,7 +16,7 @@ class SourceFilePathResolver(
     private val sourceRoots = sourceRoots.mapTo(mutableSetOf<File>()) { it.absoluteFile }
     private val outputDirPathResolver = outputDir?.let(::RelativePathCalculator)
     private val cache = mutableMapOf<File, String>()
-    private val modulesAndTheirSourcesStatus = hashMapOf<String, Boolean>()
+    private val fileExistsCache = hashMapOf<File, Boolean>()
 
     @Throws(IOException::class)
     fun getPathRelativeToSourceRoots(file: File): String {
@@ -29,8 +29,8 @@ class SourceFilePathResolver(
     }
 
     @Throws(IOException::class)
-    fun getPathRelativeToSourceRootsIfExists(moduleId: String, file: File): String? {
-        val moduleSourcesShouldBeAdded = includeUnavailableSourcesIntoSourceMap || modulesAndTheirSourcesStatus.getOrPut(moduleId) { file.exists() }
+    fun getPathRelativeToSourceRootsIfExists(file: File): String? {
+        val moduleSourcesShouldBeAdded = includeUnavailableSourcesIntoSourceMap || fileExistsCache.getOrPut(file) { file.exists() }
         return runIf(moduleSourcesShouldBeAdded) { getPathRelativeToSourceRoots(file) }
     }
 
