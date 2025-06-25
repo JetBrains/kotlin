@@ -18,6 +18,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.component.AdhocComponentWithVariants
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -38,6 +39,7 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
@@ -174,7 +176,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:8.14") {
+            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_COMMON}") {
                 capabilities {
                     requireCapability("org.gradle.experimental:gradle-public-api-internal")
                 }
@@ -182,9 +184,30 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
-                        requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
+//                        requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
                     }
                 }
+            }
+        }
+    }
+
+    afterEvaluate {
+        listOf(
+            /**
+             * Common source set outgoing variants should be a superset of attributes relative to [FIXED_CONFIGURATION_SUFFIX]. These
+             * variants are not published, but they are used to resolve interproject dependencies
+             */
+            commonSourceSet.apiElementsConfigurationName,
+            // FIXME: This breaks the early exit in longestIsSuperset check. Rewrite with a disambiguation instead?
+//            commonSourceSet.runtimeElementsConfigurationName,
+        ).forEach {
+            val outgoingVariant = configurations.getByName(it)
+            commonVariantAttributes().execute(outgoingVariant)
+            outgoingVariant.attributes {
+                attribute(
+                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                    objects.named(GradlePluginVariant.GRADLE_COMMON),
+                )
             }
         }
     }
@@ -193,6 +216,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         this@createGradleCommonSourceSet.extensions.configure<JavaPluginExtension> {
             registerFeature(commonSourceSet.name) {
                 usingSourceSet(commonSourceSet)
+                capability(project.group.toString(), project.name, project.version.toString())
+                capability(project.group.toString(), "${project.name}-common", project.version.toString())
                 disablePublication()
             }
         }
@@ -448,6 +473,16 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
                 }
             }
+
+        listOf(
+            compileClasspathConfigurationName,
+            runtimeClasspathConfigurationName,
+        ).forEach {
+            configurations.getByName(it).attributes.attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(GradlePluginVariant.GRADLE_MIN.minimalSupportedGradleVersion),
+            )
+        }
     }
 
     val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
@@ -485,6 +520,7 @@ fun Project.createGradlePluginVariant(
         extensions.configure<JavaPluginExtension> {
             registerFeature(variantSourceSet.name) {
                 usingSourceSet(variantSourceSet)
+                // ???
                 if (isGradlePlugin) {
                     capability(project.group.toString(), project.name, project.version.toString())
                 }
@@ -769,4 +805,39 @@ fun Project.registerValidatePluginTasks(
     }
 
     return validatePluginsTask
+}
+
+/**
+ * Register a kotlin source for a range of Gradle versions [[from], [to]). The sources will be visible to build scripts [from]
+ * [GradlePluginVariant.minimalSupportedGradleVersion] up to but including [to].
+ *
+ * Use this utility to overwrite or expose some API to build scripts that execute with a range of Gradle versions
+ */
+fun Project.registerKotlinSourceForVersionRange(
+    from: GradlePluginVariant,
+    to: GradlePluginVariant,
+) {
+    assert(GradleVersion.version(from.minimalSupportedGradleVersion) < GradleVersion.version(to.minimalSupportedGradleVersion)) {
+        "Minimal target version from ${from.minimalSupportedGradleVersion} must be < version to ${to.minimalSupportedGradleVersion}"
+    }
+    val applicableVariants = GradlePluginVariant.values().sortedBy { GradleVersion.version(it.minimalSupportedGradleVersion) }
+        .dropWhile { it != from }
+        .takeWhile { it != to }
+    assert(applicableVariants.isNotEmpty())
+    val sourceDirectoryName = "from_${applicableVariants.first().name}_through_${applicableVariants.last().name}"
+    val sourcesDirectory = project.layout.projectDirectory.dir("src/${sourceDirectoryName}")
+    applicableVariants
+        .forEach {
+            val sourceSet = sourceSets.getByName(it.sourceSetName)
+            (sourceSet.extensions.getByName("kotlin") as SourceDirectorySet).srcDir(sourcesDirectory)
+            val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
+            val compilation = kotlinJvmTarget.compilations.getByName(sourceSet.name)
+            tasks.named<KotlinCompile>(compilation.compileKotlinTaskName).configure {
+                doFirst {
+                    if (sourcesDirectory.asFileTree.isEmpty) {
+                        error("Ranged Gradle version sources directory\n$sourcesDirectory\nis empty. Remove ranged version or add sources to the directory")
+                    }
+                }
+            }
+        }
 }

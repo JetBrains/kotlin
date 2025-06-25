@@ -52,42 +52,42 @@ dependencies {
     }
     testImplementation(project(":kotlin-gradle-plugin")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")
         }
     }
     testImplementation(project(":kotlin-allopen")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-allopen-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-allopen-common")
         }
     }
     testImplementation(project(":kotlin-noarg")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-noarg-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-noarg-common")
         }
     }
     testImplementation(project(":kotlin-lombok")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-lombok-common")
         }
     }
     testImplementation(project(":kotlin-power-assert")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-power-assert-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-power-assert-common")
         }
     }
     testImplementation(project(":kotlin-sam-with-receiver")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-sam-with-receiver-common")
         }
     }
     testImplementation(project(":kotlin-assignment")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
+//            requireCapability("org.jetbrains.kotlin:kotlin-assignment-common")
         }
     }
     testImplementation(project(":atomicfu")) {
         capabilities {
-            requireCapability("org.jetbrains.kotlin:atomicfu-common")
+//            requireCapability("org.jetbrains.kotlin:atomicfu-common")
         }
     }
 

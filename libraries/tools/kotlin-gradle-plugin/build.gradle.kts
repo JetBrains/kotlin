@@ -108,16 +108,16 @@ dependencies {
     commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
     // Following two dependencies is a workaround for IDEA import to pick-up them correctly
-    commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-        }
-    }
-    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
-        }
-    }
+//    commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
+//        capabilities {
+//            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
+//        }
+//    }
+//    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
+//        capabilities {
+//            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
+//        }
+//    }
 
     for (compilerRuntimeDependency in unpublishedCompilerRuntimeDependencies) {
         commonCompileOnly(project(compilerRuntimeDependency)) { isTransitive = false }
@@ -625,21 +625,13 @@ fun avoidPublishingTestFixtures() {
 }
 avoidPublishingTestFixtures()
 
-GradlePluginVariant.values().forEach {
-    when (it) {
-        GradlePluginVariant.GRADLE_MIN,
-        GradlePluginVariant.GRADLE_80,
-        GradlePluginVariant.GRADLE_81,
-        GradlePluginVariant.GRADLE_82,
-        GradlePluginVariant.GRADLE_85,
-        GradlePluginVariant.GRADLE_86 -> sourceSets.getByName(it.sourceSetName).kotlin.srcDir(
-            layout.projectDirectory.dir("src/main/KotlinDependenciesBackwardsDeployment")
-        )
-        /** See [org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString] */
-        GradlePluginVariant.GRADLE_88,
-        GradlePluginVariant.GRADLE_811,
-        GradlePluginVariant.GRADLE_813 -> {
-            // Use the source from common
-        }
+afterEvaluate {
+    afterEvaluate {
+        val c = configurations.getByName("commonCompileClasspath").copy()
+        c.dependencies.clear()
+        val d = dependencies.project(":kotlin-gradle-plugin-api")
+        d.isTransitive = false
+        c.dependencies.add(d)
+        c.resolve()
     }
 }

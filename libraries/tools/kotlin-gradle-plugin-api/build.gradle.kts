@@ -41,3 +41,8 @@ tasks {
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_88
+)
