@@ -9,8 +9,14 @@
 
 package kotlin.coroutines.intrinsics
 
-import kotlin.coroutines.*
-import kotlin.coroutines.jvm.internal.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.jvm.internal.BaseContinuationImpl
+import kotlin.coroutines.jvm.internal.ContinuationImpl
+import kotlin.coroutines.jvm.internal.RestrictedContinuationImpl
+import kotlin.coroutines.jvm.internal.probeCoroutineCreated
 import kotlin.internal.InlineOnly
 
 /**
@@ -267,3 +273,8 @@ private fun <T> createSimpleCoroutineForSuspendFunction(
             }
         }
 }
+
+@SinceKotlin("1.3")
+@InlineOnly
+public actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+    error("not implemented")

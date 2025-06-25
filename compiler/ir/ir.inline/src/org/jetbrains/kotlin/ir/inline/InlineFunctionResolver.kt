@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 
 /**
  * Checks if the given function should be treated by 1st phase of inlining (inlining of private functions)
@@ -88,7 +91,6 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         if (!realOwner.isInline) return null
         // TODO: drop special cases KT-77111
         val result = when {
-            realOwner.isBuiltInSuspendCoroutineUninterceptedOrReturn() -> context.symbols.suspendCoroutineUninterceptedOrReturn.owner
             realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
             else -> realOwner
         }

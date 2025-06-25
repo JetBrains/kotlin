@@ -5,8 +5,12 @@
 
 package kotlin.coroutines
 
-import kotlin.contracts.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
+import kotlin.coroutines.intrinsics.intercepted
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.internal.InlineOnly
 
 /**
@@ -139,6 +143,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.3")
 @InlineOnly
+@Suppress("WRONG_INVOCATION_KIND", "LEAKED_IN_PLACE_LAMBDA")
 public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
