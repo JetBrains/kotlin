@@ -1699,7 +1699,7 @@ private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true):
         }
 }
 
-private fun String.toIdSuffix(): String {
+internal fun String.toIdSuffix(): String {
     return when {
         // Use original name if it's short and alphanumeric
         length <= 20 && matches(Regex("[a-zA-Z0-9_-]+")) -> this

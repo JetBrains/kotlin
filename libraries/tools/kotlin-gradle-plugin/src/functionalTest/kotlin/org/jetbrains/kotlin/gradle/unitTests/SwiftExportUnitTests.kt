@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toIdSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
@@ -463,7 +464,7 @@ class SwiftExportUnitTests {
         val project = swiftExportProject()
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning)
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning, "Swift Export".toIdSuffix())
     }
 
     @Test
