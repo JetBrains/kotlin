@@ -4,8 +4,8 @@ interface A
 interface B
 
 class C {
-    context(x: A, y: B) fun f() {}
+    context(x: A, y: B, _: Any) fun f() {}
 }
 
-context(x: A) fun g() {}
-context(y: B) val h: Int get() = 42
+context(x: A, _: Any) fun g() {}
+context(y: B, _: Any) val h: Int get() = 42
