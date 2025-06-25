@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 
 private fun getUniqueName(packageFragment: IrPackageFragment, fileName: String) =
@@ -198,7 +199,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
 
                         generationState.cStubsManager.addStub(location, impl.split('\n'), language)
                         if (libraryName.isNotEmpty()) {
-                            val library = generationState.config.librariesWithDependencies().firstOrNull { it.libraryName == libraryName }
+                            val library = generationState.config.librariesWithDependencies().firstOrNull { it.uniqueName == libraryName }
                                     ?: error("Library with name $libraryName not found in the dependencies")
                             generationState.dependenciesTracker.add(library)
                         }

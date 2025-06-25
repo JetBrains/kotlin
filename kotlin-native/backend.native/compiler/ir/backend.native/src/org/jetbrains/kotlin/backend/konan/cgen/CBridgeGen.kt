@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -191,7 +192,7 @@ internal fun KotlinStubs.generateCCall(
 
     val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
         require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${callee.render()}" }
-        it.libraryName
+        it.uniqueName
     }
 
     callBuilder.finishBuilding(libraryName)
@@ -444,7 +445,7 @@ internal fun KotlinStubs.generateObjCCall(
         } else { // Category-provided.
             method.getPackageFragment().konanLibrary.let {
                 require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
-                it.libraryName
+                it.uniqueName
             }
         }
 
