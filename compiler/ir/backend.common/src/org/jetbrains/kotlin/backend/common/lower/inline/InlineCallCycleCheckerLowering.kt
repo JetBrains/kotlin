@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorCallExpressionImpl
@@ -24,8 +25,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
-// `callLocation` is either `IrBody` or `IrValueParameter`
-internal data class CallNode(val function: IrFunction, val callLocation: IrElement)
+internal data class CallNode(val function: IrFunction, val callLocation: IrBody)
 
 internal data class CallEdge(val call: IrCall?, val callNode: CallNode)
 
@@ -99,9 +99,8 @@ internal class IrInlineCallGraphBuilder(
                 addEdges(data, null, declaration)
             }
 
-            declaration.parameters.forEach { it.accept(this, CallNode(declaration, it)) }
+            declaration.parameters.mapNotNull { it.defaultValue }.forEach { it.accept(this, CallNode(declaration, it)) }
             declaration.body?.let { it.accept(this, CallNode(declaration, it)) }
-
         } else {
             super.visitFunction(declaration, data)
         }
@@ -117,11 +116,11 @@ internal class IrInlineCallGraphBuilder(
     }
 
     private fun addEdges(callerNode: CallNode, call: IrCall?, callee: IrFunction) {
-        val parametersUsingDefaultValues =
-            callee.parameters.filter { it.defaultValue != null && call?.arguments[it] == null }
+        val usedDefaultValues =
+            callee.parameters.filter { it.defaultValue != null && call?.arguments[it] == null }.mapNotNull { it.defaultValue }
 
         val callNodes =
-            (parametersUsingDefaultValues + callee.body).filterNotNull().map { CallEdge(call, CallNode(callee, it)) }
+            (usedDefaultValues + callee.body).filterNotNull().map { CallEdge(call, CallNode(callee, it)) }
 
         callGraph.getOrPut(callerNode) { mutableSetOf() }.addAll(callNodes)
     }
