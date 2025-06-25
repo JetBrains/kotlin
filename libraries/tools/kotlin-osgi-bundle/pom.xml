@@ -12,6 +12,10 @@
 
     <artifactId>kotlin-osgi-bundle</artifactId>
 
+    <name>Kotlin OSGi Bundle</name>
+    <description>Kotlin OSGi Bundle</description>
+    <url>https://kotlinlang.org/</url>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

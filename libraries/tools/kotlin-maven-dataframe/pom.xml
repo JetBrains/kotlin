@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-dataframe</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven Dataframe</name>
     <description>DataFrame plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>
