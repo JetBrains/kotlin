@@ -55,7 +55,7 @@ internal interface KotlinStubs {
     fun exitScope()
     fun addKotlin(declaration: IrDeclaration)
     fun addC(lines: List<String>)
-    fun getC(): List<String>
+    fun flushC(): List<String>
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
 
@@ -305,7 +305,7 @@ private fun KotlinToCCallBuilder.finishBuilding(libraryName: String): IrSimpleFu
 
     val bridge = bridgeBuilder.getKotlinBridge()
 
-    val allC = stubs.getC()
+    val allC = stubs.flushC()
 
     bridge.annotations += buildSimpleAnnotation(
             stubs.irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.kotlinToCBridge.owner,
@@ -641,7 +641,7 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
                 symbols.objCMethodImp.owner, methodInfo.selector, methodInfo.encoding)
     }
 
-    val allC = getC()
+    val allC = flushC()
 
     bridge.annotations += buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             symbols.kotlinToCBridge.owner, this.language, allC.joinToString("\n") { it }, "")
