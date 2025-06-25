@@ -11,11 +11,6 @@ import kotlin.internal.getContinuation
 
 @kotlin.internal.InlineOnly
 @PublishedApi
-internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-        returnIfSuspended<T>(block(getContinuation<T>()))
-
-@kotlin.internal.InlineOnly
-@PublishedApi
 internal inline suspend fun getCoroutineContext(): CoroutineContext =
         getContinuation<Any?>().context
 

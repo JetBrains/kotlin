@@ -37,11 +37,14 @@ import kotlin.internal.InlineOnly
  */
 @SinceKotlin("1.3")
 @InlineOnly
-@Suppress("WRONG_INVOCATION_KIND", "UNUSED_PARAMETER", "RedundantSuspendModifier")
+@Suppress("WRONG_INVOCATION_KIND", "UNUSED_PARAMETER", "LEAKED_IN_PLACE_LAMBDA")
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-    throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+    return suspendCoroutineUninterceptedOrReturnInternal(block)
 }
+
+@PublishedApi
+internal expect suspend inline fun <T> suspendCoroutineUninterceptedOrReturnInternal(crossinline block: (Continuation<T>) -> Any?): T
 
 /**
  * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that

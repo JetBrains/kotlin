@@ -32,6 +32,7 @@ internal fun <T> interceptContinuationIfNeeded(
 @PublishedApi
 internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
+// TODO: remove after compiler bootstrap
 @PublishedApi
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
