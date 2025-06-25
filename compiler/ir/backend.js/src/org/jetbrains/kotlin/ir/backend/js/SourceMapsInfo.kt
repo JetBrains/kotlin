@@ -17,6 +17,7 @@ data class SourceMapsInfo(
     val outputDir: File?,
     val sourceMapContentEmbedding: SourceMapSourceEmbedding,
     val namesPolicy: SourceMapNamesPolicy,
+    val includeUnavailableSourcesIntoSourceMap: Boolean = false
 ) {
     companion object {
         fun from(configuration: CompilerConfiguration): SourceMapsInfo? =
@@ -27,6 +28,7 @@ data class SourceMapsInfo(
                     configuration.get(JSConfigurationKeys.OUTPUT_DIR),
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
                     configuration.get(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, SourceMapNamesPolicy.SIMPLE_NAMES),
+                    configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES),
                 )
             } else {
                 null
