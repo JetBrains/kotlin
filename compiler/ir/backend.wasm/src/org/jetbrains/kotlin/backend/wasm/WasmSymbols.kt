@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -103,8 +104,6 @@ class WasmSymbols(
         coroutineSymbols.continuationClass
     override val coroutineContextGetter =
         coroutineSymbols.coroutineContextGetter
-    override val suspendCoroutineUninterceptedOrReturn =
-        getInternalFunction("suspendCoroutineUninterceptedOrReturn")
     override val coroutineGetContext =
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =

@@ -267,3 +267,8 @@ private fun <T> createSimpleCoroutineForSuspendFunction(
             }
         }
 }
+
+@SinceKotlin("1.3")
+@InlineOnly
+public actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+    error("not implemented")
