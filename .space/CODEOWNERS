@@ -193,7 +193,6 @@
 /compiler/testData/parseCodeFragment/ "Kotlin Frontend"
 /compiler/testData/psi/ "Kotlin Frontend"
 /compiler/testData/psiUtil/ "Kotlin Frontend"
-/compiler/testData/psiKdocCoverage/ "Kotlin Analysis API"
 /compiler/testData/recursiveProcessor/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/repl/ "Kotlin Frontend"
@@ -212,8 +211,6 @@
 /compiler/testData/type-checker-test.kt "Kotlin Frontend"
 /compiler/testData/type-substitutor.kt "Kotlin Frontend"
 /compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/compiler/tests/org/jetbrains/kotlin/psi/PsiKDocCoverageTest.kt "Kotlin Analysis API"
-/compiler/tests/org/jetbrains/kotlin/util/KDocCoverageTest.kt "Kotlin Analysis API"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ "Kotlin Analysis API"

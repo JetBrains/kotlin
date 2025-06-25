@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.psi
 
+import org.jetbrains.kotlin.AbstractKDocCoverageTest
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.util.KDocCoverageTest
+import org.junit.jupiter.api.Test
 
-class PsiKDocCoverageTest() : KDocCoverageTest() {
+class PsiKDocCoverageTest : AbstractKDocCoverageTest() {
     override val sourceDirectories: List<DocumentationLocations> = listOf(
         DocumentationLocations(
             listOf(
-                "/compiler/psi/psi-api/src/org/jetbrains/kotlin",
-                "/compiler/psi/psi-impl/src/org/jetbrains/kotlin",
-                "/compiler/psi/psi-utils/src/org/jetbrains/kotlin",
-                "/compiler/psi/psi-frontend-utils/src/org/jetbrains/kotlin",
+                "compiler/psi/psi-api/src/org/jetbrains/kotlin",
+                "compiler/psi/psi-impl/src/org/jetbrains/kotlin",
+                "compiler/psi/psi-utils/src/org/jetbrains/kotlin",
+                "compiler/psi/psi-frontend-utils/src/org/jetbrains/kotlin",
             ),
-            "/compiler/testData/psiKdocCoverage/psi.undocumented")
+            "compiler/psi/psi-api/api/psi.undocumented",
+        )
     )
 
     override val ignoredPackages: List<FqName> = listOf(
@@ -28,6 +30,7 @@ class PsiKDocCoverageTest() : KDocCoverageTest() {
         FqName("org.jetbrains.kotlin.kdoc.parser"),
     )
 
+    @Test
     fun testKDocCoverage() {
         doTest()
     }

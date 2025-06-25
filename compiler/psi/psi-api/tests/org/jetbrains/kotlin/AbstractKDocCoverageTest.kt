@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.util
+package org.jetbrains.kotlin
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -40,7 +40,8 @@ import java.io.File
  * If the lack of documentation for some declaration is intentional,
  * the developer has to manually add this declaration to the master file.
  */
-abstract class KDocCoverageTest : KtUsefulTestCase() {
+abstract class AbstractKDocCoverageTest : KtUsefulTestCase() {
+    @OptIn(K1Deprecation::class)
     protected fun doTest() {
         val environment = KotlinCoreEnvironment.createForParallelTests(
             testRootDisposable,
@@ -52,7 +53,7 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
         val homeDir = KtTestUtil.getHomeDirectory()
 
         sourceDirectories.forEach { (sourceCodeDirectoryPaths, outputFilePath) ->
-            val roots = sourceCodeDirectoryPaths.map { File(homeDir + it) }
+            val roots = sourceCodeDirectoryPaths.map { File(homeDir, it) }
 
             val actualText = buildList {
                 for (root in roots) {
@@ -79,7 +80,7 @@ abstract class KDocCoverageTest : KtUsefulTestCase() {
                 }
             }.sorted().joinToString("\n")
 
-            val expectedFile = File(homeDir + outputFilePath)
+            val expectedFile = File(homeDir, outputFilePath)
             KotlinTestUtils.assertEqualsToFile(
                 "Some newer public declarations from `$roots` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
                 expectedFile,
