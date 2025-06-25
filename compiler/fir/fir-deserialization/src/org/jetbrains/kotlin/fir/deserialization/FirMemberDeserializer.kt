@@ -790,7 +790,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     ) {
         valueParameters.mapIndexedTo(destination) { index, proto ->
             val flags = if (proto.hasFlags()) proto.flags else 0
-            val name = c.nameResolver.getName(proto.name)
+            val name = if (kind == FirValueParameterKind.ContextParameter && !proto.hasName())
+                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            else
+                c.nameResolver.getName(proto.name)
             buildValueParameter {
                 moduleData = c.moduleData
                 this.containingDeclarationSymbol = containingDeclarationSymbol
