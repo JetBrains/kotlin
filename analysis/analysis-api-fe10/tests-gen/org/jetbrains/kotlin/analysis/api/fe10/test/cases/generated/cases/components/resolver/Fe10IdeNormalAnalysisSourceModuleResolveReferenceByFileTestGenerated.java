@@ -227,6 +227,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveReferenceByFileTestGenerate
   }
 
   @Test
+  @TestMetadata("parenthesisedAnnotationCallArguments.kt")
+  public void testParenthesisedAnnotationCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedAnnotationCallArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("parenthesisedCallArguments.kt")
+  public void testParenthesisedCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedCallArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("parenthesisedDelegatedConstructorCallArguments.kt")
+  public void testParenthesisedDelegatedConstructorCallArguments() {
+    runTest("analysis/analysis-api/testData/components/resolver/allByPsi/parenthesisedDelegatedConstructorCallArguments.kt");
+  }
+
+  @Test
   @TestMetadata("providedDelegate.kt")
   public void testProvidedDelegate() {
     runTest("analysis/analysis-api/testData/components/resolver/allByPsi/providedDelegate.kt");
