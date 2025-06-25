@@ -1083,5 +1083,11 @@ public class FirLightTreeDiagnosticsTestWithJvmIrBackendGenerated extends Abstra
     public void testSuspendInlineCycle() {
       runTest("compiler/testData/diagnostics/inlineCallCycle/suspendInlineCycle.kt");
     }
+
+    @Test
+    @TestMetadata("transitiveInlineCycle.kt")
+    public void testTransitiveInlineCycle() {
+      runTest("compiler/testData/diagnostics/inlineCallCycle/transitiveInlineCycle.kt");
+    }
   }
 }
