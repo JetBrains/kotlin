@@ -217,14 +217,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension: KotlinMultiplatformExtension,
         cocoapodsExtension: CocoapodsExtension,
     ) = project.whenEvaluated {
-        val xcodeConfiguration = project.providers.gradleProperty(CONFIGURATION_PROPERTY)
-        val platforms = project.providers.gradleProperty(PLATFORM_PROPERTY)
+        val xcodeConfiguration = project.propertiesService.flatMap { it.property(CONFIGURATION_PROPERTY, project) }
+        val platforms = project.propertiesService.flatMap { it.property(PLATFORM_PROPERTY, project) }
             .map { it.split(",", " ").filter(String::isNotBlank) }
-        val archs = project.providers.gradleProperty(ARCHS_PROPERTY)
+        val archs = project.propertiesService.flatMap { it.property(ARCHS_PROPERTY, project) }
             .map { it.split(",", " ").filter(String::isNotBlank) }
 
         if (platforms.isPresent.not() || archs.isPresent.not()) {
-            check(project.providers.gradleProperty(TARGET_PROPERTY).isPresent.not()) {
+            val target = project.propertiesService.flatMap { it.property(TARGET_PROPERTY, project) }
+            check(target.isPresent.not()) {
                 """
                 $TARGET_PROPERTY property was dropped in favor of $PLATFORM_PROPERTY and $ARCHS_PROPERTY. 
                 Podspec file might be outdated. Sync project with Gradle files or run the 'podspec' task manually to regenerate it.
@@ -392,7 +393,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension,
     ): TaskProvider<PodspecTask> {
-        val generateWrapper = project.providers.gradleProperty(GENERATE_WRAPPER_PROPERTY).map { it.toBoolean() }.orElse(false)
+        val generateWrapper = project.propertiesService.flatMap {
+            it.property(GENERATE_WRAPPER_PROPERTY, project)
+        }.map { it.toBoolean() }.orElse(false)
 
         return project.registerTask<PodspecTask>(POD_SPEC_TASK_NAME) { task ->
             task.group = TASK_GROUP
