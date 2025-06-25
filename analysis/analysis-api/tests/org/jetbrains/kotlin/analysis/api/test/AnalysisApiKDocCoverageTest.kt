@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.tools.analysisApiKdocCoverageTest
+package org.jetbrains.kotlin.analysis.api.test
 
 import org.jetbrains.kotlin.util.KDocCoverageTest
+import org.junit.jupiter.api.Test
 
-class AnalysisApiKDocCoverageTest() : KDocCoverageTest() {
+class AnalysisApiKDocCoverageTest : KDocCoverageTest() {
     override val sourceDirectories: List<DocumentationLocations> = listOf(
         DocumentationLocations(
             listOf("/analysis/analysis-api/src/org/jetbrains/kotlin/analysis/api"),
@@ -19,6 +20,7 @@ class AnalysisApiKDocCoverageTest() : KDocCoverageTest() {
         ),
     )
 
+    @Test
     fun testKDocCoverage() {
         doTest()
     }

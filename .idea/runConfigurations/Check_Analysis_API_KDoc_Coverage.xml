@@ -2,7 +2,7 @@
   <configuration default="false" name="Check Analysis API KDoc Coverage" type="GradleRunConfiguration" factoryName="Gradle" folderName="Analysis">
     <ExternalSystemSettings>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/analysis" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
@@ -10,15 +10,20 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":analysis:analysis-tools:analysis-api-kdoc-coverage-test:test" />
+          <option value=":analysis:analysis-api:test" />
+          <option value="--tests" />
+          <option value="org.jetbrains.kotlin.analysis.api.test.AnalysisApiKDocCoverageTest" />
         </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
     <DebugAllEnabled>false</DebugAllEnabled>
     <RunAsTest>true</RunAsTest>
+    <GradleProfilingDisabled>false</GradleProfilingDisabled>
+    <GradleCoverageDisabled>false</GradleCoverageDisabled>
     <method v="2" />
   </configuration>
 </component>
