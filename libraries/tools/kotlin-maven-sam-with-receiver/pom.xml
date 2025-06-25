@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-sam-with-receiver</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven Sam with Receiver</name>
     <description>"SAM with Receiver" plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>

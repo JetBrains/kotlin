@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-lombok</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven Lombok</name>
     <description>Lombok plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>
