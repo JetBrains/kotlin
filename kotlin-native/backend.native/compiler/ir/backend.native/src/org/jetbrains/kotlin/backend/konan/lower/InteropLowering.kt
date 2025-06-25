@@ -64,19 +64,15 @@ private abstract class BaseInteropIrTransformer(
         protected val irFile: IrFile?,
 ) : IrBuildingTransformer(context) {
     protected val symbols = context.symbols
-    private val counterHolder = CounterHolder()
-
-    protected fun resetCounter() {
-        counterHolder.counter = 0
-    }
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
+            counterHolder: CounterHolder,
             owner: IrDeclarationContainer,
             element: IrElement? = null,
             block: KotlinStubs.() -> T
     ): T {
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(element) {
+        val result = createKotlinStubs(counterHolder, element) {
             it.parent = owner
             addedDeclarations += it
         }.block()
@@ -91,9 +87,8 @@ private abstract class BaseInteropIrTransformer(
             element: IrElement? = null,
             block: KotlinStubs.() -> IrExpression
     ): IrExpression {
-        resetCounter()
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(element) {
+        val result = createKotlinStubs(CounterHolder(), element) {
             it.parent = parent
             addedDeclarations += it
         }.block()
@@ -111,10 +106,9 @@ private abstract class BaseInteropIrTransformer(
         }
     }
 
-    private fun createKotlinStubs(element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
+    private fun createKotlinStubs(counterHolder: CounterHolder, element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
         return object : KotlinStubs {
             private val scopes = mutableListOf<MutableList<String>>()
-            private val counterHolder = this@BaseInteropIrTransformer.counterHolder
 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.symbols
@@ -746,7 +740,7 @@ private class InteropTransformerPart2(
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {
-            resetCounter()
+            val counterHolder = CounterHolder()
             val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
                 function.overriddenSymbols.mapNotNull {
@@ -755,7 +749,7 @@ private class InteropTransformerPart2(
                         null
                     } else {
                         uniq += selector
-                        generateDeclarationWithStubs(declaration, it.owner) {
+                        generateDeclarationWithStubs(counterHolder, declaration, it.owner) {
                             generateCFunctionAndFakeKotlinExternalFunction(
                                     function,
                                     it.owner,
