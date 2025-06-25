@@ -559,7 +559,6 @@ fun AbstractDokkaTask.fixIntersectedSourceRootsAndSamples(
 
         // replace samples here
         sourceSet.samples.setFrom(sourceSet.samples.map { replacements[it] ?: it })
-        sourceSet.samples.forEach { println(it) }
     }
 
     val kotlin_library_url = "https://github.com/JetBrains/kotlin/tree/$githubRevision/libraries/$libraryName"
