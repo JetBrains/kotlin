@@ -18,7 +18,7 @@ class PsiKDocCoverageTest : AbstractKDocCoverageTest() {
                 "compiler/psi/psi-utils/src/org/jetbrains/kotlin",
                 "compiler/psi/psi-frontend-utils/src/org/jetbrains/kotlin",
             ),
-            "compiler/psi/psi-api/api/psi.undocumented",
+            "compiler/psi/psi-api/api/psi-api.undocumented",
         )
     )
 
