@@ -62,6 +62,7 @@ private enum class TestProperty(shortName: String) {
 
 private open class NativeArgsProvider @Inject constructor(
     project: Project,
+    inputs: TaskInputs,
     private val layout: ProjectLayout,
     private val objects: ObjectFactory,
     private val providers: ProviderFactory,
@@ -97,6 +98,16 @@ private open class NativeArgsProvider @Inject constructor(
             }
         }
 
+    init {
+        TestProperty.values().forEach { p ->
+            val value = providers.testProperty(p)
+            definedProperties[p] = value
+            value.orNull?.let {
+                inputs.property(p.shortName, it)
+            }
+        }
+    }
+
     @get:Input
     @get:Optional
     protected val testTarget = gradleProperty(TEST_TARGET)
@@ -104,69 +115,9 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Input
     @get:Optional
     @Suppress("unused") // used by Gradle via reflection
-    protected val testMode = gradleProperty(TEST_MODE)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
     protected val testKind = gradleProperty(TEST_KIND) {
         set(providers.testProperty(FORCE_STANDALONE).map { "STANDALONE" })
     }
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val compileOnly = gradleProperty(COMPILE_ONLY)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val optimizationMode = gradleProperty(OPTIMIZATION_MODE)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val useThreadStateChecker = gradleProperty(USE_THREAD_STATE_CHECKER)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val gcType = gradleProperty(GC_TYPE)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val gcScheduler = gradleProperty(GC_SCHEDULER)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val allocator = gradleProperty(ALLOCATOR)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val cacheMode = gradleProperty(CACHE_MODE)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val executionTimeout = gradleProperty(EXECUTION_TIMEOUT)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val sanitizer = gradleProperty(SANITIZER)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val sharedTestExecution = gradleProperty(SHARED_TEST_EXECUTION)
-
-    @get:Input
-    @get:Optional
-    @Suppress("unused") // used by Gradle via reflection
-    protected val eagerGroupCreation = gradleProperty(EAGER_GROUP_CREATION)
 
     @get:Input
     @get:Optional
@@ -288,7 +239,7 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
+        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, inputs, requirePlatformLibs).apply {
             this.compilerClasspath.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
             this.customKLibs.from(customTestDependencies)
