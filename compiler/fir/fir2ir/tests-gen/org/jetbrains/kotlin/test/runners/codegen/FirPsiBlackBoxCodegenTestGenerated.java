@@ -54887,6 +54887,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("anonymousContextParameter.kt")
+      public void testAnonymousContextParameter() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/anonymousContextParameter.kt");
+      }
+
+      @Test
       @TestMetadata("bigArity.kt")
       public void testBigArity() {
         runTest("compiler/testData/codegen/box/reflection/parameters/bigArity.kt");
