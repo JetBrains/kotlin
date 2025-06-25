@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -216,8 +219,6 @@ abstract class Symbols(
     abstract val continuationClass: IrClassSymbol
 
     abstract val coroutineContextGetter: IrSimpleFunctionSymbol
-
-    abstract val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
 
     abstract val coroutineGetContext: IrSimpleFunctionSymbol
 
