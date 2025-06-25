@@ -436,11 +436,16 @@ internal fun KotlinStubs.generateObjCCall(
             callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
         }
 
-        val libraryName = if (method.parent is IrClass)
+        // The library is saved to not lose an implicit edge in the dependencies graph (see DependenciesTracker.kt)
+        val libraryName = if (method.parent is IrClass) {
+            // Obj-C class/protocol. No need in saving the library, as to get an instance,
+            // an explicit call must have been executed and no edge would be lost.
             ""
-        else method.getPackageFragment().konanLibrary.let {
-            require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
-            it.libraryName
+        } else { // Category-provided.
+            method.getPackageFragment().konanLibrary.let {
+                require(it?.isCInteropLibrary() == true) { "Expected a function from a cinterop library: ${method.render()}" }
+                it.libraryName
+            }
         }
 
         callBuilder.finishBuilding(libraryName)
