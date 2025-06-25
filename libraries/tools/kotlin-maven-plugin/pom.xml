@@ -15,6 +15,10 @@
     <artifactId>kotlin-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
+    <name>Kotlin Maven Plugin</name>
+    <description>Kotlin plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>

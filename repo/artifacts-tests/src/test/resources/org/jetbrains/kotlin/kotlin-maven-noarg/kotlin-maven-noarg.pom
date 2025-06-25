@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-noarg</artifactId>
     <packaging>jar</packaging>
 
-    <description>All-open plugin for Maven</description>
+    <name>Kotlin Maven No-arg</name>
+    <description>No-arg plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>

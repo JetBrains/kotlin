@@ -18,7 +18,9 @@
     <artifactId>kotlin-maven-serialization</artifactId>
     <packaging>jar</packaging>
 
+    <name>Kotlin Maven Serialization</name>
     <description>Serialization plugin for Maven</description>
+    <url>https://kotlinlang.org/</url>
 
     <dependencies>
         <dependency>
