@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
+// ISSUE: KT-77131
 
 import kotlin.reflect.KProperty
 
@@ -10,7 +11,7 @@ class A {
 val aTopLevel: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
 
 class Delegate {
-  fun getValue(t: Any?, p: KProperty<*>, a: Int): Int {
+  operator fun getValue(t: Any?, p: KProperty<*>, a: Int): Int {
     return a
   }
 }
