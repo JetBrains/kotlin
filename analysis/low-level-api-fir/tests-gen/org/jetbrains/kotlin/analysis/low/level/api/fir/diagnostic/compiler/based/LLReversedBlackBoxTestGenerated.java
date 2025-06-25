@@ -54968,6 +54968,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("contextParametersToString.kt")
+      public void testContextParametersToString() {
+        runTest("compiler/testData/codegen/box/reflection/methodsFromAny/contextParametersToString.kt");
+      }
+
+      @Test
       @TestMetadata("extensionPropertyReceiverToString.kt")
       public void testExtensionPropertyReceiverToString() {
         runTest("compiler/testData/codegen/box/reflection/methodsFromAny/extensionPropertyReceiverToString.kt");

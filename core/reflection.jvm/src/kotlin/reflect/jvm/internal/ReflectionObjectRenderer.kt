@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import kotlin.reflect.*
+import kotlin.reflect.full.contextParameters
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.jvmName
@@ -38,6 +39,16 @@ internal object ReflectionObjectRenderer {
         }
         receivers.getOrNull(0)?.let { appendReceiverType(it) }
         receivers.getOrNull(1)?.let { append("(").appendReceiverType(it).append(")") }
+    }
+
+    @OptIn(ExperimentalContextParameters::class)
+    private fun StringBuilder.appendContexts(callable: KCallable<*>) {
+        val parameters = callable.contextParameters
+        if (parameters.isEmpty()) return
+
+        parameters.joinTo(this, prefix = "context(", postfix = ") ") { parameter ->
+            (parameter.name ?: "_") + ": " + parameter.type
+        }
     }
 
     private fun StringBuilder.appendName(name: String) {
@@ -55,6 +66,7 @@ internal object ReflectionObjectRenderer {
     // TODO: include visibility
     fun renderProperty(property: KProperty<*>): String {
         return buildString {
+            appendContexts(property)
             append(if (property is KMutableProperty<*>) "var " else "val ")
             appendReceivers(property)
             appendName(property.name)
@@ -66,6 +78,7 @@ internal object ReflectionObjectRenderer {
 
     fun renderFunction(function: KFunction<*>): String {
         return buildString {
+            appendContexts(function)
             append("fun ")
             appendReceivers(function)
             appendName(function.name)
