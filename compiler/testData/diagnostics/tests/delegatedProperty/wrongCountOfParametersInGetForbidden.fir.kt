@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: -ForbidGetSetValueWithTooManyParameters
+// LANGUAGE: +ForbidGetSetValueWithTooManyParameters
 // ISSUE: KT-77131
 
 import kotlin.reflect.KProperty
@@ -12,7 +12,7 @@ class A {
 val aTopLevel: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
 
 class Delegate {
-  <!INAPPLICABLE_OPERATOR_MODIFIER_WARNING!>operator<!> fun getValue(t: Any?, p: KProperty<*>, a: Int): Int {
+  <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun getValue(t: Any?, p: KProperty<*>, a: Int): Int {
     return a
   }
 }

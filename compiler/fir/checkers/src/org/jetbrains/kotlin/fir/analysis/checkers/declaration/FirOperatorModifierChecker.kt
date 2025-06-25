@@ -34,6 +34,9 @@ object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
             is CheckResult.IllegalSignature -> {
                 reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, checkResult.error)
             }
+            is CheckResult.DeprecatedSignature -> {
+                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER_WARNING, checkResult.error)
+            }
             CheckResult.AnonymousOperatorFunction -> {
                 reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, "anonymous function")
             }

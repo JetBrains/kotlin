@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// LANGUAGE: -ForbidGetSetValueWithTooManyParameters
+// LANGUAGE: +ForbidGetSetValueWithTooManyParameters
 // ISSUE: KT-77131
 
 import kotlin.reflect.KProperty

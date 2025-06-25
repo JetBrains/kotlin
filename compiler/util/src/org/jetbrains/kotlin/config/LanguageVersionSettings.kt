@@ -439,6 +439,7 @@ enum class LanguageFeature(
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-77156"),
     AllowReifiedTypeInCatchClause(KOTLIN_2_4, issue = "KT-54363"),
+    ForbidGetSetValueWithTooManyParameters(KOTLIN_2_4, issue = "KT-77131"),
 
     // End of 2.* language features --------------------------------------------------
 

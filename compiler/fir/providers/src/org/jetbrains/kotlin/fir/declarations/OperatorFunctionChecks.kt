@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class CheckResult(val isSuccess: Boolean) {
     class IllegalSignature(val error: String) : CheckResult(false)
+    class DeprecatedSignature(val error: String) : CheckResult(false)
     object IllegalFunctionName : CheckResult(false)
     object AnonymousOperatorFunction : CheckResult(false)
     object SuccessCheck : CheckResult(true)
@@ -39,10 +40,16 @@ object OperatorFunctionChecks {
         val checks = checksByName.getOrElse(function.name) {
             regexChecks.find { it.first.matches(function.name.asString()) }?.second
         } ?: return CheckResult.IllegalFunctionName
-
         for (check in checks) {
-            check.check(function, session, scopeSession)?.let { return CheckResult.IllegalSignature(it) }
+            check.check(function, session, scopeSession)?.let {
+                val feature = check.feature
+                if (feature == null || session.languageVersionSettings.supportsFeature(feature)) {
+                    return CheckResult.IllegalSignature(it)
+                }
+                return CheckResult.DeprecatedSignature(it)
+            }
         }
+
         return CheckResult.SuccessCheck
     }
 
@@ -61,14 +68,18 @@ object OperatorFunctionChecks {
         checkFor(
             OperatorNameConventions.GET_VALUE,
             Checks.memberOrExtension,
-            Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(2),
+            Checks.noDefaultAndVarargs,
+            Checks.ValueParametersCount.atLeast(2),
+            Checks.ValueParametersCount.atMost(2, LanguageFeature.ForbidGetSetValueWithTooManyParameters),
             Checks.isKProperty,
             Checks.nonSuspend,
         )
         checkFor(
             OperatorNameConventions.SET_VALUE,
             Checks.memberOrExtension,
-            Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(3),
+            Checks.noDefaultAndVarargs,
+            Checks.ValueParametersCount.atLeast(3),
+            Checks.ValueParametersCount.atMost(3, LanguageFeature.ForbidGetSetValueWithTooManyParameters),
             Checks.isKProperty,
             Checks.nonSuspend,
         )
@@ -165,16 +176,22 @@ object OperatorFunctionChecks {
 }
 
 private abstract class Check {
+    open val feature: LanguageFeature? = null
+
     abstract fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String?
 }
 
 private object Checks {
     fun simple(
         message: String,
+        feature: LanguageFeature? = null,
         requiredResolvePhase: ((FirSimpleFunction) -> FirResolvePhase?)? = null,
         predicate: (FirSimpleFunction, FirSession) -> Boolean,
     ) =
         object : Check() {
+            override val feature: LanguageFeature?
+                get() = feature
+
             override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
                 message.takeIf {
                     requiredResolvePhase?.invoke(function)?.let { function.lazyResolveToPhase(it) }
@@ -203,7 +220,7 @@ private object Checks {
         it.dispatchReceiverType != null
     }
 
-    val nonSuspend = simple("must not be suspend", { _ -> FirResolvePhase.STATUS }) { it, _ ->
+    val nonSuspend = simple("must not be suspend", feature = null, requiredResolvePhase = { _ -> FirResolvePhase.STATUS }) { it, _ ->
         !it.isSuspend
     }
 
@@ -214,6 +231,13 @@ private object Checks {
 
         fun exactly(n: Int) = simple("must have exactly $n value parameters") { it, _ ->
             it.valueParameters.size == n
+        }
+
+        fun atMost(n: Int, feature: LanguageFeature? = null) = simple(
+            message = "must have at most $n value parameter" + (if (n > 1) "s" else ""),
+            feature = feature,
+        ) { it, _ ->
+            it.valueParameters.size <= n
         }
 
         val single = simple("must have a single value parameter") { it, _ ->
@@ -229,7 +253,8 @@ private object Checks {
         fun returnsCheck(message: String, predicate: (FirSimpleFunction, FirSession) -> Boolean): Check =
             simple(
                 message,
-                { fn ->
+                feature = null,
+                requiredResolvePhase = { fn ->
                     when (fn.returnTypeRef) {
                         is FirResolvedTypeRef -> null
                         is FirImplicitTypeRef -> FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
@@ -253,7 +278,10 @@ private object Checks {
     }
 
     val noDefaultAndVarargs =
-        simple("should not have varargs or parameters with default values", { _ -> FirResolvePhase.BODY_RESOLVE }) { it, _ ->
+        simple(
+            "should not have varargs or parameters with default values", feature = null,
+            requiredResolvePhase = { _ -> FirResolvePhase.BODY_RESOLVE })
+        { it, _ ->
             it.valueParameters.all { param ->
                 param.defaultValue == null && !param.isVararg
             }

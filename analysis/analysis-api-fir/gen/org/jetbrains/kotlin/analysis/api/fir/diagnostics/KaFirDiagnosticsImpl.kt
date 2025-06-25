@@ -1659,6 +1659,12 @@ internal class InapplicableOperatorModifierImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableOperatorModifier
 
+internal class InapplicableOperatorModifierWarningImpl(
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableOperatorModifierWarning
+
 internal class NoExplicitVisibilityInApiModeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

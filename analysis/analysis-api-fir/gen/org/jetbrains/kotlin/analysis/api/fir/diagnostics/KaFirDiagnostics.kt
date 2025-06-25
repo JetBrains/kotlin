@@ -1386,6 +1386,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val message: String
     }
 
+    interface InapplicableOperatorModifierWarning : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InapplicableOperatorModifierWarning::class
+        val message: String
+    }
+
     interface NoExplicitVisibilityInApiMode : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = NoExplicitVisibilityInApiMode::class
     }
