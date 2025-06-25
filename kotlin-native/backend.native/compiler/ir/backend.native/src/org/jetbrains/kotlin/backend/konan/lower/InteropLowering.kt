@@ -131,8 +131,9 @@ private abstract class BaseInteropIrTransformer(
                 scopes.peek()!!.addAll(lines)
             }
 
-            override fun getC(): List<String> {
-                return scopes.peek()!!
+            override fun flushC(): List<String> {
+                val top = scopes.peek()!!
+                return top.toList().also { top.clear() }
             }
 
             override fun enterScope() {
@@ -140,6 +141,7 @@ private abstract class BaseInteropIrTransformer(
             }
 
             override fun exitScope() {
+                require(scopes.peek()?.isEmpty() == true)
                 scopes.pop()
             }
 
