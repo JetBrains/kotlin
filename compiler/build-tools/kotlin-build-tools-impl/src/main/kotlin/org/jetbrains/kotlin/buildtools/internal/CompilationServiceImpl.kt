@@ -101,15 +101,27 @@ internal object CompilationServiceImpl : CompilationService {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
+        val kotlinFilenameExtensions =
+            (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfig.kotlinScriptFilenameExtensions)
+        val (filteredSources, unknownSources) = sources.partition { it.isJavaFile() || it.isKotlinFile(kotlinFilenameExtensions) }
+        if (unknownSources.isNotEmpty()) {
+            compilationConfig.logger.warn("Sources with unknown extensions were passed, they will be skipped: ${unknownSources.joinToString()}")
+        }
         return when (val selectedStrategy = strategyConfig.selectedStrategy) {
-            is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, compilationConfig, sources, arguments)
+            is CompilerExecutionStrategy.InProcess -> compileInProcess(
+                loggerAdapter,
+                compilationConfig,
+                kotlinFilenameExtensions,
+                filteredSources,
+                arguments,
+            )
             is CompilerExecutionStrategy.Daemon -> compileWithinDaemon(
                 projectId,
                 loggerAdapter,
                 selectedStrategy,
                 compilationConfig,
-                sources,
-                arguments
+                filteredSources,
+                arguments,
             )
         }
     }
@@ -143,6 +155,7 @@ internal object CompilationServiceImpl : CompilationService {
     private fun compileInProcess(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
         compilationConfiguration: JvmCompilationConfigurationImpl,
+        kotlinFilenameExtensions: Set<String>,
         sources: List<File>,
         arguments: List<String>,
     ): CompilationResult {
@@ -157,11 +170,12 @@ internal object CompilationServiceImpl : CompilationService {
         val aggregatedIcConfiguration = compilationConfiguration.aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
-                val kotlinFilenameExtensions =
-                    (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + compilationConfiguration.kotlinScriptFilenameExtensions)
-
                 @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(parsedArguments, kotlinFilenameExtensions, true) + sources
+                val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
+                    parsedArguments,
+                    kotlinFilenameExtensions,
+                    includeJavaSources = true
+                ) + sources
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
