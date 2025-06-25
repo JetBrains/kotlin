@@ -166,7 +166,15 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             firElementByPsiElementChooser.isMatchingClassLikeDeclaration(classId, declaration, classCandidate.fir)
         ) {
             return classCandidate.fir
+        }
+
+        if (classCandidate != null) {
+            // In many cases, analysis still works if we return the wrong candidate FIR declaration, since it's likely to have the same
+            // shape as the actual sought declaration. We don't log an error here because we already have enough data to implement KT-72998
+            // and want to avoid spamming our users with errors.
+            return classCandidate.fir
         } else {
+            @Suppress("SENSELESS_COMPARISON")
             errorWithFirSpecificEntries(
                 "We should be able to find a symbol for $classId (has candidate: ${classCandidate != null})",
                 psi = declaration,
@@ -224,7 +232,6 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         return (if (declaration.isGetter) firProperty.getter else firProperty.setter)
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for property accessor", psi = declaration)
     }
-
 }
 
 // Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
