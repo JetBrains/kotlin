@@ -807,12 +807,15 @@ fun IrValueParameter.copyTo(
             endOffset = originalDefault.endOffset,
             expression = originalDefault.expression.run {
                 val symbolRemapper = object : DeepCopySymbolRemapper() {
+                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
+                        remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
+
                     override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
                         remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
                 }
                 acceptVoid(symbolRemapper)
-                val typeRemapper = IrTypeParameterRemapper(remapTypeMap)
-                transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(irFunction)
+                transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(irFunction)
             },
         )
     }
