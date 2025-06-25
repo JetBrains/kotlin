@@ -807,12 +807,15 @@ fun IrValueParameter.copyTo(
             endOffset = originalDefault.endOffset,
             expression = originalDefault.expression.run {
                 val symbolRemapper = object : DeepCopySymbolRemapper() {
+                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
+                        remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
+
                     override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol =
                         remapDefaultValueSymbolMap[symbol] ?: super.getReferencedValueParameter(symbol)
                 }
                 acceptVoid(symbolRemapper)
-                val typeRemapper = IrTypeParameterRemapper(remapTypeMap)
-                transform(DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper), null).patchDeclarationParents(irFunction)
+                transform(DeepCopyIrTreeWithSymbols(symbolRemapper), null).patchDeclarationParents(irFunction)
             },
         )
     }
@@ -938,6 +941,7 @@ fun IrFunction.copyValueParametersToStatic(
     assert(target.parameters.isEmpty())
 
     val parameterMapping = mutableMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
     target.parameters += source.parameters.map { param ->
         val name = when (param.kind) {
             IrParameterKind.DispatchReceiver -> Name.identifier("\$this")
@@ -952,18 +956,17 @@ fun IrFunction.copyValueParametersToStatic(
             assert(dispatchReceiverType!!.isSubtypeOfClass(param.type.classOrNull!!)) {
                 "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${param.type.render()}"
             }
-            dispatchReceiverType.remapTypeParameters(
-                (param.parent as IrTypeParametersContainer).classIfConstructor,
-                target.classIfConstructor
-            )
+            dispatchReceiverType
         } else param.type
 
-        val typeParameterMapping = source.typeParameters.zip(target.typeParameters).toMap()
-
+        val remappedType = type.remapTypeParameters(
+            (param.parent as IrTypeParametersContainer).classIfConstructor,
+            target.classIfConstructor
+        )
         param.copyTo(
             target,
             origin = origin,
-            type = type.remapTypeParameters(source.classIfConstructor, target.classIfConstructor),
+            type = remappedType,
             name = name,
             kind = IrParameterKind.Regular,
             remapTypeMap = typeParameterMapping,

@@ -3,13 +3,19 @@
 /* FILE package=<root> fileName=A.kt */
 
 /* TARGET declaration */ private fun <T : Any?> foo(x: T, y: Box<T>): T
-internal inline fun bar(): String
-    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "OK")
+internal inline fun useFoo(): String
+    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "O")
+/* TARGET declaration */ private fun <T : Any?> bar(x: T, y: Box<T>): T
+internal inline fun useBar(): String
+    /* ACCESSOR use-site */ access$bar$tAKt<String>(x = "K")
 /* ACCESSOR declaration */ internal fun <T : Any?> access$foo$tAKt(x: T, y: Box<T>): T
     /* TARGET use-site */ foo<T>(x = x, y = y)
+/* ACCESSOR declaration */ internal fun <T : Any?> access$bar$tAKt(x: T, y: Box<T>): T
+    /* TARGET use-site */ bar<T>(x = x, y = y)
 
 
 /* FILE package=<root> fileName=B.kt */
 
 public fun box(): String
-    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "OK")
+    /* ACCESSOR use-site */ access$foo$tAKt<String>(x = "O")
+    /* ACCESSOR use-site */ access$bar$tAKt<String>(x = "K")
