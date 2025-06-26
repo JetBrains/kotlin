@@ -292,6 +292,21 @@ private class SyntheticAccessorTransformer(
         )
     }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+        val function = expression.symbol.owner
+
+        if (function is IrConstructor) {
+            val generatedAccessor = when {
+                accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(function) -> accessorGenerator.getSyntheticConstructorWithMangledParams(function)
+                accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(function) -> accessorGenerator.getSyntheticConstructorOfSealedClass(function)
+                else -> return super.visitRawFunctionReference(expression)
+            }
+            expression.symbol = generatedAccessor.symbol
+        }
+
+        return super.visitRawFunctionReference(expression)
+    }
+
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {

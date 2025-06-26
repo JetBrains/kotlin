@@ -258,6 +258,20 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 return newCall
             }
 
+
+            override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.isInner) return expression
+
+                val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+
+                expression.symbol = newCallee.symbol
+                return expression
+            }
+
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
