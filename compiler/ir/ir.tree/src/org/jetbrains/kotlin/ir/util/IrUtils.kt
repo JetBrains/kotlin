@@ -792,7 +792,11 @@ fun IrValueParameter.copyTo(
         irFunction.classIfConstructor,
         remapTypeMap
     ),
-    varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
+    varargElementType: IrType? = this.varargElementType?.remapTypeParameters(
+        (parent as IrTypeParametersContainer).classIfConstructor,
+        irFunction.classIfConstructor,
+        remapTypeMap
+    ),
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline,
