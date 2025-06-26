@@ -833,4 +833,20 @@ internal class KlibVerificationTests : BaseKotlinGradleTest() {
                 .contains("+// Targets: [linuxArm64]")
         }
     }
+
+    @Test
+    fun `check depends on checkLegacyAbi`() {
+        val runner = test {
+            baseProjectSetting()
+            addToSrcSet("/examples/classes/AnotherBuildConfig.kt")
+            runner {
+                arguments.add(":check")
+            }
+        }
+
+        runner.build().apply {
+            assertTaskSuccess(":checkLegacyAbi")
+            assertTaskSuccess(":check")
+        }
+    }
 }

@@ -10,6 +10,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationKlibKindExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformExtension
@@ -124,6 +125,10 @@ internal fun AbiValidationVariantSpecImpl.configureLegacyTasks(
         it.variantName.convention(variantName)
 
         it.onlyIf { isEnabled.get() }
+
+        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) { check ->
+            check.dependsOn(it)
+        }
     }
 
     tasks.register(KotlinLegacyAbiUpdateTask.nameForVariant(variantName), KotlinLegacyAbiUpdateTask::class.java) {
