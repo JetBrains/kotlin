@@ -8,29 +8,30 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.elements.KtConstructorElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-class KotlinConstructorStubImpl<T : KtConstructor<T>>(
+class KotlinSecondaryConstructorStubImpl(
     parent: StubElement<out PsiElement>?,
-    elementType: KtConstructorElementType<T>,
     private val containingClassName: StringRef?,
     private val hasBody: Boolean,
     private val isDelegatedCallToThis: Boolean,
     private val isExplicitDelegationCall: Boolean,
     private val mayHaveContract: Boolean,
-) : KotlinStubBaseImpl<T>(parent, elementType), KotlinConstructorStub<T> {
-    override fun getFqName() = null
-    override fun getName() = StringRef.toString(containingClassName)
-    override fun isTopLevel() = false
-    override fun isExtension() = false
+) : KotlinStubBaseImpl<KtSecondaryConstructor>(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR),
+    KotlinConstructorStub<KtSecondaryConstructor> {
+    override fun getFqName(): FqName? = null
+    override fun getName(): String? = StringRef.toString(containingClassName)
+    override fun isTopLevel(): Boolean = false
+    override fun isExtension(): Boolean = false
     override fun mayHaveContract(): Boolean = mayHaveContract
 
     // It cannot have expression body
     override fun hasBlockBody(): Boolean = true
 
-    override fun hasBody() = hasBody
-    override fun isDelegatedCallToThis() = isDelegatedCallToThis
-    override fun isExplicitDelegationCall() = isExplicitDelegationCall
+    override fun hasBody(): Boolean = hasBody
+    override fun isDelegatedCallToThis(): Boolean = isDelegatedCallToThis
+    override fun isExplicitDelegationCall(): Boolean = isExplicitDelegationCall
 }

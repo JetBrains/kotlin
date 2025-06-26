@@ -2073,7 +2073,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType.Companion.kindToConstantElementType(ConstantValueKind)
-org.jetbrains.kotlin.psi.stubs.elements.KtConstructorElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtContractEffectListElementType
@@ -2247,7 +2246,6 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKind.UBYTE
 org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKind.UINT
 org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKind.ULONG
 org.jetbrains.kotlin.psi.stubs.impl.KotlinConstantValueKind.USHORT
-org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContextReceiverStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractConstantValues.FALSE
@@ -2296,10 +2294,12 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement, IStubElementType)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl:constructor(StubElement, boolean, boolean, boolean, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
+org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStubBaseImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin

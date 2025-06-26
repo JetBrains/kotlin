@@ -5,30 +5,41 @@
 package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
+import java.io.IOException
 
-class KtPrimaryConstructorElementType(debugName: String) :
-    KtConstructorElementType<KtPrimaryConstructor>(debugName, KtPrimaryConstructor::class.java, KotlinConstructorStub::class.java) {
-    override fun newStub(
+class KtPrimaryConstructorElementType(@NonNls debugName: String) :
+    KtStubElementType<KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>(
+        /* debugName = */ debugName,
+        /* psiClass = */ KtPrimaryConstructor::class.java,
+        /* stubClass = */ KotlinConstructorStub::class.java,
+    ) {
+
+    override fun createStub(
+        psi: KtPrimaryConstructor,
         parentStub: StubElement<*>,
-        nameRef: StringRef?,
-        hasBody: Boolean,
-        isDelegatedCallToThis: Boolean,
-        isExplicitDelegationCall: Boolean,
-        mayHaveContract: Boolean,
-    ): KotlinConstructorStub<KtPrimaryConstructor> = KotlinConstructorStubImpl(
+    ): KotlinConstructorStub<KtPrimaryConstructor> = KotlinPrimaryConstructorStubImpl(
         parent = parentStub,
-        elementType = KtStubElementTypes.PRIMARY_CONSTRUCTOR,
-        containingClassName = nameRef,
-        hasBody = hasBody,
-        isDelegatedCallToThis = isDelegatedCallToThis,
-        isExplicitDelegationCall = isExplicitDelegationCall,
-        mayHaveContract = mayHaveContract,
+        containingClassName = StringRef.fromString(psi.name),
     )
 
-    override fun isDelegatedCallToThis(constructor: KtPrimaryConstructor) = false
-    override fun isExplicitDelegationCall(constructor: KtPrimaryConstructor) = false
+    @Throws(IOException::class)
+    override fun serialize(stub: KotlinConstructorStub<KtPrimaryConstructor>, dataStream: StubOutputStream) {
+        dataStream.writeName(stub.name)
+    }
+
+    @Throws(IOException::class)
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinConstructorStub<KtPrimaryConstructor> {
+        val name = dataStream.readName()
+        return KotlinPrimaryConstructorStubImpl(
+            parent = parentStub,
+            containingClassName = name,
+        )
+    }
 }
