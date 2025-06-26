@@ -623,38 +623,39 @@ private fun createFileLoweringPhase(
         name: String,
         lowering: (NativeGenerationState) -> FileLoweringPass,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+) = createFileLoweringPhaseImpl(
         name,
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
-        prerequisite = prerequisite,
-        outputIfNotEnabled = { _, _, _, irFile -> irFile },
-        op = { context, irFile ->
-            lowering(context).lower(irFile)
-            irFile
-        }
-)
+        prerequisite
+) { context, irFile ->
+    lowering(context).lower(irFile)
+}
 
 private fun createFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+) = createFileLoweringPhaseImpl(
         name,
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
-        prerequisite = prerequisite,
-        outputIfNotEnabled = { _, _, _, irFile -> irFile },
-        op = { context, irFile ->
-            lowering(context.context).lower(irFile)
-            irFile
-        }
-)
+        prerequisite
+) { context, irFile ->
+    lowering(context.context).lower(irFile)
+}
 
 private fun createFileLoweringPhase(
         op: (context: Context, irFile: IrFile) -> Unit,
         name: String,
         prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
+) = createFileLoweringPhaseImpl(
+        name,
+        prerequisite
+) { context, irFile ->
+    op(context.context, irFile)
+}
+
+private fun createFileLoweringPhaseImpl(
+        name: String,
+        prerequisite: Set<NamedCompilerPhase<*, *, *>>,
+        op: (NativeGenerationState, IrFile) -> Unit
 ): NamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         preactions = getDefaultIrActions(),
@@ -662,7 +663,7 @@ private fun createFileLoweringPhase(
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
-            op(context.context, irFile)
+            op(context, irFile)
             irFile
         }
 )
