@@ -265,6 +265,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
     }
 
+    @Override
     public boolean mayHaveContract() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {

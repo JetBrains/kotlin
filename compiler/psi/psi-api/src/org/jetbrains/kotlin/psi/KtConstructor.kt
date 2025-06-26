@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
@@ -95,6 +96,16 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
 
     fun hasConstructorKeyword(): Boolean = stub != null || getConstructorKeyword() != null
+
+    override fun mayHaveContract(): Boolean {
+        val stub = greenStub
+        if (stub != null) {
+            return stub.mayHaveContract()
+        }
+
+        @OptIn(KtImplementationDetail::class)
+        return isContractPresentPsiCheck()
+    }
 
     override fun getTextOffset(): Int {
         return getConstructorKeyword()?.textOffset
