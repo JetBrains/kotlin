@@ -22,7 +22,7 @@ FILE: nullableTypeDelegate.kt
                 ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.getValue: R|MyClassSome?|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|)
             }
             public set(<set-?>: R|MyClassSome?|): R|kotlin/Unit| {
-                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|, R|<local>/other|)
+                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|, R|<local>/<set-?>|)
             }
 
         public final fun set(link: R|MyClassSome?|): R|kotlin/Unit| {

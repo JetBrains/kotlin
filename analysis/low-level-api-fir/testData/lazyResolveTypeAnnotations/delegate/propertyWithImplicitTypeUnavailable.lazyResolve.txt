@@ -371,7 +371,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailable.kt
             ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
         }
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
-            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
         }
 
 CONSTANT_EVALUATION:
@@ -414,7 +414,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailable.kt
             ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
         }
         public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
-            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
         }
 
 ANNOTATION_ARGUMENTS:
@@ -457,7 +457,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailable.kt
             ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
         }
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
         }
 
 BODY_RESOLVE:
@@ -500,7 +500,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailable.kt
             ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
         }
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
         }
 
 FILE RAW TO BODY:
@@ -546,5 +546,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeUnavailable.kt
             ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
         }
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
         }
