@@ -37,6 +37,6 @@ class FirWebReflectionAPICallChecker(val isWasm: Boolean) : AbstractFirReflectio
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun report(source: KtSourceElement?) {
         val backend = if (isWasm) "Wasm" else "JS"
-        reporter.reportOn(source, FirWebCommonErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin/$backend backend.")
+        reporter.reportOn(source, FirWebCommonErrors.UNSUPPORTED_REFLECTION_API, "This reflection API is not supported in Kotlin/$backend.")
     }
 }
