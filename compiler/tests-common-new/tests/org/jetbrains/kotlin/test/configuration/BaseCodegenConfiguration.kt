@@ -292,6 +292,9 @@ fun TestConfigurationBuilder.configureJvmBoxCodegenSettings(includeAllDumpHandle
     }
 
     forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+        configureFirHandlersStep {
+            useHandlers(::FirInterpreterDumpHandler)
+        }
         configureJvmArtifactsHandlersStep {
             useHandlers(::JvmIrInterpreterDumpHandler)
         }

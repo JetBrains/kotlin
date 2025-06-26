@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -112,9 +113,12 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
     }
 }
 
-interface FirEvaluatorDumpHandler : EvaluatorHandler {
-    fun processFirModule(module: TestModule, info: FirOutputArtifact): Map<TestFile, List<ParsedCodeMetaInfo>> {
-        return buildMap {
+class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices), EvaluatorHandler {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
+    override fun processModule(module: TestModule, info: FirOutputArtifact) {
+        val results = buildMap {
             info.partsForDependsOnModules.forEach {
                 it.firFiles.forEach { (testFile, firFile) ->
                     val intrinsicConstEvaluation = it.session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
@@ -126,6 +130,7 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
                 }
             }
         }
+        testServices.firInterpreterResultsStorage[module] = results
     }
 
     private fun processFile(testFile: TestFile, firFile: FirFile, session: FirSession): Map<TestFile, List<ParsedCodeMetaInfo>> {
@@ -202,13 +207,14 @@ interface FirEvaluatorDumpHandler : EvaluatorHandler {
 
         return resultMap
     }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-interface FirAndIrDumpHandler: FirEvaluatorDumpHandler, IrInterpreterDumpHandler {
+interface FirAndIrDumpHandler : IrInterpreterDumpHandler {
     fun processModule(module: TestModule) {
-        val firArtifact = testServices.artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)
         val irMetaInfo = processIrModule(module)
-        val firMetaInfo = firArtifact?.let { processFirModule(module, it) } ?: irMetaInfo
+        val firMetaInfo = testServices.firInterpreterResultsStorage[module] ?: irMetaInfo
 
         val commonMetaInfo = irMetaInfo.map { (irTestFile, irTestData) ->
             val firTestData = firMetaInfo[irTestFile] ?: return@map irTestFile to emptyList()
@@ -250,7 +256,24 @@ interface FirAndIrDumpHandler: FirEvaluatorDumpHandler, IrInterpreterDumpHandler
     }
 }
 
+private class FirInterpreterResultsStorage : TestService {
+    private val storage = mutableMapOf<TestModule, Map<TestFile, List<ParsedCodeMetaInfo>>>()
+
+    operator fun get(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>>? = storage[module]
+    operator fun set(module: TestModule, value: Map<TestFile, List<ParsedCodeMetaInfo>>) {
+        storage[module] = value
+    }
+}
+
+private val TestServices.firInterpreterResultsStorage: FirInterpreterResultsStorage by TestServices.testServiceAccessor()
+
+/**
+ * Should be always used together with [FirInterpreterDumpHandler]
+ */
 class JvmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, JvmBinaryArtifactHandler(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         processModule(module)
     }
@@ -258,7 +281,13 @@ class JvmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHand
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+/**
+ * Should be always used together with [FirInterpreterDumpHandler]
+ */
 class JsIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, JsBinaryArtifactHandler(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         processModule(module)
     }
@@ -266,7 +295,13 @@ class JsIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandl
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+/**
+ * Should be always used together with [FirInterpreterDumpHandler]
+ */
 class WasmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, WasmBinaryArtifactHandler(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
         processModule(module)
     }
@@ -274,8 +309,15 @@ class WasmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHan
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-// Processes all klibs before 2nd compilation phase: dependencies and main modules
+/**
+ * Processes all klibs before 2nd compilation phase: dependencies and main modules
+ *
+ * Should be always used together with [FirInterpreterDumpHandler]
+ */
 class NativeKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         processModule(module)
     }
@@ -283,7 +325,13 @@ class NativeKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDum
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+/**
+ * Should be always used together with [FirInterpreterDumpHandler]
+ */
 class JsKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+    override val additionalServices: List<ServiceRegistrationData>
+        get() = listOf(service(::FirInterpreterResultsStorage))
+
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (JsEnvironmentConfigurator.isMainModule(module, testServices)) return
         processModule(module)

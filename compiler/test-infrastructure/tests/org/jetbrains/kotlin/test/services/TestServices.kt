@@ -20,6 +20,12 @@ data class ServiceRegistrationData(
 )
 
 inline fun <reified T : TestService> service(
+    noinline serviceConstructor: () -> T
+): ServiceRegistrationData {
+    return ServiceRegistrationData(T::class) { serviceConstructor() }
+}
+
+inline fun <reified T : TestService> service(
     noinline serviceConstructor: (TestServices) -> T
 ): ServiceRegistrationData {
     return ServiceRegistrationData(T::class, serviceConstructor)

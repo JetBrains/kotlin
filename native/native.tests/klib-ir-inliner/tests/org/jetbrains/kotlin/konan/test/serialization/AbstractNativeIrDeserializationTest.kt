@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.FirInterpreterDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.test.backend.handlers.NativeKlibInterpreterDumpHandl
 import org.jetbrains.kotlin.test.backend.handlers.SerializedIrDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureKlibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.deserializedIrHandlersStep
@@ -99,6 +101,9 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
 
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
             enableMetaInfoHandler()
+            configureFirHandlersStep {
+                useHandlers(::FirInterpreterDumpHandler)
+            }
             configureKlibArtifactsHandlersStep {
                 useHandlers(::NativeKlibInterpreterDumpHandler)
             }

@@ -49,7 +49,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractAnalysisApiBasedTest()
             useDirectives(Directives)
             useAdditionalServices(
                 service(::CompiledLibraryProvider),
-                service<FirRenderingOptions> { renderingOptionsBuilder.build() }
+                service<FirRenderingOptions> { _ -> renderingOptionsBuilder.build() }
             )
         }
     }
