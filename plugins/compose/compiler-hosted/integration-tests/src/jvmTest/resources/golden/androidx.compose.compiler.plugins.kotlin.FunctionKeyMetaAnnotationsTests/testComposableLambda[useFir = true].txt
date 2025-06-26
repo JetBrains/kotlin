@@ -34,5 +34,5 @@ TestKt {
     Foo (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V null
     Bar (Landroidx/compose/runtime/Composer;I)V null
     Foo$lambda$0 (Lkotlin/jvm/functions/Function2;ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
-    Bar$lambda$1 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    Bar$lambda$0 (ILandroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
 }

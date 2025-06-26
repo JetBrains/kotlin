@@ -33,8 +33,8 @@ public final class TestKt {
   public final static C(I)V
   public final static I(Lkotlin/jvm/functions/Function0;)V
   public final static J()V
-  private final static J%lambda%1%lambda%0()Lkotlin/Unit;
-  private final static J%lambda%1()Lkotlin/Unit;
+  private final static J%lambda%0()Lkotlin/Unit;
+  private final static J%lambda%0%0()Lkotlin/Unit;
   public final static INNERCLASS TestKt%C%g%1 null null
   public final static INNERCLASS TestKt%C%D null D
 }

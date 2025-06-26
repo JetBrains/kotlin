@@ -29,9 +29,9 @@ public final class home/DominantColorState {
 public final class home/MainKt {
     // source: 'main.kt'
     public final static method Column(p0: kotlin.jvm.functions.Function3, p1: androidx.compose.runtime.Composer, p2: int): void
-    private final static method DynamicThemePrimaryColorsFromImage$lambda$1(p0: home.DominantColorState, p1: kotlin.jvm.functions.Function2, p2: int, p3: int, p4: androidx.compose.runtime.Composer, p5: int): kotlin.Unit
+    private final static method DynamicThemePrimaryColorsFromImage$lambda$0(p0: home.DominantColorState, p1: kotlin.jvm.functions.Function2, p2: int, p3: int, p4: androidx.compose.runtime.Composer, p5: int): kotlin.Unit
     public final static method DynamicThemePrimaryColorsFromImage(p0: home.DominantColorState, p1: kotlin.jvm.functions.Function2, p2: androidx.compose.runtime.Composer, p3: int, p4: int): void
-    private final static method Home$lambda$3(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    private final static method Home$lambda$1(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
     public final static method Home(p0: androidx.compose.runtime.Composer, p1: int): void
     public final static method rememberDominantColorState(p0: home.Color, p1: androidx.compose.runtime.Composer, p2: int, p3: int): home.DominantColorState
 }
