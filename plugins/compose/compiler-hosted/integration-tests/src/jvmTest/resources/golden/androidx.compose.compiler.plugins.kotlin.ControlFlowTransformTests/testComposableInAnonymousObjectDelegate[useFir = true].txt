@@ -37,7 +37,7 @@ interface B {
     }
 }
 @Composable
-@FunctionKeyMeta(key = 1378736710, startOffset = 226, endOffset = 347)
+@FunctionKeyMeta(key = 1378736710, startOffset = 214, endOffset = 347)
 fun Test(b: B, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(b):Test.kt")

@@ -17,7 +17,7 @@ fun Example(a: A) {
 
 interface A {
   @Composable
-  @FunctionKeyMeta(key = 1334990189, startOffset = 106, endOffset = 135)
+  @FunctionKeyMeta(key = 1334990189, startOffset = 94, endOffset = 135)
   abstract fun compute(value: Int, %composer: Composer?, %changed: Int)
 }
 fun Example(a: A) {

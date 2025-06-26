@@ -39,7 +39,7 @@ open class Foo {
     }
   @ReadOnlyComposable
   @Composable
-  @FunctionKeyMeta(key = 425837728, startOffset = 375, endOffset = 426)
+  @FunctionKeyMeta(key = 425837728, startOffset = 335, endOffset = 426)
   fun getHashCode(%composer: Composer?, %changed: Int): Int {
     sourceInformationMarkerStart(%composer, <>, "C(getHashCode):Test.kt")
     if (isTraceInProgress()) {
@@ -56,7 +56,7 @@ open class Foo {
 }
 @ReadOnlyComposable
 @Composable
-@FunctionKeyMeta(key = 1497411806, startOffset = 462, endOffset = 513)
+@FunctionKeyMeta(key = 1497411806, startOffset = 430, endOffset = 513)
 fun getHashCode(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(getHashCode):Test.kt")
   if (isTraceInProgress()) {

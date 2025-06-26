@@ -38,7 +38,7 @@ class Foo {
   static val %stable: Int = 8
 }
 @Composable
-@FunctionKeyMeta(key = 1275113351, startOffset = 393, endOffset = 460)
+@FunctionKeyMeta(key = 1275113351, startOffset = 361, endOffset = 460)
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
   sourceInformationMarkerStart(%composer, <>, "CC(getValue)N(thisObj,property):Test.kt#2487m")
   val tmp0 = <this>
@@ -46,7 +46,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 1149099302, startOffset = 482, endOffset = 546)
+@FunctionKeyMeta(key = 1149099302, startOffset = 466, endOffset = 546)
 fun test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test)<foo>:Test.kt#2487m")

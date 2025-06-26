@@ -25,7 +25,7 @@ interface Consumer {
   abstract fun consume(t: Int)
 }
 @Composable
-@FunctionKeyMeta(key = -1502623783, startOffset = 160, endOffset = 271)
+@FunctionKeyMeta(key = -1502623783, startOffset = 148, endOffset = 271)
 fun Test(int: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(int)<{>,<Exampl...>:Test.kt")
@@ -58,7 +58,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1139663906, startOffset = 304, endOffset = 351)
+@FunctionKeyMeta(key = -1139663906, startOffset = 285, endOffset = 351)
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Example)N(consumer):Test.kt")
   sourceInformationMarkerEnd(%composer)

@@ -48,7 +48,7 @@ class Foo {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = 1275113351, startOffset = 342, endOffset = 409)
+@FunctionKeyMeta(key = 1275113351, startOffset = 317, endOffset = 409)
 fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
   sourceInformationMarkerStart(%composer, <>, "C(getValue)N(thisObj,property):Test.kt#2487m")
   if (isTraceInProgress()) {
@@ -64,7 +64,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
 @StabilityInferred(parameters = 1)
 class FooDelegate {
   @Composable
-  @FunctionKeyMeta(key = -734324405, startOffset = 472, endOffset = 543)
+  @FunctionKeyMeta(key = -734324405, startOffset = 443, endOffset = 543)
   fun getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): FooDelegate {
     sourceInformationMarkerStart(%composer, <>, "C(getValue)N(thisObj,property):Test.kt#2487m")
     if (isTraceInProgress()) {
@@ -82,7 +82,7 @@ class FooDelegate {
 @StabilityInferred(parameters = 1)
 class Bar {
   val foo: Foo = Foo()
-    @Composable @JvmName(name = "getFoo") @FunctionKeyMeta(key = -231152804, startOffset = 599, endOffset = 615)
+    @Composable @JvmName(name = "getFoo") @FunctionKeyMeta(key = -231152804, startOffset = 575, endOffset = 615)
     get() {
       sourceInformationMarkerStart(%composer, <>, "C(<get-foo>)<Foo()>:Test.kt#2487m")
       if (isTraceInProgress()) {
@@ -98,7 +98,7 @@ class Bar {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = 1149099302, startOffset = 643, endOffset = 826)
+@FunctionKeyMeta(key = 1149099302, startOffset = 627, endOffset = 826)
 fun test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test)<foo>,<fooDel...>,<foo>:Test.kt#2487m")

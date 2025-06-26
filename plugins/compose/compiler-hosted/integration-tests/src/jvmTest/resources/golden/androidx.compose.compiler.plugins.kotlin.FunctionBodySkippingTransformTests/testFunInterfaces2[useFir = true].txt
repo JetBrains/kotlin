@@ -24,7 +24,7 @@ fun Test() {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -9633418, startOffset = 165, endOffset = 252)
+@FunctionKeyMeta(key = -9633418, startOffset = 153, endOffset = 252)
 fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Button)N(colors)<getCol...>,<Text("...>:Test.kt")
@@ -53,7 +53,7 @@ fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 265, endOffset = 349)
+@FunctionKeyMeta(key = -1794342280, startOffset = 253, endOffset = 349)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Button>:Test.kt")

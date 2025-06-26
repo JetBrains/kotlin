@@ -39,7 +39,7 @@ val bar: Int
   }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -866191870, startOffset = 347, endOffset = 372)
+@FunctionKeyMeta(key = -866191870, startOffset = 309, endOffset = 372)
 fun Example(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Example)<bar>:Test.kt#2487m")
   if (isTraceInProgress()) {

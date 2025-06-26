@@ -24,7 +24,7 @@ fun Example() {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 1292064820, startOffset = 227, endOffset = 463)
+@FunctionKeyMeta(key = 1292064820, startOffset = 189, endOffset = 463)
 fun Example(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Example)<A()>:Test.kt")
   if (isTraceInProgress()) {

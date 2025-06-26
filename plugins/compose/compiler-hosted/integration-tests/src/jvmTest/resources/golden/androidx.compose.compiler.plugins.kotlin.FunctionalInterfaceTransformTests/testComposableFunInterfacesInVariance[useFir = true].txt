@@ -24,7 +24,7 @@ fun test() {
 
 interface Consumer<T>  {
   @Composable
-  @FunctionKeyMeta(key = -747777478, startOffset = 116, endOffset = 133)
+  @FunctionKeyMeta(key = -747777478, startOffset = 104, endOffset = 133)
   abstract fun consume(t: T, %composer: Composer?, %changed: Int)
 }
 @StabilityInferred(parameters = 2)

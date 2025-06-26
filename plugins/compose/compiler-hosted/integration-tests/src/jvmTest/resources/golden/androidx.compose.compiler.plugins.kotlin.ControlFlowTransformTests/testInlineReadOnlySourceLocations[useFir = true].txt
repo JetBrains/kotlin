@@ -45,7 +45,7 @@ val current: Int
   }
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = 1306618855, startOffset = 303, endOffset = 373)
+@FunctionKeyMeta(key = 1306618855, startOffset = 247, endOffset = 373)
 fun calculateSometing(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(calculateSometing):Test.kt")
   if (isTraceInProgress()) {
@@ -59,7 +59,7 @@ fun calculateSometing(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 411, endOffset = 592)
+@FunctionKeyMeta(key = -1794342280, startOffset = 387, endOffset = 592)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")

@@ -14,7 +14,7 @@ fun Ref(content: @Composable () -> Unit) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -176876488, startOffset = 84, endOffset = 166)
+@FunctionKeyMeta(key = -176876488, startOffset = 60, endOffset = 166)
 fun Ref(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Ref)N(content)<::Fn>,<::Fn>,<Ref(::...>:Test.kt")

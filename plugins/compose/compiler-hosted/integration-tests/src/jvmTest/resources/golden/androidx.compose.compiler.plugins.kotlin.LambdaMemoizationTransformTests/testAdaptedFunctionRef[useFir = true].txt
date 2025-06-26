@@ -39,7 +39,7 @@ fun scrollState(): ScrollState {
   return TODO()
 }
 @Composable
-@FunctionKeyMeta(key = 1371891869, startOffset = 295, endOffset = 351)
+@FunctionKeyMeta(key = 1371891869, startOffset = 283, endOffset = 351)
 fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(rememberFooInline)<fooInl...>:Test.kt")
   if (isTraceInProgress()) {
@@ -61,7 +61,7 @@ fun rememberFooInline(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -954340234, startOffset = 376, endOffset = 420)
+@FunctionKeyMeta(key = -954340234, startOffset = 364, endOffset = 420)
 fun rememberFoo(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<scroll...>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
@@ -88,7 +88,7 @@ fun rememberFoo(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 153360788, startOffset = 445, endOffset = 511)
+@FunctionKeyMeta(key = 153360788, startOffset = 433, endOffset = 511)
 fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(rememberFooExactInline)<fooInl...>:Test.kt")
   if (isTraceInProgress()) {
@@ -102,7 +102,7 @@ fun rememberFooExactInline(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -743021907, startOffset = 536, endOffset = 590)
+@FunctionKeyMeta(key = -743021907, startOffset = 524, endOffset = 590)
 fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(rememberFooExact)<scroll...>,<foo(sc...>:Test.kt")
   if (isTraceInProgress()) {
@@ -124,7 +124,7 @@ fun rememberFooExact(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -109693925, startOffset = 635, endOffset = 680)
+@FunctionKeyMeta(key = -109693925, startOffset = 604, endOffset = 680)
 fun fooInline(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "CC(fooInline)N(block):Test.kt")
   val tmp0 = block(0)
@@ -132,7 +132,7 @@ fun fooInline(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): 
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = 949580322, startOffset = 718, endOffset = 757)
+@FunctionKeyMeta(key = 949580322, startOffset = 694, endOffset = 757)
 fun foo(block: Function1<Int, Int>, %composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(foo)N(block):Test.kt")
   if (isTraceInProgress()) {

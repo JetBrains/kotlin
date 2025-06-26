@@ -36,12 +36,12 @@ fun Test() {
 
 interface CustomComposable {
   @Composable
-  @FunctionKeyMeta(key = 607754244, startOffset = 130, endOffset = 140)
+  @FunctionKeyMeta(key = 607754244, startOffset = 106, endOffset = 140)
   abstract fun call(%composer: Composer?, %changed: Int)
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 799442755, startOffset = 180, endOffset = 260)
+@FunctionKeyMeta(key = 799442755, startOffset = 160, endOffset = 260)
 fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(OpenCustom)N(content)<call()>:Test.kt")
@@ -71,7 +71,7 @@ fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[UI[UI]]")
-@FunctionKeyMeta(key = -1487019547, startOffset = 290, endOffset = 397)
+@FunctionKeyMeta(key = -1487019547, startOffset = 270, endOffset = 397)
 fun ClosedCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ClosedCustom)N(content)<Text("...>,<call()>:Test.kt")
@@ -102,7 +102,7 @@ fun ClosedCustom(content: CustomComposable, %composer: Composer?, %changed: Int)
 }
 @Composable
 @ComposableTarget(applier = "UI")
-@FunctionKeyMeta(key = -1794342280, startOffset = 427, endOffset = 588)
+@FunctionKeyMeta(key = -1794342280, startOffset = 407, endOffset = 588)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<OpenCu...>,<Closed...>:Test.kt")

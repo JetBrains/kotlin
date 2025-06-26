@@ -75,7 +75,7 @@ class HolderHolder {
 val holderHolder: HolderHolder = HolderHolder()
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = 902964415, startOffset = 691, endOffset = 762)
+@FunctionKeyMeta(key = 902964415, startOffset = 635, endOffset = 762)
 fun calculateSomething(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(calculateSomething):Test.kt")
   if (isTraceInProgress()) {
@@ -89,7 +89,7 @@ fun calculateSomething(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 800, endOffset = 995)
+@FunctionKeyMeta(key = -1794342280, startOffset = 776, endOffset = 995)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")

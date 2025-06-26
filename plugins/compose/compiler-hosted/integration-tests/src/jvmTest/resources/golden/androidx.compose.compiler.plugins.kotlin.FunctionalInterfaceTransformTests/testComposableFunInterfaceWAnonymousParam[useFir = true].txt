@@ -22,11 +22,11 @@ fun interface Consumer {
 
 interface Consumer {
   @Composable
-  @FunctionKeyMeta(key = 1929556621, startOffset = 122, endOffset = 140)
+  @FunctionKeyMeta(key = 1929556621, startOffset = 101, endOffset = 140)
   abstract fun invoke(t: Int, %composer: Composer?, %changed: Int)
 }
 @Composable
-@FunctionKeyMeta(key = -1502623783, startOffset = 180, endOffset = 263)
+@FunctionKeyMeta(key = -1502623783, startOffset = 168, endOffset = 263)
 fun Test(int: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(int)<Exampl...>:Test.kt")
@@ -75,7 +75,7 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1139663906, startOffset = 289, endOffset = 336)
+@FunctionKeyMeta(key = -1139663906, startOffset = 277, endOffset = 336)
 fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)N(consumer):Test.kt")
