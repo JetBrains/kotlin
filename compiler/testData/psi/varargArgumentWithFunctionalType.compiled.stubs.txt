@@ -22,11 +22,11 @@ VarargArgumentWithFunctionalType.class:
     IMPORT_LIST
     CLASS[classId=test/VarargArgumentWithFunctionalType, fqName=test.VarargArgumentWithFunctionalType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarargArgumentWithFunctionalType, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarargArgumentWithFunctionalType]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarargArgumentWithFunctionalType]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        FUN[fqName=test.VarargArgumentWithFunctionalType.myDsl, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=myDsl]
+        FUN[fqName=test.VarargArgumentWithFunctionalType.myDsl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=myDsl]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arguments]

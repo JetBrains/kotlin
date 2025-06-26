@@ -70,7 +70,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=b]
         OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY
-            FUN[fqName=null, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+            FUN[fqName=null, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
               VALUE_PARAMETER_LIST
     CLASS_BODY
       OBJECT_DECLARATION[classId=/A.Companion, fqName=A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]

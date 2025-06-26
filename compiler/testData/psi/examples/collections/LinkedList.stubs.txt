@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       CLASS[classId=/LinkedList.Item, fqName=LinkedList.Item, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Item, superNames=[]]
         MODIFIER_LIST[private]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Item]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Item]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=LinkedList.Item.value, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=value]
               TYPE_REFERENCE
@@ -44,10 +44,10 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Item]
       PROPERTY[fqName=LinkedList.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=size]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private]
-      FUN[fqName=LinkedList.add, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUN[fqName=LinkedList.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -58,14 +58,14 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=LinkedList.checkIndex, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=checkIndex]
+      FUN[fqName=LinkedList.checkIndex, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=checkIndex]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=LinkedList.remove, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+      FUN[fqName=LinkedList.remove, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -75,7 +75,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=LinkedList.set, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUN[fqName=LinkedList.set, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
@@ -89,14 +89,14 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=LinkedList.itemAt, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=itemAt]
+      FUN[fqName=LinkedList.itemAt, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=itemAt]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=index]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=LinkedList.mutableIterator, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mutableIterator]
+      FUN[fqName=LinkedList.mutableIterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=mutableIterator]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

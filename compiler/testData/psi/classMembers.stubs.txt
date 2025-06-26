@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/ClassMembers, fqName=test.ClassMembers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassMembers, superNames=[]]
     MODIFIER_LIST[abstract]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassMembers]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassMembers]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=test.ClassMembers.p, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=p]
           MODIFIER_LIST[private]
@@ -31,15 +31,15 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
       PROPERTY[fqName=test.ClassMembers.foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=foo]
-      FUN[fqName=test.ClassMembers.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUN[fqName=test.ClassMembers.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=test.ClassMembers.openFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
+      FUN[fqName=test.ClassMembers.openFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
         MODIFIER_LIST[open]
         VALUE_PARAMETER_LIST
-      FUN[fqName=test.ClassMembers.abstractFun, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
+      FUN[fqName=test.ClassMembers.abstractFun, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
         MODIFIER_LIST[abstract]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.ClassMembers.openVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=openVal]

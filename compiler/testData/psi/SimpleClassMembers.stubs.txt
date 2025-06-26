@@ -9,7 +9,7 @@ PsiJetFileStubImpl[package=]
             CLASS_BODY
           CLASS[classId=/foo.foo.Bar, fqName=foo.foo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
-          FUN[fqName=foo.foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUN[fqName=foo.foo.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
           PROPERTY[fqName=foo.foo.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
           PROPERTY[fqName=foo.foo.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
@@ -67,7 +67,7 @@ PsiJetFileStubImpl[package=]
                           REFERENCE_EXPRESSION[referencedName=Goo]
           CLASS[classId=/foo.Bar.Bar, fqName=foo.Bar.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Bar, superNames=[]]
             CLASS_BODY
-          FUN[fqName=foo.Bar.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+          FUN[fqName=foo.Bar.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
             VALUE_PARAMETER_LIST
           PROPERTY[fqName=foo.Bar.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
           PROPERTY[fqName=foo.Bar.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]
@@ -75,7 +75,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=bar]
-      FUN[fqName=foo.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=foo.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=foo.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
       PROPERTY[fqName=foo.f, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=f]

@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=]
           VALUE_ARGUMENT[isSpread=false]
             STRING_TEMPLATE
               LITERAL_STRING_TEMPLATE_ENTRY[text=2]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=A.x, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=x]
           MODIFIER_LIST[private]
@@ -86,7 +86,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      FUN[fqName=A.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=private]
             CONSTRUCTOR_CALLEE
@@ -119,7 +119,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=data]
-        FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlineLocal]
+        FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlineLocal]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=inline]
               CONSTRUCTOR_CALLEE
@@ -138,7 +138,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=inline2]
           VALUE_PARAMETER_LIST
-        FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+        FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
               MODIFIER_LIST[]
@@ -162,7 +162,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=inject]
               CONSTRUCTOR_CALLEE
@@ -207,7 +207,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=private]
-      SECONDARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=main]
             CONSTRUCTOR_CALLEE
@@ -220,7 +220,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=private]
         VALUE_PARAMETER_LIST
-      FUN[fqName=A.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
             MODIFIER_LIST[]
@@ -249,7 +249,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=private]
-  FUN[fqName=bar, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
+  FUN[fqName=bar, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     MODIFIER_LIST[private]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=inline]
         CONSTRUCTOR_CALLEE
@@ -257,5 +257,5 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=inline]
     VALUE_PARAMETER_LIST
-  FUN[fqName=bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
+  FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
     VALUE_PARAMETER_LIST

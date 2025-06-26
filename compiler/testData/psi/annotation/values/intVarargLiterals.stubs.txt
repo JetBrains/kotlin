@@ -82,7 +82,7 @@ VarArg.kt:
     IMPORT_LIST
     CLASS[classId=/VarArg, fqName=VarArg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarArg]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=VarArg]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=VarArg.v, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=v]
             MODIFIER_LIST[vararg]

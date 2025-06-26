@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[Enum]]
     MODIFIER_LIST[enum public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Color]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Color]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=rgb]
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=Color.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=Color.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[abstract public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

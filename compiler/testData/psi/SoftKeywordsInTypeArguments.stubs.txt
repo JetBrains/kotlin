@@ -8,5 +8,5 @@ PsiJetFileStubImpl[package=]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=out]
         MODIFIER_LIST[out]
     CLASS_BODY
-  FUN[fqName=f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
+  FUN[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     VALUE_PARAMETER_LIST

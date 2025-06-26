@@ -11,7 +11,7 @@ ReceiversKt.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
+    FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         USER_TYPE
@@ -22,7 +22,7 @@ ReceiversKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=myRequireNotNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
+    FUN[fqName=myRequireNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
       MODIFIER_LIST[public]
       TYPE_REFERENCE
         NULLABLE_TYPE

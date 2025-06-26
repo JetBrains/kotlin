@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      FUN[fqName=IMutableIterator.remove, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+      FUN[fqName=IMutableIterator.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

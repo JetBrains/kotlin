@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
         MODIFIER_LIST[]
           ANNOTATION
-      FUN[fqName=A.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=q]
@@ -20,7 +20,7 @@ PsiJetFileStubImpl[package=]
         CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=A, superNames=[]]
           MODIFIER_LIST[]
             ANNOTATION
-      FUN[fqName=A.foo2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo2]
+      FUN[fqName=A.foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo2]
         MODIFIER_LIST[]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=q1]
@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=q2]
         VALUE_PARAMETER_LIST
-      FUN[fqName=A.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUN[fqName=A.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[]
           ANNOTATION
         VALUE_PARAMETER_LIST

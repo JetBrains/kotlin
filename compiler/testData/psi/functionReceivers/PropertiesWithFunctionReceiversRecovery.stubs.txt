@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G]
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=foo]
     TYPE_REFERENCE
       FUNCTION_TYPE
@@ -24,7 +24,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=foo]
     TYPE_REFERENCE
@@ -110,7 +110,7 @@ PsiJetFileStubImpl[package=]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=E]
         TYPE_REFERENCE
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=null]
   PROPERTY[fqName=<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=null]
     TYPE_REFERENCE

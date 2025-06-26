@@ -12,14 +12,14 @@ PsiJetFileStubImpl[package=a]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=a.DefaultImplsInInterface.show, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=show]
+      FUN[fqName=a.DefaultImplsInInterface.show, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=show]
         MODIFIER_LIST[suspend]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=mutatePriority]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=a.DefaultImplsInInterface.dismiss, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dismiss]
+      FUN[fqName=a.DefaultImplsInInterface.dismiss, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dismiss]
         VALUE_PARAMETER_LIST
-      FUN[fqName=a.DefaultImplsInInterface.onDispose, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=onDispose]
+      FUN[fqName=a.DefaultImplsInInterface.onDispose, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=onDispose]
         VALUE_PARAMETER_LIST

@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
     MODIFIER_LIST[abstract value]
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[value]
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[value]
     VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
@@ -26,7 +26,7 @@ PsiJetFileStubImpl[package=]
     MODIFIER_LIST[value]
     CLASS_BODY
       PROPERTY[fqName=Foo.l, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=l]
-      FUN[fqName=Foo.invoke, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+      FUN[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[private value]

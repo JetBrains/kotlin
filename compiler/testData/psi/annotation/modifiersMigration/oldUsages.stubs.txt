@@ -14,7 +14,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=tailrec]
     CLASS_BODY
-      FUN[fqName=A.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=inline]
             CONSTRUCTOR_CALLEE
@@ -25,7 +25,7 @@ PsiJetFileStubImpl[package=]
               VALUE_ARGUMENT[isSpread=false]
                 INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         VALUE_PARAMETER_LIST
-      FUN[fqName=A.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUN[fqName=A.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[inline]
         VALUE_PARAMETER_LIST
         CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]

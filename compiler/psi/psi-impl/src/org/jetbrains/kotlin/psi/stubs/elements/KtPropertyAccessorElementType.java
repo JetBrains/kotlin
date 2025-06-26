@@ -37,7 +37,7 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
     public void serialize(@NotNull KotlinPropertyAccessorStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isGetter());
         dataStream.writeBoolean(stub.hasBody());
-        dataStream.writeBoolean(stub.hasBlockBody());
+        dataStream.writeBoolean(stub.hasNoExpressionBody());
         dataStream.writeBoolean(stub.mayHaveContract());
     }
 
@@ -46,8 +46,8 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
     public KotlinPropertyAccessorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isGetter = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
-        boolean hasBlockBody = dataStream.readBoolean();
+        boolean hasNoExpressionBody = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
-        return new KotlinPropertyAccessorStubImpl(parentStub, isGetter, hasBody, hasBlockBody, mayHaveContract);
+        return new KotlinPropertyAccessorStubImpl(parentStub, isGetter, hasBody, hasNoExpressionBody, mayHaveContract);
     }
 }

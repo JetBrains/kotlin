@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=test]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TOuter]
     CLASS_BODY
-      FUN[fqName=test.NestedClasses.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUN[fqName=test.NestedClasses.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.NestedClasses.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         TYPE_REFERENCE
@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TN]
         CLASS_BODY
-          FUN[fqName=test.NestedClasses.Nested.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUN[fqName=test.NestedClasses.Nested.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE
@@ -29,7 +29,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TNN]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Nested.NN.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUN[fqName=test.NestedClasses.Nested.NN.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE
@@ -44,7 +44,7 @@ PsiJetFileStubImpl[package=test]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TN]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Nested.NI.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUN[fqName=test.NestedClasses.Nested.NI.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE
@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=TOuter]
         CLASS_BODY
-          FUN[fqName=test.NestedClasses.Inner.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUN[fqName=test.NestedClasses.Inner.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE
@@ -73,7 +73,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TII]
             CLASS_BODY
-              FUN[fqName=test.NestedClasses.Inner.II.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+              FUN[fqName=test.NestedClasses.Inner.II.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE

@@ -25,7 +25,7 @@ PsiJetFileStubImpl[package=]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
     CLASS_BODY
-      FUN[fqName=IMutableSet.add, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUN[fqName=IMutableSet.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Boolean]
-      FUN[fqName=IMutableSet.remove, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
+      FUN[fqName=IMutableSet.remove, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE

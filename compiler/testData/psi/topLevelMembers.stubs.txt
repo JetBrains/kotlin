@@ -4,12 +4,12 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       REFERENCE_EXPRESSION[referencedName=foo]
       REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
   IMPORT_LIST
-  FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
+  FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
     VALUE_PARAMETER_LIST
-  FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
+  FUN[fqName=foo.TopLevelMembers.funWithExprBody, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithExprBody]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
-  FUN[fqName=foo.TopLevelMembers.funWithParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
+  FUN[fqName=foo.TopLevelMembers.funWithParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithParams]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -34,9 +34,9 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-  FUN[fqName=foo.TopLevelMembers.ext, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+  FUN[fqName=foo.TopLevelMembers.ext, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
     MODIFIER_LIST[public]
     TYPE_REFERENCE
       USER_TYPE
@@ -49,7 +49,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
+  FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
@@ -61,7 +61,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
+  FUN[fqName=foo.TopLevelMembers.probablyNothing, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=probablyNothing]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -111,7 +111,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=D]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
     MODIFIER_LIST[internal]

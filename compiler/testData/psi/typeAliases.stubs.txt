@@ -109,7 +109,7 @@ TypeAliases.kt:
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=test.TypeAliases.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+        FUN[fqName=test.TypeAliases.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
               TYPE_REFERENCE
@@ -180,13 +180,13 @@ TypeAliases.kt:
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=F]
-        FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+        FUN[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=path]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=test.TypeAliases.order, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
+        FUN[fqName=test.TypeAliases.order, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=order]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
               TYPE_REFERENCE
@@ -213,7 +213,7 @@ dependency.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=dependency.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    FUN[fqName=dependency.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE

@@ -16,7 +16,7 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
             KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
   KotlinStub$TYPE_PARAMETER_LIST
     KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedMultiFieldValueClass]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedMultiFieldValueClass]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -38,7 +38,7 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=T]
-    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.equals, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
       KotlinStub$MODIFIER_LIST[open public operator]
       KotlinStub$VALUE_PARAMETER_LIST
         KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
@@ -53,7 +53,7 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
-    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.hashCode, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
       KotlinStub$MODIFIER_LIST[open public]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE
@@ -61,7 +61,7 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
           KotlinStub$USER_TYPE
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
-    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.toString, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+    KotlinStub$FUN[fqName=test.NestedMultiFieldValueClass.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
       KotlinStub$MODIFIER_LIST[open public]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE

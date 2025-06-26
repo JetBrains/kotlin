@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=contracts]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
-      FUN[fqName=A.foo, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=A.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
   PROPERTY[fqName=isNotNull, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=isNotNull]
     MODIFIER_LIST[]
@@ -27,8 +27,8 @@ PsiJetFileStubImpl[package=]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Boolean]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=true]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=true]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=true]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=foo1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -20,7 +20,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -44,7 +44,7 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo3, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
+  FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo4, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo4]
+  FUN[fqName=foo4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo4]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -88,7 +88,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo5, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo5]
+  FUN[fqName=foo5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo5]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -109,7 +109,7 @@ PsiJetFileStubImpl[package=]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo6, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo6]
+  FUN[fqName=foo6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo6]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -133,7 +133,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=foo7, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo7]
+  FUN[fqName=foo7, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo7]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -157,11 +157,11 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=Any, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=Any]
+  FUN[fqName=Any, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=Any]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
-  FUN[fqName=foo10, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo10]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=foo10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo10]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -187,7 +187,7 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo11, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo11]
+  FUN[fqName=foo11, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo11]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST

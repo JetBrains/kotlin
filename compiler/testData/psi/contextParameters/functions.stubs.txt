@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=simple, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
+  FUN[fqName=simple, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=simple]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param1]
@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
-  FUN[fqName=annotated, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotated]
+  FUN[fqName=annotated, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotated]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=parameter1]
@@ -53,7 +53,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
-  FUN[fqName=annotatedParameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotatedParameter]
+  FUN[fqName=annotatedParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=annotatedParameter]
     MODIFIER_LIST[]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]

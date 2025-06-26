@@ -5,12 +5,12 @@ PsiJetFileStubImpl[package=]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=getCondition, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getCondition]
+  FUN[fqName=getCondition, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getCondition]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=test_2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
+  FUN[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_2]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE
@@ -29,7 +29,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=test_4, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
+  FUN[fqName=test_4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=test_4]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE

@@ -4,7 +4,7 @@ AnnoWithCustomName.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomName, fqName=AnnoWithCustomName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomName, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomName]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomName]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=string]
@@ -36,7 +36,7 @@ AnnoWithCustomNameAndDefaultValue.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomNameAndDefaultValue, fqName=AnnoWithCustomNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomNameAndDefaultValue, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomNameAndDefaultValue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithCustomNameAndDefaultValue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=string]
@@ -70,7 +70,7 @@ AnnoWithDefaultName.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultName, fqName=AnnoWithDefaultName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultName, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultName]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultName]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -102,7 +102,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultNameAndDefaultValue, fqName=AnnoWithDefaultNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultNameAndDefaultValue, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultNameAndDefaultValue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithDefaultNameAndDefaultValue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]
@@ -136,7 +136,7 @@ AnnoWithVararg.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithVararg, fqName=AnnoWithVararg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVararg, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVararg]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVararg]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -169,7 +169,7 @@ AnnoWithVarargAndDefaultVakue.class:
     IMPORT_LIST
     CLASS[classId=/AnnoWithVarargAndDefaultVakue, fqName=AnnoWithVarargAndDefaultVakue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVarargAndDefaultVakue, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVarargAndDefaultVakue]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnoWithVarargAndDefaultVakue]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=value]

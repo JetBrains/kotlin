@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/Clazz, fqName=Clazz, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Clazz, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=Clazz.<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
-  FUN[fqName=f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
+  FUN[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     VALUE_PARAMETER_LIST
   CLASS[classId=/Clazz, fqName=Clazz, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Clazz, superNames=[]]
     CLASS_BODY

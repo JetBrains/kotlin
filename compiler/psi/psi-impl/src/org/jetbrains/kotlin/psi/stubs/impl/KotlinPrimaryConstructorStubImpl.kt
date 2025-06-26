@@ -23,7 +23,7 @@ class KotlinPrimaryConstructorStubImpl(
     override fun isTopLevel(): Boolean = false
     override fun isExtension(): Boolean = false
     override fun mayHaveContract(): Boolean = false
-    override fun hasBlockBody(): Boolean = true
+    override fun hasNoExpressionBody(): Boolean = true
     override fun hasBody(): Boolean = false
     override fun isDelegatedCallToThis(): Boolean = false
     override fun isExplicitDelegationCall(): Boolean = false

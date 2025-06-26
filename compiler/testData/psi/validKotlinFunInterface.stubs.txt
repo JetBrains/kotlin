@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[fun]
     CLASS_BODY
-      FUN[fqName=Foo.invoke, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
+      FUN[fqName=Foo.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
         VALUE_PARAMETER_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[private fun]

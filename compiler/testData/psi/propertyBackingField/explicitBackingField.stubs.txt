@@ -35,9 +35,9 @@ PsiJetFileStubImpl[package=]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=true]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
   PROPERTY[fqName=numberWithExplicitType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=numberWithExplicitType]
@@ -53,6 +53,6 @@ PsiJetFileStubImpl[package=]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Number]
     BACKING_FIELD[hasInitializer=false]
-  FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   PROPERTY[fqName=minimalNumber, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=minimalNumber]
     BACKING_FIELD[hasInitializer=false]

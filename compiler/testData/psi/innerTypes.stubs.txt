@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=I]
             CLASS_BODY
-              FUN[fqName=test.InnerTypes.Inner.Inner3.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+              FUN[fqName=test.InnerTypes.Inner.Inner3.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
                     TYPE_REFERENCE
@@ -96,7 +96,7 @@ PsiJetFileStubImpl[package=test]
                           TYPE_PROJECTION[projectionKind=STAR]
       CLASS[classId=test/InnerTypes.Inner2, fqName=test.InnerTypes.Inner2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner2, superNames=[]]
         MODIFIER_LIST[inner]
-      FUN[fqName=test.InnerTypes.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
+      FUN[fqName=test.InnerTypes.bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE

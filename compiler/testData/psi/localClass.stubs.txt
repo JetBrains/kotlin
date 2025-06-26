@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/LocalClass, fqName=test.LocalClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=LocalClass, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.LocalClass.foo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=test.LocalClass.foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
         CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=Local, superNames=[]]
@@ -23,6 +23,6 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Runnable]
           CLASS_BODY
-            FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
+            FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=run]
               MODIFIER_LIST[override]
               VALUE_PARAMETER_LIST

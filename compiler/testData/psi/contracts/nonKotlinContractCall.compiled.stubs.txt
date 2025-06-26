@@ -2,7 +2,7 @@ MainKt.class:
   PsiJetFileStubImpl[package=]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    FUN[fqName=test_1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_1]
+    FUN[fqName=test_1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_1]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -10,7 +10,7 @@ MainKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Unit]
-    FUN[fqName=test_2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_2]
+    FUN[fqName=test_2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_2]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
@@ -26,11 +26,11 @@ MyBuilder.class:
     IMPORT_LIST
     CLASS[classId=/MyBuilder, fqName=MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyBuilder]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyBuilder]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
-        FUN[fqName=MyBuilder.contract, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contract]
+        FUN[fqName=MyBuilder.contract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contract]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=contract]
@@ -44,7 +44,7 @@ MyBuilder.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=MyBuilder.nonContract, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nonContract]
+        FUN[fqName=MyBuilder.nonContract, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=nonContract]
           MODIFIER_LIST[public final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=contract]

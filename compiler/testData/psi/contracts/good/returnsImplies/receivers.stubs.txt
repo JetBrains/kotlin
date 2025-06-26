@@ -6,12 +6,12 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=A]
     VALUE_PARAMETER_LIST
-  FUN[fqName=myRequireNotNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
+  FUN[fqName=myRequireNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myRequireNotNull]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE

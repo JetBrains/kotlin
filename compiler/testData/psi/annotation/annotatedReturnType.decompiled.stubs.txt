@@ -23,7 +23,7 @@ MyInterface.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=MyInterface.function, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
+        FUN[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[abstract public]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
               CONSTRUCTOR_CALLEE
@@ -68,7 +68,7 @@ RegularAnno.class:
     IMPORT_LIST
     CLASS[classId=/RegularAnno, fqName=RegularAnno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RegularAnno, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=RegularAnno]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=RegularAnno]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -96,7 +96,7 @@ TypeAnno.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeAnno]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeAnno]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST

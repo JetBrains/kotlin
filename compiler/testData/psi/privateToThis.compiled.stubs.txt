@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=p]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]
         MODIFIER_LIST[in]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PrivateToThis]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PrivateToThis]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -26,7 +26,7 @@ PsiJetFileStubImpl[package=p]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=p.PrivateToThis.var_with_accessors, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
@@ -34,17 +34,17 @@ PsiJetFileStubImpl[package=p]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=I]
-      FUN[fqName=p.PrivateToThis.bas, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bas]
+      FUN[fqName=p.PrivateToThis.bas, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bas]
         MODIFIER_LIST[private final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

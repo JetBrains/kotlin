@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=ISized]
     CLASS_BODY
-      FUN[fqName=ReadOnlyArray.get, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
+      FUN[fqName=ReadOnlyArray.get, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=get]
         MODIFIER_LIST[]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=operator]
@@ -39,7 +39,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=ISized]
     CLASS_BODY
-      FUN[fqName=WriteOnlyArray.set, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
+      FUN[fqName=WriteOnlyArray.set, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]
         MODIFIER_LIST[]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=operator]

@@ -76,5 +76,5 @@ PsiJetFileStubImpl[package=foo.bar.goo]
     IMPORT_DIRECTIVE[importedFqName=null, isAllUnder=false, isValid=false]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
-  FUN[fqName=foo.bar.goo.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo.bar.goo.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST

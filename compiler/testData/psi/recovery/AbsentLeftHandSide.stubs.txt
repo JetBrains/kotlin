@@ -1,11 +1,11 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=import, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=import]
+  FUN[fqName=import, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=import]
     VALUE_PARAMETER_LIST
-  FUN[fqName=composite, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=composite]
+  FUN[fqName=composite, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=composite]
     VALUE_PARAMETER_LIST
-  FUN[fqName=html, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=html]
+  FUN[fqName=html, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=html]
     VALUE_PARAMETER_LIST
-  FUN[fqName=html1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=html1]
+  FUN[fqName=html1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=html1]
     VALUE_PARAMETER_LIST

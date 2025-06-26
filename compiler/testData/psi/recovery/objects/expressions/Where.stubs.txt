@@ -14,12 +14,12 @@ PsiJetFileStubImpl[package=]
       CLASS_BODY
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
       CLASS_BODY
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Bar]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
@@ -29,7 +29,7 @@ PsiJetFileStubImpl[package=]
       CLASS_BODY
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Bar]]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY

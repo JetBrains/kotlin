@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=wrongFalse, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongFalse]
+  FUN[fqName=wrongFalse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongFalse]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -16,7 +16,7 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=wrongTrue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongTrue]
+  FUN[fqName=wrongTrue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongTrue]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -31,7 +31,7 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Boolean]
-  FUN[fqName=nullableConstant, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullableConstant]
+  FUN[fqName=nullableConstant, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullableConstant]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -47,7 +47,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=string, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
+  FUN[fqName=string, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
-  FUN[fqName=nullableReturn, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullableReturn]
+  FUN[fqName=nullableReturn, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullableReturn]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -71,7 +71,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=returnsNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnsNull]
+  FUN[fqName=returnsNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnsNull]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -87,7 +87,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Any]
-  FUN[fqName=wrongReturnType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongReturnType]
+  FUN[fqName=wrongReturnType, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongReturnType]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]

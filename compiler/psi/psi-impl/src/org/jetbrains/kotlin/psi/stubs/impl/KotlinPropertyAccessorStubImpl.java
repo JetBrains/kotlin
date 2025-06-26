@@ -13,20 +13,20 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropertyAccessor> implements KotlinPropertyAccessorStub {
     private final boolean isGetter;
     private final boolean hasBody;
-    private final boolean hasBlockBody;
+    private final boolean hasNoExpressionBody;
     private final boolean mayHaveContract;
 
     public KotlinPropertyAccessorStubImpl(
             StubElement parent,
             boolean isGetter,
             boolean hasBody,
-            boolean hasBlockBody,
+            boolean hasNoExpressionBody,
             boolean mayHaveContract
     ) {
         super(parent, KtStubElementTypes.PROPERTY_ACCESSOR);
         this.isGetter = isGetter;
         this.hasBody = hasBody;
-        this.hasBlockBody = hasBlockBody;
+        this.hasNoExpressionBody = hasNoExpressionBody;
         this.mayHaveContract = mayHaveContract;
     }
 
@@ -41,8 +41,8 @@ public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropert
     }
 
     @Override
-    public boolean hasBlockBody() {
-        return hasBlockBody;
+    public boolean hasNoExpressionBody() {
+        return hasNoExpressionBody;
     }
 
     @Override

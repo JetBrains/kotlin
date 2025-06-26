@@ -63,7 +63,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasBlockBody() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasBlockBody();
+            return stub.hasNoExpressionBody();
         }
         return getEqualsToken() == null;
     }
@@ -131,7 +131,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtBlockExpression getBodyBlockExpression() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            if (!(stub.hasBlockBody() && stub.hasBody())) {
+            if (!(stub.hasNoExpressionBody() && stub.hasBody())) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
