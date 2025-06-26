@@ -20,9 +20,12 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHan
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 
 abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     protected val targetPlatform: TargetPlatform,
@@ -77,6 +80,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
             ::FirIrDumpIdenticalChecker,
+            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()
         useAdditionalSourceProviders(

@@ -22,10 +22,12 @@ import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
+import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.BackendKinds
+import org.jetbrains.kotlin.test.services.TestPhase
 
 fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     defaultDirectives {
@@ -35,6 +37,7 @@ fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
         +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         DIAGNOSTICS with "-warnings"
         DUMP_KLIB_ABI with KlibAbiDumpMode.DEFAULT
+        LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
     }
 }
 

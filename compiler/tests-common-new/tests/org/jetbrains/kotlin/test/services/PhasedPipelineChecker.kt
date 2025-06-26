@@ -11,11 +11,15 @@ import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.DISABLE_NEXT_PHA
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.RUN_PIPELINE_TILL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
+import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.ArtifactKind
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKind
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
+import org.jetbrains.kotlin.test.model.IrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.firTestDataFile
@@ -61,6 +65,32 @@ class PhasedPipelineChecker(
         is ArtifactKinds.KLib -> TestPhase.KLIB
         is ArtifactKind -> TestPhase.BACKEND
         else -> null
+    }
+
+    private fun AbstractTestFacade<*, *>.toPhase(): TestPhase? =
+        if (outputKind is BackendKind)
+            when (inputKind) {
+                is FrontendKind ->
+                    TestPhase.FIR2IR
+                is BackendKind -> {
+                    require(this is IrPreSerializationLoweringFacade)
+                    TestPhase.KLIB
+                }
+                is ArtifactKinds.KLib -> {
+                    require(this is DeserializerFacade)
+                    TestPhase.KLIB
+                }
+                else -> error(
+                    "Unexpected facade of type ${this.javaClass.simpleName} taking input artifact of kind=$this, " +
+                            "producing output artifact of kind=${outputKind.javaClass.simpleName}"
+                )
+            }
+        else
+            outputKind.toPhase()
+
+    private fun AnalysisHandler<*>.toPhase(): TestPhase? {
+        // TODO KT-78539: Different phases must be derived for handlers of different handler steps, all having artifactKind=IrBackend
+        return artifactKind.toPhase()
     }
 
     private inline fun latestPhaseDirectiveOr(otherwise: (WrappedException) -> Nothing): TestPhase {
@@ -157,8 +187,7 @@ class PhasedPipelineChecker(
         var hasFailuresInNonLeafModule = false
         var hasNonSuppressibleFailuresFromFacade = false
 
-        fun processFailure(module: TestModule?, kind: TestArtifactKind<*>, exception: WrappedException): MutableList<WrappedException> {
-            val actualPhase = kind.toPhase()
+        fun processFailure(module: TestModule?, actualPhase: TestPhase?, exception: WrappedException): MutableList<WrappedException> {
             return when {
                 module != null && !module.isLeafModule(testServices) -> {
                     hasFailuresInNonLeafModule = true
@@ -189,10 +218,10 @@ class PhasedPipelineChecker(
             val targetStorage = when (exception) {
                 is WrappedException.FromMetaInfoHandler -> nonSuppressibleFailures
                 is WrappedException.FromFacade ->
-                    processFailure(exception.failedModule, exception.facade.outputKind, exception)
+                    processFailure(exception.failedModule, exception.facade.toPhase(), exception)
                 is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures
                 is WrappedException.FromHandler ->
-                    processFailure(exception.failedModule, exception.handler.artifactKind, exception)
+                    processFailure(exception.failedModule, exception.handler.toPhase(), exception)
             }
             targetStorage += exception
         }

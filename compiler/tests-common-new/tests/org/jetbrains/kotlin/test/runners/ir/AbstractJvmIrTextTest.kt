@@ -41,10 +41,6 @@ abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.Frontend
             setupIrTextDumpHandlers()
         }
 
-        defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
-        }
-
         useAfterAnalysisCheckers(
             ::BlackBoxCodegenSuppressor,
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
