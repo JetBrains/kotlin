@@ -25,7 +25,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Repeatable]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=Annotation.value, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=value]
           TYPE_REFERENCE

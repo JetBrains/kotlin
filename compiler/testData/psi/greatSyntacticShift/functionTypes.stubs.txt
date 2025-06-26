@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=B, superNames=[]]
   CLASS[classId=/XXX, fqName=XXX, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=XXX, superNames=[]]
     MODIFIER_LIST[abstract]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=XXX]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=XXX]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=XXX.a, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a]
@@ -282,7 +282,7 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=Int]
   CLASS[classId=/YYY, fqName=YYY, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=YYY, superNames=[]]
     MODIFIER_LIST[abstract]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=YYY]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=YYY]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=YYY.a7, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=a7]

@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     MODIFIER_LIST[abstract public]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=fromConstructor]
@@ -202,7 +202,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=String]
       CLASS[classId=/Foo.Anno, fqName=Foo.Anno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
         MODIFIER_LIST[public final annotation]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Anno]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST

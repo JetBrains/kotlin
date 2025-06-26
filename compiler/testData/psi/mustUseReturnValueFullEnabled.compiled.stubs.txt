@@ -11,7 +11,7 @@ Marked.class:
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=MustUseReturnValue]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Marked]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Marked]
         MODIFIER_LIST[public MustUseReturnValue]
         VALUE_PARAMETER_LIST
       CLASS_BODY
@@ -74,7 +74,7 @@ MyEnum.class:
     IMPORT_LIST
     CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[Enum]]
       MODIFIER_LIST[enum public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyEnum]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyEnum]
         MODIFIER_LIST[private MustUseReturnValue]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -108,7 +108,7 @@ Unmarked.class:
     IMPORT_LIST
     CLASS[classId=/Unmarked, fqName=Unmarked, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unmarked, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Unmarked]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unmarked]
         MODIFIER_LIST[public MustUseReturnValue]
         VALUE_PARAMETER_LIST
       CLASS_BODY

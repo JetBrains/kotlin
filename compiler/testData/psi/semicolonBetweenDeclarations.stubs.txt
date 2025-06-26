@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=foo]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=x]
   CLASS[classId=foo/A, fqName=foo.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=foo.A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
@@ -16,7 +16,7 @@ PsiJetFileStubImpl[package=foo]
       FUN[fqName=foo.A.bar, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         VALUE_PARAMETER_LIST
       CLASS_INITIALIZER
-      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=A]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         VALUE_PARAMETER_LIST
       OBJECT_DECLARATION[classId=foo/A.Companion, fqName=foo.A.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
@@ -27,4 +27,4 @@ PsiJetFileStubImpl[package=foo]
     CLASS_BODY
       PROPERTY[fqName=foo.B.<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
       CLASS_INITIALIZER
-      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=B]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]

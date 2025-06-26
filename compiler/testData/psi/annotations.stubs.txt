@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=a]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotations]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotations]
       MODIFIER_LIST[private]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           CONSTRUCTOR_CALLEE
@@ -179,7 +179,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=f]
       CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -367,7 +367,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
       CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithConstructor]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=Annotations.ClassWithConstructor.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
               MODIFIER_LIST[]
@@ -471,7 +471,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Repeatable]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=b]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=b]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=b.e, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e]
           TYPE_REFERENCE

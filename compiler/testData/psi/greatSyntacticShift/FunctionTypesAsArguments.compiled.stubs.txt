@@ -35,7 +35,7 @@ Lifetime.class:
     IMPORT_LIST
     CLASS[classId=/Lifetime, fqName=Lifetime, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Lifetime, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Lifetime]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Lifetime]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY

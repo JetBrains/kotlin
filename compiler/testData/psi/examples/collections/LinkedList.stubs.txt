@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       CLASS[classId=/LinkedList.Item, fqName=LinkedList.Item, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Item, superNames=[]]
         MODIFIER_LIST[private]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Item]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Item]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=LinkedList.Item.value, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=value]
               TYPE_REFERENCE

@@ -9,7 +9,7 @@ Annotations.class:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=a]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Annotations]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotations]
         MODIFIER_LIST[private]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE
@@ -360,7 +360,7 @@ Annotations.class:
               REFERENCE_EXPRESSION[referencedName=Unit]
         CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
           MODIFIER_LIST[public final]
-          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Nested]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
             MODIFIER_LIST[private]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -371,7 +371,7 @@ Annotations.class:
           CLASS_BODY
         CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
           MODIFIER_LIST[enum public final]
-          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=En]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=En]
             MODIFIER_LIST[private]
             VALUE_PARAMETER_LIST
           SUPER_TYPE_LIST
@@ -411,7 +411,7 @@ Annotations.class:
                         REFERENCE_EXPRESSION[referencedName=c]
         CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
           MODIFIER_LIST[public final]
-          PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithConstructor]
+          PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithConstructor]
             MODIFIER_LIST[public]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
@@ -442,7 +442,7 @@ E.class:
     IMPORT_LIST
     CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
       MODIFIER_LIST[enum public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=E]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -477,7 +477,7 @@ a.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=a]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=a]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -523,7 +523,7 @@ b.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Repeatable]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=b]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=b]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=e]
@@ -560,7 +560,7 @@ c.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=c]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=c]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -588,7 +588,7 @@ f.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=f]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST

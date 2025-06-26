@@ -17,7 +17,7 @@ EnumLiteral.kt:
     IMPORT_LIST
     CLASS[classId=test/EnumLiteral, fqName=test.EnumLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=EnumLiteral, superNames=[]]
       MODIFIER_LIST[annotation]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=EnumLiteral]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=EnumLiteral]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=test.EnumLiteral.e1, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e1]
             TYPE_REFERENCE

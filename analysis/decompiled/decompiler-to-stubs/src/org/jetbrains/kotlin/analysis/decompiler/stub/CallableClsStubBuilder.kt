@@ -583,12 +583,14 @@ private class ConstructorClsStubBuilder(
                 parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR, name, hasBody = true,
                 isDelegatedCallToThis = false,
                 isExplicitDelegationCall = false,
+                mayHaveContract = false, // constructors don't have contracts in the metadata yet
             )
         else
             KotlinConstructorStubImpl(
                 parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false,
                 isDelegatedCallToThis = false,
                 isExplicitDelegationCall = false,
+                mayHaveContract = false, // constructors don't have contracts in the metadata yet
             )
     }
 }

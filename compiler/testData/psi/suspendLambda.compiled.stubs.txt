@@ -14,7 +14,7 @@ A.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=annotation]
                 REFERENCE_EXPRESSION[referencedName=Target]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -36,7 +36,7 @@ Continuation.class:
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
         TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Continuation]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Continuation]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
@@ -69,7 +69,7 @@ SuspendLambda.class:
     IMPORT_LIST
     CLASS[classId=test/SuspendLambda, fqName=test.SuspendLambda, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SuspendLambda, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=SuspendLambda]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SuspendLambda]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY
