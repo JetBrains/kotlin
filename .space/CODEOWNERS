@@ -191,8 +191,8 @@
 /compiler/testData/multiModule/ "Kotlin Frontend"
 # UNKNOWN: /compiler/testData/multiplatform/
 /compiler/testData/parseCodeFragment/ "Kotlin Frontend"
-/compiler/testData/psi/ "Kotlin Frontend"
-/compiler/testData/psiUtil/ "Kotlin Frontend"
+/compiler/testData/psi/ "Kotlin Analysis API"
+/compiler/testData/psiUtil/ "Kotlin Analysis API"
 /compiler/testData/recursiveProcessor/ "Kotlin Frontend"
 /compiler/testData/reflection/ "Kotlin Libraries" alexander.udalov@jetbrains.com
 /compiler/testData/repl/ "Kotlin Frontend"

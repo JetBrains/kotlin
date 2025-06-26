@@ -157,8 +157,8 @@
 /compiler/testData/modules.xml/ @JetBrains/kotlin-frontend
 /compiler/testData/multiModule/ @JetBrains/kotlin-frontend
 /compiler/testData/parseCodeFragment/ @JetBrains/kotlin-frontend
-/compiler/testData/psi/ @JetBrains/kotlin-frontend
-/compiler/testData/psiUtil/ @JetBrains/kotlin-frontend
+/compiler/testData/psi/ @JetBrains/kotlin-analysis-api
+/compiler/testData/psiUtil/ @JetBrains/kotlin-analysis-api
 /compiler/testData/recursiveProcessor/ @JetBrains/kotlin-frontend
 /compiler/testData/reflection/ @JetBrains/kotlin-libraries alexander.udalov@jetbrains.com
 /compiler/testData/repl/ @JetBrains/kotlin-frontend
