@@ -1,0 +1,10 @@
+KT element: KtProperty
+KT element text:
+public val kotlin.Boolean.myRequire: kotlin.Boolean /* compiled code */ /* hasBackingField: false */
+    public final get() {/* compiled code */ }
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val [ResolvedTo(RAW_FIR)] R|kotlin/Boolean|.myRequire: R|kotlin/Boolean|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean|

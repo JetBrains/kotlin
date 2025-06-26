@@ -623,6 +623,252 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Contracts {
+    @Test
+    public void testAllFilesPresentInContracts() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("contracts.kt")
+    public void testContracts() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/contracts.kt");
+    }
+
+    @Test
+    @TestMetadata("contractsPropertyAccessors.kt")
+    public void testContractsPropertyAccessors() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/contractsPropertyAccessors.kt");
+    }
+
+    @Test
+    @TestMetadata("contractsSecondaryConstructor.kt")
+    public void testContractsSecondaryConstructor() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/contractsSecondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("FunctionWithMultilineContract.kt")
+    public void testFunctionWithMultilineContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/FunctionWithMultilineContract.kt");
+    }
+
+    @Test
+    @TestMetadata("FunctionsWithTypeConstraintsAndContract.kt")
+    public void testFunctionsWithTypeConstraintsAndContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/FunctionsWithTypeConstraintsAndContract.kt");
+    }
+
+    @Test
+    @TestMetadata("nonKotlinContractCall2.kt")
+    public void testNonKotlinContractCall2() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/nonKotlinContractCall2.kt");
+    }
+
+    @Test
+    @TestMetadata("PropertyAccessorsContracts.kt")
+    public void testPropertyAccessorsContracts() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/PropertyAccessorsContracts.kt");
+    }
+
+    @Test
+    @TestMetadata("SimpleFunctionWithContract.kt")
+    public void testSimpleFunctionWithContract() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/SimpleFunctionWithContract.kt");
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Good {
+      @Test
+      public void testAllFilesPresentInGood() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CallsInPlace {
+        @Test
+        public void testAllFilesPresentInCallsInPlace() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("atLeastOnce.kt")
+        public void testAtLeastOnce() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/atLeastOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("atMostOnce.kt")
+        public void testAtMostOnce() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/atMostOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("contractsUsage.kt")
+        public void testContractsUsage() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/contractsUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("exactlyOnce.kt")
+        public void testExactlyOnce() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/exactlyOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("flow.kt")
+        public void testFlow() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/flow.kt");
+        }
+
+        @Test
+        @TestMetadata("inPlaceLambda.kt")
+        public void testInPlaceLambda() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/inPlaceLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("infiniteLoop.kt")
+        public void testInfiniteLoop() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/infiniteLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/namedArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("tryFinally.kt")
+        public void testTryFinally() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/tryFinally.kt");
+        }
+
+        @Test
+        @TestMetadata("unknown.kt")
+        public void testUnknown() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/callsInPlace/unknown.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ReturnsImplies {
+        @Test
+        public void testAllFilesPresentInReturnsImplies() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("booleanOperators.kt")
+        public void testBooleanOperators() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/booleanOperators.kt");
+        }
+
+        @Test
+        @TestMetadata("conditionLogic.kt")
+        public void testConditionLogic() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/conditionLogic.kt");
+        }
+
+        @Test
+        @TestMetadata("eqNotEq.kt")
+        public void testEqNotEq() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/eqNotEq.kt");
+        }
+
+        @Test
+        @TestMetadata("inapplicable.kt")
+        public void testInapplicable() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/inapplicable.kt");
+        }
+
+        @Test
+        @TestMetadata("namedArguments.kt")
+        public void testNamedArguments() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/namedArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("notNull.kt")
+        public void testNotNull() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/notNull.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAccessors.kt")
+        public void testPropertyAccessors() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/propertyAccessors.kt");
+        }
+
+        @Test
+        @TestMetadata("receivers.kt")
+        public void testReceivers() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/receivers.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/safeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("trickyCases.kt")
+        public void testTrickyCases() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/trickyCases.kt");
+        }
+
+        @Test
+        @TestMetadata("typePredicate.kt")
+        public void testTypePredicate() {
+          runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/returnsImplies/typePredicate.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/variousContracts")
+      @TestDataPath("$PROJECT_ROOT")
+      public class VariousContracts {
+        @Test
+        public void testAllFilesPresentInVariousContracts() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/variousContracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/variousContracts/newSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NewSyntax {
+          @Test
+          public void testAllFilesPresentInNewSyntax() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/variousContracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("functionsWithContract.kt")
+          public void testFunctionsWithContract() {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/contracts/good/variousContracts/newSyntax/functionsWithContract.kt");
+          }
+        }
+      }
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/getOrBuildFirBinary/js")
   @TestDataPath("$PROJECT_ROOT")
   public class Js {
