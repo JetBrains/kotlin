@@ -5,6 +5,6 @@ $TEMP_DIR$
 -ir-output-name
 reportPerfK2
 -libraries
-libraries/stdlib/build/classes/kotlin/wasmJs/main
+$STDLIB_WASM_JS$
 -Xreport-perf=true
 -XXLanguage\:+IrInlinerBeforeKlibSerialization

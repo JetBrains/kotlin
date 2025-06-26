@@ -318,6 +318,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 ).replace(
                         "$STDLIB_JS$",
                         PathUtil.getKotlinPathsForCompiler().getJsStdLibKlibPath().getAbsolutePath()
+                ).replace(
+                        "$STDLIB_WASM_JS$",
+                        PathUtil.getKotlinPathsForCompiler().getWasmJsStdLibKlibPath().getAbsolutePath()
                 );
     }
 
