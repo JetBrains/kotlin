@@ -75,6 +75,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirCommonAtomicReferenceToPrimitiveCallChecker,
         FirCommonAtomicArrayToPrimitiveCallChecker,
         FirGenericQualifierOnConstructorCallChecker,
+        FirVarargWithNonTrivialUpperBoundInferredToNothingChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(

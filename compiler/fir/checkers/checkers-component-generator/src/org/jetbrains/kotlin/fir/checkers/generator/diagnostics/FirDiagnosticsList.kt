@@ -744,6 +744,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val HAS_NEXT_FUNCTION_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("actualType")
         }
+
+        val ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING by warning<KtElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
