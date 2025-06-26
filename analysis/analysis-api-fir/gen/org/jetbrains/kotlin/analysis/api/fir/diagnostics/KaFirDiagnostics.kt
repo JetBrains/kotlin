@@ -627,7 +627,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ProjectionInImmediateArgumentToSupertype::class
     }
 
-    interface InconsistentTypeParameterValues : KaFirDiagnostic<KtClass> {
+    interface InconsistentTypeParameterValues : KaFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = InconsistentTypeParameterValues::class
         val typeParameter: KaTypeParameterSymbol
         val type: KaClassLikeSymbol
