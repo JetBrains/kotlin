@@ -348,7 +348,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 
 
@@ -387,7 +387,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 
 
@@ -426,7 +426,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 
 
@@ -465,7 +465,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 
 
@@ -507,6 +507,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
             }
             @PROPERTY_SETTER:R|Anno|[Types](position = <strcat>(String(set ), R|/prop|)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](position = <strcat>(String(setparam ), R|/prop|)) <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), R|/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), R|/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 

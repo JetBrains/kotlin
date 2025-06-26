@@ -246,7 +246,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
         hasExplicitParameterList = (function as? FirAnonymousFunction)?.hasExplicitParameterList == true
         valueParameters.addAll(function.valueParameters.map {
             buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol(it.name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         })
@@ -272,7 +272,7 @@ private fun FirPropertyAccessor.copyToFreeAccessor(
         status = accessor.status
         accessor.valueParameters.mapTo(valueParameters) {
             buildValueParameterCopy(it) {
-                symbol = FirValueParameterSymbol(it.name)
+                symbol = FirValueParameterSymbol()
                 returnTypeRef = it.returnTypeRef.approximated(approximator, typeParameterSet, toSuper = false)
             }
         }
@@ -303,7 +303,7 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         initializer = property.initializer
         delegate = property.delegate
         delegateFieldSymbol = property.delegateFieldSymbol?.let {
-            FirDelegateFieldSymbol(it.callableId)
+            FirDelegateFieldSymbol(newPropertySymbol)
         }
         source = this@copyToFreeProperty.source
         getter = property.getter?.copyToFreeAccessor(approximator, newPropertySymbol)

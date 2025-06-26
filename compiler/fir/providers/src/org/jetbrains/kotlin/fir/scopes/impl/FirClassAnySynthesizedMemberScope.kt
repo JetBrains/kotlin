@@ -152,7 +152,7 @@ class FirClassAnySynthesizedMemberScope(
                     origin = originForFunctions
                     moduleData = baseModuleData
                     this.returnTypeRef = FirImplicitNullableAnyTypeRef(null)
-                    this.symbol = FirValueParameterSymbol(this.name)
+                    this.symbol = FirValueParameterSymbol()
                     containingDeclarationSymbol = this@buildSimpleFunction.symbol
                     isCrossinline = false
                     isNoinline = false

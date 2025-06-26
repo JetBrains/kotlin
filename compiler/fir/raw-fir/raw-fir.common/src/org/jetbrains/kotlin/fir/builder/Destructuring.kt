@@ -75,7 +75,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     buildProperty {
         val localEntries = forceLocal || context.inLocalContext
         symbol = when {
-            localEntries -> FirLocalPropertySymbol(entry.name)
+            localEntries -> FirLocalPropertySymbol()
             else -> FirMemberPropertySymbol(callableIdForName(entry.name))
         }
         withContainerSymbol(symbol, localEntries) {

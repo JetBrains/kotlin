@@ -23,15 +23,15 @@
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
@@ -87,6 +87,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts
                 ^ D|/propertyToResolve|.R|/Delegate.getValue<Inapplicable(CONVENTION_ERROR): /Delegate.getValue>#|(Null(null), ::R|/propertyToResolve|)
             }
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>|): R|kotlin/Unit| {
-                ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+                ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(Null(null), ::R|/propertyToResolve|, R|<local>/<set-?>|)
             }
 

@@ -573,7 +573,7 @@ open class PsiRawFirBuilder(
                                 moduleData = baseModuleData
                                 origin = FirDeclarationOrigin.Source
                                 returnTypeRef = propertyTypeRefToUse
-                                symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
+                                symbol = FirValueParameterSymbol()
                                 annotations += parameterAnnotationsFromProperty
                             }
                         }
@@ -673,7 +673,7 @@ open class PsiRawFirBuilder(
                     extractAnnotationsTo(this)
                     this.annotations += annotationsFromProperty
                     name = BACKING_FIELD
-                    symbol = FirBackingFieldSymbol(CallableId(name))
+                    symbol = FirBackingFieldSymbol()
                     this.propertySymbol = propertySymbol
                     this.initializer = backingFieldInitializer
                     this.isVar = property.isVar
@@ -707,7 +707,7 @@ open class PsiRawFirBuilder(
                 origin = FirDeclarationOrigin.Source
                 isVararg = isVarArg
                 this.name = name
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 withContainerSymbol(symbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
                     returnTypeRef = when {
                         typeReference != null -> typeReference.toFirOrErrorType()
@@ -1536,7 +1536,7 @@ open class PsiRawFirBuilder(
                             source = file.toFirSourceElement(KtFakeSourceElementKind.CodeFragment)
                             name = StandardNames.DEFAULT_VALUE_PARAMETER
 
-                            symbol = FirValueParameterSymbol(name)
+                            symbol = FirValueParameterSymbol()
                             containingDeclarationSymbol = functionSymbol
 
                             returnTypeRef = file.getContentElement().toFirOrErrorType()
@@ -1689,7 +1689,7 @@ open class PsiRawFirBuilder(
                         // We're abusing the value parameter name for the label/type name of legacy context receivers.
                         // Luckily, legacy context receivers are getting removed soon.
                         this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                        this.symbol = FirValueParameterSymbol(name)
+                        this.symbol = FirValueParameterSymbol()
                         withContainerSymbol(this.symbol) {
                             this.returnTypeRef = contextReceiverElement.typeReference().toFirOrErrorType()
                         }
@@ -2124,7 +2124,7 @@ open class PsiRawFirBuilder(
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = valueParameter.typeReference.toFirOrImplicitType()
                             this.name = name
-                            symbol = FirValueParameterSymbol(name)
+                            symbol = FirValueParameterSymbol()
                             isCrossinline = false
                             isNoinline = false
                             isVararg = false
@@ -2306,7 +2306,7 @@ open class PsiRawFirBuilder(
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {
-                FirLocalPropertySymbol(propertyName)
+                FirLocalPropertySymbol()
             } else {
                 FirMemberPropertySymbol(callableIdForName(propertyName))
             }
@@ -2817,7 +2817,7 @@ open class PsiRawFirBuilder(
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
                             isLocal = true
                             this.name = name
-                            symbol = FirLocalPropertySymbol(name)
+                            symbol = FirLocalPropertySymbol()
                             for (annotationEntry in ktParameter.annotationEntries) {
                                 this.annotations += annotationEntry.convert<FirAnnotation>()
                             }
@@ -2878,7 +2878,7 @@ open class PsiRawFirBuilder(
                         initializer = subjectExpression
                         delegate = null
                         isVar = false
-                        symbol = FirLocalPropertySymbol(name)
+                        symbol = FirLocalPropertySymbol()
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
@@ -2902,7 +2902,7 @@ open class PsiRawFirBuilder(
                     initializer = subjectExpression
                     delegate = null
                     isVar = false
-                    symbol = FirLocalPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol()
                     isLocal = true
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 }

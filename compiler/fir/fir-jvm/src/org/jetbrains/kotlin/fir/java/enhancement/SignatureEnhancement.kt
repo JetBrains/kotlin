@@ -537,7 +537,7 @@ class FirSignatureEnhancement(
                 typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
             )
             this.name = valueParameter.name
-            symbol = FirValueParameterSymbol(this.name)
+            symbol = FirValueParameterSymbol()
             defaultValue = valueParameter.defaultValue
             isCrossinline = valueParameter.isCrossinline
             isNoinline = valueParameter.isNoinline

@@ -88,7 +88,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 deprecationsProvider = EmptyDeprecationsProvider
                 name = variableName
                 isVar = false
-                symbol = FirLocalPropertySymbol(variableName)
+                symbol = FirLocalPropertySymbol()
                 isLocal = true
             }
 

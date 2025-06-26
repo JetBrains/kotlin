@@ -23,11 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
-import org.jetbrains.kotlin.fir.declarations.utils.isActual
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -221,7 +217,7 @@ class FirSamResolver(
                     coneType = substitutedFunctionType
                 }
                 name = SAM_PARAMETER_NAME
-                this.symbol = FirValueParameterSymbol(SAM_PARAMETER_NAME)
+                this.symbol = FirValueParameterSymbol()
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false

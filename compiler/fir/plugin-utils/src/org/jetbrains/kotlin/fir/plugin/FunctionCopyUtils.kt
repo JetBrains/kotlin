@@ -52,7 +52,7 @@ public fun copyFirFunctionWithResolvePhase(
         clear()
         originalParameters.mapTo(this) { parameter ->
             buildValueParameterCopy(parameter) {
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 containingDeclarationSymbol = this@buildSimpleFunctionCopy.symbol
                 origin = key.origin
                 resolvePhase = firResolvePhase

@@ -291,7 +291,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                     origin = JsPlainObjectsPluginKey.origin
                     returnTypeRef = replacedJsPlainObjectType
                     name = sourceVariableName
-                    symbol = FirValueParameterSymbol(sourceVariableName)
+                    symbol = FirValueParameterSymbol()
                     isCrossinline = false
                     isNoinline = true
                     isVararg = false
@@ -309,7 +309,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                         typeRef.withReplacedConeType(subst.substituteOrNull(typeRef.coneType))
                     } ?: typeRef
                     name = it.name
-                    symbol = FirValueParameterSymbol(it.name)
+                    symbol = FirValueParameterSymbol()
                     isCrossinline = false
                     isNoinline = true
                     isVararg = false

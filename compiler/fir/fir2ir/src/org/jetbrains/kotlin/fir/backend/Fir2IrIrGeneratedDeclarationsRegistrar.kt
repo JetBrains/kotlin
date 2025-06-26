@@ -210,7 +210,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         origin = GeneratedForMetadata.origin
                         returnTypeRef = parameter.type.toConeType().toFirResolvedTypeRef()
                         name = parameter.name
-                        symbol = FirValueParameterSymbol(name)
+                        symbol = FirValueParameterSymbol()
                         if (parameter.defaultValue != null) {
                             defaultValue = buildExpressionStub {
                                 coneTypeOrNull = this@buildValueParameter.returnTypeRef.coneType

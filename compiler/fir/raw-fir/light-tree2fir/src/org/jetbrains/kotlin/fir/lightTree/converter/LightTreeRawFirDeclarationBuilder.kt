@@ -1392,7 +1392,7 @@ class LightTreeRawFirDeclarationBuilder(
             else -> identifier.nameAsSafeName()
         }
         val propertySymbol = if (isLocal) {
-            FirLocalPropertySymbol(propertyName)
+            FirLocalPropertySymbol()
         } else {
             FirMemberPropertySymbol(callableIdForName(propertyName))
         }
@@ -1655,7 +1655,7 @@ class LightTreeRawFirDeclarationBuilder(
             origin = FirDeclarationOrigin.Source
             source = sourceElement.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
+            symbol = FirValueParameterSymbol()
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
@@ -1792,7 +1792,7 @@ class LightTreeRawFirDeclarationBuilder(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = returnType
                 name = StandardNames.BACKING_FIELD
-                symbol = FirBackingFieldSymbol(CallableId(name))
+                symbol = FirBackingFieldSymbol()
                 this.status = status
                 modifiers?.convertAnnotationsTo(annotations)
                 annotations += annotationsFromProperty
@@ -1887,7 +1887,7 @@ class LightTreeRawFirDeclarationBuilder(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
             name = firValueParameter.name
-            symbol = FirValueParameterSymbol(firValueParameter.name)
+            symbol = FirValueParameterSymbol()
             defaultValue = firValueParameter.defaultValue
             isCrossinline = calculatedModifiers.hasCrossinline() || firValueParameter.isCrossinline
             isNoinline = calculatedModifiers.hasNoinline() || firValueParameter.isNoinline
@@ -2677,7 +2677,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), valueParameterDeclaration) { identifier }
-        val valueParameterSymbol = FirValueParameterSymbol(name)
+        val valueParameterSymbol = FirValueParameterSymbol()
         withContainerSymbol(valueParameterSymbol, isLocal = !valueParameterDeclaration.isAnnotationOwner) {
             valueParameter.forEachChildren {
                 when (it.tokenType) {
@@ -2770,7 +2770,7 @@ class LightTreeRawFirDeclarationBuilder(
                     // Luckily, legacy context receivers are getting removed soon.
                     this.name = customLabelName ?: labelNameFromTypeRef ?: SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
-                    this.symbol = FirValueParameterSymbol(name)
+                    this.symbol = FirValueParameterSymbol()
                     withContainerSymbol(this.symbol) {
                         this.returnTypeRef = typeReference?.let { convertType(it) }
                             ?: buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Type missing") }

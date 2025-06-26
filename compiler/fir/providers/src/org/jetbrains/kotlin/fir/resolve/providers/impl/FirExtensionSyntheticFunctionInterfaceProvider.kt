@@ -273,7 +273,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                                         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                         returnTypeRef = typeArgument
                                         this.name = parameterName
-                                        symbol = FirValueParameterSymbol(parameterName)
+                                        symbol = FirValueParameterSymbol()
                                         defaultValue = null
                                         isCrossinline = false
                                         isNoinline = false

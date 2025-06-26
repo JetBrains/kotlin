@@ -378,7 +378,7 @@ class FirCallCompleter(
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Source
                         this.name = name
-                        symbol = FirValueParameterSymbol(name)
+                        symbol = FirValueParameterSymbol()
                         returnTypeRef =
                             itType.approximateLambdaInputType(symbol, withPCLASession, candidate).toFirResolvedTypeRef(
                                 lambdaAtom.anonymousFunction.source?.fakeElement(ImplicitReturnTypeOfLambdaValueParameter)
@@ -538,7 +538,7 @@ class FirCallCompleter(
                             moduleData = session.moduleData
                             origin = FirDeclarationOrigin.Source
                             name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                            symbol = FirValueParameterSymbol(name)
+                            symbol = FirValueParameterSymbol()
                             returnTypeRef = contextParameterType
                                 .approximateLambdaInputType(symbol, withPCLASession, candidate)
                                 .toFirResolvedTypeRef(originalLambdaSource?.fakeElement(KtFakeSourceElementKind.LambdaContextParameter))

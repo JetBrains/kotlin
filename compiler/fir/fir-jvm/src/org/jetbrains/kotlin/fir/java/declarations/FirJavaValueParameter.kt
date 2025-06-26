@@ -238,7 +238,7 @@ class FirJavaValueParameterBuilder {
             attributes,
             returnTypeRef,
             name,
-            symbol = FirValueParameterSymbol(name),
+            symbol = FirValueParameterSymbol(),
             annotationList,
             defaultValue,
             containingDeclarationSymbol,

@@ -576,7 +576,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.moduleData = c.moduleData
             this.origin = origin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = typeRef
             this.containingDeclarationSymbol = containingDeclarationSymbol
             this.valueParameterKind = FirValueParameterKind.LegacyContextReceiver
@@ -800,7 +800,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 origin = FirDeclarationOrigin.Library
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 defaultValue = defaultValue(flags)
                 if (addDefaultValue) {

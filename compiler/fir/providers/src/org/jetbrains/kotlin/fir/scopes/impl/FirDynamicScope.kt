@@ -171,7 +171,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = anyArrayTypeRef
             this.name = Name.identifier("args")
-            this.symbol = FirValueParameterSymbol(this.name)
+            this.symbol = FirValueParameterSymbol()
             isCrossinline = false
             isNoinline = false
             isVararg = true

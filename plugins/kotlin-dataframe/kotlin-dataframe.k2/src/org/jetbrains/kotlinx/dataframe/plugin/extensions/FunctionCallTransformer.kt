@@ -387,7 +387,7 @@ class FunctionCallTransformer(
                 }
                 val parameterSymbol = receiverType?.let {
                     val itName = Name.identifier("it")
-                    val parameterSymbol = FirValueParameterSymbol(itName)
+                    val parameterSymbol = FirValueParameterSymbol()
                     valueParameters += buildValueParameter {
                         moduleData = session.moduleData
                         origin = FirDeclarationOrigin.Plugin(DataFramePlugin)

@@ -121,7 +121,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
 
             originalConstructor.contextParameters.mapTo(contextParameters) {
                 buildValueParameterCopy(it) {
-                    symbol = FirValueParameterSymbol(it.name)
+                    symbol = FirValueParameterSymbol()
                     moduleData = typeAliasSymbol.moduleData
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                     containingDeclarationSymbol = newConstructorSymbol
@@ -130,7 +130,7 @@ class TypeAliasConstructorsSubstitutingScope private constructor(
 
             originalConstructor.valueParameters.mapTo(valueParameters) {
                 buildValueParameterCopy(it) {
-                    symbol = FirValueParameterSymbol(it.name)
+                    symbol = FirValueParameterSymbol()
                     moduleData = typeAliasSymbol.moduleData
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
                     containingDeclarationSymbol = newConstructorSymbol
