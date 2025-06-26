@@ -26,21 +26,15 @@ internal fun nativeCompilerPerformanceMetricsAvailable(kotlinNativeVersion: Prov
 
 private fun KotlinToolingVersion.supportCompilerMetricsForNative() = this >= KotlinToolingVersion("2.2.0-dev-13610")
 
-private fun Provider<File>.kotlinNativeCompilerJar(
-    shouldUseEmbeddableCompilerJar: Provider<Boolean>,
-) = zip(shouldUseEmbeddableCompilerJar) { nativeHomeDir, useJar ->
-    if (useJar) {
+private val Provider<File>.kotlinNativeCompilerJar
+    get() = map { nativeHomeDir ->
         nativeHomeDir.resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
-    } else {
-        nativeHomeDir.resolve("konan/lib/kotlin-native.jar")
     }
-}
 
 internal fun ObjectFactory.nativeCompilerClasspath(
-    nativeHomeDirectory: Provider<File>,
-    shouldUseEmbeddableCompilerJar: Provider<Boolean>,
+    nativeHomeDirectory: Provider<File>
 ) = fileCollection().from(
-    nativeHomeDirectory.kotlinNativeCompilerJar(shouldUseEmbeddableCompilerJar),
+    nativeHomeDirectory.kotlinNativeCompilerJar,
     nativeHomeDirectory.map { it.resolve("konan/lib/trove4j.jar") }, // for compatibility with K/N < 2.2.0
 )
 

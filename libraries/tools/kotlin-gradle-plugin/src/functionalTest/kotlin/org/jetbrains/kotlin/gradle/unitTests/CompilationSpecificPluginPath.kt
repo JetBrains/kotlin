@@ -148,10 +148,6 @@ internal class CompilationSpecificPluginPath {
             plugins.apply(NativeSpecificPlugin::class.java)
             plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
 
-
-            // With kotlin.native.useEmbeddableCompilerJar=false
-            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.native.useEmbeddableCompilerJar", "false")
-
             kotlin {
                 linuxX64()
                 mingwX64()
@@ -269,13 +265,6 @@ internal class CompilationSpecificPluginPath {
             "test",
             id
         )
-
-        override fun getPluginArtifactForNative(): SubpluginArtifact? = idLegacyNative?.let {
-            SubpluginArtifact(
-                "test",
-                it
-            )
-        }
     }
 
     private fun pluginClassPathConfiguration(target: String, compilation: String) =

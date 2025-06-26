@@ -169,8 +169,7 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     internal val nativeClasspath = project.provider {
         project.objects.nativeCompilerClasspath(
-            project.nativeProperties.actualNativeHomeDirectory,
-            project.nativeProperties.shouldUseEmbeddableCompilerJar
+            project.nativeProperties.actualNativeHomeDirectory
         )
     }
 }
@@ -179,10 +178,10 @@ internal fun UsesKotlinNativeBundleBuildService.chooseKotlinNativeProvider(
     enabledOnCurrenHost: Boolean,
     konanTarget: KonanTarget,
 ): KotlinNativeProvider {
-    if (enabledOnCurrenHost) {
-        return KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
+    return if (enabledOnCurrenHost) {
+        KotlinNativeFromToolchainProvider(project, konanTarget, kotlinNativeBundleBuildService)
     } else {
-        return NoopKotlinNativeProvider(project)
+        NoopKotlinNativeProvider(project)
     }
 }
 
