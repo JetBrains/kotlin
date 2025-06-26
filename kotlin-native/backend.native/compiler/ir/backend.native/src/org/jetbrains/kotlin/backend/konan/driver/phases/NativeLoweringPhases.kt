@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorI
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.common.wrapWithCompilationException
 import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
 internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
@@ -663,7 +666,17 @@ private fun createFileLoweringPhaseImpl(
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
-            op(context, irFile)
+            try {
+                op(context, irFile)
+            } catch (e: CompilationException) {
+                e.initializeFileDetails(irFile)
+                throw e
+            } catch (e: KotlinExceptionWithAttachments) {
+                throw e
+            } catch (e: Throwable) {
+                throw e.wrapWithCompilationException("Internal error in file lowering", irFile, null)
+            }
+
             irFile
         }
 )
