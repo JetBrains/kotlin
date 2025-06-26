@@ -43,7 +43,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public abstract [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Foo : R|kotlin/Any| {
+public abstract [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
     public abstract [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=false] val abstractProperty: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
 

@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KotlinValueClassRepresentation
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -289,8 +291,11 @@ internal fun deserializeClassToSymbol(
 
         contextParameters.addAll(memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
     }.apply {
+        val classStub = classOrObject.stub as? KotlinClassStub
+            ?: (loadStubByElement<KotlinClassOrObjectStub<KtClassOrObject>?, KtClassOrObject>(classOrObject) as? KotlinClassStub)
+
         if (classOrObject is KtClass && isInlineOrValue) {
-            val stub = classOrObject.stub as? KotlinClassStubImpl ?: loadStubByElement(classOrObject)
+            val stub = classStub as? KotlinClassStubImpl
             valueClassRepresentation = stub?.deserializeValueClassRepresentation(this)
         }
 
@@ -307,6 +312,11 @@ internal fun deserializeClassToSymbol(
             parentProperty = null,
             session
         )
+
+        val clsStubCompiledToJvmDefaultImplementation = classStub?.isClsStubCompiledToJvmDefaultImplementation()
+        if (clsStubCompiledToJvmDefaultImplementation == true) {
+            symbol.fir.isNewPlaceForBodyGeneration = clsStubCompiledToJvmDefaultImplementation
+        }
     }
 }
 

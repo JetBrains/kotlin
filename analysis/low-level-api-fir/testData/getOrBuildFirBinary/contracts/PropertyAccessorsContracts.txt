@@ -25,8 +25,8 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class OuterClass : R|kotlin/Any| {
-    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class AnotherClass : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class OuterClass : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class AnotherClass : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var anotherInt: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherClass] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
@@ -38,7 +38,7 @@ public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] clas
 
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class MyClass : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var myInt: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
@@ -47,7 +47,7 @@ public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] clas
 
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class SomeClass : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class SomeClass : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var someInt: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeClass] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
