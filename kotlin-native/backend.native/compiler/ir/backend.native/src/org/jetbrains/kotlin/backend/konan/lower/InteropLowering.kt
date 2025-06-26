@@ -110,7 +110,6 @@ private abstract class BaseInteropIrTransformer(
 
     private fun createKotlinStubs(nameCounter: NameCounter, element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
         return object : KotlinStubs {
-            private val scopes = mutableListOf<MutableList<String>>()
 
             override val irBuiltIns get() = context.irBuiltIns
             override val symbols get() = context.symbols
@@ -127,24 +126,6 @@ private abstract class BaseInteropIrTransformer(
 
             override fun addKotlin(declaration: IrDeclaration) {
                 addKotlin(declaration)
-            }
-
-            override fun addC(lines: List<String>) {
-                scopes.peek()!!.addAll(lines)
-            }
-
-            override fun flushC(): List<String> {
-                val top = scopes.peek()!!
-                return top.toList().also { top.clear() }
-            }
-
-            override fun enterScope() {
-                scopes.add(mutableListOf())
-            }
-
-            override fun exitScope() {
-                require(scopes.peek()?.isEmpty() == true)
-                scopes.pop()
             }
 
             override fun getUniqueCName(prefix: String) = "\$$prefix${nameCounter.getNext()}\$"
@@ -1032,7 +1013,10 @@ private class InteropTransformerPart2(
                     builder.generateExpressionWithStubs {
                         val blockPtr = expression.arguments.single()!!
                         val functionType = expression.typeArguments[0]!!
-                        convertBlockPtrToKotlinFunction(builder, blockPtr, functionType)
+                        val state = CBridgeGenState(this)
+                        state.convertBlockPtrToKotlinFunction(builder, blockPtr, functionType).also {
+                            require(state.getC().isEmpty()) { "No C code generation is expected" }
+                        }
                     }
                 }
                 else -> expression
