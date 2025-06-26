@@ -89,6 +89,8 @@ internal fun KaSession.findKDoc(symbol: KaSymbol): KDocContent? {
         val containingClass = symbol.fakeOverrideOriginal.containingSymbol as? KaClassSymbol
         if (containingClass?.origin != KaSymbolOrigin.SOURCE) return null
         val kdoc = (containingClass.psi as? KtDeclaration)?.docComment ?: return null
+
+        // duplicates the logic of IDE's `lookupOwnedKDoc`
         val constructorSection = kdoc.findSectionByTag(KDocKnownTag.CONSTRUCTOR)
         if (constructorSection != null) {
             // if annotated with @constructor tag and the caret is on constructor definition,
@@ -98,6 +100,7 @@ internal fun KaSession.findKDoc(symbol: KaSymbol): KDocContent? {
             val paramSections = kdoc.findSectionsContainingTag(KDocKnownTag.PARAM)
             return KDocContent(constructorSection, paramSections)
         }
+        return KDocContent(kdoc.getDefaultSection(), kdoc.getAllSections())
     }
 
     // for generated function (e.g. `copy`) [KtSymbol.psi] is undefined (although actually returns a class psi), see test `data class kdocs over generated methods`
