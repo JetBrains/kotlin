@@ -9,10 +9,10 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Bar]
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       VALUE_PARAMETER_LIST
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[Bar]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -20,7 +20,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Bar]
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[Bar]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Foo]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY

@@ -26,7 +26,7 @@ MyBuilder.class:
     IMPORT_LIST
     CLASS[classId=/MyBuilder, fqName=MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]
       MODIFIER_LIST[public final]
-      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MyBuilder]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MyBuilder]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
       CLASS_BODY

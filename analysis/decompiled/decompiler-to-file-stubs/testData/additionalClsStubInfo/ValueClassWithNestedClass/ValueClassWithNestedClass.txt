@@ -14,7 +14,7 @@ KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassW
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=jvm]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ValueClassWithNestedClass]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ValueClassWithNestedClass]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
@@ -68,7 +68,7 @@ KotlinStub$CLASS[classId=test/ValueClassWithNestedClass, fqName=test.ValueClassW
           KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
     KotlinStub$CLASS[classId=test/ValueClassWithNestedClass.NestedClass, fqName=test.ValueClassWithNestedClass.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
       KotlinStub$MODIFIER_LIST[public final]
-      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=NestedClass]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedClass]
         KotlinStub$MODIFIER_LIST[public]
         KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$CLASS_BODY

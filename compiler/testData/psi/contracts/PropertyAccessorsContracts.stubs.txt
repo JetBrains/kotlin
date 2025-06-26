@@ -15,7 +15,7 @@ PsiJetFileStubImpl[package=]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
   CLASS[classId=/AnotherClass, fqName=AnotherClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnotherClass, superNames=[]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnotherClass]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnotherClass]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=AnotherClass.multiplier, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=multiplier]
           TYPE_REFERENCE
@@ -36,7 +36,7 @@ PsiJetFileStubImpl[package=]
           CONTRACT_EFFECT_LIST
             CONTRACT_EFFECT
   CLASS[classId=/SomeClass, fqName=SomeClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SomeClass, superNames=[]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=SomeClass]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SomeClass]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=multiplier]
           TYPE_REFERENCE

@@ -4005,8 +4005,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstantExp
 	public abstract fun value ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructorStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase {
-	public abstract fun hasBody ()Z
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructorStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
 	public abstract fun isDelegatedCallToThis ()Z
 	public abstract fun isExplicitDelegationCall ()Z
 }

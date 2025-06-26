@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=test]
     MODIFIER_LIST[annotation]
   CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[]]
     MODIFIER_LIST[enum]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnnotatedParameterInEnumConstructor]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedParameterInEnumConstructor]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           MODIFIER_LIST[]

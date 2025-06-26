@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
     CLASS_BODY
       CLASS[classId=/BinaryTree.TreeNode, fqName=BinaryTree.TreeNode, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TreeNode, superNames=[]]
         MODIFIER_LIST[private]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=TreeNode]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TreeNode]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=BinaryTree.TreeNode.value, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=value]
               TYPE_REFERENCE
@@ -53,7 +53,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=TreeNode]
       PROPERTY[fqName=BinaryTree.version, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=version]
         MODIFIER_LIST[private]
-      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=BinaryTree]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=BinaryTree]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=compare]
             TYPE_REFERENCE
@@ -64,7 +64,7 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=T]
-      SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, isDelegatedCallToThis=true, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, name=BinaryTree]
+      SECONDARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=true, isDelegatedCallToThis=true, isExplicitDelegationCall=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=BinaryTree]
         VALUE_PARAMETER_LIST
       FUN[fqName=BinaryTree.compareTo, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=compareTo]
         MODIFIER_LIST[private]

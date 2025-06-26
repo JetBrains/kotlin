@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=a]
     CLASS_BODY
       CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
         MODIFIER_LIST[abstract]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=A]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=a.InheritingClasses.A.c, hasDefaultValue=true, hasValOrVar=true, isMutable=false, name=c]
               MODIFIER_LIST[override]

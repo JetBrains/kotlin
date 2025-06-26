@@ -16,7 +16,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
             KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
   KotlinStub$TYPE_PARAMETER_LIST
     KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=MultiFieldValueClassWithTypeAlias]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=MultiFieldValueClassWithTypeAlias]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=alias]

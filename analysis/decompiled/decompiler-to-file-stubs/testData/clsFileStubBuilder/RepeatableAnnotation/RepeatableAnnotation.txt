@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   CLASS[classId=/RepeatableAnnotation, fqName=RepeatableAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=RepeatableAnnotation, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=RepeatableAnnotation]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=RepeatableAnnotation]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
@@ -14,7 +14,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithOneRepeatableAnnotation]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithOneRepeatableAnnotation]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithThreeRepeatableAnnotations]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithThreeRepeatableAnnotations]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
@@ -51,7 +51,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=MyRepeatableAnnotation]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassWithTwoRepeatableAnnotations]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithTwoRepeatableAnnotations]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY

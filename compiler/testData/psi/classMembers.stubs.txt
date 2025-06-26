@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/ClassMembers, fqName=test.ClassMembers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassMembers, superNames=[]]
     MODIFIER_LIST[abstract]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=ClassMembers]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassMembers]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=test.ClassMembers.p, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=p]
           MODIFIER_LIST[private]

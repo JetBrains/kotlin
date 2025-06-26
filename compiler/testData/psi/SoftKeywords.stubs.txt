@@ -21,7 +21,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
         MODIFIER_LIST[out]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=open]
         MODIFIER_LIST[abstract enum open override private public internal protected annotation]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=Bar]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Bar]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
           TYPE_REFERENCE
@@ -355,7 +355,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=t]
   CLASS[classId=foo/bar/goo/F, fqName=foo.bar.goo.F, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=F, superNames=[]]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=F]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=F]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=foo.bar.goo.F.foo, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=foo]
           TYPE_REFERENCE

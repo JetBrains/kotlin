@@ -104,8 +104,7 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDe
 }
 
 interface KotlinConstructorStub<T : KtConstructor<T>> :
-    KotlinCallableStubBase<T> {
-    fun hasBody(): Boolean
+    KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
     fun isDelegatedCallToThis(): Boolean
     fun isExplicitDelegationCall(): Boolean
 }
