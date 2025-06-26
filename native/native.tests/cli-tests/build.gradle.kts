@@ -35,12 +35,20 @@ nativeTest(
         JdkMajorVersion.JDK_21_0
     )
 ) {
-    // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
+    // To workaround KTI-2421, we make these tests run on JDK 17 instead of the project-default JDK 8.
     // This switches the JVM GC from ParallelGC to G1, which changes the expected performance logs in tests.
     // The performance log sanitizer replaces numbers with `$UINT$`, so `G1` becomes `G$UINT$`,
     // making the expected log funny and confusing.
     // Let's switch the GC back to ParallelGC to mitigate this:
     jvmArgs("-XX:+UseParallelGC")
+
+    // Kotlin test infra and IntelliJ platform Disposer debug mode use reflection to access JDK internals.
+    // With JDK 17, some JVM args are required to allow that:
+    jvmArgs(
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+    )
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt") {
