@@ -30676,6 +30676,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
         }
 
         @Test
+        @TestMetadata("inconsistentTypeParameterValuesOnAnonymousObject.kt")
+        public void testInconsistentTypeParameterValuesOnAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesOnAnonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("intersectionReturnTypeMismatchSubsumed.kt")
         public void testIntersectionReturnTypeMismatchSubsumed() {
           runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/intersectionReturnTypeMismatchSubsumed.kt");
