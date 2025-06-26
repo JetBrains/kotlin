@@ -54,18 +54,18 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
         val completed = mutableSetOf<CallNode>()
         val inlineCallsStack = mutableListOf<CallEdge>()
 
-        fun reportInlineCallCycle(element: IrCall?, callee: IrFunction) {
-            if (element == null) return
-            callsInInlineCycle.add(element)
-            diagnosticReporter.at(element, callee.file).report(CommonBackendErrors.INLINE_CALL_CYCLE, callee.name)
+        fun reportInlineCallCycle(caller: IrFunction, callee: CallEdge) = callee.call?.let { call ->
+            callsInInlineCycle.add(call)
+            diagnosticReporter.at(call, caller.file).report(CommonBackendErrors.INLINE_CALL_CYCLE, callee.callNode.function)
+
         }
 
         fun CallNode.dfs(call: IrCall?) {
             if (visited.contains(this)) {
                 if (!completed.contains(this)) {
-                    reportInlineCallCycle(call, this.function)
-                    inlineCallsStack.takeLastWhile { (_, callNode) -> callNode != this }.forEach { (call, callNode) ->
-                        reportInlineCallCycle(call, callNode.function)
+                    val edgesInCycle = inlineCallsStack.takeLastWhile { (_, callNode) -> callNode != this } + CallEdge(call, this)
+                    (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { (callerEdge, calleeEdge) ->
+                        reportInlineCallCycle(callerEdge.callNode.function, calleeEdge)
                     }
                 }
                 return
@@ -102,17 +102,17 @@ internal class IrInlineCallGraphBuilder(
             declaration.parameters.mapNotNull { it.defaultValue }.forEach { it.accept(this, CallNode(declaration, it)) }
             declaration.body?.let { it.accept(this, CallNode(declaration, it)) }
         } else {
-            super.visitFunction(declaration, data)
+            visitElement(declaration, data)
         }
     }
 
     override fun visitCall(expression: IrCall, data: CallNode?) {
         val callee = expression.symbol.owner
-        if (!callee.isInline) return super.visitCall(expression, data)
+        if (!callee.isInline) return visitElement(expression, data)
 
         data?.let { addEdges(it, expression, callee) }
 
-        return super.visitCall(expression, data)
+        return visitElement(expression, data)
     }
 
     private fun addEdges(callerNode: CallNode, call: IrCall?, callee: IrFunction) {
