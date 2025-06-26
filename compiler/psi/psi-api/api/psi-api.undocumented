@@ -777,7 +777,6 @@ org.jetbrains.kotlin.psi.KtNamedFunction:getFunKeyword()
 org.jetbrains.kotlin.psi.KtNamedFunction:hasTypeParameterListBeforeFunctionName()
 org.jetbrains.kotlin.psi.KtNamedFunction:isAnonymous()
 org.jetbrains.kotlin.psi.KtNamedFunction:isTopLevel()
-org.jetbrains.kotlin.psi.KtNamedFunction:mayHaveContract()
 org.jetbrains.kotlin.psi.KtNamedFunction:mayHaveContract(boolean)
 org.jetbrains.kotlin.psi.KtNamedFunction:shouldChangeModificationCount(PsiElement)
 org.jetbrains.kotlin.psi.KtNullableType

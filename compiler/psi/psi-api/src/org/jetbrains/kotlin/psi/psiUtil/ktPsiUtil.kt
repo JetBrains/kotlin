@@ -277,7 +277,7 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 /**
  * Whether the declaration may have a legacy contract (a contract that defined inside the body).
  *
- * In other words, **false** guaranties that the declaration cannot have a contract,
+ * In other words, **false** guarantees that the declaration cannot have a contract,
  * but **true** does not guarantee that the declaration has a contract.
  */
 @KtImplementationDetail
