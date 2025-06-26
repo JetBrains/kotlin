@@ -129,6 +129,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
         }
 
         forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+            configureFirHandlersStep {
+                useHandlers(::FirInterpreterDumpHandler)
+            }
             configureKlibArtifactsHandlersStep {
                 useHandlers(::JsKlibInterpreterDumpHandler)
             }
