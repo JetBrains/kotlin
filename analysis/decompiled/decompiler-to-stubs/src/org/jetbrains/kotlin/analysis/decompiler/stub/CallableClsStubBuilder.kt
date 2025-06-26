@@ -381,7 +381,7 @@ private class PropertyClsStubBuilder(
             /* parent = */ callableStub,
             /* isGetter = */ false,
             /* hasBody = */ isNotDefault,
-            /* hasNoExpressionBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* hasNoExpressionBody = */ true,
             /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
