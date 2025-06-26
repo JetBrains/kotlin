@@ -1100,6 +1100,16 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/override")
     @TestDataPath("$PROJECT_ROOT")
     public class Override {
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ClashesOnInheritance {
+        @Test
+        @TestMetadata("inconsistentTypeParameterValuesOnAnonymousObject.kt")
+        public void testInconsistentTypeParameterValuesOnAnonymousObject() {
+          runTest("compiler/testData/diagnostics/tests/override/clashesOnInheritance/inconsistentTypeParameterValuesOnAnonymousObject.kt");
+        }
+      }
     }
 
     @Nested
