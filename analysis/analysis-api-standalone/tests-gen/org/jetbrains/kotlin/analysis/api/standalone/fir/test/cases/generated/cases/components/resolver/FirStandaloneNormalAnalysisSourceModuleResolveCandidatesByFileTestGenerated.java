@@ -371,6 +371,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesByFileTestG
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("assignOperatorAmbiguity.kt")
+    public void testAssignOperatorAmbiguity() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/assignOperatorAmbiguity.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/partiallyUnresolvedTypeQualifier")
     @TestDataPath("$PROJECT_ROOT")
