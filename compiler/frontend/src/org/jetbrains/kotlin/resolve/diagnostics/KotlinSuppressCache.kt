@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 
+//test commit
 interface DiagnosticSuppressor {
     fun isSuppressed(diagnostic: Diagnostic): Boolean
     fun isSuppressed(diagnostic: Diagnostic, bindingContext: BindingContext?): Boolean = isSuppressed(diagnostic)
