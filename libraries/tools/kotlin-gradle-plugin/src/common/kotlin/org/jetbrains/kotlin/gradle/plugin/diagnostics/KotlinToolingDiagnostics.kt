@@ -1540,10 +1540,10 @@ internal object KotlinToolingDiagnostics {
 
     object AndroidExtensionPluginRemoval : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(): ToolingDiagnostic = build {
-            title("Deprecated 'kotlin-android-extensions' Gradle Plugin")
+            title("Removed 'kotlin-android-extensions' Gradle Plugin")
                 .description {
                     """
-                    The 'kotlin-android-extensions' Gradle plugin is no longer supported and will be removed in future release.
+                    The 'kotlin-android-extensions' Gradle plugin is no longer supported and was removed.
                     Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start
                     working with View Binding (https://developer.android.com/topic/libraries/view-binding)
                     and the 'kotlin-parcelize' plugin.
