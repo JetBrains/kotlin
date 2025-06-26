@@ -29,14 +29,6 @@ fun IrType.unboxInlineClass() = InlineClassAbi.unboxType(this) ?: this
 
 object InlineClassAbi {
     /**
-     * An origin for IrFunctionReferences which prevents inline class mangling. This only exists because of
-     * inconsistencies between `RuntimeTypeMapper` and `KotlinTypeMapper`. The `RuntimeTypeMapper` does not
-     * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
-     * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
-     */
-    val UNMANGLED_FUNCTION_REFERENCE by IrStatementOriginImpl
-
-    /**
      * Unwraps inline class types to their underlying representation.
      * Returns null if the type cannot be unboxed.
      */

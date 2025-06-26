@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.backend.common.originalBeforeInline
+import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -127,16 +128,10 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         //
         // Note that we cannot compute the signature at this point, since we still need to mangle the names of
         // private properties in multifile-part classes.
-        val needsDummySignature = getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
+        val reference = IrRawFunctionReferenceImpl(startOffset, endOffset, expression.type, getter)
+        reference.needsDummySignature = getter.owner.correspondingPropertySymbol?.owner?.needsAccessor(getter.owner) == false ||
                 // Internal underlying vals of inline classes have no getter method
                 getter.owner.isInlineClassFieldGetter && getter.owner.visibility == DescriptorVisibilities.INTERNAL
-        val origin = if (needsDummySignature) InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE else null
-        val reference = IrFunctionReferenceImpl.fromSymbolOwner(
-            startOffset, endOffset, expression.type, getter, getter.owner.typeParameters.size, getter, origin
-        )
-        for ((index, parameter) in getter.owner.typeParameters.withIndex()) {
-            reference.typeArguments[index] = parameter.erasedUpperBound.defaultType
-        }
         return irCall(signatureStringIntrinsic).apply { arguments[0] = reference }
     }
 
@@ -539,3 +534,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
     }
 }
+
+/**
+ * An origin for IrFunctionReferences which prevents inline class mangling. This only exists because of
+ * inconsistencies between `RuntimeTypeMapper` and `KotlinTypeMapper`. The `RuntimeTypeMapper` does not
+ * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
+ * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
+ */
+internal var IrRawFunctionReference.needsDummySignature by irFlag(copyByDefault = true)
+    private set

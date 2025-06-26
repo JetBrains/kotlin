@@ -47,18 +47,15 @@ internal abstract class JvmValueClassAbstractLowering(
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
-                } else if (function.shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
-                    function.parameters.any { it.type.isInlineClassType() } &&
-                    !function.constructedClass.isSpecificLoweringLogicApplicable()
-                ) {
-                    val inlineClassParams = function.parameters.filter { it.type.isInlineClassType() }
-                    // If all inline class parameters are boxes in non-exposed constructor, we need to add an additional
-                    // parameter to non-exposed constructor to distinguish it from exposed one
-                    if (inlineClassParams.isNotEmpty() && inlineClassParams.all { it.type.isBoxedInlineClassType() }) {
-                        val replacement = addMarkerParameterToNonExposedConstructor(function) ?: return null
-                        return listOfNotNull(replacement, createExposedConstructor(replacement))
+                } else if (function.shouldBeExposed()) {
+                    val constructorWithPotentialMarker = if (function.areAllParamsBoxedInlineClasses()) {
+                        // no replacement -> return listOf(function),
+                        // but `transformFunctionFlat` accepts null as initial fun as well for optimization reasons
+                        function.withAddedMarkerParameterToNonExposedConstructor() ?: return null
+                    } else {
+                        function
                     }
-                    return listOfNotNull(function, createExposedConstructor(function))
+                    return listOfNotNull(constructorWithPotentialMarker, createExposedConstructor(constructorWithPotentialMarker))
                 }
             }
             function.transformChildrenVoid()
@@ -91,7 +88,20 @@ internal abstract class JvmValueClassAbstractLowering(
         }
     }
 
-    abstract fun addMarkerParameterToNonExposedConstructor(constructor: IrConstructor): IrConstructor?
+    private fun IrConstructor.areAllParamsBoxedInlineClasses(): Boolean {
+        // If all inline class parameters are boxes in non-exposed constructor, we need to add an additional
+        // parameter to non-exposed constructor to distinguish it from exposed one
+        val inlineClassParams = parameters.filter { it.type.isInlineClassType() }
+        return inlineClassParams.isNotEmpty() && inlineClassParams.all { it.type.isBoxedInlineClassType() }
+    }
+
+    // Returns true if not just an annotation exists, but if it is also applicable to the constructor
+    private fun IrConstructor.shouldBeExposed(): Boolean =
+        shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
+                parameters.any { it.type.isInlineClassType() } &&
+                !constructedClass.isSpecificLoweringLogicApplicable()
+
+    abstract fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor?
 
     abstract fun createExposedConstructor(constructor: IrConstructor): IrConstructor?
 
@@ -307,7 +317,23 @@ internal abstract class JvmValueClassAbstractLowering(
     final override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) =
         super.visitLocalDelegatedPropertyReference(expression)
 
-    final override fun visitRawFunctionReference(expression: IrRawFunctionReference) = super.visitRawFunctionReference(expression)
+    final override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrExpression {
+        if (expression.needsDummySignature) return super.visitRawFunctionReference(expression)
+        val function = expression.symbol.owner
+
+        fun getReflectionReplacement(): IrFunction? {
+            replacements.getReplacementFunction(function)?.let { return it }
+            if (function is IrConstructor) {
+                replacements.getReplacementForRegularClassConstructor(function)?.let { return it }
+            }
+            return null
+        }
+
+        val replacement = getReflectionReplacement() ?: return super.visitRawFunctionReference(expression)
+        expression.symbol = replacement.symbol
+        return super.visitRawFunctionReference(expression)
+    }
+
     final override fun visitFunctionExpression(expression: IrFunctionExpression) = super.visitFunctionExpression(expression)
     final override fun visitClassReference(expression: IrClassReference) = super.visitClassReference(expression)
     final override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = super.visitInstanceInitializerCall(expression)

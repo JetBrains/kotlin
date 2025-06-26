@@ -440,7 +440,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
     }
 
     override fun createExposedConstructor(constructor: IrConstructor): IrConstructor? = null
-    override fun addMarkerParameterToNonExposedConstructor(constructor: IrConstructor): IrConstructor? = null
+    override fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor? = null
 
     private fun replaceMfvcStaticFields(declaration: IrClass) {
         val staticFieldMapping: Map<IrField, List<IrDeclaration>> = buildMap {
