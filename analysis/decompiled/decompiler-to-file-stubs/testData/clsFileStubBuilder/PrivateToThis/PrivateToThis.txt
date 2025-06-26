@@ -26,7 +26,7 @@ PsiJetFileStubImpl[package=p]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=p.PrivateToThis.var_with_accessors, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=var_with_accessors]
@@ -34,10 +34,10 @@ PsiJetFileStubImpl[package=p]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=I]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private final]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

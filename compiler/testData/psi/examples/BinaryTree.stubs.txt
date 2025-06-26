@@ -243,7 +243,7 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Boolean]
-              PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+              PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
                 VALUE_PARAMETER_LIST
             FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
               MODIFIER_LIST[override]

@@ -346,6 +346,7 @@ private class PropertyClsStubBuilder(
             /* isGetter = */ true,
             /* hasBody = */ isNotDefault,
             /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(
@@ -381,6 +382,7 @@ private class PropertyClsStubBuilder(
             /* isGetter = */ false,
             /* hasBody = */ isNotDefault,
             /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
         createModifierListAndAnnotationStubsForAccessor(

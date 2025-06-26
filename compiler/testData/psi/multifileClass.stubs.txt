@@ -52,7 +52,7 @@ MultifileClass.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=test.p1Var, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=p1Var]
       TYPE_REFERENCE
@@ -111,5 +111,5 @@ SecondPart.kt:
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST

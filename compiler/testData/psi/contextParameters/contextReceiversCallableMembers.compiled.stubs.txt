@@ -72,7 +72,7 @@ ContextReceiversCallableMembers.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[private final]
             VALUE_PARAMETER_LIST
         PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
@@ -101,10 +101,10 @@ ContextReceiversCallableMembers.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[private final]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[private final]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=v]

@@ -17,7 +17,7 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
     PROPERTY[fqName=withCustomGetter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=withCustomGetter]
@@ -27,7 +27,7 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=custom, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=custom]
       MODIFIER_LIST[internal]
@@ -36,10 +36,10 @@ Properties.kt:
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Anno]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
         REFERENCE_EXPRESSION[referencedName=field]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
     PROPERTY[fqName=variable, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=true, name=variable]

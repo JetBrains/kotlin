@@ -64,7 +64,7 @@ PsiJetFileStubImpl[package=]
               VALUE_PARAMETER_LIST
             PROPERTY[fqName=null, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
               MODIFIER_LIST[override]
-              PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+              PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
                 VALUE_PARAMETER_LIST
             FUN[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=remove]
               MODIFIER_LIST[override]
@@ -85,11 +85,11 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=ArrayList.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=ArrayList.size, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=size]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=used]
       FUN[fqName=ArrayList.set, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=set]

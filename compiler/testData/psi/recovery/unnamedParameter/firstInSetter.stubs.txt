@@ -5,7 +5,7 @@ PsiJetFileStubImpl[package=]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
           TYPE_REFERENCE

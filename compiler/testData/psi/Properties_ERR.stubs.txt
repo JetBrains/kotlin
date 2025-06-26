@@ -44,5 +44,5 @@ PsiJetFileStubImpl[package=]
         REFERENCE_EXPRESSION[referencedName=d]
     REFERENCE_EXPRESSION[referencedName=f]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST

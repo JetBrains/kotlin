@@ -19,9 +19,9 @@ Marked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
 
@@ -54,9 +54,9 @@ Unmarked.kt:
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
 
@@ -78,7 +78,7 @@ markedTopLevel.kt:
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=markedTopProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=markedTopProperty]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
 
 
@@ -92,5 +92,5 @@ unmarkedTopLevel.kt:
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]
-      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST

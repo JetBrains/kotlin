@@ -42,7 +42,7 @@ PsiJetFileStubImpl[package=]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   FUN[fqName=f13, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f13]
     VALUE_PARAMETER_LIST

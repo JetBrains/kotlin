@@ -162,7 +162,7 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=inject]
               CONSTRUCTOR_CALLEE

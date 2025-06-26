@@ -23,5 +23,5 @@ PsiJetFileStubImpl[package=test]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Boolean]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=true]
       VALUE_PARAMETER_LIST

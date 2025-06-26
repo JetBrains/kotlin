@@ -94,7 +94,7 @@ PsiJetFileStubImpl[package=]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=FileInput.hasNext, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
   CLASS[classId=/FileOutput, fqName=FileOutput, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileOutput, superNames=[IAdder, JavaCloseableWrapper]]
     SUPER_TYPE_LIST

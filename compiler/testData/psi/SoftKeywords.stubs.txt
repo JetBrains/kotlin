@@ -67,10 +67,10 @@ PsiJetFileStubImpl[package=foo.bar.goo]
       PROPERTY[fqName=foo.bar.goo.Bar.const, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=const]
       PROPERTY[fqName=foo.bar.goo.Bar.suspend, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=suspend]
       PROPERTY[fqName=foo.bar.goo.Bar.coroutine, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=coroutine]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
           REFERENCE_EXPRESSION[referencedName=a]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=S]
               TYPE_REFERENCE

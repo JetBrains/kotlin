@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=String]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   FUN[fqName=foo.TopLevelMembers.ext, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
     MODIFIER_LIST[public]
@@ -111,7 +111,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=D]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
     MODIFIER_LIST[internal]

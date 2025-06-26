@@ -52,14 +52,14 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Anno]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
@@ -73,7 +73,7 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE
@@ -87,7 +87,7 @@ Foo.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
                 CONSTRUCTOR_CALLEE

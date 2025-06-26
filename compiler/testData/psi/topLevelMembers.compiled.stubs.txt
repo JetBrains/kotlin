@@ -92,7 +92,7 @@ TopLevelMembersKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=String]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
@@ -119,7 +119,7 @@ TopLevelMembersKt.class:
                 REFERENCE_EXPRESSION[referencedName=foo]
               REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=D]
-      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+      PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=foo.TopLevelMembers.Main, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]

@@ -144,14 +144,14 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
+        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false, mayHaveContract=false]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE
@@ -308,7 +308,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=Annotations.getterField, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=getterField]
         MODIFIER_LIST[]
