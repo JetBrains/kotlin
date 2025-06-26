@@ -27,8 +27,8 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@R|kotlin/MustUseReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Marked : R|kotlin/Any| {
-    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] enum class E : R|kotlin/Enum<Marked.E>| {
+@R|kotlin/MustUseReturnValue|() public final [ResolvedTo(BODY_RESOLVE)] class Marked : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] enum class E : R|kotlin/Enum<Marked.E>| {
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String|
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Marked.E| {
@@ -46,7 +46,7 @@ FIR element rendered:
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] enum entry B: R|Marked.E|
     }
 
-    public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Unmarked : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Unmarked : R|kotlin/Any| {
         public final [ResolvedTo(BODY_RESOLVE)] fun getStuff(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] var prop: R|kotlin/String|

@@ -11,7 +11,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class Main : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class Main : R|kotlin/Any| {
     public final [ResolvedTo(BODY_RESOLVE)] fun contract([ResolvedTo(BODY_RESOLVE)] test: R|Test|): R|kotlin/Unit|
 
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit|

@@ -9,7 +9,7 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] [IsNewPlaceForBodyGeneration=false] class KotlinClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+public final [ResolvedTo(BODY_RESOLVE)] class KotlinClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
     private final [ResolvedTo(BODY_RESOLVE)] [HasBackingFieldKey=true] val block: R|() -> T|
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinClass] get(): R|() -> T|
 
