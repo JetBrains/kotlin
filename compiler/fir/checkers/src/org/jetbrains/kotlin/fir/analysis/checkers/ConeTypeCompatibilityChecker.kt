@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.errorComponentOfUpperBound
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.valueComponentOfUpperBound
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -117,24 +119,29 @@ object ConeTypeCompatibilityChecker {
      * another example: `emptyList<Int>() == emptyList<String>()`.
      */
     private fun ConeInferenceContext.getCompatibility(
-        upperBounds: Set<ConeClassLikeType>,
+        upperBounds: Set<ConeRigidType>,
         lowerBounds: Set<ConeClassLikeType>,
         compatibilityUpperBound: Compatibility,
         checkedTypeParameters: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
     ): Compatibility {
-        val upperBoundClasses: Set<FirClassWithSuperClasses> = upperBounds.mapNotNull { it.toFirClassWithSuperClasses(this) }.toSet()
+        val errorUpperBounds = upperBounds.map { it.errorComponentOfUpperBound() }
+        if (errorUpperBounds.intersectErrorTypes() !is CEBotType) return Compatibility.COMPATIBLE
+
+        val valueUpperBounds = upperBounds.map { it.valueComponentOfUpperBound() }
+
+        val upperBoundClasses: Set<FirClassWithSuperClasses> = valueUpperBounds.mapNotNull { it.toFirClassWithSuperClasses(this) }.toSet()
 
         // Following if condition is an optimization: if we ignore the subtyping relation and treat all upper bounds as unrelated
         // classes/interfaces, yet the types are deemed compatible for sure, then we just bail out early.
         if (lowerBounds.isEmpty() &&
-            (upperBounds.size < 2 ||
+            (valueUpperBounds.size < 2 ||
                     this.areClassesOrInterfacesCompatible(upperBoundClasses, compatibilityUpperBound) == Compatibility.COMPATIBLE)
         ) {
             return Compatibility.COMPATIBLE
         }
 
         // TODO: Due to KT-49358, we skip any checks on Java and Kotlin refection class.
-        if (upperBounds.any { it.classId == javaClassClassId || it.classId == kotlinClassClassId }) return Compatibility.COMPATIBLE
+        if (valueUpperBounds.any { it.classId == javaClassClassId || it.classId == kotlinClassClassId }) return Compatibility.COMPATIBLE
 
         val leafClassesOrInterfaces = computeLeafClassesOrInterfaces(upperBoundClasses)
         this.areClassesOrInterfacesCompatible(leafClassesOrInterfaces, compatibilityUpperBound)?.let { return it }
@@ -149,12 +156,12 @@ object ConeTypeCompatibilityChecker {
             return compatibilityUpperBound
         }
 
-        if (upperBounds.size < 2) return Compatibility.COMPATIBLE
+        if (valueUpperBounds.size < 2) return Compatibility.COMPATIBLE
 
         // Base types are compatible. Now we check type parameters.
 
         val typeArgumentMapping = mutableMapOf<FirTypeParameterSymbol, BoundTypeArguments>().apply {
-            for (type in upperBounds) {
+            for (type in valueUpperBounds) {
                 collectTypeArgumentMapping(type, this@getCompatibility, compatibilityUpperBound)
             }
         }
@@ -389,7 +396,7 @@ object ConeTypeCompatibilityChecker {
 
     /** Accumulated type arguments bound to a type parameter declared in a class. */
     private data class BoundTypeArguments(
-        val upper: MutableSet<ConeClassLikeType>,
+        val upper: MutableSet<ConeRigidType>,
         val lower: MutableSet<ConeClassLikeType>,
         val compatibilityUpperBound: Compatibility
     )

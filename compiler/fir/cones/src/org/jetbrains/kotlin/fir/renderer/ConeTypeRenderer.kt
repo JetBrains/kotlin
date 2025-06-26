@@ -275,7 +275,7 @@ open class ConeTypeRenderer(
                 builder.append(" | ")
                 renderConstructor(type.lookupTag)
             }
-            is CETypeVariable -> {
+            is CETypeVariableType -> {
                 builder.append(" | ")
                 renderConstructor(type.typeConstructor)
             }

@@ -97,6 +97,18 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     override fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean {
         error("unexpected for non-cone type system")
     }
+
+    override fun List<ErrorTypeMarker>.intersectErrorTypes(): ErrorTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker> {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
+        error("unexpected for non-cone type system")
+    }
 }
 
 interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {

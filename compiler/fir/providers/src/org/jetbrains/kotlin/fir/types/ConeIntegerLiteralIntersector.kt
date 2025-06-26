@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.types
 
 object ConeIntegerLiteralIntersector {
-    fun findCommonIntersectionType(types: Collection<ConeKotlinType>): ConeKotlinType? {
-        if (types.isEmpty()) return null
-        return types.reduce { left: ConeKotlinType?, right: ConeKotlinType? -> fold(left, right) }
+    fun findCommonIntersectionType(types: Collection<ConeKotlinType>): ConeSimpleKotlinType? {
+        val ilt = types.find { it is ConeIntegerLiteralType } ?: return null
+        return types.fold(ilt as ConeSimpleKotlinType) { acc: ConeSimpleKotlinType?, right: ConeKotlinType -> fold(acc, right) }
     }
 
-    private fun fold(left: ConeKotlinType?, right: ConeKotlinType?): ConeKotlinType? {
-        if (left == null || right == null) return null
+    private fun fold(left: ConeSimpleKotlinType?, right: ConeKotlinType): ConeSimpleKotlinType? {
+        if (left == null) return null
         return when {
             left is ConeIntegerLiteralType && right is ConeIntegerLiteralType ->
                 fold(left, right)
@@ -23,7 +23,7 @@ object ConeIntegerLiteralIntersector {
         }
     }
 
-    private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType): ConeKotlinType? {
+    private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType): ConeIntegerLiteralType? {
         return when {
             left.possibleTypes.containsAll(right.possibleTypes) -> right
             right.possibleTypes.containsAll(left.possibleTypes) -> left
@@ -31,6 +31,6 @@ object ConeIntegerLiteralIntersector {
         }
     }
 
-    private fun fold(left: ConeIntegerLiteralType, right: ConeKotlinType): ConeKotlinType? =
-        if (right in left.possibleTypes) right else null
+    private fun fold(left: ConeIntegerLiteralType, right: ConeKotlinType): ConeClassLikeType? =
+        if (right in left.possibleTypes) (right as ConeClassLikeType) else null
 }

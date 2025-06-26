@@ -112,7 +112,7 @@ open class ConeTypeVariable(name: String, containsErrorComponent: Boolean, origi
     val defaultType: ConeRigidType = if (containsErrorComponent) {
         ConeErrorUnionType(
             ConeTypeVariableType(isMarkedNullable = false, typeConstructor),
-            CETypeVariable(typeConstructor)
+            CETypeVariableType(typeConstructor)
         )
     } else {
         ConeTypeVariableType(isMarkedNullable = false, typeConstructor)

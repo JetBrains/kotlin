@@ -145,7 +145,7 @@ class FirCallCompleter(
                     // Frankly speaking, this is some sort of hack, which currently I don't know how to resolve properly.
                     val storage = candidate.system.currentStorage()
                     val finalSubstitutor = storage
-                        .buildCurrentSubstitutor(session.typeContext, emptyMap()) as ConeSubstitutor
+                        .buildCurrentSubstitutor(session.typeContext, emptyMap(), candidate.system.errorTypeSystem.currentSolution) as ConeSubstitutor
                     call.transformSingle(
                         createCompletionResultsWriter(finalSubstitutor),
                         null

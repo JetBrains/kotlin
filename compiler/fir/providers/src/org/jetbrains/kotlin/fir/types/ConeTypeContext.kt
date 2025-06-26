@@ -719,17 +719,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is CEBotType -> true
             is CELookupTagBasedType -> this == other
             is CETopType -> false
-            is CETypeVariable -> this == other
+            is CETypeVariableType -> this == other
             is CEUnionType -> error("Not atomic")
         }
     }
 
-    private fun <T : MutableCollection<CEType>> collectAtomics(type: CEType, col: T): T {
-        when (type) {
-            is CELookupTagBasedType -> col.add(type)
-            is CETypeVariable -> col.add(type)
-            is CETopType -> col.add(type)
-            is CEUnionType -> type.types.forEach { collectAtomics(it, col) }
+    private fun <T : MutableCollection<CEType>> CEType.collectAtomics(col: T): T {
+        when (this) {
+            is CELookupTagBasedType -> col.add(this)
+            is CETypeVariableType -> col.add(this)
+            is CETopType -> col.add(this)
+            is CEUnionType -> types.forEach { it.collectAtomics(col) }
             is CEBotType -> {}
         }
         return col
@@ -737,8 +737,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
         // TODO: RE: MID: for better and faster subtyping we should initially store them in some kind of sets
-        val subTs = collectAtomics(this as CEType, mutableListOf())
-        val superTs = collectAtomics(other as CEType, mutableListOf())
+        val subTs = (this as CEType).collectAtomics(mutableListOf())
+        val superTs = (other as CEType).collectAtomics(mutableListOf())
 
         return subTs.all { subT -> superTs.any { superT -> subT.isSubtypeOfAtomic(superT) } }
     }
@@ -747,8 +747,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         lowerType: ErrorTypeMarker,
         upperType: ErrorTypeMarker,
     ): List<Pair<ErrorTypeMarker, ErrorTypeMarker>> {
-        val subTs = collectAtomics(lowerType as CEType, mutableListOf())
-        val superTs = collectAtomics(upperType as CEType, mutableListOf())
+        val subTs = (lowerType as CEType).collectAtomics(mutableListOf())
+        val superTs = (upperType as CEType).collectAtomics(mutableListOf())
 
         val unsatisfiedSubTs = subTs.filter { subTs -> superTs.none { superTs -> subTs.isSubtypeOfAtomic(superTs) } }
 
@@ -756,15 +756,167 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean {
+        // TODO: RE: This function does not expand upper bounds of type parameters, so incorrect
         require(this !is CEUnionType) { "Expected atomic" }
         require(!this.isSubtypeOf(other)) { "Already a subtype" }
 
         val subT = this as CEType
-        val superTs = collectAtomics(other as CEType, mutableListOf())
+        val superTs = (other as CEType).collectAtomics(mutableListOf())
 
-        if (subT is CETypeVariable) return true
-        if (superTs.any { it is CETypeVariable }) return true
+        if (subT is CETypeVariableType) return true
+        if (superTs.any { it is CETypeVariableType }) return true
 
         return false
+    }
+
+    override fun List<ErrorTypeMarker>.intersectErrorTypes(): CEType {
+        // TODO: RE: suspicious function
+        val atomicTypes = this.map { (it as CEType).collectAtomics(mutableListOf()) }
+
+        val resultingTypes = mutableListOf<CEType>()
+
+        atomicTypes.forEach {
+            it.forEach { type ->
+                // already in intersection => not needed
+                if (resultingTypes.any { superType -> type.isSubtypeOfAtomic(superType) })
+                    return@forEach
+                // check if this atom is a subtype of all types in intersection
+                if (atomicTypes.all { types -> types.any { superType -> type.isSubtypeOfAtomic(superType) } })
+                    resultingTypes.add(type)
+            }
+        }
+
+        atomicTypes.map { it.filter { atom -> resultingTypes.any { resAtom -> !atom.isSubtypeOfAtomic(resAtom) } } }
+        if (atomicTypes.any { types -> types.any { it is CETypeVariableType || it is CETypeParameterType } }) {
+            error("This should not happen. Intersection for different type variables is not supported yet.")
+        }
+
+        return when (resultingTypes.size) {
+            0 -> CEBotType
+            1 -> resultingTypes.single()
+            else -> CEUnionType(resultingTypes)
+        }
+    }
+
+    fun ConeRigidType.errorComponent(): CEType {
+        return when (this) {
+            is ConeErrorUnionType -> errorType
+            is ConeValueType -> CEBotType
+        }
+    }
+
+    fun ConeRigidType.valueComponent(): ConeValueType {
+        return when (this) {
+            is ConeErrorUnionType -> valueType
+            is ConeValueType -> this
+        }
+    }
+
+    override fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker> {
+        // TODO: RE: Current solution considers all type variables as required to solve, which is not always true
+
+        @Suppress("UNCHECKED_CAST")
+        this as RichErrorsSystemState<CEType>
+
+        require(constraints.all { it.lower !is CEUnionType })
+
+
+        fun CEType.allVariables(): Sequence<CETypeVariableType> {
+            return when (this) {
+                is CEBotType -> emptySequence()
+                is CELookupTagBasedType -> emptySequence()
+                is CETopType -> emptySequence()
+                is CETypeVariableType -> sequenceOf(this)
+                is CEUnionType -> types.asSequence().flatMap { it.allVariables() }
+            }
+        }
+
+        val variables = buildList {
+            for (constraint in constraints) {
+                constraint.lower.allVariables().forEach { add(it) }
+                constraint.upper.allVariables().forEach { add(it) }
+            }
+        }
+
+        val currentSolution = variables.map { it.typeConstructor }.associateWith { mutableListOf<CEType>() }
+
+        fun CEType.atomicsWithSubstitution(): List<CEType> {
+            return when (this) {
+                is CEBotType -> emptyList()
+                is CELookupTagBasedType -> listOf(this)
+                is CETopType -> listOf(this)
+                is CETypeVariableType -> currentSolution[typeConstructor]!!
+                is CEUnionType -> types.flatMap { it.atomicsWithSubstitution() }
+            }
+        }
+
+        fun RichErrorsSystemState.Constraint<CEType>.isSatisfied(): Boolean {
+            val lowerAtomics = lower.atomicsWithSubstitution()
+            val upperAtomics = upper.atomicsWithSubstitution()
+            return lowerAtomics.all { lowerT -> upperAtomics.any { upperT -> lowerT.isSubtypeOfAtomic(upperT) } }
+        }
+
+        fun RichErrorsSystemState.Constraint<CEType>.isPossible(): Boolean {
+            fun CEType.isPossibleSubtypeOf(other: CEType): Boolean {
+                if (other is CETypeVariableType) return true
+                if (isSubtypeOfAtomic(other)) return true
+                return false
+            }
+
+            val lowerAtomics = lower.atomicsWithSubstitution()
+            val upperAtomics = upper.collectAtomics(mutableListOf())
+            return lowerAtomics.all { lowerT -> upperAtomics.any { upperT -> lowerT.isPossibleSubtypeOf(upperT) } }
+        }
+
+        val impossibleConstraints = mutableSetOf<RichErrorsSystemState.Constraint<CEType>>()
+
+        do {
+            var relaxedAny = false
+
+            for (constraint in constraints) {
+                if (constraint.isSatisfied() || constraint in impossibleConstraints) continue
+                if (!constraint.isPossible()) {
+                    impossibleConstraints.add(constraint)
+                    continue
+                }
+                relaxedAny = true
+
+                val lowerAtomics = constraint.lower.atomicsWithSubstitution()
+                val upperAtomics = constraint.upper.collectAtomics(mutableListOf())
+
+                val unsatisfiedLowerAtomics = lowerAtomics.filter { lt -> !upperAtomics.any { ut -> lt.isSubtypeOfAtomic(ut) } }
+
+                val upperVariables = upperAtomics.filterIsInstance<CETypeVariableType>()
+                val upperVariable = when (upperVariables.size) {
+                    0 -> error("Should not happen")
+                    1 -> upperVariables.single()
+                    else -> error("Too many upper variables: $upperVariables")
+                }
+
+                currentSolution[upperVariable.typeConstructor]!!.addAll(unsatisfiedLowerAtomics)
+            }
+        } while (relaxedAny)
+
+        // TODO: RE: Simplify current solution
+
+        return RichErrorsSystemSolution(
+            currentSolution.mapValues { (_, types) -> CEUnionType(types) },
+            impossibleConstraints.isNotEmpty()
+        )
+    }
+
+    override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
+        errorType as CEType
+
+        return when (this) {
+            is ConeFlexibleType -> {
+                val lowerBound = ConeErrorUnionType(lowerBound as ConeValueType, errorType)
+                val upperBound = ConeErrorUnionType(upperBound as ConeValueType, errorType)
+                ConeFlexibleType(lowerBound, upperBound, isTrivial)
+            }
+            is ConeErrorUnionType -> error("unexpected")
+            is ConeValueType -> ConeErrorUnionType(this, errorType)
+            else -> error("Unexpected")
+        }
     }
 }

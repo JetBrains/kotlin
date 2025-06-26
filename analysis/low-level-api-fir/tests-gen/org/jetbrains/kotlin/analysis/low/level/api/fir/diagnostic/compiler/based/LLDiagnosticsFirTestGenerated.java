@@ -6084,9 +6084,9 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
-      @TestMetadata("play.kt")
-      public void testPlay() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/play.kt");
+      @TestMetadata("genericCalls.kt")
+      public void testGenericCalls() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/genericCalls.kt");
       }
 
       @Test

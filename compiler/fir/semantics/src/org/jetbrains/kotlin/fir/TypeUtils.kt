@@ -9,45 +9,110 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 
 /**
- * Collects the upper bounds as [ConeClassLikeType].
+ * Collects the upper bounds as [ConeClassLikeType] or [ConeErrorUnionType].
  */
-fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+fun ConeKotlinType?.collectUpperBounds(): Set<ConeRigidType> {
     if (this == null) return emptySet()
 
-    val upperBounds = mutableSetOf<ConeClassLikeType>()
-    val seen = mutableSetOf<ConeKotlinType>()
-    fun collect(type: ConeKotlinType) {
-        if (!seen.add(type)) return // Avoid infinite recursion.
+    val seen = mutableSetOf<Any>()
 
-        when (type) {
-            is ConeErrorType -> return // Ignore error types
+    fun collectErrorType(type: CEType): Sequence<CEType> {
+        fun ConeKotlinType.stripToError(): CEType {
+            return when (this) {
+                is ConeFlexibleType -> upperBound.stripToError()
+                is ConeErrorUnionType -> errorType
+                else -> CEBotType
+            }
+        }
+
+        if (!seen.add(type)) return emptySequence() // Avoid infinite recursion.
+
+        return when (type) {
+            is CEBotType -> sequenceOf(CEBotType)
+            is CELookupTagBasedType -> when (type) {
+                is CEClassifierType -> sequenceOf(type)
+                is CETypeParameterType -> {
+                    val symbol = type.lookupTag.typeParameterSymbol
+                    symbol.resolvedBounds.asSequence().flatMap { collectErrorType(it.coneType.stripToError()) }
+                }
+                else -> error("missing branch for ${javaClass.name}")
+            }
+            is CETopType -> sequenceOf(CETopType)
+            is CETypeVariableType -> {
+                val symbol = (type.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol
+                    ?: return emptySequence()
+                symbol.resolvedBounds.asSequence().flatMap { collectErrorType(it.coneType.stripToError()) }
+            }
+            is CEUnionType -> type.types.asSequence().flatMap(::collectErrorType)
+        }
+    }
+
+    fun collect(type: ConeKotlinType): Sequence<ConeRigidType> {
+        if (!seen.add(type)) return emptySequence() // Avoid infinite recursion.
+
+        return when (type) {
+            is ConeErrorType -> return emptySequence() // Ignore error types
             is ConeLookupTagBasedType -> when (type) {
-                is ConeClassLikeType -> upperBounds.add(type)
+                is ConeClassLikeType -> sequenceOf(type)
                 is ConeTypeParameterType -> {
                     val symbol = type.lookupTag.typeParameterSymbol
-                    symbol.resolvedBounds.forEach { collect(it.coneType) }
+                    symbol.resolvedBounds.asSequence().flatMap { collect(it.coneType) }
                 }
                 else -> error("missing branch for ${javaClass.name}")
             }
             is ConeTypeVariableType -> {
-                val symbol = (type.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol ?: return
-                symbol.resolvedBounds.forEach { collect(it.coneType) }
+                val symbol = (type.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol
+                    ?: return emptySequence()
+                symbol.resolvedBounds.asSequence().flatMap { collect(it.coneType) }
             }
             is ConeDefinitelyNotNullType -> collect(type.original)
-            is ConeIntersectionType -> type.intersectedTypes.forEach(::collect)
+            is ConeIntersectionType -> type.intersectedTypes.asSequence().flatMap(::collect)
             is ConeFlexibleType -> collect(type.upperBound)
-            is ConeCapturedType -> type.constructor.supertypes?.forEach(::collect)
-            is ConeIntegerConstantOperatorType -> upperBounds.add(type.getApproximatedType())
+            is ConeCapturedType -> type.constructor.supertypes?.asSequence()?.flatMap(::collect) ?: emptySequence()
+            is ConeIntegerConstantOperatorType -> sequenceOf(type.getApproximatedType())
             is ConeStubType, is ConeIntegerLiteralConstantType -> {
                 error("$type should not reach here")
             }
             is ConeErrorUnionType -> {
-                // TODO: RE: idk what is expected here, so:
-                error("boom")
+                val errorTypes = collectErrorType(type.errorType).toList()
+                collect(type.valueType).map {
+                    when (it) {
+                        is ConeClassLikeType -> {
+                            ConeErrorUnionType(
+                                it, CEUnionType(errorTypes)
+                            )
+                        }
+                        is ConeErrorUnionType -> {
+                            val unitedErrorTypes = when (val et = it.errorType) {
+                                is CEUnionType -> errorTypes + et.types
+                                else -> errorTypes + et
+                            }
+                            it.copy(errorType = CEUnionType(unitedErrorTypes))
+                        }
+                        else -> error("unexpected")
+                    }
+                }
             }
         }
     }
 
+    val upperBounds = mutableSetOf<ConeRigidType>()
     collect(this)
     return upperBounds
+}
+
+fun ConeRigidType.valueComponentOfUpperBound(): ConeClassLikeType {
+    return when (this) {
+        is ConeClassLikeType -> this
+        is ConeErrorUnionType -> valueType as ConeClassLikeType
+        else -> error("Unexpected type: $this")
+    }
+}
+
+fun ConeRigidType.errorComponentOfUpperBound(): CEType {
+    return when (this) {
+        is ConeClassLikeType -> CEBotType
+        is ConeErrorUnionType -> errorType
+        else -> error("Unexpected type: $this")
+    }
 }

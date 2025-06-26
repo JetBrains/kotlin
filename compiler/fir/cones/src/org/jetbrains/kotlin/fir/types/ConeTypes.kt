@@ -88,7 +88,7 @@ data object CETopType : CEType()
 
 data object CEBotType : CEType()
 
-data class CETypeVariable(
+data class CETypeVariableType(
     val typeConstructor: ConeTypeVariableTypeConstructor,
 ) : CEType()
 

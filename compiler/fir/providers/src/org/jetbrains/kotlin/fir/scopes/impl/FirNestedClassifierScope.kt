@@ -149,6 +149,7 @@ fun FirTypeParameterSymbol.mayHaveErrorComponent(): Boolean {
     fun ConeKotlinType.mayHaveErrorComponent(): Boolean = when (this) {
         is ConeFlexibleType -> lowerBound.mayHaveErrorComponent() || upperBound.mayHaveErrorComponent()
         is ConeErrorUnionType -> true
+        is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.mayHaveErrorComponent()
         else -> false
     }
 

@@ -43,7 +43,7 @@ class NewConstraintSystemImpl(
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
 
-    private val errorTypeSystem: RichErrorsConstraintSystem = RichErrorsConstraintSystem(typeSystemContext)
+    val errorTypeSystem: RichErrorsConstraintSystem = RichErrorsConstraintSystem(typeSystemContext)
 
     // Cached value that should be reset on each new constraint or fork point
     private var hasContradictionInForkPointsCache: Boolean? = null
@@ -867,7 +867,7 @@ class NewConstraintSystemImpl(
 
     override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.buildCurrentSubstitutor(this, additionalBindings)
+        return storage.buildCurrentSubstitutor(this, additionalBindings, errorTypeSystem.currentSolution)
     }
 
     override fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker {

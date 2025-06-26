@@ -403,6 +403,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
 
+    // BEGIN: functions for error unions
+
     fun RigidTypeMarker.isErrorUnion(): Boolean
     fun RigidTypeMarker.isValueType(): Boolean
 
@@ -418,7 +420,18 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.containsErrorComponent(): Boolean
     fun KotlinTypeMarker.disableFlexibilityForErrorType(): ErrorTypeMarker
 
-    fun simplifyAndIncorporateSubtyping(lowerType: ErrorTypeMarker, upperType: ErrorTypeMarker): List<Pair<ErrorTypeMarker, ErrorTypeMarker>>
+    fun simplifyAndIncorporateSubtyping(
+        lowerType: ErrorTypeMarker,
+        upperType: ErrorTypeMarker,
+    ): List<Pair<ErrorTypeMarker, ErrorTypeMarker>>
+
+    fun List<ErrorTypeMarker>.intersectErrorTypes(): ErrorTypeMarker
+
+    fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker>
+
+    fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker
+
+    // END: functions for error unions
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
     fun DynamicTypeMarker.asDynamicType(): DynamicTypeMarker = this
@@ -681,3 +694,17 @@ annotation class ObsoleteTypeKind
 
 @RequiresOptIn
 annotation class K2Only
+
+data class RichErrorsSystemState<T : ErrorTypeMarker>(
+    val constraints: List<Constraint<T>>,
+) {
+    data class Constraint<T : ErrorTypeMarker>(
+        val lower: T,
+        val upper: T,
+    )
+}
+
+data class RichErrorsSystemSolution<T : ErrorTypeMarker>(
+    val mappings: Map<TypeConstructorMarker, T>,
+    val hasContradiction: Boolean,
+)

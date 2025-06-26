@@ -482,7 +482,7 @@ internal class KaFirResolver(
         val candidateSubstitutor = substitutor
 
         // Maps the type variable `TypeVariable(A)` into the resulting type
-        val systemSubstitutor = system.asReadOnlyStorage().buildCurrentSubstitutor(system, emptyMap()) as ConeSubstitutor
+        val systemSubstitutor = system.asReadOnlyStorage().buildCurrentSubstitutor(system, emptyMap(), system.errorTypeSystem.currentSolution) as ConeSubstitutor
 
         val typeMapping = typeArgumentMapping as? TypeArgumentMapping.Mapped
         return buildMap {

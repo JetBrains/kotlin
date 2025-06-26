@@ -12,9 +12,22 @@ import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
-    additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>
+    additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>,
+    errorBindings: Map<TypeConstructorMarker, ErrorTypeMarker>,
 ): TypeSubstitutorMarker {
-    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + additionalBindings)
+    val bindings = with(context) {
+        val result = mutableMapOf<TypeConstructorMarker, KotlinTypeMarker>()
+        for ((variableConstructor, type) in additionalBindings) {
+            val errorType = errorBindings[variableConstructor]
+            result[variableConstructor] = if (errorType == null) type else type.addErrorComponent(errorType)
+        }
+        for ((variableConstructor, type) in fixedTypeVariables) {
+            val errorType = errorBindings[variableConstructor]
+            result[variableConstructor] = if (errorType == null) type else type.addErrorComponent(errorType)
+        }
+        result
+    }
+    return context.typeSubstitutorByTypeConstructor(bindings)
 }
 
 fun ConstraintStorage.buildAbstractResultingSubstitutor(
