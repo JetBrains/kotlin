@@ -33,11 +33,10 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         }
     }
 
-    val testProjectKlibFiles = testProjectKlib.incoming.files
-
     dependencies {
         testProjectKlib(project("testProject"))
     }
+    val testProjectKlibFiles: FileCollection = testProjectKlib
 
     inputs.files(testProjectKlibFiles)
         .withPathSensitivity(PathSensitivity.RELATIVE)

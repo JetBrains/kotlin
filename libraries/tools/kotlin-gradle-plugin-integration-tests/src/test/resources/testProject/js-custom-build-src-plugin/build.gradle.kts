@@ -17,8 +17,7 @@ dependencies {
 kotlin {
     js {
         tasks.register("checkConfigurationsResolve") {
-            val npmAggregatedFiles = configurations.named(kotlin.js().compilations["main"].npmAggregatedConfigurationName)
-                .get().incoming.files
+            val npmAggregatedFiles: FileCollection = configurations.named(kotlin.js().compilations["main"].npmAggregatedConfigurationName).get()
             inputs.files(npmAggregatedFiles).withPropertyName("npmAggregatedFiles")
             doLast {
                 npmAggregatedFiles.files

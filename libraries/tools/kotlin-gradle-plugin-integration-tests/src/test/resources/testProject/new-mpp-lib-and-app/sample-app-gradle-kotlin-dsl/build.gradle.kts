@@ -68,7 +68,7 @@ kotlin {
 
 tasks.register("resolveRuntimeDependencies") {
     val configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
-    val runtimeDependencies = configurations[configName].incoming.files
+    val runtimeDependencies: FileCollection = configurations[configName]
     inputs.files(runtimeDependencies).withPropertyName("runtimeDependencies")
     doFirst {
         // KT-26301

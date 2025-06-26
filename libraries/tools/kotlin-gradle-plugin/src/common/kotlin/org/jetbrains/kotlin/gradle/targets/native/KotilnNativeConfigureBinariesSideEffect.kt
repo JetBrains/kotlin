@@ -133,7 +133,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.includes.clear() // we need to include non '.kt' or '.kts' files
         task.disallowSourceChanges()
 
-        task.apiFiles.from({ compilation.resolvableApiConfiguration().incoming.files })
+        task.apiFiles.from({ compilation.resolvableApiConfiguration() })
 
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)

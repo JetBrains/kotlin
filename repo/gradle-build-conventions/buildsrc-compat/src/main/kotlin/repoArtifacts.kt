@@ -103,7 +103,7 @@ fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
     val jarTask = tasks.named<Jar>("jar")
     jarTask.configure {
         addEmbeddedRuntime()
-        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -126,7 +126,7 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
         from {
             zipTree(shadowJarTask.get().outputs.files.singleFile)
         }
-        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
@@ -143,7 +143,7 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
 
     task.configure {
         configurations = configurations + listOf(project.configurations["embedded"])
-        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         body()
     }
@@ -428,19 +428,13 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
 fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
 
 fun Jar.setupPublicJar(
-    baseName: String,
-    classifier: String = ""
-) = setupPublicJar(
-    project.provider { baseName },
-    project.provider { classifier }
-)
-
-fun Jar.setupPublicJar(
     baseName: Provider<String>,
     classifier: Provider<String> = project.provider { "" }
 ) {
     val buildNumber = project.rootProject.extra["buildNumber"] as String
-    this.archiveBaseName.set(baseName)
+    if (archiveBaseName != baseName) {
+        this.archiveBaseName.set(baseName)
+    }
     this.archiveClassifier.set(classifier)
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")

@@ -303,7 +303,7 @@ fun Project.wireGradleVariantToCommonGradleVariant(
     tasks.withType<Jar>().configureEach {
         if (name == wireSourceSet.jarTaskName) {
             from(wireSourceSet.output, commonSourceSet.output)
-            setupPublicJar(archiveBaseName.get())
+            setupPublicJar(archiveBaseName)
             addEmbeddedRuntime()
             addEmbeddedRuntime(wireSourceSet.embeddedConfigurationName)
         } else if (name == wireSourceSet.sourcesJarTaskName) {
@@ -402,7 +402,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                             }
 
                         plugins.withType<JavaPlugin> {
-                            tasks.named<JavaCompile>(compileJavaTaskName).get().apply {
+                            tasks.named<JavaCompile>(compileJavaTaskName).configure {
                                 attribute(
                                     TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
                                     when (targetCompatibility) {

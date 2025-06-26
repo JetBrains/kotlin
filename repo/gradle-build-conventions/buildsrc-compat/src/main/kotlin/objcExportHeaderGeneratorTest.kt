@@ -94,8 +94,8 @@ fun Project.nativeTestWithExternalDependencies(
         run {
             /* Create a classpath (list of file paths) that will be exposed as System property */
             val testDependencyKlibsClasspath = project.files(
-                testDependencyProjectKlibs.incoming.files,
-                testDependencyLibraryKlibs.incoming.files
+                testDependencyProjectKlibs,
+                testDependencyLibraryKlibs
             ).elements.map { elements ->
                 elements.joinToString(File.pathSeparator) { location -> location.asFile.absolutePath }
             }
