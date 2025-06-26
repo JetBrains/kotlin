@@ -33,6 +33,14 @@ fun test_4() {
     test_4()
 }
 
+class MyClass {
+    constructor(x: Boolean) {
+        contract {
+            returns(true) implies (x)
+        }
+    }
+}
+
 // should not have raw description
 
 fun test_5() {

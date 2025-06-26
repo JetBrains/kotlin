@@ -75,6 +75,19 @@ FILE: contractDescription.kt
         contract#()
         test_4#()
     }
+    public final? class MyClass : R|kotlin/Any| {
+        public? [ContainingClassKey=MyClass] constructor(x: Boolean): R|MyClass| {
+            super<R|kotlin/Any|>()
+             {
+                contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    returns#(Boolean(true)).implies#(x#)
+                }
+                )
+            }
+
+        }
+
+    }
     public? final? fun test_5(): R|kotlin/Unit| {
         test_5#()
         contract#()
