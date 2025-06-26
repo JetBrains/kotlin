@@ -169,8 +169,7 @@ internal class KotlinNativeFromToolchainProvider(
     @get:Internal
     internal val nativeClasspath = project.provider {
         project.objects.nativeCompilerClasspath(
-            project.nativeProperties.actualNativeHomeDirectory,
-            project.nativeProperties.shouldUseEmbeddableCompilerJar
+            project.nativeProperties.actualNativeHomeDirectory
         )
     }
 }

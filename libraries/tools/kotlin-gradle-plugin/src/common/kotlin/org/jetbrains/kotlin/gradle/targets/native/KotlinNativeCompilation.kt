@@ -55,10 +55,6 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
-
-    internal val useGenericPluginArtifact: Boolean
-        get() = project.nativeProperties.shouldUseEmbeddableCompilerJar.get()
-
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(

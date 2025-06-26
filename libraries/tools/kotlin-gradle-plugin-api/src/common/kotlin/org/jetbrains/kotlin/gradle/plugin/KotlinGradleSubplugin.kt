@@ -232,16 +232,6 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
      * for compilation.
      */
     fun getPluginArtifact(): SubpluginArtifact
-
-    /**
-     * Retrieves the Maven coordinates of the legacy Kotlin/Native-specific compiler plugin associated with this supplemental Gradle plugin.
-     *
-     * It's used only if Gradle is configured not to use the Kotlin/Native embeddable compiler JAR file.
-     * (with `kotlin.native.useEmbeddableCompilerJar=false` project property).
-     *
-     * Otherwise, [getPluginArtifact] is used by default.
-     */
-    fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 
 /**
