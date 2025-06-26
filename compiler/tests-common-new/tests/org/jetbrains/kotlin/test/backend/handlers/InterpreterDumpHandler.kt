@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 private const val stopEvaluation = "// STOP_EVALUATION_CHECKS"
 private const val startEvaluation = "// START_EVALUATION_CHECKS"
 
-interface EvaluatorHandler {
+interface EvaluatorHandlerTrait {
     val testServices: TestServices
 
     val globalMetadataInfoHandler
@@ -65,7 +65,7 @@ interface EvaluatorHandler {
     }
 }
 
-interface FirAndIrDumpHandler : IrInterpreterDumpHandler {
+interface IrInterpreterDumpHandlerTrait : EvaluatorHandlerTrait {
     fun processModule(module: TestModule) {
         val irMetaInfo = processIrModule(module)
         val firMetaInfo = testServices.firInterpreterResultsStorage[module] ?: irMetaInfo
@@ -108,9 +108,6 @@ interface FirAndIrDumpHandler : IrInterpreterDumpHandler {
             globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfo.map { it.copy().apply { attributes.add("FIR") } })
         }
     }
-}
-
-interface IrInterpreterDumpHandler : EvaluatorHandler {
     fun processIrModule(module: TestModule): Map<TestFile, List<ParsedCodeMetaInfo>> {
         if (!module.isSuppressedForK2() && testServices.defaultsProvider.frontendKind == FrontendKinds.ClassicFrontend) {
             return module.files.associateWith { testFile -> testFile.getExpectedResult() }
@@ -158,7 +155,7 @@ interface IrInterpreterDumpHandler : EvaluatorHandler {
     }
 }
 
-class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices), EvaluatorHandler {
+class FirInterpreterDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices), EvaluatorHandlerTrait {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
@@ -270,7 +267,7 @@ private val TestServices.firInterpreterResultsStorage: FirInterpreterResultsStor
 /**
  * Should be always used together with [FirInterpreterDumpHandler]
  */
-class JvmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, JvmBinaryArtifactHandler(testServices) {
+class JvmIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, JvmBinaryArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
@@ -284,7 +281,7 @@ class JvmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHand
 /**
  * Should be always used together with [FirInterpreterDumpHandler]
  */
-class JsIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, JsBinaryArtifactHandler(testServices) {
+class JsIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, JsBinaryArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
@@ -298,7 +295,7 @@ class JsIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandl
 /**
  * Should be always used together with [FirInterpreterDumpHandler]
  */
-class WasmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, WasmBinaryArtifactHandler(testServices) {
+class WasmIrInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, WasmBinaryArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
@@ -314,7 +311,7 @@ class WasmIrInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHan
  *
  * Should be always used together with [FirInterpreterDumpHandler]
  */
-class NativeKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+class NativeKlibInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, KlibArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
@@ -328,7 +325,7 @@ class NativeKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDum
 /**
  * Should be always used together with [FirInterpreterDumpHandler]
  */
-class JsKlibInterpreterDumpHandler(testServices: TestServices) : FirAndIrDumpHandler, KlibArtifactHandler(testServices) {
+class JsKlibInterpreterDumpHandler(testServices: TestServices) : IrInterpreterDumpHandlerTrait, KlibArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::FirInterpreterResultsStorage))
 
