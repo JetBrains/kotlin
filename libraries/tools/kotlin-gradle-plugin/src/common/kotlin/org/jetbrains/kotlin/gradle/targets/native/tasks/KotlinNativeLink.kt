@@ -139,10 +139,6 @@ constructor(
     @get:Input
     internal val konanCacheKind: Provider<NativeCacheKind> = project.getKonanCacheKind(konanTarget)
 
-    @Suppress("unused")
-    @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
-
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
         "Use toolOptions.freeCompilerArgs",
@@ -425,7 +421,6 @@ constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,

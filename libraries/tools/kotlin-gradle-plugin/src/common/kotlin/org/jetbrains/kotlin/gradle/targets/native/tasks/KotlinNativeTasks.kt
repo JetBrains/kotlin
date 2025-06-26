@@ -231,9 +231,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Input
     val artifactVersion = project.version.toString()
 
-    @get:Input
-    internal val useEmbeddableCompilerJar: Provider<Boolean> = project.nativeProperties.shouldUseEmbeddableCompilerJar
-
     @get:Internal
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
@@ -436,7 +433,6 @@ internal constructor(
             classLoadersCachingService,
             forceDisableRunningInProcess,
             useXcodeMessageStyle,
-            useEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             konanPropertiesService,
@@ -1169,7 +1165,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Internal
     val konanHome: Provider<String> = kotlinNativeProvider.flatMap { it.bundleDirectory }
 
-    private val shouldUseEmbeddableCompilerJar = project.nativeProperties.shouldUseEmbeddableCompilerJar
     private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
@@ -1178,7 +1173,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         get() = objectFactory.KotlinNativeCInteropRunner(
             metrics,
             classLoadersCachingService,
-            shouldUseEmbeddableCompilerJar,
             actualNativeHomeDirectory,
             runnerJvmArgs,
             useXcodeMessageStyle,

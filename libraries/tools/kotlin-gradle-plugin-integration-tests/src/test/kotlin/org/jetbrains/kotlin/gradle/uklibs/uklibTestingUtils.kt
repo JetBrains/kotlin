@@ -254,8 +254,7 @@ fun TestProject.dumpKlibMetadataSignatures(klib: File): String {
     buildScriptInjection {
         project.tasks.register(dumpName) {
             val nativeCompilerClasspath = project.objects.nativeCompilerClasspath(
-                project.nativeProperties.actualNativeHomeDirectory,
-                project.nativeProperties.shouldUseEmbeddableCompilerJar,
+                project.nativeProperties.actualNativeHomeDirectory
             )
             it.inputs.files(nativeCompilerClasspath)
             it.doLast {

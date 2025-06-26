@@ -241,6 +241,13 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
      *
      * Otherwise, [getPluginArtifact] is used by default.
      */
+    @Deprecated(
+        message = "This function is no longer used as only the embeddable compiler is supported. " +
+                "The 'kotlin.native.useEmbeddableCompilerJar' property has been removed and " +
+                "getPluginArtifact() is always used instead.",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith("getPluginArtifact()")
+    ) // Since 2.2.20
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 
