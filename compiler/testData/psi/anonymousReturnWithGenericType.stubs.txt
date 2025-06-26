@@ -21,7 +21,7 @@ PsiJetFileStubImpl[package=]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
           CLASS_BODY
-      FUN[fqName=AnonymousReturnWithGenericType.f1, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
+      FUN[fqName=AnonymousReturnWithGenericType.f1, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
         VALUE_PARAMETER_LIST
         OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
@@ -49,7 +49,7 @@ PsiJetFileStubImpl[package=]
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=T]
           CLASS_BODY
-      FUN[fqName=AnonymousReturnWithGenericType.f2, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
+      FUN[fqName=AnonymousReturnWithGenericType.f2, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
         OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]

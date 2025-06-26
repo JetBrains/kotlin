@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/AnnotationsOnNullableTypes, fqName=AnnotationsOnNullableTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationsOnNullableTypes, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-      FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
+      FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=B]
@@ -21,7 +21,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
         VALUE_PARAMETER_LIST
-      FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
+      FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
+      FUN[fqName=AnnotationsOnNullableTypes.parameterArgument, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
@@ -52,7 +52,7 @@ PsiJetFileStubImpl[package=]
                       NULLABLE_TYPE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
+      FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           MODIFIER_LIST[]
@@ -64,7 +64,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
+      FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         VALUE_PARAMETER_LIST
@@ -78,7 +78,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
+      FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -177,7 +177,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
+      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]

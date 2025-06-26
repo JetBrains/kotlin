@@ -228,7 +228,7 @@ private class FunctionClsStubBuilder(
             isTopLevel,
             c.containerFqName.child(callableName),
             isExtension = functionProto.hasReceiver(),
-            hasBlockBody = true,
+            hasNoExpressionBody = true,
             hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
             hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
             mayHaveContract = hasContract,
@@ -345,7 +345,7 @@ private class PropertyClsStubBuilder(
             /* parent = */ callableStub,
             /* isGetter = */ true,
             /* hasBody = */ isNotDefault,
-            /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* hasNoExpressionBody = */ true,
             /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 
@@ -381,7 +381,7 @@ private class PropertyClsStubBuilder(
             /* parent = */ callableStub,
             /* isGetter = */ false,
             /* hasBody = */ isNotDefault,
-            /* hasBlockBody = */ true, // KT-77302: The value is always true due to a current hasBlockBody semantic
+            /* hasNoExpressionBody = */ true,
             /* mayHaveContract = */ false, // property accessors don't have contracts in metadata yet
         )
 

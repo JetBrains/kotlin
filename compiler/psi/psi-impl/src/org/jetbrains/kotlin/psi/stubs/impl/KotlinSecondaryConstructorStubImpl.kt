@@ -29,7 +29,7 @@ class KotlinSecondaryConstructorStubImpl(
     override fun mayHaveContract(): Boolean = mayHaveContract
 
     // It cannot have expression body
-    override fun hasBlockBody(): Boolean = true
+    override fun hasNoExpressionBody(): Boolean = true
 
     override fun hasBody(): Boolean = hasBody
     override fun isDelegatedCallToThis(): Boolean = isDelegatedCallToThis

@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
   IMPORT_LIST
   CLASS[classId=a/b/c/test/enum/Enum, fqName=a.b.c.test.enum.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
     MODIFIER_LIST[enum public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Enum]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Enum]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
     SUPER_TYPE_LIST
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-      FUN[fqName=a.b.c.test.enum.Enum.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[open public]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE

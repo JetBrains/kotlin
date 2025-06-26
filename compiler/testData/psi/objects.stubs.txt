@@ -5,9 +5,9 @@ PsiJetFileStubImpl[package=]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=Objects.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
-      FUN[fqName=Objects.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUN[fqName=Objects.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         VALUE_PARAMETER_LIST
-      FUN[fqName=Objects.g, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
+      FUN[fqName=Objects.g, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         VALUE_PARAMETER_LIST
       OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
         MODIFIER_LIST[private]
@@ -18,7 +18,7 @@ PsiJetFileStubImpl[package=]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
           PROPERTY[fqName=Objects.InnerObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          FUN[fqName=Objects.InnerObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUN[fqName=Objects.InnerObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
       OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
         MODIFIER_LIST[public]
@@ -30,7 +30,7 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION[referencedName=NestedClass]
         CLASS_BODY
           PROPERTY[fqName=Objects.OtherObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          FUN[fqName=Objects.OtherObject.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+          FUN[fqName=Objects.OtherObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
       CLASS[classId=/Objects.NestedClass, fqName=Objects.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
         MODIFIER_LIST[open public]

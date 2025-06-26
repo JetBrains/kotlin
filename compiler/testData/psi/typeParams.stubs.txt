@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=test]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T6]
     CLASS_BODY
-      FUN[fqName=test.TypeParams.useParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParams]
+      FUN[fqName=test.TypeParams.useParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParams]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -91,7 +91,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T5]
-      FUN[fqName=test.TypeParams.useParamsInOtherOrder, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInOtherOrder]
+      FUN[fqName=test.TypeParams.useParamsInOtherOrder, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInOtherOrder]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -113,7 +113,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T1]
-      FUN[fqName=test.TypeParams.useParamsInTypeArg, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInTypeArg]
+      FUN[fqName=test.TypeParams.useParamsInTypeArg, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParamsInTypeArg]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -158,7 +158,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T1]
-      FUN[fqName=test.TypeParams.withOwnParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParams]
+      FUN[fqName=test.TypeParams.withOwnParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParams]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G2]
@@ -191,7 +191,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.TypeParams.withOwnParamsAndTypeConstraints, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsAndTypeConstraints]
+      FUN[fqName=test.TypeParams.withOwnParamsAndTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsAndTypeConstraints]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
             TYPE_REFERENCE
@@ -249,7 +249,7 @@ PsiJetFileStubImpl[package=test]
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Serializable]
-      FUN[fqName=test.TypeParams.withOwnParamsClashing, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsClashing]
+      FUN[fqName=test.TypeParams.withOwnParamsClashing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsClashing]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
@@ -275,7 +275,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T5]
-      FUN[fqName=test.TypeParams.withOwnParamExtension, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=withOwnParamExtension]
+      FUN[fqName=test.TypeParams.withOwnParamExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=withOwnParamExtension]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
         TYPE_REFERENCE
@@ -295,7 +295,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.TypeParams.withOwnBoundedParam, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
         TYPE_PARAMETER_LIST
@@ -310,7 +310,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.TypeParams.withOwnBoundedParamByOther, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnBoundedParamByOther]
         TYPE_PARAMETER_LIST
@@ -324,15 +324,15 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.TypeParams.useSomeParam, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=useSomeParam]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T2]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
-      FUN[fqName=test.TypeParams.f, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+      FUN[fqName=test.TypeParams.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public inline]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]

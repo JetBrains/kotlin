@@ -88,10 +88,8 @@ interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement
 
     /**
      * Whether the declaration has a block body or no bodies at all.
-     *
-     * TODO: KT-77302 fix the semantics
      */
-    fun hasBlockBody(): Boolean
+    fun hasNoExpressionBody(): Boolean
 
     /**
      * Whether the declaration has a body (expression or block).

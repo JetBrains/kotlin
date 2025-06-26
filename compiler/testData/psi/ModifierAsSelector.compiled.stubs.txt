@@ -10,7 +10,7 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=java]
           REFERENCE_EXPRESSION[referencedName=io]
         REFERENCE_EXPRESSION[referencedName=PrintStream]
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE

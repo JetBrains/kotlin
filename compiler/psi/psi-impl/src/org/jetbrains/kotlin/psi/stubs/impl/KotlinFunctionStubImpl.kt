@@ -23,7 +23,7 @@ class KotlinFunctionStubImpl(
     private val isTopLevel: Boolean,
     private val fqName: FqName?,
     private val isExtension: Boolean,
-    private val hasBlockBody: Boolean,
+    private val hasNoExpressionBody: Boolean,
     private val hasBody: Boolean,
     private val hasTypeParameterListBeforeFunctionName: Boolean,
     private val mayHaveContract: Boolean,
@@ -41,7 +41,7 @@ class KotlinFunctionStubImpl(
     override fun getName() = StringRef.toString(nameRef)
     override fun isTopLevel() = isTopLevel
     override fun isExtension() = isExtension
-    override fun hasBlockBody() = hasBlockBody
+    override fun hasNoExpressionBody(): Boolean = hasNoExpressionBody
     override fun hasBody() = hasBody
     override fun hasTypeParameterListBeforeFunctionName() = hasTypeParameterListBeforeFunctionName
     override fun mayHaveContract(): Boolean = mayHaveContract

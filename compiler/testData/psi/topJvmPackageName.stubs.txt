@@ -48,7 +48,7 @@ PsiJetFileStubImpl[package=some.other]
       REFERENCE_EXPRESSION[referencedName=some]
       REFERENCE_EXPRESSION[referencedName=other]
   IMPORT_LIST
-  FUN[fqName=some.other.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=some.other.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         CONSTRUCTOR_CALLEE

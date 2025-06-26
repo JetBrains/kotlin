@@ -4022,8 +4022,8 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContractEff
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun hasBlockBody ()Z
 	public abstract fun hasBody ()Z
+	public abstract fun hasNoExpressionBody ()Z
 	public abstract fun mayHaveContract ()Z
 }
 

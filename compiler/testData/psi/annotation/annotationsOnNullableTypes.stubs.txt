@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -14,7 +14,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+  FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -32,7 +32,7 @@ PsiJetFileStubImpl[package=]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar]
+  FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -71,7 +71,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
+  FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -92,7 +92,7 @@ PsiJetFileStubImpl[package=]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar1, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar1]
+  FUN[fqName=bar1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar1]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=b]
@@ -121,7 +121,7 @@ PsiJetFileStubImpl[package=]
       NULLABLE_TYPE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
@@ -143,7 +143,7 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=foo2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
+  FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
         TYPE_REFERENCE
@@ -170,7 +170,7 @@ PsiJetFileStubImpl[package=]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=Int]
-  FUN[fqName=bar2, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar2]
+  FUN[fqName=bar2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=bar2]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION

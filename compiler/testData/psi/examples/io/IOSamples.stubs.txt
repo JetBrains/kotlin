@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
       TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
-      FUN[fqName=IAdder.add, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUN[fqName=IAdder.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
@@ -19,11 +19,11 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/ICloseable, fqName=ICloseable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ICloseable, superNames=[]]
     MODIFIER_LIST[open]
     CLASS_BODY
-      FUN[fqName=ICloseable.close, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=close]
+      FUN[fqName=ICloseable.close, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=close]
         VALUE_PARAMETER_LIST
   CLASS[classId=/JavaCloseableWrapper, fqName=JavaCloseableWrapper, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=JavaCloseableWrapper, superNames=[ICloseable]]
     MODIFIER_LIST[abstract]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=JavaCloseableWrapper]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=JavaCloseableWrapper]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=closeable]
           TYPE_REFERENCE
@@ -39,7 +39,7 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=ICloseable]
-  FUN[fqName=streamCopy, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
+  FUN[fqName=streamCopy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     VALUE_PARAMETER_LIST
@@ -89,12 +89,12 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=FileInput.nextUsed, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=nextUsed]
         MODIFIER_LIST[private]
-      FUN[fqName=FileInput.next, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
+      FUN[fqName=FileInput.next, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=next]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=FileInput.hasNext, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=hasNext]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
+        PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST
   CLASS[classId=/FileOutput, fqName=FileOutput, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FileOutput, superNames=[IAdder, JavaCloseableWrapper]]
     SUPER_TYPE_LIST
@@ -117,12 +117,12 @@ PsiJetFileStubImpl[package=]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=OutputStream]
-      FUN[fqName=FileOutput.add, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
+      FUN[fqName=FileOutput.add, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
         MODIFIER_LIST[override]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=item]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Byte]
-  FUN[fqName=example, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=example]
+  FUN[fqName=example, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=example]
     VALUE_PARAMETER_LIST

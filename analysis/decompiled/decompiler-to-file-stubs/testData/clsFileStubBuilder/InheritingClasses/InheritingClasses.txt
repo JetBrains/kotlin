@@ -4,13 +4,13 @@ PsiJetFileStubImpl[package=a]
   IMPORT_LIST
   CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritingClasses]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritingClasses]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
         MODIFIER_LIST[abstract public]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=c]
@@ -51,7 +51,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.A.af, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+          FUN[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[abstract public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -59,7 +59,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.A.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+          FUN[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=a]
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
         MODIFIER_LIST[open public]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST
@@ -96,7 +96,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.B.af, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+          FUN[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -104,7 +104,7 @@ PsiJetFileStubImpl[package=a]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
-          FUN[fqName=a.InheritingClasses.B.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+          FUN[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
             MODIFIER_LIST[open public]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
@@ -148,7 +148,7 @@ PsiJetFileStubImpl[package=a]
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=G]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=G]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST
@@ -194,25 +194,25 @@ PsiJetFileStubImpl[package=a]
         CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
         MODIFIER_LIST[public final]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritAny]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritAny]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExplicitAny]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ExplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ImplicitAny]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ImplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTrait]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTrait]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             SUPER_TYPE_LIST
@@ -229,7 +229,7 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTraits]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=OnlyTraits]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             SUPER_TYPE_LIST
@@ -262,7 +262,7 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitWithExplicitAny]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitWithExplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             SUPER_TYPE_LIST
@@ -285,7 +285,7 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY
           CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
             MODIFIER_LIST[public final]
-            PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitsWithExplicitAny]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TraitsWithExplicitAny]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST
             SUPER_TYPE_LIST
@@ -318,7 +318,7 @@ PsiJetFileStubImpl[package=a]
             CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
         MODIFIER_LIST[abstract public]
-        PRIMARY_CONSTRUCTOR[fqName=null, hasBlockBody=true, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritFunctionType]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritFunctionType]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         SUPER_TYPE_LIST

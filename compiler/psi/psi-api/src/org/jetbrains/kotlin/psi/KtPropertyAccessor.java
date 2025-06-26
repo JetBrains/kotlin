@@ -95,7 +95,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     public KtBlockExpression getBodyBlockExpression() {
         KotlinPropertyAccessorStub stub = getStub();
         if (stub != null) {
-            if (!(stub.hasBlockBody() && stub.hasBody())) {
+            if (!(stub.hasNoExpressionBody() && stub.hasBody())) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
@@ -115,7 +115,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     public boolean hasBlockBody() {
         KotlinPropertyAccessorStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasBlockBody();
+            return stub.hasNoExpressionBody();
         }
         return getEqualsToken() == null;
     }

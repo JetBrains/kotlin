@@ -15,7 +15,7 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION[referencedName=Ann]
       PROPERTY[fqName=B.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
       CLASS_INITIALIZER
-      FUN[fqName=B.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
+      FUN[fqName=B.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         VALUE_PARAMETER_LIST
       CLASS_INITIALIZER
       CLASS_INITIALIZER

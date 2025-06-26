@@ -20,7 +20,7 @@ MyInterface.kt:
                       REFERENCE_EXPRESSION[referencedName=TypeAnno]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
-        FUN[fqName=MyInterface.function, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
+        FUN[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
               CONSTRUCTOR_CALLEE

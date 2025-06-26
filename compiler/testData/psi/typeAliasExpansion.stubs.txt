@@ -131,7 +131,7 @@ PsiJetFileStubImpl[package=test]
           REFERENCE_EXPRESSION[referencedName=FunctionAlias]
   CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
     CLASS_BODY
-      FUN[fqName=test.TypeAliasExpansion.entryToString, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
+      FUN[fqName=test.TypeAliasExpansion.entryToString, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=entry]
             TYPE_REFERENCE

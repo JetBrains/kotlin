@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=test]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST
-KotlinStub$FUN[fqName=test.call_InPlace, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=call_InPlace]
+KotlinStub$FUN[fqName=test.call_InPlace, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=true, name=call_InPlace]
   effect:CallsInPlace(param(0), EXACTLY_ONCE)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$TYPE_PARAMETER_LIST
@@ -18,7 +18,7 @@ KotlinStub$FUN[fqName=test.call_InPlace, hasBlockBody=true, hasBody=true, hasTyp
   KotlinStub$TYPE_REFERENCE
     KotlinStub$USER_TYPE
       KotlinStub$REFERENCE_EXPRESSION[referencedName=R]
-KotlinStub$FUN[fqName=test.isNotNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNotNull]
+KotlinStub$FUN[fqName=test.isNotNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNotNull]
   effect:Returns(NOT_NULL) -> param(0) != null
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -35,7 +35,7 @@ KotlinStub$FUN[fqName=test.isNotNull, hasBlockBody=true, hasBody=true, hasTypePa
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]
-KotlinStub$FUN[fqName=test.isNotString, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNotString]
+KotlinStub$FUN[fqName=test.isNotString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNotString]
   effect:Returns(NOT_NULL) -> param(0) !is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -52,7 +52,7 @@ KotlinStub$FUN[fqName=test.isNotString, hasBlockBody=true, hasBody=true, hasType
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
-KotlinStub$FUN[fqName=test.isNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNull]
+KotlinStub$FUN[fqName=test.isNull, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isNull]
   effect:Returns(TRUE) -> param(0) != null
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -68,7 +68,7 @@ KotlinStub$FUN[fqName=test.isNull, hasBlockBody=true, hasBody=true, hasTypeParam
       KotlinStub$USER_TYPE
         KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
       KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
-KotlinStub$FUN[fqName=test.isString, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isString]
+KotlinStub$FUN[fqName=test.isString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isString]
   effect:Returns(NOT_NULL) -> param(0) is KotlinClassTypeBean(classId=kotlin/String, arguments=[], nullable=false, abbreviatedType=null)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -85,7 +85,7 @@ KotlinStub$FUN[fqName=test.isString, hasBlockBody=true, hasBody=true, hasTypePar
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
-KotlinStub$FUN[fqName=test.isStringCheck, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isStringCheck]
+KotlinStub$FUN[fqName=test.isStringCheck, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isStringCheck]
   effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -102,7 +102,7 @@ KotlinStub$FUN[fqName=test.isStringCheck, hasBlockBody=true, hasBody=true, hasTy
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]
-KotlinStub$FUN[fqName=test.isStringOrNumber, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isStringOrNumber]
+KotlinStub$FUN[fqName=test.isStringOrNumber, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=isStringOrNumber]
   effect:Returns(TRUE) -> param(0) is KotlinClassTypeBean(classId=kotlin/Comparable, arguments=[KotlinTypeArgumentBean(projectionKind=STAR, type=null)], nullable=false, abbreviatedType=null) && param(0) is KotlinClassTypeBean(classId=kotlin/CharSequence, arguments=[], nullable=false, abbreviatedType=null) || param(0) is KotlinClassTypeBean(classId=kotlin/Number, arguments=[], nullable=false, abbreviatedType=null)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -119,7 +119,7 @@ KotlinStub$FUN[fqName=test.isStringOrNumber, hasBlockBody=true, hasBody=true, ha
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]
-KotlinStub$FUN[fqName=test.myRequire, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequire]
+KotlinStub$FUN[fqName=test.myRequire, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=myRequire]
   effect:Returns(WILDCARD) -> param(0)
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$VALUE_PARAMETER_LIST
@@ -134,7 +134,7 @@ KotlinStub$FUN[fqName=test.myRequire, hasBlockBody=true, hasBody=true, hasTypePa
       KotlinStub$USER_TYPE
         KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
       KotlinStub$REFERENCE_EXPRESSION[referencedName=Unit]
-KotlinStub$FUN[fqName=test.asSafe, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=asSafe]
+KotlinStub$FUN[fqName=test.asSafe, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=asSafe]
   effect:Returns(NOT_NULL) -> param(-1) != null
   KotlinStub$MODIFIER_LIST[public]
   KotlinStub$TYPE_REFERENCE
@@ -150,7 +150,7 @@ KotlinStub$FUN[fqName=test.asSafe, hasBlockBody=true, hasBody=true, hasTypeParam
         KotlinStub$USER_TYPE
           KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
         KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
-KotlinStub$FUN[fqName=test.test0, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=test0]
+KotlinStub$FUN[fqName=test.test0, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=true, name=test0]
   effect:Returns(TRUE) -> param(-1) is KotlinTypeParameterTypeBean(typeParameterName=T, nullable=false, definitelyNotNull=false)
   KotlinStub$MODIFIER_LIST[public inline]
   KotlinStub$TYPE_PARAMETER_LIST
