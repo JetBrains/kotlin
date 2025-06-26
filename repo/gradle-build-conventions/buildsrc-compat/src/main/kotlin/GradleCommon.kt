@@ -509,7 +509,6 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
 fun Project.createGradlePluginVariant(
     variant: GradlePluginVariant,
     commonSourceSet: SourceSet,
-    isGradlePlugin: Boolean = true,
 ): SourceSet {
     val variantSourceSet = sourceSets.create(variant.sourceSetName) {
         excludeGradleCommonDependencies(this)
@@ -521,9 +520,7 @@ fun Project.createGradlePluginVariant(
             registerFeature(variantSourceSet.name) {
                 usingSourceSet(variantSourceSet)
                 // ???
-                if (isGradlePlugin) {
-                    capability(project.group.toString(), project.name, project.version.toString())
-                }
+                capability(project.group.toString(), project.name, project.version.toString())
 
                 if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
                     withJavadocJar()
@@ -589,7 +586,7 @@ fun Project.createGradlePluginVariant(
         if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
                 capabilities {
-                    requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
+                    //requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
                 }
             }
         }
