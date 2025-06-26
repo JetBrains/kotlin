@@ -1,8 +1,20 @@
-// COMPILATION_ERRORS
 // the following functions have type constraints and contracts written in different order
 // any order is correct
 
-fun someFunctionWithTypeConstraints<T, E>(arg: E?, block: () -> T): String
+// FILE: MyClass.kt
+open class MyClass
+
+// FILE: MyOtherClass.kt
+open class MyOtherClass
+
+// FILE: SuperType.kt
+interface SuperType
+
+// FILE: SomeType.kt
+interface SomeType
+
+// FILE: main.kt
+fun <T, E> someFunctionWithTypeConstraints(arg: E?, block: () -> T): String
     contract [
         returns() implies (arg != null),
         callsInPlace(block, EXACTLY_ONCE),
@@ -11,11 +23,11 @@ fun someFunctionWithTypeConstraints<T, E>(arg: E?, block: () -> T): String
           E : MyOtherClass
 {
     block()
-    arg ?: throw NullArgumentException()
+    arg ?: throw IllegalArgumentException()
     return "some string"
 }
 
-fun anotherFunctionWithTypeConstraints<D, T>(data: D?, arg: T?, block: () -> Unit)
+fun <D, T> anotherFunctionWithTypeConstraints(data: D?, arg: T?, block: () -> Unit)
     where D : SuperType,
           T : SomeType
     contract [
