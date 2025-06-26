@@ -156,10 +156,8 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     fun hasDefaultValue(): Boolean
 }
 
-interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
+interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
     fun isGetter(): Boolean
-    fun hasBody(): Boolean
-    fun hasBlockBody(): Boolean
 }
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {

@@ -217,14 +217,14 @@ Test.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=MyAnnotation]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=MyAnnotation2]
                 CONSTRUCTOR_CALLEE
@@ -255,10 +255,10 @@ Test.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
-          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+          PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
             MODIFIER_LIST[public final]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]

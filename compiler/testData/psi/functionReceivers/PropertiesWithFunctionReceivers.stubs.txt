@@ -39,9 +39,9 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=it]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=foo]
@@ -58,12 +58,12 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=it]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=foo]
@@ -83,7 +83,7 @@ PsiJetFileStubImpl[package=]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=bar]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public]
         ANNOTATION
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -92,7 +92,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       MODIFIER_LIST[open]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -116,7 +116,7 @@ PsiJetFileStubImpl[package=]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=bar]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       MODIFIER_LIST[open]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -140,7 +140,7 @@ PsiJetFileStubImpl[package=]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=bar]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public]
         ANNOTATION
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -163,7 +163,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
@@ -181,9 +181,9 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Unit]
     REFERENCE_EXPRESSION[referencedName=foo]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=false, mayHaveContract=false]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
   FUN[fqName=<no name provided>, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]

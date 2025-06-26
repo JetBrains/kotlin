@@ -2030,8 +2030,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text()
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.hasBlockBody()
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.hasBody()
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.isGetter()
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegate()
@@ -2301,7 +2299,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl:constructor(StubElement, IStubElementType)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl:constructor(StubElement, boolean, boolean, boolean)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl:constructor(StubElement, boolean, boolean, boolean, boolean)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl

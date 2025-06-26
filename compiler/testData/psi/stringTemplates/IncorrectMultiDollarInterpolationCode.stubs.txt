@@ -16,7 +16,7 @@ PsiJetFileStubImpl[package=]
   FUN[fqName=interpolationOfIncorrectExpression, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=interpolationOfIncorrectExpression]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=runTimeConstant, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=runTimeConstant]
-    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]
     MODIFIER_LIST[annotation]

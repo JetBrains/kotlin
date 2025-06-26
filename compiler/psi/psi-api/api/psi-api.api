@@ -4077,9 +4077,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolder
 	public abstract fun text ()Ljava/lang/String;
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyAccessorStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun hasBlockBody ()Z
-	public abstract fun hasBody ()Z
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyAccessorStub : org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
 	public abstract fun isGetter ()Z
 }
 

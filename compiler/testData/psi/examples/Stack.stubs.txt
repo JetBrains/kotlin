@@ -29,5 +29,5 @@ PsiJetFileStubImpl[package=]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=Stack.isEmpty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=isEmpty]
         MODIFIER_LIST[override]
-        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true]
+        PROPERTY_ACCESSOR[hasBlockBody=false, hasBody=true, isGetter=true, mayHaveContract=false]
           VALUE_PARAMETER_LIST

@@ -62,7 +62,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
               REFERENCE_EXPRESSION[referencedName=foo]
             REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=D]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo.TopLevelMembers.ext, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
@@ -77,7 +77,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=true, isGetter=true, mayHaveContract=false]
       MODIFIER_LIST[public final]
       VALUE_PARAMETER_LIST
   FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]

@@ -274,6 +274,18 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 }
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
+/**
+ * Whether the declaration may have a legacy contract (a contract that defined inside the body).
+ *
+ * In other words, **false** guaranties that the declaration cannot have a contract,
+ * but **true** does not guarantee that the declaration has a contract.
+ */
+@KtImplementationDetail
+fun KtDeclarationWithBody.isContractPresentPsiCheck(): Boolean {
+    if (hasModifier(KtTokens.OPERATOR_KEYWORD)) return false
+
+    return bodyBlockExpression?.firstStatement?.isContractDescriptionCallPsiCheck() == true
+}
 
 fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
     val contractAllowedHere =
