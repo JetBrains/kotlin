@@ -5,6 +5,10 @@ FILE: contractDescription.kt
         public? get(): Int { LAZY_BLOCK }
         public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_4(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final? class MyClass : R|kotlin/Any| {
+        public? constructor(x: Boolean): R|MyClass| { LAZY_BLOCK }
+
+    }
     public? final? fun test_5(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_6(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_7(): R|kotlin/Unit| { LAZY_BLOCK }
