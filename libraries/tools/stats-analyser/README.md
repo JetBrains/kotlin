@@ -1,6 +1,6 @@
 # Kotlin Stats Analyser
 
-The light-weight console tool that allows analysis JSON performance reports obtained by running `kotlinc` with passed `-Xdump-perf=<path-to-reports-directory>/$.json` or `Xdump-perf=<path-to-reports-directory>`.
+The light-weight console tool that allows analysis JSON performance reports obtained by running `kotlinc` with passed `-Xdump-perf=<path-to-reports-directory>/*.json` or `Xdump-perf=<path-to-reports-directory>`.
 
 Currently, it doesn't depend on the superior build system.
 The only thing is needed to collect reports: pass `-Xdump-perf` argument to kotlin compiler somehow.
