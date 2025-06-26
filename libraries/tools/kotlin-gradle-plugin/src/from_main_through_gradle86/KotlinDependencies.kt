@@ -3,9 +3,11 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.artifacts.dsl.Dependencies
-import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString
 
-
+/**
+ * Keep in sync with [org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsString]
+ */
+internal const val MinSupportedGradleVersionWithDependencyCollectorsString = "8.8"
 private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level dependencies is not available in your Gradle version. " +
         "Minimum supported version is Gradle $MinSupportedGradleVersionWithDependencyCollectorsString.\n" +
         "Please upgrade your Gradle version or keep using source set dependencies block: https://kotl.in/kmp-top-level-dependencies"

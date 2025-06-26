@@ -115,6 +115,13 @@ fun TestProject.publishReturn(
     }
 }
 
+/**
+ * Configures and publishes a Kotlin publication to a temporary directory. The returned [PublishedProject][org.jetbrains.kotlin.gradle.uklibs.PublishedProject]
+ * can be added to the repositories list using [addPublishedProjectToRepositories][org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories]
+ * and added to dependencies using [PublishedProject.rootCoordinate][org.jetbrains.kotlin.gradle.uklibs.PublishedProject.rootCoordinate]
+ *
+ * See [BuildScriptInjectionIT.publishAndConsumeProject][org.jetbrains.kotlin.gradle.BuildScriptInjectionIT.publishAndConsumeProject] for an example of usage
+ */
 fun TestProject.publish(
     vararg buildArguments: String = emptyArray(),
     publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
@@ -134,6 +141,11 @@ fun TestProject.publish(
     )
 }
 
+/**
+ * Publish a Java publication to a temporary repository
+ *
+ * @see TestProject.publish
+ */
 fun TestProject.publishJava(
     publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
         group = "default_java_${generateIdentifier()}"
@@ -165,6 +177,11 @@ fun TestProject.publishJava(
     )
 }
 
+/**
+ * Publish a Java platform publication to a temporary repository
+ *
+ * @see TestProject.publish
+ */
 fun TestProject.publishJavaPlatform(
     publisherConfiguration: PublisherConfiguration = PublisherConfiguration(
         group = "default_javaPlatform_${generateIdentifier()}"

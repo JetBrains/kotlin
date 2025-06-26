@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
 import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 
 /**
- * FIXME: Why was it 8.9?
- *
  * - [org.gradle.api.artifacts.dsl.Dependencies] is accessible since 7.6
  * - [org.gradle.api.artifacts.dsl.DependencyCollector] is accessible since 8.6
  * - [org.gradle.api.artifacts.Configuration.fromDependencyCollector] is accessible since 8.7
- * [org.jetbrains.kotlin.gradle.dsl.KotlinDependencies] can't be instantiated
- * with [org.gradle.api.artifacts.dsl.DependencyCollector] before 8.8
+ * - [org.jetbrains.kotlin.gradle.dsl.KotlinDependencies] can't be instantiated with [org.gradle.api.artifacts.dsl.DependencyCollector] before 8.8
+ *
+ * Keep in sync with [org.jetbrains.kotlin.gradle.dsl.MinSupportedGradleVersionWithDependencyCollectorsString]
  */
 internal const val MinSupportedGradleVersionWithDependencyCollectorsString = "8.8"
 internal val MinSupportedGradleVersionWithDependencyCollectors = GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsString)
