@@ -242,7 +242,7 @@ Additionally, even if you build with Gradle, you can extract command-line
 compiler arguments from the detailed Gradle output of your project's build
 process.
 This will allow you to run the command-line compiler instead of Gradle, which might be helpful when debugging.
-To get the detailed Gradle output, run the Gradle command with `-i` flag.
+To get the detailed Gradle output, run the Gradle command with `-Pkotlin.internal.compiler.arguments.log.level=warning` flag.
 See also [degrade](tools/degrade) tool -- it automates extracting Kotlin/Native command-line tools invocations from Gradle builds.
 
 ### Attaching with IntelliJ IDEA
