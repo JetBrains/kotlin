@@ -214,7 +214,12 @@ val nativeTest = nativeTest(
     customCompilerDependencies = listOf(atomicfuJvmClasspath),
     customTestDependencies = listOf(atomicfuNativeKlib),
     compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
-)
+) {
+    // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
+    // Kotlin test infra uses reflection to access JDK internals.
+    // With JDK 11, some JVM args are required to silence the warnings caused by that:
+    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+}
 
 tasks.named("check") {
     // Depend on the test task that launches Native tests so that it will also run together with tests
