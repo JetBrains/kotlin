@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.unwrapInlineLambda
+import org.jetbrains.kotlin.backend.jvm.ir.unwrapRichInlineLambda
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
 object SingleArgumentInlineFunctionIntrinsic : IntrinsicMethod() {
@@ -14,7 +14,7 @@ object SingleArgumentInlineFunctionIntrinsic : IntrinsicMethod() {
         val sourceCompiler =
             IrSourceCompilerForInline(codegen.state, expression, expression.symbol.owner, codegen, data, codegen.context.evaluatorData)
         val argumentExpression = expression.arguments[0]!!
-        val inlineLambda = argumentExpression.unwrapInlineLambda()
+        val inlineLambda = argumentExpression.unwrapRichInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
             lambdaInfo.generateLambdaBody(sourceCompiler)

@@ -48,7 +48,7 @@ open class UpgradeCallableReferences(
         fun selectSAMOverriddenFunction(type: IrType): IrSimpleFunctionSymbol {
             // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
             // e.g., callBy and other reflection related callables. So we need to filter them out.
-            return if (type.isFunctionOrKFunction() || type.isSuspendFunctionOrKFunction()) {
+            return if (type.isFunctionOrKFunction() || type.isSuspendFunctionOrKFunction() || type.isKProperty() || type.isKMutableProperty()) {
                 type.classOrFail.functions.singleOrNull { it.owner.name == OperatorNameConventions.INVOKE }
             } else {
                 type.classOrFail.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
@@ -137,17 +137,32 @@ open class UpgradeCallableReferences(
 
         private val blockReferenceOrigins = setOf(
             IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, IrStatementOrigin.SUSPEND_CONVERSION,
-            IrStatementOrigin.LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
+            IrStatementOrigin.LAMBDA, IrStatementOrigin.INLINE_LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
         )
+
+        private val usedLambdas = mutableSetOf<IrFunction>()
+        override fun visitClass(declaration: IrClass, data: IrDeclarationParent): IrStatement {
+            return super.visitClass(declaration, data).also { declaration.declarations.removeIf { it in usedLambdas } }
+        }
 
         private fun IrBlock.parseAdaptedBlock() : AdaptedBlock? {
             if (origin !in blockReferenceOrigins) return null
             if (statements.size != 2) return null
             val (function, reference) = statements
-            if (function !is IrSimpleFunction) return null
             return when (reference) {
-                is IrFunctionReference -> AdaptedBlock(function, reference, null, reference.type)
+                is IrFunctionReference -> {
+                    when (function) {
+                        is IrSimpleFunction -> AdaptedBlock(function, reference, null, reference.type)
+                        is IrContainerExpression if function.statements.isEmpty() -> {
+                            val lambda = reference.symbol.owner as IrSimpleFunction
+                            val lambdaToAdd = if (usedLambdas.add(lambda)) lambda else lambda.deepCopyWithSymbols()
+                            AdaptedBlock(lambdaToAdd, reference, null, reference.type)
+                        }
+                        else -> null
+                    }
+                }
                 is IrTypeOperatorCall -> {
+                    if (function !is IrSimpleFunction) return null
                     if (reference.operator != IrTypeOperator.SAM_CONVERSION) return null
                     val argument = reference.argument as? IrFunctionReference ?: return null
                     if (upgradeSamConversions) {
@@ -164,6 +179,8 @@ open class UpgradeCallableReferences(
             if (!upgradeFunctionReferencesAndLambdas) return super.visitBlock(expression, data)
             val (function, reference, samType, referenceType) = expression.parseAdaptedBlock() ?: return super.visitBlock(expression, data)
             function.transformChildren(this, function)
+            function.setDeclarationsParent(data)
+            function.visibility = DescriptorVisibilities.LOCAL
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
             function.flattenParameters()
@@ -177,13 +194,14 @@ open class UpgradeCallableReferences(
                 reflectionTargetSymbol = reflectionTarget,
                 overriddenFunctionSymbol = selectSAMOverriddenFunction(referenceType),
                 invokeFunction = function,
-                origin = expression.origin,
+                origin = reference.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
                 hasUnitConversion = reflectionTarget != null && !reflectionTarget.owner.returnType.isUnit() && function.returnType.isUnit(),
                 hasVarargConversion = reflectionTarget is IrSimpleFunctionSymbol && hasVarargConversion(function, reflectionTarget.owner),
                 isRestrictedSuspension = isRestrictedSuspension,
             ).apply {
                 boundValues.addAll(reference.arguments.filterNotNull())
+                copyAttributes(reference)
             }.let {
                 if (samType != null) {
                     IrTypeOperatorCallImpl(
@@ -284,6 +302,14 @@ open class UpgradeCallableReferences(
             )
         }
 
+        // TODO delete once the lowering is moved
+        private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
+            addValueParameter("\$completion", continuationType())
+
+        // TODO delete once the lowering is moved
+        private fun IrFunction.continuationType(): IrType =
+            context.symbols.continuationClass.typeWith(returnType).makeNullable()
+
         private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
@@ -332,6 +358,9 @@ open class UpgradeCallableReferences(
                         this.name = Name.identifier("p${index++}")
                         this.type = type
                     }
+                }
+                if (isSuspend) {
+                    addCompletionValueParameter()
                 }
                 this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {
