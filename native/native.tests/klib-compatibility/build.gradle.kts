@@ -53,4 +53,9 @@ nativeTest(
     testTags,
     releasedCompilerDist = releasedCompilerDist,
     maxMetaspaceSizeMb = 1024 // to handle two compilers in classloader
-)
+) {
+    // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
+    // Kotlin test infra uses reflection to access JDK internals.
+    // With JDK 11, some JVM args are required to silence the warnings caused by that:
+    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+}

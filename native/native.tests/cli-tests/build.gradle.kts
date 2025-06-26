@@ -41,6 +41,14 @@ nativeTest(
     // making the expected log funny and confusing.
     // Let's switch the GC back to ParallelGC to mitigate this:
     jvmArgs("-XX:+UseParallelGC")
+
+    // Kotlin test infra and IntelliJ platform Disposer debug mode use reflection to access JDK internals.
+    // With JDK 11, some JVM args are required to silence the warnings caused by that:
+    jvmArgs(
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+    )
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt") {
