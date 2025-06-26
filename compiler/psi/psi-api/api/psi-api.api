@@ -4018,6 +4018,12 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContextRece
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContractEffectStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub {
 }
 
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : com/intellij/psi/stubs/StubElement {
+	public abstract fun hasBlockBody ()Z
+	public abstract fun hasBody ()Z
+	public abstract fun mayHaveContract ()Z
+}
+
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinEnumEntrySuperclassReferenceExpressionStub : com/intellij/psi/stubs/StubElement {
 	public abstract fun getReferencedName ()Ljava/lang/String;
 }
@@ -4028,11 +4034,8 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStub : 
 	public abstract fun isScript ()Z
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase {
-	public abstract fun hasBlockBody ()Z
-	public abstract fun hasBody ()Z
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
 	public abstract fun hasTypeParameterListBeforeFunctionName ()Z
-	public abstract fun mayHaveContract ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub : com/intellij/psi/stubs/StubElement {

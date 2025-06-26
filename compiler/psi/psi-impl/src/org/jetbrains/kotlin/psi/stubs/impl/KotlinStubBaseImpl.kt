@@ -76,6 +76,7 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
             NamedStub::class.java,
             KotlinCallableStubBase::class.java,
             KotlinPlaceHolderWithTextStub::class.java,
+            KotlinDeclarationWithBodyStub::class.java,
         )
     }
 }

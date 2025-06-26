@@ -75,11 +75,32 @@ interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTar
     fun getUseSiteTarget(): String
 }
 
-interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction> {
-    fun hasBlockBody(): Boolean
-    fun hasBody(): Boolean
-    fun hasTypeParameterListBeforeFunctionName(): Boolean
+/**
+ * A marker interface for declarations with bodies.
+ */
+interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement<T> {
+    /**
+     * Whether the declaration may have a contract.
+     * **false** means that the declaration is definitely having no contract,
+     * but **true** doesn't guarantee that the declaration has a contract.
+     */
     fun mayHaveContract(): Boolean
+
+    /**
+     * Whether the declaration has a block body or no bodies at all.
+     *
+     * TODO: KT-77302 fix the semantics
+     */
+    fun hasBlockBody(): Boolean
+
+    /**
+     * Whether the declaration has a body (expression or block).
+     */
+    fun hasBody(): Boolean
+}
+
+interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {
+    fun hasTypeParameterListBeforeFunctionName(): Boolean
 }
 
 interface KotlinConstructorStub<T : KtConstructor<T>> :
