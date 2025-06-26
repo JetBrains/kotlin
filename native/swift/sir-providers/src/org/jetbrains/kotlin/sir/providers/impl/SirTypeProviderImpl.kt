@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider.TypePosition
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
@@ -31,22 +32,42 @@ public class SirTypeProviderImpl(
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
 ) : SirTypeProvider {
 
+    private class SirVarianceContext(private val previousCtx: SirVarianceContext? = null) {
+        fun varianceForPosition(position: TypePosition): SirTypeVariance =
+            previousCtx?.varianceForPosition(position)?.flip()
+                ?: when (position) {
+                    TypePosition.ParameterType -> SirTypeVariance.CONTRAVARIANT
+                    TypePosition.ReturnType -> SirTypeVariance.COVARIANT
+                    TypePosition.StructureType -> SirTypeVariance.INVARIANT
+                }
+    }
+
     private data class TypeTranslationCtx(
+        val currentPosition: TypePosition,
         val reportErrorType: (String) -> Nothing,
         val reportUnsupportedType: () -> Nothing,
         val processTypeImports: (List<SirImport>) -> Unit,
-    )
+        val varianceContext: SirVarianceContext,
+    ) {
+        fun forFunctionalTypeCopy(position: TypePosition): TypeTranslationCtx = copy(
+            currentPosition = position,
+            varianceContext = SirVarianceContext(previousCtx = varianceContext)
+        )
+    }
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: TypePosition,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
     ): SirType = translateType(
         TypeTranslationCtx(
-            reportErrorType,
-            reportUnsupportedType,
-            processTypeImports,
+            currentPosition = position,
+            reportErrorType = reportErrorType,
+            reportUnsupportedType = reportUnsupportedType,
+            processTypeImports = processTypeImports,
+            varianceContext = SirVarianceContext(previousCtx = null),
         )
     )
 
@@ -61,26 +82,27 @@ public class SirTypeProviderImpl(
     private fun buildSirType(ktType: KaType, ctx: TypeTranslationCtx): SirType {
         fun buildPrimitiveType(ktType: KaType): SirType? = sirSession.withSessions {
             when {
-                ktType.isCharType -> SirNominalType(SirSwiftModule.utf16CodeUnit)
-                ktType.isUnitType -> SirNominalType(SirSwiftModule.void)
+                ktType.isCharType -> SirSwiftModule.utf16CodeUnit
+                ktType.isUnitType -> SirSwiftModule.void
 
-                ktType.isByteType -> SirNominalType(SirSwiftModule.int8)
-                ktType.isShortType -> SirNominalType(SirSwiftModule.int16)
-                ktType.isIntType -> SirNominalType(SirSwiftModule.int32)
-                ktType.isLongType -> SirNominalType(SirSwiftModule.int64)
+                ktType.isByteType -> SirSwiftModule.int8
+                ktType.isShortType -> SirSwiftModule.int16
+                ktType.isIntType -> SirSwiftModule.int32
+                ktType.isLongType -> SirSwiftModule.int64
 
-                ktType.isUByteType -> SirNominalType(SirSwiftModule.uint8)
-                ktType.isUShortType -> SirNominalType(SirSwiftModule.uint16)
-                ktType.isUIntType -> SirNominalType(SirSwiftModule.uint32)
-                ktType.isULongType -> SirNominalType(SirSwiftModule.uint64)
+                ktType.isUByteType -> SirSwiftModule.uint8
+                ktType.isUShortType -> SirSwiftModule.uint16
+                ktType.isUIntType -> SirSwiftModule.uint32
+                ktType.isULongType -> SirSwiftModule.uint64
 
-                ktType.isBooleanType -> SirNominalType(SirSwiftModule.bool)
+                ktType.isBooleanType -> SirSwiftModule.bool
 
-                ktType.isDoubleType -> SirNominalType(SirSwiftModule.double)
-                ktType.isFloatType -> SirNominalType(SirSwiftModule.float)
+                ktType.isDoubleType -> SirSwiftModule.double
+                ktType.isFloatType -> SirSwiftModule.float
 
                 else -> null
             }
+                ?.let { SirNominalType(it) }
                 ?.optionalIfNeeded(ktType)
         }
 
@@ -89,6 +111,7 @@ public class SirTypeProviderImpl(
                 is KaStarTypeProjection -> SirNominalType(KotlinRuntimeModule.kotlinBase)
                 is KaTypeArgumentWithVariance -> buildSirType(type, ctx)
             }
+
             when (kaType) {
                 is KaUsualClassType -> {
                     when {
@@ -98,21 +121,21 @@ public class SirTypeProviderImpl(
 
                         kaType.isClassType(StandardClassIds.List) -> {
                             SirArrayType(
-                                kaType.typeArguments.single().sirType()
+                                kaType.typeArguments.single().sirType(),
                             )
                         }
 
                         kaType.isClassType(StandardClassIds.Set) -> {
                             SirNominalType(
                                 SirSwiftModule.set,
-                                listOf(kaType.typeArguments.single().sirType())
+                                listOf(kaType.typeArguments.single().sirType()),
                             )
                         }
 
                         kaType.isClassType(StandardClassIds.Map) -> {
                             SirDictionaryType(
                                 kaType.typeArguments.first().sirType(),
-                                kaType.typeArguments.last().sirType()
+                                kaType.typeArguments.last().sirType(),
                             )
                         }
 
@@ -135,10 +158,16 @@ public class SirTypeProviderImpl(
                 is KaFunctionType -> {
                     if (kaType.isSuspendFunctionType) {
                         return@withSessions SirUnsupportedType
+                    } else if (ctx.varianceContext.varianceForPosition(ctx.currentPosition) == SirTypeVariance.COVARIANT) {
+                        SirUnsupportedType
                     } else {
                         SirFunctionalType(
-                            parameterTypes = listOfNotNull(kaType.receiverType?.translateType(ctx)) + kaType.parameterTypes.map { it.translateType(ctx) },
-                            returnType = kaType.returnType.translateType(ctx)
+                            parameterTypes = listOfNotNull(
+                                kaType.receiverType?.translateType(
+                                    ctx.forFunctionalTypeCopy(TypePosition.ParameterType)
+                                )
+                            ) + kaType.parameterTypes.map { it.translateType(ctx.forFunctionalTypeCopy(TypePosition.ParameterType)) },
+                            returnType = kaType.returnType.translateType(ctx.forFunctionalTypeCopy(TypePosition.ReturnType)),
                         )
                     }
                 }

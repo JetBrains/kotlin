@@ -72,6 +72,7 @@ public interface SirSession :
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: SirTypeProvider.TypePosition,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
@@ -79,6 +80,7 @@ public interface SirSession :
         with(typeProvider) {
             this@translateType.translateType(
                 ktAnalysisSession,
+                position,
                 reportErrorType,
                 reportUnsupportedType,
                 processTypeImports
@@ -259,6 +261,10 @@ public interface SirTypeProvider {
         Fail, ErrorType
     }
 
+    public enum class TypePosition {
+        ReturnType, ParameterType, StructureType
+    }
+
     /**
      * Translates the given [KaType] to [SirType].
      * Calls [reportErrorType] / [reportUnsupportedType] if error/unsupported type
@@ -268,6 +274,7 @@ public interface SirTypeProvider {
      */
     public fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: TypePosition,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,

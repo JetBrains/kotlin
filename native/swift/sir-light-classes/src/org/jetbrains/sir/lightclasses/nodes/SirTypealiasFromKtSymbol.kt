@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -35,6 +36,7 @@ internal class SirTypealiasFromKtSymbol(
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
             useSiteSession,
+            SirTypeProvider.TypePosition.StructureType,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
             processTypeImports = ktSymbol.containingModule.sirModule()::updateImports

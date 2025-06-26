@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildSetter
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
@@ -107,10 +108,11 @@ internal class SirEnumEntriesStaticPropertyFromKtSymbol(
                 .typeArguments.first().type!!
                 .translateType(
                     useSiteSession,
+                    SirTypeProvider.TypePosition.StructureType,
                     reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
                     reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
                     processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
-                )
+                ),
         )
     }
 }

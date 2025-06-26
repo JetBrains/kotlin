@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
@@ -75,6 +76,7 @@ private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterPar
             val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
             val outType = outSymbol?.defaultType?.translateType(
                 this.useSiteSession,
+                SirTypeProvider.TypePosition.StructureType,
                 { error("Error translating type") },
                 { error("Unsupported type") },
                 {})
