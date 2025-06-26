@@ -25,56 +25,48 @@ reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_80,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.1+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_81,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.2+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_82,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.5+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_85,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.6+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_86,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.8+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_88,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.11+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_811,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 // Used for Gradle 8.13+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_813,
     commonSourceSet = commonSourceSet,
-    isGradlePlugin = false
 )
 
 publishing {

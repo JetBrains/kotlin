@@ -176,17 +176,35 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:8.14") {
+            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_COMMON}") {
                 capabilities {
                     requireCapability("org.gradle.experimental:gradle-public-api-internal")
                 }
             }
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
-                compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
-                    capabilities {
-                        requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-                    }
-                }
+                compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api"))
+            }
+        }
+    }
+
+    afterEvaluate {
+        // The common source set compilation artifacts are never intended for consumption
+        configurations.getByName(commonSourceSet.runtimeElementsConfigurationName).isCanBeConsumed = false
+
+        listOf(
+            /**
+             * Common source set outgoing variants should be a superset of attributes relative to [FIXED_CONFIGURATION_SUFFIX]. These
+             * variants are not published, but they are used to resolve interproject dependencies
+             */
+            commonSourceSet.apiElementsConfigurationName,
+        ).forEach {
+            val outgoingVariant = configurations.getByName(it)
+            commonVariantAttributes().execute(outgoingVariant)
+            outgoingVariant.attributes {
+                attribute(
+                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                    objects.named(GradlePluginVariant.GRADLE_COMMON),
+                )
             }
         }
     }
@@ -195,6 +213,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         this@createGradleCommonSourceSet.extensions.configure<JavaPluginExtension> {
             registerFeature(commonSourceSet.name) {
                 usingSourceSet(commonSourceSet)
+                capability(project.group.toString(), project.name, project.version.toString())
+                capability(project.group.toString(), "${project.name}-common", project.version.toString())
                 disablePublication()
             }
         }
@@ -450,6 +470,16 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
                 }
             }
+
+        listOf(
+            compileClasspathConfigurationName,
+            runtimeClasspathConfigurationName,
+        ).forEach {
+            configurations.getByName(it).attributes.attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(GradlePluginVariant.GRADLE_MIN.minimalSupportedGradleVersion),
+            )
+        }
     }
 
     val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
@@ -476,7 +506,6 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
 fun Project.createGradlePluginVariant(
     variant: GradlePluginVariant,
     commonSourceSet: SourceSet,
-    isGradlePlugin: Boolean = true,
 ): SourceSet {
     val variantSourceSet = sourceSets.create(variant.sourceSetName) {
         excludeGradleCommonDependencies(this)
@@ -487,9 +516,8 @@ fun Project.createGradlePluginVariant(
         extensions.configure<JavaPluginExtension> {
             registerFeature(variantSourceSet.name) {
                 usingSourceSet(variantSourceSet)
-                if (isGradlePlugin) {
-                    capability(project.group.toString(), project.name, project.version.toString())
-                }
+                // ???
+                capability(project.group.toString(), project.name, project.version.toString())
 
                 if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
                     withJavadocJar()
@@ -553,11 +581,7 @@ fun Project.createGradlePluginVariant(
             variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
         }
         if (this@createGradlePluginVariant.name !in testPlugins) {
-            variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
-                capabilities {
-                    requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
-                }
-            }
+            variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api"))
         }
     }
 

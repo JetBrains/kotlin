@@ -15,6 +15,8 @@ private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level d
 /**
  * You will see this type if you are compiling against Kotlin Gradle Plugin
  * less than [MinSupportedGradleVersionWithDependencyCollectorsString]
+ *
+ * @suppress
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinBackwardsDeploymentDependencyCollector {
@@ -25,6 +27,8 @@ interface KotlinBackwardsDeploymentDependencyCollector {
 /**
  * You will see this type if you are compiling against Kotlin Gradle Plugin
  * less than [MinSupportedGradleVersionWithDependencyCollectorsString]
+ *
+ * @suppress
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinDependencies : Dependencies {
