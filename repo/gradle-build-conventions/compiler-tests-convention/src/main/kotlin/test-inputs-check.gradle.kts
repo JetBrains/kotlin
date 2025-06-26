@@ -137,8 +137,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "$konanDataDir/-", "read,write,delete,execute";""",
                                         """permission java.io.FilePermission "$konanDataDir", "read";""",
                                         """permission java.io.FilePermission "/bin/sh", "execute";""",
-                                        """permission java.io.FilePermission "/bin/tar", "execute";""",
-                                        """permission java.io.FilePermission "/usr/bin/tar", "execute";""",
+                                        """permission java.io.FilePermission "<<ALL_FILES>>", "execute";""", // DependencyExtractor.kt to untar calls `tar` directly, and the system needs to find it
                                         """permission java.net.SocketPermission "download.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                         """permission java.net.SocketPermission "download-cdn.jetbrains.com:443", "connect,resolve";""", // DependencyDownloader.kt
                                     )
