@@ -24,7 +24,6 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathNioRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -211,7 +210,7 @@ internal class TestRepl(
             loadScriptingPlugin(this, disposable)
         }
 
-    val baseClasspath: List<File> get() = configuration.jvmClasspathNioRoots().map { it.toFile() }.toList()
+    val baseClasspath: List<File> get() = configuration.jvmClasspathRoots
 
     val currentLineCounter = AtomicInteger()
 
