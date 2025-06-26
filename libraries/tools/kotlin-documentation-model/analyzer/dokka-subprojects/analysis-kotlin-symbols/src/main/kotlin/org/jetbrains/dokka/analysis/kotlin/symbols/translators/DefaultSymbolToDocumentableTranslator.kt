@@ -513,7 +513,12 @@ internal class DokkaSymbolVisitor(
                     propertySymbol.getDefaultValue()?.let { DefaultValue(it.toSourceSetDependent()) },
                     inheritedFrom?.let { InheritedMember(it.toSourceSetDependent()) },
                     takeUnless { propertySymbol.isVal }?.let { IsVar },
-                    takeIf { propertySymbol.psi is KtParameter }?.let { IsAlsoParameter(listOf(sourceSet)) }
+                    takeIf { propertySymbol.isFromPrimaryConstructor &&
+                            // a property can be from a constructor of a super class
+                            inheritedFrom == null }?.let {
+
+                        IsAlsoParameter(listOf(sourceSet))
+                    }
                 )
             )
         }
