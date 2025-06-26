@@ -747,7 +747,7 @@ internal class InconsistentTypeParameterValuesImpl(
     override val bounds: List<KaType>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtClass>(firDiagnostic, token), KaFirDiagnostic.InconsistentTypeParameterValues
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.InconsistentTypeParameterValues
 
 internal class InconsistentTypeParameterBoundsImpl(
     override val typeParameter: KaTypeParameterSymbol,
