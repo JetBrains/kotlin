@@ -55,7 +55,7 @@ fun generateTemporaryVariable(
         returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
-        symbol = FirLocalPropertySymbol(name)
+        symbol = FirLocalPropertySymbol()
         isVar = false
         isLocal = true
         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)

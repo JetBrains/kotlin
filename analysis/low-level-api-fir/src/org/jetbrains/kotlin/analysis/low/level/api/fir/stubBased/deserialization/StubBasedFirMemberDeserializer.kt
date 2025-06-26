@@ -468,7 +468,7 @@ internal class StubBasedFirMemberDeserializer(
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = contextReceiver.typeReference()?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
                 withPsiEntry("contextReceiver", contextReceiver)
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
@@ -485,7 +485,7 @@ internal class StubBasedFirMemberDeserializer(
             this.moduleData = c.moduleData
             this.origin = initialOrigin
             this.name = if (parameter.name == "_") SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else parameter.nameAsSafeName
-            this.symbol = FirValueParameterSymbol(name)
+            this.symbol = FirValueParameterSymbol()
             this.returnTypeRef = parameter.typeReference?.toTypeRef(c) ?: errorWithAttachment("KtParameter doesn't have type") {
                 withPsiEntry("ktParameter", parameter)
                 withFirSymbolEntry("functionSymbol", containingDeclarationSymbol)
@@ -506,7 +506,7 @@ internal class StubBasedFirMemberDeserializer(
                 this.moduleData = c.moduleData
                 this.origin = initialOrigin
                 this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                this.symbol = FirValueParameterSymbol(name)
+                this.symbol = FirValueParameterSymbol()
                 this.returnTypeRef = it.toTypeRef(c)
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 this.valueParameterKind = FirValueParameterKind.ContextParameter
@@ -701,7 +701,7 @@ internal class StubBasedFirMemberDeserializer(
                     returnTypeRef = returnTypeRef.withReplacedReturnType(returnTypeRef.coneType.createOutArrayType())
                 }
                 this.name = name
-                symbol = FirValueParameterSymbol(name)
+                symbol = FirValueParameterSymbol()
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
                 defaultValue = if (ktParameter.hasDefaultValue() || addDefaultValue) {

@@ -169,7 +169,7 @@ fun generateValueOfFunction(
                 )
             }
             name = DEFAULT_VALUE_PARAMETER
-            this@vp.symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
+            this@vp.symbol = FirValueParameterSymbol()
             isCrossinline = false
             isNoinline = false
             isVararg = false

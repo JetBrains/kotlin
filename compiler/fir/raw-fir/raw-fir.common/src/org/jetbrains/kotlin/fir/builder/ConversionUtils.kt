@@ -321,7 +321,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     explicitDeclarationSource: KtSourceElement? = null
 ) {
     if (delegateBuilder == null) return
-    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
+    val delegateFieldSymbol = FirDelegateFieldSymbol(symbol).also {
         this.delegateFieldSymbol = it
     }
 
@@ -496,7 +496,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = FirImplicitTypeRefImplWithoutSource
                 name = SpecialNames.IMPLICIT_SET_PARAMETER
-                symbol = FirValueParameterSymbol(this@generateAccessorsByDelegate.name)
+                symbol = FirValueParameterSymbol()
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false

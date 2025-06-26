@@ -100,7 +100,7 @@ class FirScriptConfiguratorExtensionImpl(
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
-                            symbol = FirLocalPropertySymbol(name)
+                            symbol = FirLocalPropertySymbol()
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             isLocal = true
                             isVar = false
@@ -131,7 +131,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType)
                     name = Name.identifier(propertyName)
-                    symbol = FirLocalPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
@@ -147,7 +147,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = this@configure.tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class))
                     name = Name.identifier(it)
-                    symbol = FirLocalPropertySymbol(name)
+                    symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false

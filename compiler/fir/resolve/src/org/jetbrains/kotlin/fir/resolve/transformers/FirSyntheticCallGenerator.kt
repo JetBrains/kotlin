@@ -654,7 +654,7 @@ class FirSyntheticCallGenerator(
             isCrossinline = false
             isNoinline = false
             this.isVararg = isVararg
-            symbol = FirValueParameterSymbol(name)
+            symbol = FirValueParameterSymbol()
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
     }

@@ -63,7 +63,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val dispatchReceiverType: ConeSimpleKotlinType?
         get() = fir.dispatchReceiverType
 
-    val name: Name
+    open val name: Name
         get() = callableId.callableName
 
     val containerSource: DeserializedContainerSource?

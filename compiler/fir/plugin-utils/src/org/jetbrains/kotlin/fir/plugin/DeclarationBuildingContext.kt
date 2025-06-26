@@ -127,7 +127,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
                 this.moduleData = session.moduleData
                 this.origin = origin
                 this.name = SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
-                this.symbol = FirValueParameterSymbol(name)
+                this.symbol = FirValueParameterSymbol()
                 this.returnTypeRef = it.invoke(typeParameters).toFirResolvedTypeRef()
                 this.containingDeclarationSymbol = containingDeclarationSymbol
                 this.valueParameterKind = FirValueParameterKind.ContextParameter
