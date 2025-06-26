@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
   CLASS[classId=/AnotherClass, fqName=AnotherClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnotherClass, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=AnotherClass]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=multiplier]
+        VALUE_PARAMETER[fqName=AnotherClass.multiplier, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=multiplier]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]

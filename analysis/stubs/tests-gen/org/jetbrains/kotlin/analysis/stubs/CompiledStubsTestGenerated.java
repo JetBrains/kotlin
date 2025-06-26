@@ -2066,6 +2066,18 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("contractsPropertyAccessors.kt")
+    public void testContractsPropertyAccessors() {
+      runTest("compiler/testData/psi/contracts/contractsPropertyAccessors.kt");
+    }
+
+    @Test
+    @TestMetadata("contractsSecondaryConstructor.kt")
+    public void testContractsSecondaryConstructor() {
+      runTest("compiler/testData/psi/contracts/contractsSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("FunctionWithMultilineContract.kt")
     public void testFunctionWithMultilineContract() {
       runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");
@@ -2078,6 +2090,18 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("nonKotlinContractCall.kt")
+    public void testNonKotlinContractCall() {
+      runTest("compiler/testData/psi/contracts/nonKotlinContractCall.kt");
+    }
+
+    @Test
+    @TestMetadata("nonKotlinContractCall2.kt")
+    public void testNonKotlinContractCall2() {
+      runTest("compiler/testData/psi/contracts/nonKotlinContractCall2.kt");
+    }
+
+    @Test
     @TestMetadata("PropertyAccessorsContracts.kt")
     public void testPropertyAccessorsContracts() {
       runTest("compiler/testData/psi/contracts/PropertyAccessorsContracts.kt");
@@ -2087,6 +2111,194 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     @TestMetadata("SimpleFunctionWithContract.kt")
     public void testSimpleFunctionWithContract() {
       runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/psi/contracts/good")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Good {
+      @Test
+      public void testAllFilesPresentInGood() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/psi/contracts/good/callsInPlace")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CallsInPlace {
+        @Test
+        public void testAllFilesPresentInCallsInPlace() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/callsInPlace"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("atLeastOnce.kt")
+        public void testAtLeastOnce() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/atLeastOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("atMostOnce.kt")
+        public void testAtMostOnce() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/atMostOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("contractsUsage.kt")
+        public void testContractsUsage() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/contractsUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("exactlyOnce.kt")
+        public void testExactlyOnce() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/exactlyOnce.kt");
+        }
+
+        @Test
+        @TestMetadata("flow.kt")
+        public void testFlow() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/flow.kt");
+        }
+
+        @Test
+        @TestMetadata("inPlaceLambda.kt")
+        public void testInPlaceLambda() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/inPlaceLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("infiniteLoop.kt")
+        public void testInfiniteLoop() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/infiniteLoop.kt");
+        }
+
+        @Test
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/namedArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("tryFinally.kt")
+        public void testTryFinally() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/tryFinally.kt");
+        }
+
+        @Test
+        @TestMetadata("unknown.kt")
+        public void testUnknown() {
+          runTest("compiler/testData/psi/contracts/good/callsInPlace/unknown.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/psi/contracts/good/returnsImplies")
+      @TestDataPath("$PROJECT_ROOT")
+      public class ReturnsImplies {
+        @Test
+        public void testAllFilesPresentInReturnsImplies() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("booleanOperators.kt")
+        public void testBooleanOperators() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/booleanOperators.kt");
+        }
+
+        @Test
+        @TestMetadata("conditionLogic.kt")
+        public void testConditionLogic() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/conditionLogic.kt");
+        }
+
+        @Test
+        @TestMetadata("eqNotEq.kt")
+        public void testEqNotEq() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/eqNotEq.kt");
+        }
+
+        @Test
+        @TestMetadata("inapplicable.kt")
+        public void testInapplicable() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/inapplicable.kt");
+        }
+
+        @Test
+        @TestMetadata("namedArguments.kt")
+        public void testNamedArguments() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/namedArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("notNull.kt")
+        public void testNotNull() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/notNull.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAccessors.kt")
+        public void testPropertyAccessors() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/propertyAccessors.kt");
+        }
+
+        @Test
+        @TestMetadata("receivers.kt")
+        public void testReceivers() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/receivers.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/safeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("trickyCases.kt")
+        public void testTrickyCases() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/trickyCases.kt");
+        }
+
+        @Test
+        @TestMetadata("typePredicate.kt")
+        public void testTypePredicate() {
+          runTest("compiler/testData/psi/contracts/good/returnsImplies/typePredicate.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/psi/contracts/good/variousContracts")
+      @TestDataPath("$PROJECT_ROOT")
+      public class VariousContracts {
+        @Test
+        public void testAllFilesPresentInVariousContracts() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/psi/contracts/good/variousContracts/newSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        public class NewSyntax {
+          @Test
+          public void testAllFilesPresentInNewSyntax() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+          }
+
+          @Test
+          @TestMetadata("functionsWithContract.kt")
+          public void testFunctionsWithContract() {
+            runTest("compiler/testData/psi/contracts/good/variousContracts/newSyntax/functionsWithContract.kt");
+          }
+        }
+      }
     }
   }
 

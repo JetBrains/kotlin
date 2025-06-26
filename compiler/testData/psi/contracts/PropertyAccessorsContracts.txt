@@ -3,8 +3,6 @@ KtFile: PropertyAccessorsContracts.kt
     <empty list>
   IMPORT_LIST
     <empty list>
-  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
-  PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')
@@ -93,6 +91,8 @@ KtFile: PropertyAccessorsContracts.kt
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
           PsiElement(IDENTIFIER)('multiplier')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -305,7 +305,7 @@ KtFile: PropertyAccessorsContracts.kt
                 PsiWhiteSpace(' ')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('NullArgumentException')
+                    PsiElement(IDENTIFIER)('IllegalArgumentException')
                   VALUE_ARGUMENT_LIST
                     PsiElement(LPAR)('(')
                     PsiElement(RPAR)(')')

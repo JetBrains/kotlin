@@ -1,0 +1,136 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+    IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=contracts]
+  FUN[fqName=wrongFalse, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongFalse]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUN[fqName=wrongTrue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongTrue]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+  FUN[fqName=nullableConstant, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableConstant]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Any]
+  FUN[fqName=string, hasBlockBody=false, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=string]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+  FUN[fqName=nullableReturn, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=nullableReturn]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Any]
+  FUN[fqName=returnsNull, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=returnsNull]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Any]
+  FUN[fqName=wrongReturnType, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongReturnType]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=OptIn]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=ExperimentalContracts]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=Any]

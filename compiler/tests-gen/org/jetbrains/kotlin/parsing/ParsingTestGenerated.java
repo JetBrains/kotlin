@@ -1811,6 +1811,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contracts/contracts.kt");
       }
 
+      @TestMetadata("contractsPropertyAccessors.kt")
+      public void testContractsPropertyAccessors() {
+        runTest("compiler/testData/psi/contracts/contractsPropertyAccessors.kt");
+      }
+
+      @TestMetadata("contractsSecondaryConstructor.kt")
+      public void testContractsSecondaryConstructor() {
+        runTest("compiler/testData/psi/contracts/contractsSecondaryConstructor.kt");
+      }
+
       @TestMetadata("FunctionWithMultilineContract.kt")
       public void testFunctionWithMultilineContract() {
         runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");
@@ -1821,6 +1831,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/contracts/FunctionsWithTypeConstraintsAndContract.kt");
       }
 
+      @TestMetadata("nonKotlinContractCall.kt")
+      public void testNonKotlinContractCall() {
+        runTest("compiler/testData/psi/contracts/nonKotlinContractCall.kt");
+      }
+
+      @TestMetadata("nonKotlinContractCall2.kt")
+      public void testNonKotlinContractCall2() {
+        runTest("compiler/testData/psi/contracts/nonKotlinContractCall2.kt");
+      }
+
       @TestMetadata("PropertyAccessorsContracts.kt")
       public void testPropertyAccessorsContracts() {
         runTest("compiler/testData/psi/contracts/PropertyAccessorsContracts.kt");
@@ -1829,6 +1849,186 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("SimpleFunctionWithContract.kt")
       public void testSimpleFunctionWithContract() {
         runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
+      }
+
+      @TestMetadata("compiler/testData/psi/contracts/good")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Good extends AbstractParsingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInGood() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+        }
+
+        @TestMetadata("compiler/testData/psi/contracts/good/callsInPlace")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallsInPlace extends AbstractParsingTest {
+          private void runTest(String testDataFilePath) {
+            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          }
+
+          public void testAllFilesPresentInCallsInPlace() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/callsInPlace"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+          }
+
+          @TestMetadata("atLeastOnce.kt")
+          public void testAtLeastOnce() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/atLeastOnce.kt");
+          }
+
+          @TestMetadata("atMostOnce.kt")
+          public void testAtMostOnce() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/atMostOnce.kt");
+          }
+
+          @TestMetadata("contractsUsage.kt")
+          public void testContractsUsage() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/contractsUsage.kt");
+          }
+
+          @TestMetadata("exactlyOnce.kt")
+          public void testExactlyOnce() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/exactlyOnce.kt");
+          }
+
+          @TestMetadata("flow.kt")
+          public void testFlow() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/flow.kt");
+          }
+
+          @TestMetadata("inPlaceLambda.kt")
+          public void testInPlaceLambda() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/inPlaceLambda.kt");
+          }
+
+          @TestMetadata("infiniteLoop.kt")
+          public void testInfiniteLoop() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/infiniteLoop.kt");
+          }
+
+          @TestMetadata("namedArgument.kt")
+          public void testNamedArgument() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/namedArgument.kt");
+          }
+
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/simple.kt");
+          }
+
+          @TestMetadata("tryFinally.kt")
+          public void testTryFinally() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/tryFinally.kt");
+          }
+
+          @TestMetadata("unknown.kt")
+          public void testUnknown() {
+            runTest("compiler/testData/psi/contracts/good/callsInPlace/unknown.kt");
+          }
+        }
+
+        @TestMetadata("compiler/testData/psi/contracts/good/returnsImplies")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReturnsImplies extends AbstractParsingTest {
+          private void runTest(String testDataFilePath) {
+            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          }
+
+          public void testAllFilesPresentInReturnsImplies() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/returnsImplies"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+          }
+
+          @TestMetadata("booleanOperators.kt")
+          public void testBooleanOperators() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/booleanOperators.kt");
+          }
+
+          @TestMetadata("conditionLogic.kt")
+          public void testConditionLogic() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/conditionLogic.kt");
+          }
+
+          @TestMetadata("eqNotEq.kt")
+          public void testEqNotEq() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/eqNotEq.kt");
+          }
+
+          @TestMetadata("inapplicable.kt")
+          public void testInapplicable() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/inapplicable.kt");
+          }
+
+          @TestMetadata("namedArguments.kt")
+          public void testNamedArguments() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/namedArguments.kt");
+          }
+
+          @TestMetadata("notNull.kt")
+          public void testNotNull() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/notNull.kt");
+          }
+
+          @TestMetadata("propertyAccessors.kt")
+          public void testPropertyAccessors() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/propertyAccessors.kt");
+          }
+
+          @TestMetadata("receivers.kt")
+          public void testReceivers() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/receivers.kt");
+          }
+
+          @TestMetadata("safeCall.kt")
+          public void testSafeCall() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/safeCall.kt");
+          }
+
+          @TestMetadata("trickyCases.kt")
+          public void testTrickyCases() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/trickyCases.kt");
+          }
+
+          @TestMetadata("typePredicate.kt")
+          public void testTypePredicate() {
+            runTest("compiler/testData/psi/contracts/good/returnsImplies/typePredicate.kt");
+          }
+        }
+
+        @TestMetadata("compiler/testData/psi/contracts/good/variousContracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class VariousContracts extends AbstractParsingTest {
+          private void runTest(String testDataFilePath) {
+            KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+          }
+
+          public void testAllFilesPresentInVariousContracts() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+          }
+
+          @TestMetadata("compiler/testData/psi/contracts/good/variousContracts/newSyntax")
+          @TestDataPath("$PROJECT_ROOT")
+          @RunWith(JUnit3RunnerWithInners.class)
+          public static class NewSyntax extends AbstractParsingTest {
+            private void runTest(String testDataFilePath) {
+              KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNewSyntax() {
+              KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts/good/variousContracts/newSyntax"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+            }
+
+            @TestMetadata("functionsWithContract.kt")
+            public void testFunctionsWithContract() {
+              runTest("compiler/testData/psi/contracts/good/variousContracts/newSyntax/functionsWithContract.kt");
+            }
+          }
+        }
       }
     }
 
