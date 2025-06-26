@@ -15,6 +15,46 @@ import utils.*
 class ConstructorsTest : AbstractModelTest("/src/main/kotlin/constructors/Test.kt", "constructors") {
 
     @Test
+    fun `should have documentation for @param of type parameter on implicit primary constructor`() {
+        val expectedRootDescription = Description(
+            CustomDocTag(
+                emptyList(),
+                params = emptyMap(),
+                name = MARKDOWN_ELEMENT_FILE_NAME
+            )
+        )
+
+        val expectedParamTag = Param(
+            CustomDocTag(
+                listOf(
+                    P(
+                        listOf(
+                            Text("some doc"),
+                        )
+                    )
+                ),
+                params = emptyMap(),
+                name = MARKDOWN_ELEMENT_FILE_NAME
+            ),
+            name = "T"
+        )
+        inlineModelTest(
+            """
+               |/** 
+               |* @param T some doc 
+               |*/
+               |class Foo<T>
+            """.trimMargin()
+        ) {
+            val classlike = packages.flatMap { it.classlikes }.first() as DClass
+            classlike.name equals "Foo"
+            classlike.documentation.values.single() equals DocumentationNode(listOf(expectedRootDescription, expectedParamTag))
+            val constructor = classlike.constructors.single()
+            constructor.documentation.values.single() equals DocumentationNode(listOf(expectedParamTag))
+        }
+    }
+
+    @Test
     fun `should have documentation for @constructor tag without parameters`() {
         val expectedRootDescription = Description(
             CustomDocTag(
