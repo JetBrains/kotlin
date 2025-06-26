@@ -192,14 +192,15 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
     }
 
     afterEvaluate {
+        // The common source set compilation artifacts are never intended for consumption
+        configurations.getByName(commonSourceSet.runtimeElementsConfigurationName).isCanBeConsumed = false
+
         listOf(
             /**
              * Common source set outgoing variants should be a superset of attributes relative to [FIXED_CONFIGURATION_SUFFIX]. These
              * variants are not published, but they are used to resolve interproject dependencies
              */
             commonSourceSet.apiElementsConfigurationName,
-            // FIXME: This breaks the early exit in longestIsSuperset check. Rewrite with a disambiguation instead?
-//            commonSourceSet.runtimeElementsConfigurationName,
         ).forEach {
             val outgoingVariant = configurations.getByName(it)
             commonVariantAttributes().execute(outgoingVariant)
@@ -806,7 +807,7 @@ fun Project.registerValidatePluginTasks(
 
 /**
  * Register a kotlin source for a range of Gradle versions [[from], [to]). The sources will be visible to build scripts [from]
- * [GradlePluginVariant.minimalSupportedGradleVersion] up to but including [to].
+ * [GradlePluginVariant.minimalSupportedGradleVersion] up to but not including [to].
  *
  * Use this utility to overwrite or expose some API to build scripts that execute with a range of Gradle versions
  */

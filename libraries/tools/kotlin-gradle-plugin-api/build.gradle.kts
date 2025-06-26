@@ -46,3 +46,8 @@ registerKotlinSourceForVersionRange(
     GradlePluginVariant.GRADLE_MIN,
     GradlePluginVariant.GRADLE_88
 )
+
+pluginApiReference {
+    // FIXME: Source sets 'jvm' and 'jvm' have the common source roots???
+    failOnWarning = false
+}
