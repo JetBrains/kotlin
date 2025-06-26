@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // FIR_IDENTICAL
 
@@ -20,3 +21,5 @@ inline fun test() {
         }
     }
 }
+
+/* GENERATED_FIR_TAGS: anonymousObjectExpression, functionDeclaration, inline, stringLiteral */

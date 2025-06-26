@@ -40,7 +40,7 @@ abstract class AbstractFirJsDiagnosticTestBase(val parser: FirParser) : Abstract
         }
         defaultDirectives {
             +ConfigurationDirectives.WITH_STDLIB
-            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.KLIB
+            TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
         }
 
         commonConfigurationForJsTest(

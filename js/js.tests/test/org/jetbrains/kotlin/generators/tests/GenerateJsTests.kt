@@ -354,7 +354,7 @@ fun main(args: Array<String>) {
                     targetBackend = TargetBackend.JS_IR
                 )
                 model(
-                    relativeRootPath = "inlineCallCycle",
+                    relativeRootPath = "testsWithAnyBackend",
                     pattern = "^([^_](.+))\\.kt$",
                     excludedPattern = excludedFirTestdataPattern,
                     targetBackend = TargetBackend.JS_IR

@@ -329,66 +329,66 @@ public class FirJsOldFrontendDiagnosticsWithBackendWithInlinedFunInKlibTestGener
   }
 
   @Nested
-  @TestMetadata("compiler/testData/diagnostics/inlineCallCycle")
+  @TestMetadata("compiler/testData/diagnostics/testsWithAnyBackend")
   @TestDataPath("$PROJECT_ROOT")
-  public class InlineCallCycle {
+  public class TestsWithAnyBackend {
     @Test
-    public void testAllFilesPresentInInlineCallCycle() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/inlineCallCycle"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    public void testAllFilesPresentInTestsWithAnyBackend() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithAnyBackend"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("crossFileInlineCycle.kt")
+    public void testCrossFileInlineCycle() {
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/crossFileInlineCycle.kt");
     }
 
     @Test
     @TestMetadata("defaultValuesCycle.kt")
     public void testDefaultValuesCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/defaultValuesCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/defaultValuesCycle.kt");
     }
 
     @Test
     @TestMetadata("indirectInlineCycle.kt")
     public void testIndirectInlineCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/indirectInlineCycle.kt");
-    }
-
-    @Test
-    @TestMetadata("inlineCycle.kt")
-    public void testInlineCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/inlineCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/indirectInlineCycle.kt");
     }
 
     @Test
     @TestMetadata("localInlineFunctionCycle.kt")
     public void testLocalInlineFunctionCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/localInlineFunctionCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/localInlineFunctionCycle.kt");
     }
 
     @Test
     @TestMetadata("propertyInlineCycle.kt")
     public void testPropertyInlineCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/propertyInlineCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/propertyInlineCycle.kt");
     }
 
     @Test
     @TestMetadata("recursionCycleLambda.kt")
     public void testRecursionCycleLambda() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/recursionCycleLambda.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/recursionCycleLambda.kt");
     }
 
     @Test
     @TestMetadata("recursionCycleWithStdlibCall.kt")
     public void testRecursionCycleWithStdlibCall() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/recursionCycleWithStdlibCall.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/recursionCycleWithStdlibCall.kt");
     }
 
     @Test
     @TestMetadata("suspendInlineCycle.kt")
     public void testSuspendInlineCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/suspendInlineCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/suspendInlineCycle.kt");
     }
 
     @Test
     @TestMetadata("transitiveInlineCycle.kt")
     public void testTransitiveInlineCycle() {
-      runTest("compiler/testData/diagnostics/inlineCallCycle/transitiveInlineCycle.kt");
+      runTest("compiler/testData/diagnostics/testsWithAnyBackend/transitiveInlineCycle.kt");
     }
   }
 }
