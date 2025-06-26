@@ -112,7 +112,7 @@ internal class IrInlineCallGraphBuilder(
 
         data?.let { addEdges(it, expression, callee) }
 
-        return visitElement(expression, data)
+        visitElement(expression, data)
     }
 
     private fun addEdges(callerNode: CallNode, call: IrCall?, callee: IrFunction) {
@@ -127,13 +127,12 @@ internal class IrInlineCallGraphBuilder(
 }
 
 class IrInlineCallCycleRemover(private val callsInInlineCycle: MutableSet<IrCall>) : IrElementTransformerVoid() {
-    override fun visitCall(expression: IrCall): IrExpression {
-        if (expression in callsInInlineCycle) return IrErrorCallExpressionImpl(
+    override fun visitCall(expression: IrCall): IrExpression =
+        if (expression in callsInInlineCycle) IrErrorCallExpressionImpl(
             startOffset = expression.startOffset,
             endOffset = expression.endOffset,
             type = expression.type,
             description = "'${expression.render()}' is a part of an inline call cycle"
         )
-        return super.visitCall(expression)
-    }
+        else super.visitCall(expression)
 }
