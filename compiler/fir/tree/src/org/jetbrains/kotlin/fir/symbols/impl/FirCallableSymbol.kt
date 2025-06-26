@@ -123,7 +123,13 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
         }
     }
 
-    override fun toString(): String = "${this::class.simpleName} $callableId"
+    override fun toString(): String {
+        val description = when (isBound) {
+            true -> callableId.toString()
+            false -> "(unbound)"
+        }
+        return "${this::class.simpleName} $description"
+    }
 }
 
 val FirCallableSymbol<*>.hasContextParameters: Boolean
