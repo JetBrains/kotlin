@@ -589,12 +589,12 @@ internal class StubBasedFirMemberDeserializer(
         }.apply {
             setLazyPublishedVisibility(c.session)
         }
-        if (function.mayHaveContract()) {
-            val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
-            if (resolvedDescription != null) {
-                simpleFunction.replaceContractDescription(resolvedDescription)
-            }
+
+        val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
+        if (resolvedDescription != null) {
+            simpleFunction.replaceContractDescription(resolvedDescription)
         }
+
         return simpleFunction
     }
 
