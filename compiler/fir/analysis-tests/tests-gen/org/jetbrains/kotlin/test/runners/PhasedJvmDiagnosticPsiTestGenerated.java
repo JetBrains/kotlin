@@ -32782,6 +32782,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("kt78621.kt")
+      public void testKt78621() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/kt78621.kt");
+      }
+
+      @Test
       @TestMetadata("methodTypeParameterDefaultBound.kt")
       public void testMethodTypeParameterDefaultBound() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
