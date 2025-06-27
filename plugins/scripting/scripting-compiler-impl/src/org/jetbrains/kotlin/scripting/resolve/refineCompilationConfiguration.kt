@@ -16,6 +16,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -81,6 +86,14 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name
 
     override fun getCanonicalPath() = path
+}
+
+fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
+    is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
+    is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
+    is KtIoFileSourceFile -> FileScriptSource(file)
+    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
+    else -> null
 }
 
 class ScriptCompilationConfigurationWrapper(
