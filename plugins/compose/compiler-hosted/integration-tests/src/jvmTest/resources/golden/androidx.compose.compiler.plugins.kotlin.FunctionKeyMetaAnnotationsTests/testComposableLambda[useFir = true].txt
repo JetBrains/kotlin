@@ -26,7 +26,7 @@ ComposableSingletons$TestKt {
     getLambda$-420233864$test_module ()Lkotlin/jvm/functions/Function2; null
     getLambda$511230191$test_module ()Lkotlin/jvm/functions/Function2; null
     lambda__420233864$lambda$0 (Landroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
-    lambda_511230191$lambda$1 (Landroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    lambda_511230191$lambda$0 (Landroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
     <clinit> ()V null
 }
 

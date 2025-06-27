@@ -38,7 +38,7 @@ public final class compose/ui/ComposableSingletons$BarKt {
     public final method getLambda$2013108129$main(): kotlin.jvm.functions.Function2
     public final method getLambda-1$main(): kotlin.jvm.functions.Function2
     public final method getLambda-2$main(): kotlin.jvm.functions.Function2
-    private final static method lambda_2013108129$lambda$1(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
+    private final static method lambda_2013108129$lambda$0(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
     private final static method lambda__1754416646$lambda$0(p0: androidx.compose.runtime.Composer, p1: int): kotlin.Unit
 }
 
