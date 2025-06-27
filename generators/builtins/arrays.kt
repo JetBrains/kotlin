@@ -19,7 +19,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
         return file(this::class) { generateClasses() }.apply { this.modifyGeneratedFile() }
     }
 
-    internal abstract class ArrayBuilder(val kind: PrimitiveType?) {
+    internal abstract class ArrayBuilder(val kind: PrimitiveType?, val includeJvmTypeInfo: Boolean) {
         protected val arrayClassName = "${kind?.capitalized ?: ""}Array"
         protected val arrayTypeName = arrayClassName + if (kind == null) "<T>" else ""
         protected val elementTypeName = kind?.capitalized ?: "T"
@@ -32,13 +32,19 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 expectActual = ExpectActualModifier.Actual
                 name = arrayClassName
                 if (kind == null) {
-                    appendDoc("A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.")
+                    appendDoc("A generic array of objects.")
+                    if (includeJvmTypeInfo) {
+                        appendDoc("When targeting the JVM, instances of this class are represented as `T[]`.")
+                    }
                     appendDoc("Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]")
                     appendDoc("standard library functions.")
                     typeParam("T")
                     noPrimaryConstructor()
                 } else {
-                    appendDoc("An array of ${typeLower}s. When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
+                    appendDoc("An array of ${typeLower}s.")
+                    if (includeJvmTypeInfo) {
+                        appendDoc("When targeting the JVM, instances of this class are represented as `$typeLower[]`.")
+                    }
                     val defaultValue = when (kind) {
                         PrimitiveType.CHAR -> "null char (`\\u0000')"
                         PrimitiveType.BOOLEAN -> "`false`"
@@ -211,7 +217,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
 
 class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, includeJvmTypeInfo = true) {
         override fun ClassBuilder.modifyGeneratedClass() {
             expectActual = ExpectActualModifier.Expect
         }
@@ -227,7 +233,7 @@ class GenerateJvmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generat
         suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, includeJvmTypeInfo = true) {
         override fun ClassBuilder.modifyGeneratedClass() {
             expectActual = ExpectActualModifier.Actual
         }
@@ -239,7 +245,7 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
         suppress("UNUSED_PARAMETER")
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, includeJvmTypeInfo = false) {
         override fun SecondaryConstructorBuilder.modifySecondaryConstructor() {
             annotations.removeAll { it.startsWith("Suppress") }
             annotations += """Suppress("WRONG_MODIFIER_TARGET", "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED")"""
@@ -270,7 +276,7 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
         suppress("UNUSED_PARAMETER")
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, includeJvmTypeInfo = false) {
         private val storageArrayType = when (kind) {
             null -> "WasmAnyArray"
             PrimitiveType.BOOLEAN -> "WasmByteArray"
@@ -371,7 +377,7 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
         }
     }
 
-    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind) {
+    override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, includeJvmTypeInfo = false) {
 
         override fun ClassBuilder.modifyGeneratedClass() {
             annotations += """ExportTypeInfo("the${arrayClassName}TypeInfo")"""
