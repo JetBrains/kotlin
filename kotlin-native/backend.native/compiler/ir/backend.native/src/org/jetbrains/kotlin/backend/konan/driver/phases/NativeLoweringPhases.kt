@@ -91,9 +91,8 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
                             // TODO: remove this condition after the fix of KT-66734:
                             inlineFunction.isExternal -> true // temporarily permitted
 
-                            // it's fine to have typeOf<T> with reified T, it would be correctly handled by inliner on inlining to next use-sites.
-                            // maybe it should be replaced by separate node to avoid this special case and simplify detection code - KT-70360
-                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) && inlineFunctionUseSite.typeArguments[0]?.isReifiedTypeParameter == true -> true
+                            // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) -> true
 
                             else -> false // forbidden
                         }
