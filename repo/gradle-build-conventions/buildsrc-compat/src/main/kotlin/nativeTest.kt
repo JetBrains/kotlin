@@ -272,6 +272,15 @@ fun Project.nativeTest(
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 
+        // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
+        // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
+        // Switch back to Parallel GC to mitigate the test execution time degradation:
+        jvmArgs("-XX:+UseParallelGC")
+        // Another reason for switching back to Parallel GC is CLI tests:
+        // some of them validate the compiler performance report.
+        // The latter contains GC statistics, and the format varies per GC.
+        // So using G1 GC makes those tests fail because they expect the format of Parallel GC statistics.
+
         // Effectively remove the limit for the amount of stack trace elements in Throwable.
         jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
 
