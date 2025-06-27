@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
-    abstract val callableId: CallableId
+    abstract val callableId: CallableId?
+
+    val callableIdForRendering: CallableId
+        get() = callableId ?: CallableId(name)
 
     val resolvedReturnTypeRef: FirResolvedTypeRef
         get() {
@@ -63,8 +66,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val dispatchReceiverType: ConeSimpleKotlinType?
         get() = fir.dispatchReceiverType
 
-    open val name: Name
-        get() = callableId.callableName
+    abstract val name: Name
 
     val containerSource: DeserializedContainerSource?
         // This is ok, because containerSource should be set during fir creation
@@ -125,11 +127,13 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
 
     override fun toString(): String {
         val description = when (isBound) {
-            true -> callableId.toString()
+            true -> callableIdAsString()
             false -> "(unbound)"
         }
         return "${this::class.simpleName} $description"
     }
+
+    fun callableIdAsString(): String = callableId?.toString() ?: "<local>/$name"
 }
 
 val FirCallableSymbol<*>.hasContextParameters: Boolean

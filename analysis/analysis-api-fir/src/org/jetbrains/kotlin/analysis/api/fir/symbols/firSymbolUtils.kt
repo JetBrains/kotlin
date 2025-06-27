@@ -84,7 +84,7 @@ private fun createContextReceiver(
 internal fun FirCallableSymbol<*>.getCallableId(): CallableId? {
     return when {
         origin == FirDeclarationOrigin.DynamicScope -> null
-        callableId.isLocal -> null
+        callableId?.isLocal != false -> null
         else -> callableId
     }
 }

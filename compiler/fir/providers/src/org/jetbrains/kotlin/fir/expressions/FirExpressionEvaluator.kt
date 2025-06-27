@@ -240,10 +240,10 @@ object FirExpressionEvaluator {
             return when (propertySymbol) {
                 is FirPropertySymbol -> {
                     when {
-                        propertySymbol.callableId.isStringLength || propertySymbol.callableId.isCharCode -> {
+                        propertySymbol.callableId?.isStringLength == true || propertySymbol.callableId?.isCharCode == true -> {
                             evaluate(propertyAccessExpression.explicitReceiver).let { receiver ->
                                 val unaryArg = receiver.unwrapOr<FirExpression> { return it } ?: return NotEvaluated
-                                evaluateUnary(unaryArg, propertySymbol.callableId)
+                                evaluateUnary(unaryArg, propertySymbol.callableId!!)
                                     .adjustTypeAndConvertToLiteral(propertyAccessExpression)
                             }
                         }

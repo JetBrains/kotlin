@@ -59,7 +59,7 @@ private class Visitor(val session: FirSession, val scopeSession: ScopeSession) :
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         val symbol = resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
-        val id = symbol.callableId.takeUnless { it.isLocal || it.classId != null } ?: return
+        val id = symbol.callableId.takeUnless { it?.isLocal != false || it.classId != null } ?: return
         session.symbolProvider.getTopLevelCallableSymbols(id.packageName, id.callableName)
     }
 

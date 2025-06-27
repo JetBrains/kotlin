@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 class FirIdRendererBasedSymbolRenderer : FirSymbolRenderer() {
     override fun printReference(symbol: FirBasedSymbol<*>) {
         when (symbol) {
-            is FirCallableSymbol<*> -> components.idRenderer.renderCallableId(symbol.callableId)
+            is FirCallableSymbol<*> -> components.idRenderer.renderCallableId(symbol.callableIdForRendering)
             is FirClassLikeSymbol<*> -> components.idRenderer.renderClassId(symbol.classId)
             else -> super.printReference(symbol)
         }

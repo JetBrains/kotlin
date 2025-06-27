@@ -381,7 +381,7 @@ class ConeUnknownLambdaParameterTypeDiagnostic : ConeDiagnostic {
 private fun describeSymbol(symbol: FirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()
-        is FirCallableSymbol<*> -> symbol.callableId.toString()
+        is FirCallableSymbol<*> -> symbol.callableIdAsString()
         else -> "$symbol"
     }
 }

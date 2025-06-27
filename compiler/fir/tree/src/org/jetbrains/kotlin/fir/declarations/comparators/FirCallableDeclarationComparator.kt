@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeRefComparator
+import org.jetbrains.kotlin.name.packageName
 
 object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
     override fun compare(a: FirCallableDeclaration, b: FirCallableDeclaration): Int {

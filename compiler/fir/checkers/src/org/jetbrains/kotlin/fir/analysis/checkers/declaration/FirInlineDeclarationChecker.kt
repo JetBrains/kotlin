@@ -202,7 +202,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             source: KtSourceElement,
         ) {
             if (// Access of backing field (e.g. from getter) is not important, see inline/property/propertyWithBackingField.kt
-                calledDeclaration.callableId.callableName == BACKING_FIELD ||
+                calledDeclaration.name == BACKING_FIELD ||
                 // Any annotations do not rely to visibility problems
                 context.callsOrAssignments.any { it is FirAnnotationCall }
             ) {

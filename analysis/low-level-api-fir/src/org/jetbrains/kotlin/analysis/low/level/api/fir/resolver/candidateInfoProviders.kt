@@ -47,7 +47,7 @@ abstract class AbstractCandidateInfoProvider(
         CallInfo(
             firFile, // TODO: consider passing more precise info here, if needed
             callKind = callKind(),
-            name = callableSymbol.callableId.callableName,
+            name = callableSymbol.name,
             explicitReceiver = explicitReceiver,
             argumentList = argumentList,
             typeArguments = typeArgumentList,

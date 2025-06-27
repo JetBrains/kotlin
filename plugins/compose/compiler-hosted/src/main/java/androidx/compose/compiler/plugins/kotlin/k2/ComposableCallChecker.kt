@@ -62,7 +62,7 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.Com
 
         if (calleeFunction.isComposable(context.session)) {
             checkComposableCall(expression, calleeFunction, context, reporter)
-        } else if (calleeFunction.callableId.isInvoke()) {
+        } else if (calleeFunction.callableId?.isInvoke() == true) {
             checkInvoke(expression, context, reporter)
         }
     }

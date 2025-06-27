@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 sealed class FirFunctionSymbol<out D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
+    override val name: Name
+        get() = callableId.callableName
+
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
 

@@ -95,14 +95,14 @@ class FirScriptConfiguratorExtensionImpl(
                     parameters.add(
                         buildProperty {
                             moduleData = session.moduleData
-                            source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                            source = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter)
                             origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
-                            symbol = FirLocalPropertySymbol()
+                            symbol = FirRegularPropertySymbol(CallableId(name))
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                            isLocal = true
+                            isLocal = false
                             isVar = false
                         }
                     )

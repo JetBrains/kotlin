@@ -42,7 +42,7 @@ abstract class FirWebCommonExternalChecker(
     context(context: CheckerContext, reporter: DiagnosticReporter)
     abstract fun additionalCheck(declaration: FirDeclaration)
 
-    abstract fun isDefinedExternallyCallableId(callableId: CallableId): Boolean
+    abstract fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean
 
     abstract fun hasExternalLikeAnnotations(declaration: FirDeclaration, session: FirSession): Boolean
 

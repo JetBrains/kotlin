@@ -69,7 +69,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeAliasSymbolMarker.classId: ClassId
         get() = asSymbol().classId
     override val CallableSymbolMarker.callableId: CallableId
-        get() = asSymbol().callableId
+        get() = asSymbol().callableId!!
 
     override val TypeParameterSymbolMarker.parameterName: Name
         get() = asSymbol().name

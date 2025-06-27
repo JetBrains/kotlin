@@ -104,7 +104,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
         declaration.checkEnumEntry()
     }
 
-    override fun isDefinedExternallyCallableId(callableId: CallableId): Boolean {
+    override fun isDefinedExternallyCallableId(callableId: CallableId?): Boolean {
         return callableId == JsStandardClassIds.Callables.JsDefinedExternally
     }
 

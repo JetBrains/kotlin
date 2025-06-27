@@ -117,7 +117,7 @@ object FirOptInUsageBaseChecker {
             val annotationType = annotation.annotationTypeRef.coneType as? ConeClassLikeType ?: continue
             val className = when (this) {
                 is FirRegularClassSymbol -> name.asString()
-                is FirCallableSymbol<*> -> callableId.className?.shortName()?.asString()
+                is FirCallableSymbol<*> -> callableId?.className?.shortName()?.asString()
                 else -> null
             }
             result.addIfNotNull(

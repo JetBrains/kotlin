@@ -182,7 +182,7 @@ fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(): IrStatementOrigin? {
 private fun FirVariableAssignment.getCallableNameFromIntClassIfAny(): Name? {
     val calleeReferenceSymbol = calleeReference?.toResolvedCallableSymbol() ?: return null
     val rValue = rValue
-    if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId.isLocal) {
+    if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId?.isLocal != false) {
         val callableId = rValue.calleeReference.toResolvedCallableSymbol()?.callableId
         if (callableId?.classId == StandardClassIds.Int) {
             return callableId.callableName

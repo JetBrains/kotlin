@@ -109,7 +109,7 @@ class FirReplSnippetResolveExtensionImpl(
                     isStatic = true
                 )
             isLocal = !makePublic
-            symbol = FirRegularPropertySymbol(this@createCopyForState.symbol.callableId)
+            symbol = this@createCopyForState.symbol.callableId?.let { FirRegularPropertySymbol(it) } ?: FirLocalPropertySymbol()
         }.also {
             it.originalReplSnippetSymbol = snippet
             if (makePublic) {
