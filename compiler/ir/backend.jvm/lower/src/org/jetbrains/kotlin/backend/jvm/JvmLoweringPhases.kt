@@ -106,13 +106,13 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::AdditionalClassAnnotationLowering,
     ::RecordEnclosingMethodsLowering,
     ::TypeOperatorLowering,
+    ::JvmUpgradeCallableReferences,
     ::ReplaceKFunctionInvokeWithFunctionInvoke,
     ::JvmKotlinNothingValueExceptionLowering,
     ::MakePropertyDelegateMethodsStaticLowering,
     ::ReplaceNumberToCharCallSitesLowering,
 
     ::RenameFieldsLowering,
-    ::JvmUpgradeCallableReferences,
     ::FakeLocalVariablesForBytecodeInlinerLowering,
 
     ::SpecialAccessLowering,
