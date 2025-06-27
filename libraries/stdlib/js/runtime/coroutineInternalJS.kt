@@ -26,8 +26,3 @@ internal fun <T> interceptContinuationIfNeeded(
     context: CoroutineContext,
     continuation: Continuation<T>
 ): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
-
-
-@SinceKotlin("1.2")
-@PublishedApi
-internal inline suspend fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
