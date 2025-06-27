@@ -656,7 +656,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     @TodoAnalysisApi
     fun `test - block with explicit parameter names`() {
-        doTest(headersTestDataDir.resolve("blockWithExplicitParameterNames"), Configuration(explicitBlockParameterNames = true))
+        doTest(headersTestDataDir.resolve("blockWithExplicitParameterNames"), Configuration(objcExportBlockExplicitParameterNames = true))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
