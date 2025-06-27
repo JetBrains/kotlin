@@ -37,7 +37,7 @@ sourceSets {
     }
 }
 
-nativeTest("test", null)
+nativeTest("test", null, requirePlatformLibs = true)
 
 testsJar()
 

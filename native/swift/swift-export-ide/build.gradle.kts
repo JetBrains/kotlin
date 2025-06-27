@@ -37,7 +37,7 @@ sourceSets {
 }
 
 
-val test by nativeTest("test", null) {
+val test by nativeTest("test", null, requirePlatformLibs = true) {
     dependsOn(":dist")
 }
 

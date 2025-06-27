@@ -26,7 +26,7 @@ dependencies {
     testImplementation(project(":compiler:tests-common", "tests-jar"))
 }
 
-nativeTest("test", null)
+nativeTest("test", null, requirePlatformLibs = true)
 
 sourceSets {
     "main" { projectDefault() }
