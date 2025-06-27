@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
@@ -203,31 +204,47 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
             enclosingSuspendFunction.dispatchReceiverType?.classLikeLookupTagIfAny?.toRegularClassSymbol(session)
         val enclosingSuspendFunctionExtensionReceiverSymbol = enclosingSuspendFunction.receiverParameterSymbol
+        val enclosingSuspendFunctionContextParameterSymbols = enclosingSuspendFunction.contextParameterSymbols
 
-        val (dispatchReceiverExpression, extensionReceiverExpression, extensionReceiverParameterType) =
-            expression.computeReceiversInfo(session, calledDeclarationSymbol)
+        val (dispatchReceiverExpression, extensionReceiverInformation, contextParametersInformation) = expression.computeReceiversInfo(session, calledDeclarationSymbol)
+        val (extensionReceiverExpression, extensionReceiverParameterType) = extensionReceiverInformation
 
-        for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
+        for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression) + contextParametersInformation.map { it.first }) {
             if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) continue
+            if (enclosingSuspendFunctionContextParameterSymbols.any { sameInstanceOfReceiver(receiverExpression, it) }) continue
 
             return false
         }
 
-        if (enclosingSuspendFunctionExtensionReceiverSymbol?.resolvedType?.isRestrictSuspensionReceiver(session) != true) {
+        val restrictSuspensionSymbols =
+            listOfNotNull(enclosingSuspendFunctionExtensionReceiverSymbol.takeIf { it?.resolvedType?.isRestrictSuspensionReceiver(session) == true }) +
+                    enclosingSuspendFunctionContextParameterSymbols.filter { it.resolvedReturnType.isRestrictSuspensionReceiver(session) }
+
+        if (restrictSuspensionSymbols.isEmpty()) return true
+        if (restrictSuspensionSymbols.size > 1) return false
+
+        val chosenRestrictSuspensionSymbol = restrictSuspensionSymbols.single()
+
+        if (sameInstanceOfReceiver(dispatchReceiverExpression, chosenRestrictSuspensionSymbol)) {
             return true
         }
 
-        if (sameInstanceOfReceiver(dispatchReceiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) {
-            return true
-        }
-
-        if (sameInstanceOfReceiver(extensionReceiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) {
+        if (sameInstanceOfReceiver(extensionReceiverExpression, chosenRestrictSuspensionSymbol)) {
             if (extensionReceiverParameterType?.isRestrictSuspensionReceiver(session) == true) {
                 return true
             }
         }
+
+        for ((contextParameterExpression, contextParameterType) in contextParametersInformation) {
+            if (sameInstanceOfReceiver(contextParameterExpression, chosenRestrictSuspensionSymbol)) {
+                if (contextParameterType?.isRestrictSuspensionReceiver(session) == true) {
+                    return true
+                }
+            }
+        }
+
         return false
     }
 
@@ -293,40 +310,50 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
     private fun sameInstanceOfReceiver(
         useSiteReceiverExpression: FirExpression?,
         declarationSiteReceiverOwnerSymbol: FirBasedSymbol<*>?
-    ): Boolean {
-        if (declarationSiteReceiverOwnerSymbol == null || useSiteReceiverExpression == null) return false
-        if (useSiteReceiverExpression is FirThisReceiverExpression) {
-            return useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
-        }
-        return false
+    ): Boolean = when {
+        declarationSiteReceiverOwnerSymbol == null || useSiteReceiverExpression == null -> false
+        useSiteReceiverExpression is FirThisReceiverExpression ->
+            useSiteReceiverExpression.calleeReference.boundSymbol == declarationSiteReceiverOwnerSymbol
+        useSiteReceiverExpression is FirPropertyAccessExpression ->
+            declarationSiteReceiverOwnerSymbol is FirValueParameterSymbol
+                    && declarationSiteReceiverOwnerSymbol.isContextParameter()
+                    && useSiteReceiverExpression.toResolvedCallableSymbol() == declarationSiteReceiverOwnerSymbol
+        else -> false
     }
 
-    // Triple<DispatchReceiverValue, ExtensionReceiverValue, ExtensionReceiverParameterType>
+    // Triple<DispatchReceiverValue, Pair<ExtensionReceiverValue, ExtensionReceiverParameterType>>, List<Pair<ContextParameterValue, ContextParameterType>>>
     private fun FirQualifiedAccessExpression.computeReceiversInfo(
         session: FirSession,
         calledDeclarationSymbol: FirCallableSymbol<*>
-    ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
+    ): Triple<FirExpression?, Pair<FirExpression?, ConeKotlinType?>, List<Pair<FirExpression, ConeKotlinType?>>> {
         val dispatchReceiver = dispatchReceiver
         if (this is FirImplicitInvokeCall &&
             dispatchReceiver != null && dispatchReceiver.resolvedType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
             val variableForInvokeType = variableForInvoke.resolvedType
-            if (!variableForInvokeType.isExtensionFunctionType) return Triple(null, null, null)
+
+            if (!variableForInvokeType.hasContextParameters && !variableForInvokeType.isExtensionFunctionType) {
+                return Triple(null, Pair(null, null), emptyList())
+            }
+
+            val amountOfContexts = variableForInvokeType.contextParameterNumberForFunctionType
+            val contexts = argumentList.arguments.take(amountOfContexts)
+                .zip(variableForInvokeType.typeArguments.take(amountOfContexts).map { it as? ConeKotlinType })
+            val extension = Pair(
+                argumentList.arguments.getOrNull(amountOfContexts),
+                variableForInvokeType.typeArguments.getOrNull(amountOfContexts) as? ConeKotlinType
+            )
 
             // `a.foo()` is resolved to invokeExtension, so it's been desugared to `foo.invoke(a)`
             // And we use the first argument (`a`) as an extension receiver
-            return Triple(
-                null,
-                argumentList.arguments.getOrNull(0),
-                variableForInvokeType.typeArguments.getOrNull(0) as? ConeKotlinType
-            )
+            return Triple(null, extension, contexts)
         }
 
         return Triple(
             dispatchReceiver,
-            extensionReceiver,
-            calledDeclarationSymbol.resolvedReceiverType,
+            Pair(extensionReceiver,calledDeclarationSymbol.resolvedReceiverType),
+            contextArguments.zip(calledDeclarationSymbol.contextParameterSymbols.map { it.resolvedReturnType })
         )
     }
 
