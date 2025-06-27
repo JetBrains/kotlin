@@ -33,12 +33,12 @@ object Names {
         )
     val VALUE_COLUMN_CLASS_ID: ClassId
         get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe.columns")),
+            FqName("org.jetbrains.kotlinx.dataframe.columns"),
             Name.identifier("ValueColumn")
         )
     val BASE_COLUMN_CLASS_ID: ClassId
         get() = ClassId(
-            FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "columns")),
+            FqName("org.jetbrains.kotlinx.dataframe.columns"),
             Name.identifier("BaseColumn")
         )
     val COLUMNS_CONTAINER_CLASS_ID: ClassId
