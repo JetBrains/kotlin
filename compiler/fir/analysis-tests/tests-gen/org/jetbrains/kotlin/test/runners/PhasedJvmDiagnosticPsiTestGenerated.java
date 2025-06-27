@@ -52012,6 +52012,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("genericVarargInferredToNullableNothing.kt")
+      public void testGenericVarargInferredToNullableNothing() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/arguments/genericVarargInferredToNullableNothing.kt");
+      }
+
+      @Test
       @TestMetadata("incorrectFunctionalType.kt")
       public void testIncorrectFunctionalType() {
         runTest("compiler/fir/analysis-tests/testData/resolve/arguments/incorrectFunctionalType.kt");
