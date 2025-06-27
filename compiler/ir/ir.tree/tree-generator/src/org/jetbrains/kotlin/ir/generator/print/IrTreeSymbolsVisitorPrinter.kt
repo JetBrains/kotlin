@@ -106,9 +106,4 @@ internal class IrTreeSymbolsVisitorPrinter(
             print(symbolVisitFunction, "(", element.visitorParameterName, ", ", *valueArgs, ")")
         }
     }
-
-    override fun printMethodsForElement(element: Element) {
-        super.printMethodsForElement(element)
-        println("~")
-    }
 }
