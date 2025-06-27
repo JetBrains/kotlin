@@ -29,7 +29,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] contextParameterAnonymousFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
-        context([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Boolean|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+        context([ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Boolean|) [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/c|
         }
 

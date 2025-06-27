@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNCHECKED_CAST
 // Issues: KT-38890, KT-38439
 
@@ -26,7 +25,7 @@ fun main() {
     foo(((<!ARGUMENT_TYPE_MISMATCH!>fun(): String = "1"<!>)))
 
     val a10: Int.(String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x: String) = 10<!>
-    val a11: () -> () -> () -> Int = fun() = <!RETURN_TYPE_MISMATCH!>fun() = fun(): String = "1"<!>
+    val a11: () -> () -> () -> Int = fun() = fun() = <!RETURN_TYPE_MISMATCH!>fun(): String = "1"<!>
 
     val a12: Int = <!INITIALIZER_TYPE_MISMATCH!>fun(): String = "1"<!>
     val a13: Int = <!INITIALIZER_TYPE_MISMATCH!>fun() = fun(): String = "1"<!>
@@ -38,7 +37,7 @@ fun main() {
     val a18: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun() {}<!>
     val a19: () -> () -> Int = fun() = <!RETURN_TYPE_MISMATCH!>fun() {}<!>
     val a20: () -> () -> () -> Unit = fun() = fun() = {}
-    val a21: () -> () -> () -> Int = fun() = <!RETURN_TYPE_MISMATCH!>fun() = {}<!>
+    val a21: () -> () -> () -> Int = fun() = fun() = <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>{}<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, asExpression, functionDeclaration, functionalType, integerLiteral,

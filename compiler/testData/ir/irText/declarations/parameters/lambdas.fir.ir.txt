@@ -16,12 +16,12 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
-        FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Int
+        FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Any
             VALUE_PARAMETER kind:Regular name:it index:1 type:kotlin.Any
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<this>: kotlin.Any, it: kotlin.Any): kotlin.Int declared in <root>.test2'
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (<this>: kotlin.Any, it: kotlin.Any): kotlin.Any declared in <root>.test2'
                 CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                   ARG <this>: GET_VAR 'it: kotlin.Any declared in <root>.test2.<anonymous>' type=kotlin.Any origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL returnType:@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>

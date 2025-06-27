@@ -2,7 +2,7 @@ FILE: valCapturedInLambda.kt
     public final fun test_1(x: R|kotlin/Any|): R|kotlin/String| {
         when () {
             (R|<local>/x| is R|kotlin/String|) ->  {
-                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     ^ R|<local>/x|
                 }
 
@@ -15,7 +15,7 @@ FILE: valCapturedInLambda.kt
     public final fun test_2(x: R|kotlin/Any|): R|kotlin/String| {
         when () {
             (R|<local>/x| is R|kotlin/String|) ->  {
-                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                lval thunk: R|() -> kotlin/String| = fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
                     ^ R|<local>/x|.R|kotlin/String.plus|(String(a))
                 }
 
