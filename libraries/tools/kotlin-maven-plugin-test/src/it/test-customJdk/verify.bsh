@@ -1,21 +1,35 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
+boolean isJava9OrNewer() {
+    String version = System.getProperty("java.version");
+    // For versions like "1.8.0_292", "1.7.0_u45"
+    if (version.startsWith("1.")) {
+        return false;
+    } else {
+        // For versions like "9.0.4", "11.0.12", "17"
+        try {
+            // The first part of the version string is the major version
+            int major = Integer.parseInt(version.split("\\.")[0]);
+            return major >= 9;
+        } catch (NumberFormatException e) {
+            // In case the version string is not in the expected format
+            return false;
+        }
+    }
+}
+
+if (!isJava9OrNewer()) {
+    throw new Exception("The test may produce incorrect results if the invoking JDK is lower than 9");
+}
+
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasNoLineThatContains("AutoCloseable");
+assertBuildLogHasLineThatContains("[INFO] Overriding JDK home path with");
+assertBuildLogHasNoLineThatContains("stream");
 
-int line1 = findBuildLogLineThatContains("Unresolved reference: stream");
-int line2 = findBuildLogLineThatContains("Unresolved reference: java.util.stream.Stream");
-int line1K2 = findBuildLogLineThatContains("Unresolved reference 'stream'");
-int line2K2 = findBuildLogLineThatContains("Unresolved reference 'java.util.stream.Stream'");
+int line = findBuildLogLineThatContains("Unresolved reference 'StackWalker'");
 
-if (line1 >= 0) {
-    print("Expected content \"Unresolved reference: stream\" was found at line " + (line1+1) + " of build log: \"" + buildLog[line1] + "\"");
-} else if (line2 >= 0) {
-    print("Expected content \"Unresolved reference: java.util.stream.Stream\" was found at line " + (line2+1) + " of build log: \"" + buildLog[line2] + "\"");
-} else if (line1K2 >= 0) {
-    print("Expected content \"Unresolved reference 'stream'\" was found at line " + (line1K2+1) + " of build log: \"" + buildLog[line1K2] + "\"");
-} else if (line2K2 >= 0) {
-    print("Expected content \"Unresolved reference 'java.util.stream.Stream'\" was found at line " + (line2K2+1) + " of build log: \"" + buildLog[line2K2] + "\"");
+if (line >= 0) {
+    print("Expected content \"Unresolved reference: 'StackWalker'\" was found at line " + (line+1) + " of build log: \"" + buildLog[line] + "\"");
 } else {
-    throw new Exception("Expected build log to contain: \"Unresolved reference: stream\" or \"Unresolved reference: java.util.stream.Stream\"");
+    throw new Exception("Expected build log to contain: \"Unresolved reference: 'StackWalker'\"");
 }
