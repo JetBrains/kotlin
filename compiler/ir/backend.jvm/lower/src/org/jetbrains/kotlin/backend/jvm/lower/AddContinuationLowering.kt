@@ -473,7 +473,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
 ): T {
     // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
     val owner = symbol.owner
-    if (isSuspendFunctionInvokable(owner, caller)) return this
+    if (!owner.isSuspendFunctionToLower(caller)) return this
     val view = owner.suspendFunctionViewOrStub(context)
     if (view == owner) return this
 
@@ -502,7 +502,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
 private fun IrRawFunctionReference.retargetToSuspendView(context: JvmBackendContext) {
     // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
     val owner = symbol.owner
-    if (isSuspendFunctionInvokable(owner, null)) return
+    if (!owner.isSuspendFunctionToLower(caller = null)) return
     val view = owner.suspendFunctionViewOrStub(context)
     if (view == owner) return
 
@@ -511,9 +511,9 @@ private fun IrRawFunctionReference.retargetToSuspendView(context: JvmBackendCont
 
 
 @OptIn(ExperimentalContracts::class)
-private fun isSuspendFunctionInvokable(owner: IrFunction, caller: IrFunction?, ): Boolean {
-    contract { returns(false) implies (owner is IrSimpleFunction) }
-    return (owner !is IrSimpleFunction || !owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
-            || owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
-            || owner.continuationParameter() != null)
+private fun IrFunction.isSuspendFunctionToLower(caller: IrFunction?): Boolean {
+    contract { returns(true) implies (this@isSuspendFunctionToLower is IrSimpleFunction) }
+    return this is IrSimpleFunction && isSuspend && caller?.isInvokeSuspendOfContinuation() != true
+            && origin != JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+            && continuationParameter() == null
 }

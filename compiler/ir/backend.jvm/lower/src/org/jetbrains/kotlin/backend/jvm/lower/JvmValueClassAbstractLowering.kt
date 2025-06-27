@@ -47,8 +47,10 @@ internal abstract class JvmValueClassAbstractLowering(
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
-                } else if (function.shouldReallyBeExposed()) {
+                } else if (function.shouldBeExposed()) {
                     val constructorWithPotentialMarker = if (function.areAllParamsBoxedInlineClasses()) {
+                        // no replacement -> return listOf(function),
+                        // but `transformFunctionFlat` accepts null as initial fun as well for optimization reasons
                         function.withAddedMarkerParameterToNonExposedConstructor() ?: return null
                     } else {
                         function
@@ -93,7 +95,8 @@ internal abstract class JvmValueClassAbstractLowering(
         return inlineClassParams.isNotEmpty() && inlineClassParams.all { it.type.isBoxedInlineClassType() }
     }
 
-    private fun IrConstructor.shouldReallyBeExposed(): Boolean =
+    // Returns true if not just an annotation exists, but if it is also applicable to the constructor
+    private fun IrConstructor.shouldBeExposed(): Boolean =
         shouldBeExposedByAnnotationOrFlag(context.config.languageVersionSettings) &&
                 parameters.any { it.type.isInlineClassType() } &&
                 !constructedClass.isSpecificLoweringLogicApplicable()
