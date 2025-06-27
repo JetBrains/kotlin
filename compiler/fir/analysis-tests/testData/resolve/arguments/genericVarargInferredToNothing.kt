@@ -10,7 +10,7 @@ fun createNothing(): Nothing = null!!
 
 fun test() {
     bounded<<!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>Nothing<!>>() // throws ClassCastException at runtime
-    unbound<Nothing>() // works fine
+    unbound<<!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>Nothing<!>>() // works fine
     multipleTypeArguments<Nothing, <!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>Nothing<!>>()
     inferredParameter<<!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>_<!>>(createNothing())
     <!ILLEGAL_TYPE_ARGUMENT_FOR_VARARG_PARAMETER_WARNING!>inferredParameter<!>(createNothing())

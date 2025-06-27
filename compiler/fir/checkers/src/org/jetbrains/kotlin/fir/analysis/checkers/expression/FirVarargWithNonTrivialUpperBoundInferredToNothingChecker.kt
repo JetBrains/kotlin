@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.arrayElementTypeArgument
 import org.jetbrains.kotlin.fir.types.isAnyOrNullableAny
+import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.isNothingOrNullableNothing
+import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.type
 
 object FirVarargWithNonTrivialUpperBoundInferredToNothingChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
@@ -31,14 +33,20 @@ object FirVarargWithNonTrivialUpperBoundInferredToNothingChecker : FirFunctionCa
                 val varargType = valueParameter.resolvedReturnTypeRef.coneType.arrayElementTypeArgument()?.type ?: return@mapNotNull null
                 varargType.toTypeParameterSymbol(context.session)
                     ?.takeUnless { it.isReified } // reified parameters are covered with FirReifiedChecker
-                    ?.takeIf { it.resolvedBounds.any { bound -> !bound.coneType.isAnyOrNullableAny } }
             }
             .takeIf { it.isNotEmpty() }
             ?: return
         val substitutor = expression.createConeSubstitutorFromTypeArguments(context.session) ?: return
         for (typeParameter in typeParametersUsedAsVarargs) {
             val parameterType = typeParameter.toConeType()
-            if (substitutor.substituteOrSelf(parameterType).isNothingOrNullableNothing) {
+            val actualVarargType = substitutor.substituteOrSelf(parameterType)
+            val needReport = when {
+                actualVarargType.isNothing -> true
+                actualVarargType.isNullableNothing -> typeParameter.resolvedBounds.any { !it.coneType.isAnyOrNullableAny }
+                else -> false
+            }
+
+            if (needReport) {
                 val typeParameterIndex = resolvedSymbol.typeParameterSymbols.indexOf(typeParameter)
                 val typeArgumentSource = typeParameterIndex.let { expression.typeArguments.getOrNull(it) }?.source
                 val source = typeArgumentSource ?: expression.source
