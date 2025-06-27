@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import kotlin.reflect.KClass
 
 
@@ -42,7 +42,7 @@ abstract class FirMetadataSerializerPlugin(session: FirSession) : FirExtension(s
 
     interface ProtoRegistrar {
         fun <Type> setExtension(
-            extension: GeneratedMessageLite.GeneratedExtension<ProtoBuf.Class, Type>,
+            extension: GeneratedMessage.GeneratedExtension<ProtoBuf.Class, Type>,
             value: Type,
         )
     }

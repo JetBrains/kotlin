@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.ExtendableMessage
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
+import org.jetbrains.kotlin.protobuf.GeneratedMessage.ExtendableMessage
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -200,8 +200,8 @@ abstract class AbstractAnnotationDeserializer(
     open fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
         emptyList<FirAnnotation>()
 
-    private fun <T : ExtendableMessage<T, *>> T.loadAnnotations(
-        extension: GeneratedMessageLite.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
+    private fun <T : ExtendableMessage<T>> T.loadAnnotations(
+        extension: GeneratedMessage.GeneratedExtension<T, List<ProtoBuf.Annotation>>?,
         flags: Int,
         nameResolver: NameResolver,
         useSiteTarget: AnnotationUseSiteTarget? = null

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 abstract class FirSerializerExtensionBase(
@@ -164,11 +164,11 @@ abstract class FirSerializerExtensionBase(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
     > List<FirAnnotation>.serializeAnnotations(
-        proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+        proto: GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
+        extension: GeneratedMessage.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
     ) {
         if (extension == null) return
         for (annotation in this) {

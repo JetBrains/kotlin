@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.library.metadata
 
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.ExtensionRegistry
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object KlibMetadataSerializerProtocol : SerializerExtensionProtocol(
-    ExtensionRegistryLite.newInstance().apply(KlibMetadataProtoBuf::registerAllExtensions),
+    ExtensionRegistry.newInstance().apply(KlibMetadataProtoBuf::registerAllExtensions),
     KlibMetadataProtoBuf.packageFqName,
     KlibMetadataProtoBuf.constructorAnnotation,
     KlibMetadataProtoBuf.classAnnotation,

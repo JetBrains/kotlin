@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
@@ -66,14 +66,14 @@ fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boo
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
         > FirAnnotationContainer.serializeAnnotations(
     session: FirSession,
     additionalMetadataProvider: FirAdditionalMetadataProvider?,
     annotationSerializer: FirAnnotationSerializer,
-    proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-    extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+    proto: GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
+    extension: GeneratedMessage.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
 ) {
     if (extension == null) return
     allRequiredAnnotations(session, additionalMetadataProvider).serializeAnnotations(annotationSerializer, proto, extension)
@@ -92,12 +92,12 @@ fun FirAnnotationContainer.allRequiredAnnotations(
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
         > List<FirAnnotation>.serializeAnnotations(
     annotationSerializer: FirAnnotationSerializer,
-    proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-    extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
+    proto: GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
+    extension: GeneratedMessage.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?,
 ) {
     if (extension == null) return
     for (annotation in this) {
@@ -106,11 +106,11 @@ fun <
 }
 
 fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
         Type,
-        > GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(
-    extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<Type>>,
+        > GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(
+    extension: GeneratedMessage.GeneratedExtension<MessageType, List<Type>>,
     value: Type?,
 ) {
     if (value != null) {

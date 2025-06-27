@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.serialization.deserialization.builtins
 
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.ExtensionRegistry
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
-    ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions),
+    ExtensionRegistry.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions),
     BuiltInsProtoBuf.packageFqName,
     BuiltInsProtoBuf.constructorAnnotation,
     BuiltInsProtoBuf.classAnnotation,

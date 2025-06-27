@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 
 class FirKLibSerializerExtension(
@@ -84,11 +84,11 @@ class FirKLibSerializerExtension(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
     > FirDeclaration.setKDoc(
-        proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, String>,
+        proto: GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
+        extension: GeneratedMessage.GeneratedExtension<MessageType, String>,
     ) {
         if (exportKDoc) {
             findKDocString()?.let { proto.setExtension(extension, it) }
@@ -104,11 +104,11 @@ class FirKLibSerializerExtension(
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
     > FirDeclaration.setFileId(
-        proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, Int>,
+        proto: GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
+        extension: GeneratedMessage.GeneratedExtension<MessageType, Int>,
     ) {
         declarationFileId(this)?.let { proto.setExtension(extension, it) }
     }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -116,10 +116,10 @@ class JvmSerializerExtension(
         writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable)
     }
 
-    private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
+    private fun <MessageType : GeneratedMessage.ExtendableMessage<MessageType>, BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
         proto: BuilderType,
         classAsmType: Type,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
+        extension: GeneratedMessage.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
         for (localVariable in localDelegatedProperties[classAsmType].orEmpty()) {
             if (localVariable !is LocalVariableDescriptor) continue

@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
+import org.jetbrains.kotlin.protobuf.ExtensionRegistry
+import org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension
 
 open class SerializerExtensionProtocol(
-    val extensionRegistry: ExtensionRegistryLite,
+    val extensionRegistry: ExtensionRegistry,
     val packageFqName: GeneratedExtension<ProtoBuf.Package, Int>,
     val constructorAnnotation: GeneratedExtension<ProtoBuf.Constructor, List<ProtoBuf.Annotation>>,
     val classAnnotation: GeneratedExtension<ProtoBuf.Class, List<ProtoBuf.Annotation>>,

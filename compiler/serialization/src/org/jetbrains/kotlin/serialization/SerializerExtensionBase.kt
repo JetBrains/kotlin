@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.types.KotlinType
@@ -136,11 +136,11 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
 
     @Suppress("Reformat")
     private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType, BuilderType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
+        MessageType : GeneratedMessage.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>,
         Type
-    > GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<Type>>,
+    > GeneratedMessage.ExtendableBuilder<MessageType, BuilderType>.addExtensionOrNull(
+        extension: GeneratedMessage.GeneratedExtension<MessageType, List<Type>>,
         value: Type?
     ) {
         if (value != null) {

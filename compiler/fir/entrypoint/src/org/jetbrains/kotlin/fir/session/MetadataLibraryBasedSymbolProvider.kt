@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.resolve.KlibCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -184,15 +183,15 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
         fir.klibSourceFile = loadKlibSourceFileExtensionOrNull(packagePart, proto, KlibMetadataProtoBuf.propertyFile) ?: return
     }
 
-    private fun <T : GeneratedMessageLite.ExtendableMessage<T, *>> loadKlibSourceFileExtensionOrNull(
-        packagePart: PackagePartsCacheData, proto: T, sourceFileExtension: GeneratedExtension<T, Int>,
+    private fun <T : GeneratedMessage.ExtendableMessage<T>> loadKlibSourceFileExtensionOrNull(
+        packagePart: PackagePartsCacheData, proto: T, sourceFileExtension: GeneratedMessage.GeneratedExtension<T, Int>,
     ): DeserializedSourceFile? {
         val library = (packagePart.extra as? MetadataLibraryPackagePartCacheDataExtra)?.library as? KotlinLibrary ?: return null
         return loadKlibSourceFileExtensionOrNull(library, packagePart.context.nameResolver, proto, sourceFileExtension)
     }
 
-    private fun <T : GeneratedMessageLite.ExtendableMessage<T, *>> loadKlibSourceFileExtensionOrNull(
-        library: KotlinLibrary, nameResolver: NameResolver, proto: T, sourceFileExtension: GeneratedExtension<T, Int>,
+    private fun <T : GeneratedMessage.ExtendableMessage<T>> loadKlibSourceFileExtensionOrNull(
+        library: KotlinLibrary, nameResolver: NameResolver, proto: T, sourceFileExtension: GeneratedMessage.GeneratedExtension<T, Int>,
     ): DeserializedSourceFile? {
         return proto.getExtensionOrNull(sourceFileExtension)
             ?.let { fileId -> nameResolver.getString(fileId) }

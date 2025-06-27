@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.protobuf.ByteString
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
@@ -343,7 +343,7 @@ class FirElementSerializer private constructor(
             for (plugin in session.extensionService.metadataSerializerPlugins) {
                 val protoRegistrar = object : FirMetadataSerializerPlugin.ProtoRegistrar {
                     override fun <Type> setExtension(
-                        extension: GeneratedMessageLite.GeneratedExtension<ProtoBuf.Class, Type>,
+                        extension: GeneratedMessage.GeneratedExtension<ProtoBuf.Class, Type>,
                         value: Type,
                     ) {
                         builder.setExtension(extension, value)
@@ -1601,7 +1601,7 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private inline fun <M : GeneratedMessageLite.ExtendableMessage<M, B>, B : GeneratedMessageLite.Builder<M, B>> B.serializeCompilerPluginMetadata(
+    private inline fun <M : GeneratedMessage.ExtendableMessage<M>, B : GeneratedMessage.Builder<B>> B.serializeCompilerPluginMetadata(
         declaration: FirDeclaration,
         addCompilerPluginData: B.(ProtoBuf.CompilerPluginData.Builder) -> B
     ) {

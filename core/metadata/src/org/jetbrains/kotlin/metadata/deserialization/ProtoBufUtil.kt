@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.metadata.deserialization
 
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.protobuf.GeneratedMessage
 
-fun <M : GeneratedMessageLite.ExtendableMessage<M, *>, T> GeneratedMessageLite.ExtendableMessage<M, *>.getExtensionOrNull(
-    extension: GeneratedMessageLite.GeneratedExtension<M, T>
+fun <M : GeneratedMessage.ExtendableMessage<M>, T> GeneratedMessage.ExtendableMessage<M>.getExtensionOrNull(
+    extension: GeneratedMessage.GeneratedExtension<M, T>
 ): T? = if (hasExtension(extension)) getExtension(extension) else null
 
-fun <M : GeneratedMessageLite.ExtendableMessage<M, *>, T> GeneratedMessageLite.ExtendableMessage<M, *>.getExtensionOrNull(
-    extension: GeneratedMessageLite.GeneratedExtension<M, List<T>>, index: Int
+fun <M : GeneratedMessage.ExtendableMessage<M>, T> GeneratedMessage.ExtendableMessage<M>.getExtensionOrNull(
+    extension: GeneratedMessage.GeneratedExtension<M, List<T>>, index: Int
 ): T? = if (index < getExtensionCount(extension)) getExtension(extension, index) else null
