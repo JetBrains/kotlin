@@ -105,8 +105,14 @@ public actual fun print(message: Any?) {
     output.print(message)
 }
 
+/**
+ * This function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
 public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/JS")
 
+/**
+ * This function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ */
 @SinceKotlin("1.6")
 public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/JS")

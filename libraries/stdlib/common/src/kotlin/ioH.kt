@@ -21,7 +21,7 @@ public expect fun print(message: Any?)
  *
  * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
  *
- * Currently this function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ * Currently this function is not supported in Kotlin/JS and in Kotlin/Wasm, and throws [UnsupportedOperationException].
  */
 @SinceKotlin("1.6")
 public expect fun readln(): String
@@ -32,7 +32,7 @@ public expect fun readln(): String
  *
  * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
  *
- * Currently this function is not supported in Kotlin/JS and throws [UnsupportedOperationException].
+ * Currently this function is not supported in Kotlin/JS and in Kotlin/Wasm, and throws [UnsupportedOperationException].
  */
 @SinceKotlin("1.6")
 public expect fun readlnOrNull(): String?
