@@ -102,7 +102,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.allocationDescriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        "kotlin.native.internal.createUninitializedInstance<${typeNamer.parameterizedTypeNamer(request.callable.constructingType)}>(${args.joinToString()})"
+                        "kotlin.native.internal.createUninitializedInstance<${typeNamer.parameterizedTypeNamer(request.callable.producingType)}>(${args.joinToString()})"
                     }
                 )
                 if (request.callable.origin is InnerInitSource) {
@@ -127,7 +127,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
                             val args = argNames(this)
-                            "kotlin.native.internal.initInstance(${args.first()}, ${typeNamer.parameterizedTypeNamer(request.callable.constructingType)}(${args.drop(1).joinToString()}))"
+                            "kotlin.native.internal.initInstance(${args.first()}, ${typeNamer.parameterizedTypeNamer(request.callable.producingType)}(${args.drop(1).joinToString()}))"
                         }
                     )
                 }
@@ -1070,3 +1070,7 @@ private val kotlinKeywords = setOf(
 
 private val BridgeFunctionDescriptor.safeImportName: String
     get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }
+
+private val SirInit.producingType: SirType get() = SirNominalType(
+        parent as? SirNamedDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
+    )

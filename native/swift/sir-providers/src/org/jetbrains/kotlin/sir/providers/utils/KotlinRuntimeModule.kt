@@ -35,31 +35,22 @@ public object KotlinRuntimeModule : SirModule() {
         struct.declarations.forEach { it.parent = struct }
     }
 
-    public val kotlinBaseDesignatedInit: SirInit = object : SirInit() {
-        override lateinit var parent: SirDeclarationParent
-        override val constructingType: SirType by lazy { SirNominalType(kotlinBase) }
-        override val parameters: List<SirParameter> = listOf(
-            SirParameter(
-                argumentName = "__externalRCRefUnsafe",
-                type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
-            ),
-            SirParameter(
-                argumentName = "options",
-                type = SirNominalType(kotlinBaseConstructionOptions)
-            ),
+    public val kotlinBaseDesignatedInit: SirInit = buildInit {
+        origin = KotlinRuntimeElement()
+        isFailable = false
+        isOverride = false
+        parameters.addAll(
+            listOf(
+                SirParameter(
+                    argumentName = "__externalRCRefUnsafe",
+                    type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
+                ),
+                SirParameter(
+                    argumentName = "options",
+                    type = SirNominalType(kotlinBaseConstructionOptions)
+                ),
+            )
         )
-
-        override val origin: SirOrigin = KotlinRuntimeElement()
-        override val visibility: SirVisibility = SirVisibility.PUBLIC
-        override val documentation: String? = null
-        override val attributes: List<SirAttribute> = emptyList()
-        override var body: SirFunctionBody? = null
-        override val errorType: SirType = SirType.never
-
-        override val isFailable: Boolean = false
-        override val isConvenience: Boolean = false
-        override val isRequired: Boolean = false
-        override val isOverride: Boolean = false
     }
 
     public val kotlinBase: SirClass by lazy {
