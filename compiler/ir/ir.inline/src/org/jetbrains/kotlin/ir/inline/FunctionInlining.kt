@@ -79,8 +79,7 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
         if (expression is IrCall && Symbols.isTypeOfIntrinsic(actualCallee.symbol)) {
-            inlineFunctionResolver.callInlinerStrategy.at(data, expression)
-            return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)
+            return expression.apply { typeArguments[0] = expression.typeArguments[0]!! }
         }
         if (actualCallee.body == null) {
             return expression
