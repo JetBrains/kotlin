@@ -42,5 +42,8 @@ fun box(): String {
     check<Array<Any>>(::any, ::cloneable, ::serializable)
     checkAll<Array<Any>>(::any, ::cloneable, ::serializable)
 
+    check<DoubleArray>(::any, ::cloneable, ::serializable)
+    checkAll<DoubleArray>(::any, ::cloneable, ::serializable)
+
     return "OK"
 }

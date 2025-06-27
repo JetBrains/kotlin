@@ -3452,6 +3452,12 @@ public class ReflectionLegacyImplementationTestGenerated extends AbstractReflect
     }
 
     @Test
+    @TestMetadata("arrayClassifier.kt")
+    public void testArrayClassifier() {
+      runTest("compiler/testData/codegen/box/reflection/supertypes/arrayClassifier.kt");
+    }
+
+    @Test
     @TestMetadata("builtInClassSupertypes.kt")
     public void testBuiltInClassSupertypes() {
       runTest("compiler/testData/codegen/box/reflection/supertypes/builtInClassSupertypes.kt");
@@ -3485,6 +3491,12 @@ public class ReflectionLegacyImplementationTestGenerated extends AbstractReflect
     @TestMetadata("primitives.kt")
     public void testPrimitives() {
       runTest("compiler/testData/codegen/box/reflection/supertypes/primitives.kt");
+    }
+
+    @Test
+    @TestMetadata("rawSupertypes.kt")
+    public void testRawSupertypes() {
+      runTest("compiler/testData/codegen/box/reflection/supertypes/rawSupertypes.kt");
     }
 
     @Test
