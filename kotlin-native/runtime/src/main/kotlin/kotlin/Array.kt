@@ -13,7 +13,7 @@ import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.escapeAnalysis.PointsTo
 
 /**
- * A generic array of objects. When targeting the JVM, instances of this class are represented as `T[]`.
+ * A generic array of objects.
  * Array instances can be created using the [arrayOf], [arrayOfNulls] and [emptyArray]
  * standard library functions.
  *

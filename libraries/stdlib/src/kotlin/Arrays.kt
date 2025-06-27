@@ -9,7 +9,8 @@
 package kotlin
 
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
+ * An array of bytes.
+ * When targeting the JVM, instances of this class are represented as `byte[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -68,7 +69,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
+ * An array of chars.
+ * When targeting the JVM, instances of this class are represented as `char[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -127,7 +129,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
+ * An array of shorts.
+ * When targeting the JVM, instances of this class are represented as `short[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -186,7 +189,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * An array of ints.
+ * When targeting the JVM, instances of this class are represented as `int[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -245,7 +249,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
+ * An array of longs.
+ * When targeting the JVM, instances of this class are represented as `long[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -304,7 +309,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
+ * An array of floats.
+ * When targeting the JVM, instances of this class are represented as `float[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -363,7 +369,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
+ * An array of doubles.
+ * When targeting the JVM, instances of this class are represented as `double[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -422,7 +429,8 @@ public constructor(size: Int) {
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
+ * An array of booleans.
+ * When targeting the JVM, instances of this class are represented as `boolean[]`.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
