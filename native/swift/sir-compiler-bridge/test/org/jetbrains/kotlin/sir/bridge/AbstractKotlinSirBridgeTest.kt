@@ -75,7 +75,7 @@ abstract class AbstractKotlinSirBridgeTest {
                         }
                     }
 
-                    override fun parameterizedTypeNamer(type: SirType): String {
+                    override fun kotlinParametrizedName(type: SirType): String {
                         return kotlinFqName(type)
                     }
                 })
