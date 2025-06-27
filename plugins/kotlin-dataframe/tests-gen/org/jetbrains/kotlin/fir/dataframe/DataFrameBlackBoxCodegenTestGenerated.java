@@ -164,6 +164,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("dataSchemaWithTypeParameter.kt")
+  public void testDataSchemaWithTypeParameter() {
+    runTest("plugins/kotlin-dataframe/testData/box/dataSchemaWithTypeParameter.kt");
+  }
+
+  @Test
   @TestMetadata("dfIde.kt")
   public void testDfIde() {
     runTest("plugins/kotlin-dataframe/testData/box/dfIde.kt");

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey
+import org.jetbrains.kotlinx.dataframe.plugin.utils.CallableIdOrSymbol
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 import org.jetbrains.kotlinx.dataframe.plugin.utils.generateExtensionProperty
 
@@ -65,7 +66,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     val propertyName = schemaProperty.propertyName
                     val callableId = CallableId(k.classId, propertyName.identifier)
                     val dataRowExtension = generateExtensionProperty(
-                        callableId = callableId,
+                        callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
                         receiverType = ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
@@ -79,7 +80,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                     )
 
                     val columnContainerExtension = generateExtensionProperty(
-                        callableId = callableId,
+                        callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
                         receiverType = ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagImpl(Names.COLUMNS_SCOPE_CLASS_ID),
                             typeArguments = arrayOf(schemaProperty.marker),
