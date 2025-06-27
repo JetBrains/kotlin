@@ -4,10 +4,7 @@ inlineFunctions/A.bar|bar(){}[0]
 inlineFunctions/A|null[0]
 inlineFunctions/baz|baz(){}[0]
 
-// Imported signatures: 8
-[ File 'inlineFunctions.kt' <- inlineFunctions/bar|bar(inlineFunctions.A){}[0] ]
-[ File 'inlineFunctions.kt' <- inlineFunctions/baz|baz(){}[0] ]
-inlineFunctions/bar|bar(inlineFunctions.A){}[0]
+// Imported signatures: 5
 kotlin/Any.<init>|<init>(){}[0]
 kotlin/Any|null[0]
 kotlin/Int|null[0]
