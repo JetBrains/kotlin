@@ -22,3 +22,5 @@
 
 # Statically guarded by try-catch block and not used on Android, see CacheByClass
 -dontwarn java.lang.ClassValue
+
+-keep class sun.misc.Unsafe { *; }

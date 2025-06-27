@@ -22,3 +22,5 @@
 -assumenosideeffects class kotlin.reflect.jvm.internal.CacheByClassKt {
     boolean useClassValue return false;
 }
+
+-keep class sun.misc.Unsafe { *; }
