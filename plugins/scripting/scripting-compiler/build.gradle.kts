@@ -9,6 +9,7 @@ plugins {
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
 val kotlinDataFrameGradlePluginClasspath by configurations.creating
+val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -57,6 +58,7 @@ dependencies {
 
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
+    kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -83,16 +85,18 @@ javadocJar()
 testsJar()
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath)
+    dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath, kotlinxCoroutinesCoreGradlePluginClasspath)
     workingDir = rootDir
     useJUnitPlatform()
     val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
     val localKotlinDataFramePluginClasspath: FileCollection = kotlinDataFrameGradlePluginClasspath
+    val localKotlinxCoroutinesCorePluginClasspath: FileCollection = kotlinxCoroutinesCoreGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.test.script.classpath", scriptClasspath)
         systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
         systemProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath", localKotlinDataFramePluginClasspath.asPath)
+        systemProperty("kotlin.script.test.kotlinx.coroutines.core.classpath", localKotlinxCoroutinesCorePluginClasspath.asPath)
     }
 }
 

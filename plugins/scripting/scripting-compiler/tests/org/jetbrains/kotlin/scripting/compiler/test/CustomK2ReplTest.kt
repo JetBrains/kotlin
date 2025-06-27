@@ -283,6 +283,37 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testKotlinCoroutines() {
+        if (!isK2) return
+        val coroutinesCoreClasspath = System.getProperty("kotlin.script.test.kotlinx.coroutines.core.classpath")!!
+            .split(File.pathSeparator).map { File(it) }
+        evalAndCheckSnippetsResultVals(
+            sequenceOf(
+                """
+            import kotlin.coroutines.*
+            import kotlinx.coroutines.*
+
+            runBlocking { async {}.join() }
+            "After runBlocking"
+        """,
+            ),
+            sequenceOf(
+                "After runBlocking",
+            ),
+            baseCompilationConfiguration.with {
+                updateClasspath(
+                    coroutinesCoreClasspath
+                )
+            },
+            baseEvaluationConfiguration.with {
+                jvm {
+                    baseClassLoader(null)
+                }
+            }
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =
