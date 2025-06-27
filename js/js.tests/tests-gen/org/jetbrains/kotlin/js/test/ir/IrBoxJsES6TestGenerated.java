@@ -1354,6 +1354,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("jsModuleSideEffects.kt")
+    public void testJsModuleSideEffects() {
+      runTest("js/js.translator/testData/box/dce/jsModuleSideEffects.kt");
+    }
+
+    @Test
     @TestMetadata("removeUnusedOverride.kt")
     public void testRemoveUnusedOverride() {
       runTest("js/js.translator/testData/box/dce/removeUnusedOverride.kt");
