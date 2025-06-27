@@ -50,6 +50,12 @@ public class NativeKlibDumpMetadataSignaturesTestGenerated extends AbstractNativ
   }
 
   @Test
+  @TestMetadata("inlineFunctions.kt")
+  public void testInlineFunctions() {
+    runTest("native/native.tests/testData/klib/dump-signatures/inlineFunctions.kt");
+  }
+
+  @Test
   @TestMetadata("just_cinterop_c.def")
   public void testJust_cinterop_c() {
     runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_c.def");

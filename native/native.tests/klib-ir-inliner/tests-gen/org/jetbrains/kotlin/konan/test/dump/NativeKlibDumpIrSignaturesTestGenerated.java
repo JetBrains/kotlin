@@ -44,6 +44,12 @@ public class NativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKlibD
   }
 
   @Test
+  @TestMetadata("inlineFunctions.kt")
+  public void testInlineFunctions() {
+    runTest("native/native.tests/testData/klib/dump-signatures/inlineFunctions.kt");
+  }
+
+  @Test
   @TestMetadata("type_parameters.kt")
   public void testType_parameters() {
     runTest("native/native.tests/testData/klib/dump-signatures/type_parameters.kt");
