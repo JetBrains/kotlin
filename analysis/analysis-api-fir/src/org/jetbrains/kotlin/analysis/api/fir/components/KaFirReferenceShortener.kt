@@ -809,7 +809,7 @@ private class ElementsToShortenCollector(
         return !importDirectiveForDifferentSymbolWithSameNameIsPresent(classId)
     }
 
-    private fun shortenIfAlreadyImportedAsAlias(referenceExpression: KtElement, referencedSymbolFqName: FqName): ElementToShorten? {
+    private fun shortenIfAlreadyImportedAsAlias(referenceExpression: KtElement, referencedSymbolFqName: FqName?): ElementToShorten? {
         val importDirectiveForReferencedSymbol = containingFile.importDirectives.firstOrNull {
             it.importedFqName == referencedSymbolFqName && it.alias != null
         } ?: return null
@@ -1093,7 +1093,7 @@ private class ElementsToShortenCollector(
     private fun KtExpression.isCompanionMemberUsedForEnumEntryInit(resolvedSymbol: FirCallableSymbol<*>): Boolean {
         val enumEntry = getNonStrictParentOfType<KtEnumEntry>() ?: return false
         val firEnumEntry = enumEntry.resolveToFirSymbol(resolutionFacade) as? FirEnumEntrySymbol ?: return false
-        val classNameOfResolvedSymbol = resolvedSymbol.callableId.className ?: return false
+        val classNameOfResolvedSymbol = resolvedSymbol.callableId?.className ?: return false
         return firEnumEntry.callableId.className == classNameOfResolvedSymbol.parent() &&
                 classNameOfResolvedSymbol.shortName() == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
     }
@@ -1168,7 +1168,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenStrategy(propertySymbol)
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return
 
-        shortenIfAlreadyImportedAsAlias(qualifiedProperty, propertySymbol.callableId.asSingleFqName())?.let {
+        shortenIfAlreadyImportedAsAlias(qualifiedProperty, propertySymbol.callableId?.asSingleFqName())?.let {
             addElementToShorten(it)
             return
         }
@@ -1220,7 +1220,7 @@ private class ElementsToShortenCollector(
         val option = callableShortenStrategy(calledSymbol)
         if (option == ShortenStrategy.DO_NOT_SHORTEN) return
 
-        shortenIfAlreadyImportedAsAlias(qualifiedCallExpression, calledSymbol.callableId.asSingleFqName())?.let {
+        shortenIfAlreadyImportedAsAlias(qualifiedCallExpression, calledSymbol.callableId?.asSingleFqName())?.let {
             addElementToShorten(it)
             return
         }
@@ -1331,7 +1331,7 @@ private class ElementsToShortenCollector(
                     val classId = candidate.typeAliasConstructorInfo?.typeAliasSymbol?.classId ?: candidate.classIdIfExists
                     classId?.asSingleFqName()
                 }
-                else -> candidate.callableId.asSingleFqName()
+                else -> candidate.callableId?.asSingleFqName()
             }
         }
 
@@ -1561,7 +1561,7 @@ private class KDocQualifiersToShortenCollector(
         }
 
         resolvedSymbols.firstIsInstanceOrNull<KaCallableSymbol>()?.firSymbol?.let { availableCallable ->
-            return canShorten(fqName, availableCallable.callableId.asSingleFqName()) { callableShortenStrategy(availableCallable) }
+            return canShorten(fqName, availableCallable.callableId?.asSingleFqName()) { callableShortenStrategy(availableCallable) }
         }
 
         resolvedSymbols.firstIsInstanceOrNull<KaClassLikeSymbol>()?.firSymbol?.let { availableClassifier ->
@@ -1571,7 +1571,7 @@ private class KDocQualifiersToShortenCollector(
         return false
     }
 
-    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName, getShortenStrategy: () -> ShortenStrategy): Boolean =
+    private fun canShorten(fqNameToShorten: FqName, fqNameOfAvailableSymbol: FqName?, getShortenStrategy: () -> ShortenStrategy): Boolean =
         fqNameToShorten == fqNameOfAvailableSymbol && getShortenStrategy() != ShortenStrategy.DO_NOT_SHORTEN
 
     private fun FqName.isInNewImports(additionalImports: AdditionalImports): Boolean =

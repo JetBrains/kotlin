@@ -79,7 +79,7 @@ internal object FirRedeclarationPresenter {
 
     fun represent(it: FirVariableSymbol<*>) = buildString {
         appendRepresentationBeforeCallableId(it)
-        appendRepresentation(it.callableId)
+        appendRepresentation(it.callableIdForRendering)
 
         if (it is FirFieldSymbol) {
             append("#f")

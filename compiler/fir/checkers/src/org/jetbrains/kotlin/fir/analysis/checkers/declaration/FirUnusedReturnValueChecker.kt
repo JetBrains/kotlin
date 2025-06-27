@@ -154,8 +154,8 @@ private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
     // This should be removed after bootstrapping and recompiling stdlib in FULL mode
-    if (this.callableId.packageName.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
-    callableId.ifMappedTypeCollection { return it }
+    if (this.callableId?.packageName?.asString() == "kotlin") return this.origin !is FirDeclarationOrigin.Enhancement
+    callableId?.ifMappedTypeCollection { return it }
 
 
     // TBD: Do we want to report them unconditionally? Or only in FULL mode?

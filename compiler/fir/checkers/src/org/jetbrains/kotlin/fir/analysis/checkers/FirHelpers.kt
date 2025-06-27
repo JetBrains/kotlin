@@ -915,7 +915,7 @@ fun FirPropertySymbol.processOverriddenPropertiesWithActionSafe(
     action: (FirPropertySymbol) -> ProcessorAction,
 ) {
     val firTypeScope = containingClassUnsubstitutedScope() ?: return
-    firTypeScope.processPropertiesByName(callableId.callableName) { }
+    firTypeScope.processPropertiesByName(name) { }
     firTypeScope.processOverriddenProperties(this, action)
 }
 

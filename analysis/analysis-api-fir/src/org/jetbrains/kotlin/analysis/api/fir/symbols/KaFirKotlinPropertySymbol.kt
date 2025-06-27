@@ -131,7 +131,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
                     KaFirResultPropertySymbolPointer(analysisSession.createOwnerPointer(this), this)
                 } else {
                     KaFirTopLevelPropertySymbolPointer(
-                        firSymbol.callableId,
+                        firSymbol.callableId!!,
                         FirCallableSignature.createSignature(firSymbol),
                         this
                     )

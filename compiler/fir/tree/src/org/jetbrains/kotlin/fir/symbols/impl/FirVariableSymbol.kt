@@ -100,8 +100,8 @@ sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbo
  * Used for purely local properties, which are declared in a functions
  */
 class FirLocalPropertySymbol() : FirPropertySymbol() {
-    override val callableId: CallableId
-        get() = CallableId(name)
+    override val callableId: CallableId?
+        get() = null
 }
 
 /**
@@ -138,7 +138,7 @@ class FirBackingFieldSymbol : FirVariableSymbol<FirBackingField>() {
 }
 
 class FirDelegateFieldSymbol(val correspondingPropertySymbol: FirPropertySymbol) : FirVariableSymbol<FirProperty>() {
-    override val callableId: CallableId
+    override val callableId: CallableId?
         get() = correspondingPropertySymbol.callableId
 }
 

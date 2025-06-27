@@ -271,7 +271,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
 
     private inline fun <reified TYPE : FirCallableSymbol<*>> FirFile.collectCallableSymbolsOfTypeTo(result: MutableList<TYPE>, name: Name) {
         ((declarations.singleOrNull() as? FirScript)?.declarations ?: declarations).mapNotNullTo(result) { declaration ->
-            if (declaration is FirCallableDeclaration && declaration.symbol.callableId.callableName == name) {
+            if (declaration is FirCallableDeclaration && declaration.symbol.name == name) {
                 declaration.symbol as? TYPE
             } else null
         }

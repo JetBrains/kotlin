@@ -316,7 +316,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@report ""
             buildString {
-                append(callable.symbol.callableId.asFqNameForDebugInfo().asString())
+                append(callable.symbol.callableIdForRendering.asFqNameForDebugInfo().asString())
                 append(" in ")
                 if (callable.containingClassForStaticMemberAttr == null) {
                     append("implicit ")
@@ -359,7 +359,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     private fun FirBasedSymbol<*>.fqNameUnsafe(): FqNameUnsafe? = when (this) {
         is FirClassLikeSymbol<*> -> classId.asSingleFqName().toUnsafe()
-        is FirCallableSymbol<*> -> callableId.asFqNameForDebugInfo().toUnsafe()
+        is FirCallableSymbol<*> -> callableId?.asFqNameForDebugInfo()?.toUnsafe()
         else -> null
     }
 }

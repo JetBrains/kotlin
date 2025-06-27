@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.declarations.isLegacyContextReceiver
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -26,7 +25,7 @@ open class FirSymbolRenderer {
         return when (symbol) {
             is FirValueParameterSymbol if (symbol.fir.isLegacyContextReceiver()) ->
                 "context of ${renderReference(symbol.fir.containingDeclarationSymbol)}"
-            is FirCallableSymbol<*> -> symbol.callableId.toString()
+            is FirCallableSymbol<*> -> symbol.callableIdAsString()
             is FirClassLikeSymbol<*> -> symbol.classId.toString()
             is FirReceiverParameterSymbol -> {
                 renderReference(symbol.fir.containingDeclarationSymbol)

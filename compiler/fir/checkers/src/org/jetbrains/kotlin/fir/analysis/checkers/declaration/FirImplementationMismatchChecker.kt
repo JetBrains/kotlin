@@ -138,7 +138,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
          * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
          */
         fun FirCallableSymbol<*>.isTrivialIntersectionOverride(): Boolean {
-            return callableId.classId != containingClass.classId || MemberWithBaseScope(this, classScope).isTrivialIntersection()
+            return callableId?.classId != containingClass.classId || MemberWithBaseScope(this, classScope).isTrivialIntersection()
         }
 
         val intersectionSymbols = when {

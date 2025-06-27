@@ -59,7 +59,7 @@ val FirDeclaration.isNonLocal: Boolean
 val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
         is FirFileSymbol -> true
-        is FirCallableSymbol -> !callableId.isLocal
+        is FirCallableSymbol -> callableId?.isLocal == false
         is FirClassLikeSymbol -> !classId.isLocal
         else -> false
     }
@@ -77,7 +77,7 @@ val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
 
 val FirMemberDeclaration.nameOrSpecialName: Name
     get() = when (this) {
-        is FirCallableDeclaration -> symbol.callableId.callableName
+        is FirCallableDeclaration -> symbol.name
         is FirClassLikeDeclaration -> classId.shortClassName
     }
 

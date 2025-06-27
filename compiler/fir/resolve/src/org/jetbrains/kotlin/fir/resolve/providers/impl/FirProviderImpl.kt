@@ -173,6 +173,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             map: MutableMap<CallableId, List<S>>
         ) {
             val callableId = symbol.callableId
+                ?: return // For scripts, we can come here with local variables like <local>/<destruct>
             map.merge(callableId, listOf(symbol)) { a, b -> a + b }
             data.state.callableContainerMap[symbol] = data.file
         }

@@ -25,7 +25,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
         return when (declaration) {
             is FirRegularClass -> declaration.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(declaration.symbol)
             is FirCallableDeclaration -> {
-                val parentClassId = declaration.symbol.callableId.classId ?: return false
+                val parentClassId = declaration.symbol.callableId?.classId ?: return false
                 if (parentClassId.isLocal) return false
                 val parentClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol
                     ?: return false

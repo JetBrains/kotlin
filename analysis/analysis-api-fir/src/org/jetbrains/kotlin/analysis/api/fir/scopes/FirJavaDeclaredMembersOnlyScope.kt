@@ -30,14 +30,14 @@ internal class FirJavaDeclaredMembersOnlyScope(
     }
 
     private fun FirCallableDeclaration.isDeclared(): Boolean =
-        symbol.callableId.classId == owner.classId
+        symbol.callableId?.classId == owner.classId
                 && origin !is FirDeclarationOrigin.SubstitutionOverride
                 && origin != FirDeclarationOrigin.IntersectionOverride
 
     private fun FirRegularClass.isDeclared(): Boolean = symbol.classId.parentClassId == owner.classId
 
     override fun isTargetCallable(callable: FirCallableSymbol<*>): Boolean =
-        callable.callableId.callableName != SpecialNames.INIT && callable.fir.isDeclared()
+        callable.callableId?.callableName != SpecialNames.INIT && callable.fir.isDeclared()
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegate.processDeclaredConstructors(processor)

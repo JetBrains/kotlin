@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
@@ -57,11 +58,10 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
     private val fields by lazy {
         matchedClasses.filterNot { it.isLocal }.flatMap { classSymbol ->
             classSymbol.declaredProperties(session).map { propertySymbol ->
-                val callableId = propertySymbol.callableId
                 DataSchemaField(
                     classSymbol,
                     propertySymbol,
-                    CallableId(packageName = callableId.packageName, className = null, callableName = callableId.callableName)
+                    CallableId(packageName = propertySymbol.callableId.packageName, className = null, callableName = propertySymbol.name)
                 )
             }
         }

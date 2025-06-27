@@ -93,7 +93,7 @@ class SingleCandidateResolver(
         buildFunctionCall {
             calleeReference = FirNamedReferenceWithCandidate(
                 source = null,
-                name = resolutionParameters.callableSymbol.callableId.callableName,
+                name = resolutionParameters.callableSymbol.name,
                 candidate = candidate
             )
         }
@@ -104,7 +104,7 @@ class SingleCandidateResolver(
         resolutionParameters: ResolutionParameters
     ): FirFunctionCall {
         val diagnostic = createConeDiagnosticForCandidateWithError(applicability, candidate)
-        val name = resolutionParameters.callableSymbol.callableId.callableName
+        val name = resolutionParameters.callableSymbol.name
         return buildFunctionCall {
             calleeReference = FirErrorReferenceWithCandidate(source = null, name, candidate, diagnostic)
         }

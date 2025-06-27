@@ -60,7 +60,7 @@ object FirPrivateToThisAccessChecker : FirQualifiedAccessExpressionChecker(MppCh
                 factory = FirErrors.INVISIBLE_REFERENCE,
                 a = symbol,
                 b = Visibilities.PrivateToThis,
-                c = symbol.callableId.classId
+                c = symbol.callableId!!.classId
             )
         }
     }

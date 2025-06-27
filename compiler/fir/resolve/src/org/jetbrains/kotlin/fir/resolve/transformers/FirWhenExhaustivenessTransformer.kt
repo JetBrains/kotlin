@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -451,7 +452,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                     it.fir.classKind.isSingleton,
                     it.ownTypeParameterSymbols.size
                 )
-                is FirVariableSymbol<*> -> WhenMissingCase.EnumCheckIsMissing(it.callableId)
+                is FirEnumEntrySymbol -> WhenMissingCase.EnumCheckIsMissing(it.callableId)
                 else -> null
             }
         }

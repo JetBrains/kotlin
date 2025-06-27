@@ -109,9 +109,10 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(type: ConeKotlinType?, s
 fun FirLookupTrackerComponent.recordCallableCandidateAsLookup(
     callableSymbol: FirCallableSymbol<*>, source: KtSourceElement?, fileSource: KtSourceElement?
 ) {
-    if (!callableSymbol.callableId.isLocal && callableSymbol !is FirConstructorSymbol) {
+    val callableId = callableSymbol.callableId
+    if (callableId?.isLocal == false && callableSymbol !is FirConstructorSymbol) {
         recordTypeResolveAsLookup(callableSymbol.fir.returnTypeRef, source, fileSource)
-        recordFqNameLookup(callableSymbol.callableId.asSingleFqName(), source, fileSource)
+        recordFqNameLookup(callableId.asSingleFqName(), source, fileSource)
     }
 }
 

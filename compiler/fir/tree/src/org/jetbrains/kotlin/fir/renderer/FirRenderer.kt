@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
@@ -291,7 +293,7 @@ class FirRenderer(
                     idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
                 }
                 is FirVariable -> {
-                    idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
+                    idRenderer.renderCallableId(callableDeclaration.symbol.callableIdForRendering)
                 }
                 else -> {}
             }
@@ -374,7 +376,7 @@ class FirRenderer(
 
         override fun visitProperty(property: FirProperty) {
             visitVariable(property)
-            if (property.isLocal) return
+            if (property.isLocal || property.visibility == Visibilities.Local) return
             propertyAccessorRenderer?.render(property)
         }
 
@@ -954,13 +956,13 @@ class FirRenderer(
 
         override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
             print("F|")
-            print(backingFieldReference.resolvedSymbol.fir.propertySymbol.callableId)
+            print(backingFieldReference.resolvedSymbol.fir.propertySymbol.callableIdForRendering)
             print("|")
         }
 
         override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
             print("D|")
-            print(delegateFieldReference.resolvedSymbol.callableId)
+            print(delegateFieldReference.resolvedSymbol.callableIdForRendering)
             print("|")
         }
 
