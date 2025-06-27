@@ -79,7 +79,7 @@ class Fir2IrVisitor(
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by c, FirDefaultVisitor<IrElement, Any?>() {
-    private val cleaner: FirDeclarationsContentCleaner = FirDeclarationsContentCleaner.create(c.configuration)
+    private val cleaner: FirDeclarationsContentCleaner = FirDeclarationsContentCleaner.create()
     private val memberGenerator = ClassMemberGenerator(c, this, conversionScope, cleaner)
 
     private val operatorGenerator = OperatorExpressionGenerator(c, this, conversionScope)

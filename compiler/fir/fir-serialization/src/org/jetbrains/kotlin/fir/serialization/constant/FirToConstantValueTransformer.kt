@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.math.exp
 
 internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
     session: FirSession,
@@ -54,7 +56,7 @@ internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue
     return valueFromFir as? T
 }
 
-internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
+fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
@@ -250,5 +252,10 @@ private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): Boolean {
         return namedArgumentExpression.expression.accept(this, data)
+    }
+
+    override fun visitExpression(expression: FirExpression, data: FirSession): Boolean {
+        // FirExpressionStub could replace constant initializers in fir2ir
+        return expression is FirExpressionStub
     }
 }

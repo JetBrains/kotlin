@@ -26,7 +26,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 )
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?`
+#### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?↩`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(T)` for `FirNamedFunctionSymbol /ifTrue`s parameter 0
@@ -48,7 +48,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 decode#(R|<local>/token|)
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /decode` --- `fun decode(src: String): String`
+#### Candidate 1: `FirNamedFunctionSymbol /decode` --- `fun decode(src: String): String↩`
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/String <: kotlin/String` _from Argument R|<local>/token|_
@@ -59,7 +59,7 @@ decode#(R|<local>/token|)
 parse#(R|/decode|(R|<local>/token|))
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /parse` --- `fun <reified P : Any> parse(text: String): P`
+#### Candidate 1: `FirNamedFunctionSymbol /parse` --- `fun <reified P : Any> parse(text: String): P↩`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(P)` for `FirNamedFunctionSymbol /parse`s parameter 0
@@ -115,7 +115,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 )
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?`
+#### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?↩`
 ##### Continue Call Completion:
 
 1. `TypeVariable(K) <: TypeVariable(T)?` _from Argument try {↩    R?C|/parse|(R|/decode|(R|<local>/token|))↩}↩catch (e: R|{kotlin/Exception=} java/lang/Exception|) {↩    Null(null)↩}↩_

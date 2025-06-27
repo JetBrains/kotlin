@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.serialization.constant.hasConstantValue
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 sealed class FirDeclarationsContentCleaner {
     abstract fun cleanFile(file: FirFile)
@@ -22,13 +26,19 @@ sealed class FirDeclarationsContentCleaner {
     abstract fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer)
 
     companion object {
-        fun create(configuration: Fir2IrConfiguration): FirDeclarationsContentCleaner = when {
-            // Don't modify the fir tree in...
-            configuration.allowNonCachedDeclarations || // IDE debugger mode
-                    configuration.skipBodies // KAPT mode
-                -> DoNothing
+        context(c: Fir2IrComponents)
+        fun create(): FirDeclarationsContentCleaner {
+            val configuration = c.configuration
+            return when {
+                // Don't modify the fir tree in...
+                configuration.allowNonCachedDeclarations || // IDE debugger mode
+                        configuration.skipBodies || // KAPT mode
+                        // In HMPP mode we need to iterate over FIR bodies once again, after all modules are converted to IR in [referenceAllCommonDependencies]
+                        configuration.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)
+                    -> DoNothing
 
-            else -> CleanBodies
+                else -> CleanBodies(c.session)
+            }
         }
     }
 
@@ -45,7 +55,7 @@ sealed class FirDeclarationsContentCleaner {
         override fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {}
     }
 
-    object CleanBodies : FirDeclarationsContentCleaner() {
+    class CleanBodies(val session: FirSession) : FirDeclarationsContentCleaner() {
         override fun cleanFile(file: FirFile) {
             file.replaceControlFlowGraphReference(null)
         }
@@ -86,7 +96,15 @@ sealed class FirDeclarationsContentCleaner {
         }
 
         override fun cleanProperty(property: FirProperty) {
-            property.replaceInitializer(null)
+            property.initializer?.let { initializer ->
+                val newInitializer = runIf(initializer.hasConstantValue(session)) {
+                    buildExpressionStub {
+                        source = initializer.source
+                        coneTypeOrNull = initializer.resolvedType
+                    }
+                }
+                property.replaceInitializer(newInitializer)
+            }
             property.replaceControlFlowGraphReference(null)
             property.getter?.let { cleanPropertyAccessor(it) }
             property.setter?.let { cleanPropertyAccessor(it) }
