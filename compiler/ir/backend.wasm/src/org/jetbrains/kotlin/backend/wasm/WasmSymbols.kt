@@ -103,10 +103,6 @@ class WasmSymbols(
         getInternalFunction("getContinuation")
     override val continuationClass =
         coroutineSymbols.continuationClass
-    override val coroutineContextGetter =
-        coroutineSymbols.coroutineContextGetter
-    override val coroutineGetContext =
-        getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
         getInternalFunction("returnIfSuspended")
 

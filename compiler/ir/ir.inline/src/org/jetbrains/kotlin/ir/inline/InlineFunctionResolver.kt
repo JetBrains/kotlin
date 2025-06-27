@@ -91,7 +91,6 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
         if (!realOwner.isInline) return null
         // TODO: drop special cases KT-77111
         val result = when {
-            realOwner.symbol == context.symbols.coroutineContextGetter -> context.symbols.coroutineGetContext.owner
             else -> realOwner
         }
         if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null

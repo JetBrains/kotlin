@@ -159,7 +159,4 @@ public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<
 @SinceKotlin("1.3")
 @Suppress("WRONG_MODIFIER_TARGET")
 @InlineOnly
-public suspend inline val coroutineContext: CoroutineContext
-    get() {
-        throw NotImplementedError("Implemented as intrinsic")
-    }
+public expect suspend inline val coroutineContext: CoroutineContext
