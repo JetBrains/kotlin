@@ -102,7 +102,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.allocationDescriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        "kotlin.native.internal.createUninitializedInstance<${typeNamer.parameterizedTypeNamer(request.callable.producingType)}>(${args.joinToString()})"
+                        "kotlin.native.internal.createUninitializedInstance<${typeNamer.kotlinParametrizedName(request.callable.producingType)}>(${args.joinToString()})"
                     }
                 )
                 if (request.callable.origin is InnerInitSource) {
@@ -127,7 +127,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
                             val args = argNames(this)
-                            "kotlin.native.internal.initInstance(${args.first()}, ${typeNamer.parameterizedTypeNamer(request.callable.producingType)}(${args.drop(1).joinToString()}))"
+                            "kotlin.native.internal.initInstance(${args.first()}, ${typeNamer.kotlinParametrizedName(request.callable.producingType)}(${args.drop(1).joinToString()}))"
                         }
                     )
                 }
@@ -644,7 +644,7 @@ private sealed class Bridge(
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${typeNamer.parameterizedTypeNamer(swiftType)}"
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${typeNamer.kotlinParametrizedName(swiftType)}"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
@@ -700,7 +700,7 @@ private sealed class Bridge(
     ) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "interpretObjCPointer<${typeNamer.parameterizedTypeNamer(swiftType)}>($valueExpression)"
+                "interpretObjCPointer<${typeNamer.kotlinParametrizedName(swiftType)}>($valueExpression)"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "$valueExpression.objcPtr()"
@@ -925,7 +925,7 @@ private sealed class Bridge(
                     val argsInClosure = parameters
                         .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                     val defineArgs = argsInClosure
-                        ?.let { " ${it.joinToString { "${it.first}: ${typeNamer.parameterizedTypeNamer(it.second.swiftType)}" }} ->" }
+                        ?.let { " ${it.joinToString { "${it.first}: ${typeNamer.kotlinParametrizedName(it.second.swiftType)}" }} ->" }
                     val callArgs = argsInClosure
                         ?.let { it.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
                     return """run {    
