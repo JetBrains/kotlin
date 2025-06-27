@@ -23,27 +23,27 @@
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/a
+  context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/a
+  context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 @R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/a
+  context -> FirBackingFieldSymbol <local>/field from FirLocalPropertySymbol <local>/a
   anchor -> [FirNamedFunctionSymbol <local>/foo]
 
 FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt

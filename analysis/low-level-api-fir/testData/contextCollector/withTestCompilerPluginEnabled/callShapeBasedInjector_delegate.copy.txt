@@ -18,7 +18,7 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval df1: <ERROR TYPE REF: Unresolved name: getValue>
+                FirLocalPropertySymbol lval df1: <ERROR TYPE REF: Unresolved name: getValue>
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_delegate.kt
     public final? [ResolvedTo(RAW_FIR)] interface DataFrame<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {

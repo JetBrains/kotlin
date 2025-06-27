@@ -18,11 +18,11 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lvar current: R|Node|
+                FirLocalPropertySymbol lvar current: R|Node|
     Element 8
         Scope: FirLocalScope
 Smart Casts:
-    FirPropertySymbol lvar current: R|Node|
+    FirLocalPropertySymbol lvar current: R|Node|
     Types:
         kotlin.Any
 

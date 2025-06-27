@@ -1,49 +1,49 @@
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertySymbol properties/MyClass.property
+  context -> FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol properties/MyClass.property
+  context -> FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol properties/MyClass.property
+  context -> FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol properties/MyClass.property
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
+  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
+  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 @R|properties/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol properties/MyClass.property
+  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol properties/MyClass.property
   anchor -> [FirConstructorSymbol properties/MyClass.MyClass]
 
 FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromConstructorScript.kts

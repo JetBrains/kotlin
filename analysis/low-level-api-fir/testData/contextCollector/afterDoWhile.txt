@@ -18,8 +18,8 @@ Tower Data Context:
             Functions
                 FirNamedFunctionSymbol local final fun outerFunction(): R|kotlin/Boolean|
             Properties:
-                FirPropertySymbol lvar outerVariable: R|kotlin/Boolean|
-                FirPropertySymbol lvar unrelatedVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar outerVariable: R|kotlin/Boolean|
+                FirLocalPropertySymbol lvar unrelatedVariable: R|kotlin/Boolean|
 
 FILE: [ResolvedTo(IMPORTS)] afterDoWhile.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {

@@ -1,49 +1,49 @@
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol <local>/a
+  context -> FirLocalPropertySymbol <local>/a
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/b
+  context -> FirLocalPropertySymbol <local>/b
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?
-  context -> FirPropertySymbol <local>/c
+  context -> FirLocalPropertySymbol <local>/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol <local>/c
+  context -> FirLocalPropertySymbol <local>/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol <local>/c
+  context -> FirLocalPropertySymbol <local>/c
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?
-  context -> FirPropertySymbol <local>/d
+  context -> FirLocalPropertySymbol <local>/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertySymbol <local>/d
+  context -> FirLocalPropertySymbol <local>/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertySymbol <local>/d
+  context -> FirLocalPropertySymbol <local>/d
   anchor -> [FirConstructorSymbol util/Pair.Pair]
 
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts

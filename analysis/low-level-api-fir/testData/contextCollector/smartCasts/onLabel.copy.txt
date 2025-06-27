@@ -18,7 +18,7 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lvar result: R|kotlin/Int|
+                FirLocalPropertySymbol lvar result: R|kotlin/Int|
 Smart Casts:
     FirValueParameterSymbol a: R|kotlin/Any|
     Types:
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] onLabel.kt
         loop@while(Boolean(true)) {
             when () {
                 R|<local>/a|.R|/Foo.process|().R|kotlin/Boolean.not|() ->  {
-                    break@@@[Boolean(true)]
+                    break@@@[Boolean(true)] 
                 }
             }
 

@@ -20,7 +20,7 @@ Tower Data Context:
     Element 8
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>|
+                FirLocalPropertySymbol lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>|
     Element 9
         Scope: FirLocalScope
 

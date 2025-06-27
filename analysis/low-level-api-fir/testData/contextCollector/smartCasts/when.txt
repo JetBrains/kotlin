@@ -18,9 +18,9 @@ Tower Data Context:
     Element 7
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval <when-subject>: R|kotlin/Any|
+                FirLocalPropertySymbol lval <when-subject>: R|kotlin/Any|
 Smart Casts:
-    FirPropertySymbol lval <when-subject>: R|kotlin/Any|
+    FirLocalPropertySymbol lval <when-subject>: R|kotlin/Any|
     Types:
         Bar
         kotlin.Any

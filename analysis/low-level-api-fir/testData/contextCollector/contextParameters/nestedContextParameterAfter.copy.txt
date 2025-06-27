@@ -29,7 +29,7 @@ Tower Data Context:
     Element 10
         Scope: FirLocalScope
             Properties:
-                FirPropertySymbol lval d: R|D|
+                FirLocalPropertySymbol lval d: R|D|
 Smart Casts:
     FirValueParameterSymbol a: R|T|
     Types:

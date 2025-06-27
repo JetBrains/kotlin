@@ -38,7 +38,7 @@ context -> FirDanglingModifierSymbol from FirRegularClassSymbol TopLevelClass
 
 @ClassPropertyAnnotation()
 owner -> FirDanglingModifierSymbol
-context -> FirPropertySymbol <local>/classLocalProperty from FirAnonymousFunctionSymbol special/anonymous from FirDanglingModifierSymbol from FirRegularClassSymbol TopLevelClass
+context -> FirLocalPropertySymbol <local>/classLocalProperty from FirAnonymousFunctionSymbol special/anonymous from FirDanglingModifierSymbol from FirRegularClassSymbol TopLevelClass
 
 @ClassLevel4(value = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
     @ClassTypeAlias() local final typealias ClassLocalTypeAlias = String
@@ -92,7 +92,7 @@ context -> FirDanglingModifierSymbol from FirFileSymbol annotationArgumentLocalD
 
 @FilePropertyAnnotation()
 owner -> FirDanglingModifierSymbol
-context -> FirPropertySymbol <local>/fileLocalProperty from FirAnonymousFunctionSymbol special/anonymous from FirDanglingModifierSymbol from FirFileSymbol annotationArgumentLocalDeclarations.kt
+context -> FirLocalPropertySymbol <local>/fileLocalProperty from FirAnonymousFunctionSymbol special/anonymous from FirDanglingModifierSymbol from FirFileSymbol annotationArgumentLocalDeclarations.kt
 
 @FileLevel4(value = fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
     @FileTypeAlias() local final typealias FileLocalTypeAlias = Int

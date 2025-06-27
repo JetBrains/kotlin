@@ -1,25 +1,25 @@
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>
-  context -> FirPropertySymbol foo/$$result
+  context -> FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertySymbol foo/$$result
+  context -> FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertySymbol foo/$$result
+  context -> FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 @R|foo/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol foo/$$result
+  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol foo/$$result
   anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] resultWithPropagatedTypeUnavailable.kts
