@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationOfNullableToFlexibleLowerConstraint
+// LANGUAGE: +PreciseSimplificationOfNullableToFlexibleLowerConstraint
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java
@@ -23,4 +22,5 @@ fun bar(n: Number?) {
     takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>length<!>
 }
 
-/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, javaFunction, localFunction, nullableType, stringLiteral */
+/* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localFunction, nullableType,
+stringLiteral */

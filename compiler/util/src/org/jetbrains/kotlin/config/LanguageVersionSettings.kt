@@ -417,6 +417,7 @@ enum class LanguageFeature(
     ForbidParenthesizedLhsInAssignments(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-70507"),
     AllowEagerSupertypeAccessibilityChecks(KOTLIN_2_3, "KT-73611"),
     DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, "KT-71718"),
+    PreciseSimplificationOfNullableToFlexibleLowerConstraint(KOTLIN_2_3, "KT-78621"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_3, "KT-67146"),
     ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, "KT-67869"),
     DataFlowBasedExhaustiveness(sinceVersion = KOTLIN_2_3, issue = "KT-76635"),

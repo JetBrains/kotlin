@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationOfNullableToFlexibleLowerConstraint
 // ISSUE: KT-67651
 // FULL_JDK
 

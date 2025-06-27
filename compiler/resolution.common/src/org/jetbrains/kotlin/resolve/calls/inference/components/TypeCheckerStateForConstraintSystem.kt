@@ -323,9 +323,13 @@ abstract class TypeCheckerStateForConstraintSystem(
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
-                            // In K1 (FE1.0), there is an obsolete behavior
-                            subType.isMarkedNullable() -> subType
-                            else -> createTrivialFlexibleTypeOrSelf(subType)
+                            !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
+                            usePreciseSimplificationOfNullableToFlexibleLowerConstraint() ->
+                                createTrivialFlexibleTypeOrSelf(
+                                    subType.makeDefinitelyNotNullOrNotNull(),
+                                )
+                            // Obsolete behavior in 2.2 and earlier versions
+                            else -> subType
                         }
 
                     is FlexibleTypeMarker ->

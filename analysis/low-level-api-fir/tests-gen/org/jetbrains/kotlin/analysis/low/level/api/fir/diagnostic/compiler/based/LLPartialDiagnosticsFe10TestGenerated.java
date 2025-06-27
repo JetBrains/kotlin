@@ -25117,6 +25117,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("flexibleTypeVariablePositionPreciseLowerConstraints.kt")
+      public void testFlexibleTypeVariablePositionPreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/j+k/flexibleTypeVariablePositionPreciseLowerConstraints.kt");
+      }
+
+      @Test
       @TestMetadata("futureGet.kt")
       public void testFutureGet() {
         runTest("compiler/testData/diagnostics/tests/j+k/futureGet.kt");
@@ -33985,12 +33991,6 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
-      @TestMetadata("kt78621.kt")
-      public void testKt78621() {
-        runTest("compiler/testData/diagnostics/tests/platformTypes/kt78621.kt");
-      }
-
-      @Test
       @TestMetadata("methodTypeParameterDefaultBound.kt")
       public void testMethodTypeParameterDefaultBound() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
@@ -34012,6 +34012,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("override.kt")
       public void testOverride() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/override.kt");
+      }
+
+      @Test
+      @TestMetadata("preciseSimplificationOfNullableToFlexibleLowerConstraintDisabled.kt")
+      public void testPreciseSimplificationOfNullableToFlexibleLowerConstraintDisabled() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/preciseSimplificationOfNullableToFlexibleLowerConstraintDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("preciseSimplificationOfNullableToFlexibleLowerConstraintEnabled.kt")
+      public void testPreciseSimplificationOfNullableToFlexibleLowerConstraintEnabled() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/preciseSimplificationOfNullableToFlexibleLowerConstraintEnabled.kt");
       }
 
       @Test
@@ -38087,6 +38099,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("samConversionWithCallableReferencePreciseLowerConstraints.kt")
+      public void testSamConversionWithCallableReferencePreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReferencePreciseLowerConstraints.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithCondition.kt")
       public void testSamConversionWithCondition() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCondition.kt");
@@ -38108,6 +38126,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("samConversionWithJavaFlexibleTypeDnnRepresentation.kt")
       public void testSamConversionWithJavaFlexibleTypeDnnRepresentation() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleTypeDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithJavaFlexibleTypePreciseLowerConstraints.kt")
+      public void testSamConversionWithJavaFlexibleTypePreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleTypePreciseLowerConstraints.kt");
       }
 
       @Test

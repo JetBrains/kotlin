@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationOfNullableToFlexibleLowerConstraint
-// ISSUE: KT-67651
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +PreciseSimplificationOfNullableToFlexibleLowerConstraint
 // FULL_JDK
 
 // FILE: JavaBox.java
@@ -16,11 +15,11 @@ import java.util.function.Supplier
 
 fun test(){
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
+        JavaBox(null).a
     }
 
     val sam : Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
+        <!TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam2 = object : Supplier<String> {
