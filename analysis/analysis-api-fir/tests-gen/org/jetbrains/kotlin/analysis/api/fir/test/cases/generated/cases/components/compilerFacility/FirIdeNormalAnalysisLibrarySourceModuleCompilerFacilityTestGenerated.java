@@ -452,6 +452,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("localFakeOverrideForwarding.kt")
+    public void testLocalFakeOverrideForwarding() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localFakeOverrideForwarding.kt");
+    }
+
+    @Test
+    @TestMetadata("localFakeOverrideForwarding2.kt")
+    public void testLocalFakeOverrideForwarding2() {
+      runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localFakeOverrideForwarding2.kt");
+    }
+
+    @Test
     @TestMetadata("localObject.kt")
     public void testLocalObject() {
       runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/localObject.kt");
