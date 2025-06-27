@@ -964,7 +964,7 @@ internal class KaFirCompilerFacility(
         }
 
         if (chunk.kind == ChunkKind.CONTEXT) {
-            contextDeclarationCache?.initialize(fir2IrResult, commonMemberStorage, evaluatorData)
+            contextDeclarationCache?.initialize(commonMemberStorage, evaluatorData)
         }
 
         return result
