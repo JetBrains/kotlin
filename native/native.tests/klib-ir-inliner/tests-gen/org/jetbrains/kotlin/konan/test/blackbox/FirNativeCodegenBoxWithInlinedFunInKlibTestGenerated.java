@@ -30453,6 +30453,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       public void testLambda_kt49360_wrapBlock() {
         runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_wrapBlock.kt");
       }
+
+      @Test
+      @TestMetadata("lambda_kt78666.kt")
+      public void testLambda_kt78666() {
+        runTest("compiler/testData/codegen/box/lambda/lambda_kt78666.kt");
+      }
     }
 
     @Nested
