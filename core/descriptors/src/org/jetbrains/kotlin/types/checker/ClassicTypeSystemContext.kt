@@ -904,6 +904,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = false
 
+    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
+
     override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is SimpleType, type::errorMessage)
         val substitutor = TypeConstructorSubstitution.create(type).buildSubstitutor()

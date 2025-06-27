@@ -319,13 +319,19 @@ abstract class TypeCheckerStateForConstraintSystem(
                     is RigidTypeMarker ->
                         when {
                             useRefinedBoundsForTypeVariableInFlexiblePosition() ->
-                                // Foo <: T! -- (Foo!! .. Foo) <: T
+                                // TODO: delete me as a part of KT-76065
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
-                            // In K1 (FE1.0), there is an obsolete behavior
-                            subType.isMarkedNullable() -> subType
-                            else -> createTrivialFlexibleTypeOrSelf(subType)
+                            usePreciseSimplificationToFlexibleLowerConstraint() ->
+                                // Foo <: T! -- (Foo!! .. Foo) <: T
+                                // Foo? <: T! -- (Foo!! .. Foo?) <: T
+                                createTrivialFlexibleTypeOrSelf(
+                                    subType.makeDefinitelyNotNullOrNotNull(),
+                                )
+                            !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
+                            // Obsolete behavior in 2.2 and earlier versions
+                            else -> subType
                         }
 
                     is FlexibleTypeMarker ->

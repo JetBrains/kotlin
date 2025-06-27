@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: Consumer.java
 public interface Consumer<T> {
@@ -86,7 +86,7 @@ fun main() {
     A().doOnSuccessOut(::takeAny)
     A().doOnSuccessStar(::takeAny)
     A().doOnSuccessString(::takeAny)
-    A().doOnSuccessNullableString(<!TYPE_MISMATCH!>::takeAny<!>)
+    A().doOnSuccessNullableString(::<!INAPPLICABLE_CANDIDATE!>takeAny<!>)
     A().doOnSuccessNullableString(::takeNullableAny)
     A().doOnSuccessTypeParameter(::takeAny)
     A().doOnSuccessTypeParameter(::takeNullableAny)
@@ -95,12 +95,12 @@ fun main() {
     A().doOnSuccessJavaBox2(::takeAny)
     A().doOnSuccessJavaBox2(::takeNullableAny)
 
-    A().doOnSuccessInProducer(<!TYPE_MISMATCH!>::returnAny<!>)
+    A().doOnSuccessInProducer(::<!INAPPLICABLE_CANDIDATE!>returnAny<!>)
     A().doOnSuccessInProducer(::returnString)
     A().doOnSuccessInProducer(::returnNullableString)
     A().doOnSuccessOutProducer(::returnString)
     A().doOnSuccessOutProducer(::returnNullableString)
-    A().doOnSuccessOutProducer(<!TYPE_MISMATCH!>::returnNullableAny<!>)
+    A().doOnSuccessOutProducer(::<!INAPPLICABLE_CANDIDATE!>returnNullableAny<!>)
 
     A().doOnSuccessStarProducer(::returnNullableAny)
     A().doOnSuccessStarProducer(::returnAny)
@@ -108,13 +108,13 @@ fun main() {
     A().doOnSuccessStarProducer(::returnNullableString)
     A().doOnSuccessStringProducer(::returnString)
     A().doOnSuccessStringProducer(::returnNullableString)
-    A().doOnSuccessStringProducer(<!TYPE_MISMATCH!>::returnNullableAny<!>)
+    A().doOnSuccessStringProducer(::<!INAPPLICABLE_CANDIDATE!>returnNullableAny<!>)
 
     A().doOnSuccessTypeParameterProducer(::returnNullableAny)
     A().doOnSuccessTypeParameterProducer(::returnAny)
     A().doOnSuccessTypeParameterProducer(::returnNullableString)
     A().doOnSuccessTypeParameterProducer(::returnString)
-    A().doOnSuccessTypeParameterProducer<String>(<!TYPE_MISMATCH!>::returnNullableString<!>)
+    A().doOnSuccessTypeParameterProducer<String>(::returnNullableString)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classDeclaration, flexibleType, functionDeclaration, inProjection,

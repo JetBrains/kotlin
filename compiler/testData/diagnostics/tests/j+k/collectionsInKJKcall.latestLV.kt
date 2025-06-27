@@ -4,23 +4,23 @@
 // LATEST_LV_DIFFERENCE
 
 fun testCollections() {
-    testKotlinSet(<!TYPE_MISMATCH!>java.util.HashSet(setOf(null))<!>)
-    testKotlinSet(<!TYPE_MISMATCH!>HashSet(setOf(null))<!>)
+    testKotlinSet(java.util.HashSet(setOf(null)))
+    testKotlinSet(HashSet(setOf(null)))
     testKotlinList(java.util.ArrayList(arrayListOf(null)))
-    testKotlinList(<!TYPE_MISMATCH!>ArrayList(arrayListOf(null))<!>)
+    testKotlinList(ArrayList(arrayListOf(null)))
     testKotlinMap(java.util.HashMap(hashMapOf(Pair(null, null))))
-    testKotlinMap(<!TYPE_MISMATCH!>HashMap(hashMapOf(Pair(null, null)))<!>)
+    testKotlinMap(HashMap(hashMapOf(Pair(null, null))))
 
     testJavaSet(java.util.HashSet(setOf(null)))
-    testJavaSet(<!TYPE_MISMATCH!>HashSet(setOf(null))<!>)
+    testJavaSet(HashSet(setOf(null)))
     testJavaList(java.util.ArrayList(arrayListOf(null)))
-    testJavaList(<!TYPE_MISMATCH!>ArrayList(arrayListOf(null))<!>)
+    testJavaList(ArrayList(arrayListOf(null)))
     testJavaMap(java.util.HashMap(hashMapOf(Pair(null, null))))
-    testJavaMap(<!TYPE_MISMATCH!>HashMap(hashMapOf(Pair(null, null)))<!>)
+    testJavaMap(HashMap(hashMapOf(Pair(null, null))))
 
-    testKotlinSet(<!TYPE_MISMATCH!>java.util.HashSet(setOf(null))<!>)
+    testKotlinSet(java.util.HashSet(setOf(null)))
     testKotlinSet(java.util.HashSet(hashSetOf(null)))
-    testKotlinList(<!TYPE_MISMATCH!>java.util.ArrayList(listOf(null))<!>)
+    testKotlinList(java.util.ArrayList(listOf(null)))
     testKotlinList(java.util.ArrayList(arrayListOf(null)))
 }
 

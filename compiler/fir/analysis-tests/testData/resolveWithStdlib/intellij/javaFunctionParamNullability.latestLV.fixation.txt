@@ -1,31 +1,32 @@
 CHOSEN for fixation: TypeVariable(S) --- FORBIDDEN
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_LOWER
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      = kotlin/String
-     <: kotlin/String!
+     <: kotlin/String?
+     <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      = kotlin/String
+     <: kotlin/String?
      <: kotlin/String!
     FIXED TO: kotlin/String
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- FORBIDDEN
 ********************************
 CHOSEN for fixation: TypeVariable(S) --- READY_FOR_FIXATION_LOWER
-     >: TypeVariable(T)?
+     >: ft<TypeVariable(T) & Any, TypeVariable(T)?>
      >: kotlin/String!
      = kotlin/String! (inferred during fixation)
-     >: kotlin/Nothing? (inferred during fixation)
     FIXED TO: kotlin/String!
 TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      = kotlin/String
-     <: kotlin/String!
+     <: kotlin/String?
+     <: kotlin/String! (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
      >: kotlin/String
@@ -41,6 +42,7 @@ CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      = kotlin/String
+     <: kotlin/String?
      <: kotlin/String!
     FIXED TO: kotlin/String
 ********************************

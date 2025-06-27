@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationToFlexibleLowerConstraint
-// ISSUE: KT-67651
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // FULL_JDK
 
 // FILE: JavaBox.java
@@ -20,11 +19,11 @@ fun test(){
     }
 
     val sam : Supplier<String> = Supplier {
-        <!TYPE_MISMATCH!>JavaBox(null).a<!>
+        JavaBox(null).a
     }
 
     val sam2 = object : Supplier<String> {
-        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = JavaBox(null).a
+        override fun get() = JavaBox(null).a
     }
 }
 

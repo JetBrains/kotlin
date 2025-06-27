@@ -1,5 +1,6 @@
-// LANGUAGE: +DontMakeExplicitJavaTypeArgumentsFlexible
-// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78621
 
 
@@ -28,9 +29,9 @@ interface PsiFile
 
 fun test() {
     WriteAction.compute<PsiFile> {
-        <!RETURN_TYPE_MISMATCH("PsiFile!; PsiFile?")!>nullableMaterialize<PsiElement>()?.execute {
+        nullableMaterialize<PsiElement>()?.execute {
             nullableMaterialize<PsiFile>()
-        }<!>
+        }
     }
 }
 

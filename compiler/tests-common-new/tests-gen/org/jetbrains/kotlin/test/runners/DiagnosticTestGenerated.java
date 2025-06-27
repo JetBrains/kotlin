@@ -25177,6 +25177,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("flexibleTypeVariablePositionPreciseLowerConstraints.kt")
+      public void testFlexibleTypeVariablePositionPreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/j+k/flexibleTypeVariablePositionPreciseLowerConstraints.kt");
+      }
+
+      @Test
       @TestMetadata("futureGet.kt")
       public void testFutureGet() {
         runTest("compiler/testData/diagnostics/tests/j+k/futureGet.kt");
@@ -26869,6 +26875,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestMetadata("notNullTypeParameterWithKotlinNullableDnnRepresentation.kt")
         public void testNotNullTypeParameterWithKotlinNullableDnnRepresentation() {
           runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullableDnnRepresentation.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullTypeParameterWithKotlinNullablePreciseLowerConstraints.kt")
+        public void testNotNullTypeParameterWithKotlinNullablePreciseLowerConstraints() {
+          runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullablePreciseLowerConstraints.kt");
         }
 
         @Test
@@ -34051,12 +34063,6 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
-      @TestMetadata("kt78621.kt")
-      public void testKt78621() {
-        runTest("compiler/testData/diagnostics/tests/platformTypes/kt78621.kt");
-      }
-
-      @Test
       @TestMetadata("methodTypeParameterDefaultBound.kt")
       public void testMethodTypeParameterDefaultBound() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
@@ -34078,6 +34084,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("override.kt")
       public void testOverride() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/override.kt");
+      }
+
+      @Test
+      @TestMetadata("preciseSimplificationToFlexibleLowerConstraintDisabled.kt")
+      public void testPreciseSimplificationToFlexibleLowerConstraintDisabled() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/preciseSimplificationToFlexibleLowerConstraintDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("preciseSimplificationToFlexibleLowerConstraintEnabled.kt")
+      public void testPreciseSimplificationToFlexibleLowerConstraintEnabled() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/preciseSimplificationToFlexibleLowerConstraintEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("preciseSimplificationToFlexibleLowerConstraintEnabled2.kt")
+      public void testPreciseSimplificationToFlexibleLowerConstraintEnabled2() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/preciseSimplificationToFlexibleLowerConstraintEnabled2.kt");
       }
 
       @Test
@@ -38153,6 +38177,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("samConversionWithCallableReferencePreciseLowerConstraints.kt")
+      public void testSamConversionWithCallableReferencePreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCallableReferencePreciseLowerConstraints.kt");
+      }
+
+      @Test
       @TestMetadata("samConversionWithCondition.kt")
       public void testSamConversionWithCondition() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithCondition.kt");
@@ -38174,6 +38204,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       @TestMetadata("samConversionWithJavaFlexibleTypeDnnRepresentation.kt")
       public void testSamConversionWithJavaFlexibleTypeDnnRepresentation() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleTypeDnnRepresentation.kt");
+      }
+
+      @Test
+      @TestMetadata("samConversionWithJavaFlexibleTypePreciseLowerConstraints.kt")
+      public void testSamConversionWithJavaFlexibleTypePreciseLowerConstraints() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithJavaFlexibleTypePreciseLowerConstraints.kt");
       }
 
       @Test

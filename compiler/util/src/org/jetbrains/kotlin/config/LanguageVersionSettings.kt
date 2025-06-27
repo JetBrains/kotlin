@@ -415,6 +415,7 @@ enum class LanguageFeature(
     EnableDfaWarningsInK2(KOTLIN_2_3, "KT-50965"),
     ForbidParenthesizedLhsInAssignments(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-70507"),
     DontMakeExplicitJavaTypeArgumentsFlexible(KOTLIN_2_3, "KTLC-284"),
+    PreciseSimplificationToFlexibleLowerConstraint(KOTLIN_2_3, "KT-78621"),
     DontIgnoreUpperBoundViolatedOnImplicitArguments(KOTLIN_2_3, "KT-67146"),
     ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, "KT-67869"),
     DataFlowBasedExhaustiveness(sinceVersion = KOTLIN_2_3, issue = "KT-76635"),

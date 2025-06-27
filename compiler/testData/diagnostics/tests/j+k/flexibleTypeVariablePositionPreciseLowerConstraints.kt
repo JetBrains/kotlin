@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java

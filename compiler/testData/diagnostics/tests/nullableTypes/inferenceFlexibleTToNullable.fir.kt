@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNCHECKED_CAST -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // SKIP_TXT
+// LATEST_LV_DIFFERENCE
 
 // FILE: Foo.java
 import org.jetbrains.annotations.NotNull;
@@ -34,13 +35,13 @@ public class Foo<T>  {
 fun <T> bar(n: Number?, d: T, e: T) {
     val a: Number = <!INITIALIZER_TYPE_MISMATCH!>Foo.simpleId(n)<!>
     val b: Number? = Foo.simpleId(n)
-    val c = Foo.simpleId(n)
+    val c = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number?")!>Foo.simpleId(n)<!>
 
     val x4 = Foo(if (true) 10 else null)
     val x5: Number = <!INITIALIZER_TYPE_MISMATCH!>x4.produceT()<!>
     val x6: Number? = x4.produceT()
-    val x7 = x4.produceT()
-    val x8 = x4.produceNotNullT()
+    val x7 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x4.produceT()<!>
+    val x8 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x4.produceNotNullT()<!>
 
     x4.consumeT(x7)
 

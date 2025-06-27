@@ -343,6 +343,21 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
     /**
+     * This flag handles the LowerConstraint returned for the case Foo(?) <: (T..T?)
+     *
+     * With this flag (K2 +PreciseSimplificationFlexibleLowerConstraint),
+     * we use precise (Foo!!..Foo?) <: T for nullable type and (Foo!!..Foo) <: T for non-null type.
+     *
+     * Without it (K1 or K2 -PreciseSimplificationToFlexibleLowerConstraint), we use Foo <: T for nullable type instead
+     * and it can lead to information loss. E.g. with initial constraints T = Bar, Bar? <: U, U? <: (T..T?)
+     * we infer a lower constraint U <: T and get Bar? <: Bar contradiction.
+     *
+     * In K1 and early versions of K2 (2.0-2.2) this problem is mitigated with so-called TypePreservingVisibilityWrtHack,
+     * that allows us to use flexible types for explicit type arguments of Java type parameters
+     */
+    fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean
+
+    /**
      * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
      */
     fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker

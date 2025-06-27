@@ -686,6 +686,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
     )
 
+    override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.PreciseSimplificationToFlexibleLowerConstraint
+    )
+
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)
         return this.convertToNonRawVersion()

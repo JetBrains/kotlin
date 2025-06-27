@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +JavaTypeParameterDefaultRepresentationWithDNN
+// LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java
@@ -18,8 +18,8 @@ fun bar(n: Number?) {
 
     // in K1 & K2 (2.0-2.2), it is resolved to nullable takeN
     // in K2 with DNN representation ON or in 2.3+, it would be resolved to not-nullable and may fail with NPE
-    takeN(JavaClass.simpleId(n)).div(1)
-    takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>length<!>
+    takeN(JavaClass.simpleId(n)).<!UNRESOLVED_REFERENCE!>div<!>(1)
+    takeN(JavaClass.simpleId(n)).length
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, integerLiteral, javaFunction, localFunction, nullableType,
