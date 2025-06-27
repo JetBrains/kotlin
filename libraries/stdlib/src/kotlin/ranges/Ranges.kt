@@ -256,6 +256,13 @@ public operator fun Float.rangeUntil(that: Float): OpenEndRange<Float> = OpenEnd
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
+public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Comparable<T>, R : ClosedRange<T>, R : Iterable<T> =
+    element != null && contains(element)
+
+@Deprecated("The signature violates type safery guarantees", level = DeprecationLevel.HIDDEN)
+@Suppress("UPPER_BOUND_VIOLATED")
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
 public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : ClosedRange<T>, R : Iterable<T> =
     element != null && contains(element)
 
@@ -266,6 +273,13 @@ public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any
  */
 @SinceKotlin("1.9")
 @WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Comparable<T>, R : OpenEndRange<T>, R : Iterable<T> =
+    element != null && contains(element)
+
+@Deprecated("The signature violates type safery guarantees", level = DeprecationLevel.HIDDEN)
+@Suppress("UPPER_BOUND_VIOLATED")
+@SinceKotlin("1.9")
 @kotlin.internal.InlineOnly
 public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : OpenEndRange<T>, R : Iterable<T> =
     element != null && contains(element)
