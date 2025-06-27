@@ -42,6 +42,9 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
             override val objcGenerics: Boolean
                 get() = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
 
+            override val objcExportBlockExplicitParameterNames: Boolean
+                get() = config.configuration.getBoolean(BinaryOptions.objcExportBlockExplicitParameterNames)
+
             override val disableSwiftMemberNameMangling: Boolean
                 get() = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
 

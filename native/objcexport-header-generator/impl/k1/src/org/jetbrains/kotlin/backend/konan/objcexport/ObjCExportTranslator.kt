@@ -48,6 +48,7 @@ class ObjCExportTranslatorImpl(
     val namer: ObjCExportNamer,
     val problemCollector: ObjCExportProblemCollector,
     val objcGenerics: Boolean,
+    val objcExportBlockExplicitParameterNames: Boolean,
 ) : ObjCExportTranslator {
 
     private val kotlinAnyName = namer.kotlinAnyName
@@ -997,7 +998,7 @@ class ObjCExportTranslatorImpl(
                 mapReferenceType(functionType.getReturnTypeFromFunctionType(), objCExportScope)
             },
             parameterTypes.map {
-                val uniqueName = when (namer.needsExplicitBlockParameterNames()) {
+                val uniqueName = when (objcExportBlockExplicitParameterNames) {
                     true -> {
                         val parameterName = it.extractParameterNameFromFunctionTypeArgument()?.asString() ?: ""
                         val name = unifyName(parameterName, usedNames)
