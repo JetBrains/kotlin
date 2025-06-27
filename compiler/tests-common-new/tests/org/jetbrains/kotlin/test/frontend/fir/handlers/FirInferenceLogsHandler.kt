@@ -69,7 +69,12 @@ class FirInferenceLogsHandler(
         get() {
             // K1 doesn't support constraint dumps, no need to care about ".fir.inference.md"
             val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
-            val dumpFile = originalFile.withExtension(fileExtension)
+            val additionalExtension = if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
+                ".latestLV"
+            } else {
+                ""
+            }
+            val dumpFile = originalFile.withExtension("$additionalExtension$fileExtension")
             return dumpFile
         }
 
