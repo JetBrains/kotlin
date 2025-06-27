@@ -5,10 +5,14 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.io.Serializable
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 internal object StandardKTypes {
     val ANY: KType = typeOf<Any>()
     val NULLABLE_ANY: KType = typeOf<Any?>()
+
+    val CLONEABLE: KType = typeOf<Cloneable>()
+    val SERIALIZABLE: KType = typeOf<Serializable>()
 }

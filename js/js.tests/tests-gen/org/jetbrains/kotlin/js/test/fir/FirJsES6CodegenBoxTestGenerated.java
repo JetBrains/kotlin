@@ -55072,6 +55072,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("genericArrayElementTypeInSupertype.kt")
+        public void testGenericArrayElementTypeInSupertype() {
+          runTest("compiler/testData/codegen/box/reflection/mapping/types/genericArrayElementTypeInSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClassInSignature.kt")
         public void testInlineClassInSignature() {
           runTest("compiler/testData/codegen/box/reflection/mapping/types/inlineClassInSignature.kt");
@@ -56211,6 +56217,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("arrayClassifier.kt")
+      public void testArrayClassifier() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/arrayClassifier.kt");
+      }
+
+      @Test
       @TestMetadata("builtInClassSupertypes.kt")
       public void testBuiltInClassSupertypes() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/builtInClassSupertypes.kt");
@@ -56235,6 +56247,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       }
 
       @Test
+      @TestMetadata("javaArrayType.kt")
+      public void testJavaArrayType() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/javaArrayType.kt");
+      }
+
+      @Test
       @TestMetadata("nullablilitySubstitution.kt")
       public void testNullablilitySubstitution() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/nullablilitySubstitution.kt");
@@ -56244,6 +56262,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @TestMetadata("primitives.kt")
       public void testPrimitives() {
         runTest("compiler/testData/codegen/box/reflection/supertypes/primitives.kt");
+      }
+
+      @Test
+      @TestMetadata("rawSupertypes.kt")
+      public void testRawSupertypes() {
+        runTest("compiler/testData/codegen/box/reflection/supertypes/rawSupertypes.kt");
       }
 
       @Test
@@ -56848,6 +56872,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
       @TestMetadata("typeAliasedType.kt")
       public void testTypeAliasedType() {
         runTest("compiler/testData/codegen/box/reflection/types/typeAliasedType.kt");
+      }
+
+      @Test
+      @TestMetadata("typeAliasedTypeInSupertype.kt")
+      public void testTypeAliasedTypeInSupertype() {
+        runTest("compiler/testData/codegen/box/reflection/types/typeAliasedTypeInSupertype.kt");
       }
 
       @Test

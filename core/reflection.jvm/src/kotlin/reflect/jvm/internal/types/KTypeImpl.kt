@@ -11,16 +11,11 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import java.lang.reflect.GenericArrayType
-import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import java.lang.reflect.WildcardType
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
@@ -73,29 +68,8 @@ internal class KTypeImpl(
         val typeArguments = type.arguments
         if (typeArguments.isEmpty()) return@arguments emptyList()
 
-        val parameterizedTypeArguments by lazy(PUBLICATION) { javaType!!.parameterizedTypeArguments }
-
         typeArguments.mapIndexed { i, typeProjection ->
-            typeProjection.toKTypeProjection(if (computeJavaType == null) null else fun(): Type {
-                return when (val javaType = javaType) {
-                    is Class<*> -> {
-                        // It's either an array or a raw type.
-                        // TODO: return upper bound of the corresponding parameter for a raw type?
-                        if (javaType.isArray) javaType.componentType else Any::class.java
-                    }
-                    is GenericArrayType -> {
-                        if (i != 0) throw KotlinReflectionInternalError("Array type has been queried for a non-0th argument: $this")
-                        javaType.genericComponentType
-                    }
-                    is ParameterizedType -> {
-                        val argument = parameterizedTypeArguments[i]
-                        // In "Foo<out Bar>", the JVM type of the first type argument should be "Bar", not "? extends Bar"
-                        if (argument !is WildcardType) argument
-                        else argument.lowerBounds.firstOrNull() ?: argument.upperBounds.first()
-                    }
-                    else -> throw KotlinReflectionInternalError("Non-generic type has been queried for arguments: $this")
-                }
-            })
+            typeProjection.toKTypeProjection(if (computeJavaType == null) null else convertTypeArgumentToJavaType({ this }, i))
         }
     }
 
