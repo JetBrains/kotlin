@@ -339,6 +339,8 @@ private fun contentRootToVirtualFile(
             else localFileSystem.findExistingRoot(root, "Java module root", messageCollector)
         is JavaSourceRoot ->
             localFileSystem.findExistingRoot(root, "Java source root", messageCollector)
+        is VirtualJvmClasspathRoot ->
+            root.file
         else ->
             throw IllegalStateException("Unexpected root: $root")
     }
