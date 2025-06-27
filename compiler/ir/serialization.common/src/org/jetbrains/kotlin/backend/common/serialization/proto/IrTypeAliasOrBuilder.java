@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrTypeAliasOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrTypeAliasOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int64 name_type = 2 [features = { ... }</code>
@@ -44,4 +48,14 @@ public interface IrTypeAliasOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
    */
   int getTypeParameterCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
+      getTypeParameterOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getTypeParameterOrBuilder(
+      int index);
 }

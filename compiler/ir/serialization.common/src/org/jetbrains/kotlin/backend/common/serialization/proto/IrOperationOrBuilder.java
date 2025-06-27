@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrOperationOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock block = 1;</code>
@@ -19,6 +19,10 @@ public interface IrOperationOrBuilder extends
    * @return The block.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBlock();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock block = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder getBlockOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak break = 2;</code>
@@ -30,6 +34,10 @@ public interface IrOperationOrBuilder extends
    * @return The break.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak getBreak();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak break = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBreakOrBuilder getBreakOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrCall call = 3;</code>
@@ -41,6 +49,10 @@ public interface IrOperationOrBuilder extends
    * @return The call.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrCall getCall();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrCall call = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrCallOrBuilder getCallOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference class_reference = 4;</code>
@@ -52,6 +64,10 @@ public interface IrOperationOrBuilder extends
    * @return The classReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference getClassReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference class_reference = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReferenceOrBuilder getClassReferenceOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite composite = 5;</code>
@@ -63,6 +79,10 @@ public interface IrOperationOrBuilder extends
    * @return The composite.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite getComposite();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite composite = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrCompositeOrBuilder getCompositeOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConst const = 6;</code>
@@ -74,6 +94,10 @@ public interface IrOperationOrBuilder extends
    * @return The const.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConst getConst();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConst const = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstOrBuilder getConstOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue continue = 7;</code>
@@ -85,6 +109,10 @@ public interface IrOperationOrBuilder extends
    * @return The continue.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue getContinue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue continue = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrContinueOrBuilder getContinueOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall delegating_constructor_call = 8;</code>
@@ -96,6 +124,10 @@ public interface IrOperationOrBuilder extends
    * @return The delegatingConstructorCall.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall getDelegatingConstructorCall();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall delegating_constructor_call = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCallOrBuilder getDelegatingConstructorCallOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile do_while = 9;</code>
@@ -107,6 +139,10 @@ public interface IrOperationOrBuilder extends
    * @return The doWhile.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile getDoWhile();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile do_while = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhileOrBuilder getDoWhileOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall enum_constructor_call = 10;</code>
@@ -118,6 +154,10 @@ public interface IrOperationOrBuilder extends
    * @return The enumConstructorCall.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall getEnumConstructorCall();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall enum_constructor_call = 10;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCallOrBuilder getEnumConstructorCallOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference function_reference = 11;</code>
@@ -129,6 +169,10 @@ public interface IrOperationOrBuilder extends
    * @return The functionReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference getFunctionReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference function_reference = 11;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReferenceOrBuilder getFunctionReferenceOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass get_class = 12;</code>
@@ -140,6 +184,10 @@ public interface IrOperationOrBuilder extends
    * @return The getClass.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass getGetClass();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass get_class = 12;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClassOrBuilder getGetClassOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue get_enum_value = 13;</code>
@@ -151,6 +199,10 @@ public interface IrOperationOrBuilder extends
    * @return The getEnumValue.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue getGetEnumValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue get_enum_value = 13;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValueOrBuilder getGetEnumValueOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField get_field = 14;</code>
@@ -162,6 +214,10 @@ public interface IrOperationOrBuilder extends
    * @return The getField.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField getGetField();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField get_field = 14;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetFieldOrBuilder getGetFieldOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject get_object = 15;</code>
@@ -173,6 +229,10 @@ public interface IrOperationOrBuilder extends
    * @return The getObject.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject getGetObject();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject get_object = 15;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObjectOrBuilder getGetObjectOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue get_value = 16;</code>
@@ -184,6 +244,10 @@ public interface IrOperationOrBuilder extends
    * @return The getValue.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue getGetValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue get_value = 16;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValueOrBuilder getGetValueOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall instance_initializer_call = 17;</code>
@@ -195,6 +259,10 @@ public interface IrOperationOrBuilder extends
    * @return The instanceInitializerCall.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall getInstanceInitializerCall();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall instance_initializer_call = 17;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCallOrBuilder getInstanceInitializerCallOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference property_reference = 18;</code>
@@ -206,6 +274,10 @@ public interface IrOperationOrBuilder extends
    * @return The propertyReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference getPropertyReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference property_reference = 18;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReferenceOrBuilder getPropertyReferenceOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn return = 19;</code>
@@ -217,6 +289,10 @@ public interface IrOperationOrBuilder extends
    * @return The return.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn getReturn();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn return = 19;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnOrBuilder getReturnOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField set_field = 20;</code>
@@ -228,6 +304,10 @@ public interface IrOperationOrBuilder extends
    * @return The setField.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField getSetField();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField set_field = 20;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetFieldOrBuilder getSetFieldOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
@@ -239,6 +319,10 @@ public interface IrOperationOrBuilder extends
    * @return The setValue.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue getSetValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue set_value = 21;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValueOrBuilder getSetValueOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat string_concat = 22;</code>
@@ -250,6 +334,10 @@ public interface IrOperationOrBuilder extends
    * @return The stringConcat.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat getStringConcat();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat string_concat = 22;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcatOrBuilder getStringConcatOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow throw = 23;</code>
@@ -261,6 +349,10 @@ public interface IrOperationOrBuilder extends
    * @return The throw.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow getThrow();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow throw = 23;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrThrowOrBuilder getThrowOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTry try = 24;</code>
@@ -272,6 +364,10 @@ public interface IrOperationOrBuilder extends
    * @return The try.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTry getTry();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTry try = 24;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTryOrBuilder getTryOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp type_op = 25;</code>
@@ -283,6 +379,10 @@ public interface IrOperationOrBuilder extends
    * @return The typeOp.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp getTypeOp();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp type_op = 25;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOpOrBuilder getTypeOpOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg vararg = 26;</code>
@@ -294,6 +394,10 @@ public interface IrOperationOrBuilder extends
    * @return The vararg.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg getVararg();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg vararg = 26;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargOrBuilder getVarargOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen when = 27;</code>
@@ -305,6 +409,10 @@ public interface IrOperationOrBuilder extends
    * @return The when.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen getWhen();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen when = 27;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrWhenOrBuilder getWhenOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile while = 28;</code>
@@ -316,6 +424,10 @@ public interface IrOperationOrBuilder extends
    * @return The while.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile getWhile();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile while = 28;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrWhileOrBuilder getWhileOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression dynamic_member = 29;</code>
@@ -327,6 +439,10 @@ public interface IrOperationOrBuilder extends
    * @return The dynamicMember.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression getDynamicMember();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression dynamic_member = 29;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpressionOrBuilder getDynamicMemberOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression dynamic_operator = 30;</code>
@@ -338,6 +454,10 @@ public interface IrOperationOrBuilder extends
    * @return The dynamicOperator.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression getDynamicOperator();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression dynamic_operator = 30;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpressionOrBuilder getDynamicOperatorOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
@@ -349,6 +469,10 @@ public interface IrOperationOrBuilder extends
    * @return The localDelegatedPropertyReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference getLocalDelegatedPropertyReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReferenceOrBuilder getLocalDelegatedPropertyReferenceOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall constructor_call = 32;</code>
@@ -360,6 +484,10 @@ public interface IrOperationOrBuilder extends
    * @return The constructorCall.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getConstructorCall();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall constructor_call = 32;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder getConstructorCallOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
@@ -371,6 +499,10 @@ public interface IrOperationOrBuilder extends
    * @return The functionExpression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression getFunctionExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpressionOrBuilder getFunctionExpressionOrBuilder();
 
   /**
    * <pre>
@@ -390,6 +522,14 @@ public interface IrOperationOrBuilder extends
    * @return The errorExpression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression getErrorExpression();
+  /**
+   * <pre>
+   * Error code
+   * </pre>
+   *
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression error_expression = 34;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpressionOrBuilder getErrorExpressionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
@@ -401,6 +541,10 @@ public interface IrOperationOrBuilder extends
    * @return The errorCallExpression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression getErrorCallExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression error_call_expression = 35;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpressionOrBuilder getErrorCallExpressionOrBuilder();
 
   /**
    * <pre>
@@ -420,6 +564,14 @@ public interface IrOperationOrBuilder extends
    * @return The returnableBlock.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock getReturnableBlock();
+  /**
+   * <pre>
+   * Operations again
+   * </pre>
+   *
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock returnable_block = 36;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlockOrBuilder getReturnableBlockOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
@@ -431,6 +583,10 @@ public interface IrOperationOrBuilder extends
    * @return The inlinedFunctionBlock.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getInlinedFunctionBlock();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock inlined_function_block = 37;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlockOrBuilder getInlinedFunctionBlockOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
@@ -442,6 +598,10 @@ public interface IrOperationOrBuilder extends
    * @return The richFunctionReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference getRichFunctionReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference rich_function_reference = 38;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReferenceOrBuilder getRichFunctionReferenceOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
@@ -453,6 +613,10 @@ public interface IrOperationOrBuilder extends
    * @return The richPropertyReference.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference getRichPropertyReference();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference rich_property_reference = 39;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReferenceOrBuilder getRichPropertyReferenceOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase getOperationCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase getOperationCase();
 }

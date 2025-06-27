@@ -8,16 +8,46 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrType}
  */
-public  final class IrType extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        IrType, IrType.Builder> implements
+public final class IrType extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrType)
     IrTypeOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrType.class.getName());
+  }
+  // Use IrType.newBuilder() to construct.
+  private IrType(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private IrType() {
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrType.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrType.Builder.class);
+  }
+
   private int kindCase_ = 0;
+  @SuppressWarnings("serial")
   private java.lang.Object kind_;
-  public enum KindCase {
+  public enum KindCase
+      implements org.jetbrains.kotlin.protobuf.Internal.EnumLite,
+          org.jetbrains.kotlin.protobuf.AbstractMessage.InternalOneOfEnum {
     LEGACYSIMPLE(1),
     DYNAMIC(2),
     DNN(4),
@@ -28,6 +58,8 @@ public  final class IrType extends
       this.value = value;
     }
     /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
@@ -50,21 +82,16 @@ public  final class IrType extends
     }
   };
 
-  @java.lang.Override
   public KindCase
   getKindCase() {
     return KindCase.forNumber(
         kindCase_);
   }
 
-  private void clearKind() {
-    kindCase_ = 0;
-    kind_ = null;
-  }
-
   public static final int LEGACYSIMPLE_FIELD_NUMBER = 1;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+   * @return Whether the legacySimple field is set.
    */
   @java.lang.Override
   public boolean hasLegacySimple() {
@@ -72,6 +99,7 @@ public  final class IrType extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+   * @return The legacySimple.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple() {
@@ -83,40 +111,18 @@ public  final class IrType extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
-    value.getClass();  // minimal bytecode null check
-    kind_ = value;
-    kindCase_ = 1;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void mergeLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
-    value.getClass();  // minimal bytecode null check
-    if (kindCase_ == 1 &&
-        kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance()) {
-      kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      kind_ = value;
-    }
-    kindCase_ = 1;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
-   */
-  private void clearLegacySimple() {
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder getLegacySimpleOrBuilder() {
     if (kindCase_ == 1) {
-      kindCase_ = 0;
-      kind_ = null;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_;
     }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
   }
 
   public static final int DYNAMIC_FIELD_NUMBER = 2;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+   * @return Whether the dynamic field is set.
    */
   @java.lang.Override
   public boolean hasDynamic() {
@@ -124,6 +130,7 @@ public  final class IrType extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+   * @return The dynamic.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType getDynamic() {
@@ -135,40 +142,18 @@ public  final class IrType extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setDynamic(org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType value) {
-    value.getClass();  // minimal bytecode null check
-    kind_ = value;
-    kindCase_ = 2;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void mergeDynamic(org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType value) {
-    value.getClass();  // minimal bytecode null check
-    if (kindCase_ == 2 &&
-        kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance()) {
-      kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      kind_ = value;
-    }
-    kindCase_ = 2;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
-   */
-  private void clearDynamic() {
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder getDynamicOrBuilder() {
     if (kindCase_ == 2) {
-      kindCase_ = 0;
-      kind_ = null;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_;
     }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
   }
 
   public static final int DNN_FIELD_NUMBER = 4;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   * @return Whether the dnn field is set.
    */
   @java.lang.Override
   public boolean hasDnn() {
@@ -176,6 +161,7 @@ public  final class IrType extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   * @return The dnn.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn() {
@@ -187,40 +173,18 @@ public  final class IrType extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
-    value.getClass();  // minimal bytecode null check
-    kind_ = value;
-    kindCase_ = 4;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void mergeDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
-    value.getClass();  // minimal bytecode null check
-    if (kindCase_ == 4 &&
-        kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance()) {
-      kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      kind_ = value;
-    }
-    kindCase_ = 4;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
-   */
-  private void clearDnn() {
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder getDnnOrBuilder() {
     if (kindCase_ == 4) {
-      kindCase_ = 0;
-      kind_ = null;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_;
     }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
   }
 
   public static final int SIMPLE_FIELD_NUMBER = 5;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   * @return Whether the simple field is set.
    */
   @java.lang.Override
   public boolean hasSimple() {
@@ -228,6 +192,7 @@ public  final class IrType extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   * @return The simple.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
@@ -239,166 +204,528 @@ public  final class IrType extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
-    value.getClass();  // minimal bytecode null check
-    kind_ = value;
-    kindCase_ = 5;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void mergeSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
-    value.getClass();  // minimal bytecode null check
-    if (kindCase_ == 5 &&
-        kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance()) {
-      kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_)
-          .mergeFrom(value).buildPartial();
-    } else {
-      kind_ = value;
-    }
-    kindCase_ = 5;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
-   */
-  private void clearSimple() {
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder getSimpleOrBuilder() {
     if (kindCase_ == 5) {
-      kindCase_ = 0;
-      kind_ = null;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
     }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+  }
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    if (hasLegacySimple()) {
+      if (!getLegacySimple().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (hasDynamic()) {
+      if (!getDynamic().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (hasSimple()) {
+      if (!getSimple().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    memoizedIsInitialized = 1;
+    return true;
+  }
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    if (kindCase_ == 1) {
+      output.writeMessage(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_);
+    }
+    if (kindCase_ == 2) {
+      output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_);
+    }
+    if (kindCase_ == 4) {
+      output.writeMessage(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+    }
+    if (kindCase_ == 5) {
+      output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+    }
+    getUnknownFields().writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    if (kindCase_ == 1) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(1, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_);
+    }
+    if (kindCase_ == 2) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_);
+    }
+    if (kindCase_ == 4) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
+    }
+    if (kindCase_ == 5) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(5, (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_);
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrType)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.IrType other = (org.jetbrains.kotlin.backend.common.serialization.proto.IrType) obj;
+
+    if (!getKindCase().equals(other.getKindCase())) return false;
+    switch (kindCase_) {
+      case 1:
+        if (!getLegacySimple()
+            .equals(other.getLegacySimple())) return false;
+        break;
+      case 2:
+        if (!getDynamic()
+            .equals(other.getDynamic())) return false;
+        break;
+      case 4:
+        if (!getDnn()
+            .equals(other.getDnn())) return false;
+        break;
+      case 5:
+        if (!getSimple()
+            .equals(other.getSimple())) return false;
+        break;
+      case 0:
+      default:
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    switch (kindCase_) {
+      case 1:
+        hash = (37 * hash) + LEGACYSIMPLE_FIELD_NUMBER;
+        hash = (53 * hash) + getLegacySimple().hashCode();
+        break;
+      case 2:
+        hash = (37 * hash) + DYNAMIC_FIELD_NUMBER;
+        hash = (53 * hash) + getDynamic().hashCode();
+        break;
+      case 4:
+        hash = (37 * hash) + DNN_FIELD_NUMBER;
+        hash = (53 * hash) + getDnn().hashCode();
+        break;
+      case 5:
+        hash = (37 * hash) + SIMPLE_FIELD_NUMBER;
+        hash = (53 * hash) + getSimple().hashCode();
+        break;
+      case 0:
+      default:
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrType prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrType}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrType, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrType)
       org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrType.newBuilder()
-    private Builder() {
-      super(DEFAULT_INSTANCE);
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor;
     }
 
     @java.lang.Override
-    public KindCase
-        getKindCase() {
-      return instance.getKindCase();
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.IrType.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrType.Builder.class);
     }
 
-    public Builder clearKind() {
-      copyOnWrite();
-      instance.clearKind();
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrType.newBuilder()
+    private Builder() {
+
+    }
+
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      if (legacySimpleBuilder_ != null) {
+        legacySimpleBuilder_.clear();
+      }
+      if (dynamicBuilder_ != null) {
+        dynamicBuilder_.clear();
+      }
+      if (dnnBuilder_ != null) {
+        dnnBuilder_.clear();
+      }
+      if (simpleBuilder_ != null) {
+        simpleBuilder_.clear();
+      }
+      kindCase_ = 0;
+      kind_ = null;
       return this;
     }
 
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor;
+    }
 
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrType getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrType.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrType build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrType result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrType buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrType result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrType(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      buildPartialOneofs(result);
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.IrType result) {
+      int from_bitField0_ = bitField0_;
+    }
+
+    private void buildPartialOneofs(org.jetbrains.kotlin.backend.common.serialization.proto.IrType result) {
+      result.kindCase_ = kindCase_;
+      result.kind_ = this.kind_;
+      if (kindCase_ == 1 &&
+          legacySimpleBuilder_ != null) {
+        result.kind_ = legacySimpleBuilder_.build();
+      }
+      if (kindCase_ == 2 &&
+          dynamicBuilder_ != null) {
+        result.kind_ = dynamicBuilder_.build();
+      }
+      if (kindCase_ == 4 &&
+          dnnBuilder_ != null) {
+        result.kind_ = dnnBuilder_.build();
+      }
+      if (kindCase_ == 5 &&
+          simpleBuilder_ != null) {
+        result.kind_ = simpleBuilder_.build();
+      }
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrType) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrType)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrType other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrType.getDefaultInstance()) return this;
+      switch (other.getKindCase()) {
+        case LEGACYSIMPLE: {
+          mergeLegacySimple(other.getLegacySimple());
+          break;
+        }
+        case DYNAMIC: {
+          mergeDynamic(other.getDynamic());
+          break;
+        }
+        case DNN: {
+          mergeDnn(other.getDnn());
+          break;
+        }
+        case SIMPLE: {
+          mergeSimple(other.getSimple());
+          break;
+        }
+        case KIND_NOT_SET: {
+          break;
+        }
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      if (hasLegacySimple()) {
+        if (!getLegacySimple().isInitialized()) {
+          return false;
+        }
+      }
+      if (hasDynamic()) {
+        if (!getDynamic().isInitialized()) {
+          return false;
+        }
+      }
+      if (hasSimple()) {
+        if (!getSimple().isInitialized()) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              input.readMessage(
+                  getLegacySimpleFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              kindCase_ = 1;
+              break;
+            } // case 10
+            case 18: {
+              input.readMessage(
+                  getDynamicFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              kindCase_ = 2;
+              break;
+            } // case 18
+            case 34: {
+              input.readMessage(
+                  getDnnFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              kindCase_ = 4;
+              break;
+            } // case 34
+            case 42: {
+              input.readMessage(
+                  getSimpleFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              kindCase_ = 5;
+              break;
+            } // case 42
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int kindCase_ = 0;
+    private java.lang.Object kind_;
+    public KindCase
+        getKindCase() {
+      return KindCase.forNumber(
+          kindCase_);
+    }
+
+    public Builder clearKind() {
+      kindCase_ = 0;
+      kind_ = null;
+      onChanged();
+      return this;
+    }
+
+    private int bitField0_;
+
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder> legacySimpleBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+     * @return Whether the legacySimple field is set.
      */
     @java.lang.Override
     public boolean hasLegacySimple() {
-      return instance.hasLegacySimple();
+      return kindCase_ == 1;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+     * @return The legacySimple.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple() {
-      return instance.getLegacySimple();
+      if (legacySimpleBuilder_ == null) {
+        if (kindCase_ == 1) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
+      } else {
+        if (kindCase_ == 1) {
+          return legacySimpleBuilder_.getMessage();
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
     public Builder setLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
-      copyOnWrite();
-      instance.setLegacySimple(value);
+      if (legacySimpleBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        kind_ = value;
+        onChanged();
+      } else {
+        legacySimpleBuilder_.setMessage(value);
+      }
+      kindCase_ = 1;
       return this;
     }
     /**
@@ -406,47 +733,141 @@ public  final class IrType extends
      */
     public Builder setLegacySimple(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder builderForValue) {
-      copyOnWrite();
-      instance.setLegacySimple(builderForValue.build());
+      if (legacySimpleBuilder_ == null) {
+        kind_ = builderForValue.build();
+        onChanged();
+      } else {
+        legacySimpleBuilder_.setMessage(builderForValue.build());
+      }
+      kindCase_ = 1;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
     public Builder mergeLegacySimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy value) {
-      copyOnWrite();
-      instance.mergeLegacySimple(value);
+      if (legacySimpleBuilder_ == null) {
+        if (kindCase_ == 1 &&
+            kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance()) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          kind_ = value;
+        }
+        onChanged();
+      } else {
+        if (kindCase_ == 1) {
+          legacySimpleBuilder_.mergeFrom(value);
+        } else {
+          legacySimpleBuilder_.setMessage(value);
+        }
+      }
+      kindCase_ = 1;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
      */
     public Builder clearLegacySimple() {
-      copyOnWrite();
-      instance.clearLegacySimple();
+      if (legacySimpleBuilder_ == null) {
+        if (kindCase_ == 1) {
+          kindCase_ = 0;
+          kind_ = null;
+          onChanged();
+        }
+      } else {
+        if (kindCase_ == 1) {
+          kindCase_ = 0;
+          kind_ = null;
+        }
+        legacySimpleBuilder_.clear();
+      }
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder getLegacySimpleBuilder() {
+      return getLegacySimpleFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder getLegacySimpleOrBuilder() {
+      if ((kindCase_ == 1) && (legacySimpleBuilder_ != null)) {
+        return legacySimpleBuilder_.getMessageOrBuilder();
+      } else {
+        if (kindCase_ == 1) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder> 
+        getLegacySimpleFieldBuilder() {
+      if (legacySimpleBuilder_ == null) {
+        if (!(kindCase_ == 1)) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.getDefaultInstance();
+        }
+        legacySimpleBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder>(
+                (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy) kind_,
+                getParentForChildren(),
+                isClean());
+        kind_ = null;
+      }
+      kindCase_ = 1;
+      onChanged();
+      return legacySimpleBuilder_;
+    }
 
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder> dynamicBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+     * @return Whether the dynamic field is set.
      */
     @java.lang.Override
     public boolean hasDynamic() {
-      return instance.hasDynamic();
+      return kindCase_ == 2;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+     * @return The dynamic.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType getDynamic() {
-      return instance.getDynamic();
+      if (dynamicBuilder_ == null) {
+        if (kindCase_ == 2) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
+      } else {
+        if (kindCase_ == 2) {
+          return dynamicBuilder_.getMessage();
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
      */
     public Builder setDynamic(org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType value) {
-      copyOnWrite();
-      instance.setDynamic(value);
+      if (dynamicBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        kind_ = value;
+        onChanged();
+      } else {
+        dynamicBuilder_.setMessage(value);
+      }
+      kindCase_ = 2;
       return this;
     }
     /**
@@ -454,47 +875,141 @@ public  final class IrType extends
      */
     public Builder setDynamic(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.Builder builderForValue) {
-      copyOnWrite();
-      instance.setDynamic(builderForValue.build());
+      if (dynamicBuilder_ == null) {
+        kind_ = builderForValue.build();
+        onChanged();
+      } else {
+        dynamicBuilder_.setMessage(builderForValue.build());
+      }
+      kindCase_ = 2;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
      */
     public Builder mergeDynamic(org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType value) {
-      copyOnWrite();
-      instance.mergeDynamic(value);
+      if (dynamicBuilder_ == null) {
+        if (kindCase_ == 2 &&
+            kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance()) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          kind_ = value;
+        }
+        onChanged();
+      } else {
+        if (kindCase_ == 2) {
+          dynamicBuilder_.mergeFrom(value);
+        } else {
+          dynamicBuilder_.setMessage(value);
+        }
+      }
+      kindCase_ = 2;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
      */
     public Builder clearDynamic() {
-      copyOnWrite();
-      instance.clearDynamic();
+      if (dynamicBuilder_ == null) {
+        if (kindCase_ == 2) {
+          kindCase_ = 0;
+          kind_ = null;
+          onChanged();
+        }
+      } else {
+        if (kindCase_ == 2) {
+          kindCase_ = 0;
+          kind_ = null;
+        }
+        dynamicBuilder_.clear();
+      }
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.Builder getDynamicBuilder() {
+      return getDynamicFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder getDynamicOrBuilder() {
+      if ((kindCase_ == 2) && (dynamicBuilder_ != null)) {
+        return dynamicBuilder_.getMessageOrBuilder();
+      } else {
+        if (kindCase_ == 2) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder> 
+        getDynamicFieldBuilder() {
+      if (dynamicBuilder_ == null) {
+        if (!(kindCase_ == 2)) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
+        }
+        dynamicBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder>(
+                (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_,
+                getParentForChildren(),
+                isClean());
+        kind_ = null;
+      }
+      kindCase_ = 2;
+      onChanged();
+      return dynamicBuilder_;
+    }
 
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder> dnnBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     * @return Whether the dnn field is set.
      */
     @java.lang.Override
     public boolean hasDnn() {
-      return instance.hasDnn();
+      return kindCase_ == 4;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     * @return The dnn.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn() {
-      return instance.getDnn();
+      if (dnnBuilder_ == null) {
+        if (kindCase_ == 4) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+      } else {
+        if (kindCase_ == 4) {
+          return dnnBuilder_.getMessage();
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
      */
     public Builder setDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
-      copyOnWrite();
-      instance.setDnn(value);
+      if (dnnBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        kind_ = value;
+        onChanged();
+      } else {
+        dnnBuilder_.setMessage(value);
+      }
+      kindCase_ = 4;
       return this;
     }
     /**
@@ -502,47 +1017,141 @@ public  final class IrType extends
      */
     public Builder setDnn(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder builderForValue) {
-      copyOnWrite();
-      instance.setDnn(builderForValue.build());
+      if (dnnBuilder_ == null) {
+        kind_ = builderForValue.build();
+        onChanged();
+      } else {
+        dnnBuilder_.setMessage(builderForValue.build());
+      }
+      kindCase_ = 4;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
      */
     public Builder mergeDnn(org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType value) {
-      copyOnWrite();
-      instance.mergeDnn(value);
+      if (dnnBuilder_ == null) {
+        if (kindCase_ == 4 &&
+            kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance()) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          kind_ = value;
+        }
+        onChanged();
+      } else {
+        if (kindCase_ == 4) {
+          dnnBuilder_.mergeFrom(value);
+        } else {
+          dnnBuilder_.setMessage(value);
+        }
+      }
+      kindCase_ = 4;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
      */
     public Builder clearDnn() {
-      copyOnWrite();
-      instance.clearDnn();
+      if (dnnBuilder_ == null) {
+        if (kindCase_ == 4) {
+          kindCase_ = 0;
+          kind_ = null;
+          onChanged();
+        }
+      } else {
+        if (kindCase_ == 4) {
+          kindCase_ = 0;
+          kind_ = null;
+        }
+        dnnBuilder_.clear();
+      }
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder getDnnBuilder() {
+      return getDnnFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder getDnnOrBuilder() {
+      if ((kindCase_ == 4) && (dnnBuilder_ != null)) {
+        return dnnBuilder_.getMessageOrBuilder();
+      } else {
+        if (kindCase_ == 4) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder> 
+        getDnnFieldBuilder() {
+      if (dnnBuilder_ == null) {
+        if (!(kindCase_ == 4)) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.getDefaultInstance();
+        }
+        dnnBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder>(
+                (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_,
+                getParentForChildren(),
+                isClean());
+        kind_ = null;
+      }
+      kindCase_ = 4;
+      onChanged();
+      return dnnBuilder_;
+    }
 
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder> simpleBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     * @return Whether the simple field is set.
      */
     @java.lang.Override
     public boolean hasSimple() {
-      return instance.hasSimple();
+      return kindCase_ == 5;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     * @return The simple.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple() {
-      return instance.getSimple();
+      if (simpleBuilder_ == null) {
+        if (kindCase_ == 5) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+      } else {
+        if (kindCase_ == 5) {
+          return simpleBuilder_.getMessage();
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
      */
     public Builder setSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
-      copyOnWrite();
-      instance.setSimple(value);
+      if (simpleBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        kind_ = value;
+        onChanged();
+      } else {
+        simpleBuilder_.setMessage(value);
+      }
+      kindCase_ = 5;
       return this;
     }
     /**
@@ -550,105 +1159,146 @@ public  final class IrType extends
      */
     public Builder setSimple(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder builderForValue) {
-      copyOnWrite();
-      instance.setSimple(builderForValue.build());
+      if (simpleBuilder_ == null) {
+        kind_ = builderForValue.build();
+        onChanged();
+      } else {
+        simpleBuilder_.setMessage(builderForValue.build());
+      }
+      kindCase_ = 5;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
      */
     public Builder mergeSimple(org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType value) {
-      copyOnWrite();
-      instance.mergeSimple(value);
+      if (simpleBuilder_ == null) {
+        if (kindCase_ == 5 &&
+            kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance()) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          kind_ = value;
+        }
+        onChanged();
+      } else {
+        if (kindCase_ == 5) {
+          simpleBuilder_.mergeFrom(value);
+        } else {
+          simpleBuilder_.setMessage(value);
+        }
+      }
+      kindCase_ = 5;
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
      */
     public Builder clearSimple() {
-      copyOnWrite();
-      instance.clearSimple();
+      if (simpleBuilder_ == null) {
+        if (kindCase_ == 5) {
+          kindCase_ = 0;
+          kind_ = null;
+          onChanged();
+        }
+      } else {
+        if (kindCase_ == 5) {
+          kindCase_ = 0;
+          kind_ = null;
+        }
+        simpleBuilder_.clear();
+      }
       return this;
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder getSimpleBuilder() {
+      return getSimpleFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder getSimpleOrBuilder() {
+      if ((kindCase_ == 5) && (simpleBuilder_ != null)) {
+        return simpleBuilder_.getMessageOrBuilder();
+      } else {
+        if (kindCase_ == 5) {
+          return (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_;
+        }
+        return org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder> 
+        getSimpleFieldBuilder() {
+      if (simpleBuilder_ == null) {
+        if (!(kindCase_ == 5)) {
+          kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.getDefaultInstance();
+        }
+        simpleBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder>(
+                (org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType) kind_,
+                getParentForChildren(),
+                isClean());
+        kind_ = null;
+      }
+      kindCase_ = 5;
+      onChanged();
+      return simpleBuilder_;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrType)
   }
-  private byte memoizedIsInitialized = 2;
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.IrType();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "kind_",
-            "kindCase_",
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy.class,
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.class,
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.class,
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType.class,
-          };
-          java.lang.String info =
-              "\u0004\u0004\u0001\u0000\u0001\u0005\u0004\u0000\u0000\u0003\u0001\u043c\u0000\u0002" +
-              "\u043c\u0000\u0004<\u0000\u0005\u043c\u0000";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.IrType> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.IrType.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.IrType>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return memoizedIsInitialized;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrType)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.IrType DEFAULT_INSTANCE;
   static {
-    IrType defaultInstance = new IrType();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      IrType.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.IrType();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrType getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<IrType> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<IrType>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<IrType>() {
+    @java.lang.Override
+    public IrType parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<IrType> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<IrType> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrType getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

@@ -8,17 +8,46 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature}
  */
-public  final class LocalSignature extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        LocalSignature, LocalSignature.Builder> implements
+public final class LocalSignature extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)
     LocalSignatureOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      LocalSignature.class.getName());
+  }
+  // Use LocalSignature.newBuilder() to construct.
+  private LocalSignature(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private LocalSignature() {
     localFqName_ = emptyIntList();
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.class, org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.Builder.class);
+  }
+
   private int bitField0_;
   public static final int LOCAL_FQ_NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.protobuf.Internal.IntList localFqName_;
+  @SuppressWarnings("serial")
+  private org.jetbrains.kotlin.protobuf.Internal.IntList localFqName_ =
+      emptyIntList();
   /**
    * <code>repeated int32 local_fq_name = 1;</code>
    * @return A list containing the localFqName.
@@ -32,7 +61,6 @@ public  final class LocalSignature extends
    * <code>repeated int32 local_fq_name = 1;</code>
    * @return The count of localFqName.
    */
-  @java.lang.Override
   public int getLocalFqNameCount() {
     return localFqName_.size();
   }
@@ -41,55 +69,13 @@ public  final class LocalSignature extends
    * @param index The index of the element to return.
    * @return The localFqName at the given index.
    */
-  @java.lang.Override
   public int getLocalFqName(int index) {
     return localFqName_.getInt(index);
   }
   private int localFqNameMemoizedSerializedSize = -1;
-  private void ensureLocalFqNameIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.IntList tmp = localFqName_;
-    if (!tmp.isModifiable()) {
-      localFqName_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-  /**
-   * <code>repeated int32 local_fq_name = 1;</code>
-   * @param index The index to set the value at.
-   * @param value The localFqName to set.
-   */
-  private void setLocalFqName(
-      int index, int value) {
-    ensureLocalFqNameIsMutable();
-    localFqName_.setInt(index, value);
-  }
-  /**
-   * <code>repeated int32 local_fq_name = 1;</code>
-   * @param value The localFqName to add.
-   */
-  private void addLocalFqName(int value) {
-    ensureLocalFqNameIsMutable();
-    localFqName_.addInt(value);
-  }
-  /**
-   * <code>repeated int32 local_fq_name = 1;</code>
-   * @param values The localFqName to add.
-   */
-  private void addAllLocalFqName(
-      java.lang.Iterable<? extends java.lang.Integer> values) {
-    ensureLocalFqNameIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, localFqName_);
-  }
-  /**
-   * <code>repeated int32 local_fq_name = 1;</code>
-   */
-  private void clearLocalFqName() {
-    localFqName_ = emptyIntList();
-  }
 
   public static final int LOCAL_HASH_FIELD_NUMBER = 2;
-  private long localHash_;
+  private long localHash_ = 0L;
   /**
    * <code>int64 local_hash = 2;</code>
    * @return Whether the localHash field is set.
@@ -106,155 +92,413 @@ public  final class LocalSignature extends
   public long getLocalHash() {
     return localHash_;
   }
-  /**
-   * <code>int64 local_hash = 2;</code>
-   * @param value The localHash to set.
-   */
-  private void setLocalHash(long value) {
-    bitField0_ |= 0x00000001;
-    localHash_ = value;
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    memoizedIsInitialized = 1;
+    return true;
   }
-  /**
-   * <code>int64 local_hash = 2;</code>
-   */
-  private void clearLocalHash() {
-    bitField0_ = (bitField0_ & ~0x00000001);
-    localHash_ = 0L;
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    getSerializedSize();
+    if (getLocalFqNameList().size() > 0) {
+      output.writeUInt32NoTag(10);
+      output.writeUInt32NoTag(localFqNameMemoizedSerializedSize);
+    }
+    for (int i = 0; i < localFqName_.size(); i++) {
+      output.writeInt32NoTag(localFqName_.getInt(i));
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeInt64(2, localHash_);
+    }
+    getUnknownFields().writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    {
+      int dataSize = 0;
+      for (int i = 0; i < localFqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(localFqName_.getInt(i));
+      }
+      size += dataSize;
+      if (!getLocalFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      localFqNameMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(2, localHash_);
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature other = (org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature) obj;
+
+    if (!getLocalFqNameList()
+        .equals(other.getLocalFqNameList())) return false;
+    if (hasLocalHash() != other.hasLocalHash()) return false;
+    if (hasLocalHash()) {
+      if (getLocalHash()
+          != other.getLocalHash()) return false;
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    if (getLocalFqNameCount() > 0) {
+      hash = (37 * hash) + LOCAL_FQ_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getLocalFqNameList().hashCode();
+    }
+    if (hasLocalHash()) {
+      hash = (37 * hash) + LOCAL_HASH_FIELD_NUMBER;
+      hash = (53 * hash) + org.jetbrains.kotlin.protobuf.Internal.hashLong(
+          getLocalHash());
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)
       org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignatureOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.newBuilder()
-    private Builder() {
-      super(DEFAULT_INSTANCE);
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor;
     }
 
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.class, org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.Builder.class);
+    }
 
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.newBuilder()
+    private Builder() {
+
+    }
+
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      localFqName_ = emptyIntList();
+      localHash_ = 0L;
+      return this;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        localFqName_.makeImmutable();
+        result.localFqName_ = localFqName_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.localHash_ = localHash_;
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.getDefaultInstance()) return this;
+      if (!other.localFqName_.isEmpty()) {
+        if (localFqName_.isEmpty()) {
+          localFqName_ = other.localFqName_;
+          localFqName_.makeImmutable();
+          bitField0_ |= 0x00000001;
+        } else {
+          ensureLocalFqNameIsMutable();
+          localFqName_.addAll(other.localFqName_);
+        }
+        onChanged();
+      }
+      if (other.hasLocalHash()) {
+        setLocalHash(other.getLocalHash());
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              int v = input.readInt32();
+              ensureLocalFqNameIsMutable();
+              localFqName_.addInt(v);
+              break;
+            } // case 8
+            case 10: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              ensureLocalFqNameIsMutable();
+              while (input.getBytesUntilLimit() > 0) {
+                localFqName_.addInt(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            } // case 10
+            case 16: {
+              localHash_ = input.readInt64();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 16
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int bitField0_;
+
+    private org.jetbrains.kotlin.protobuf.Internal.IntList localFqName_ = emptyIntList();
+    private void ensureLocalFqNameIsMutable() {
+      if (!localFqName_.isModifiable()) {
+        localFqName_ = makeMutableCopy(localFqName_);
+      }
+      bitField0_ |= 0x00000001;
+    }
     /**
      * <code>repeated int32 local_fq_name = 1;</code>
      * @return A list containing the localFqName.
      */
-    @java.lang.Override
     public java.util.List<java.lang.Integer>
         getLocalFqNameList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getLocalFqNameList());
+      localFqName_.makeImmutable();
+      return localFqName_;
     }
     /**
      * <code>repeated int32 local_fq_name = 1;</code>
      * @return The count of localFqName.
      */
-    @java.lang.Override
     public int getLocalFqNameCount() {
-      return instance.getLocalFqNameCount();
+      return localFqName_.size();
     }
     /**
      * <code>repeated int32 local_fq_name = 1;</code>
      * @param index The index of the element to return.
      * @return The localFqName at the given index.
      */
-    @java.lang.Override
     public int getLocalFqName(int index) {
-      return instance.getLocalFqName(index);
+      return localFqName_.getInt(index);
     }
     /**
      * <code>repeated int32 local_fq_name = 1;</code>
+     * @param index The index to set the value at.
      * @param value The localFqName to set.
      * @return This builder for chaining.
      */
     public Builder setLocalFqName(
         int index, int value) {
-      copyOnWrite();
-      instance.setLocalFqName(index, value);
+
+      ensureLocalFqNameIsMutable();
+      localFqName_.setInt(index, value);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -263,8 +507,11 @@ public  final class LocalSignature extends
      * @return This builder for chaining.
      */
     public Builder addLocalFqName(int value) {
-      copyOnWrite();
-      instance.addLocalFqName(value);
+
+      ensureLocalFqNameIsMutable();
+      localFqName_.addInt(value);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -274,8 +521,11 @@ public  final class LocalSignature extends
      */
     public Builder addAllLocalFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      copyOnWrite();
-      instance.addAllLocalFqName(values);
+      ensureLocalFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, localFqName_);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -283,18 +533,20 @@ public  final class LocalSignature extends
      * @return This builder for chaining.
      */
     public Builder clearLocalFqName() {
-      copyOnWrite();
-      instance.clearLocalFqName();
+      localFqName_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      onChanged();
       return this;
     }
 
+    private long localHash_ ;
     /**
      * <code>int64 local_hash = 2;</code>
      * @return Whether the localHash field is set.
      */
     @java.lang.Override
     public boolean hasLocalHash() {
-      return instance.hasLocalHash();
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <code>int64 local_hash = 2;</code>
@@ -302,7 +554,7 @@ public  final class LocalSignature extends
      */
     @java.lang.Override
     public long getLocalHash() {
-      return instance.getLocalHash();
+      return localHash_;
     }
     /**
      * <code>int64 local_hash = 2;</code>
@@ -310,8 +562,10 @@ public  final class LocalSignature extends
      * @return This builder for chaining.
      */
     public Builder setLocalHash(long value) {
-      copyOnWrite();
-      instance.setLocalHash(value);
+
+      localHash_ = value;
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -319,84 +573,59 @@ public  final class LocalSignature extends
      * @return This builder for chaining.
      */
     public Builder clearLocalHash() {
-      copyOnWrite();
-      instance.clearLocalHash();
+      bitField0_ = (bitField0_ & ~0x00000002);
+      localHash_ = 0L;
+      onChanged();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)
   }
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "bitField0_",
-            "localFqName_",
-            "localHash_",
-          };
-          java.lang.String info =
-              "\u0004\u0002\u0000\u0001\u0001\u0002\u0002\u0000\u0001\u0000\u0001\'\u0002\u1002" +
-              "\u0000";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return (byte) 1;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature DEFAULT_INSTANCE;
   static {
-    LocalSignature defaultInstance = new LocalSignature();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      LocalSignature.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<LocalSignature> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<LocalSignature>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<LocalSignature>() {
+    @java.lang.Override
+    public LocalSignature parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<LocalSignature> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<LocalSignature> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

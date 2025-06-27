@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrSpreadElementOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrSpreadElementOrBuilder extends
    * @return The expression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getExpressionOrBuilder();
 
   /**
    * <code>int64 coordinates = 2 [features = { ... }</code>

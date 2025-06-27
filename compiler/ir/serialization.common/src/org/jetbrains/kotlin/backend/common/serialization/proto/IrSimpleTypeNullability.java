@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
  * Protobuf enum {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability}
  */
 public enum IrSimpleTypeNullability
-    implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
   /**
    * <code>MARKED_NULLABLE = 0;</code>
    */
@@ -24,6 +24,15 @@ public enum IrSimpleTypeNullability
   DEFINITELY_NOT_NULL(2),
   ;
 
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrSimpleTypeNullability.class.getName());
+  }
   /**
    * <code>MARKED_NULLABLE = 0;</code>
    */
@@ -38,14 +47,13 @@ public enum IrSimpleTypeNullability
   public static final int DEFINITELY_NOT_NULL_VALUE = 2;
 
 
-  @java.lang.Override
   public final int getNumber() {
     return value;
   }
 
   /**
-   * @param value The number of the enum to look for.
-   * @return The enum associated with the given number.
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
@@ -53,6 +61,10 @@ public enum IrSimpleTypeNullability
     return forNumber(value);
   }
 
+  /**
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
+   */
   public static IrSimpleTypeNullability forNumber(int value) {
     switch (value) {
       case 0: return MARKED_NULLABLE;
@@ -69,25 +81,34 @@ public enum IrSimpleTypeNullability
   private static final org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<
       IrSimpleTypeNullability> internalValueMap =
         new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrSimpleTypeNullability>() {
-          @java.lang.Override
           public IrSimpleTypeNullability findValueByNumber(int number) {
             return IrSimpleTypeNullability.forNumber(number);
           }
         };
 
-  public static org.jetbrains.kotlin.protobuf.Internal.EnumVerifier 
-      internalGetVerifier() {
-    return IrSimpleTypeNullabilityVerifier.INSTANCE;
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+      getValueDescriptor() {
+    return getDescriptor().getValues().get(ordinal());
+  }
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptorForType() {
+    return getDescriptor();
+  }
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.getDescriptor().getEnumTypes().get(0);
   }
 
-  private static final class IrSimpleTypeNullabilityVerifier implements 
-       org.jetbrains.kotlin.protobuf.Internal.EnumVerifier { 
-          static final org.jetbrains.kotlin.protobuf.Internal.EnumVerifier           INSTANCE = new IrSimpleTypeNullabilityVerifier();
-          @java.lang.Override
-          public boolean isInRange(int number) {
-            return IrSimpleTypeNullability.forNumber(number) != null;
-          }
-        };
+  private static final IrSimpleTypeNullability[] VALUES = values();
+
+  public static IrSimpleTypeNullability valueOf(
+      org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+    if (desc.getType() != getDescriptor()) {
+      throw new java.lang.IllegalArgumentException(
+        "EnumValueDescriptor is not for this type.");
+    }
+    return VALUES[desc.getIndex()];
+  }
 
   private final int value;
 

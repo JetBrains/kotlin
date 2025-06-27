@@ -60,8 +60,8 @@ fun main() {
     }
 
     fun generateRelease() {
-        for (protoPath in PROTO_PATHS) {
-            execProtoc(protoPath.file, protoPath.outPath, liteMode = true)
+        for (protoPath in listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS) {
+            execProtoc(protoPath.file, protoPath.outPath, liteMode = false)
             renamePackages(protoPath.file, protoPath.outPath)
         }
     }

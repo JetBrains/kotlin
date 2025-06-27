@@ -7,28 +7,64 @@ package org.jetbrains.kotlin.metadata;
 
 public final class SerializationPluginMetadataExtensions {
   private SerializationPluginMetadataExtensions() {}
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      SerializationPluginMetadataExtensions.class.getName());
+  }
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder);
+  }
+
+  public static void registerAllExtensions(
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (org.jetbrains.kotlin.protobuf.ExtensionRegistryLite) registry);
   }
   public static final int PROPERTIES_NAMES_IN_PROGRAM_ORDER_FIELD_NUMBER = 18000;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Class,
-      java.util.List<java.lang.Integer>> propertiesNamesInProgramOrder = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
-        null,
-        null,
-        18000,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
-        false,
-        java.lang.Integer.class);
+      java.util.List<java.lang.Integer>> propertiesNamesInProgramOrder = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
 
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      descriptor;
   static {
+    java.lang.String[] descriptorData = {
+      "\n2core/metadata/src/properties_order_ext" +
+      "ension.proto\022\035org.jetbrains.kotlin.metad" +
+      "ata\032 core/metadata/src/metadata.proto\032#c" +
+      "ore/metadata/src/ext_options.proto:X\n!pr" +
+      "operties_names_in_program_order\022$.org.je" +
+      "tbrains.kotlin.metadata.Class\030\320\214\001 \003(\005B\005\252" +
+      "\001\002\030\002B,B%SerializationPluginMetadataExten" +
+      "sions\222\003\002 \003b\010editionsp\350\007"
+    };
+    descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor(),
+          org.jetbrains.kotlin.metadata.ExtOptionsProtoBuf.getDescriptor(),
+        });
+    propertiesNamesInProgramOrder.internalInit(descriptor.getExtensions().get(0));
+    descriptor.resolveAllFeaturesImmutable();
+    org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor();
+    org.jetbrains.kotlin.metadata.ExtOptionsProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

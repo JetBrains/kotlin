@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface FileLocalIdSignatureOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int32 container = 1 [features = { ... }</code>

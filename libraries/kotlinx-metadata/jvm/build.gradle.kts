@@ -24,7 +24,7 @@ dependencies {
     embedded(project(":kotlin-metadata"))
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
-    embedded(protobufLite())
+    embedded(protobufFull())
     testImplementation(kotlinTest("junit5"))
     testImplementation(libs.intellij.asm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

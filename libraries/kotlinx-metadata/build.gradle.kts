@@ -13,7 +13,7 @@ sourceSets {
 dependencies {
     api(kotlinStdlib())
     compileOnly(project(":core:metadata"))
-    compileOnly(protobufLite())
+    compileOnly(protobufFull())
 }
 
 kotlin {

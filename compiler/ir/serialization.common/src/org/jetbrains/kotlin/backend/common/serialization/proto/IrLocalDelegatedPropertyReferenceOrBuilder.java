@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrLocalDelegatedPropertyReferenceOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 delegate = 1 [features = { ... }</code>

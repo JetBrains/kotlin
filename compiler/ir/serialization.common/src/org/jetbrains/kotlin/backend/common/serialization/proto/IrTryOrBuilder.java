@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrTryOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrTry)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrTryOrBuilder extends
    * @return The result.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getResult();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getResultOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement catch = 2;</code>
@@ -33,6 +37,16 @@ public interface IrTryOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement catch = 2;</code>
    */
   int getCatchCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement catch = 2;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrBuilder> 
+      getCatchOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement catch = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrBuilder getCatchOrBuilder(
+      int index);
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression finally = 3;</code>
@@ -44,4 +58,8 @@ public interface IrTryOrBuilder extends
    * @return The finally.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getFinally();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression finally = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getFinallyOrBuilder();
 }

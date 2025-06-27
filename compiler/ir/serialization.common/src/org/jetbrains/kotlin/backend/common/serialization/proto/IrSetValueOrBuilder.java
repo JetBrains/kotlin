@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrSetValueOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetValue)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 symbol = 1 [features = { ... }</code>
@@ -30,6 +30,10 @@ public interface IrSetValueOrBuilder extends
    * @return The value.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getValueOrBuilder();
 
   /**
    * <code>int32 origin_name = 3;</code>

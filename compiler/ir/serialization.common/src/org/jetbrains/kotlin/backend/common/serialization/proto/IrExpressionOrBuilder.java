@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrExpressionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation operation = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrExpressionOrBuilder extends
    * @return The operation.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation getOperation();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation operation = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrOperationOrBuilder getOperationOrBuilder();
 
   /**
    * <code>int32 type = 2 [features = { ... }</code>

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrRichFunctionReferenceOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrRichFunctionReference)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
@@ -22,6 +22,16 @@ public interface IrRichFunctionReferenceOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
    */
   int getBoundValuesCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
+      getBoundValuesOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getBoundValuesOrBuilder(
+      int index);
 
   /**
    * <code>int64 reflection_target_symbol = 2;</code>
@@ -55,6 +65,10 @@ public interface IrRichFunctionReferenceOrBuilder extends
    * @return The invokeFunction.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getInvokeFunction();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction invoke_function = 4 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getInvokeFunctionOrBuilder();
 
   /**
    * <code>int64 flags = 5 [default = 0];</code>

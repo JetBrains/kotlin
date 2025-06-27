@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrFunctionBaseOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrFunctionBaseOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int64 name_type = 2 [features = { ... }</code>
@@ -44,6 +48,16 @@ public interface IrFunctionBaseOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
    */
   int getTypeParameterCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
+      getTypeParameterOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getTypeParameterOrBuilder(
+      int index);
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 4;</code>
@@ -55,6 +69,10 @@ public interface IrFunctionBaseOrBuilder extends
    * @return The dispatchReceiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getDispatchReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getDispatchReceiverOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
@@ -69,6 +87,16 @@ public interface IrFunctionBaseOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
    */
   int getContextParameterCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> 
+      getContextParameterOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter context_parameter = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getContextParameterOrBuilder(
+      int index);
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
@@ -80,6 +108,10 @@ public interface IrFunctionBaseOrBuilder extends
    * @return The extensionReceiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getExtensionReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getExtensionReceiverOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
@@ -94,6 +126,16 @@ public interface IrFunctionBaseOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
    */
   int getRegularParameterCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> 
+      getRegularParameterOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter regular_parameter = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getRegularParameterOrBuilder(
+      int index);
 
   /**
    * <pre>

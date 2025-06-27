@@ -58,7 +58,7 @@ dependencies {
     compileOnly(project(":core:metadata"))
     compileOnly(project(":kotlin-metadata"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(protobufLite())
+    compileOnly(protobufFull())
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":compiler:tests-common", "tests-jar"))

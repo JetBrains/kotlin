@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrReturnableBlockOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrReturnableBlock)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 symbol = 1 [features = { ... }</code>
@@ -30,4 +30,8 @@ public interface IrReturnableBlockOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder getBaseOrBuilder();
 }

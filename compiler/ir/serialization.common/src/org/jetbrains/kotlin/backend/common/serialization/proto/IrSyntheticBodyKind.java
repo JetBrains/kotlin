@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
  * Protobuf enum {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKind}
  */
 public enum IrSyntheticBodyKind
-    implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
   /**
    * <code>ENUM_VALUES = 1;</code>
    */
@@ -24,6 +24,15 @@ public enum IrSyntheticBodyKind
   ENUM_ENTRIES(3),
   ;
 
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrSyntheticBodyKind.class.getName());
+  }
   /**
    * <code>ENUM_VALUES = 1;</code>
    */
@@ -38,14 +47,13 @@ public enum IrSyntheticBodyKind
   public static final int ENUM_ENTRIES_VALUE = 3;
 
 
-  @java.lang.Override
   public final int getNumber() {
     return value;
   }
 
   /**
-   * @param value The number of the enum to look for.
-   * @return The enum associated with the given number.
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
@@ -53,6 +61,10 @@ public enum IrSyntheticBodyKind
     return forNumber(value);
   }
 
+  /**
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
+   */
   public static IrSyntheticBodyKind forNumber(int value) {
     switch (value) {
       case 1: return ENUM_VALUES;
@@ -69,25 +81,34 @@ public enum IrSyntheticBodyKind
   private static final org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<
       IrSyntheticBodyKind> internalValueMap =
         new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrSyntheticBodyKind>() {
-          @java.lang.Override
           public IrSyntheticBodyKind findValueByNumber(int number) {
             return IrSyntheticBodyKind.forNumber(number);
           }
         };
 
-  public static org.jetbrains.kotlin.protobuf.Internal.EnumVerifier 
-      internalGetVerifier() {
-    return IrSyntheticBodyKindVerifier.INSTANCE;
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+      getValueDescriptor() {
+    return getDescriptor().getValues().get(ordinal());
+  }
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptorForType() {
+    return getDescriptor();
+  }
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.getDescriptor().getEnumTypes().get(2);
   }
 
-  private static final class IrSyntheticBodyKindVerifier implements 
-       org.jetbrains.kotlin.protobuf.Internal.EnumVerifier { 
-          static final org.jetbrains.kotlin.protobuf.Internal.EnumVerifier           INSTANCE = new IrSyntheticBodyKindVerifier();
-          @java.lang.Override
-          public boolean isInRange(int number) {
-            return IrSyntheticBodyKind.forNumber(number) != null;
-          }
-        };
+  private static final IrSyntheticBodyKind[] VALUES = values();
+
+  public static IrSyntheticBodyKind valueOf(
+      org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+    if (desc.getType() != getDescriptor()) {
+      throw new java.lang.IllegalArgumentException(
+        "EnumValueDescriptor is not for this type.");
+    }
+    return VALUES[desc.getIndex()];
+  }
 
   private final int value;
 

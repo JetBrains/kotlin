@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrCatchOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable catch_parameter = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrCatchOrBuilder extends
    * @return The catchParameter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getCatchParameter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable catch_parameter = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVariableOrBuilder getCatchParameterOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 2 [features = { ... }</code>
@@ -30,4 +34,8 @@ public interface IrCatchOrBuilder extends
    * @return The result.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getResult();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getResultOrBuilder();
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrFileOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrFile)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>repeated int32 declaration_id = 1;</code>
@@ -44,6 +44,14 @@ public interface IrFileOrBuilder extends
    * @return The fileEntry.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
+  /**
+   * <pre>
+   * Required: either `file_entry` or `file_entry_id` is present.
+   * </pre>
+   *
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder getFileEntryOrBuilder();
 
   /**
    * <pre>
@@ -94,6 +102,16 @@ public interface IrFileOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
    */
   int getAnnotationCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder> 
+      getAnnotationOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder getAnnotationOrBuilder(
+      int index);
 
   /**
    * <code>repeated int64 explicitly_exported_to_compiler = 5;</code>

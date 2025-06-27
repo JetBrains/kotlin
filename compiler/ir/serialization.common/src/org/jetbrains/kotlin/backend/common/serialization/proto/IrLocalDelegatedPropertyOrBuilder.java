@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrLocalDelegatedPropertyOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrLocalDelegatedPropertyOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int64 name_type = 2 [features = { ... }</code>
@@ -41,6 +45,10 @@ public interface IrLocalDelegatedPropertyOrBuilder extends
    * @return The delegate.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getDelegate();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVariableOrBuilder getDelegateOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
@@ -52,6 +60,10 @@ public interface IrLocalDelegatedPropertyOrBuilder extends
    * @return The getter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getGetterOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
@@ -63,4 +75,8 @@ public interface IrLocalDelegatedPropertyOrBuilder extends
    * @return The setter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getSetterOrBuilder();
 }

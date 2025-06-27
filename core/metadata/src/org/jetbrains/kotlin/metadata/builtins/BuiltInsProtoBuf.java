@@ -7,6 +7,15 @@ package org.jetbrains.kotlin.metadata.builtins;
 
 public final class BuiltInsProtoBuf {
   private BuiltInsProtoBuf() {}
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      BuiltInsProtoBuf.class.getName());
+  }
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.packageFqName);
@@ -22,200 +31,211 @@ public final class BuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf.typeParameterAnnotation);
   }
+
+  public static void registerAllExtensions(
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (org.jetbrains.kotlin.protobuf.ExtensionRegistryLite) registry);
+  }
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 151;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Package { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Package,
-      java.lang.Integer> packageFqName = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Package.getDefaultInstance(),
-        0,
-        null,
-        null,
-        151,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
-        java.lang.Integer.class);
+      java.lang.Integer> packageFqName = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Class,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> classAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> classAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int CONSTRUCTOR_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Constructor,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> constructorAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Constructor.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> constructorAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int FUNCTION_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Function,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> functionAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Function.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> functionAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 152;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        152,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 153;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        153,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 151;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value> compileTimeValue = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance(),
-        null,
-        151,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.class);
+      org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value> compileTimeValue = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.getDefaultInstance());
   public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.EnumEntry { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.EnumEntry,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> enumEntryAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.EnumEntry.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> enumEntryAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.ValueParameter { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> parameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> parameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Type { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Type,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
   public static final int TYPE_PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.TypeParameter { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter,
-      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeParameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newRepeatedGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.getDefaultInstance(),
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
-        null,
-        150,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        false,
-        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> typeParameterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
 
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      descriptor;
   static {
+    java.lang.String[] descriptorData = {
+      "\n core/metadata/src/builtins.proto\022&org." +
+      "jetbrains.kotlin.metadata.builtins\032 core" +
+      "/metadata/src/metadata.proto:@\n\017package_" +
+      "fq_name\022&.org.jetbrains.kotlin.metadata." +
+      "Package\030\227\001 \001(\005:j\n\020class_annotation\022$.org" +
+      ".jetbrains.kotlin.metadata.Class\030\226\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on:v\n\026constructor_annotation\022*.org.jetbr" +
+      "ains.kotlin.metadata.Constructor\030\226\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati" +
+      "on:p\n\023function_annotation\022\'.org.jetbrain" +
+      "s.kotlin.metadata.Function\030\226\001 \003(\0132).org." +
+      "jetbrains.kotlin.metadata.Annotation:p\n\023" +
+      "property_annotation\022\'.org.jetbrains.kotl" +
+      "in.metadata.Property\030\226\001 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.Annotation:w\n\032proper" +
+      "ty_getter_annotation\022\'.org.jetbrains.kot" +
+      "lin.metadata.Property\030\230\001 \003(\0132).org.jetbr" +
+      "ains.kotlin.metadata.Annotation:w\n\032prope" +
+      "rty_setter_annotation\022\'.org.jetbrains.ko" +
+      "tlin.metadata.Property\030\231\001 \003(\0132).org.jetb" +
+      "rains.kotlin.metadata.Annotation:~\n\022comp" +
+      "ile_time_value\022\'.org.jetbrains.kotlin.me" +
+      "tadata.Property\030\227\001 \001(\01328.org.jetbrains.k" +
+      "otlin.metadata.Annotation.Argument.Value" +
+      ":s\n\025enum_entry_annotation\022(.org.jetbrain" +
+      "s.kotlin.metadata.EnumEntry\030\226\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:w\n" +
+      "\024parameter_annotation\022-.org.jetbrains.ko" +
+      "tlin.metadata.ValueParameter\030\226\001 \003(\0132).or" +
+      "g.jetbrains.kotlin.metadata.Annotation:h" +
+      "\n\017type_annotation\022#.org.jetbrains.kotlin" +
+      ".metadata.Type\030\226\001 \003(\0132).org.jetbrains.ko" +
+      "tlin.metadata.Annotation:{\n\031type_paramet" +
+      "er_annotation\022,.org.jetbrains.kotlin.met" +
+      "adata.TypeParameter\030\226\001 \003(\0132).org.jetbrai" +
+      "ns.kotlin.metadata.AnnotationB\027B\020BuiltIn" +
+      "sProtoBuf\222\003\002 \003b\010editionsp\350\007"
+    };
+    descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor(),
+        });
+    packageFqName.internalInit(descriptor.getExtensions().get(0));
+    classAnnotation.internalInit(descriptor.getExtensions().get(1));
+    constructorAnnotation.internalInit(descriptor.getExtensions().get(2));
+    functionAnnotation.internalInit(descriptor.getExtensions().get(3));
+    propertyAnnotation.internalInit(descriptor.getExtensions().get(4));
+    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(5));
+    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(6));
+    compileTimeValue.internalInit(descriptor.getExtensions().get(7));
+    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(8));
+    parameterAnnotation.internalInit(descriptor.getExtensions().get(9));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(10));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(11));
+    descriptor.resolveAllFeaturesImmutable();
+    org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

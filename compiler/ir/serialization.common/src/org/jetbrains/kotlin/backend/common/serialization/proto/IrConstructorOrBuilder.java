@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrConstructorOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase base = 1 [features = { ... }</code>
@@ -19,4 +19,8 @@ public interface IrConstructorOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBaseOrBuilder getBaseOrBuilder();
 }

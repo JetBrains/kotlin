@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrEnumConstructorCallOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 symbol = 1 [features = { ... }</code>
@@ -30,4 +30,8 @@ public interface IrEnumConstructorCallOrBuilder extends
    * @return The memberAccess.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonOrBuilder getMemberAccessOrBuilder();
 }

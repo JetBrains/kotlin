@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrVarargElementOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1;</code>
@@ -19,6 +19,10 @@ public interface IrVarargElementOrBuilder extends
    * @return The expression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getExpressionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement spread_element = 2;</code>
@@ -30,6 +34,10 @@ public interface IrVarargElementOrBuilder extends
    * @return The spreadElement.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement getSpreadElement();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement spread_element = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElementOrBuilder getSpreadElementOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase getVarargElementCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement.VarargElementCase getVarargElementCase();
 }

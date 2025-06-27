@@ -8,16 +8,43 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.Loop}
  */
-public  final class Loop extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        Loop, Loop.Builder> implements
+public final class Loop extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.Loop)
     LoopOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      Loop.class.getName());
+  }
+  // Use Loop.newBuilder() to construct.
+  private Loop(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private Loop() {
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.Loop.class, org.jetbrains.kotlin.backend.common.serialization.proto.Loop.Builder.class);
+  }
+
   private int bitField0_;
   public static final int LOOP_ID_FIELD_NUMBER = 1;
-  private int loopId_;
+  private int loopId_ = 0;
   /**
    * <code>int32 loop_id = 1 [features = { ... }</code>
    * @return Whether the loopId field is set.
@@ -34,26 +61,12 @@ public  final class Loop extends
   public int getLoopId() {
     return loopId_;
   }
-  /**
-   * <code>int32 loop_id = 1 [features = { ... }</code>
-   * @param value The loopId to set.
-   */
-  private void setLoopId(int value) {
-    bitField0_ |= 0x00000001;
-    loopId_ = value;
-  }
-  /**
-   * <code>int32 loop_id = 1 [features = { ... }</code>
-   */
-  private void clearLoopId() {
-    bitField0_ = (bitField0_ & ~0x00000001);
-    loopId_ = 0;
-  }
 
   public static final int CONDITION_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+   * @return Whether the condition field is set.
    */
   @java.lang.Override
   public boolean hasCondition() {
@@ -61,6 +74,7 @@ public  final class Loop extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+   * @return The condition.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getCondition() {
@@ -69,36 +83,13 @@ public  final class Loop extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setCondition(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-    value.getClass();  // minimal bytecode null check
-    condition_ = value;
-    bitField0_ |= 0x00000002;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeCondition(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-    value.getClass();  // minimal bytecode null check
-    if (condition_ != null &&
-        condition_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
-      condition_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.newBuilder(condition_).mergeFrom(value).buildPartial();
-    } else {
-      condition_ = value;
-    }
-    bitField0_ |= 0x00000002;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
-   */
-  private void clearCondition() {  condition_ = null;
-    bitField0_ = (bitField0_ & ~0x00000002);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getConditionOrBuilder() {
+    return condition_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : condition_;
   }
 
   public static final int LABEL_FIELD_NUMBER = 3;
-  private int label_;
+  private int label_ = 0;
   /**
    * <code>int32 label = 3;</code>
    * @return Whether the label field is set.
@@ -115,26 +106,12 @@ public  final class Loop extends
   public int getLabel() {
     return label_;
   }
-  /**
-   * <code>int32 label = 3;</code>
-   * @param value The label to set.
-   */
-  private void setLabel(int value) {
-    bitField0_ |= 0x00000004;
-    label_ = value;
-  }
-  /**
-   * <code>int32 label = 3;</code>
-   */
-  private void clearLabel() {
-    bitField0_ = (bitField0_ & ~0x00000004);
-    label_ = 0;
-  }
 
   public static final int BODY_FIELD_NUMBER = 4;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+   * @return Whether the body field is set.
    */
   @java.lang.Override
   public boolean hasBody() {
@@ -142,6 +119,7 @@ public  final class Loop extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+   * @return The body.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getBody() {
@@ -150,36 +128,13 @@ public  final class Loop extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-    value.getClass();  // minimal bytecode null check
-    body_ = value;
-    bitField0_ |= 0x00000008;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-    value.getClass();  // minimal bytecode null check
-    if (body_ != null &&
-        body_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
-      body_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.newBuilder(body_).mergeFrom(value).buildPartial();
-    } else {
-      body_ = value;
-    }
-    bitField0_ |= 0x00000008;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
-   */
-  private void clearBody() {  body_ = null;
-    bitField0_ = (bitField0_ & ~0x00000008);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getBodyOrBuilder() {
+    return body_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : body_;
   }
 
   public static final int ORIGIN_NAME_FIELD_NUMBER = 5;
-  private int originName_;
+  private int originName_ = 0;
   /**
    * <code>int32 origin_name = 5;</code>
    * @return Whether the originName field is set.
@@ -196,126 +151,487 @@ public  final class Loop extends
   public int getOriginName() {
     return originName_;
   }
-  /**
-   * <code>int32 origin_name = 5;</code>
-   * @param value The originName to set.
-   */
-  private void setOriginName(int value) {
-    bitField0_ |= 0x00000010;
-    originName_ = value;
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    if (!hasLoopId()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasCondition()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!getCondition().isInitialized()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (hasBody()) {
+      if (!getBody().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    memoizedIsInitialized = 1;
+    return true;
   }
-  /**
-   * <code>int32 origin_name = 5;</code>
-   */
-  private void clearOriginName() {
-    bitField0_ = (bitField0_ & ~0x00000010);
-    originName_ = 0;
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeInt32(1, loopId_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeMessage(2, getCondition());
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeInt32(3, label_);
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      output.writeMessage(4, getBody());
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeInt32(5, originName_);
+    }
+    getUnknownFields().writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(1, loopId_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(2, getCondition());
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(3, label_);
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(4, getBody());
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, originName_);
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.Loop)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.Loop other = (org.jetbrains.kotlin.backend.common.serialization.proto.Loop) obj;
+
+    if (hasLoopId() != other.hasLoopId()) return false;
+    if (hasLoopId()) {
+      if (getLoopId()
+          != other.getLoopId()) return false;
+    }
+    if (hasCondition() != other.hasCondition()) return false;
+    if (hasCondition()) {
+      if (!getCondition()
+          .equals(other.getCondition())) return false;
+    }
+    if (hasLabel() != other.hasLabel()) return false;
+    if (hasLabel()) {
+      if (getLabel()
+          != other.getLabel()) return false;
+    }
+    if (hasBody() != other.hasBody()) return false;
+    if (hasBody()) {
+      if (!getBody()
+          .equals(other.getBody())) return false;
+    }
+    if (hasOriginName() != other.hasOriginName()) return false;
+    if (hasOriginName()) {
+      if (getOriginName()
+          != other.getOriginName()) return false;
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasLoopId()) {
+      hash = (37 * hash) + LOOP_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getLoopId();
+    }
+    if (hasCondition()) {
+      hash = (37 * hash) + CONDITION_FIELD_NUMBER;
+      hash = (53 * hash) + getCondition().hashCode();
+    }
+    if (hasLabel()) {
+      hash = (37 * hash) + LABEL_FIELD_NUMBER;
+      hash = (53 * hash) + getLabel();
+    }
+    if (hasBody()) {
+      hash = (37 * hash) + BODY_FIELD_NUMBER;
+      hash = (53 * hash) + getBody().hashCode();
+    }
+    if (hasOriginName()) {
+      hash = (37 * hash) + ORIGIN_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getOriginName();
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.Loop prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.Loop}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.Loop, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.Loop)
       org.jetbrains.kotlin.backend.common.serialization.proto.LoopOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.Loop.newBuilder()
-    private Builder() {
-      super(DEFAULT_INSTANCE);
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor;
     }
 
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.Loop.class, org.jetbrains.kotlin.backend.common.serialization.proto.Loop.Builder.class);
+    }
 
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.Loop.newBuilder()
+    private Builder() {
+      maybeForceBuilderInitialization();
+    }
+
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (org.jetbrains.kotlin.protobuf.GeneratedMessage
+              .alwaysUseFieldBuilders) {
+        getConditionFieldBuilder();
+        getBodyFieldBuilder();
+      }
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      loopId_ = 0;
+      condition_ = null;
+      if (conditionBuilder_ != null) {
+        conditionBuilder_.dispose();
+        conditionBuilder_ = null;
+      }
+      label_ = 0;
+      body_ = null;
+      if (bodyBuilder_ != null) {
+        bodyBuilder_.dispose();
+        bodyBuilder_ = null;
+      }
+      originName_ = 0;
+      return this;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.Loop getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.Loop.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.Loop build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.Loop result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.Loop buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.Loop result = new org.jetbrains.kotlin.backend.common.serialization.proto.Loop(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.Loop result) {
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.loopId_ = loopId_;
+        to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.condition_ = conditionBuilder_ == null
+            ? condition_
+            : conditionBuilder_.build();
+        to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.label_ = label_;
+        to_bitField0_ |= 0x00000004;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.body_ = bodyBuilder_ == null
+            ? body_
+            : bodyBuilder_.build();
+        to_bitField0_ |= 0x00000008;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.originName_ = originName_;
+        to_bitField0_ |= 0x00000010;
+      }
+      result.bitField0_ |= to_bitField0_;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.Loop) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.Loop)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.Loop other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.Loop.getDefaultInstance()) return this;
+      if (other.hasLoopId()) {
+        setLoopId(other.getLoopId());
+      }
+      if (other.hasCondition()) {
+        mergeCondition(other.getCondition());
+      }
+      if (other.hasLabel()) {
+        setLabel(other.getLabel());
+      }
+      if (other.hasBody()) {
+        mergeBody(other.getBody());
+      }
+      if (other.hasOriginName()) {
+        setOriginName(other.getOriginName());
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      if (!hasLoopId()) {
+        return false;
+      }
+      if (!hasCondition()) {
+        return false;
+      }
+      if (!getCondition().isInitialized()) {
+        return false;
+      }
+      if (hasBody()) {
+        if (!getBody().isInitialized()) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              loopId_ = input.readInt32();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 8
+            case 18: {
+              input.readMessage(
+                  getConditionFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 24: {
+              label_ = input.readInt32();
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 24
+            case 34: {
+              input.readMessage(
+                  getBodyFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 34
+            case 40: {
+              originName_ = input.readInt32();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 40
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int bitField0_;
+
+    private int loopId_ ;
     /**
      * <code>int32 loop_id = 1 [features = { ... }</code>
      * @return Whether the loopId field is set.
      */
     @java.lang.Override
     public boolean hasLoopId() {
-      return instance.hasLoopId();
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      * <code>int32 loop_id = 1 [features = { ... }</code>
@@ -323,7 +639,7 @@ public  final class Loop extends
      */
     @java.lang.Override
     public int getLoopId() {
-      return instance.getLoopId();
+      return loopId_;
     }
     /**
      * <code>int32 loop_id = 1 [features = { ... }</code>
@@ -331,8 +647,10 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder setLoopId(int value) {
-      copyOnWrite();
-      instance.setLoopId(value);
+
+      loopId_ = value;
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -340,65 +658,141 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder clearLoopId() {
-      copyOnWrite();
-      instance.clearLoopId();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      loopId_ = 0;
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> conditionBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+     * @return Whether the condition field is set.
      */
-    @java.lang.Override
     public boolean hasCondition() {
-      return instance.hasCondition();
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+     * @return The condition.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getCondition() {
-      return instance.getCondition();
+      if (conditionBuilder_ == null) {
+        return condition_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : condition_;
+      } else {
+        return conditionBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
      */
     public Builder setCondition(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      copyOnWrite();
-      instance.setCondition(value);
-      return this;
+      if (conditionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        condition_ = value;
+      } else {
+        conditionBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
      */
     public Builder setCondition(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
-      copyOnWrite();
-      instance.setCondition(builderForValue.build());
+      if (conditionBuilder_ == null) {
+        condition_ = builderForValue.build();
+      } else {
+        conditionBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
      */
     public Builder mergeCondition(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      copyOnWrite();
-      instance.mergeCondition(value);
+      if (conditionBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          condition_ != null &&
+          condition_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
+          getConditionBuilder().mergeFrom(value);
+        } else {
+          condition_ = value;
+        }
+      } else {
+        conditionBuilder_.mergeFrom(value);
+      }
+      if (condition_ != null) {
+        bitField0_ |= 0x00000002;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
      */
-    public Builder clearCondition() {  copyOnWrite();
-      instance.clearCondition();
+    public Builder clearCondition() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      condition_ = null;
+      if (conditionBuilder_ != null) {
+        conditionBuilder_.dispose();
+        conditionBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder getConditionBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getConditionFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getConditionOrBuilder() {
+      if (conditionBuilder_ != null) {
+        return conditionBuilder_.getMessageOrBuilder();
+      } else {
+        return condition_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : condition_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
+        getConditionFieldBuilder() {
+      if (conditionBuilder_ == null) {
+        conditionBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder>(
+                getCondition(),
+                getParentForChildren(),
+                isClean());
+        condition_ = null;
+      }
+      return conditionBuilder_;
+    }
 
+    private int label_ ;
     /**
      * <code>int32 label = 3;</code>
      * @return Whether the label field is set.
      */
     @java.lang.Override
     public boolean hasLabel() {
-      return instance.hasLabel();
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>int32 label = 3;</code>
@@ -406,7 +800,7 @@ public  final class Loop extends
      */
     @java.lang.Override
     public int getLabel() {
-      return instance.getLabel();
+      return label_;
     }
     /**
      * <code>int32 label = 3;</code>
@@ -414,8 +808,10 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder setLabel(int value) {
-      copyOnWrite();
-      instance.setLabel(value);
+
+      label_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -423,65 +819,141 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder clearLabel() {
-      copyOnWrite();
-      instance.clearLabel();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      label_ = 0;
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> bodyBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+     * @return Whether the body field is set.
      */
-    @java.lang.Override
     public boolean hasBody() {
-      return instance.hasBody();
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+     * @return The body.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getBody() {
-      return instance.getBody();
+      if (bodyBuilder_ == null) {
+        return body_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : body_;
+      } else {
+        return bodyBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
      */
     public Builder setBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      copyOnWrite();
-      instance.setBody(value);
-      return this;
+      if (bodyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        body_ = value;
+      } else {
+        bodyBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
      */
     public Builder setBody(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
-      copyOnWrite();
-      instance.setBody(builderForValue.build());
+      if (bodyBuilder_ == null) {
+        body_ = builderForValue.build();
+      } else {
+        bodyBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
      */
     public Builder mergeBody(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      copyOnWrite();
-      instance.mergeBody(value);
+      if (bodyBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          body_ != null &&
+          body_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
+          getBodyBuilder().mergeFrom(value);
+        } else {
+          body_ = value;
+        }
+      } else {
+        bodyBuilder_.mergeFrom(value);
+      }
+      if (body_ != null) {
+        bitField0_ |= 0x00000008;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
      */
-    public Builder clearBody() {  copyOnWrite();
-      instance.clearBody();
+    public Builder clearBody() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      body_ = null;
+      if (bodyBuilder_ != null) {
+        bodyBuilder_.dispose();
+        bodyBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder getBodyBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getBodyFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getBodyOrBuilder() {
+      if (bodyBuilder_ != null) {
+        return bodyBuilder_.getMessageOrBuilder();
+      } else {
+        return body_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance() : body_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
+        getBodyFieldBuilder() {
+      if (bodyBuilder_ == null) {
+        bodyBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder>(
+                getBody(),
+                getParentForChildren(),
+                isClean());
+        body_ = null;
+      }
+      return bodyBuilder_;
+    }
 
+    private int originName_ ;
     /**
      * <code>int32 origin_name = 5;</code>
      * @return Whether the originName field is set.
      */
     @java.lang.Override
     public boolean hasOriginName() {
-      return instance.hasOriginName();
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <code>int32 origin_name = 5;</code>
@@ -489,7 +961,7 @@ public  final class Loop extends
      */
     @java.lang.Override
     public int getOriginName() {
-      return instance.getOriginName();
+      return originName_;
     }
     /**
      * <code>int32 origin_name = 5;</code>
@@ -497,8 +969,10 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder setOriginName(int value) {
-      copyOnWrite();
-      instance.setOriginName(value);
+
+      originName_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -506,89 +980,59 @@ public  final class Loop extends
      * @return This builder for chaining.
      */
     public Builder clearOriginName() {
-      copyOnWrite();
-      instance.clearOriginName();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      originName_ = 0;
+      onChanged();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.Loop)
   }
-  private byte memoizedIsInitialized = 2;
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.Loop();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "bitField0_",
-            "loopId_",
-            "condition_",
-            "label_",
-            "body_",
-            "originName_",
-          };
-          java.lang.String info =
-              "\u0004\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0000\u0003\u0001\u1504\u0000\u0002" +
-              "\u1509\u0001\u0003\u1004\u0002\u0004\u1409\u0003\u0005\u1004\u0004";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.Loop> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.Loop.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.Loop>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return memoizedIsInitialized;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.Loop)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.Loop DEFAULT_INSTANCE;
   static {
-    Loop defaultInstance = new Loop();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      Loop.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.Loop();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.Loop getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<Loop> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<Loop>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<Loop>() {
+    @java.lang.Override
+    public Loop parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<Loop> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<Loop> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.Loop getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

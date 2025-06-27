@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrInlinedFunctionBlockOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 inlined_function_symbol = 1;</code>
@@ -38,6 +38,14 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * @return The inlinedFunctionFileEntry.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry();
+  /**
+   * <pre>
+   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+   * </pre>
+   *
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder getInlinedFunctionFileEntryOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
@@ -49,6 +57,10 @@ public interface IrInlinedFunctionBlockOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>

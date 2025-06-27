@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrVariableOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrVariableOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int64 name_type = 2 [features = { ... }</code>
@@ -41,4 +45,8 @@ public interface IrVariableOrBuilder extends
    * @return The initializer.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getInitializerOrBuilder();
 }

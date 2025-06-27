@@ -30,7 +30,7 @@ dependencies {
     embedded(project(":kotlin-util-klib-metadata"))
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
-    embedded(protobufLite())
+    embedded(protobufFull())
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
 }

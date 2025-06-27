@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrClassOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrClassOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int32 name = 2 [features = { ... }</code>
@@ -41,6 +45,10 @@ public interface IrClassOrBuilder extends
    * @return The thisReceiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getThisReceiverOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
@@ -55,6 +63,16 @@ public interface IrClassOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
   int getTypeParameterCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
+      getTypeParameterOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getTypeParameterOrBuilder(
+      int index);
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
@@ -69,6 +87,16 @@ public interface IrClassOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
   int getDeclarationCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder> 
+      getDeclarationOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder getDeclarationOrBuilder(
+      int index);
 
   /**
    * <code>repeated int32 super_type = 6;</code>
@@ -97,6 +125,10 @@ public interface IrClassOrBuilder extends
    * @return The inlineClassRepresentation.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder getInlineClassRepresentationOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
@@ -108,6 +140,10 @@ public interface IrClassOrBuilder extends
    * @return The multiFieldValueClassRepresentation.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder getMultiFieldValueClassRepresentationOrBuilder();
 
   /**
    * <code>repeated int64 sealed_subclass = 8;</code>

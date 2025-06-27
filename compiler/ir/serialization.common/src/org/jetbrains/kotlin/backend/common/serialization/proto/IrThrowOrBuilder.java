@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrThrowOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 1 [features = { ... }</code>
@@ -19,4 +19,8 @@ public interface IrThrowOrBuilder extends
    * @return The value.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getValueOrBuilder();
 }

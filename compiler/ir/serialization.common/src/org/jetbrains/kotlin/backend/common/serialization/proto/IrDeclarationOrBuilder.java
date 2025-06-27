@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrDeclarationOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit ir_anonymous_init = 1;</code>
@@ -19,6 +19,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irAnonymousInit.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit getIrAnonymousInit();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit ir_anonymous_init = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInitOrBuilder getIrAnonymousInitOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrClass ir_class = 2;</code>
@@ -30,6 +34,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irClass.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getIrClass();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrClass ir_class = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrClassOrBuilder getIrClassOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor ir_constructor = 3;</code>
@@ -41,6 +49,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irConstructor.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor getIrConstructor();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor ir_constructor = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorOrBuilder getIrConstructorOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry ir_enum_entry = 4;</code>
@@ -52,6 +64,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irEnumEntry.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry getIrEnumEntry();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry ir_enum_entry = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntryOrBuilder getIrEnumEntryOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrField ir_field = 5;</code>
@@ -63,6 +79,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irField.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrField getIrField();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrField ir_field = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFieldOrBuilder getIrFieldOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction ir_function = 6;</code>
@@ -74,6 +94,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irFunction.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getIrFunction();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction ir_function = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getIrFunctionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty ir_property = 7;</code>
@@ -85,6 +109,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irProperty.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty getIrProperty();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty ir_property = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyOrBuilder getIrPropertyOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter ir_type_parameter = 8;</code>
@@ -96,6 +124,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irTypeParameter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter getIrTypeParameter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter ir_type_parameter = 8;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getIrTypeParameterOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable ir_variable = 9;</code>
@@ -107,6 +139,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irVariable.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getIrVariable();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable ir_variable = 9;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVariableOrBuilder getIrVariableOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter ir_value_parameter = 10;</code>
@@ -118,6 +154,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irValueParameter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getIrValueParameter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter ir_value_parameter = 10;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getIrValueParameterOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty ir_local_delegated_property = 11;</code>
@@ -129,6 +169,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irLocalDelegatedProperty.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty getIrLocalDelegatedProperty();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty ir_local_delegated_property = 11;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyOrBuilder getIrLocalDelegatedPropertyOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias ir_type_alias = 12;</code>
@@ -140,6 +184,10 @@ public interface IrDeclarationOrBuilder extends
    * @return The irTypeAlias.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias getIrTypeAlias();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias ir_type_alias = 12;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAliasOrBuilder getIrTypeAliasOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase getDeclaratorCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase getDeclaratorCase();
 }

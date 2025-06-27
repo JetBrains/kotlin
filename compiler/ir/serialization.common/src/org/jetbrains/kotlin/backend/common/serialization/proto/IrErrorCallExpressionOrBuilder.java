@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrErrorCallExpressionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int32 description = 1 [features = { ... }</code>
@@ -30,6 +30,10 @@ public interface IrErrorCallExpressionOrBuilder extends
    * @return The receiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression receiver = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getReceiverOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_argument = 3;</code>
@@ -44,4 +48,14 @@ public interface IrErrorCallExpressionOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_argument = 3;</code>
    */
   int getValueArgumentCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_argument = 3;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
+      getValueArgumentOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value_argument = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getValueArgumentOrBuilder(
+      int index);
 }

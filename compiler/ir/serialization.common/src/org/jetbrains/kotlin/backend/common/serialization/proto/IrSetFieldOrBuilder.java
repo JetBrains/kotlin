@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrSetFieldOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon field_access = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrSetFieldOrBuilder extends
    * @return The fieldAccess.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon getFieldAccess();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon field_access = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommonOrBuilder getFieldAccessOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2 [features = { ... }</code>
@@ -30,6 +34,10 @@ public interface IrSetFieldOrBuilder extends
    * @return The value.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getValue();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getValueOrBuilder();
 
   /**
    * <code>int32 origin_name = 3;</code>

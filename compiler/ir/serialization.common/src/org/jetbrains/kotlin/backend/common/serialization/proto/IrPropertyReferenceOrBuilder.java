@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrPropertyReferenceOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 field = 1;</code>
@@ -63,6 +63,10 @@ public interface IrPropertyReferenceOrBuilder extends
    * @return The memberAccess.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 5 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonOrBuilder getMemberAccessOrBuilder();
 
   /**
    * <code>int64 symbol = 6 [features = { ... }</code>

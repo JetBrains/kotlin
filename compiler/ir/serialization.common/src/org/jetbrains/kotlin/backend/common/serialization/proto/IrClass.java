@@ -8,22 +8,50 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrClass}
  */
-public  final class IrClass extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        IrClass, IrClass.Builder> implements
+public final class IrClass extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)
     IrClassOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrClass.class.getName());
+  }
+  // Use IrClass.newBuilder() to construct.
+  private IrClass(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private IrClass() {
-    typeParameter_ = emptyProtobufList();
-    declaration_ = emptyProtobufList();
+    typeParameter_ = java.util.Collections.emptyList();
+    declaration_ = java.util.Collections.emptyList();
     superType_ = emptyIntList();
     sealedSubclass_ = emptyLongList();
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.Builder.class);
+  }
+
   private int bitField0_;
   public static final int BASE_FIELD_NUMBER = 1;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   * @return Whether the base field is set.
    */
   @java.lang.Override
   public boolean hasBase() {
@@ -31,6 +59,7 @@ public  final class IrClass extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   * @return The base.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase() {
@@ -39,36 +68,13 @@ public  final class IrClass extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase value) {
-    value.getClass();  // minimal bytecode null check
-    base_ = value;
-    bitField0_ |= 0x00000001;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase value) {
-    value.getClass();  // minimal bytecode null check
-    if (base_ != null &&
-        base_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance()) {
-      base_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.newBuilder(base_).mergeFrom(value).buildPartial();
-    } else {
-      base_ = value;
-    }
-    bitField0_ |= 0x00000001;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
-   */
-  private void clearBase() {  base_ = null;
-    bitField0_ = (bitField0_ & ~0x00000001);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder() {
+    return base_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance() : base_;
   }
 
   public static final int NAME_FIELD_NUMBER = 2;
-  private int name_;
+  private int name_ = 0;
   /**
    * <code>int32 name = 2 [features = { ... }</code>
    * @return Whether the name field is set.
@@ -85,26 +91,12 @@ public  final class IrClass extends
   public int getName() {
     return name_;
   }
-  /**
-   * <code>int32 name = 2 [features = { ... }</code>
-   * @param value The name to set.
-   */
-  private void setName(int value) {
-    bitField0_ |= 0x00000002;
-    name_ = value;
-  }
-  /**
-   * <code>int32 name = 2 [features = { ... }</code>
-   */
-  private void clearName() {
-    bitField0_ = (bitField0_ & ~0x00000002);
-    name_ = 0;
-  }
 
   public static final int THIS_RECEIVER_FIELD_NUMBER = 3;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+   * @return Whether the thisReceiver field is set.
    */
   @java.lang.Override
   public boolean hasThisReceiver() {
@@ -112,6 +104,7 @@ public  final class IrClass extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+   * @return The thisReceiver.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver() {
@@ -120,36 +113,14 @@ public  final class IrClass extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
-    value.getClass();  // minimal bytecode null check
-    thisReceiver_ = value;
-    bitField0_ |= 0x00000004;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
-    value.getClass();  // minimal bytecode null check
-    if (thisReceiver_ != null &&
-        thisReceiver_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) {
-      thisReceiver_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.newBuilder(thisReceiver_).mergeFrom(value).buildPartial();
-    } else {
-      thisReceiver_ = value;
-    }
-    bitField0_ |= 0x00000004;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
-   */
-  private void clearThisReceiver() {  thisReceiver_ = null;
-    bitField0_ = (bitField0_ & ~0x00000004);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getThisReceiverOrBuilder() {
+    return thisReceiver_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance() : thisReceiver_;
   }
 
   public static final int TYPE_PARAMETER_FIELD_NUMBER = 4;
-  private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> typeParameter_;
+  @SuppressWarnings("serial")
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> typeParameter_;
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
@@ -160,6 +131,7 @@ public  final class IrClass extends
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
+  @java.lang.Override
   public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
       getTypeParameterOrBuilderList() {
     return typeParameter_;
@@ -181,72 +153,15 @@ public  final class IrClass extends
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
+  @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getTypeParameterOrBuilder(
       int index) {
     return typeParameter_.get(index);
   }
-  private void ensureTypeParameterIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> tmp = typeParameter_;
-    if (!tmp.isModifiable()) {
-      typeParameter_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setTypeParameter(
-      int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-    value.getClass();  // minimal bytecode null check
-    ensureTypeParameterIsMutable();
-    typeParameter_.set(index, value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void addTypeParameter(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-    value.getClass();  // minimal bytecode null check
-    ensureTypeParameterIsMutable();
-    typeParameter_.add(value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void addTypeParameter(
-      int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-    value.getClass();  // minimal bytecode null check
-    ensureTypeParameterIsMutable();
-    typeParameter_.add(index, value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  private void addAllTypeParameter(
-      java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> values) {
-    ensureTypeParameterIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, typeParameter_);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  private void clearTypeParameter() {
-    typeParameter_ = emptyProtobufList();
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
-   */
-  private void removeTypeParameter(int index) {
-    ensureTypeParameterIsMutable();
-    typeParameter_.remove(index);
-  }
 
   public static final int DECLARATION_FIELD_NUMBER = 5;
-  private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> declaration_;
+  @SuppressWarnings("serial")
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> declaration_;
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
@@ -257,6 +172,7 @@ public  final class IrClass extends
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
+  @java.lang.Override
   public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder> 
       getDeclarationOrBuilderList() {
     return declaration_;
@@ -278,72 +194,16 @@ public  final class IrClass extends
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
+  @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder getDeclarationOrBuilder(
       int index) {
     return declaration_.get(index);
   }
-  private void ensureDeclarationIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> tmp = declaration_;
-    if (!tmp.isModifiable()) {
-      declaration_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setDeclaration(
-      int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-    value.getClass();  // minimal bytecode null check
-    ensureDeclarationIsMutable();
-    declaration_.set(index, value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void addDeclaration(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-    value.getClass();  // minimal bytecode null check
-    ensureDeclarationIsMutable();
-    declaration_.add(value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void addDeclaration(
-      int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-    value.getClass();  // minimal bytecode null check
-    ensureDeclarationIsMutable();
-    declaration_.add(index, value);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  private void addAllDeclaration(
-      java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> values) {
-    ensureDeclarationIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, declaration_);
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  private void clearDeclaration() {
-    declaration_ = emptyProtobufList();
-  }
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
-   */
-  private void removeDeclaration(int index) {
-    ensureDeclarationIsMutable();
-    declaration_.remove(index);
-  }
 
   public static final int SUPER_TYPE_FIELD_NUMBER = 6;
-  private org.jetbrains.kotlin.protobuf.Internal.IntList superType_;
+  @SuppressWarnings("serial")
+  private org.jetbrains.kotlin.protobuf.Internal.IntList superType_ =
+      emptyIntList();
   /**
    * <code>repeated int32 super_type = 6;</code>
    * @return A list containing the superType.
@@ -357,7 +217,6 @@ public  final class IrClass extends
    * <code>repeated int32 super_type = 6;</code>
    * @return The count of superType.
    */
-  @java.lang.Override
   public int getSuperTypeCount() {
     return superType_.size();
   }
@@ -366,57 +225,16 @@ public  final class IrClass extends
    * @param index The index of the element to return.
    * @return The superType at the given index.
    */
-  @java.lang.Override
   public int getSuperType(int index) {
     return superType_.getInt(index);
   }
   private int superTypeMemoizedSerializedSize = -1;
-  private void ensureSuperTypeIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.IntList tmp = superType_;
-    if (!tmp.isModifiable()) {
-      superType_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-  /**
-   * <code>repeated int32 super_type = 6;</code>
-   * @param index The index to set the value at.
-   * @param value The superType to set.
-   */
-  private void setSuperType(
-      int index, int value) {
-    ensureSuperTypeIsMutable();
-    superType_.setInt(index, value);
-  }
-  /**
-   * <code>repeated int32 super_type = 6;</code>
-   * @param value The superType to add.
-   */
-  private void addSuperType(int value) {
-    ensureSuperTypeIsMutable();
-    superType_.addInt(value);
-  }
-  /**
-   * <code>repeated int32 super_type = 6;</code>
-   * @param values The superType to add.
-   */
-  private void addAllSuperType(
-      java.lang.Iterable<? extends java.lang.Integer> values) {
-    ensureSuperTypeIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, superType_);
-  }
-  /**
-   * <code>repeated int32 super_type = 6;</code>
-   */
-  private void clearSuperType() {
-    superType_ = emptyIntList();
-  }
 
   public static final int INLINE_CLASS_REPRESENTATION_FIELD_NUMBER = 7;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   * @return Whether the inlineClassRepresentation field is set.
    */
   @java.lang.Override
   public boolean hasInlineClassRepresentation() {
@@ -424,6 +242,7 @@ public  final class IrClass extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+   * @return The inlineClassRepresentation.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
@@ -432,38 +251,16 @@ public  final class IrClass extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
-    value.getClass();  // minimal bytecode null check
-    inlineClassRepresentation_ = value;
-    bitField0_ |= 0x00000008;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
-    value.getClass();  // minimal bytecode null check
-    if (inlineClassRepresentation_ != null &&
-        inlineClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance()) {
-      inlineClassRepresentation_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.newBuilder(inlineClassRepresentation_).mergeFrom(value).buildPartial();
-    } else {
-      inlineClassRepresentation_ = value;
-    }
-    bitField0_ |= 0x00000008;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
-   */
-  private void clearInlineClassRepresentation() {  inlineClassRepresentation_ = null;
-    bitField0_ = (bitField0_ & ~0x00000008);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder getInlineClassRepresentationOrBuilder() {
+    return inlineClassRepresentation_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance() : inlineClassRepresentation_;
   }
 
   public static final int MULTI_FIELD_VALUE_CLASS_REPRESENTATION_FIELD_NUMBER = 9;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multiFieldValueClassRepresentation_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+   * @return Whether the multiFieldValueClassRepresentation field is set.
    */
   @java.lang.Override
   public boolean hasMultiFieldValueClassRepresentation() {
@@ -471,6 +268,7 @@ public  final class IrClass extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+   * @return The multiFieldValueClassRepresentation.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation() {
@@ -479,36 +277,15 @@ public  final class IrClass extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setMultiFieldValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation value) {
-    value.getClass();  // minimal bytecode null check
-    multiFieldValueClassRepresentation_ = value;
-    bitField0_ |= 0x00000010;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeMultiFieldValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation value) {
-    value.getClass();  // minimal bytecode null check
-    if (multiFieldValueClassRepresentation_ != null &&
-        multiFieldValueClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.getDefaultInstance()) {
-      multiFieldValueClassRepresentation_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.newBuilder(multiFieldValueClassRepresentation_).mergeFrom(value).buildPartial();
-    } else {
-      multiFieldValueClassRepresentation_ = value;
-    }
-    bitField0_ |= 0x00000010;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
-   */
-  private void clearMultiFieldValueClassRepresentation() {  multiFieldValueClassRepresentation_ = null;
-    bitField0_ = (bitField0_ & ~0x00000010);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder getMultiFieldValueClassRepresentationOrBuilder() {
+    return multiFieldValueClassRepresentation_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.getDefaultInstance() : multiFieldValueClassRepresentation_;
   }
 
   public static final int SEALED_SUBCLASS_FIELD_NUMBER = 8;
-  private org.jetbrains.kotlin.protobuf.Internal.LongList sealedSubclass_;
+  @SuppressWarnings("serial")
+  private org.jetbrains.kotlin.protobuf.Internal.LongList sealedSubclass_ =
+      emptyLongList();
   /**
    * <code>repeated int64 sealed_subclass = 8;</code>
    * @return A list containing the sealedSubclass.
@@ -522,7 +299,6 @@ public  final class IrClass extends
    * <code>repeated int64 sealed_subclass = 8;</code>
    * @return The count of sealedSubclass.
    */
-  @java.lang.Override
   public int getSealedSubclassCount() {
     return sealedSubclass_.size();
   }
@@ -531,204 +307,924 @@ public  final class IrClass extends
    * @param index The index of the element to return.
    * @return The sealedSubclass at the given index.
    */
-  @java.lang.Override
   public long getSealedSubclass(int index) {
     return sealedSubclass_.getLong(index);
   }
   private int sealedSubclassMemoizedSerializedSize = -1;
-  private void ensureSealedSubclassIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.LongList tmp = sealedSubclass_;
-    if (!tmp.isModifiable()) {
-      sealedSubclass_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    if (!hasBase()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasName()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!getBase().isInitialized()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (hasThisReceiver()) {
+      if (!getThisReceiver().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    for (int i = 0; i < getTypeParameterCount(); i++) {
+      if (!getTypeParameter(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    for (int i = 0; i < getDeclarationCount(); i++) {
+      if (!getDeclaration(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (hasInlineClassRepresentation()) {
+      if (!getInlineClassRepresentation().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    memoizedIsInitialized = 1;
+    return true;
   }
-  /**
-   * <code>repeated int64 sealed_subclass = 8;</code>
-   * @param index The index to set the value at.
-   * @param value The sealedSubclass to set.
-   */
-  private void setSealedSubclass(
-      int index, long value) {
-    ensureSealedSubclassIsMutable();
-    sealedSubclass_.setLong(index, value);
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    getSerializedSize();
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(1, getBase());
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeInt32(2, name_);
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeMessage(3, getThisReceiver());
+    }
+    for (int i = 0; i < typeParameter_.size(); i++) {
+      output.writeMessage(4, typeParameter_.get(i));
+    }
+    for (int i = 0; i < declaration_.size(); i++) {
+      output.writeMessage(5, declaration_.get(i));
+    }
+    if (getSuperTypeList().size() > 0) {
+      output.writeUInt32NoTag(50);
+      output.writeUInt32NoTag(superTypeMemoizedSerializedSize);
+    }
+    for (int i = 0; i < superType_.size(); i++) {
+      output.writeInt32NoTag(superType_.getInt(i));
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      output.writeMessage(7, getInlineClassRepresentation());
+    }
+    if (getSealedSubclassList().size() > 0) {
+      output.writeUInt32NoTag(66);
+      output.writeUInt32NoTag(sealedSubclassMemoizedSerializedSize);
+    }
+    for (int i = 0; i < sealedSubclass_.size(); i++) {
+      output.writeInt64NoTag(sealedSubclass_.getLong(i));
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeMessage(9, getMultiFieldValueClassRepresentation());
+    }
+    getUnknownFields().writeTo(output);
   }
-  /**
-   * <code>repeated int64 sealed_subclass = 8;</code>
-   * @param value The sealedSubclass to add.
-   */
-  private void addSealedSubclass(long value) {
-    ensureSealedSubclassIsMutable();
-    sealedSubclass_.addLong(value);
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(1, getBase());
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(2, name_);
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(3, getThisReceiver());
+    }
+    for (int i = 0; i < typeParameter_.size(); i++) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(4, typeParameter_.get(i));
+    }
+    for (int i = 0; i < declaration_.size(); i++) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(5, declaration_.get(i));
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < superType_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(superType_.getInt(i));
+      }
+      size += dataSize;
+      if (!getSuperTypeList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      superTypeMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(7, getInlineClassRepresentation());
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < sealedSubclass_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt64SizeNoTag(sealedSubclass_.getLong(i));
+      }
+      size += dataSize;
+      if (!getSealedSubclassList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      sealedSubclassMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(9, getMultiFieldValueClassRepresentation());
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
   }
-  /**
-   * <code>repeated int64 sealed_subclass = 8;</code>
-   * @param values The sealedSubclass to add.
-   */
-  private void addAllSealedSubclass(
-      java.lang.Iterable<? extends java.lang.Long> values) {
-    ensureSealedSubclassIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, sealedSubclass_);
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.IrClass other = (org.jetbrains.kotlin.backend.common.serialization.proto.IrClass) obj;
+
+    if (hasBase() != other.hasBase()) return false;
+    if (hasBase()) {
+      if (!getBase()
+          .equals(other.getBase())) return false;
+    }
+    if (hasName() != other.hasName()) return false;
+    if (hasName()) {
+      if (getName()
+          != other.getName()) return false;
+    }
+    if (hasThisReceiver() != other.hasThisReceiver()) return false;
+    if (hasThisReceiver()) {
+      if (!getThisReceiver()
+          .equals(other.getThisReceiver())) return false;
+    }
+    if (!getTypeParameterList()
+        .equals(other.getTypeParameterList())) return false;
+    if (!getDeclarationList()
+        .equals(other.getDeclarationList())) return false;
+    if (!getSuperTypeList()
+        .equals(other.getSuperTypeList())) return false;
+    if (hasInlineClassRepresentation() != other.hasInlineClassRepresentation()) return false;
+    if (hasInlineClassRepresentation()) {
+      if (!getInlineClassRepresentation()
+          .equals(other.getInlineClassRepresentation())) return false;
+    }
+    if (hasMultiFieldValueClassRepresentation() != other.hasMultiFieldValueClassRepresentation()) return false;
+    if (hasMultiFieldValueClassRepresentation()) {
+      if (!getMultiFieldValueClassRepresentation()
+          .equals(other.getMultiFieldValueClassRepresentation())) return false;
+    }
+    if (!getSealedSubclassList()
+        .equals(other.getSealedSubclassList())) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
   }
-  /**
-   * <code>repeated int64 sealed_subclass = 8;</code>
-   */
-  private void clearSealedSubclass() {
-    sealedSubclass_ = emptyLongList();
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasBase()) {
+      hash = (37 * hash) + BASE_FIELD_NUMBER;
+      hash = (53 * hash) + getBase().hashCode();
+    }
+    if (hasName()) {
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName();
+    }
+    if (hasThisReceiver()) {
+      hash = (37 * hash) + THIS_RECEIVER_FIELD_NUMBER;
+      hash = (53 * hash) + getThisReceiver().hashCode();
+    }
+    if (getTypeParameterCount() > 0) {
+      hash = (37 * hash) + TYPE_PARAMETER_FIELD_NUMBER;
+      hash = (53 * hash) + getTypeParameterList().hashCode();
+    }
+    if (getDeclarationCount() > 0) {
+      hash = (37 * hash) + DECLARATION_FIELD_NUMBER;
+      hash = (53 * hash) + getDeclarationList().hashCode();
+    }
+    if (getSuperTypeCount() > 0) {
+      hash = (37 * hash) + SUPER_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getSuperTypeList().hashCode();
+    }
+    if (hasInlineClassRepresentation()) {
+      hash = (37 * hash) + INLINE_CLASS_REPRESENTATION_FIELD_NUMBER;
+      hash = (53 * hash) + getInlineClassRepresentation().hashCode();
+    }
+    if (hasMultiFieldValueClassRepresentation()) {
+      hash = (37 * hash) + MULTI_FIELD_VALUE_CLASS_REPRESENTATION_FIELD_NUMBER;
+      hash = (53 * hash) + getMultiFieldValueClassRepresentation().hashCode();
+    }
+    if (getSealedSubclassCount() > 0) {
+      hash = (37 * hash) + SEALED_SUBCLASS_FIELD_NUMBER;
+      hash = (53 * hash) + getSealedSubclassList().hashCode();
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrClass prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrClass}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrClass, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)
       org.jetbrains.kotlin.backend.common.serialization.proto.IrClassOrBuilder {
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor;
+    }
+
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.Builder.class);
+    }
+
     // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.newBuilder()
     private Builder() {
-      super(DEFAULT_INSTANCE);
+      maybeForceBuilderInitialization();
     }
 
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (org.jetbrains.kotlin.protobuf.GeneratedMessage
+              .alwaysUseFieldBuilders) {
+        getBaseFieldBuilder();
+        getThisReceiverFieldBuilder();
+        getTypeParameterFieldBuilder();
+        getDeclarationFieldBuilder();
+        getInlineClassRepresentationFieldBuilder();
+        getMultiFieldValueClassRepresentationFieldBuilder();
+      }
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      base_ = null;
+      if (baseBuilder_ != null) {
+        baseBuilder_.dispose();
+        baseBuilder_ = null;
+      }
+      name_ = 0;
+      thisReceiver_ = null;
+      if (thisReceiverBuilder_ != null) {
+        thisReceiverBuilder_.dispose();
+        thisReceiverBuilder_ = null;
+      }
+      if (typeParameterBuilder_ == null) {
+        typeParameter_ = java.util.Collections.emptyList();
+      } else {
+        typeParameter_ = null;
+        typeParameterBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000008);
+      if (declarationBuilder_ == null) {
+        declaration_ = java.util.Collections.emptyList();
+      } else {
+        declaration_ = null;
+        declarationBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000010);
+      superType_ = emptyIntList();
+      inlineClassRepresentation_ = null;
+      if (inlineClassRepresentationBuilder_ != null) {
+        inlineClassRepresentationBuilder_.dispose();
+        inlineClassRepresentationBuilder_ = null;
+      }
+      multiFieldValueClassRepresentation_ = null;
+      if (multiFieldValueClassRepresentationBuilder_ != null) {
+        multiFieldValueClassRepresentationBuilder_.dispose();
+        multiFieldValueClassRepresentationBuilder_ = null;
+      }
+      sealedSubclass_ = emptyLongList();
+      return this;
+    }
 
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrClass build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrClass result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrClass buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrClass result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrClass(this);
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(org.jetbrains.kotlin.backend.common.serialization.proto.IrClass result) {
+      if (typeParameterBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0)) {
+          typeParameter_ = java.util.Collections.unmodifiableList(typeParameter_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.typeParameter_ = typeParameter_;
+      } else {
+        result.typeParameter_ = typeParameterBuilder_.build();
+      }
+      if (declarationBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0)) {
+          declaration_ = java.util.Collections.unmodifiableList(declaration_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.declaration_ = declaration_;
+      } else {
+        result.declaration_ = declarationBuilder_.build();
+      }
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.IrClass result) {
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.base_ = baseBuilder_ == null
+            ? base_
+            : baseBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.name_ = name_;
+        to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.thisReceiver_ = thisReceiverBuilder_ == null
+            ? thisReceiver_
+            : thisReceiverBuilder_.build();
+        to_bitField0_ |= 0x00000004;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        superType_.makeImmutable();
+        result.superType_ = superType_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.inlineClassRepresentation_ = inlineClassRepresentationBuilder_ == null
+            ? inlineClassRepresentation_
+            : inlineClassRepresentationBuilder_.build();
+        to_bitField0_ |= 0x00000008;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.multiFieldValueClassRepresentation_ = multiFieldValueClassRepresentationBuilder_ == null
+            ? multiFieldValueClassRepresentation_
+            : multiFieldValueClassRepresentationBuilder_.build();
+        to_bitField0_ |= 0x00000010;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        sealedSubclass_.makeImmutable();
+        result.sealedSubclass_ = sealedSubclass_;
+      }
+      result.bitField0_ |= to_bitField0_;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrClass) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrClass other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.getDefaultInstance()) return this;
+      if (other.hasBase()) {
+        mergeBase(other.getBase());
+      }
+      if (other.hasName()) {
+        setName(other.getName());
+      }
+      if (other.hasThisReceiver()) {
+        mergeThisReceiver(other.getThisReceiver());
+      }
+      if (typeParameterBuilder_ == null) {
+        if (!other.typeParameter_.isEmpty()) {
+          if (typeParameter_.isEmpty()) {
+            typeParameter_ = other.typeParameter_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureTypeParameterIsMutable();
+            typeParameter_.addAll(other.typeParameter_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.typeParameter_.isEmpty()) {
+          if (typeParameterBuilder_.isEmpty()) {
+            typeParameterBuilder_.dispose();
+            typeParameterBuilder_ = null;
+            typeParameter_ = other.typeParameter_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+            typeParameterBuilder_ = 
+              org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getTypeParameterFieldBuilder() : null;
+          } else {
+            typeParameterBuilder_.addAllMessages(other.typeParameter_);
+          }
+        }
+      }
+      if (declarationBuilder_ == null) {
+        if (!other.declaration_.isEmpty()) {
+          if (declaration_.isEmpty()) {
+            declaration_ = other.declaration_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureDeclarationIsMutable();
+            declaration_.addAll(other.declaration_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.declaration_.isEmpty()) {
+          if (declarationBuilder_.isEmpty()) {
+            declarationBuilder_.dispose();
+            declarationBuilder_ = null;
+            declaration_ = other.declaration_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+            declarationBuilder_ = 
+              org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                 getDeclarationFieldBuilder() : null;
+          } else {
+            declarationBuilder_.addAllMessages(other.declaration_);
+          }
+        }
+      }
+      if (!other.superType_.isEmpty()) {
+        if (superType_.isEmpty()) {
+          superType_ = other.superType_;
+          superType_.makeImmutable();
+          bitField0_ |= 0x00000020;
+        } else {
+          ensureSuperTypeIsMutable();
+          superType_.addAll(other.superType_);
+        }
+        onChanged();
+      }
+      if (other.hasInlineClassRepresentation()) {
+        mergeInlineClassRepresentation(other.getInlineClassRepresentation());
+      }
+      if (other.hasMultiFieldValueClassRepresentation()) {
+        mergeMultiFieldValueClassRepresentation(other.getMultiFieldValueClassRepresentation());
+      }
+      if (!other.sealedSubclass_.isEmpty()) {
+        if (sealedSubclass_.isEmpty()) {
+          sealedSubclass_ = other.sealedSubclass_;
+          sealedSubclass_.makeImmutable();
+          bitField0_ |= 0x00000100;
+        } else {
+          ensureSealedSubclassIsMutable();
+          sealedSubclass_.addAll(other.sealedSubclass_);
+        }
+        onChanged();
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      if (!hasBase()) {
+        return false;
+      }
+      if (!hasName()) {
+        return false;
+      }
+      if (!getBase().isInitialized()) {
+        return false;
+      }
+      if (hasThisReceiver()) {
+        if (!getThisReceiver().isInitialized()) {
+          return false;
+        }
+      }
+      for (int i = 0; i < getTypeParameterCount(); i++) {
+        if (!getTypeParameter(i).isInitialized()) {
+          return false;
+        }
+      }
+      for (int i = 0; i < getDeclarationCount(); i++) {
+        if (!getDeclaration(i).isInitialized()) {
+          return false;
+        }
+      }
+      if (hasInlineClassRepresentation()) {
+        if (!getInlineClassRepresentation().isInitialized()) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              input.readMessage(
+                  getBaseFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 16: {
+              name_ = input.readInt32();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 16
+            case 26: {
+              input.readMessage(
+                  getThisReceiverFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
+            case 34: {
+              org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter m =
+                  input.readMessage(
+                      org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.parser(),
+                      extensionRegistry);
+              if (typeParameterBuilder_ == null) {
+                ensureTypeParameterIsMutable();
+                typeParameter_.add(m);
+              } else {
+                typeParameterBuilder_.addMessage(m);
+              }
+              break;
+            } // case 34
+            case 42: {
+              org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration m =
+                  input.readMessage(
+                      org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.parser(),
+                      extensionRegistry);
+              if (declarationBuilder_ == null) {
+                ensureDeclarationIsMutable();
+                declaration_.add(m);
+              } else {
+                declarationBuilder_.addMessage(m);
+              }
+              break;
+            } // case 42
+            case 48: {
+              int v = input.readInt32();
+              ensureSuperTypeIsMutable();
+              superType_.addInt(v);
+              break;
+            } // case 48
+            case 50: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              ensureSuperTypeIsMutable();
+              while (input.getBytesUntilLimit() > 0) {
+                superType_.addInt(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            } // case 50
+            case 58: {
+              input.readMessage(
+                  getInlineClassRepresentationFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 58
+            case 64: {
+              long v = input.readInt64();
+              ensureSealedSubclassIsMutable();
+              sealedSubclass_.addLong(v);
+              break;
+            } // case 64
+            case 66: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              ensureSealedSubclassIsMutable();
+              while (input.getBytesUntilLimit() > 0) {
+                sealedSubclass_.addLong(input.readInt64());
+              }
+              input.popLimit(limit);
+              break;
+            } // case 66
+            case 74: {
+              input.readMessage(
+                  getMultiFieldValueClassRepresentationFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 74
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int bitField0_;
+
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder> baseBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+     * @return Whether the base field is set.
      */
-    @java.lang.Override
     public boolean hasBase() {
-      return instance.hasBase();
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+     * @return The base.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase() {
-      return instance.getBase();
+      if (baseBuilder_ == null) {
+        return base_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance() : base_;
+      } else {
+        return baseBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
      */
     public Builder setBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase value) {
-      copyOnWrite();
-      instance.setBase(value);
-      return this;
+      if (baseBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        base_ = value;
+      } else {
+        baseBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
      */
     public Builder setBase(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder builderForValue) {
-      copyOnWrite();
-      instance.setBase(builderForValue.build());
+      if (baseBuilder_ == null) {
+        base_ = builderForValue.build();
+      } else {
+        baseBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
      */
     public Builder mergeBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase value) {
-      copyOnWrite();
-      instance.mergeBase(value);
+      if (baseBuilder_ == null) {
+        if (((bitField0_ & 0x00000001) != 0) &&
+          base_ != null &&
+          base_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance()) {
+          getBaseBuilder().mergeFrom(value);
+        } else {
+          base_ = value;
+        }
+      } else {
+        baseBuilder_.mergeFrom(value);
+      }
+      if (base_ != null) {
+        bitField0_ |= 0x00000001;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
      */
-    public Builder clearBase() {  copyOnWrite();
-      instance.clearBase();
+    public Builder clearBase() {
+      bitField0_ = (bitField0_ & ~0x00000001);
+      base_ = null;
+      if (baseBuilder_ != null) {
+        baseBuilder_.dispose();
+        baseBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder getBaseBuilder() {
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return getBaseFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder() {
+      if (baseBuilder_ != null) {
+        return baseBuilder_.getMessageOrBuilder();
+      } else {
+        return base_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance() : base_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder> 
+        getBaseFieldBuilder() {
+      if (baseBuilder_ == null) {
+        baseBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder>(
+                getBase(),
+                getParentForChildren(),
+                isClean());
+        base_ = null;
+      }
+      return baseBuilder_;
+    }
 
+    private int name_ ;
     /**
      * <code>int32 name = 2 [features = { ... }</code>
      * @return Whether the name field is set.
      */
     @java.lang.Override
     public boolean hasName() {
-      return instance.hasName();
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <code>int32 name = 2 [features = { ... }</code>
@@ -736,7 +1232,7 @@ public  final class IrClass extends
      */
     @java.lang.Override
     public int getName() {
-      return instance.getName();
+      return name_;
     }
     /**
      * <code>int32 name = 2 [features = { ... }</code>
@@ -744,8 +1240,10 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder setName(int value) {
-      copyOnWrite();
-      instance.setName(value);
+
+      name_ = value;
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -753,86 +1251,190 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder clearName() {
-      copyOnWrite();
-      instance.clearName();
+      bitField0_ = (bitField0_ & ~0x00000002);
+      name_ = 0;
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> thisReceiverBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+     * @return Whether the thisReceiver field is set.
      */
-    @java.lang.Override
     public boolean hasThisReceiver() {
-      return instance.hasThisReceiver();
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+     * @return The thisReceiver.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver() {
-      return instance.getThisReceiver();
+      if (thisReceiverBuilder_ == null) {
+        return thisReceiver_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance() : thisReceiver_;
+      } else {
+        return thisReceiverBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
      */
     public Builder setThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
-      copyOnWrite();
-      instance.setThisReceiver(value);
-      return this;
+      if (thisReceiverBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        thisReceiver_ = value;
+      } else {
+        thisReceiverBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
      */
     public Builder setThisReceiver(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
-      copyOnWrite();
-      instance.setThisReceiver(builderForValue.build());
+      if (thisReceiverBuilder_ == null) {
+        thisReceiver_ = builderForValue.build();
+      } else {
+        thisReceiverBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
      */
     public Builder mergeThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
-      copyOnWrite();
-      instance.mergeThisReceiver(value);
+      if (thisReceiverBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0) &&
+          thisReceiver_ != null &&
+          thisReceiver_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) {
+          getThisReceiverBuilder().mergeFrom(value);
+        } else {
+          thisReceiver_ = value;
+        }
+      } else {
+        thisReceiverBuilder_.mergeFrom(value);
+      }
+      if (thisReceiver_ != null) {
+        bitField0_ |= 0x00000004;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
      */
-    public Builder clearThisReceiver() {  copyOnWrite();
-      instance.clearThisReceiver();
+    public Builder clearThisReceiver() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      thisReceiver_ = null;
+      if (thisReceiverBuilder_ != null) {
+        thisReceiverBuilder_.dispose();
+        thisReceiverBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder getThisReceiverBuilder() {
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return getThisReceiverFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder getThisReceiverOrBuilder() {
+      if (thisReceiverBuilder_ != null) {
+        return thisReceiverBuilder_.getMessageOrBuilder();
+      } else {
+        return thisReceiver_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance() : thisReceiver_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder> 
+        getThisReceiverFieldBuilder() {
+      if (thisReceiverBuilder_ == null) {
+        thisReceiverBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameterOrBuilder>(
+                getThisReceiver(),
+                getParentForChildren(),
+                isClean());
+        thisReceiver_ = null;
+      }
+      return thisReceiverBuilder_;
+    }
+
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> typeParameter_ =
+      java.util.Collections.emptyList();
+    private void ensureTypeParameterIsMutable() {
+      if (!((bitField0_ & 0x00000008) != 0)) {
+        typeParameter_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter>(typeParameter_);
+        bitField0_ |= 0x00000008;
+       }
+    }
+
+    private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> typeParameterBuilder_;
 
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
-    @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> getTypeParameterList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getTypeParameterList());
+      if (typeParameterBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(typeParameter_);
+      } else {
+        return typeParameterBuilder_.getMessageList();
+      }
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
-    @java.lang.Override
     public int getTypeParameterCount() {
-      return instance.getTypeParameterCount();
-    }/**
+      if (typeParameterBuilder_ == null) {
+        return typeParameter_.size();
+      } else {
+        return typeParameterBuilder_.getCount();
+      }
+    }
+    /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter getTypeParameter(int index) {
-      return instance.getTypeParameter(index);
+      if (typeParameterBuilder_ == null) {
+        return typeParameter_.get(index);
+      } else {
+        return typeParameterBuilder_.getMessage(index);
+      }
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
     public Builder setTypeParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-      copyOnWrite();
-      instance.setTypeParameter(index, value);
+      if (typeParameterBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, value);
+        onChanged();
+      } else {
+        typeParameterBuilder_.setMessage(index, value);
+      }
       return this;
     }
     /**
@@ -840,17 +1442,29 @@ public  final class IrClass extends
      */
     public Builder setTypeParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder builderForValue) {
-      copyOnWrite();
-      instance.setTypeParameter(index,
-          builderForValue.build());
+      if (typeParameterBuilder_ == null) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        typeParameterBuilder_.setMessage(index, builderForValue.build());
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
     public Builder addTypeParameter(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-      copyOnWrite();
-      instance.addTypeParameter(value);
+      if (typeParameterBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(value);
+        onChanged();
+      } else {
+        typeParameterBuilder_.addMessage(value);
+      }
       return this;
     }
     /**
@@ -858,8 +1472,16 @@ public  final class IrClass extends
      */
     public Builder addTypeParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter value) {
-      copyOnWrite();
-      instance.addTypeParameter(index, value);
+      if (typeParameterBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, value);
+        onChanged();
+      } else {
+        typeParameterBuilder_.addMessage(index, value);
+      }
       return this;
     }
     /**
@@ -867,8 +1489,13 @@ public  final class IrClass extends
      */
     public Builder addTypeParameter(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder builderForValue) {
-      copyOnWrite();
-      instance.addTypeParameter(builderForValue.build());
+      if (typeParameterBuilder_ == null) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(builderForValue.build());
+        onChanged();
+      } else {
+        typeParameterBuilder_.addMessage(builderForValue.build());
+      }
       return this;
     }
     /**
@@ -876,9 +1503,13 @@ public  final class IrClass extends
      */
     public Builder addTypeParameter(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder builderForValue) {
-      copyOnWrite();
-      instance.addTypeParameter(index,
-          builderForValue.build());
+      if (typeParameterBuilder_ == null) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        typeParameterBuilder_.addMessage(index, builderForValue.build());
+      }
       return this;
     }
     /**
@@ -886,55 +1517,164 @@ public  final class IrClass extends
      */
     public Builder addAllTypeParameter(
         java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> values) {
-      copyOnWrite();
-      instance.addAllTypeParameter(values);
+      if (typeParameterBuilder_ == null) {
+        ensureTypeParameterIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, typeParameter_);
+        onChanged();
+      } else {
+        typeParameterBuilder_.addAllMessages(values);
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
     public Builder clearTypeParameter() {
-      copyOnWrite();
-      instance.clearTypeParameter();
+      if (typeParameterBuilder_ == null) {
+        typeParameter_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+      } else {
+        typeParameterBuilder_.clear();
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
      */
     public Builder removeTypeParameter(int index) {
-      copyOnWrite();
-      instance.removeTypeParameter(index);
+      if (typeParameterBuilder_ == null) {
+        ensureTypeParameterIsMutable();
+        typeParameter_.remove(index);
+        onChanged();
+      } else {
+        typeParameterBuilder_.remove(index);
+      }
       return this;
     }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder getTypeParameterBuilder(
+        int index) {
+      return getTypeParameterFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder getTypeParameterOrBuilder(
+        int index) {
+      if (typeParameterBuilder_ == null) {
+        return typeParameter_.get(index);  } else {
+        return typeParameterBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
+         getTypeParameterOrBuilderList() {
+      if (typeParameterBuilder_ != null) {
+        return typeParameterBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(typeParameter_);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder addTypeParameterBuilder() {
+      return getTypeParameterFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder addTypeParameterBuilder(
+        int index) {
+      return getTypeParameterFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder> 
+         getTypeParameterBuilderList() {
+      return getTypeParameterFieldBuilder().getBuilderList();
+    }
+    private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder> 
+        getTypeParameterFieldBuilder() {
+      if (typeParameterBuilder_ == null) {
+        typeParameterBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterOrBuilder>(
+                typeParameter_,
+                ((bitField0_ & 0x00000008) != 0),
+                getParentForChildren(),
+                isClean());
+        typeParameter_ = null;
+      }
+      return typeParameterBuilder_;
+    }
+
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> declaration_ =
+      java.util.Collections.emptyList();
+    private void ensureDeclarationIsMutable() {
+      if (!((bitField0_ & 0x00000010) != 0)) {
+        declaration_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration>(declaration_);
+        bitField0_ |= 0x00000010;
+       }
+    }
+
+    private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder> declarationBuilder_;
 
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
-    @java.lang.Override
     public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> getDeclarationList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getDeclarationList());
+      if (declarationBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(declaration_);
+      } else {
+        return declarationBuilder_.getMessageList();
+      }
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
-    @java.lang.Override
     public int getDeclarationCount() {
-      return instance.getDeclarationCount();
-    }/**
+      if (declarationBuilder_ == null) {
+        return declaration_.size();
+      } else {
+        return declarationBuilder_.getCount();
+      }
+    }
+    /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration getDeclaration(int index) {
-      return instance.getDeclaration(index);
+      if (declarationBuilder_ == null) {
+        return declaration_.get(index);
+      } else {
+        return declarationBuilder_.getMessage(index);
+      }
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
     public Builder setDeclaration(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-      copyOnWrite();
-      instance.setDeclaration(index, value);
+      if (declarationBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDeclarationIsMutable();
+        declaration_.set(index, value);
+        onChanged();
+      } else {
+        declarationBuilder_.setMessage(index, value);
+      }
       return this;
     }
     /**
@@ -942,17 +1682,29 @@ public  final class IrClass extends
      */
     public Builder setDeclaration(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder builderForValue) {
-      copyOnWrite();
-      instance.setDeclaration(index,
-          builderForValue.build());
+      if (declarationBuilder_ == null) {
+        ensureDeclarationIsMutable();
+        declaration_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        declarationBuilder_.setMessage(index, builderForValue.build());
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
     public Builder addDeclaration(org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-      copyOnWrite();
-      instance.addDeclaration(value);
+      if (declarationBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDeclarationIsMutable();
+        declaration_.add(value);
+        onChanged();
+      } else {
+        declarationBuilder_.addMessage(value);
+      }
       return this;
     }
     /**
@@ -960,8 +1712,16 @@ public  final class IrClass extends
      */
     public Builder addDeclaration(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration value) {
-      copyOnWrite();
-      instance.addDeclaration(index, value);
+      if (declarationBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDeclarationIsMutable();
+        declaration_.add(index, value);
+        onChanged();
+      } else {
+        declarationBuilder_.addMessage(index, value);
+      }
       return this;
     }
     /**
@@ -969,8 +1729,13 @@ public  final class IrClass extends
      */
     public Builder addDeclaration(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder builderForValue) {
-      copyOnWrite();
-      instance.addDeclaration(builderForValue.build());
+      if (declarationBuilder_ == null) {
+        ensureDeclarationIsMutable();
+        declaration_.add(builderForValue.build());
+        onChanged();
+      } else {
+        declarationBuilder_.addMessage(builderForValue.build());
+      }
       return this;
     }
     /**
@@ -978,9 +1743,13 @@ public  final class IrClass extends
      */
     public Builder addDeclaration(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder builderForValue) {
-      copyOnWrite();
-      instance.addDeclaration(index,
-          builderForValue.build());
+      if (declarationBuilder_ == null) {
+        ensureDeclarationIsMutable();
+        declaration_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        declarationBuilder_.addMessage(index, builderForValue.build());
+      }
       return this;
     }
     /**
@@ -988,63 +1757,151 @@ public  final class IrClass extends
      */
     public Builder addAllDeclaration(
         java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> values) {
-      copyOnWrite();
-      instance.addAllDeclaration(values);
+      if (declarationBuilder_ == null) {
+        ensureDeclarationIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, declaration_);
+        onChanged();
+      } else {
+        declarationBuilder_.addAllMessages(values);
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
     public Builder clearDeclaration() {
-      copyOnWrite();
-      instance.clearDeclaration();
+      if (declarationBuilder_ == null) {
+        declaration_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+      } else {
+        declarationBuilder_.clear();
+      }
       return this;
     }
     /**
      * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
      */
     public Builder removeDeclaration(int index) {
-      copyOnWrite();
-      instance.removeDeclaration(index);
+      if (declarationBuilder_ == null) {
+        ensureDeclarationIsMutable();
+        declaration_.remove(index);
+        onChanged();
+      } else {
+        declarationBuilder_.remove(index);
+      }
       return this;
     }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder getDeclarationBuilder(
+        int index) {
+      return getDeclarationFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder getDeclarationOrBuilder(
+        int index) {
+      if (declarationBuilder_ == null) {
+        return declaration_.get(index);  } else {
+        return declarationBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder> 
+         getDeclarationOrBuilderList() {
+      if (declarationBuilder_ != null) {
+        return declarationBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(declaration_);
+      }
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder addDeclarationBuilder() {
+      return getDeclarationFieldBuilder().addBuilder(
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder addDeclarationBuilder(
+        int index) {
+      return getDeclarationFieldBuilder().addBuilder(
+          index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.getDefaultInstance());
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder> 
+         getDeclarationBuilderList() {
+      return getDeclarationFieldBuilder().getBuilderList();
+    }
+    private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder> 
+        getDeclarationFieldBuilder() {
+      if (declarationBuilder_ == null) {
+        declarationBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder>(
+                declaration_,
+                ((bitField0_ & 0x00000010) != 0),
+                getParentForChildren(),
+                isClean());
+        declaration_ = null;
+      }
+      return declarationBuilder_;
+    }
 
+    private org.jetbrains.kotlin.protobuf.Internal.IntList superType_ = emptyIntList();
+    private void ensureSuperTypeIsMutable() {
+      if (!superType_.isModifiable()) {
+        superType_ = makeMutableCopy(superType_);
+      }
+      bitField0_ |= 0x00000020;
+    }
     /**
      * <code>repeated int32 super_type = 6;</code>
      * @return A list containing the superType.
      */
-    @java.lang.Override
     public java.util.List<java.lang.Integer>
         getSuperTypeList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getSuperTypeList());
+      superType_.makeImmutable();
+      return superType_;
     }
     /**
      * <code>repeated int32 super_type = 6;</code>
      * @return The count of superType.
      */
-    @java.lang.Override
     public int getSuperTypeCount() {
-      return instance.getSuperTypeCount();
+      return superType_.size();
     }
     /**
      * <code>repeated int32 super_type = 6;</code>
      * @param index The index of the element to return.
      * @return The superType at the given index.
      */
-    @java.lang.Override
     public int getSuperType(int index) {
-      return instance.getSuperType(index);
+      return superType_.getInt(index);
     }
     /**
      * <code>repeated int32 super_type = 6;</code>
+     * @param index The index to set the value at.
      * @param value The superType to set.
      * @return This builder for chaining.
      */
     public Builder setSuperType(
         int index, int value) {
-      copyOnWrite();
-      instance.setSuperType(index, value);
+
+      ensureSuperTypeIsMutable();
+      superType_.setInt(index, value);
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -1053,8 +1910,11 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder addSuperType(int value) {
-      copyOnWrite();
-      instance.addSuperType(value);
+
+      ensureSuperTypeIsMutable();
+      superType_.addInt(value);
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -1064,8 +1924,11 @@ public  final class IrClass extends
      */
     public Builder addAllSuperType(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      copyOnWrite();
-      instance.addAllSuperType(values);
+      ensureSuperTypeIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, superType_);
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -1073,141 +1936,298 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder clearSuperType() {
-      copyOnWrite();
-      instance.clearSuperType();
+      superType_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000020);
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inlineClassRepresentation_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder> inlineClassRepresentationBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     * @return Whether the inlineClassRepresentation field is set.
      */
-    @java.lang.Override
     public boolean hasInlineClassRepresentation() {
-      return instance.hasInlineClassRepresentation();
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     * @return The inlineClassRepresentation.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation getInlineClassRepresentation() {
-      return instance.getInlineClassRepresentation();
+      if (inlineClassRepresentationBuilder_ == null) {
+        return inlineClassRepresentation_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance() : inlineClassRepresentation_;
+      } else {
+        return inlineClassRepresentationBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
      */
     public Builder setInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
-      copyOnWrite();
-      instance.setInlineClassRepresentation(value);
-      return this;
+      if (inlineClassRepresentationBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        inlineClassRepresentation_ = value;
+      } else {
+        inlineClassRepresentationBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
      */
     public Builder setInlineClassRepresentation(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder builderForValue) {
-      copyOnWrite();
-      instance.setInlineClassRepresentation(builderForValue.build());
+      if (inlineClassRepresentationBuilder_ == null) {
+        inlineClassRepresentation_ = builderForValue.build();
+      } else {
+        inlineClassRepresentationBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
      */
     public Builder mergeInlineClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation value) {
-      copyOnWrite();
-      instance.mergeInlineClassRepresentation(value);
+      if (inlineClassRepresentationBuilder_ == null) {
+        if (((bitField0_ & 0x00000040) != 0) &&
+          inlineClassRepresentation_ != null &&
+          inlineClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance()) {
+          getInlineClassRepresentationBuilder().mergeFrom(value);
+        } else {
+          inlineClassRepresentation_ = value;
+        }
+      } else {
+        inlineClassRepresentationBuilder_.mergeFrom(value);
+      }
+      if (inlineClassRepresentation_ != null) {
+        bitField0_ |= 0x00000040;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
      */
-    public Builder clearInlineClassRepresentation() {  copyOnWrite();
-      instance.clearInlineClassRepresentation();
+    public Builder clearInlineClassRepresentation() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      inlineClassRepresentation_ = null;
+      if (inlineClassRepresentationBuilder_ != null) {
+        inlineClassRepresentationBuilder_.dispose();
+        inlineClassRepresentationBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder getInlineClassRepresentationBuilder() {
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return getInlineClassRepresentationFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder getInlineClassRepresentationOrBuilder() {
+      if (inlineClassRepresentationBuilder_ != null) {
+        return inlineClassRepresentationBuilder_.getMessageOrBuilder();
+      } else {
+        return inlineClassRepresentation_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.getDefaultInstance() : inlineClassRepresentation_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation inline_class_representation = 7;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder> 
+        getInlineClassRepresentationFieldBuilder() {
+      if (inlineClassRepresentationBuilder_ == null) {
+        inlineClassRepresentationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentationOrBuilder>(
+                getInlineClassRepresentation(),
+                getParentForChildren(),
+                isClean());
+        inlineClassRepresentation_ = null;
+      }
+      return inlineClassRepresentationBuilder_;
+    }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multiFieldValueClassRepresentation_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder> multiFieldValueClassRepresentationBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+     * @return Whether the multiFieldValueClassRepresentation field is set.
      */
-    @java.lang.Override
     public boolean hasMultiFieldValueClassRepresentation() {
-      return instance.hasMultiFieldValueClassRepresentation();
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+     * @return The multiFieldValueClassRepresentation.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation getMultiFieldValueClassRepresentation() {
-      return instance.getMultiFieldValueClassRepresentation();
+      if (multiFieldValueClassRepresentationBuilder_ == null) {
+        return multiFieldValueClassRepresentation_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.getDefaultInstance() : multiFieldValueClassRepresentation_;
+      } else {
+        return multiFieldValueClassRepresentationBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
      */
     public Builder setMultiFieldValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation value) {
-      copyOnWrite();
-      instance.setMultiFieldValueClassRepresentation(value);
-      return this;
+      if (multiFieldValueClassRepresentationBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        multiFieldValueClassRepresentation_ = value;
+      } else {
+        multiFieldValueClassRepresentationBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
      */
     public Builder setMultiFieldValueClassRepresentation(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.Builder builderForValue) {
-      copyOnWrite();
-      instance.setMultiFieldValueClassRepresentation(builderForValue.build());
+      if (multiFieldValueClassRepresentationBuilder_ == null) {
+        multiFieldValueClassRepresentation_ = builderForValue.build();
+      } else {
+        multiFieldValueClassRepresentationBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
      */
     public Builder mergeMultiFieldValueClassRepresentation(org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation value) {
-      copyOnWrite();
-      instance.mergeMultiFieldValueClassRepresentation(value);
+      if (multiFieldValueClassRepresentationBuilder_ == null) {
+        if (((bitField0_ & 0x00000080) != 0) &&
+          multiFieldValueClassRepresentation_ != null &&
+          multiFieldValueClassRepresentation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.getDefaultInstance()) {
+          getMultiFieldValueClassRepresentationBuilder().mergeFrom(value);
+        } else {
+          multiFieldValueClassRepresentation_ = value;
+        }
+      } else {
+        multiFieldValueClassRepresentationBuilder_.mergeFrom(value);
+      }
+      if (multiFieldValueClassRepresentation_ != null) {
+        bitField0_ |= 0x00000080;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
      */
-    public Builder clearMultiFieldValueClassRepresentation() {  copyOnWrite();
-      instance.clearMultiFieldValueClassRepresentation();
+    public Builder clearMultiFieldValueClassRepresentation() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      multiFieldValueClassRepresentation_ = null;
+      if (multiFieldValueClassRepresentationBuilder_ != null) {
+        multiFieldValueClassRepresentationBuilder_.dispose();
+        multiFieldValueClassRepresentationBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.Builder getMultiFieldValueClassRepresentationBuilder() {
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return getMultiFieldValueClassRepresentationFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder getMultiFieldValueClassRepresentationOrBuilder() {
+      if (multiFieldValueClassRepresentationBuilder_ != null) {
+        return multiFieldValueClassRepresentationBuilder_.getMessageOrBuilder();
+      } else {
+        return multiFieldValueClassRepresentation_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.getDefaultInstance() : multiFieldValueClassRepresentation_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation multi_field_value_class_representation = 9;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder> 
+        getMultiFieldValueClassRepresentationFieldBuilder() {
+      if (multiFieldValueClassRepresentationBuilder_ == null) {
+        multiFieldValueClassRepresentationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentationOrBuilder>(
+                getMultiFieldValueClassRepresentation(),
+                getParentForChildren(),
+                isClean());
+        multiFieldValueClassRepresentation_ = null;
+      }
+      return multiFieldValueClassRepresentationBuilder_;
+    }
 
+    private org.jetbrains.kotlin.protobuf.Internal.LongList sealedSubclass_ = emptyLongList();
+    private void ensureSealedSubclassIsMutable() {
+      if (!sealedSubclass_.isModifiable()) {
+        sealedSubclass_ = makeMutableCopy(sealedSubclass_);
+      }
+      bitField0_ |= 0x00000100;
+    }
     /**
      * <code>repeated int64 sealed_subclass = 8;</code>
      * @return A list containing the sealedSubclass.
      */
-    @java.lang.Override
     public java.util.List<java.lang.Long>
         getSealedSubclassList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getSealedSubclassList());
+      sealedSubclass_.makeImmutable();
+      return sealedSubclass_;
     }
     /**
      * <code>repeated int64 sealed_subclass = 8;</code>
      * @return The count of sealedSubclass.
      */
-    @java.lang.Override
     public int getSealedSubclassCount() {
-      return instance.getSealedSubclassCount();
+      return sealedSubclass_.size();
     }
     /**
      * <code>repeated int64 sealed_subclass = 8;</code>
      * @param index The index of the element to return.
      * @return The sealedSubclass at the given index.
      */
-    @java.lang.Override
     public long getSealedSubclass(int index) {
-      return instance.getSealedSubclass(index);
+      return sealedSubclass_.getLong(index);
     }
     /**
      * <code>repeated int64 sealed_subclass = 8;</code>
+     * @param index The index to set the value at.
      * @param value The sealedSubclass to set.
      * @return This builder for chaining.
      */
     public Builder setSealedSubclass(
         int index, long value) {
-      copyOnWrite();
-      instance.setSealedSubclass(index, value);
+
+      ensureSealedSubclassIsMutable();
+      sealedSubclass_.setLong(index, value);
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -1216,8 +2236,11 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder addSealedSubclass(long value) {
-      copyOnWrite();
-      instance.addSealedSubclass(value);
+
+      ensureSealedSubclassIsMutable();
+      sealedSubclass_.addLong(value);
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -1227,8 +2250,11 @@ public  final class IrClass extends
      */
     public Builder addAllSealedSubclass(
         java.lang.Iterable<? extends java.lang.Long> values) {
-      copyOnWrite();
-      instance.addAllSealedSubclass(values);
+      ensureSealedSubclassIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, sealedSubclass_);
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -1236,96 +2262,59 @@ public  final class IrClass extends
      * @return This builder for chaining.
      */
     public Builder clearSealedSubclass() {
-      copyOnWrite();
-      instance.clearSealedSubclass();
+      sealedSubclass_ = emptyLongList();
+      bitField0_ = (bitField0_ & ~0x00000100);
+      onChanged();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)
   }
-  private byte memoizedIsInitialized = 2;
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.IrClass();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "bitField0_",
-            "base_",
-            "name_",
-            "thisReceiver_",
-            "typeParameter_",
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter.class,
-            "declaration_",
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.class,
-            "superType_",
-            "inlineClassRepresentation_",
-            "sealedSubclass_",
-            "multiFieldValueClassRepresentation_",
-          };
-          java.lang.String info =
-              "\u0004\t\u0000\u0001\u0001\t\t\u0000\u0004\u0006\u0001\u1509\u0000\u0002\u1504\u0001" +
-              "\u0003\u1409\u0002\u0004\u041b\u0005\u041b\u0006\'\u0007\u1409\u0003\b%\t\u1009\u0004" +
-              "";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.IrClass> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.IrClass.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.IrClass>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return memoizedIsInitialized;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrClass)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.IrClass DEFAULT_INSTANCE;
   static {
-    IrClass defaultInstance = new IrClass();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      IrClass.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.IrClass();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<IrClass> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<IrClass>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<IrClass>() {
+    @java.lang.Override
+    public IrClass parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<IrClass> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<IrClass> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

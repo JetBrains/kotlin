@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface MemberAccessCommonOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <pre>
@@ -34,6 +34,24 @@ public interface MemberAccessCommonOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
    */
   int getArgumentCount();
+  /**
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   *
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder> 
+      getArgumentOrBuilderList();
+  /**
+   * <pre>
+   * Value argument serialization scheme after 2.2.0
+   * </pre>
+   *
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression argument = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder getArgumentOrBuilder(
+      int index);
 
   /**
    * <pre>
@@ -53,6 +71,14 @@ public interface MemberAccessCommonOrBuilder extends
    * @return The dispatchReceiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getDispatchReceiver();
+  /**
+   * <pre>
+   * Value argument serialization scheme before 2.2.0
+   * </pre>
+   *
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression dispatch_receiver = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getDispatchReceiverOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression extension_receiver = 2;</code>
@@ -64,6 +90,10 @@ public interface MemberAccessCommonOrBuilder extends
    * @return The extensionReceiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExtensionReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression extension_receiver = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getExtensionReceiverOrBuilder();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
@@ -78,6 +108,16 @@ public interface MemberAccessCommonOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
    */
   int getRegularArgumentCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder> 
+      getRegularArgumentOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression regular_argument = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpressionOrBuilder getRegularArgumentOrBuilder(
+      int index);
 
   /**
    * <code>repeated int32 type_argument = 4;</code>

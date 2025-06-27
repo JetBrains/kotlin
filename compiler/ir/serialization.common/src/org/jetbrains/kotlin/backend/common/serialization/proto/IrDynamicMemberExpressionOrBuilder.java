@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrDynamicMemberExpressionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int32 member_name = 1 [features = { ... }</code>
@@ -30,4 +30,8 @@ public interface IrDynamicMemberExpressionOrBuilder extends
    * @return The receiver.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getReceiver();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression receiver = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getReceiverOrBuilder();
 }

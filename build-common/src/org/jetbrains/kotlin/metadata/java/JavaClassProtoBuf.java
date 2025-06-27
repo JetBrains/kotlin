@@ -7,6 +7,15 @@ package org.jetbrains.kotlin.metadata.java;
 
 public final class JavaClassProtoBuf {
   private JavaClassProtoBuf() {}
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      JavaClassProtoBuf.class.getName());
+  }
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf.isStaticMethod);
@@ -16,104 +25,116 @@ public final class JavaClassProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf.isPackagePrivateClass);
     registry.add(org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf.isPackagePrivateConstructor);
   }
+
+  public static void registerAllExtensions(
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (org.jetbrains.kotlin.protobuf.ExtensionRegistryLite) registry);
+  }
   public static final int IS_STATIC_METHOD_FIELD_NUMBER = 1000;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Function,
-      java.lang.Boolean> isStaticMethod = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Function.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1000,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isStaticMethod = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
   public static final int IS_PACKAGE_PRIVATE_METHOD_FIELD_NUMBER = 1001;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Function,
-      java.lang.Boolean> isPackagePrivateMethod = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Function.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1001,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isPackagePrivateMethod = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
   public static final int IS_STATIC_FIELD_FIELD_NUMBER = 1000;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.lang.Boolean> isStaticField = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1000,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isStaticField = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
   public static final int IS_PACKAGE_PRIVATE_FIELD_FIELD_NUMBER = 1001;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Property,
-      java.lang.Boolean> isPackagePrivateField = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1001,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isPackagePrivateField = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
   public static final int IS_PACKAGE_PRIVATE_CLASS_FIELD_NUMBER = 1000;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Class,
-      java.lang.Boolean> isPackagePrivateClass = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1000,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isPackagePrivateClass = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
   public static final int IS_PACKAGE_PRIVATE_CONSTRUCTOR_FIELD_NUMBER = 1000;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Constructor { ... }</code>
    */
   public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.Constructor,
-      java.lang.Boolean> isPackagePrivateConstructor = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.Constructor.getDefaultInstance(),
-        false,
-        null,
-        null,
-        1000,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.BOOL,
-        java.lang.Boolean.class);
+      java.lang.Boolean> isPackagePrivateConstructor = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Boolean.class,
+        null);
 
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      descriptor;
   static {
+    java.lang.String[] descriptorData = {
+      "\n\'build-common/src/java_descriptors.prot" +
+      "o\022\"org.jetbrains.kotlin.metadata.java\032 c" +
+      "ore/metadata/src/metadata.proto:B\n\020is_st" +
+      "atic_method\022\'.org.jetbrains.kotlin.metad" +
+      "ata.Function\030\350\007 \001(\010:K\n\031is_package_privat" +
+      "e_method\022\'.org.jetbrains.kotlin.metadata" +
+      ".Function\030\351\007 \001(\010:A\n\017is_static_field\022\'.or" +
+      "g.jetbrains.kotlin.metadata.Property\030\350\007 " +
+      "\001(\010:J\n\030is_package_private_field\022\'.org.je" +
+      "tbrains.kotlin.metadata.Property\030\351\007 \001(\010:" +
+      "G\n\030is_package_private_class\022$.org.jetbra" +
+      "ins.kotlin.metadata.Class\030\350\007 \001(\010:S\n\036is_p" +
+      "ackage_private_constructor\022*.org.jetbrai" +
+      "ns.kotlin.metadata.Constructor\030\350\007 \001(\010B\030B" +
+      "\021JavaClassProtoBuf\222\003\002 \003b\010editionsp\350\007"
+    };
+    descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor(),
+        });
+    isStaticMethod.internalInit(descriptor.getExtensions().get(0));
+    isPackagePrivateMethod.internalInit(descriptor.getExtensions().get(1));
+    isStaticField.internalInit(descriptor.getExtensions().get(2));
+    isPackagePrivateField.internalInit(descriptor.getExtensions().get(3));
+    isPackagePrivateClass.internalInit(descriptor.getExtensions().get(4));
+    isPackagePrivateConstructor.internalInit(descriptor.getExtensions().get(5));
+    descriptor.resolveAllFeaturesImmutable();
+    org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

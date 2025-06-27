@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IdSignatureOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature public_sig = 1;</code>
@@ -19,6 +19,10 @@ public interface IdSignatureOrBuilder extends
    * @return The publicSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature getPublicSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature public_sig = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignatureOrBuilder getPublicSigOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature private_sig = 2;</code>
@@ -30,6 +34,10 @@ public interface IdSignatureOrBuilder extends
    * @return The privateSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature getPrivateSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignature private_sig = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignatureOrBuilder getPrivateSigOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature accessor_sig = 3;</code>
@@ -41,6 +49,10 @@ public interface IdSignatureOrBuilder extends
    * @return The accessorSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature getAccessorSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature accessor_sig = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignatureOrBuilder getAccessorSigOrBuilder();
 
   /**
    * <code>int32 scoped_local_sig = 4;</code>
@@ -63,6 +75,10 @@ public interface IdSignatureOrBuilder extends
    * @return The compositeSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature getCompositeSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature composite_sig = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignatureOrBuilder getCompositeSigOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature local_sig = 6;</code>
@@ -74,6 +90,10 @@ public interface IdSignatureOrBuilder extends
    * @return The localSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature getLocalSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature local_sig = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignatureOrBuilder getLocalSigOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
@@ -85,6 +105,10 @@ public interface IdSignatureOrBuilder extends
    * @return The fileSig.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.FileSignatureOrBuilder getFileSigOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdSigCase getIdSigCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdSigCase getIdSigCase();
 }

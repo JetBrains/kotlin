@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrRichPropertyReferenceOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrRichPropertyReference)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
@@ -22,6 +22,16 @@ public interface IrRichPropertyReferenceOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
    */
   int getBoundValuesCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder> 
+      getBoundValuesOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression bound_values = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getBoundValuesOrBuilder(
+      int index);
 
   /**
    * <code>int64 reflection_target_symbol = 2;</code>
@@ -44,6 +54,10 @@ public interface IrRichPropertyReferenceOrBuilder extends
    * @return The getterFunction.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetterFunction();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter_function = 3 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getGetterFunctionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter_function = 4;</code>
@@ -55,6 +69,10 @@ public interface IrRichPropertyReferenceOrBuilder extends
    * @return The setterFunction.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetterFunction();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter_function = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getSetterFunctionOrBuilder();
 
   /**
    * <code>int32 origin_name = 5;</code>

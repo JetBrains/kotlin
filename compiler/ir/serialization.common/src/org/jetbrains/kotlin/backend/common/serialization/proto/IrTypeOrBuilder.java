@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrTypeOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrType)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
@@ -19,6 +19,10 @@ public interface IrTypeOrBuilder extends
    * @return The legacySimple.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy getLegacySimple();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy legacySimple = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacyOrBuilder getLegacySimpleOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
@@ -30,6 +34,10 @@ public interface IrTypeOrBuilder extends
    * @return The dynamic.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType getDynamic();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType dynamic = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicTypeOrBuilder getDynamicOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
@@ -41,6 +49,10 @@ public interface IrTypeOrBuilder extends
    * @return The dnn.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType getDnn();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType dnn = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullTypeOrBuilder getDnnOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
@@ -52,6 +64,10 @@ public interface IrTypeOrBuilder extends
    * @return The simple.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType getSimple();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType simple = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeOrBuilder getSimpleOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase getKindCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase getKindCase();
 }

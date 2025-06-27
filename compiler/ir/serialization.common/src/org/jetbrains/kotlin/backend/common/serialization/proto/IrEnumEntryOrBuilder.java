@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrEnumEntryOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrEnumEntryOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int32 name = 2 [features = { ... }</code>
@@ -52,4 +56,8 @@ public interface IrEnumEntryOrBuilder extends
    * @return The correspondingClass.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getCorrespondingClass();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrClassOrBuilder getCorrespondingClassOrBuilder();
 }

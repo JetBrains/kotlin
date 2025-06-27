@@ -8,16 +8,43 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock}
  */
-public  final class IrInlinedFunctionBlock extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        IrInlinedFunctionBlock, IrInlinedFunctionBlock.Builder> implements
+public final class IrInlinedFunctionBlock extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)
     IrInlinedFunctionBlockOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrInlinedFunctionBlock.class.getName());
+  }
+  // Use IrInlinedFunctionBlock.newBuilder() to construct.
+  private IrInlinedFunctionBlock(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private IrInlinedFunctionBlock() {
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.Builder.class);
+  }
+
   private int bitField0_;
   public static final int INLINED_FUNCTION_SYMBOL_FIELD_NUMBER = 1;
-  private long inlinedFunctionSymbol_;
+  private long inlinedFunctionSymbol_ = 0L;
   /**
    * <code>int64 inlined_function_symbol = 1;</code>
    * @return Whether the inlinedFunctionSymbol field is set.
@@ -34,21 +61,6 @@ public  final class IrInlinedFunctionBlock extends
   public long getInlinedFunctionSymbol() {
     return inlinedFunctionSymbol_;
   }
-  /**
-   * <code>int64 inlined_function_symbol = 1;</code>
-   * @param value The inlinedFunctionSymbol to set.
-   */
-  private void setInlinedFunctionSymbol(long value) {
-    bitField0_ |= 0x00000001;
-    inlinedFunctionSymbol_ = value;
-  }
-  /**
-   * <code>int64 inlined_function_symbol = 1;</code>
-   */
-  private void clearInlinedFunctionSymbol() {
-    bitField0_ = (bitField0_ & ~0x00000001);
-    inlinedFunctionSymbol_ = 0L;
-  }
 
   public static final int INLINED_FUNCTION_FILE_ENTRY_FIELD_NUMBER = 2;
   private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlinedFunctionFileEntry_;
@@ -58,6 +70,7 @@ public  final class IrInlinedFunctionBlock extends
    * </pre>
    *
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * @return Whether the inlinedFunctionFileEntry field is set.
    */
   @java.lang.Override
   public boolean hasInlinedFunctionFileEntry() {
@@ -69,6 +82,7 @@ public  final class IrInlinedFunctionBlock extends
    * </pre>
    *
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+   * @return The inlinedFunctionFileEntry.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry() {
@@ -81,46 +95,16 @@ public  final class IrInlinedFunctionBlock extends
    *
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-    value.getClass();  // minimal bytecode null check
-    inlinedFunctionFileEntry_ = value;
-    bitField0_ |= 0x00000002;
-    }
-  /**
-   * <pre>
-   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
-   * </pre>
-   *
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-    value.getClass();  // minimal bytecode null check
-    if (inlinedFunctionFileEntry_ != null &&
-        inlinedFunctionFileEntry_ != org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance()) {
-      inlinedFunctionFileEntry_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.newBuilder(inlinedFunctionFileEntry_).mergeFrom(value).buildPartial();
-    } else {
-      inlinedFunctionFileEntry_ = value;
-    }
-    bitField0_ |= 0x00000002;
-  }
-  /**
-   * <pre>
-   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
-   * </pre>
-   *
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
-   */
-  private void clearInlinedFunctionFileEntry() {  inlinedFunctionFileEntry_ = null;
-    bitField0_ = (bitField0_ & ~0x00000002);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder getInlinedFunctionFileEntryOrBuilder() {
+    return inlinedFunctionFileEntry_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance() : inlinedFunctionFileEntry_;
   }
 
   public static final int BASE_FIELD_NUMBER = 3;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base_;
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+   * @return Whether the base field is set.
    */
   @java.lang.Override
   public boolean hasBase() {
@@ -128,6 +112,7 @@ public  final class IrInlinedFunctionBlock extends
   }
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+   * @return The base.
    */
   @java.lang.Override
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase() {
@@ -136,36 +121,13 @@ public  final class IrInlinedFunctionBlock extends
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
    */
-  @java.lang.SuppressWarnings("ReturnValueIgnored")
-  private void setBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock value) {
-    value.getClass();  // minimal bytecode null check
-    base_ = value;
-    bitField0_ |= 0x00000004;
-    }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
-   */
-  @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-  private void mergeBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock value) {
-    value.getClass();  // minimal bytecode null check
-    if (base_ != null &&
-        base_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance()) {
-      base_ =
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.newBuilder(base_).mergeFrom(value).buildPartial();
-    } else {
-      base_ = value;
-    }
-    bitField0_ |= 0x00000004;
-  }
-  /**
-   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
-   */
-  private void clearBase() {  base_ = null;
-    bitField0_ = (bitField0_ & ~0x00000004);
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder getBaseOrBuilder() {
+    return base_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance() : base_;
   }
 
   public static final int INLINED_FUNCTION_START_OFFSET_FIELD_NUMBER = 4;
-  private int inlinedFunctionStartOffset_;
+  private int inlinedFunctionStartOffset_ = 0;
   /**
    * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
    * @return Whether the inlinedFunctionStartOffset field is set.
@@ -182,24 +144,9 @@ public  final class IrInlinedFunctionBlock extends
   public int getInlinedFunctionStartOffset() {
     return inlinedFunctionStartOffset_;
   }
-  /**
-   * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
-   * @param value The inlinedFunctionStartOffset to set.
-   */
-  private void setInlinedFunctionStartOffset(int value) {
-    bitField0_ |= 0x00000008;
-    inlinedFunctionStartOffset_ = value;
-  }
-  /**
-   * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
-   */
-  private void clearInlinedFunctionStartOffset() {
-    bitField0_ = (bitField0_ & ~0x00000008);
-    inlinedFunctionStartOffset_ = 0;
-  }
 
   public static final int INLINED_FUNCTION_END_OFFSET_FIELD_NUMBER = 5;
-  private int inlinedFunctionEndOffset_;
+  private int inlinedFunctionEndOffset_ = 0;
   /**
    * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
    * @return Whether the inlinedFunctionEndOffset field is set.
@@ -216,24 +163,9 @@ public  final class IrInlinedFunctionBlock extends
   public int getInlinedFunctionEndOffset() {
     return inlinedFunctionEndOffset_;
   }
-  /**
-   * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
-   * @param value The inlinedFunctionEndOffset to set.
-   */
-  private void setInlinedFunctionEndOffset(int value) {
-    bitField0_ |= 0x00000010;
-    inlinedFunctionEndOffset_ = value;
-  }
-  /**
-   * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
-   */
-  private void clearInlinedFunctionEndOffset() {
-    bitField0_ = (bitField0_ & ~0x00000010);
-    inlinedFunctionEndOffset_ = 0;
-  }
 
   public static final int INLINED_FUNCTION_FILE_ENTRY_ID_FIELD_NUMBER = 6;
-  private int inlinedFunctionFileEntryId_;
+  private int inlinedFunctionFileEntryId_ = 0;
   /**
    * <pre>
    * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
@@ -258,134 +190,524 @@ public  final class IrInlinedFunctionBlock extends
   public int getInlinedFunctionFileEntryId() {
     return inlinedFunctionFileEntryId_;
   }
-  /**
-   * <pre>
-   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
-   * </pre>
-   *
-   * <code>int32 inlined_function_file_entry_id = 6;</code>
-   * @param value The inlinedFunctionFileEntryId to set.
-   */
-  private void setInlinedFunctionFileEntryId(int value) {
-    bitField0_ |= 0x00000020;
-    inlinedFunctionFileEntryId_ = value;
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    if (!hasBase()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasInlinedFunctionStartOffset()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasInlinedFunctionEndOffset()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (hasInlinedFunctionFileEntry()) {
+      if (!getInlinedFunctionFileEntry().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
+    if (!getBase().isInitialized()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    memoizedIsInitialized = 1;
+    return true;
   }
-  /**
-   * <pre>
-   * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
-   * </pre>
-   *
-   * <code>int32 inlined_function_file_entry_id = 6;</code>
-   */
-  private void clearInlinedFunctionFileEntryId() {
-    bitField0_ = (bitField0_ & ~0x00000020);
-    inlinedFunctionFileEntryId_ = 0;
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeInt64(1, inlinedFunctionSymbol_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeMessage(2, getInlinedFunctionFileEntry());
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeMessage(3, getBase());
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      output.writeInt32(4, inlinedFunctionStartOffset_);
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeInt32(5, inlinedFunctionEndOffset_);
+    }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      output.writeInt32(6, inlinedFunctionFileEntryId_);
+    }
+    getUnknownFields().writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(1, inlinedFunctionSymbol_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(2, getInlinedFunctionFileEntry());
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(3, getBase());
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, inlinedFunctionStartOffset_);
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, inlinedFunctionEndOffset_);
+    }
+    if (((bitField0_ & 0x00000020) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(6, inlinedFunctionFileEntryId_);
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock other = (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) obj;
+
+    if (hasInlinedFunctionSymbol() != other.hasInlinedFunctionSymbol()) return false;
+    if (hasInlinedFunctionSymbol()) {
+      if (getInlinedFunctionSymbol()
+          != other.getInlinedFunctionSymbol()) return false;
+    }
+    if (hasInlinedFunctionFileEntry() != other.hasInlinedFunctionFileEntry()) return false;
+    if (hasInlinedFunctionFileEntry()) {
+      if (!getInlinedFunctionFileEntry()
+          .equals(other.getInlinedFunctionFileEntry())) return false;
+    }
+    if (hasBase() != other.hasBase()) return false;
+    if (hasBase()) {
+      if (!getBase()
+          .equals(other.getBase())) return false;
+    }
+    if (hasInlinedFunctionStartOffset() != other.hasInlinedFunctionStartOffset()) return false;
+    if (hasInlinedFunctionStartOffset()) {
+      if (getInlinedFunctionStartOffset()
+          != other.getInlinedFunctionStartOffset()) return false;
+    }
+    if (hasInlinedFunctionEndOffset() != other.hasInlinedFunctionEndOffset()) return false;
+    if (hasInlinedFunctionEndOffset()) {
+      if (getInlinedFunctionEndOffset()
+          != other.getInlinedFunctionEndOffset()) return false;
+    }
+    if (hasInlinedFunctionFileEntryId() != other.hasInlinedFunctionFileEntryId()) return false;
+    if (hasInlinedFunctionFileEntryId()) {
+      if (getInlinedFunctionFileEntryId()
+          != other.getInlinedFunctionFileEntryId()) return false;
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasInlinedFunctionSymbol()) {
+      hash = (37 * hash) + INLINED_FUNCTION_SYMBOL_FIELD_NUMBER;
+      hash = (53 * hash) + org.jetbrains.kotlin.protobuf.Internal.hashLong(
+          getInlinedFunctionSymbol());
+    }
+    if (hasInlinedFunctionFileEntry()) {
+      hash = (37 * hash) + INLINED_FUNCTION_FILE_ENTRY_FIELD_NUMBER;
+      hash = (53 * hash) + getInlinedFunctionFileEntry().hashCode();
+    }
+    if (hasBase()) {
+      hash = (37 * hash) + BASE_FIELD_NUMBER;
+      hash = (53 * hash) + getBase().hashCode();
+    }
+    if (hasInlinedFunctionStartOffset()) {
+      hash = (37 * hash) + INLINED_FUNCTION_START_OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + getInlinedFunctionStartOffset();
+    }
+    if (hasInlinedFunctionEndOffset()) {
+      hash = (37 * hash) + INLINED_FUNCTION_END_OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + getInlinedFunctionEndOffset();
+    }
+    if (hasInlinedFunctionFileEntryId()) {
+      hash = (37 * hash) + INLINED_FUNCTION_FILE_ENTRY_ID_FIELD_NUMBER;
+      hash = (53 * hash) + getInlinedFunctionFileEntryId();
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)
       org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlockOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.newBuilder()
-    private Builder() {
-      super(DEFAULT_INSTANCE);
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor;
     }
 
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.class, org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.Builder.class);
+    }
 
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.newBuilder()
+    private Builder() {
+      maybeForceBuilderInitialization();
+    }
+
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (org.jetbrains.kotlin.protobuf.GeneratedMessage
+              .alwaysUseFieldBuilders) {
+        getInlinedFunctionFileEntryFieldBuilder();
+        getBaseFieldBuilder();
+      }
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      inlinedFunctionSymbol_ = 0L;
+      inlinedFunctionFileEntry_ = null;
+      if (inlinedFunctionFileEntryBuilder_ != null) {
+        inlinedFunctionFileEntryBuilder_.dispose();
+        inlinedFunctionFileEntryBuilder_ = null;
+      }
+      base_ = null;
+      if (baseBuilder_ != null) {
+        baseBuilder_.dispose();
+        baseBuilder_ = null;
+      }
+      inlinedFunctionStartOffset_ = 0;
+      inlinedFunctionEndOffset_ = 0;
+      inlinedFunctionFileEntryId_ = 0;
+      return this;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock result) {
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.inlinedFunctionSymbol_ = inlinedFunctionSymbol_;
+        to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.inlinedFunctionFileEntry_ = inlinedFunctionFileEntryBuilder_ == null
+            ? inlinedFunctionFileEntry_
+            : inlinedFunctionFileEntryBuilder_.build();
+        to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.base_ = baseBuilder_ == null
+            ? base_
+            : baseBuilder_.build();
+        to_bitField0_ |= 0x00000004;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.inlinedFunctionStartOffset_ = inlinedFunctionStartOffset_;
+        to_bitField0_ |= 0x00000008;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.inlinedFunctionEndOffset_ = inlinedFunctionEndOffset_;
+        to_bitField0_ |= 0x00000010;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.inlinedFunctionFileEntryId_ = inlinedFunctionFileEntryId_;
+        to_bitField0_ |= 0x00000020;
+      }
+      result.bitField0_ |= to_bitField0_;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.getDefaultInstance()) return this;
+      if (other.hasInlinedFunctionSymbol()) {
+        setInlinedFunctionSymbol(other.getInlinedFunctionSymbol());
+      }
+      if (other.hasInlinedFunctionFileEntry()) {
+        mergeInlinedFunctionFileEntry(other.getInlinedFunctionFileEntry());
+      }
+      if (other.hasBase()) {
+        mergeBase(other.getBase());
+      }
+      if (other.hasInlinedFunctionStartOffset()) {
+        setInlinedFunctionStartOffset(other.getInlinedFunctionStartOffset());
+      }
+      if (other.hasInlinedFunctionEndOffset()) {
+        setInlinedFunctionEndOffset(other.getInlinedFunctionEndOffset());
+      }
+      if (other.hasInlinedFunctionFileEntryId()) {
+        setInlinedFunctionFileEntryId(other.getInlinedFunctionFileEntryId());
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      if (!hasBase()) {
+        return false;
+      }
+      if (!hasInlinedFunctionStartOffset()) {
+        return false;
+      }
+      if (!hasInlinedFunctionEndOffset()) {
+        return false;
+      }
+      if (hasInlinedFunctionFileEntry()) {
+        if (!getInlinedFunctionFileEntry().isInitialized()) {
+          return false;
+        }
+      }
+      if (!getBase().isInitialized()) {
+        return false;
+      }
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              inlinedFunctionSymbol_ = input.readInt64();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 8
+            case 18: {
+              input.readMessage(
+                  getInlinedFunctionFileEntryFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 26: {
+              input.readMessage(
+                  getBaseFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
+            case 32: {
+              inlinedFunctionStartOffset_ = input.readInt32();
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 32
+            case 40: {
+              inlinedFunctionEndOffset_ = input.readInt32();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 40
+            case 48: {
+              inlinedFunctionFileEntryId_ = input.readInt32();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 48
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int bitField0_;
+
+    private long inlinedFunctionSymbol_ ;
     /**
      * <code>int64 inlined_function_symbol = 1;</code>
      * @return Whether the inlinedFunctionSymbol field is set.
      */
     @java.lang.Override
     public boolean hasInlinedFunctionSymbol() {
-      return instance.hasInlinedFunctionSymbol();
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      * <code>int64 inlined_function_symbol = 1;</code>
@@ -393,7 +715,7 @@ public  final class IrInlinedFunctionBlock extends
      */
     @java.lang.Override
     public long getInlinedFunctionSymbol() {
-      return instance.getInlinedFunctionSymbol();
+      return inlinedFunctionSymbol_;
     }
     /**
      * <code>int64 inlined_function_symbol = 1;</code>
@@ -401,8 +723,10 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder setInlinedFunctionSymbol(long value) {
-      copyOnWrite();
-      instance.setInlinedFunctionSymbol(value);
+
+      inlinedFunctionSymbol_ = value;
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -410,21 +734,25 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder clearInlinedFunctionSymbol() {
-      copyOnWrite();
-      instance.clearInlinedFunctionSymbol();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      inlinedFunctionSymbol_ = 0L;
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlinedFunctionFileEntry_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder> inlinedFunctionFileEntryBuilder_;
     /**
      * <pre>
      * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
      * </pre>
      *
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * @return Whether the inlinedFunctionFileEntry field is set.
      */
-    @java.lang.Override
     public boolean hasInlinedFunctionFileEntry() {
-      return instance.hasInlinedFunctionFileEntry();
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <pre>
@@ -432,10 +760,14 @@ public  final class IrInlinedFunctionBlock extends
      * </pre>
      *
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     * @return The inlinedFunctionFileEntry.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getInlinedFunctionFileEntry() {
-      return instance.getInlinedFunctionFileEntry();
+      if (inlinedFunctionFileEntryBuilder_ == null) {
+        return inlinedFunctionFileEntry_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance() : inlinedFunctionFileEntry_;
+      } else {
+        return inlinedFunctionFileEntryBuilder_.getMessage();
+      }
     }
     /**
      * <pre>
@@ -445,10 +777,18 @@ public  final class IrInlinedFunctionBlock extends
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
      */
     public Builder setInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-      copyOnWrite();
-      instance.setInlinedFunctionFileEntry(value);
-      return this;
+      if (inlinedFunctionFileEntryBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        inlinedFunctionFileEntry_ = value;
+      } else {
+        inlinedFunctionFileEntryBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
     /**
      * <pre>
      * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
@@ -458,8 +798,13 @@ public  final class IrInlinedFunctionBlock extends
      */
     public Builder setInlinedFunctionFileEntry(
         org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder builderForValue) {
-      copyOnWrite();
-      instance.setInlinedFunctionFileEntry(builderForValue.build());
+      if (inlinedFunctionFileEntryBuilder_ == null) {
+        inlinedFunctionFileEntry_ = builderForValue.build();
+      } else {
+        inlinedFunctionFileEntryBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -470,8 +815,21 @@ public  final class IrInlinedFunctionBlock extends
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
      */
     public Builder mergeInlinedFunctionFileEntry(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry value) {
-      copyOnWrite();
-      instance.mergeInlinedFunctionFileEntry(value);
+      if (inlinedFunctionFileEntryBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          inlinedFunctionFileEntry_ != null &&
+          inlinedFunctionFileEntry_ != org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance()) {
+          getInlinedFunctionFileEntryBuilder().mergeFrom(value);
+        } else {
+          inlinedFunctionFileEntry_ = value;
+        }
+      } else {
+        inlinedFunctionFileEntryBuilder_.mergeFrom(value);
+      }
+      if (inlinedFunctionFileEntry_ != null) {
+        bitField0_ |= 0x00000002;
+        onChanged();
+      }
       return this;
     }
     /**
@@ -481,65 +839,193 @@ public  final class IrInlinedFunctionBlock extends
      *
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
      */
-    public Builder clearInlinedFunctionFileEntry() {  copyOnWrite();
-      instance.clearInlinedFunctionFileEntry();
+    public Builder clearInlinedFunctionFileEntry() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      inlinedFunctionFileEntry_ = null;
+      if (inlinedFunctionFileEntryBuilder_ != null) {
+        inlinedFunctionFileEntryBuilder_.dispose();
+        inlinedFunctionFileEntryBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     *
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder getInlinedFunctionFileEntryBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getInlinedFunctionFileEntryFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     *
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder getInlinedFunctionFileEntryOrBuilder() {
+      if (inlinedFunctionFileEntryBuilder_ != null) {
+        return inlinedFunctionFileEntryBuilder_.getMessageOrBuilder();
+      } else {
+        return inlinedFunctionFileEntry_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance() : inlinedFunctionFileEntry_;
+      }
+    }
+    /**
+     * <pre>
+     * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
+     * </pre>
+     *
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry inlined_function_file_entry = 2;</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder> 
+        getInlinedFunctionFileEntryFieldBuilder() {
+      if (inlinedFunctionFileEntryBuilder_ == null) {
+        inlinedFunctionFileEntryBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.FileEntryOrBuilder>(
+                getInlinedFunctionFileEntry(),
+                getParentForChildren(),
+                isClean());
+        inlinedFunctionFileEntry_ = null;
+      }
+      return inlinedFunctionFileEntryBuilder_;
+    }
 
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base_;
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder> baseBuilder_;
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+     * @return Whether the base field is set.
      */
-    @java.lang.Override
     public boolean hasBase() {
-      return instance.hasBase();
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+     * @return The base.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock getBase() {
-      return instance.getBase();
+      if (baseBuilder_ == null) {
+        return base_ == null ? org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance() : base_;
+      } else {
+        return baseBuilder_.getMessage();
+      }
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
      */
     public Builder setBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock value) {
-      copyOnWrite();
-      instance.setBase(value);
-      return this;
+      if (baseBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        base_ = value;
+      } else {
+        baseBuilder_.setMessage(value);
       }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
      */
     public Builder setBase(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.Builder builderForValue) {
-      copyOnWrite();
-      instance.setBase(builderForValue.build());
+      if (baseBuilder_ == null) {
+        base_ = builderForValue.build();
+      } else {
+        baseBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
      */
     public Builder mergeBase(org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock value) {
-      copyOnWrite();
-      instance.mergeBase(value);
+      if (baseBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0) &&
+          base_ != null &&
+          base_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance()) {
+          getBaseBuilder().mergeFrom(value);
+        } else {
+          base_ = value;
+        }
+      } else {
+        baseBuilder_.mergeFrom(value);
+      }
+      if (base_ != null) {
+        bitField0_ |= 0x00000004;
+        onChanged();
+      }
       return this;
     }
     /**
      * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
      */
-    public Builder clearBase() {  copyOnWrite();
-      instance.clearBase();
+    public Builder clearBase() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      base_ = null;
+      if (baseBuilder_ != null) {
+        baseBuilder_.dispose();
+        baseBuilder_ = null;
+      }
+      onChanged();
       return this;
     }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.Builder getBaseBuilder() {
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return getBaseFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder getBaseOrBuilder() {
+      if (baseBuilder_ != null) {
+        return baseBuilder_.getMessageOrBuilder();
+      } else {
+        return base_ == null ?
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance() : base_;
+      }
+    }
+    /**
+     * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock base = 3 [features = { ... }</code>
+     */
+    private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder> 
+        getBaseFieldBuilder() {
+      if (baseBuilder_ == null) {
+        baseBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.Builder, org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockOrBuilder>(
+                getBase(),
+                getParentForChildren(),
+                isClean());
+        base_ = null;
+      }
+      return baseBuilder_;
+    }
 
+    private int inlinedFunctionStartOffset_ ;
     /**
      * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
      * @return Whether the inlinedFunctionStartOffset field is set.
      */
     @java.lang.Override
     public boolean hasInlinedFunctionStartOffset() {
-      return instance.hasInlinedFunctionStartOffset();
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
@@ -547,7 +1033,7 @@ public  final class IrInlinedFunctionBlock extends
      */
     @java.lang.Override
     public int getInlinedFunctionStartOffset() {
-      return instance.getInlinedFunctionStartOffset();
+      return inlinedFunctionStartOffset_;
     }
     /**
      * <code>int32 inlined_function_start_offset = 4 [features = { ... }</code>
@@ -555,8 +1041,10 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder setInlinedFunctionStartOffset(int value) {
-      copyOnWrite();
-      instance.setInlinedFunctionStartOffset(value);
+
+      inlinedFunctionStartOffset_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -564,18 +1052,20 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder clearInlinedFunctionStartOffset() {
-      copyOnWrite();
-      instance.clearInlinedFunctionStartOffset();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      inlinedFunctionStartOffset_ = 0;
+      onChanged();
       return this;
     }
 
+    private int inlinedFunctionEndOffset_ ;
     /**
      * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
      * @return Whether the inlinedFunctionEndOffset field is set.
      */
     @java.lang.Override
     public boolean hasInlinedFunctionEndOffset() {
-      return instance.hasInlinedFunctionEndOffset();
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
@@ -583,7 +1073,7 @@ public  final class IrInlinedFunctionBlock extends
      */
     @java.lang.Override
     public int getInlinedFunctionEndOffset() {
-      return instance.getInlinedFunctionEndOffset();
+      return inlinedFunctionEndOffset_;
     }
     /**
      * <code>int32 inlined_function_end_offset = 5 [features = { ... }</code>
@@ -591,8 +1081,10 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder setInlinedFunctionEndOffset(int value) {
-      copyOnWrite();
-      instance.setInlinedFunctionEndOffset(value);
+
+      inlinedFunctionEndOffset_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -600,11 +1092,13 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder clearInlinedFunctionEndOffset() {
-      copyOnWrite();
-      instance.clearInlinedFunctionEndOffset();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      inlinedFunctionEndOffset_ = 0;
+      onChanged();
       return this;
     }
 
+    private int inlinedFunctionFileEntryId_ ;
     /**
      * <pre>
      * Required: either `inlined_function_file_entry` or `inlined_function_file_entry_id` is present.
@@ -615,7 +1109,7 @@ public  final class IrInlinedFunctionBlock extends
      */
     @java.lang.Override
     public boolean hasInlinedFunctionFileEntryId() {
-      return instance.hasInlinedFunctionFileEntryId();
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      * <pre>
@@ -627,7 +1121,7 @@ public  final class IrInlinedFunctionBlock extends
      */
     @java.lang.Override
     public int getInlinedFunctionFileEntryId() {
-      return instance.getInlinedFunctionFileEntryId();
+      return inlinedFunctionFileEntryId_;
     }
     /**
      * <pre>
@@ -639,8 +1133,10 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder setInlinedFunctionFileEntryId(int value) {
-      copyOnWrite();
-      instance.setInlinedFunctionFileEntryId(value);
+
+      inlinedFunctionFileEntryId_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -652,91 +1148,59 @@ public  final class IrInlinedFunctionBlock extends
      * @return This builder for chaining.
      */
     public Builder clearInlinedFunctionFileEntryId() {
-      copyOnWrite();
-      instance.clearInlinedFunctionFileEntryId();
+      bitField0_ = (bitField0_ & ~0x00000020);
+      inlinedFunctionFileEntryId_ = 0;
+      onChanged();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)
   }
-  private byte memoizedIsInitialized = 2;
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "bitField0_",
-            "inlinedFunctionSymbol_",
-            "inlinedFunctionFileEntry_",
-            "base_",
-            "inlinedFunctionStartOffset_",
-            "inlinedFunctionEndOffset_",
-            "inlinedFunctionFileEntryId_",
-          };
-          java.lang.String info =
-              "\u0004\u0006\u0000\u0001\u0001\u0006\u0006\u0000\u0000\u0004\u0001\u1002\u0000\u0002" +
-              "\u1409\u0001\u0003\u1509\u0002\u0004\u1504\u0003\u0005\u1504\u0004\u0006\u1004\u0005" +
-              "";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return memoizedIsInitialized;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock DEFAULT_INSTANCE;
   static {
-    IrInlinedFunctionBlock defaultInstance = new IrInlinedFunctionBlock();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      IrInlinedFunctionBlock.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<IrInlinedFunctionBlock> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<IrInlinedFunctionBlock>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<IrInlinedFunctionBlock>() {
+    @java.lang.Override
+    public IrInlinedFunctionBlock parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<IrInlinedFunctionBlock> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<IrInlinedFunctionBlock> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrInlinedFunctionBlock getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

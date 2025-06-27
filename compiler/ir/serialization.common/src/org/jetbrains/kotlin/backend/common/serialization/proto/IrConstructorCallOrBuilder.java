@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrConstructorCallOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 symbol = 1 [features = { ... }</code>
@@ -41,6 +41,10 @@ public interface IrConstructorCallOrBuilder extends
    * @return The memberAccess.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 3 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommonOrBuilder getMemberAccessOrBuilder();
 
   /**
    * <code>int32 origin_name = 4;</code>

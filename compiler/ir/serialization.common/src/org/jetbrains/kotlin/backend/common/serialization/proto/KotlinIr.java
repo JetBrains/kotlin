@@ -7,11 +7,1520 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public final class KotlinIr {
   private KotlinIr() {}
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      KotlinIr.class.getName());
+  }
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
   }
 
+  public static void registerAllExtensions(
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (org.jetbrains.kotlin.protobuf.ExtensionRegistryLite) registry);
+  }
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileEntry_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileEntry_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFile_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFile_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_AccessorIdSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_AccessorIdSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileLocalIdSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileLocalIdSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CompositeSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CompositeSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IdSignature_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IdSignature_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleTypeLegacy_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleTypeLegacy_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleType_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleType_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAbbreviation_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAbbreviation_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicType_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicType_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDefinitelyNotNullType_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDefinitelyNotNullType_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBreak_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBreak_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlock_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlock_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturnableBlock_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturnableBlock_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_MemberAccessCommon_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_MemberAccessCommon_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCall_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCall_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructorCall_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructorCall_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedPropertyReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedPropertyReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrPropertyReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrPropertyReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichFunctionReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichFunctionReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichPropertyReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichPropertyReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrComposite_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrComposite_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClassReference_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClassReference_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConst_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConst_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrContinue_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrContinue_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDelegatingConstructorCall_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDelegatingConstructorCall_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDoWhile_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDoWhile_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumConstructorCall_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumConstructorCall_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetClass_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetClass_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetEnumValue_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetEnumValue_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FieldAccessCommon_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FieldAccessCommon_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetField_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetField_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetValue_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetValue_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetObject_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetObject_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInstanceInitializerCall_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInstanceInitializerCall_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturn_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturn_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetField_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetField_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetValue_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetValue_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSpreadElement_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSpreadElement_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStringConcat_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStringConcat_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrThrow_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrThrow_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTry_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTry_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeOp_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeOp_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVararg_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVararg_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVarargElement_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVarargElement_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhen_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhen_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhile_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhile_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorCallExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorCallExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicMemberExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicMemberExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicOperatorExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicOperatorExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrOperation_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrOperation_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_NullableIrExpression_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_NullableIrExpression_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclarationBase_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclarationBase_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionBase_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionBase_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunction_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunction_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructor_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructor_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrField_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrField_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedProperty_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedProperty_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrProperty_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrProperty_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVariable_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVariable_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrValueParameter_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrValueParameter_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeParameter_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeParameter_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAlias_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAlias_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumEntry_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumEntry_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrAnonymousInit_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrAnonymousInit_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclaration_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclaration_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBranch_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBranch_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlockBody_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlockBody_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCatch_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCatch_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSyntheticBody_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSyntheticBody_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStatement_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStatement_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlineClassRepresentation_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlineClassRepresentation_fieldAccessorTable;
+  static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrMultiFieldValueClassRepresentation_descriptor;
+  static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrMultiFieldValueClassRepresentation_fieldAccessorTable;
+
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      descriptor;
   static {
+    java.lang.String[] descriptorData = {
+      "\n3compiler/ir/serialization.common/src/K" +
+      "otlinIr.proto\0227org.jetbrains.kotlin.back" +
+      "end.common.serialization.proto\"a\n\tFileEn" +
+      "try\022\023\n\004name\030\001 \001(\tB\005\252\001\002\010\003\022\031\n\021line_start_o" +
+      "ffset\030\002 \003(\005\022$\n\031first_relevant_line_index" +
+      "\030\003 \001(\005:\0010\"\320\002\n\006IrFile\022\026\n\016declaration_id\030\001" +
+      " \003(\005\022V\n\nfile_entry\030\002 \001(\0132B.org.jetbrains" +
+      ".kotlin.backend.common.serialization.pro" +
+      "to.FileEntry\022\025\n\rfile_entry_id\030\007 \001(\005\022\017\n\007f" +
+      "q_name\030\003 \003(\005\022^\n\nannotation\030\004 \003(\0132J.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.IrConstructorCall\022\'\n\037explicit" +
+      "ly_exported_to_compiler\030\005 \003(\003\022%\n\035preproc" +
+      "essed_inline_functions\030\010 \003(\005\"\207\001\n\021CommonI" +
+      "dSignature\022\027\n\017package_fq_name\030\001 \003(\005\022\033\n\023d" +
+      "eclaration_fq_name\030\002 \003(\005\022\026\n\016member_uniq_" +
+      "id\030\003 \001(\003\022\020\n\005flags\030\004 \001(\003:\0010\022\022\n\ndebug_info" +
+      "\030\005 \001(\005\"\224\001\n\023AccessorIdSignature\022!\n\022proper" +
+      "ty_signature\030\001 \001(\005B\005\252\001\002\010\003\022\023\n\004name\030\002 \001(\005B" +
+      "\005\252\001\002\010\003\022\037\n\020accessor_hash_id\030\003 \001(\003B\005\252\001\002\010\003\022" +
+      "\020\n\005flags\030\004 \001(\003:\0010\022\022\n\ndebug_info\030\005 \001(\005\"I\n" +
+      "\024FileLocalIdSignature\022\030\n\tcontainer\030\001 \001(\005" +
+      "B\005\252\001\002\010\003\022\027\n\010local_id\030\002 \001(\003B\005\252\001\002\010\003\"L\n\022Comp" +
+      "ositeSignature\022\034\n\rcontainer_sig\030\001 \001(\005B\005\252" +
+      "\001\002\010\003\022\030\n\tinner_sig\030\002 \001(\005B\005\252\001\002\010\003\";\n\016LocalS" +
+      "ignature\022\025\n\rlocal_fq_name\030\001 \003(\005\022\022\n\nlocal" +
+      "_hash\030\002 \001(\003\"\017\n\rFileSignature\"\200\005\n\013IdSigna" +
+      "ture\022`\n\npublic_sig\030\001 \001(\0132J.org.jetbrains" +
+      ".kotlin.backend.common.serialization.pro" +
+      "to.CommonIdSignatureH\000\022d\n\013private_sig\030\002 " +
+      "\001(\0132M.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.FileLocalIdSignatu" +
+      "reH\000\022d\n\014accessor_sig\030\003 \001(\0132L.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.AccessorIdSignatureH\000\022\032\n\020scoped_loc" +
+      "al_sig\030\004 \001(\005H\000\022d\n\rcomposite_sig\030\005 \001(\0132K." +
+      "org.jetbrains.kotlin.backend.common.seri" +
+      "alization.proto.CompositeSignatureH\000\022\\\n\t" +
+      "local_sig\030\006 \001(\0132G.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.LocalS" +
+      "ignatureH\000\022Z\n\010file_sig\030\007 \001(\0132F.org.jetbr" +
+      "ains.kotlin.backend.common.serialization" +
+      ".proto.FileSignatureH\000B\007\n\005idSig\"\246\002\n\022IrSi" +
+      "mpleTypeLegacy\022^\n\nannotation\030\001 \003(\0132J.org" +
+      ".jetbrains.kotlin.backend.common.seriali" +
+      "zation.proto.IrConstructorCall\022\031\n\nclassi" +
+      "fier\030\002 \001(\003B\005\252\001\002\010\003\022 \n\021has_question_mark\030\003" +
+      " \001(\010B\005\252\001\002\010\003\022\020\n\010argument\030\004 \003(\003\022a\n\014abbrevi" +
+      "ation\030\005 \001(\0132K.org.jetbrains.kotlin.backe" +
+      "nd.common.serialization.proto.IrTypeAbbr" +
+      "eviation\"\364\002\n\014IrSimpleType\022^\n\nannotation\030" +
+      "\001 \003(\0132J.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.IrConstructorCal" +
+      "l\022\031\n\nclassifier\030\002 \001(\003B\005\252\001\002\010\003\022t\n\013nullabil" +
+      "ity\030\003 \001(\0162P.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrSimpleType" +
+      "Nullability:\rNOT_SPECIFIED\022\020\n\010argument\030\004" +
+      " \003(\003\022a\n\014abbreviation\030\005 \001(\0132K.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrTypeAbbreviation\"\303\001\n\022IrTypeAbbrev" +
+      "iation\022^\n\nannotation\030\001 \003(\0132J.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrConstructorCall\022\031\n\ntype_alias\030\002 \001" +
+      "(\003B\005\252\001\002\010\003\022 \n\021has_question_mark\030\003 \001(\010B\005\252\001" +
+      "\002\010\003\022\020\n\010argument\030\004 \003(\003\"o\n\rIrDynamicType\022^" +
+      "\n\nannotation\030\001 \003(\0132J.org.jetbrains.kotli" +
+      "n.backend.common.serialization.proto.IrC" +
+      "onstructorCall\"(\n\027IrDefinitelyNotNullTyp" +
+      "e\022\r\n\005types\030\001 \003(\005\"\212\003\n\006IrType\022c\n\014legacySim" +
+      "ple\030\001 \001(\0132K.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrSimpleType" +
+      "LegacyH\000\022Y\n\007dynamic\030\002 \001(\0132F.org.jetbrain" +
+      "s.kotlin.backend.common.serialization.pr" +
+      "oto.IrDynamicTypeH\000\022_\n\003dnn\030\004 \001(\0132P.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.IrDefinitelyNotNullTypeH\000\022W\n\006" +
+      "simple\030\005 \001(\0132E.org.jetbrains.kotlin.back" +
+      "end.common.serialization.proto.IrSimpleT" +
+      "ypeH\000B\006\n\004kind\"0\n\007IrBreak\022\026\n\007loop_id\030\001 \001(" +
+      "\005B\005\252\001\002\010\003\022\r\n\005label\030\002 \001(\005\"w\n\007IrBlock\022W\n\tst" +
+      "atement\030\001 \003(\0132D.org.jetbrains.kotlin.bac" +
+      "kend.common.serialization.proto.IrStatem" +
+      "ent\022\023\n\013origin_name\030\002 \001(\005\"\201\001\n\021IrReturnabl" +
+      "eBlock\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003\022U\n\004base\030\002 " +
+      "\001(\0132@.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrBlockB\005\252\001\002\010\003\"\373\002\n" +
+      "\026IrInlinedFunctionBlock\022\037\n\027inlined_funct" +
+      "ion_symbol\030\001 \001(\003\022g\n\033inlined_function_fil" +
+      "e_entry\030\002 \001(\0132B.org.jetbrains.kotlin.bac" +
+      "kend.common.serialization.proto.FileEntr" +
+      "y\022U\n\004base\030\003 \001(\0132@.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrBloc" +
+      "kB\005\252\001\002\010\003\022,\n\035inlined_function_start_offse" +
+      "t\030\004 \001(\005B\005\252\001\002\010\003\022*\n\033inlined_function_end_o" +
+      "ffset\030\005 \001(\005B\005\252\001\002\010\003\022&\n\036inlined_function_f" +
+      "ile_entry_id\030\006 \001(\005\"\272\003\n\022MemberAccessCommo" +
+      "n\022_\n\010argument\030\006 \003(\0132M.org.jetbrains.kotl" +
+      "in.backend.common.serialization.proto.Nu" +
+      "llableIrExpression\022`\n\021dispatch_receiver\030" +
+      "\001 \001(\0132E.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.IrExpression\022a\n\022" +
+      "extension_receiver\030\002 \001(\0132E.org.jetbrains" +
+      ".kotlin.backend.common.serialization.pro" +
+      "to.IrExpression\022g\n\020regular_argument\030\003 \003(" +
+      "\0132M.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.NullableIrExpression" +
+      "\022\025\n\rtype_argument\030\004 \003(\005\"\256\001\n\006IrCall\022\025\n\006sy" +
+      "mbol\030\001 \001(\003B\005\252\001\002\010\003\022i\n\rmember_access\030\002 \001(\013" +
+      "2K.org.jetbrains.kotlin.backend.common.s" +
+      "erialization.proto.MemberAccessCommonB\005\252" +
+      "\001\002\010\003\022\r\n\005super\030\003 \001(\003\022\023\n\013origin_name\030\004 \001(\005" +
+      "\"\333\001\n\021IrConstructorCall\022\025\n\006symbol\030\001 \001(\003B\005" +
+      "\252\001\002\010\003\022/\n constructor_type_arguments_coun" +
+      "t\030\002 \001(\005B\005\252\001\002\010\003\022i\n\rmember_access\030\003 \001(\0132K." +
+      "org.jetbrains.kotlin.backend.common.seri" +
+      "alization.proto.MemberAccessCommonB\005\252\001\002\010" +
+      "\003\022\023\n\013origin_name\030\004 \001(\005\"\316\001\n\023IrFunctionRef" +
+      "erence\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003\022\023\n\013origin_" +
+      "name\030\002 \001(\005\022i\n\rmember_access\030\003 \001(\0132K.org." +
+      "jetbrains.kotlin.backend.common.serializ" +
+      "ation.proto.MemberAccessCommonB\005\252\001\002\010\003\022 \n" +
+      "\030reflection_target_symbol\030\004 \001(\003\"\210\001\n!IrLo" +
+      "calDelegatedPropertyReference\022\027\n\010delegat" +
+      "e\030\001 \001(\003B\005\252\001\002\010\003\022\016\n\006getter\030\002 \001(\003\022\016\n\006setter" +
+      "\030\003 \001(\003\022\025\n\006symbol\030\004 \001(\003B\005\252\001\002\010\003\022\023\n\013origin_" +
+      "name\030\005 \001(\005\"\333\001\n\023IrPropertyReference\022\r\n\005fi" +
+      "eld\030\001 \001(\003\022\016\n\006getter\030\002 \001(\003\022\016\n\006setter\030\003 \001(" +
+      "\003\022\023\n\013origin_name\030\004 \001(\005\022i\n\rmember_access\030" +
+      "\005 \001(\0132K.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.MemberAccessComm" +
+      "onB\005\252\001\002\010\003\022\025\n\006symbol\030\006 \001(\003B\005\252\001\002\010\003\"\317\002\n\027IrR" +
+      "ichFunctionReference\022[\n\014bound_values\030\001 \003" +
+      "(\0132E.org.jetbrains.kotlin.backend.common" +
+      ".serialization.proto.IrExpression\022 \n\030ref" +
+      "lection_target_symbol\030\002 \001(\003\022)\n\032overridde" +
+      "n_function_symbol\030\003 \001(\003B\005\252\001\002\010\003\022c\n\017invoke" +
+      "_function\030\004 \001(\0132C.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrFunc" +
+      "tionB\005\252\001\002\010\003\022\020\n\005flags\030\005 \001(\003:\0010\022\023\n\013origin_" +
+      "name\030\006 \001(\005\"\360\002\n\027IrRichPropertyReference\022[" +
+      "\n\014bound_values\030\001 \003(\0132E.org.jetbrains.kot" +
+      "lin.backend.common.serialization.proto.I" +
+      "rExpression\022 \n\030reflection_target_symbol\030" +
+      "\002 \001(\003\022c\n\017getter_function\030\003 \001(\0132C.org.jet" +
+      "brains.kotlin.backend.common.serializati" +
+      "on.proto.IrFunctionB\005\252\001\002\010\003\022\\\n\017setter_fun" +
+      "ction\030\004 \001(\0132C.org.jetbrains.kotlin.backe" +
+      "nd.common.serialization.proto.IrFunction" +
+      "\022\023\n\013origin_name\030\005 \001(\005\"{\n\013IrComposite\022W\n\t" +
+      "statement\030\001 \003(\0132D.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrStat" +
+      "ement\022\023\n\013origin_name\030\002 \001(\005\"J\n\020IrClassRef" +
+      "erence\022\033\n\014class_symbol\030\001 \001(\003B\005\252\001\002\010\003\022\031\n\nc" +
+      "lass_type\030\002 \001(\005B\005\252\001\002\010\003\"\304\001\n\007IrConst\022\016\n\004nu" +
+      "ll\030\001 \001(\010H\000\022\021\n\007boolean\030\002 \001(\010H\000\022\016\n\004char\030\003 " +
+      "\001(\005H\000\022\016\n\004byte\030\004 \001(\005H\000\022\017\n\005short\030\005 \001(\005H\000\022\r" +
+      "\n\003int\030\006 \001(\005H\000\022\016\n\004long\030\007 \001(\003H\000\022\024\n\nfloat_b" +
+      "its\030\010 \001(\007H\000\022\025\n\013double_bits\030\t \001(\006H\000\022\020\n\006st" +
+      "ring\030\n \001(\005H\000B\007\n\005value\"3\n\nIrContinue\022\026\n\007l" +
+      "oop_id\030\001 \001(\005B\005\252\001\002\010\003\022\r\n\005label\030\002 \001(\005\"\237\001\n\033I" +
+      "rDelegatingConstructorCall\022\025\n\006symbol\030\001 \001" +
+      "(\003B\005\252\001\002\010\003\022i\n\rmember_access\030\002 \001(\0132K.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.MemberAccessCommonB\005\252\001\002\010\003\"_\n\t" +
+      "IrDoWhile\022R\n\004loop\030\001 \001(\0132=.org.jetbrains." +
+      "kotlin.backend.common.serialization.prot" +
+      "o.LoopB\005\252\001\002\010\003\"\231\001\n\025IrEnumConstructorCall\022" +
+      "\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003\022i\n\rmember_access\030" +
+      "\002 \001(\0132K.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.MemberAccessComm" +
+      "onB\005\252\001\002\010\003\"l\n\nIrGetClass\022^\n\010argument\030\001 \001(" +
+      "\0132E.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.IrExpressionB\005\252\001\002\010\003\"" +
+      "\'\n\016IrGetEnumValue\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003" +
+      "\"\222\001\n\021FieldAccessCommon\022\025\n\006symbol\030\001 \001(\003B\005" +
+      "\252\001\002\010\003\022\r\n\005super\030\002 \001(\003\022W\n\010receiver\030\003 \001(\0132E" +
+      ".org.jetbrains.kotlin.backend.common.ser" +
+      "ialization.proto.IrExpression\"\212\001\n\nIrGetF" +
+      "ield\022g\n\014field_access\030\001 \001(\0132J.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.FieldAccessCommonB\005\252\001\002\010\003\022\023\n\013origin_" +
+      "name\030\002 \001(\005\"8\n\nIrGetValue\022\025\n\006symbol\030\001 \001(\003" +
+      "B\005\252\001\002\010\003\022\023\n\013origin_name\030\002 \001(\005\"$\n\013IrGetObj" +
+      "ect\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003\"2\n\031IrInstance" +
+      "InitializerCall\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010\003\"\370" +
+      "\001\n\004Loop\022\026\n\007loop_id\030\001 \001(\005B\005\252\001\002\010\003\022_\n\tcondi" +
+      "tion\030\002 \001(\0132E.org.jetbrains.kotlin.backen" +
+      "d.common.serialization.proto.IrExpressio" +
+      "nB\005\252\001\002\010\003\022\r\n\005label\030\003 \001(\005\022S\n\004body\030\004 \001(\0132E." +
+      "org.jetbrains.kotlin.backend.common.seri" +
+      "alization.proto.IrExpression\022\023\n\013origin_n" +
+      "ame\030\005 \001(\005\"\205\001\n\010IrReturn\022\034\n\rreturn_target\030" +
+      "\001 \001(\003B\005\252\001\002\010\003\022[\n\005value\030\002 \001(\0132E.org.jetbra" +
+      "ins.kotlin.backend.common.serialization." +
+      "proto.IrExpressionB\005\252\001\002\010\003\"\347\001\n\nIrSetField" +
+      "\022g\n\014field_access\030\001 \001(\0132J.org.jetbrains.k" +
+      "otlin.backend.common.serialization.proto" +
+      ".FieldAccessCommonB\005\252\001\002\010\003\022[\n\005value\030\002 \001(\013" +
+      "2E.org.jetbrains.kotlin.backend.common.s" +
+      "erialization.proto.IrExpressionB\005\252\001\002\010\003\022\023" +
+      "\n\013origin_name\030\003 \001(\005\"\225\001\n\nIrSetValue\022\025\n\006sy" +
+      "mbol\030\001 \001(\003B\005\252\001\002\010\003\022[\n\005value\030\002 \001(\0132E.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.IrExpressionB\005\252\001\002\010\003\022\023\n\013origin" +
+      "_name\030\003 \001(\005\"\217\001\n\017IrSpreadElement\022`\n\nexpre" +
+      "ssion\030\001 \001(\0132E.org.jetbrains.kotlin.backe" +
+      "nd.common.serialization.proto.IrExpressi" +
+      "onB\005\252\001\002\010\003\022\032\n\013coordinates\030\002 \001(\003B\005\252\001\002\010\003\"i\n" +
+      "\016IrStringConcat\022W\n\010argument\030\001 \003(\0132E.org." +
+      "jetbrains.kotlin.backend.common.serializ" +
+      "ation.proto.IrExpression\"f\n\007IrThrow\022[\n\005v" +
+      "alue\030\001 \001(\0132E.org.jetbrains.kotlin.backen" +
+      "d.common.serialization.proto.IrExpressio" +
+      "nB\005\252\001\002\010\003\"\222\002\n\005IrTry\022\\\n\006result\030\001 \001(\0132E.org" +
+      ".jetbrains.kotlin.backend.common.seriali" +
+      "zation.proto.IrExpressionB\005\252\001\002\010\003\022S\n\005catc" +
+      "h\030\002 \003(\0132D.org.jetbrains.kotlin.backend.c" +
+      "ommon.serialization.proto.IrStatement\022V\n" +
+      "\007finally\030\003 \001(\0132E.org.jetbrains.kotlin.ba" +
+      "ckend.common.serialization.proto.IrExpre" +
+      "ssion\"\344\001\n\010IrTypeOp\022`\n\010operator\030\001 \001(\0162G.o" +
+      "rg.jetbrains.kotlin.backend.common.seria" +
+      "lization.proto.IrTypeOperatorB\005\252\001\002\010\003\022\026\n\007" +
+      "operand\030\002 \001(\005B\005\252\001\002\010\003\022^\n\010argument\030\003 \001(\0132E" +
+      ".org.jetbrains.kotlin.backend.common.ser" +
+      "ialization.proto.IrExpressionB\005\252\001\002\010\003\"\202\001\n" +
+      "\010IrVararg\022\033\n\014element_type\030\001 \001(\005B\005\252\001\002\010\003\022Y" +
+      "\n\007element\030\002 \003(\0132H.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrVara" +
+      "rgElement\"\344\001\n\017IrVarargElement\022[\n\nexpress" +
+      "ion\030\001 \001(\0132E.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrExpression" +
+      "H\000\022b\n\016spread_element\030\002 \001(\0132H.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrSpreadElementH\000B\020\n\016vararg_element" +
+      "\"s\n\006IrWhen\022T\n\006branch\030\001 \003(\0132D.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrStatement\022\023\n\013origin_name\030\002 \001(\005\"]\n" +
+      "\007IrWhile\022R\n\004loop\030\001 \001(\0132=.org.jetbrains.k" +
+      "otlin.backend.common.serialization.proto" +
+      ".LoopB\005\252\001\002\010\003\"\220\001\n\024IrFunctionExpression\022\\\n" +
+      "\010function\030\001 \001(\0132C.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrFunc" +
+      "tionB\005\252\001\002\010\003\022\032\n\013origin_name\030\002 \001(\005B\005\252\001\002\010\003\"" +
+      "/\n\021IrErrorExpression\022\032\n\013description\030\001 \001(" +
+      "\005B\005\252\001\002\010\003\"\353\001\n\025IrErrorCallExpression\022\032\n\013de" +
+      "scription\030\001 \001(\005B\005\252\001\002\010\003\022W\n\010receiver\030\002 \001(\013" +
+      "2E.org.jetbrains.kotlin.backend.common.s" +
+      "erialization.proto.IrExpression\022]\n\016value" +
+      "_argument\030\003 \003(\0132E.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrExpr" +
+      "ession\"\227\001\n\031IrDynamicMemberExpression\022\032\n\013" +
+      "member_name\030\001 \001(\005B\005\252\001\002\010\003\022^\n\010receiver\030\002 \001" +
+      "(\0132E.org.jetbrains.kotlin.backend.common" +
+      ".serialization.proto.IrExpressionB\005\252\001\002\010\003" +
+      "\"\374\005\n\033IrDynamicOperatorExpression\022\177\n\010oper" +
+      "ator\030\001 \001(\0162f.org.jetbrains.kotlin.backen" +
+      "d.common.serialization.proto.IrDynamicOp" +
+      "eratorExpression.IrDynamicOperatorB\005\252\001\002\010" +
+      "\003\022^\n\010receiver\030\002 \001(\0132E.org.jetbrains.kotl" +
+      "in.backend.common.serialization.proto.Ir" +
+      "ExpressionB\005\252\001\002\010\003\022W\n\010argument\030\003 \003(\0132E.or" +
+      "g.jetbrains.kotlin.backend.common.serial" +
+      "ization.proto.IrExpression\"\242\003\n\021IrDynamic" +
+      "Operator\022\016\n\nUNARY_PLUS\020\001\022\017\n\013UNARY_MINUS\020" +
+      "\002\022\010\n\004EXCL\020\003\022\024\n\020PREFIX_INCREMENT\020\004\022\025\n\021POS" +
+      "TFIX_INCREMENT\020\005\022\024\n\020PREFIX_DECREMENT\020\006\022\025" +
+      "\n\021POSTFIX_DECREMENT\020\007\022\017\n\013BINARY_PLUS\020\010\022\020" +
+      "\n\014BINARY_MINUS\020\t\022\007\n\003MUL\020\n\022\007\n\003DIV\020\013\022\007\n\003MO" +
+      "D\020\014\022\006\n\002GT\020\r\022\006\n\002LT\020\016\022\006\n\002GE\020\017\022\006\n\002LE\020\020\022\010\n\004E" +
+      "QEQ\020\021\022\n\n\006EXCLEQ\020\022\022\n\n\006EQEQEQ\020\023\022\014\n\010EXCLEQE" +
+      "Q\020\024\022\n\n\006ANDAND\020\025\022\010\n\004OROR\020\026\022\006\n\002EQ\020\027\022\n\n\006PLU" +
+      "SEQ\020\030\022\013\n\007MINUSEQ\020\031\022\t\n\005MULEQ\020\032\022\t\n\005DIVEQ\020\033" +
+      "\022\t\n\005MODEQ\020\034\022\020\n\014ARRAY_ACCESS\020\035\022\n\n\006INVOKE\020" +
+      "\036\032\004:\002\020\002\"\235\036\n\013IrOperation\022Q\n\005block\030\001 \001(\0132@" +
+      ".org.jetbrains.kotlin.backend.common.ser" +
+      "ialization.proto.IrBlockH\000\022Q\n\005break\030\002 \001(" +
+      "\0132@.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.IrBreakH\000\022O\n\004call\030\003 " +
+      "\001(\0132?.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrCallH\000\022d\n\017class_" +
+      "reference\030\004 \001(\0132I.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrClas" +
+      "sReferenceH\000\022Y\n\tcomposite\030\005 \001(\0132D.org.je" +
+      "tbrains.kotlin.backend.common.serializat" +
+      "ion.proto.IrCompositeH\000\022Q\n\005const\030\006 \001(\0132@" +
+      ".org.jetbrains.kotlin.backend.common.ser" +
+      "ialization.proto.IrConstH\000\022W\n\010continue\030\007" +
+      " \001(\0132C.org.jetbrains.kotlin.backend.comm" +
+      "on.serialization.proto.IrContinueH\000\022{\n\033d" +
+      "elegating_constructor_call\030\010 \001(\0132T.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.IrDelegatingConstructorCallH\000" +
+      "\022V\n\010do_while\030\t \001(\0132B.org.jetbrains.kotli" +
+      "n.backend.common.serialization.proto.IrD" +
+      "oWhileH\000\022o\n\025enum_constructor_call\030\n \001(\0132" +
+      "N.org.jetbrains.kotlin.backend.common.se" +
+      "rialization.proto.IrEnumConstructorCallH" +
+      "\000\022j\n\022function_reference\030\013 \001(\0132L.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrFunctionReferenceH\000\022X\n\tget_cla" +
+      "ss\030\014 \001(\0132C.org.jetbrains.kotlin.backend." +
+      "common.serialization.proto.IrGetClassH\000\022" +
+      "a\n\016get_enum_value\030\r \001(\0132G.org.jetbrains." +
+      "kotlin.backend.common.serialization.prot" +
+      "o.IrGetEnumValueH\000\022X\n\tget_field\030\016 \001(\0132C." +
+      "org.jetbrains.kotlin.backend.common.seri" +
+      "alization.proto.IrGetFieldH\000\022Z\n\nget_obje" +
+      "ct\030\017 \001(\0132D.org.jetbrains.kotlin.backend." +
+      "common.serialization.proto.IrGetObjectH\000" +
+      "\022X\n\tget_value\030\020 \001(\0132C.org.jetbrains.kotl" +
+      "in.backend.common.serialization.proto.Ir" +
+      "GetValueH\000\022w\n\031instance_initializer_call\030" +
+      "\021 \001(\0132R.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.IrInstanceInitia" +
+      "lizerCallH\000\022j\n\022property_reference\030\022 \001(\0132" +
+      "L.org.jetbrains.kotlin.backend.common.se" +
+      "rialization.proto.IrPropertyReferenceH\000\022" +
+      "S\n\006return\030\023 \001(\0132A.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrRetu" +
+      "rnH\000\022X\n\tset_field\030\024 \001(\0132C.org.jetbrains." +
+      "kotlin.backend.common.serialization.prot" +
+      "o.IrSetFieldH\000\022X\n\tset_value\030\025 \001(\0132C.org." +
+      "jetbrains.kotlin.backend.common.serializ" +
+      "ation.proto.IrSetValueH\000\022`\n\rstring_conca" +
+      "t\030\026 \001(\0132G.org.jetbrains.kotlin.backend.c" +
+      "ommon.serialization.proto.IrStringConcat" +
+      "H\000\022Q\n\005throw\030\027 \001(\0132@.org.jetbrains.kotlin" +
+      ".backend.common.serialization.proto.IrTh" +
+      "rowH\000\022M\n\003try\030\030 \001(\0132>.org.jetbrains.kotli" +
+      "n.backend.common.serialization.proto.IrT" +
+      "ryH\000\022T\n\007type_op\030\031 \001(\0132A.org.jetbrains.ko" +
+      "tlin.backend.common.serialization.proto." +
+      "IrTypeOpH\000\022S\n\006vararg\030\032 \001(\0132A.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrVarargH\000\022O\n\004when\030\033 \001(\0132?.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrWhenH\000\022Q\n\005while\030\034 \001(\0132@.org.je" +
+      "tbrains.kotlin.backend.common.serializat" +
+      "ion.proto.IrWhileH\000\022l\n\016dynamic_member\030\035 " +
+      "\001(\0132R.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrDynamicMemberExp" +
+      "ressionH\000\022p\n\020dynamic_operator\030\036 \001(\0132T.or" +
+      "g.jetbrains.kotlin.backend.common.serial" +
+      "ization.proto.IrDynamicOperatorExpressio" +
+      "nH\000\022\210\001\n\"local_delegated_property_referen" +
+      "ce\030\037 \001(\0132Z.org.jetbrains.kotlin.backend." +
+      "common.serialization.proto.IrLocalDelega" +
+      "tedPropertyReferenceH\000\022f\n\020constructor_ca" +
+      "ll\030  \001(\0132J.org.jetbrains.kotlin.backend." +
+      "common.serialization.proto.IrConstructor" +
+      "CallH\000\022l\n\023function_expression\030! \001(\0132M.or" +
+      "g.jetbrains.kotlin.backend.common.serial" +
+      "ization.proto.IrFunctionExpressionH\000\022f\n\020" +
+      "error_expression\030\" \001(\0132J.org.jetbrains.k" +
+      "otlin.backend.common.serialization.proto" +
+      ".IrErrorExpressionH\000\022o\n\025error_call_expre" +
+      "ssion\030# \001(\0132N.org.jetbrains.kotlin.backe" +
+      "nd.common.serialization.proto.IrErrorCal" +
+      "lExpressionH\000\022f\n\020returnable_block\030$ \001(\0132" +
+      "J.org.jetbrains.kotlin.backend.common.se" +
+      "rialization.proto.IrReturnableBlockH\000\022q\n" +
+      "\026inlined_function_block\030% \001(\0132O.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrInlinedFunctionBlockH\000\022s\n\027rich" +
+      "_function_reference\030& \001(\0132P.org.jetbrain" +
+      "s.kotlin.backend.common.serialization.pr" +
+      "oto.IrRichFunctionReferenceH\000\022s\n\027rich_pr" +
+      "operty_reference\030\' \001(\0132P.org.jetbrains.k" +
+      "otlin.backend.common.serialization.proto" +
+      ".IrRichPropertyReferenceH\000B\013\n\toperation\"" +
+      "\237\001\n\014IrExpression\022^\n\toperation\030\001 \001(\0132D.or" +
+      "g.jetbrains.kotlin.backend.common.serial" +
+      "ization.proto.IrOperationB\005\252\001\002\010\003\022\023\n\004type" +
+      "\030\002 \001(\005B\005\252\001\002\010\003\022\032\n\013coordinates\030\003 \001(\003B\005\252\001\002\010" +
+      "\003\"q\n\024NullableIrExpression\022Y\n\nexpression\030" +
+      "\001 \001(\0132E.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.IrExpression\"\324\001\n" +
+      "\021IrDeclarationBase\022\025\n\006symbol\030\001 \001(\003B\005\252\001\002\010" +
+      "\003\022\032\n\013origin_name\030\002 \001(\005B\005\252\001\002\010\003\022\032\n\013coordin" +
+      "ates\030\003 \001(\003B\005\252\001\002\010\003\022\020\n\005flags\030\004 \001(\003:\0010\022^\n\na" +
+      "nnotation\030\005 \003(\0132J.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrCons" +
+      "tructorCall\"\224\005\n\016IrFunctionBase\022_\n\004base\030\001" +
+      " \001(\0132J.org.jetbrains.kotlin.backend.comm" +
+      "on.serialization.proto.IrDeclarationBase" +
+      "B\005\252\001\002\010\003\022\030\n\tname_type\030\002 \001(\003B\005\252\001\002\010\003\022`\n\016typ" +
+      "e_parameter\030\003 \003(\0132H.org.jetbrains.kotlin" +
+      ".backend.common.serialization.proto.IrTy" +
+      "peParameter\022d\n\021dispatch_receiver\030\004 \001(\0132I" +
+      ".org.jetbrains.kotlin.backend.common.ser" +
+      "ialization.proto.IrValueParameter\022d\n\021con" +
+      "text_parameter\030\t \003(\0132I.org.jetbrains.kot" +
+      "lin.backend.common.serialization.proto.I" +
+      "rValueParameter\022e\n\022extension_receiver\030\005 " +
+      "\001(\0132I.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrValueParameter\022d" +
+      "\n\021regular_parameter\030\006 \003(\0132I.org.jetbrain" +
+      "s.kotlin.backend.common.serialization.pr" +
+      "oto.IrValueParameter\022\014\n\004body\030\007 \001(\005\"~\n\nIr",
+      "Function\022\\\n\004base\030\001 \001(\0132G.org.jetbrains.k" +
+      "otlin.backend.common.serialization.proto" +
+      ".IrFunctionBaseB\005\252\001\002\010\003\022\022\n\noverridden\030\002 \003" +
+      "(\003\"m\n\rIrConstructor\022\\\n\004base\030\001 \001(\0132G.org." +
+      "jetbrains.kotlin.backend.common.serializ" +
+      "ation.proto.IrFunctionBaseB\005\252\001\002\010\003\"\231\001\n\007Ir" +
+      "Field\022_\n\004base\030\001 \001(\0132J.org.jetbrains.kotl" +
+      "in.backend.common.serialization.proto.Ir" +
+      "DeclarationBaseB\005\252\001\002\010\003\022\030\n\tname_type\030\002 \001(" +
+      "\003B\005\252\001\002\010\003\022\023\n\013initializer\030\003 \001(\005\"\226\003\n\030IrLoca" +
+      "lDelegatedProperty\022_\n\004base\030\001 \001(\0132J.org.j" +
+      "etbrains.kotlin.backend.common.serializa" +
+      "tion.proto.IrDeclarationBaseB\005\252\001\002\010\003\022\030\n\tn" +
+      "ame_type\030\002 \001(\003B\005\252\001\002\010\003\022U\n\010delegate\030\003 \001(\0132" +
+      "C.org.jetbrains.kotlin.backend.common.se" +
+      "rialization.proto.IrVariable\022S\n\006getter\030\004" +
+      " \001(\0132C.org.jetbrains.kotlin.backend.comm" +
+      "on.serialization.proto.IrFunction\022S\n\006set" +
+      "ter\030\005 \001(\0132C.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrFunction\"\205" +
+      "\003\n\nIrProperty\022_\n\004base\030\001 \001(\0132J.org.jetbra" +
+      "ins.kotlin.backend.common.serialization." +
+      "proto.IrDeclarationBaseB\005\252\001\002\010\003\022\023\n\004name\030\002" +
+      " \001(\005B\005\252\001\002\010\003\022W\n\rbacking_field\030\003 \001(\0132@.org" +
+      ".jetbrains.kotlin.backend.common.seriali" +
+      "zation.proto.IrField\022S\n\006getter\030\004 \001(\0132C.o" +
+      "rg.jetbrains.kotlin.backend.common.seria" +
+      "lization.proto.IrFunction\022S\n\006setter\030\005 \001(" +
+      "\0132C.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.IrFunction\"\343\001\n\nIrVar" +
+      "iable\022_\n\004base\030\001 \001(\0132J.org.jetbrains.kotl" +
+      "in.backend.common.serialization.proto.Ir" +
+      "DeclarationBaseB\005\252\001\002\010\003\022\030\n\tname_type\030\002 \001(" +
+      "\003B\005\252\001\002\010\003\022Z\n\013initializer\030\003 \001(\0132E.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrExpression\"\301\001\n\020IrValueParamete" +
+      "r\022_\n\004base\030\001 \001(\0132J.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrDecl" +
+      "arationBaseB\005\252\001\002\010\003\022\030\n\tname_type\030\002 \001(\003B\005\252" +
+      "\001\002\010\003\022\033\n\023vararg_element_type\030\003 \001(\005\022\025\n\rdef" +
+      "ault_value\030\004 \001(\005\"\233\001\n\017IrTypeParameter\022_\n\004" +
+      "base\030\001 \001(\0132J.org.jetbrains.kotlin.backen" +
+      "d.common.serialization.proto.IrDeclarati" +
+      "onBaseB\005\252\001\002\010\003\022\023\n\004name\030\002 \001(\005B\005\252\001\002\010\003\022\022\n\nsu" +
+      "per_type\030\003 \003(\005\"\330\005\n\007IrClass\022_\n\004base\030\001 \001(\013" +
+      "2J.org.jetbrains.kotlin.backend.common.s" +
+      "erialization.proto.IrDeclarationBaseB\005\252\001" +
+      "\002\010\003\022\023\n\004name\030\002 \001(\005B\005\252\001\002\010\003\022`\n\rthis_receive" +
+      "r\030\003 \001(\0132I.org.jetbrains.kotlin.backend.c" +
+      "ommon.serialization.proto.IrValueParamet" +
+      "er\022`\n\016type_parameter\030\004 \003(\0132H.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrTypeParameter\022[\n\013declaration\030\005 \003(" +
+      "\0132F.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.IrDeclaration\022\022\n\nsup" +
+      "er_type\030\006 \003(\005\022y\n\033inline_class_representa" +
+      "tion\030\007 \001(\0132T.org.jetbrains.kotlin.backen" +
+      "d.common.serialization.proto.IrInlineCla" +
+      "ssRepresentation\022\215\001\n&multi_field_value_c" +
+      "lass_representation\030\t \001(\0132].org.jetbrain" +
+      "s.kotlin.backend.common.serialization.pr" +
+      "oto.IrMultiFieldValueClassRepresentation" +
+      "\022\027\n\017sealed_subclass\030\010 \003(\003\"\352\001\n\013IrTypeAlia" +
+      "s\022_\n\004base\030\001 \001(\0132J.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrDecl" +
+      "arationBaseB\005\252\001\002\010\003\022\030\n\tname_type\030\002 \001(\003B\005\252" +
+      "\001\002\010\003\022`\n\016type_parameter\030\003 \003(\0132H.org.jetbr" +
+      "ains.kotlin.backend.common.serialization" +
+      ".proto.IrTypeParameter\"\367\001\n\013IrEnumEntry\022_" +
+      "\n\004base\030\001 \001(\0132J.org.jetbrains.kotlin.back" +
+      "end.common.serialization.proto.IrDeclara" +
+      "tionBaseB\005\252\001\002\010\003\022\023\n\004name\030\002 \001(\005B\005\252\001\002\010\003\022\023\n\013" +
+      "initializer\030\003 \001(\005\022]\n\023corresponding_class" +
+      "\030\004 \001(\0132@.org.jetbrains.kotlin.backend.co" +
+      "mmon.serialization.proto.IrClass\"\207\001\n\017IrA" +
+      "nonymousInit\022_\n\004base\030\001 \001(\0132J.org.jetbrai" +
+      "ns.kotlin.backend.common.serialization.p" +
+      "roto.IrDeclarationBaseB\005\252\001\002\010\003\022\023\n\004body\030\002 " +
+      "\001(\005B\005\252\001\002\010\003\"\256\t\n\rIrDeclaration\022e\n\021ir_anony" +
+      "mous_init\030\001 \001(\0132H.org.jetbrains.kotlin.b" +
+      "ackend.common.serialization.proto.IrAnon" +
+      "ymousInitH\000\022T\n\010ir_class\030\002 \001(\0132@.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrClassH\000\022`\n\016ir_constructor\030\003 \001(" +
+      "\0132F.org.jetbrains.kotlin.backend.common." +
+      "serialization.proto.IrConstructorH\000\022]\n\ri" +
+      "r_enum_entry\030\004 \001(\0132D.org.jetbrains.kotli" +
+      "n.backend.common.serialization.proto.IrE" +
+      "numEntryH\000\022T\n\010ir_field\030\005 \001(\0132@.org.jetbr" +
+      "ains.kotlin.backend.common.serialization" +
+      ".proto.IrFieldH\000\022Z\n\013ir_function\030\006 \001(\0132C." +
+      "org.jetbrains.kotlin.backend.common.seri" +
+      "alization.proto.IrFunctionH\000\022Z\n\013ir_prope" +
+      "rty\030\007 \001(\0132C.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrPropertyH\000" +
+      "\022e\n\021ir_type_parameter\030\010 \001(\0132H.org.jetbra" +
+      "ins.kotlin.backend.common.serialization." +
+      "proto.IrTypeParameterH\000\022Z\n\013ir_variable\030\t" +
+      " \001(\0132C.org.jetbrains.kotlin.backend.comm" +
+      "on.serialization.proto.IrVariableH\000\022g\n\022i" +
+      "r_value_parameter\030\n \001(\0132I.org.jetbrains." +
+      "kotlin.backend.common.serialization.prot" +
+      "o.IrValueParameterH\000\022x\n\033ir_local_delegat" +
+      "ed_property\030\013 \001(\0132Q.org.jetbrains.kotlin" +
+      ".backend.common.serialization.proto.IrLo" +
+      "calDelegatedPropertyH\000\022]\n\rir_type_alias\030" +
+      "\014 \001(\0132D.org.jetbrains.kotlin.backend.com" +
+      "mon.serialization.proto.IrTypeAliasH\000B\014\n" +
+      "\ndeclarator\"\311\001\n\010IrBranch\022_\n\tcondition\030\001 " +
+      "\001(\0132E.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrExpressionB\005\252\001\002\010" +
+      "\003\022\\\n\006result\030\002 \001(\0132E.org.jetbrains.kotlin" +
+      ".backend.common.serialization.proto.IrEx" +
+      "pressionB\005\252\001\002\010\003\"f\n\013IrBlockBody\022W\n\tstatem" +
+      "ent\030\001 \003(\0132D.org.jetbrains.kotlin.backend" +
+      ".common.serialization.proto.IrStatement\"" +
+      "\314\001\n\007IrCatch\022c\n\017catch_parameter\030\001 \001(\0132C.o" +
+      "rg.jetbrains.kotlin.backend.common.seria" +
+      "lization.proto.IrVariableB\005\252\001\002\010\003\022\\\n\006resu" +
+      "lt\030\002 \001(\0132E.org.jetbrains.kotlin.backend." +
+      "common.serialization.proto.IrExpressionB" +
+      "\005\252\001\002\010\003\"t\n\017IrSyntheticBody\022a\n\004kind\030\001 \001(\0162" +
+      "L.org.jetbrains.kotlin.backend.common.se" +
+      "rialization.proto.IrSyntheticBodyKindB\005\252" +
+      "\001\002\010\003\"\332\004\n\013IrStatement\022\032\n\013coordinates\030\001 \001(" +
+      "\003B\005\252\001\002\010\003\022]\n\013declaration\030\002 \001(\0132F.org.jetb" +
+      "rains.kotlin.backend.common.serializatio" +
+      "n.proto.IrDeclarationH\000\022[\n\nexpression\030\003 " +
+      "\001(\0132E.org.jetbrains.kotlin.backend.commo" +
+      "n.serialization.proto.IrExpressionH\000\022Z\n\n" +
+      "block_body\030\004 \001(\0132D.org.jetbrains.kotlin." +
+      "backend.common.serialization.proto.IrBlo" +
+      "ckBodyH\000\022S\n\006branch\030\005 \001(\0132A.org.jetbrains" +
+      ".kotlin.backend.common.serialization.pro" +
+      "to.IrBranchH\000\022Q\n\005catch\030\006 \001(\0132@.org.jetbr" +
+      "ains.kotlin.backend.common.serialization" +
+      ".proto.IrCatchH\000\022b\n\016synthetic_body\030\007 \001(\013" +
+      "2H.org.jetbrains.kotlin.backend.common.s" +
+      "erialization.proto.IrSyntheticBodyH\000B\013\n\t" +
+      "statement\"o\n\033IrInlineClassRepresentation" +
+      "\022\'\n\030underlying_property_name\030\001 \001(\005B\005\252\001\002\010" +
+      "\003\022\'\n\030underlying_property_type\030\002 \001(\005B\005\252\001\002" +
+      "\010\003\"j\n$IrMultiFieldValueClassRepresentati" +
+      "on\022 \n\030underlying_property_name\030\001 \003(\005\022 \n\030" +
+      "underlying_property_type\030\002 \003(\005*`\n\027IrSimp" +
+      "leTypeNullability\022\023\n\017MARKED_NULLABLE\020\000\022\021" +
+      "\n\rNOT_SPECIFIED\020\001\022\027\n\023DEFINITELY_NOT_NULL" +
+      "\020\002\032\004:\002\020\002*\377\001\n\016IrTypeOperator\022\010\n\004CAST\020\001\022\021\n" +
+      "\rIMPLICIT_CAST\020\002\022\024\n\020IMPLICIT_NOTNULL\020\003\022\035" +
+      "\n\031IMPLICIT_COERCION_TO_UNIT\020\004\022\035\n\031IMPLICI" +
+      "T_INTEGER_COERCION\020\005\022\r\n\tSAFE_CAST\020\006\022\016\n\nI" +
+      "NSTANCEOF\020\007\022\022\n\016NOT_INSTANCEOF\020\010\022\022\n\016SAM_C" +
+      "ONVERSION\020\t\022\031\n\025IMPLICIT_DYNAMIC_CAST\020\n\022\024" +
+      "\n\020REINTERPRET_CAST\020\013\032\004:\002\020\002*P\n\023IrSyntheti" +
+      "cBodyKind\022\017\n\013ENUM_VALUES\020\001\022\020\n\014ENUM_VALUE" +
+      "OF\020\002\022\020\n\014ENUM_ENTRIES\020\003\032\004:\002\020\002B\021B\010KotlinIr" +
+      "P\001\222\003\002 \003b\010editionsp\350\007"
+    };
+    descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+        });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileEntry_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileEntry_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileEntry_descriptor,
+        new java.lang.String[] { "Name", "LineStartOffset", "FirstRelevantLineIndex", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFile_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFile_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFile_descriptor,
+        new java.lang.String[] { "DeclarationId", "FileEntry", "FileEntryId", "FqName", "Annotation", "ExplicitlyExportedToCompiler", "PreprocessedInlineFunctions", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor,
+        new java.lang.String[] { "PackageFqName", "DeclarationFqName", "MemberUniqId", "Flags", "DebugInfo", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_AccessorIdSignature_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_AccessorIdSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_AccessorIdSignature_descriptor,
+        new java.lang.String[] { "PropertySignature", "Name", "AccessorHashId", "Flags", "DebugInfo", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileLocalIdSignature_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileLocalIdSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileLocalIdSignature_descriptor,
+        new java.lang.String[] { "Container", "LocalId", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CompositeSignature_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CompositeSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CompositeSignature_descriptor,
+        new java.lang.String[] { "ContainerSig", "InnerSig", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_LocalSignature_descriptor,
+        new java.lang.String[] { "LocalFqName", "LocalHash", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileSignature_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FileSignature_descriptor,
+        new java.lang.String[] { });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IdSignature_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IdSignature_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IdSignature_descriptor,
+        new java.lang.String[] { "PublicSig", "PrivateSig", "AccessorSig", "ScopedLocalSig", "CompositeSig", "LocalSig", "FileSig", "IdSig", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleTypeLegacy_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleTypeLegacy_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleTypeLegacy_descriptor,
+        new java.lang.String[] { "Annotation", "Classifier", "HasQuestionMark", "Argument", "Abbreviation", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleType_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleType_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSimpleType_descriptor,
+        new java.lang.String[] { "Annotation", "Classifier", "Nullability", "Argument", "Abbreviation", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAbbreviation_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAbbreviation_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAbbreviation_descriptor,
+        new java.lang.String[] { "Annotation", "TypeAlias", "HasQuestionMark", "Argument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicType_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicType_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicType_descriptor,
+        new java.lang.String[] { "Annotation", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDefinitelyNotNullType_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDefinitelyNotNullType_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDefinitelyNotNullType_descriptor,
+        new java.lang.String[] { "Types", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrType_descriptor,
+        new java.lang.String[] { "LegacySimple", "Dynamic", "Dnn", "Simple", "Kind", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBreak_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBreak_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBreak_descriptor,
+        new java.lang.String[] { "LoopId", "Label", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlock_descriptor =
+      getDescriptor().getMessageTypes().get(16);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlock_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlock_descriptor,
+        new java.lang.String[] { "Statement", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturnableBlock_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturnableBlock_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturnableBlock_descriptor,
+        new java.lang.String[] { "Symbol", "Base", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor =
+      getDescriptor().getMessageTypes().get(18);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlinedFunctionBlock_descriptor,
+        new java.lang.String[] { "InlinedFunctionSymbol", "InlinedFunctionFileEntry", "Base", "InlinedFunctionStartOffset", "InlinedFunctionEndOffset", "InlinedFunctionFileEntryId", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_MemberAccessCommon_descriptor =
+      getDescriptor().getMessageTypes().get(19);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_MemberAccessCommon_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_MemberAccessCommon_descriptor,
+        new java.lang.String[] { "Argument", "DispatchReceiver", "ExtensionReceiver", "RegularArgument", "TypeArgument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCall_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCall_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCall_descriptor,
+        new java.lang.String[] { "Symbol", "MemberAccess", "Super", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructorCall_descriptor =
+      getDescriptor().getMessageTypes().get(21);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructorCall_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructorCall_descriptor,
+        new java.lang.String[] { "Symbol", "ConstructorTypeArgumentsCount", "MemberAccess", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionReference_descriptor =
+      getDescriptor().getMessageTypes().get(22);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionReference_descriptor,
+        new java.lang.String[] { "Symbol", "OriginName", "MemberAccess", "ReflectionTargetSymbol", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedPropertyReference_descriptor =
+      getDescriptor().getMessageTypes().get(23);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedPropertyReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedPropertyReference_descriptor,
+        new java.lang.String[] { "Delegate", "Getter", "Setter", "Symbol", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrPropertyReference_descriptor =
+      getDescriptor().getMessageTypes().get(24);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrPropertyReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrPropertyReference_descriptor,
+        new java.lang.String[] { "Field", "Getter", "Setter", "OriginName", "MemberAccess", "Symbol", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichFunctionReference_descriptor =
+      getDescriptor().getMessageTypes().get(25);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichFunctionReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichFunctionReference_descriptor,
+        new java.lang.String[] { "BoundValues", "ReflectionTargetSymbol", "OverriddenFunctionSymbol", "InvokeFunction", "Flags", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichPropertyReference_descriptor =
+      getDescriptor().getMessageTypes().get(26);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichPropertyReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrRichPropertyReference_descriptor,
+        new java.lang.String[] { "BoundValues", "ReflectionTargetSymbol", "GetterFunction", "SetterFunction", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrComposite_descriptor =
+      getDescriptor().getMessageTypes().get(27);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrComposite_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrComposite_descriptor,
+        new java.lang.String[] { "Statement", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClassReference_descriptor =
+      getDescriptor().getMessageTypes().get(28);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClassReference_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClassReference_descriptor,
+        new java.lang.String[] { "ClassSymbol", "ClassType", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConst_descriptor =
+      getDescriptor().getMessageTypes().get(29);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConst_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConst_descriptor,
+        new java.lang.String[] { "Null", "Boolean", "Char", "Byte", "Short", "Int", "Long", "FloatBits", "DoubleBits", "String", "Value", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrContinue_descriptor =
+      getDescriptor().getMessageTypes().get(30);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrContinue_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrContinue_descriptor,
+        new java.lang.String[] { "LoopId", "Label", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDelegatingConstructorCall_descriptor =
+      getDescriptor().getMessageTypes().get(31);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDelegatingConstructorCall_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDelegatingConstructorCall_descriptor,
+        new java.lang.String[] { "Symbol", "MemberAccess", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDoWhile_descriptor =
+      getDescriptor().getMessageTypes().get(32);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDoWhile_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDoWhile_descriptor,
+        new java.lang.String[] { "Loop", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumConstructorCall_descriptor =
+      getDescriptor().getMessageTypes().get(33);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumConstructorCall_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumConstructorCall_descriptor,
+        new java.lang.String[] { "Symbol", "MemberAccess", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetClass_descriptor =
+      getDescriptor().getMessageTypes().get(34);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetClass_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetClass_descriptor,
+        new java.lang.String[] { "Argument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetEnumValue_descriptor =
+      getDescriptor().getMessageTypes().get(35);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetEnumValue_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetEnumValue_descriptor,
+        new java.lang.String[] { "Symbol", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FieldAccessCommon_descriptor =
+      getDescriptor().getMessageTypes().get(36);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FieldAccessCommon_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_FieldAccessCommon_descriptor,
+        new java.lang.String[] { "Symbol", "Super", "Receiver", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetField_descriptor =
+      getDescriptor().getMessageTypes().get(37);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetField_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetField_descriptor,
+        new java.lang.String[] { "FieldAccess", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetValue_descriptor =
+      getDescriptor().getMessageTypes().get(38);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetValue_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetValue_descriptor,
+        new java.lang.String[] { "Symbol", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetObject_descriptor =
+      getDescriptor().getMessageTypes().get(39);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetObject_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrGetObject_descriptor,
+        new java.lang.String[] { "Symbol", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInstanceInitializerCall_descriptor =
+      getDescriptor().getMessageTypes().get(40);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInstanceInitializerCall_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInstanceInitializerCall_descriptor,
+        new java.lang.String[] { "Symbol", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor =
+      getDescriptor().getMessageTypes().get(41);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_Loop_descriptor,
+        new java.lang.String[] { "LoopId", "Condition", "Label", "Body", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturn_descriptor =
+      getDescriptor().getMessageTypes().get(42);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturn_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrReturn_descriptor,
+        new java.lang.String[] { "ReturnTarget", "Value", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetField_descriptor =
+      getDescriptor().getMessageTypes().get(43);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetField_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetField_descriptor,
+        new java.lang.String[] { "FieldAccess", "Value", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetValue_descriptor =
+      getDescriptor().getMessageTypes().get(44);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetValue_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSetValue_descriptor,
+        new java.lang.String[] { "Symbol", "Value", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSpreadElement_descriptor =
+      getDescriptor().getMessageTypes().get(45);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSpreadElement_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSpreadElement_descriptor,
+        new java.lang.String[] { "Expression", "Coordinates", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStringConcat_descriptor =
+      getDescriptor().getMessageTypes().get(46);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStringConcat_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStringConcat_descriptor,
+        new java.lang.String[] { "Argument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrThrow_descriptor =
+      getDescriptor().getMessageTypes().get(47);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrThrow_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrThrow_descriptor,
+        new java.lang.String[] { "Value", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTry_descriptor =
+      getDescriptor().getMessageTypes().get(48);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTry_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTry_descriptor,
+        new java.lang.String[] { "Result", "Catch", "Finally", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeOp_descriptor =
+      getDescriptor().getMessageTypes().get(49);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeOp_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeOp_descriptor,
+        new java.lang.String[] { "Operator", "Operand", "Argument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVararg_descriptor =
+      getDescriptor().getMessageTypes().get(50);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVararg_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVararg_descriptor,
+        new java.lang.String[] { "ElementType", "Element", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVarargElement_descriptor =
+      getDescriptor().getMessageTypes().get(51);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVarargElement_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVarargElement_descriptor,
+        new java.lang.String[] { "Expression", "SpreadElement", "VarargElement", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhen_descriptor =
+      getDescriptor().getMessageTypes().get(52);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhen_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhen_descriptor,
+        new java.lang.String[] { "Branch", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhile_descriptor =
+      getDescriptor().getMessageTypes().get(53);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhile_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrWhile_descriptor,
+        new java.lang.String[] { "Loop", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionExpression_descriptor =
+      getDescriptor().getMessageTypes().get(54);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionExpression_descriptor,
+        new java.lang.String[] { "Function", "OriginName", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorExpression_descriptor =
+      getDescriptor().getMessageTypes().get(55);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorExpression_descriptor,
+        new java.lang.String[] { "Description", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorCallExpression_descriptor =
+      getDescriptor().getMessageTypes().get(56);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorCallExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrErrorCallExpression_descriptor,
+        new java.lang.String[] { "Description", "Receiver", "ValueArgument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicMemberExpression_descriptor =
+      getDescriptor().getMessageTypes().get(57);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicMemberExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicMemberExpression_descriptor,
+        new java.lang.String[] { "MemberName", "Receiver", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicOperatorExpression_descriptor =
+      getDescriptor().getMessageTypes().get(58);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicOperatorExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDynamicOperatorExpression_descriptor,
+        new java.lang.String[] { "Operator", "Receiver", "Argument", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrOperation_descriptor =
+      getDescriptor().getMessageTypes().get(59);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrOperation_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrOperation_descriptor,
+        new java.lang.String[] { "Block", "Break", "Call", "ClassReference", "Composite", "Const", "Continue", "DelegatingConstructorCall", "DoWhile", "EnumConstructorCall", "FunctionReference", "GetClass", "GetEnumValue", "GetField", "GetObject", "GetValue", "InstanceInitializerCall", "PropertyReference", "Return", "SetField", "SetValue", "StringConcat", "Throw", "Try", "TypeOp", "Vararg", "When", "While", "DynamicMember", "DynamicOperator", "LocalDelegatedPropertyReference", "ConstructorCall", "FunctionExpression", "ErrorExpression", "ErrorCallExpression", "ReturnableBlock", "InlinedFunctionBlock", "RichFunctionReference", "RichPropertyReference", "Operation", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrExpression_descriptor =
+      getDescriptor().getMessageTypes().get(60);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrExpression_descriptor,
+        new java.lang.String[] { "Operation", "Type", "Coordinates", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_NullableIrExpression_descriptor =
+      getDescriptor().getMessageTypes().get(61);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_NullableIrExpression_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_NullableIrExpression_descriptor,
+        new java.lang.String[] { "Expression", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclarationBase_descriptor =
+      getDescriptor().getMessageTypes().get(62);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclarationBase_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclarationBase_descriptor,
+        new java.lang.String[] { "Symbol", "OriginName", "Coordinates", "Flags", "Annotation", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionBase_descriptor =
+      getDescriptor().getMessageTypes().get(63);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionBase_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunctionBase_descriptor,
+        new java.lang.String[] { "Base", "NameType", "TypeParameter", "DispatchReceiver", "ContextParameter", "ExtensionReceiver", "RegularParameter", "Body", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunction_descriptor =
+      getDescriptor().getMessageTypes().get(64);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunction_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrFunction_descriptor,
+        new java.lang.String[] { "Base", "Overridden", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructor_descriptor =
+      getDescriptor().getMessageTypes().get(65);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructor_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrConstructor_descriptor,
+        new java.lang.String[] { "Base", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrField_descriptor =
+      getDescriptor().getMessageTypes().get(66);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrField_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrField_descriptor,
+        new java.lang.String[] { "Base", "NameType", "Initializer", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedProperty_descriptor =
+      getDescriptor().getMessageTypes().get(67);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedProperty_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrLocalDelegatedProperty_descriptor,
+        new java.lang.String[] { "Base", "NameType", "Delegate", "Getter", "Setter", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrProperty_descriptor =
+      getDescriptor().getMessageTypes().get(68);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrProperty_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrProperty_descriptor,
+        new java.lang.String[] { "Base", "Name", "BackingField", "Getter", "Setter", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVariable_descriptor =
+      getDescriptor().getMessageTypes().get(69);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVariable_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrVariable_descriptor,
+        new java.lang.String[] { "Base", "NameType", "Initializer", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrValueParameter_descriptor =
+      getDescriptor().getMessageTypes().get(70);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrValueParameter_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrValueParameter_descriptor,
+        new java.lang.String[] { "Base", "NameType", "VarargElementType", "DefaultValue", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeParameter_descriptor =
+      getDescriptor().getMessageTypes().get(71);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeParameter_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeParameter_descriptor,
+        new java.lang.String[] { "Base", "Name", "SuperType", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor =
+      getDescriptor().getMessageTypes().get(72);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrClass_descriptor,
+        new java.lang.String[] { "Base", "Name", "ThisReceiver", "TypeParameter", "Declaration", "SuperType", "InlineClassRepresentation", "MultiFieldValueClassRepresentation", "SealedSubclass", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAlias_descriptor =
+      getDescriptor().getMessageTypes().get(73);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAlias_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrTypeAlias_descriptor,
+        new java.lang.String[] { "Base", "NameType", "TypeParameter", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumEntry_descriptor =
+      getDescriptor().getMessageTypes().get(74);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumEntry_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrEnumEntry_descriptor,
+        new java.lang.String[] { "Base", "Name", "Initializer", "CorrespondingClass", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrAnonymousInit_descriptor =
+      getDescriptor().getMessageTypes().get(75);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrAnonymousInit_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrAnonymousInit_descriptor,
+        new java.lang.String[] { "Base", "Body", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclaration_descriptor =
+      getDescriptor().getMessageTypes().get(76);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclaration_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrDeclaration_descriptor,
+        new java.lang.String[] { "IrAnonymousInit", "IrClass", "IrConstructor", "IrEnumEntry", "IrField", "IrFunction", "IrProperty", "IrTypeParameter", "IrVariable", "IrValueParameter", "IrLocalDelegatedProperty", "IrTypeAlias", "Declarator", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBranch_descriptor =
+      getDescriptor().getMessageTypes().get(77);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBranch_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBranch_descriptor,
+        new java.lang.String[] { "Condition", "Result", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlockBody_descriptor =
+      getDescriptor().getMessageTypes().get(78);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlockBody_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrBlockBody_descriptor,
+        new java.lang.String[] { "Statement", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCatch_descriptor =
+      getDescriptor().getMessageTypes().get(79);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCatch_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrCatch_descriptor,
+        new java.lang.String[] { "CatchParameter", "Result", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSyntheticBody_descriptor =
+      getDescriptor().getMessageTypes().get(80);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSyntheticBody_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrSyntheticBody_descriptor,
+        new java.lang.String[] { "Kind", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStatement_descriptor =
+      getDescriptor().getMessageTypes().get(81);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStatement_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrStatement_descriptor,
+        new java.lang.String[] { "Coordinates", "Declaration", "Expression", "BlockBody", "Branch", "Catch", "SyntheticBody", "Statement", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlineClassRepresentation_descriptor =
+      getDescriptor().getMessageTypes().get(82);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlineClassRepresentation_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrInlineClassRepresentation_descriptor,
+        new java.lang.String[] { "UnderlyingPropertyName", "UnderlyingPropertyType", });
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrMultiFieldValueClassRepresentation_descriptor =
+      getDescriptor().getMessageTypes().get(83);
+    internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrMultiFieldValueClassRepresentation_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_IrMultiFieldValueClassRepresentation_descriptor,
+        new java.lang.String[] { "UnderlyingPropertyName", "UnderlyingPropertyType", });
+    descriptor.resolveAllFeaturesImmutable();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface NullableIrExpressionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1;</code>
@@ -19,4 +19,8 @@ public interface NullableIrExpressionOrBuilder extends
    * @return The expression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 1;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getExpressionOrBuilder();
 }

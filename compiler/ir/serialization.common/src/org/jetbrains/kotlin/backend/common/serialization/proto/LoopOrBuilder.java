@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface LoopOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.Loop)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int32 loop_id = 1 [features = { ... }</code>
@@ -30,6 +30,10 @@ public interface LoopOrBuilder extends
    * @return The condition.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getCondition();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getConditionOrBuilder();
 
   /**
    * <code>int32 label = 3;</code>
@@ -52,6 +56,10 @@ public interface LoopOrBuilder extends
    * @return The body.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getBody();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getBodyOrBuilder();
 
   /**
    * <code>int32 origin_name = 5;</code>

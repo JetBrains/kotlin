@@ -7,12 +7,27 @@ package org.jetbrains.kotlin.metadata.jvm;
 
 public final class JvmModuleProtoBuf {
   private JvmModuleProtoBuf() {}
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      JvmModuleProtoBuf.class.getName());
+  }
   public static void registerAllExtensions(
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite registry) {
   }
+
+  public static void registerAllExtensions(
+      org.jetbrains.kotlin.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (org.jetbrains.kotlin.protobuf.ExtensionRegistryLite) registry);
+  }
   public interface ModuleOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.jvm.Module)
-      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
      * <pre>
@@ -39,6 +54,24 @@ public final class JvmModuleProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
     int getPackagePartsCount();
+    /**
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+        getPackagePartsOrBuilderList();
+    /**
+     * <pre>
+     * Names of .class files for each package
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+     */
+    org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
+        int index);
 
     /**
      * <pre>
@@ -65,6 +98,24 @@ public final class JvmModuleProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
     int getMetadataPartsCount();
+    /**
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+        getMetadataPartsOrBuilderList();
+    /**
+     * <pre>
+     * Names of .kotlin_metadata files for each package
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+     */
+    org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
+        int index);
 
     /**
      * <pre>
@@ -105,8 +156,8 @@ public final class JvmModuleProtoBuf {
      * </pre>
      *
      * <code>repeated string jvm_package_name = 3;</code>
-     * @param index The index of the element to return.
-     * @return The jvmPackageName at the given index.
+     * @param index The index of the value to return.
+     * @return The bytes of the jvmPackageName at the given index.
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getJvmPackageNameBytes(int index);
@@ -121,6 +172,10 @@ public final class JvmModuleProtoBuf {
      * @return The stringTable.
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStringTable();
+    /**
+     * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder getStringTableOrBuilder();
 
     /**
      * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
@@ -132,6 +187,10 @@ public final class JvmModuleProtoBuf {
      * @return The qualifiedNameTable.
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNameTable();
+    /**
+     * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder();
 
     /**
      * <pre>
@@ -158,6 +217,24 @@ public final class JvmModuleProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
     int getAnnotationCount();
+    /**
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> 
+        getAnnotationOrBuilderList();
+    /**
+     * <pre>
+     * Annotations on the whole module
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+        int index);
 
     /**
      * <pre>
@@ -193,25 +270,78 @@ public final class JvmModuleProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
     int getOptionalAnnotationClassCount();
+    /**
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> 
+        getOptionalAnnotationClassOrBuilderList();
+    /**
+     * <pre>
+     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+     * it to the corresponding class with the resolution capabilities of common modules.
+     * </pre>
+     *
+     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.jvm.Module}
    */
-  public  static final class Module extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-          Module, Module.Builder> implements
+  public static final class Module extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.metadata.jvm.Module)
       ModuleOrBuilder {
-    private Module() {
-      packageParts_ = emptyProtobufList();
-      metadataParts_ = emptyProtobufList();
-      jvmPackageName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-      annotation_ = emptyProtobufList();
-      optionalAnnotationClass_ = emptyProtobufList();
+  private static final long serialVersionUID = 0L;
+    static {
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 29,
+        /* patch= */ 3,
+        /* suffix= */ "",
+        Module.class.getName());
     }
+    // Use Module.newBuilder() to construct.
+    private Module(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Module() {
+      packageParts_ = java.util.Collections.emptyList();
+      metadataParts_ = java.util.Collections.emptyList();
+      jvmPackageName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      annotation_ = java.util.Collections.emptyList();
+      optionalAnnotationClass_ = java.util.Collections.emptyList();
+    }
+
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor;
+    }
+
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_Module_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.class, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.Builder.class);
+    }
+
     private int bitField0_;
     public static final int PACKAGE_PARTS_FIELD_NUMBER = 1;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> packageParts_;
+    @SuppressWarnings("serial")
+    private java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> packageParts_;
     /**
      * <pre>
      * Names of .class files for each package
@@ -230,6 +360,7 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
         getPackagePartsOrBuilderList() {
       return packageParts_;
@@ -263,96 +394,15 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
      */
+    @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
         int index) {
       return packageParts_.get(index);
     }
-    private void ensurePackagePartsIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> tmp = packageParts_;
-      if (!tmp.isModifiable()) {
-        packageParts_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setPackageParts(
-        int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensurePackagePartsIsMutable();
-      packageParts_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addPackageParts(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensurePackagePartsIsMutable();
-      packageParts_.add(value);
-    }
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addPackageParts(
-        int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensurePackagePartsIsMutable();
-      packageParts_.add(index, value);
-    }
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    private void addAllPackageParts(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> values) {
-      ensurePackagePartsIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, packageParts_);
-    }
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    private void clearPackageParts() {
-      packageParts_ = emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Names of .class files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
-     */
-    private void removePackageParts(int index) {
-      ensurePackagePartsIsMutable();
-      packageParts_.remove(index);
-    }
 
     public static final int METADATA_PARTS_FIELD_NUMBER = 2;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> metadataParts_;
+    @SuppressWarnings("serial")
+    private java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> metadataParts_;
     /**
      * <pre>
      * Names of .kotlin_metadata files for each package
@@ -371,6 +421,7 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
         getMetadataPartsOrBuilderList() {
       return metadataParts_;
@@ -404,96 +455,16 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
      */
+    @java.lang.Override
     public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
         int index) {
       return metadataParts_.get(index);
     }
-    private void ensureMetadataPartsIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> tmp = metadataParts_;
-      if (!tmp.isModifiable()) {
-        metadataParts_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setMetadataParts(
-        int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensureMetadataPartsIsMutable();
-      metadataParts_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addMetadataParts(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensureMetadataPartsIsMutable();
-      metadataParts_.add(value);
-    }
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addMetadataParts(
-        int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-      value.getClass();  // minimal bytecode null check
-      ensureMetadataPartsIsMutable();
-      metadataParts_.add(index, value);
-    }
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    private void addAllMetadataParts(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> values) {
-      ensureMetadataPartsIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, metadataParts_);
-    }
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    private void clearMetadataParts() {
-      metadataParts_ = emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Names of .kotlin_metadata files for each package
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
-     */
-    private void removeMetadataParts(int index) {
-      ensureMetadataPartsIsMutable();
-      metadataParts_.remove(index);
-    }
 
     public static final int JVM_PACKAGE_NAME_FIELD_NUMBER = 3;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> jvmPackageName_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.LazyStringArrayList jvmPackageName_ =
+        org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
     /**
      * <pre>
      * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
@@ -503,8 +474,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string jvm_package_name = 3;</code>
      * @return A list containing the jvmPackageName.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.String> getJvmPackageNameList() {
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getJvmPackageNameList() {
       return jvmPackageName_;
     }
     /**
@@ -516,7 +487,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string jvm_package_name = 3;</code>
      * @return The count of jvmPackageName.
      */
-    @java.lang.Override
     public int getJvmPackageNameCount() {
       return jvmPackageName_.size();
     }
@@ -530,7 +500,6 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The jvmPackageName at the given index.
      */
-    @java.lang.Override
     public java.lang.String getJvmPackageName(int index) {
       return jvmPackageName_.get(index);
     }
@@ -544,97 +513,16 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the value to return.
      * @return The bytes of the jvmPackageName at the given index.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.protobuf.ByteString
         getJvmPackageNameBytes(int index) {
-      return org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-          jvmPackageName_.get(index));
-    }
-    private void ensureJvmPackageNameIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> tmp =
-          jvmPackageName_;  if (!tmp.isModifiable()) {
-        jvmPackageName_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
-     * The names here are dot-separated, e.g. "org.foo.bar"
-     * </pre>
-     *
-     * <code>repeated string jvm_package_name = 3;</code>
-     * @param index The index to set the value at.
-     * @param value The jvmPackageName to set.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setJvmPackageName(
-        int index, java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureJvmPackageNameIsMutable();
-      jvmPackageName_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
-     * The names here are dot-separated, e.g. "org.foo.bar"
-     * </pre>
-     *
-     * <code>repeated string jvm_package_name = 3;</code>
-     * @param value The jvmPackageName to add.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addJvmPackageName(
-        java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureJvmPackageNameIsMutable();
-      jvmPackageName_.add(value);
-    }
-    /**
-     * <pre>
-     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
-     * The names here are dot-separated, e.g. "org.foo.bar"
-     * </pre>
-     *
-     * <code>repeated string jvm_package_name = 3;</code>
-     * @param values The jvmPackageName to add.
-     */
-    private void addAllJvmPackageName(
-        java.lang.Iterable<java.lang.String> values) {
-      ensureJvmPackageNameIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, jvmPackageName_);
-    }
-    /**
-     * <pre>
-     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
-     * The names here are dot-separated, e.g. "org.foo.bar"
-     * </pre>
-     *
-     * <code>repeated string jvm_package_name = 3;</code>
-     */
-    private void clearJvmPackageName() {
-      jvmPackageName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
-     * The names here are dot-separated, e.g. "org.foo.bar"
-     * </pre>
-     *
-     * <code>repeated string jvm_package_name = 3;</code>
-     * @param value The bytes of the jvmPackageName to add.
-     */
-    private void addJvmPackageNameBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      ensureJvmPackageNameIsMutable();
-      jvmPackageName_.add(value.toStringUtf8());
+      return jvmPackageName_.getByteString(index);
     }
 
     public static final int STRING_TABLE_FIELD_NUMBER = 4;
     private org.jetbrains.kotlin.metadata.ProtoBuf.StringTable stringTable_;
     /**
      * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+     * @return Whether the stringTable field is set.
      */
     @java.lang.Override
     public boolean hasStringTable() {
@@ -642,6 +530,7 @@ public final class JvmModuleProtoBuf {
     }
     /**
      * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+     * @return The stringTable.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStringTable() {
@@ -650,38 +539,16 @@ public final class JvmModuleProtoBuf {
     /**
      * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
      */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setStringTable(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-      value.getClass();  // minimal bytecode null check
-      stringTable_ = value;
-      bitField0_ |= 0x00000001;
-      }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
-     */
-    @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-    private void mergeStringTable(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-      value.getClass();  // minimal bytecode null check
-      if (stringTable_ != null &&
-          stringTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance()) {
-        stringTable_ =
-          org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.newBuilder(stringTable_).mergeFrom(value).buildPartial();
-      } else {
-        stringTable_ = value;
-      }
-      bitField0_ |= 0x00000001;
-    }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
-     */
-    private void clearStringTable() {  stringTable_ = null;
-      bitField0_ = (bitField0_ & ~0x00000001);
+    @java.lang.Override
+    public org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder getStringTableOrBuilder() {
+      return stringTable_ == null ? org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance() : stringTable_;
     }
 
     public static final int QUALIFIED_NAME_TABLE_FIELD_NUMBER = 5;
     private org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable qualifiedNameTable_;
     /**
      * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+     * @return Whether the qualifiedNameTable field is set.
      */
     @java.lang.Override
     public boolean hasQualifiedNameTable() {
@@ -689,6 +556,7 @@ public final class JvmModuleProtoBuf {
     }
     /**
      * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+     * @return The qualifiedNameTable.
      */
     @java.lang.Override
     public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNameTable() {
@@ -697,36 +565,14 @@ public final class JvmModuleProtoBuf {
     /**
      * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
      */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setQualifiedNameTable(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-      value.getClass();  // minimal bytecode null check
-      qualifiedNameTable_ = value;
-      bitField0_ |= 0x00000002;
-      }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
-     */
-    @java.lang.SuppressWarnings({"ReferenceEquality", "ReturnValueIgnored"})
-    private void mergeQualifiedNameTable(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-      value.getClass();  // minimal bytecode null check
-      if (qualifiedNameTable_ != null &&
-          qualifiedNameTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance()) {
-        qualifiedNameTable_ =
-          org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.newBuilder(qualifiedNameTable_).mergeFrom(value).buildPartial();
-      } else {
-        qualifiedNameTable_ = value;
-      }
-      bitField0_ |= 0x00000002;
-    }
-    /**
-     * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
-     */
-    private void clearQualifiedNameTable() {  qualifiedNameTable_ = null;
-      bitField0_ = (bitField0_ & ~0x00000002);
+    @java.lang.Override
+    public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder() {
+      return qualifiedNameTable_ == null ? org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance() : qualifiedNameTable_;
     }
 
     public static final int ANNOTATION_FIELD_NUMBER = 6;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_;
+    @SuppressWarnings("serial")
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_;
     /**
      * <pre>
      * Annotations on the whole module
@@ -745,6 +591,7 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> 
         getAnnotationOrBuilderList() {
       return annotation_;
@@ -778,96 +625,15 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
      */
+    @java.lang.Override
     public org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
         int index) {
       return annotation_.get(index);
     }
-    private void ensureAnnotationIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> tmp = annotation_;
-      if (!tmp.isModifiable()) {
-        annotation_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setAnnotation(
-        int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-      value.getClass();  // minimal bytecode null check
-      ensureAnnotationIsMutable();
-      annotation_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addAnnotation(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-      value.getClass();  // minimal bytecode null check
-      ensureAnnotationIsMutable();
-      annotation_.add(value);
-    }
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addAnnotation(
-        int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-      value.getClass();  // minimal bytecode null check
-      ensureAnnotationIsMutable();
-      annotation_.add(index, value);
-    }
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    private void addAllAnnotation(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> values) {
-      ensureAnnotationIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, annotation_);
-    }
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    private void clearAnnotation() {
-      annotation_ = emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Annotations on the whole module
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
-     */
-    private void removeAnnotation(int index) {
-      ensureAnnotationIsMutable();
-      annotation_.remove(index);
-    }
 
     public static final int OPTIONAL_ANNOTATION_CLASS_FIELD_NUMBER = 16;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.ProtoBuf.Class> optionalAnnotationClass_;
+    @SuppressWarnings("serial")
+    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> optionalAnnotationClass_;
     /**
      * <pre>
      * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
@@ -892,6 +658,7 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> 
         getOptionalAnnotationClassOrBuilderList() {
       return optionalAnnotationClass_;
@@ -934,208 +701,750 @@ public final class JvmModuleProtoBuf {
      *
      * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
      */
+    @java.lang.Override
     public org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
         int index) {
       return optionalAnnotationClass_.get(index);
     }
-    private void ensureOptionalAnnotationClassIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<org.jetbrains.kotlin.metadata.ProtoBuf.Class> tmp = optionalAnnotationClass_;
-      if (!tmp.isModifiable()) {
-        optionalAnnotationClass_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      for (int i = 0; i < getPackagePartsCount(); i++) {
+        if (!getPackageParts(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getMetadataPartsCount(); i++) {
+        if (!getMetadataParts(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasQualifiedNameTable()) {
+        if (!getQualifiedNameTable().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getAnnotationCount(); i++) {
+        if (!getAnnotation(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getOptionalAnnotationClassCount(); i++) {
+        if (!getOptionalAnnotationClass(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
     }
 
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setOptionalAnnotationClass(
-        int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-      value.getClass();  // minimal bytecode null check
-      ensureOptionalAnnotationClassIsMutable();
-      optionalAnnotationClass_.set(index, value);
+    @java.lang.Override
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < packageParts_.size(); i++) {
+        output.writeMessage(1, packageParts_.get(i));
+      }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        output.writeMessage(2, metadataParts_.get(i));
+      }
+      for (int i = 0; i < jvmPackageName_.size(); i++) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.writeString(output, 3, jvmPackageName_.getRaw(i));
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(4, getStringTable());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(5, getQualifiedNameTable());
+      }
+      for (int i = 0; i < annotation_.size(); i++) {
+        output.writeMessage(6, annotation_.get(i));
+      }
+      for (int i = 0; i < optionalAnnotationClass_.size(); i++) {
+        output.writeMessage(16, optionalAnnotationClass_.get(i));
+      }
+      getUnknownFields().writeTo(output);
     }
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addOptionalAnnotationClass(org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-      value.getClass();  // minimal bytecode null check
-      ensureOptionalAnnotationClassIsMutable();
-      optionalAnnotationClass_.add(value);
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      for (int i = 0; i < packageParts_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(1, packageParts_.get(i));
+      }
+      for (int i = 0; i < metadataParts_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(2, metadataParts_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < jvmPackageName_.size(); i++) {
+          dataSize += computeStringSizeNoTag(jvmPackageName_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getJvmPackageNameList().size();
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, getStringTable());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, getQualifiedNameTable());
+      }
+      for (int i = 0; i < annotation_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(6, annotation_.get(i));
+      }
+      for (int i = 0; i < optionalAnnotationClass_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(16, optionalAnnotationClass_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
     }
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addOptionalAnnotationClass(
-        int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-      value.getClass();  // minimal bytecode null check
-      ensureOptionalAnnotationClassIsMutable();
-      optionalAnnotationClass_.add(index, value);
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module)) {
+        return super.equals(obj);
+      }
+      org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module other = (org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module) obj;
+
+      if (!getPackagePartsList()
+          .equals(other.getPackagePartsList())) return false;
+      if (!getMetadataPartsList()
+          .equals(other.getMetadataPartsList())) return false;
+      if (!getJvmPackageNameList()
+          .equals(other.getJvmPackageNameList())) return false;
+      if (hasStringTable() != other.hasStringTable()) return false;
+      if (hasStringTable()) {
+        if (!getStringTable()
+            .equals(other.getStringTable())) return false;
+      }
+      if (hasQualifiedNameTable() != other.hasQualifiedNameTable()) return false;
+      if (hasQualifiedNameTable()) {
+        if (!getQualifiedNameTable()
+            .equals(other.getQualifiedNameTable())) return false;
+      }
+      if (!getAnnotationList()
+          .equals(other.getAnnotationList())) return false;
+      if (!getOptionalAnnotationClassList()
+          .equals(other.getOptionalAnnotationClassList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
     }
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    private void addAllOptionalAnnotationClass(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Class> values) {
-      ensureOptionalAnnotationClassIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, optionalAnnotationClass_);
-    }
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    private void clearOptionalAnnotationClass() {
-      optionalAnnotationClass_ = emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
-     * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
-     * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
-     * it to the corresponding class with the resolution capabilities of common modules.
-     * </pre>
-     *
-     * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
-     */
-    private void removeOptionalAnnotationClass(int index) {
-      ensureOptionalAnnotationClassIsMutable();
-      optionalAnnotationClass_.remove(index);
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getPackagePartsCount() > 0) {
+        hash = (37 * hash) + PACKAGE_PARTS_FIELD_NUMBER;
+        hash = (53 * hash) + getPackagePartsList().hashCode();
+      }
+      if (getMetadataPartsCount() > 0) {
+        hash = (37 * hash) + METADATA_PARTS_FIELD_NUMBER;
+        hash = (53 * hash) + getMetadataPartsList().hashCode();
+      }
+      if (getJvmPackageNameCount() > 0) {
+        hash = (37 * hash) + JVM_PACKAGE_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getJvmPackageNameList().hashCode();
+      }
+      if (hasStringTable()) {
+        hash = (37 * hash) + STRING_TABLE_FIELD_NUMBER;
+        hash = (53 * hash) + getStringTable().hashCode();
+      }
+      if (hasQualifiedNameTable()) {
+        hash = (37 * hash) + QUALIFIED_NAME_TABLE_FIELD_NUMBER;
+        hash = (53 * hash) + getQualifiedNameTable().hashCode();
+      }
+      if (getAnnotationCount() > 0) {
+        hash = (37 * hash) + ANNOTATION_FIELD_NUMBER;
+        hash = (53 * hash) + getAnnotationList().hashCode();
+      }
+      if (getOptionalAnnotationClassCount() > 0) {
+        hash = (37 * hash) + OPTIONAL_ANNOTATION_CLASS_FIELD_NUMBER;
+        hash = (53 * hash) + getOptionalAnnotationClassList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         java.nio.ByteBuffer data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         java.nio.ByteBuffer data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
+      return DEFAULT_INSTANCE.toBuilder();
     }
     public static Builder newBuilder(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module prototype) {
-      return DEFAULT_INSTANCE.createBuilder(prototype);
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
     }
 
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
     /**
      * Protobuf type {@code org.jetbrains.kotlin.metadata.jvm.Module}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module, Builder> implements
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.metadata.jvm.Module)
         org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.ModuleOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor;
+      }
+
+      @java.lang.Override
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_Module_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.class, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.Builder.class);
+      }
+
       // Construct using org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.newBuilder()
       private Builder() {
-        super(DEFAULT_INSTANCE);
+        maybeForceBuilderInitialization();
       }
 
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage
+                .alwaysUseFieldBuilders) {
+          getPackagePartsFieldBuilder();
+          getMetadataPartsFieldBuilder();
+          getStringTableFieldBuilder();
+          getQualifiedNameTableFieldBuilder();
+          getAnnotationFieldBuilder();
+          getOptionalAnnotationClassFieldBuilder();
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        if (packagePartsBuilder_ == null) {
+          packageParts_ = java.util.Collections.emptyList();
+        } else {
+          packageParts_ = null;
+          packagePartsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (metadataPartsBuilder_ == null) {
+          metadataParts_ = java.util.Collections.emptyList();
+        } else {
+          metadataParts_ = null;
+          metadataPartsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        jvmPackageName_ =
+            org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        stringTable_ = null;
+        if (stringTableBuilder_ != null) {
+          stringTableBuilder_.dispose();
+          stringTableBuilder_ = null;
+        }
+        qualifiedNameTable_ = null;
+        if (qualifiedNameTableBuilder_ != null) {
+          qualifiedNameTableBuilder_.dispose();
+          qualifiedNameTableBuilder_ = null;
+        }
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+        } else {
+          annotation_ = null;
+          annotationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
+        if (optionalAnnotationClassBuilder_ == null) {
+          optionalAnnotationClass_ = java.util.Collections.emptyList();
+        } else {
+          optionalAnnotationClass_ = null;
+          optionalAnnotationClassBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000040);
+        return this;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module build() {
+        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module buildPartial() {
+        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module result = new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module result) {
+        if (packagePartsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            packageParts_ = java.util.Collections.unmodifiableList(packageParts_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.packageParts_ = packageParts_;
+        } else {
+          result.packageParts_ = packagePartsBuilder_.build();
+        }
+        if (metadataPartsBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            metadataParts_ = java.util.Collections.unmodifiableList(metadataParts_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.metadataParts_ = metadataParts_;
+        } else {
+          result.metadataParts_ = metadataPartsBuilder_.build();
+        }
+        if (annotationBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0)) {
+            annotation_ = java.util.Collections.unmodifiableList(annotation_);
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.annotation_ = annotation_;
+        } else {
+          result.annotation_ = annotationBuilder_.build();
+        }
+        if (optionalAnnotationClassBuilder_ == null) {
+          if (((bitField0_ & 0x00000040) != 0)) {
+            optionalAnnotationClass_ = java.util.Collections.unmodifiableList(optionalAnnotationClass_);
+            bitField0_ = (bitField0_ & ~0x00000040);
+          }
+          result.optionalAnnotationClass_ = optionalAnnotationClass_;
+        } else {
+          result.optionalAnnotationClass_ = optionalAnnotationClassBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          jvmPackageName_.makeImmutable();
+          result.jvmPackageName_ = jvmPackageName_;
+        }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.stringTable_ = stringTableBuilder_ == null
+              ? stringTable_
+              : stringTableBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.qualifiedNameTable_ = qualifiedNameTableBuilder_ == null
+              ? qualifiedNameTable_
+              : qualifiedNameTableBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module) {
+          return mergeFrom((org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module other) {
+        if (other == org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.getDefaultInstance()) return this;
+        if (packagePartsBuilder_ == null) {
+          if (!other.packageParts_.isEmpty()) {
+            if (packageParts_.isEmpty()) {
+              packageParts_ = other.packageParts_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePackagePartsIsMutable();
+              packageParts_.addAll(other.packageParts_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.packageParts_.isEmpty()) {
+            if (packagePartsBuilder_.isEmpty()) {
+              packagePartsBuilder_.dispose();
+              packagePartsBuilder_ = null;
+              packageParts_ = other.packageParts_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              packagePartsBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getPackagePartsFieldBuilder() : null;
+            } else {
+              packagePartsBuilder_.addAllMessages(other.packageParts_);
+            }
+          }
+        }
+        if (metadataPartsBuilder_ == null) {
+          if (!other.metadataParts_.isEmpty()) {
+            if (metadataParts_.isEmpty()) {
+              metadataParts_ = other.metadataParts_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureMetadataPartsIsMutable();
+              metadataParts_.addAll(other.metadataParts_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.metadataParts_.isEmpty()) {
+            if (metadataPartsBuilder_.isEmpty()) {
+              metadataPartsBuilder_.dispose();
+              metadataPartsBuilder_ = null;
+              metadataParts_ = other.metadataParts_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              metadataPartsBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getMetadataPartsFieldBuilder() : null;
+            } else {
+              metadataPartsBuilder_.addAllMessages(other.metadataParts_);
+            }
+          }
+        }
+        if (!other.jvmPackageName_.isEmpty()) {
+          if (jvmPackageName_.isEmpty()) {
+            jvmPackageName_ = other.jvmPackageName_;
+            bitField0_ |= 0x00000004;
+          } else {
+            ensureJvmPackageNameIsMutable();
+            jvmPackageName_.addAll(other.jvmPackageName_);
+          }
+          onChanged();
+        }
+        if (other.hasStringTable()) {
+          mergeStringTable(other.getStringTable());
+        }
+        if (other.hasQualifiedNameTable()) {
+          mergeQualifiedNameTable(other.getQualifiedNameTable());
+        }
+        if (annotationBuilder_ == null) {
+          if (!other.annotation_.isEmpty()) {
+            if (annotation_.isEmpty()) {
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensureAnnotationIsMutable();
+              annotation_.addAll(other.annotation_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.annotation_.isEmpty()) {
+            if (annotationBuilder_.isEmpty()) {
+              annotationBuilder_.dispose();
+              annotationBuilder_ = null;
+              annotation_ = other.annotation_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+              annotationBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getAnnotationFieldBuilder() : null;
+            } else {
+              annotationBuilder_.addAllMessages(other.annotation_);
+            }
+          }
+        }
+        if (optionalAnnotationClassBuilder_ == null) {
+          if (!other.optionalAnnotationClass_.isEmpty()) {
+            if (optionalAnnotationClass_.isEmpty()) {
+              optionalAnnotationClass_ = other.optionalAnnotationClass_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+            } else {
+              ensureOptionalAnnotationClassIsMutable();
+              optionalAnnotationClass_.addAll(other.optionalAnnotationClass_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.optionalAnnotationClass_.isEmpty()) {
+            if (optionalAnnotationClassBuilder_.isEmpty()) {
+              optionalAnnotationClassBuilder_.dispose();
+              optionalAnnotationClassBuilder_ = null;
+              optionalAnnotationClass_ = other.optionalAnnotationClass_;
+              bitField0_ = (bitField0_ & ~0x00000040);
+              optionalAnnotationClassBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getOptionalAnnotationClassFieldBuilder() : null;
+            } else {
+              optionalAnnotationClassBuilder_.addAllMessages(other.optionalAnnotationClass_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        for (int i = 0; i < getPackagePartsCount(); i++) {
+          if (!getPackageParts(i).isInitialized()) {
+            return false;
+          }
+        }
+        for (int i = 0; i < getMetadataPartsCount(); i++) {
+          if (!getMetadataParts(i).isInitialized()) {
+            return false;
+          }
+        }
+        if (hasQualifiedNameTable()) {
+          if (!getQualifiedNameTable().isInitialized()) {
+            return false;
+          }
+        }
+        for (int i = 0; i < getAnnotationCount(); i++) {
+          if (!getAnnotation(i).isInitialized()) {
+            return false;
+          }
+        }
+        for (int i = 0; i < getOptionalAnnotationClassCount(); i++) {
+          if (!getOptionalAnnotationClass(i).isInitialized()) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts m =
+                    input.readMessage(
+                        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.parser(),
+                        extensionRegistry);
+                if (packagePartsBuilder_ == null) {
+                  ensurePackagePartsIsMutable();
+                  packageParts_.add(m);
+                } else {
+                  packagePartsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              case 18: {
+                org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts m =
+                    input.readMessage(
+                        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.parser(),
+                        extensionRegistry);
+                if (metadataPartsBuilder_ == null) {
+                  ensureMetadataPartsIsMutable();
+                  metadataParts_.add(m);
+                } else {
+                  metadataPartsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 18
+              case 26: {
+                org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+                ensureJvmPackageNameIsMutable();
+                jvmPackageName_.add(bs);
+                break;
+              } // case 26
+              case 34: {
+                input.readMessage(
+                    getStringTableFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              case 42: {
+                input.readMessage(
+                    getQualifiedNameTableFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
+              case 50: {
+                org.jetbrains.kotlin.metadata.ProtoBuf.Annotation m =
+                    input.readMessage(
+                        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.parser(),
+                        extensionRegistry);
+                if (annotationBuilder_ == null) {
+                  ensureAnnotationIsMutable();
+                  annotation_.add(m);
+                } else {
+                  annotationBuilder_.addMessage(m);
+                }
+                break;
+              } // case 50
+              case 130: {
+                org.jetbrains.kotlin.metadata.ProtoBuf.Class m =
+                    input.readMessage(
+                        org.jetbrains.kotlin.metadata.ProtoBuf.Class.parser(),
+                        extensionRegistry);
+                if (optionalAnnotationClassBuilder_ == null) {
+                  ensureOptionalAnnotationClassIsMutable();
+                  optionalAnnotationClass_.add(m);
+                } else {
+                  optionalAnnotationClassBuilder_.addMessage(m);
+                }
+                break;
+              } // case 130
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> packageParts_ =
+        java.util.Collections.emptyList();
+      private void ensurePackagePartsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          packageParts_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts>(packageParts_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> packagePartsBuilder_;
 
       /**
        * <pre>
@@ -1144,10 +1453,12 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
-      @java.lang.Override
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> getPackagePartsList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getPackagePartsList());
+        if (packagePartsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(packageParts_);
+        } else {
+          return packagePartsBuilder_.getMessageList();
+        }
       }
       /**
        * <pre>
@@ -1156,19 +1467,26 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
-      @java.lang.Override
       public int getPackagePartsCount() {
-        return instance.getPackagePartsCount();
-      }/**
+        if (packagePartsBuilder_ == null) {
+          return packageParts_.size();
+        } else {
+          return packagePartsBuilder_.getCount();
+        }
+      }
+      /**
        * <pre>
        * Names of .class files for each package
        * </pre>
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts getPackageParts(int index) {
-        return instance.getPackageParts(index);
+        if (packagePartsBuilder_ == null) {
+          return packageParts_.get(index);
+        } else {
+          return packagePartsBuilder_.getMessage(index);
+        }
       }
       /**
        * <pre>
@@ -1179,8 +1497,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.setPackageParts(index, value);
+        if (packagePartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagePartsIsMutable();
+          packageParts_.set(index, value);
+          onChanged();
+        } else {
+          packagePartsBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1192,9 +1518,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.setPackageParts(index,
-            builderForValue.build());
+        if (packagePartsBuilder_ == null) {
+          ensurePackagePartsIsMutable();
+          packageParts_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          packagePartsBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1205,8 +1535,16 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder addPackageParts(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.addPackageParts(value);
+        if (packagePartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagePartsIsMutable();
+          packageParts_.add(value);
+          onChanged();
+        } else {
+          packagePartsBuilder_.addMessage(value);
+        }
         return this;
       }
       /**
@@ -1218,8 +1556,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.addPackageParts(index, value);
+        if (packagePartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePackagePartsIsMutable();
+          packageParts_.add(index, value);
+          onChanged();
+        } else {
+          packagePartsBuilder_.addMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1231,8 +1577,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addPackageParts(
           org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.addPackageParts(builderForValue.build());
+        if (packagePartsBuilder_ == null) {
+          ensurePackagePartsIsMutable();
+          packageParts_.add(builderForValue.build());
+          onChanged();
+        } else {
+          packagePartsBuilder_.addMessage(builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1244,9 +1595,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addPackageParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.addPackageParts(index,
-            builderForValue.build());
+        if (packagePartsBuilder_ == null) {
+          ensurePackagePartsIsMutable();
+          packageParts_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          packagePartsBuilder_.addMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1258,8 +1613,14 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllPackageParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> values) {
-        copyOnWrite();
-        instance.addAllPackageParts(values);
+        if (packagePartsBuilder_ == null) {
+          ensurePackagePartsIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, packageParts_);
+          onChanged();
+        } else {
+          packagePartsBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
@@ -1270,8 +1631,13 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder clearPackageParts() {
-        copyOnWrite();
-        instance.clearPackageParts();
+        if (packagePartsBuilder_ == null) {
+          packageParts_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          packagePartsBuilder_.clear();
+        }
         return this;
       }
       /**
@@ -1282,10 +1648,115 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
        */
       public Builder removePackageParts(int index) {
-        copyOnWrite();
-        instance.removePackageParts(index);
+        if (packagePartsBuilder_ == null) {
+          ensurePackagePartsIsMutable();
+          packageParts_.remove(index);
+          onChanged();
+        } else {
+          packagePartsBuilder_.remove(index);
+        }
         return this;
       }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder getPackagePartsBuilder(
+          int index) {
+        return getPackagePartsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getPackagePartsOrBuilder(
+          int index) {
+        if (packagePartsBuilder_ == null) {
+          return packageParts_.get(index);  } else {
+          return packagePartsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+           getPackagePartsOrBuilderList() {
+        if (packagePartsBuilder_ != null) {
+          return packagePartsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(packageParts_);
+        }
+      }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder addPackagePartsBuilder() {
+        return getPackagePartsFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder addPackagePartsBuilder(
+          int index) {
+        return getPackagePartsFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Names of .class files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts package_parts = 1;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder> 
+           getPackagePartsBuilderList() {
+        return getPackagePartsFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+          getPackagePartsFieldBuilder() {
+        if (packagePartsBuilder_ == null) {
+          packagePartsBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder>(
+                  packageParts_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          packageParts_ = null;
+        }
+        return packagePartsBuilder_;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> metadataParts_ =
+        java.util.Collections.emptyList();
+      private void ensureMetadataPartsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          metadataParts_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts>(metadataParts_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> metadataPartsBuilder_;
 
       /**
        * <pre>
@@ -1294,10 +1765,12 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
-      @java.lang.Override
       public java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> getMetadataPartsList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getMetadataPartsList());
+        if (metadataPartsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(metadataParts_);
+        } else {
+          return metadataPartsBuilder_.getMessageList();
+        }
       }
       /**
        * <pre>
@@ -1306,19 +1779,26 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
-      @java.lang.Override
       public int getMetadataPartsCount() {
-        return instance.getMetadataPartsCount();
-      }/**
+        if (metadataPartsBuilder_ == null) {
+          return metadataParts_.size();
+        } else {
+          return metadataPartsBuilder_.getCount();
+        }
+      }
+      /**
        * <pre>
        * Names of .kotlin_metadata files for each package
        * </pre>
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts getMetadataParts(int index) {
-        return instance.getMetadataParts(index);
+        if (metadataPartsBuilder_ == null) {
+          return metadataParts_.get(index);
+        } else {
+          return metadataPartsBuilder_.getMessage(index);
+        }
       }
       /**
        * <pre>
@@ -1329,8 +1809,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.setMetadataParts(index, value);
+        if (metadataPartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataPartsIsMutable();
+          metadataParts_.set(index, value);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1342,9 +1830,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.setMetadataParts(index,
-            builderForValue.build());
+        if (metadataPartsBuilder_ == null) {
+          ensureMetadataPartsIsMutable();
+          metadataParts_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          metadataPartsBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1355,8 +1847,16 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder addMetadataParts(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.addMetadataParts(value);
+        if (metadataPartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataPartsIsMutable();
+          metadataParts_.add(value);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.addMessage(value);
+        }
         return this;
       }
       /**
@@ -1368,8 +1868,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts value) {
-        copyOnWrite();
-        instance.addMetadataParts(index, value);
+        if (metadataPartsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureMetadataPartsIsMutable();
+          metadataParts_.add(index, value);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.addMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1381,8 +1889,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addMetadataParts(
           org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.addMetadataParts(builderForValue.build());
+        if (metadataPartsBuilder_ == null) {
+          ensureMetadataPartsIsMutable();
+          metadataParts_.add(builderForValue.build());
+          onChanged();
+        } else {
+          metadataPartsBuilder_.addMessage(builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1394,9 +1907,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addMetadataParts(
           int index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder builderForValue) {
-        copyOnWrite();
-        instance.addMetadataParts(index,
-            builderForValue.build());
+        if (metadataPartsBuilder_ == null) {
+          ensureMetadataPartsIsMutable();
+          metadataParts_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          metadataPartsBuilder_.addMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1408,8 +1925,14 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllMetadataParts(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> values) {
-        copyOnWrite();
-        instance.addAllMetadataParts(values);
+        if (metadataPartsBuilder_ == null) {
+          ensureMetadataPartsIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, metadataParts_);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
@@ -1420,8 +1943,13 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder clearMetadataParts() {
-        copyOnWrite();
-        instance.clearMetadataParts();
+        if (metadataPartsBuilder_ == null) {
+          metadataParts_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.clear();
+        }
         return this;
       }
       /**
@@ -1432,11 +1960,112 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
        */
       public Builder removeMetadataParts(int index) {
-        copyOnWrite();
-        instance.removeMetadataParts(index);
+        if (metadataPartsBuilder_ == null) {
+          ensureMetadataPartsIsMutable();
+          metadataParts_.remove(index);
+          onChanged();
+        } else {
+          metadataPartsBuilder_.remove(index);
+        }
         return this;
       }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder getMetadataPartsBuilder(
+          int index) {
+        return getMetadataPartsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder getMetadataPartsOrBuilder(
+          int index) {
+        if (metadataPartsBuilder_ == null) {
+          return metadataParts_.get(index);  } else {
+          return metadataPartsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+           getMetadataPartsOrBuilderList() {
+        if (metadataPartsBuilder_ != null) {
+          return metadataPartsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(metadataParts_);
+        }
+      }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder addMetadataPartsBuilder() {
+        return getMetadataPartsFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder addMetadataPartsBuilder(
+          int index) {
+        return getMetadataPartsFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Names of .kotlin_metadata files for each package
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.jvm.PackageParts metadata_parts = 2;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder> 
+           getMetadataPartsBuilderList() {
+        return getMetadataPartsFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder> 
+          getMetadataPartsFieldBuilder() {
+        if (metadataPartsBuilder_ == null) {
+          metadataPartsBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder>(
+                  metadataParts_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
+          metadataParts_ = null;
+        }
+        return metadataPartsBuilder_;
+      }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringArrayList jvmPackageName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      private void ensureJvmPackageNameIsMutable() {
+        if (!jvmPackageName_.isModifiable()) {
+          jvmPackageName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(jvmPackageName_);
+        }
+        bitField0_ |= 0x00000004;
+      }
       /**
        * <pre>
        * Values of &#64;JvmPackageName annotation used in this module; can be referenced in PackageParts#class_with_jvm_package_name_package_id.
@@ -1446,11 +2075,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string jvm_package_name = 3;</code>
        * @return A list containing the jvmPackageName.
        */
-      @java.lang.Override
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getJvmPackageNameList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getJvmPackageNameList());
+        jvmPackageName_.makeImmutable();
+        return jvmPackageName_;
       }
       /**
        * <pre>
@@ -1461,9 +2089,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string jvm_package_name = 3;</code>
        * @return The count of jvmPackageName.
        */
-      @java.lang.Override
       public int getJvmPackageNameCount() {
-        return instance.getJvmPackageNameCount();
+        return jvmPackageName_.size();
       }
       /**
        * <pre>
@@ -1475,9 +2102,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The jvmPackageName at the given index.
        */
-      @java.lang.Override
       public java.lang.String getJvmPackageName(int index) {
-        return instance.getJvmPackageName(index);
+        return jvmPackageName_.get(index);
       }
       /**
        * <pre>
@@ -1489,10 +2115,9 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the value to return.
        * @return The bytes of the jvmPackageName at the given index.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.protobuf.ByteString
           getJvmPackageNameBytes(int index) {
-        return instance.getJvmPackageNameBytes(index);
+        return jvmPackageName_.getByteString(index);
       }
       /**
        * <pre>
@@ -1507,8 +2132,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setJvmPackageName(
           int index, java.lang.String value) {
-        copyOnWrite();
-        instance.setJvmPackageName(index, value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureJvmPackageNameIsMutable();
+        jvmPackageName_.set(index, value);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1523,8 +2151,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addJvmPackageName(
           java.lang.String value) {
-        copyOnWrite();
-        instance.addJvmPackageName(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureJvmPackageNameIsMutable();
+        jvmPackageName_.add(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1539,8 +2170,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllJvmPackageName(
           java.lang.Iterable<java.lang.String> values) {
-        copyOnWrite();
-        instance.addAllJvmPackageName(values);
+        ensureJvmPackageNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, jvmPackageName_);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1553,8 +2187,10 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearJvmPackageName() {
-        copyOnWrite();
-        instance.clearJvmPackageName();
+        jvmPackageName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);;
+        onChanged();
         return this;
       }
       /**
@@ -1569,104 +2205,267 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addJvmPackageNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.addJvmPackageNameBytes(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureJvmPackageNameIsMutable();
+        jvmPackageName_.add(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.metadata.ProtoBuf.StringTable stringTable_;
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.StringTable, org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder> stringTableBuilder_;
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+       * @return Whether the stringTable field is set.
        */
-      @java.lang.Override
       public boolean hasStringTable() {
-        return instance.hasStringTable();
+        return ((bitField0_ & 0x00000008) != 0);
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+       * @return The stringTable.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStringTable() {
-        return instance.getStringTable();
+        if (stringTableBuilder_ == null) {
+          return stringTable_ == null ? org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance() : stringTable_;
+        } else {
+          return stringTableBuilder_.getMessage();
+        }
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
        */
       public Builder setStringTable(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-        copyOnWrite();
-        instance.setStringTable(value);
-        return this;
+        if (stringTableBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stringTable_ = value;
+        } else {
+          stringTableBuilder_.setMessage(value);
         }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
        */
       public Builder setStringTable(
           org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder builderForValue) {
-        copyOnWrite();
-        instance.setStringTable(builderForValue.build());
+        if (stringTableBuilder_ == null) {
+          stringTable_ = builderForValue.build();
+        } else {
+          stringTableBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
        */
       public Builder mergeStringTable(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-        copyOnWrite();
-        instance.mergeStringTable(value);
+        if (stringTableBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0) &&
+            stringTable_ != null &&
+            stringTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance()) {
+            getStringTableBuilder().mergeFrom(value);
+          } else {
+            stringTable_ = value;
+          }
+        } else {
+          stringTableBuilder_.mergeFrom(value);
+        }
+        if (stringTable_ != null) {
+          bitField0_ |= 0x00000008;
+          onChanged();
+        }
         return this;
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
        */
-      public Builder clearStringTable() {  copyOnWrite();
-        instance.clearStringTable();
+      public Builder clearStringTable() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        stringTable_ = null;
+        if (stringTableBuilder_ != null) {
+          stringTableBuilder_.dispose();
+          stringTableBuilder_ = null;
+        }
+        onChanged();
         return this;
       }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder getStringTableBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getStringTableFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder getStringTableOrBuilder() {
+        if (stringTableBuilder_ != null) {
+          return stringTableBuilder_.getMessageOrBuilder();
+        } else {
+          return stringTable_ == null ?
+              org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance() : stringTable_;
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.StringTable string_table = 4;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.StringTable, org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder> 
+          getStringTableFieldBuilder() {
+        if (stringTableBuilder_ == null) {
+          stringTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.metadata.ProtoBuf.StringTable, org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.StringTableOrBuilder>(
+                  getStringTable(),
+                  getParentForChildren(),
+                  isClean());
+          stringTable_ = null;
+        }
+        return stringTableBuilder_;
+      }
 
+      private org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable qualifiedNameTable_;
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder> qualifiedNameTableBuilder_;
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+       * @return Whether the qualifiedNameTable field is set.
        */
-      @java.lang.Override
       public boolean hasQualifiedNameTable() {
-        return instance.hasQualifiedNameTable();
+        return ((bitField0_ & 0x00000010) != 0);
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+       * @return The qualifiedNameTable.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNameTable() {
-        return instance.getQualifiedNameTable();
+        if (qualifiedNameTableBuilder_ == null) {
+          return qualifiedNameTable_ == null ? org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance() : qualifiedNameTable_;
+        } else {
+          return qualifiedNameTableBuilder_.getMessage();
+        }
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
        */
       public Builder setQualifiedNameTable(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-        copyOnWrite();
-        instance.setQualifiedNameTable(value);
-        return this;
+        if (qualifiedNameTableBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          qualifiedNameTable_ = value;
+        } else {
+          qualifiedNameTableBuilder_.setMessage(value);
         }
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
        */
       public Builder setQualifiedNameTable(
           org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder builderForValue) {
-        copyOnWrite();
-        instance.setQualifiedNameTable(builderForValue.build());
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTable_ = builderForValue.build();
+        } else {
+          qualifiedNameTableBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
        */
       public Builder mergeQualifiedNameTable(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-        copyOnWrite();
-        instance.mergeQualifiedNameTable(value);
+        if (qualifiedNameTableBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) != 0) &&
+            qualifiedNameTable_ != null &&
+            qualifiedNameTable_ != org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance()) {
+            getQualifiedNameTableBuilder().mergeFrom(value);
+          } else {
+            qualifiedNameTable_ = value;
+          }
+        } else {
+          qualifiedNameTableBuilder_.mergeFrom(value);
+        }
+        if (qualifiedNameTable_ != null) {
+          bitField0_ |= 0x00000010;
+          onChanged();
+        }
         return this;
       }
       /**
        * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
        */
-      public Builder clearQualifiedNameTable() {  copyOnWrite();
-        instance.clearQualifiedNameTable();
+      public Builder clearQualifiedNameTable() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        qualifiedNameTable_ = null;
+        if (qualifiedNameTableBuilder_ != null) {
+          qualifiedNameTableBuilder_.dispose();
+          qualifiedNameTableBuilder_ = null;
+        }
+        onChanged();
         return this;
       }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder getQualifiedNameTableBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getQualifiedNameTableFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder getQualifiedNameTableOrBuilder() {
+        if (qualifiedNameTableBuilder_ != null) {
+          return qualifiedNameTableBuilder_.getMessageOrBuilder();
+        } else {
+          return qualifiedNameTable_ == null ?
+              org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance() : qualifiedNameTable_;
+        }
+      }
+      /**
+       * <code>.org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_name_table = 5;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder> 
+          getQualifiedNameTableFieldBuilder() {
+        if (qualifiedNameTableBuilder_ == null) {
+          qualifiedNameTableBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTableOrBuilder>(
+                  getQualifiedNameTable(),
+                  getParentForChildren(),
+                  isClean());
+          qualifiedNameTable_ = null;
+        }
+        return qualifiedNameTableBuilder_;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_ =
+        java.util.Collections.emptyList();
+      private void ensureAnnotationIsMutable() {
+        if (!((bitField0_ & 0x00000020) != 0)) {
+          annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>(annotation_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Annotation, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> annotationBuilder_;
 
       /**
        * <pre>
@@ -1675,10 +2474,12 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
-      @java.lang.Override
       public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> getAnnotationList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getAnnotationList());
+        if (annotationBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(annotation_);
+        } else {
+          return annotationBuilder_.getMessageList();
+        }
       }
       /**
        * <pre>
@@ -1687,19 +2488,26 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
-      @java.lang.Override
       public int getAnnotationCount() {
-        return instance.getAnnotationCount();
-      }/**
+        if (annotationBuilder_ == null) {
+          return annotation_.size();
+        } else {
+          return annotationBuilder_.getCount();
+        }
+      }
+      /**
        * <pre>
        * Annotations on the whole module
        * </pre>
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation getAnnotation(int index) {
-        return instance.getAnnotation(index);
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);
+        } else {
+          return annotationBuilder_.getMessage(index);
+        }
       }
       /**
        * <pre>
@@ -1710,8 +2518,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        copyOnWrite();
-        instance.setAnnotation(index, value);
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.set(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1723,9 +2539,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setAnnotation(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        copyOnWrite();
-        instance.setAnnotation(index,
-            builderForValue.build());
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1736,8 +2556,16 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder addAnnotation(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        copyOnWrite();
-        instance.addAnnotation(value);
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(value);
+        }
         return this;
       }
       /**
@@ -1749,8 +2577,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        copyOnWrite();
-        instance.addAnnotation(index, value);
+        if (annotationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureAnnotationIsMutable();
+          annotation_.add(index, value);
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1762,8 +2598,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAnnotation(
           org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        copyOnWrite();
-        instance.addAnnotation(builderForValue.build());
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1775,9 +2616,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAnnotation(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        copyOnWrite();
-        instance.addAnnotation(index,
-            builderForValue.build());
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          annotationBuilder_.addMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1789,8 +2634,14 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllAnnotation(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> values) {
-        copyOnWrite();
-        instance.addAllAnnotation(values);
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, annotation_);
+          onChanged();
+        } else {
+          annotationBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
@@ -1801,8 +2652,13 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder clearAnnotation() {
-        copyOnWrite();
-        instance.clearAnnotation();
+        if (annotationBuilder_ == null) {
+          annotation_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+        } else {
+          annotationBuilder_.clear();
+        }
         return this;
       }
       /**
@@ -1813,10 +2669,115 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
        */
       public Builder removeAnnotation(int index) {
-        copyOnWrite();
-        instance.removeAnnotation(index);
+        if (annotationBuilder_ == null) {
+          ensureAnnotationIsMutable();
+          annotation_.remove(index);
+          onChanged();
+        } else {
+          annotationBuilder_.remove(index);
+        }
         return this;
       }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder getAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
+          int index) {
+        if (annotationBuilder_ == null) {
+          return annotation_.get(index);  } else {
+          return annotationBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> 
+           getAnnotationOrBuilderList() {
+        if (annotationBuilder_ != null) {
+          return annotationBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(annotation_);
+        }
+      }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder addAnnotationBuilder() {
+        return getAnnotationFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder addAnnotationBuilder(
+          int index) {
+        return getAnnotationFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * Annotations on the whole module
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 6;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder> 
+           getAnnotationBuilderList() {
+        return getAnnotationFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Annotation, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> 
+          getAnnotationFieldBuilder() {
+        if (annotationBuilder_ == null) {
+          annotationBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.metadata.ProtoBuf.Annotation, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder>(
+                  annotation_,
+                  ((bitField0_ & 0x00000020) != 0),
+                  getParentForChildren(),
+                  isClean());
+          annotation_ = null;
+        }
+        return annotationBuilder_;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> optionalAnnotationClass_ =
+        java.util.Collections.emptyList();
+      private void ensureOptionalAnnotationClassIsMutable() {
+        if (!((bitField0_ & 0x00000040) != 0)) {
+          optionalAnnotationClass_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Class>(optionalAnnotationClass_);
+          bitField0_ |= 0x00000040;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Class, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> optionalAnnotationClassBuilder_;
 
       /**
        * <pre>
@@ -1828,10 +2789,12 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
-      @java.lang.Override
       public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class> getOptionalAnnotationClassList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getOptionalAnnotationClassList());
+        if (optionalAnnotationClassBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(optionalAnnotationClass_);
+        } else {
+          return optionalAnnotationClassBuilder_.getMessageList();
+        }
       }
       /**
        * <pre>
@@ -1843,10 +2806,14 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
-      @java.lang.Override
       public int getOptionalAnnotationClassCount() {
-        return instance.getOptionalAnnotationClassCount();
-      }/**
+        if (optionalAnnotationClassBuilder_ == null) {
+          return optionalAnnotationClass_.size();
+        } else {
+          return optionalAnnotationClassBuilder_.getCount();
+        }
+      }
+      /**
        * <pre>
        * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
        * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
@@ -1856,9 +2823,12 @@ public final class JvmModuleProtoBuf {
        *
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.metadata.ProtoBuf.Class getOptionalAnnotationClass(int index) {
-        return instance.getOptionalAnnotationClass(index);
+        if (optionalAnnotationClassBuilder_ == null) {
+          return optionalAnnotationClass_.get(index);
+        } else {
+          return optionalAnnotationClassBuilder_.getMessage(index);
+        }
       }
       /**
        * <pre>
@@ -1872,8 +2842,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-        copyOnWrite();
-        instance.setOptionalAnnotationClass(index, value);
+        if (optionalAnnotationClassBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.set(index, value);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1888,9 +2866,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
-        copyOnWrite();
-        instance.setOptionalAnnotationClass(index,
-            builderForValue.build());
+        if (optionalAnnotationClassBuilder_ == null) {
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1904,8 +2886,16 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder addOptionalAnnotationClass(org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-        copyOnWrite();
-        instance.addOptionalAnnotationClass(value);
+        if (optionalAnnotationClassBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.add(value);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.addMessage(value);
+        }
         return this;
       }
       /**
@@ -1920,8 +2910,16 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class value) {
-        copyOnWrite();
-        instance.addOptionalAnnotationClass(index, value);
+        if (optionalAnnotationClassBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.add(index, value);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.addMessage(index, value);
+        }
         return this;
       }
       /**
@@ -1936,8 +2934,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addOptionalAnnotationClass(
           org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
-        copyOnWrite();
-        instance.addOptionalAnnotationClass(builderForValue.build());
+        if (optionalAnnotationClassBuilder_ == null) {
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.add(builderForValue.build());
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.addMessage(builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1952,9 +2955,13 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addOptionalAnnotationClass(
           int index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder builderForValue) {
-        copyOnWrite();
-        instance.addOptionalAnnotationClass(index,
-            builderForValue.build());
+        if (optionalAnnotationClassBuilder_ == null) {
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.addMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
@@ -1969,8 +2976,14 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllOptionalAnnotationClass(
           java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Class> values) {
-        copyOnWrite();
-        instance.addAllOptionalAnnotationClass(values);
+        if (optionalAnnotationClassBuilder_ == null) {
+          ensureOptionalAnnotationClassIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, optionalAnnotationClass_);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
@@ -1984,8 +2997,13 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder clearOptionalAnnotationClass() {
-        copyOnWrite();
-        instance.clearOptionalAnnotationClass();
+        if (optionalAnnotationClassBuilder_ == null) {
+          optionalAnnotationClass_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000040);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.clear();
+        }
         return this;
       }
       /**
@@ -1999,102 +3017,176 @@ public final class JvmModuleProtoBuf {
        * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
        */
       public Builder removeOptionalAnnotationClass(int index) {
-        copyOnWrite();
-        instance.removeOptionalAnnotationClass(index);
+        if (optionalAnnotationClassBuilder_ == null) {
+          ensureOptionalAnnotationClassIsMutable();
+          optionalAnnotationClass_.remove(index);
+          onChanged();
+        } else {
+          optionalAnnotationClassBuilder_.remove(index);
+        }
         return this;
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder getOptionalAnnotationClassBuilder(
+          int index) {
+        return getOptionalAnnotationClassFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder getOptionalAnnotationClassOrBuilder(
+          int index) {
+        if (optionalAnnotationClassBuilder_ == null) {
+          return optionalAnnotationClass_.get(index);  } else {
+          return optionalAnnotationClassBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> 
+           getOptionalAnnotationClassOrBuilderList() {
+        if (optionalAnnotationClassBuilder_ != null) {
+          return optionalAnnotationClassBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(optionalAnnotationClass_);
+        }
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder addOptionalAnnotationClassBuilder() {
+        return getOptionalAnnotationClassFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder addOptionalAnnotationClassBuilder(
+          int index) {
+        return getOptionalAnnotationClassFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.metadata.ProtoBuf.Class.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * &#64;OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+       * a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+       * This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+       * it to the corresponding class with the resolution capabilities of common modules.
+       * </pre>
+       *
+       * <code>repeated .org.jetbrains.kotlin.metadata.Class optional_annotation_class = 16;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder> 
+           getOptionalAnnotationClassBuilderList() {
+        return getOptionalAnnotationClassFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.ProtoBuf.Class, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder> 
+          getOptionalAnnotationClassFieldBuilder() {
+        if (optionalAnnotationClassBuilder_ == null) {
+          optionalAnnotationClassBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.metadata.ProtoBuf.Class, org.jetbrains.kotlin.metadata.ProtoBuf.Class.Builder, org.jetbrains.kotlin.metadata.ProtoBuf.ClassOrBuilder>(
+                  optionalAnnotationClass_,
+                  ((bitField0_ & 0x00000040) != 0),
+                  getParentForChildren(),
+                  isClean());
+          optionalAnnotationClass_ = null;
+        }
+        return optionalAnnotationClassBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.jvm.Module)
     }
-    private byte memoizedIsInitialized = 2;
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "bitField0_",
-              "packageParts_",
-              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.class,
-              "metadataParts_",
-              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.class,
-              "jvmPackageName_",
-              "stringTable_",
-              "qualifiedNameTable_",
-              "annotation_",
-              org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class,
-              "optionalAnnotationClass_",
-              org.jetbrains.kotlin.metadata.ProtoBuf.Class.class,
-            };
-            java.lang.String info =
-                "\u0004\u0007\u0000\u0001\u0001\u0010\u0007\u0000\u0005\u0005\u0001\u041b\u0002\u041b" +
-                "\u0003\u001a\u0004\u1009\u0000\u0005\u1409\u0001\u0006\u041b\u0010\u041b";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module> parser = PARSER;
-          if (parser == null) {
-            synchronized (org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return memoizedIsInitialized;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.jvm.Module)
     private static final org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module DEFAULT_INSTANCE;
     static {
-      Module defaultInstance = new Module();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        Module.class, defaultInstance);
+      DEFAULT_INSTANCE = new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module();
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static volatile org.jetbrains.kotlin.protobuf.Parser<Module> PARSER;
+    private static final org.jetbrains.kotlin.protobuf.Parser<Module>
+        PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<Module>() {
+      @java.lang.Override
+      public Module parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
 
     public static org.jetbrains.kotlin.protobuf.Parser<Module> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
+      return PARSER;
     }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Module> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.Module getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface PackagePartsOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.jvm.PackageParts)
-      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
      * <pre>
@@ -2172,8 +3264,8 @@ public final class JvmModuleProtoBuf {
      * </pre>
      *
      * <code>repeated string short_class_name = 2;</code>
-     * @param index The index of the element to return.
-     * @return The shortClassName at the given index.
+     * @param index The index of the value to return.
+     * @return The bytes of the shortClassName at the given index.
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getShortClassNameBytes(int index);
@@ -2264,8 +3356,8 @@ public final class JvmModuleProtoBuf {
      * </pre>
      *
      * <code>repeated string multifile_facade_short_name = 4;</code>
-     * @param index The index of the element to return.
-     * @return The multifileFacadeShortName at the given index.
+     * @param index The index of the value to return.
+     * @return The bytes of the multifileFacadeShortName at the given index.
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getMultifileFacadeShortNameBytes(int index);
@@ -2309,8 +3401,8 @@ public final class JvmModuleProtoBuf {
      * </pre>
      *
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     * @param index The index of the element to return.
-     * @return The classWithJvmPackageNameShortName at the given index.
+     * @param index The index of the value to return.
+     * @return The bytes of the classWithJvmPackageNameShortName at the given index.
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getClassWithJvmPackageNameShortNameBytes(int index);
@@ -2406,23 +3498,54 @@ public final class JvmModuleProtoBuf {
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.jvm.PackageParts}
    */
-  public  static final class PackageParts extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-          PackageParts, PackageParts.Builder> implements
+  public static final class PackageParts extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.metadata.jvm.PackageParts)
       PackagePartsOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 29,
+        /* patch= */ 3,
+        /* suffix= */ "",
+        PackageParts.class.getName());
+    }
+    // Use PackageParts.newBuilder() to construct.
+    private PackageParts(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
     private PackageParts() {
       packageFqName_ = "";
-      shortClassName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
+      shortClassName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
       multifileFacadeShortNameId_ = emptyIntList();
-      multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-      classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
+      multifileFacadeShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      classWithJvmPackageNameShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
       classWithJvmPackageNameMultifileFacadeShortNameId_ = emptyIntList();
       classWithJvmPackageNamePackageId_ = emptyIntList();
     }
+
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor;
+    }
+
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.class, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder.class);
+    }
+
     private int bitField0_;
     public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
-    private java.lang.String packageFqName_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object packageFqName_ = "";
     /**
      * <pre>
      * Dot-separated Kotlin FQ name of the package.
@@ -2445,7 +3568,18 @@ public final class JvmModuleProtoBuf {
      */
     @java.lang.Override
     public java.lang.String getPackageFqName() {
-      return packageFqName_;
+      java.lang.Object ref = packageFqName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          packageFqName_ = s;
+        }
+        return s;
+      }
     }
     /**
      * <pre>
@@ -2458,50 +3592,22 @@ public final class JvmModuleProtoBuf {
     @java.lang.Override
     public org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes() {
-      return org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(packageFqName_);
-    }
-    /**
-     * <pre>
-     * Dot-separated Kotlin FQ name of the package.
-     * </pre>
-     *
-     * <code>string package_fq_name = 1 [features = { ... }</code>
-     * @param value The packageFqName to set.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setPackageFqName(
-        java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      bitField0_ |= 0x00000001;
-      packageFqName_ = value;
-    }
-    /**
-     * <pre>
-     * Dot-separated Kotlin FQ name of the package.
-     * </pre>
-     *
-     * <code>string package_fq_name = 1 [features = { ... }</code>
-     */
-    private void clearPackageFqName() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      packageFqName_ = getDefaultInstance().getPackageFqName();
-    }
-    /**
-     * <pre>
-     * Dot-separated Kotlin FQ name of the package.
-     * </pre>
-     *
-     * <code>string package_fq_name = 1 [features = { ... }</code>
-     * @param value The bytes for packageFqName to set.
-     */
-    private void setPackageFqNameBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      packageFqName_ = value.toStringUtf8();
-      bitField0_ |= 0x00000001;
+      java.lang.Object ref = packageFqName_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        packageFqName_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
     }
 
     public static final int SHORT_CLASS_NAME_FIELD_NUMBER = 2;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> shortClassName_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.LazyStringArrayList shortClassName_ =
+        org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
     /**
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
@@ -2513,8 +3619,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string short_class_name = 2;</code>
      * @return A list containing the shortClassName.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.String> getShortClassNameList() {
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getShortClassNameList() {
       return shortClassName_;
     }
     /**
@@ -2528,7 +3634,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string short_class_name = 2;</code>
      * @return The count of shortClassName.
      */
-    @java.lang.Override
     public int getShortClassNameCount() {
       return shortClassName_.size();
     }
@@ -2544,7 +3649,6 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The shortClassName at the given index.
      */
-    @java.lang.Override
     public java.lang.String getShortClassName(int index) {
       return shortClassName_.get(index);
     }
@@ -2560,105 +3664,15 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the value to return.
      * @return The bytes of the shortClassName at the given index.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.protobuf.ByteString
         getShortClassNameBytes(int index) {
-      return org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-          shortClassName_.get(index));
-    }
-    private void ensureShortClassNameIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> tmp =
-          shortClassName_;  if (!tmp.isModifiable()) {
-        shortClassName_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
-     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
-     * class_with_jvm_package_name_short_name.
-     * </pre>
-     *
-     * <code>repeated string short_class_name = 2;</code>
-     * @param index The index to set the value at.
-     * @param value The shortClassName to set.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setShortClassName(
-        int index, java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureShortClassNameIsMutable();
-      shortClassName_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
-     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
-     * class_with_jvm_package_name_short_name.
-     * </pre>
-     *
-     * <code>repeated string short_class_name = 2;</code>
-     * @param value The shortClassName to add.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addShortClassName(
-        java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureShortClassNameIsMutable();
-      shortClassName_.add(value);
-    }
-    /**
-     * <pre>
-     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
-     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
-     * class_with_jvm_package_name_short_name.
-     * </pre>
-     *
-     * <code>repeated string short_class_name = 2;</code>
-     * @param values The shortClassName to add.
-     */
-    private void addAllShortClassName(
-        java.lang.Iterable<java.lang.String> values) {
-      ensureShortClassNameIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, shortClassName_);
-    }
-    /**
-     * <pre>
-     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
-     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
-     * class_with_jvm_package_name_short_name.
-     * </pre>
-     *
-     * <code>repeated string short_class_name = 2;</code>
-     */
-    private void clearShortClassName() {
-      shortClassName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
-     * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
-     * class_with_jvm_package_name_short_name.
-     * </pre>
-     *
-     * <code>repeated string short_class_name = 2;</code>
-     * @param value The bytes of the shortClassName to add.
-     */
-    private void addShortClassNameBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      ensureShortClassNameIsMutable();
-      shortClassName_.add(value.toStringUtf8());
+      return shortClassName_.getByteString(index);
     }
 
     public static final int MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER = 3;
-    private org.jetbrains.kotlin.protobuf.Internal.IntList multifileFacadeShortNameId_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.Internal.IntList multifileFacadeShortNameId_ =
+        emptyIntList();
     /**
      * <pre>
      * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
@@ -2684,7 +3698,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
      * @return The count of multifileFacadeShortNameId.
      */
-    @java.lang.Override
     public int getMultifileFacadeShortNameIdCount() {
       return multifileFacadeShortNameId_.size();
     }
@@ -2699,79 +3712,15 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The multifileFacadeShortNameId at the given index.
      */
-    @java.lang.Override
     public int getMultifileFacadeShortNameId(int index) {
       return multifileFacadeShortNameId_.getInt(index);
     }
     private int multifileFacadeShortNameIdMemoizedSerializedSize = -1;
-    private void ensureMultifileFacadeShortNameIdIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.IntList tmp = multifileFacadeShortNameId_;
-      if (!tmp.isModifiable()) {
-        multifileFacadeShortNameId_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
-     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
-     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
-     * </pre>
-     *
-     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
-     * @param index The index to set the value at.
-     * @param value The multifileFacadeShortNameId to set.
-     */
-    private void setMultifileFacadeShortNameId(
-        int index, int value) {
-      ensureMultifileFacadeShortNameIdIsMutable();
-      multifileFacadeShortNameId_.setInt(index, value);
-    }
-    /**
-     * <pre>
-     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
-     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
-     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
-     * </pre>
-     *
-     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
-     * @param value The multifileFacadeShortNameId to add.
-     */
-    private void addMultifileFacadeShortNameId(int value) {
-      ensureMultifileFacadeShortNameIdIsMutable();
-      multifileFacadeShortNameId_.addInt(value);
-    }
-    /**
-     * <pre>
-     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
-     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
-     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
-     * </pre>
-     *
-     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
-     * @param values The multifileFacadeShortNameId to add.
-     */
-    private void addAllMultifileFacadeShortNameId(
-        java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureMultifileFacadeShortNameIdIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, multifileFacadeShortNameId_);
-    }
-    /**
-     * <pre>
-     * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
-     * or 0 if the class is not a multi-file part. If there's no value in this list at some index, the value is assumed to be 0.
-     * (e.g. if there are no multi-file classes in the module, this list is not going to exist at all)
-     * </pre>
-     *
-     * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
-     */
-    private void clearMultifileFacadeShortNameId() {
-      multifileFacadeShortNameId_ = emptyIntList();
-    }
 
     public static final int MULTIFILE_FACADE_SHORT_NAME_FIELD_NUMBER = 4;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> multifileFacadeShortName_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.LazyStringArrayList multifileFacadeShortName_ =
+        org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
     /**
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
@@ -2784,8 +3733,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return A list containing the multifileFacadeShortName.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.String> getMultifileFacadeShortNameList() {
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getMultifileFacadeShortNameList() {
       return multifileFacadeShortName_;
     }
     /**
@@ -2800,7 +3749,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string multifile_facade_short_name = 4;</code>
      * @return The count of multifileFacadeShortName.
      */
-    @java.lang.Override
     public int getMultifileFacadeShortNameCount() {
       return multifileFacadeShortName_.size();
     }
@@ -2817,7 +3765,6 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The multifileFacadeShortName at the given index.
      */
-    @java.lang.Override
     public java.lang.String getMultifileFacadeShortName(int index) {
       return multifileFacadeShortName_.get(index);
     }
@@ -2834,110 +3781,15 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the value to return.
      * @return The bytes of the multifileFacadeShortName at the given index.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.protobuf.ByteString
         getMultifileFacadeShortNameBytes(int index) {
-      return org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-          multifileFacadeShortName_.get(index));
-    }
-    private void ensureMultifileFacadeShortNameIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> tmp =
-          multifileFacadeShortName_;  if (!tmp.isModifiable()) {
-        multifileFacadeShortName_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
-     *
-     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
-     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
-     * otherwise behavior is unspecified.
-     * </pre>
-     *
-     * <code>repeated string multifile_facade_short_name = 4;</code>
-     * @param index The index to set the value at.
-     * @param value The multifileFacadeShortName to set.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setMultifileFacadeShortName(
-        int index, java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureMultifileFacadeShortNameIsMutable();
-      multifileFacadeShortName_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
-     *
-     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
-     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
-     * otherwise behavior is unspecified.
-     * </pre>
-     *
-     * <code>repeated string multifile_facade_short_name = 4;</code>
-     * @param value The multifileFacadeShortName to add.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addMultifileFacadeShortName(
-        java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureMultifileFacadeShortNameIsMutable();
-      multifileFacadeShortName_.add(value);
-    }
-    /**
-     * <pre>
-     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
-     *
-     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
-     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
-     * otherwise behavior is unspecified.
-     * </pre>
-     *
-     * <code>repeated string multifile_facade_short_name = 4;</code>
-     * @param values The multifileFacadeShortName to add.
-     */
-    private void addAllMultifileFacadeShortName(
-        java.lang.Iterable<java.lang.String> values) {
-      ensureMultifileFacadeShortNameIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, multifileFacadeShortName_);
-    }
-    /**
-     * <pre>
-     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
-     *
-     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
-     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
-     * otherwise behavior is unspecified.
-     * </pre>
-     *
-     * <code>repeated string multifile_facade_short_name = 4;</code>
-     */
-    private void clearMultifileFacadeShortName() {
-      multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
-     *
-     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
-     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
-     * otherwise behavior is unspecified.
-     * </pre>
-     *
-     * <code>repeated string multifile_facade_short_name = 4;</code>
-     * @param value The bytes of the multifileFacadeShortName to add.
-     */
-    private void addMultifileFacadeShortNameBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      ensureMultifileFacadeShortNameIsMutable();
-      multifileFacadeShortName_.add(value.toStringUtf8());
+      return multifileFacadeShortName_.getByteString(index);
     }
 
     public static final int CLASS_WITH_JVM_PACKAGE_NAME_SHORT_NAME_FIELD_NUMBER = 5;
-    private org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> classWithJvmPackageNameShortName_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.LazyStringArrayList classWithJvmPackageNameShortName_ =
+        org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
     /**
      * <pre>
      * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
@@ -2947,8 +3799,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return A list containing the classWithJvmPackageNameShortName.
      */
-    @java.lang.Override
-    public java.util.List<java.lang.String> getClassWithJvmPackageNameShortNameList() {
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getClassWithJvmPackageNameShortNameList() {
       return classWithJvmPackageNameShortName_;
     }
     /**
@@ -2960,7 +3812,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      * @return The count of classWithJvmPackageNameShortName.
      */
-    @java.lang.Override
     public int getClassWithJvmPackageNameShortNameCount() {
       return classWithJvmPackageNameShortName_.size();
     }
@@ -2974,7 +3825,6 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameShortName at the given index.
      */
-    @java.lang.Override
     public java.lang.String getClassWithJvmPackageNameShortName(int index) {
       return classWithJvmPackageNameShortName_.get(index);
     }
@@ -2988,95 +3838,15 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the value to return.
      * @return The bytes of the classWithJvmPackageNameShortName at the given index.
      */
-    @java.lang.Override
     public org.jetbrains.kotlin.protobuf.ByteString
         getClassWithJvmPackageNameShortNameBytes(int index) {
-      return org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
-          classWithJvmPackageNameShortName_.get(index));
-    }
-    private void ensureClassWithJvmPackageNameShortNameIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.ProtobufList<java.lang.String> tmp =
-          classWithJvmPackageNameShortName_;  if (!tmp.isModifiable()) {
-        classWithJvmPackageNameShortName_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
-     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
-     * </pre>
-     *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     * @param index The index to set the value at.
-     * @param value The classWithJvmPackageNameShortName to set.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void setClassWithJvmPackageNameShortName(
-        int index, java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureClassWithJvmPackageNameShortNameIsMutable();
-      classWithJvmPackageNameShortName_.set(index, value);
-    }
-    /**
-     * <pre>
-     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
-     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
-     * </pre>
-     *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     * @param value The classWithJvmPackageNameShortName to add.
-     */
-    @java.lang.SuppressWarnings("ReturnValueIgnored")
-    private void addClassWithJvmPackageNameShortName(
-        java.lang.String value) {
-      value.getClass();  // minimal bytecode null check
-      ensureClassWithJvmPackageNameShortNameIsMutable();
-      classWithJvmPackageNameShortName_.add(value);
-    }
-    /**
-     * <pre>
-     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
-     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
-     * </pre>
-     *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     * @param values The classWithJvmPackageNameShortName to add.
-     */
-    private void addAllClassWithJvmPackageNameShortName(
-        java.lang.Iterable<java.lang.String> values) {
-      ensureClassWithJvmPackageNameShortNameIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, classWithJvmPackageNameShortName_);
-    }
-    /**
-     * <pre>
-     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
-     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
-     * </pre>
-     *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     */
-    private void clearClassWithJvmPackageNameShortName() {
-      classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.GeneratedMessageLite.emptyProtobufList();
-    }
-    /**
-     * <pre>
-     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
-     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
-     * </pre>
-     *
-     * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
-     * @param value The bytes of the classWithJvmPackageNameShortName to add.
-     */
-    private void addClassWithJvmPackageNameShortNameBytes(
-        org.jetbrains.kotlin.protobuf.ByteString value) {
-      ensureClassWithJvmPackageNameShortNameIsMutable();
-      classWithJvmPackageNameShortName_.add(value.toStringUtf8());
+      return classWithJvmPackageNameShortName_.getByteString(index);
     }
 
     public static final int CLASS_WITH_JVM_PACKAGE_NAME_MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER = 7;
-    private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNameMultifileFacadeShortNameId_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNameMultifileFacadeShortNameId_ =
+        emptyIntList();
     /**
      * <pre>
      * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
@@ -3108,7 +3878,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
      * @return The count of classWithJvmPackageNameMultifileFacadeShortNameId.
      */
-    @java.lang.Override
     public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
       return classWithJvmPackageNameMultifileFacadeShortNameId_.size();
     }
@@ -3126,91 +3895,15 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNameMultifileFacadeShortNameId at the given index.
      */
-    @java.lang.Override
     public int getClassWithJvmPackageNameMultifileFacadeShortNameId(int index) {
       return classWithJvmPackageNameMultifileFacadeShortNameId_.getInt(index);
     }
     private int classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize = -1;
-    private void ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.IntList tmp = classWithJvmPackageNameMultifileFacadeShortNameId_;
-      if (!tmp.isModifiable()) {
-        classWithJvmPackageNameMultifileFacadeShortNameId_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
-    }
-    /**
-     * <pre>
-     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
-     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
-     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     *
-     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
-     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
-     * @param index The index to set the value at.
-     * @param value The classWithJvmPackageNameMultifileFacadeShortNameId to set.
-     */
-    private void setClassWithJvmPackageNameMultifileFacadeShortNameId(
-        int index, int value) {
-      ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
-      classWithJvmPackageNameMultifileFacadeShortNameId_.setInt(index, value);
-    }
-    /**
-     * <pre>
-     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
-     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
-     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     *
-     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
-     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
-     * @param value The classWithJvmPackageNameMultifileFacadeShortNameId to add.
-     */
-    private void addClassWithJvmPackageNameMultifileFacadeShortNameId(int value) {
-      ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
-      classWithJvmPackageNameMultifileFacadeShortNameId_.addInt(value);
-    }
-    /**
-     * <pre>
-     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
-     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
-     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     *
-     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
-     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
-     * @param values The classWithJvmPackageNameMultifileFacadeShortNameId to add.
-     */
-    private void addAllClassWithJvmPackageNameMultifileFacadeShortNameId(
-        java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, classWithJvmPackageNameMultifileFacadeShortNameId_);
-    }
-    /**
-     * <pre>
-     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
-     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
-     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     *
-     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
-     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
-     */
-    private void clearClassWithJvmPackageNameMultifileFacadeShortNameId() {
-      classWithJvmPackageNameMultifileFacadeShortNameId_ = emptyIntList();
-    }
 
     public static final int CLASS_WITH_JVM_PACKAGE_NAME_PACKAGE_ID_FIELD_NUMBER = 6;
-    private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNamePackageId_;
+    @SuppressWarnings("serial")
+    private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNamePackageId_ =
+        emptyIntList();
     /**
      * <pre>
      * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
@@ -3242,7 +3935,6 @@ public final class JvmModuleProtoBuf {
      * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
      * @return The count of classWithJvmPackageNamePackageId.
      */
-    @java.lang.Override
     public int getClassWithJvmPackageNamePackageIdCount() {
       return classWithJvmPackageNamePackageId_.size();
     }
@@ -3260,186 +3952,616 @@ public final class JvmModuleProtoBuf {
      * @param index The index of the element to return.
      * @return The classWithJvmPackageNamePackageId at the given index.
      */
-    @java.lang.Override
     public int getClassWithJvmPackageNamePackageId(int index) {
       return classWithJvmPackageNamePackageId_.getInt(index);
     }
     private int classWithJvmPackageNamePackageIdMemoizedSerializedSize = -1;
-    private void ensureClassWithJvmPackageNamePackageIdIsMutable() {
-      org.jetbrains.kotlin.protobuf.Internal.IntList tmp = classWithJvmPackageNamePackageId_;
-      if (!tmp.isModifiable()) {
-        classWithJvmPackageNamePackageId_ =
-            org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-       }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasPackageFqName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
     }
-    /**
-     * <pre>
-     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
-     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
-     *
-     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
-     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
-     * when a bunch of files from the same Kotlin package have the same JVM package name.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
-     * @param index The index to set the value at.
-     * @param value The classWithJvmPackageNamePackageId to set.
-     */
-    private void setClassWithJvmPackageNamePackageId(
-        int index, int value) {
-      ensureClassWithJvmPackageNamePackageIdIsMutable();
-      classWithJvmPackageNamePackageId_.setInt(index, value);
+
+    @java.lang.Override
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) != 0)) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.writeString(output, 1, packageFqName_);
+      }
+      for (int i = 0; i < shortClassName_.size(); i++) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.writeString(output, 2, shortClassName_.getRaw(i));
+      }
+      if (getMultifileFacadeShortNameIdList().size() > 0) {
+        output.writeUInt32NoTag(26);
+        output.writeUInt32NoTag(multifileFacadeShortNameIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < multifileFacadeShortNameId_.size(); i++) {
+        output.writeInt32NoTag(multifileFacadeShortNameId_.getInt(i));
+      }
+      for (int i = 0; i < multifileFacadeShortName_.size(); i++) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.writeString(output, 4, multifileFacadeShortName_.getRaw(i));
+      }
+      for (int i = 0; i < classWithJvmPackageNameShortName_.size(); i++) {
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.writeString(output, 5, classWithJvmPackageNameShortName_.getRaw(i));
+      }
+      if (getClassWithJvmPackageNamePackageIdList().size() > 0) {
+        output.writeUInt32NoTag(50);
+        output.writeUInt32NoTag(classWithJvmPackageNamePackageIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < classWithJvmPackageNamePackageId_.size(); i++) {
+        output.writeInt32NoTag(classWithJvmPackageNamePackageId_.getInt(i));
+      }
+      if (getClassWithJvmPackageNameMultifileFacadeShortNameIdList().size() > 0) {
+        output.writeUInt32NoTag(58);
+        output.writeUInt32NoTag(classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < classWithJvmPackageNameMultifileFacadeShortNameId_.size(); i++) {
+        output.writeInt32NoTag(classWithJvmPackageNameMultifileFacadeShortNameId_.getInt(i));
+      }
+      getUnknownFields().writeTo(output);
     }
-    /**
-     * <pre>
-     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
-     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
-     *
-     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
-     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
-     * when a bunch of files from the same Kotlin package have the same JVM package name.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
-     * @param value The classWithJvmPackageNamePackageId to add.
-     */
-    private void addClassWithJvmPackageNamePackageId(int value) {
-      ensureClassWithJvmPackageNamePackageIdIsMutable();
-      classWithJvmPackageNamePackageId_.addInt(value);
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += org.jetbrains.kotlin.protobuf.GeneratedMessage.computeStringSize(1, packageFqName_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < shortClassName_.size(); i++) {
+          dataSize += computeStringSizeNoTag(shortClassName_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getShortClassNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeShortNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(multifileFacadeShortNameId_.getInt(i));
+        }
+        size += dataSize;
+        if (!getMultifileFacadeShortNameIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        multifileFacadeShortNameIdMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < multifileFacadeShortName_.size(); i++) {
+          dataSize += computeStringSizeNoTag(multifileFacadeShortName_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getMultifileFacadeShortNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNameShortName_.size(); i++) {
+          dataSize += computeStringSizeNoTag(classWithJvmPackageNameShortName_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getClassWithJvmPackageNameShortNameList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNamePackageId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(classWithJvmPackageNamePackageId_.getInt(i));
+        }
+        size += dataSize;
+        if (!getClassWithJvmPackageNamePackageIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        classWithJvmPackageNamePackageIdMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNameMultifileFacadeShortNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(classWithJvmPackageNameMultifileFacadeShortNameId_.getInt(i));
+        }
+        size += dataSize;
+        if (!getClassWithJvmPackageNameMultifileFacadeShortNameIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize = dataSize;
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
     }
-    /**
-     * <pre>
-     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
-     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
-     *
-     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
-     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
-     * when a bunch of files from the same Kotlin package have the same JVM package name.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
-     * @param values The classWithJvmPackageNamePackageId to add.
-     */
-    private void addAllClassWithJvmPackageNamePackageId(
-        java.lang.Iterable<? extends java.lang.Integer> values) {
-      ensureClassWithJvmPackageNamePackageIdIsMutable();
-      org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-          values, classWithJvmPackageNamePackageId_);
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts)) {
+        return super.equals(obj);
+      }
+      org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts other = (org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts) obj;
+
+      if (hasPackageFqName() != other.hasPackageFqName()) return false;
+      if (hasPackageFqName()) {
+        if (!getPackageFqName()
+            .equals(other.getPackageFqName())) return false;
+      }
+      if (!getShortClassNameList()
+          .equals(other.getShortClassNameList())) return false;
+      if (!getMultifileFacadeShortNameIdList()
+          .equals(other.getMultifileFacadeShortNameIdList())) return false;
+      if (!getMultifileFacadeShortNameList()
+          .equals(other.getMultifileFacadeShortNameList())) return false;
+      if (!getClassWithJvmPackageNameShortNameList()
+          .equals(other.getClassWithJvmPackageNameShortNameList())) return false;
+      if (!getClassWithJvmPackageNameMultifileFacadeShortNameIdList()
+          .equals(other.getClassWithJvmPackageNameMultifileFacadeShortNameIdList())) return false;
+      if (!getClassWithJvmPackageNamePackageIdList()
+          .equals(other.getClassWithJvmPackageNamePackageIdList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
     }
-    /**
-     * <pre>
-     * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
-     * This list should have at least one element, otherwise classes with JVM package names are going to be ignored completely.
-     *
-     * If there's no value in this list at some index other than 0, the value is assumed to be the same as the value of the last element
-     * of this list. The intended use case for this optimization is to have just a list of a single element in the most frequent case
-     * when a bunch of files from the same Kotlin package have the same JVM package name.
-     * </pre>
-     *
-     * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
-     */
-    private void clearClassWithJvmPackageNamePackageId() {
-      classWithJvmPackageNamePackageId_ = emptyIntList();
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasPackageFqName()) {
+        hash = (37 * hash) + PACKAGE_FQ_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getPackageFqName().hashCode();
+      }
+      if (getShortClassNameCount() > 0) {
+        hash = (37 * hash) + SHORT_CLASS_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getShortClassNameList().hashCode();
+      }
+      if (getMultifileFacadeShortNameIdCount() > 0) {
+        hash = (37 * hash) + MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getMultifileFacadeShortNameIdList().hashCode();
+      }
+      if (getMultifileFacadeShortNameCount() > 0) {
+        hash = (37 * hash) + MULTIFILE_FACADE_SHORT_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getMultifileFacadeShortNameList().hashCode();
+      }
+      if (getClassWithJvmPackageNameShortNameCount() > 0) {
+        hash = (37 * hash) + CLASS_WITH_JVM_PACKAGE_NAME_SHORT_NAME_FIELD_NUMBER;
+        hash = (53 * hash) + getClassWithJvmPackageNameShortNameList().hashCode();
+      }
+      if (getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() > 0) {
+        hash = (37 * hash) + CLASS_WITH_JVM_PACKAGE_NAME_MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getClassWithJvmPackageNameMultifileFacadeShortNameIdList().hashCode();
+      }
+      if (getClassWithJvmPackageNamePackageIdCount() > 0) {
+        hash = (37 * hash) + CLASS_WITH_JVM_PACKAGE_NAME_PACKAGE_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getClassWithJvmPackageNamePackageIdList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         java.nio.ByteBuffer data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         java.nio.ByteBuffer data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         org.jetbrains.kotlin.protobuf.ByteString data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(byte[] data)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
+      return PARSER.parseFrom(data);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         byte[] data,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
+      return PARSER.parseFrom(data, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseDelimitedFrom(
         java.io.InputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
     }
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts parseFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
+      return org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
+      return DEFAULT_INSTANCE.toBuilder();
     }
     public static Builder newBuilder(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts prototype) {
-      return DEFAULT_INSTANCE.createBuilder(prototype);
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
     }
 
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
     /**
      * Protobuf type {@code org.jetbrains.kotlin.metadata.jvm.PackageParts}
      */
     public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts, Builder> implements
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.metadata.jvm.PackageParts)
         org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackagePartsOrBuilder {
-      // Construct using org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor;
       }
 
+      @java.lang.Override
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.class, org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.Builder.class);
+      }
 
+      // Construct using org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        packageFqName_ = "";
+        shortClassName_ =
+            org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        multifileFacadeShortNameId_ = emptyIntList();
+        multifileFacadeShortName_ =
+            org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        classWithJvmPackageNameShortName_ =
+            org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        classWithJvmPackageNameMultifileFacadeShortNameId_ = emptyIntList();
+        classWithJvmPackageNamePackageId_ = emptyIntList();
+        return this;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts build() {
+        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts buildPartial() {
+        org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts result = new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.packageFqName_ = packageFqName_;
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          shortClassName_.makeImmutable();
+          result.shortClassName_ = shortClassName_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          multifileFacadeShortNameId_.makeImmutable();
+          result.multifileFacadeShortNameId_ = multifileFacadeShortNameId_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          multifileFacadeShortName_.makeImmutable();
+          result.multifileFacadeShortName_ = multifileFacadeShortName_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          classWithJvmPackageNameShortName_.makeImmutable();
+          result.classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          classWithJvmPackageNameMultifileFacadeShortNameId_.makeImmutable();
+          result.classWithJvmPackageNameMultifileFacadeShortNameId_ = classWithJvmPackageNameMultifileFacadeShortNameId_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          classWithJvmPackageNamePackageId_.makeImmutable();
+          result.classWithJvmPackageNamePackageId_ = classWithJvmPackageNamePackageId_;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts) {
+          return mergeFrom((org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts other) {
+        if (other == org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.getDefaultInstance()) return this;
+        if (other.hasPackageFqName()) {
+          packageFqName_ = other.packageFqName_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.shortClassName_.isEmpty()) {
+          if (shortClassName_.isEmpty()) {
+            shortClassName_ = other.shortClassName_;
+            bitField0_ |= 0x00000002;
+          } else {
+            ensureShortClassNameIsMutable();
+            shortClassName_.addAll(other.shortClassName_);
+          }
+          onChanged();
+        }
+        if (!other.multifileFacadeShortNameId_.isEmpty()) {
+          if (multifileFacadeShortNameId_.isEmpty()) {
+            multifileFacadeShortNameId_ = other.multifileFacadeShortNameId_;
+            multifileFacadeShortNameId_.makeImmutable();
+            bitField0_ |= 0x00000004;
+          } else {
+            ensureMultifileFacadeShortNameIdIsMutable();
+            multifileFacadeShortNameId_.addAll(other.multifileFacadeShortNameId_);
+          }
+          onChanged();
+        }
+        if (!other.multifileFacadeShortName_.isEmpty()) {
+          if (multifileFacadeShortName_.isEmpty()) {
+            multifileFacadeShortName_ = other.multifileFacadeShortName_;
+            bitField0_ |= 0x00000008;
+          } else {
+            ensureMultifileFacadeShortNameIsMutable();
+            multifileFacadeShortName_.addAll(other.multifileFacadeShortName_);
+          }
+          onChanged();
+        }
+        if (!other.classWithJvmPackageNameShortName_.isEmpty()) {
+          if (classWithJvmPackageNameShortName_.isEmpty()) {
+            classWithJvmPackageNameShortName_ = other.classWithJvmPackageNameShortName_;
+            bitField0_ |= 0x00000010;
+          } else {
+            ensureClassWithJvmPackageNameShortNameIsMutable();
+            classWithJvmPackageNameShortName_.addAll(other.classWithJvmPackageNameShortName_);
+          }
+          onChanged();
+        }
+        if (!other.classWithJvmPackageNameMultifileFacadeShortNameId_.isEmpty()) {
+          if (classWithJvmPackageNameMultifileFacadeShortNameId_.isEmpty()) {
+            classWithJvmPackageNameMultifileFacadeShortNameId_ = other.classWithJvmPackageNameMultifileFacadeShortNameId_;
+            classWithJvmPackageNameMultifileFacadeShortNameId_.makeImmutable();
+            bitField0_ |= 0x00000020;
+          } else {
+            ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+            classWithJvmPackageNameMultifileFacadeShortNameId_.addAll(other.classWithJvmPackageNameMultifileFacadeShortNameId_);
+          }
+          onChanged();
+        }
+        if (!other.classWithJvmPackageNamePackageId_.isEmpty()) {
+          if (classWithJvmPackageNamePackageId_.isEmpty()) {
+            classWithJvmPackageNamePackageId_ = other.classWithJvmPackageNamePackageId_;
+            classWithJvmPackageNamePackageId_.makeImmutable();
+            bitField0_ |= 0x00000040;
+          } else {
+            ensureClassWithJvmPackageNamePackageIdIsMutable();
+            classWithJvmPackageNamePackageId_.addAll(other.classWithJvmPackageNamePackageId_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        if (!hasPackageFqName()) {
+          return false;
+        }
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                packageFqName_ = input.readBytes();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+                ensureShortClassNameIsMutable();
+                shortClassName_.add(bs);
+                break;
+              } // case 18
+              case 24: {
+                int v = input.readInt32();
+                ensureMultifileFacadeShortNameIdIsMutable();
+                multifileFacadeShortNameId_.addInt(v);
+                break;
+              } // case 24
+              case 26: {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                ensureMultifileFacadeShortNameIdIsMutable();
+                while (input.getBytesUntilLimit() > 0) {
+                  multifileFacadeShortNameId_.addInt(input.readInt32());
+                }
+                input.popLimit(limit);
+                break;
+              } // case 26
+              case 34: {
+                org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+                ensureMultifileFacadeShortNameIsMutable();
+                multifileFacadeShortName_.add(bs);
+                break;
+              } // case 34
+              case 42: {
+                org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+                ensureClassWithJvmPackageNameShortNameIsMutable();
+                classWithJvmPackageNameShortName_.add(bs);
+                break;
+              } // case 42
+              case 48: {
+                int v = input.readInt32();
+                ensureClassWithJvmPackageNamePackageIdIsMutable();
+                classWithJvmPackageNamePackageId_.addInt(v);
+                break;
+              } // case 48
+              case 50: {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                ensureClassWithJvmPackageNamePackageIdIsMutable();
+                while (input.getBytesUntilLimit() > 0) {
+                  classWithJvmPackageNamePackageId_.addInt(input.readInt32());
+                }
+                input.popLimit(limit);
+                break;
+              } // case 50
+              case 56: {
+                int v = input.readInt32();
+                ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+                classWithJvmPackageNameMultifileFacadeShortNameId_.addInt(v);
+                break;
+              } // case 56
+              case 58: {
+                int length = input.readRawVarint32();
+                int limit = input.pushLimit(length);
+                ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+                while (input.getBytesUntilLimit() > 0) {
+                  classWithJvmPackageNameMultifileFacadeShortNameId_.addInt(input.readInt32());
+                }
+                input.popLimit(limit);
+                break;
+              } // case 58
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object packageFqName_ = "";
       /**
        * <pre>
        * Dot-separated Kotlin FQ name of the package.
@@ -3448,9 +4570,8 @@ public final class JvmModuleProtoBuf {
        * <code>string package_fq_name = 1 [features = { ... }</code>
        * @return Whether the packageFqName field is set.
        */
-      @java.lang.Override
       public boolean hasPackageFqName() {
-        return instance.hasPackageFqName();
+        return ((bitField0_ & 0x00000001) != 0);
       }
       /**
        * <pre>
@@ -3460,9 +4581,19 @@ public final class JvmModuleProtoBuf {
        * <code>string package_fq_name = 1 [features = { ... }</code>
        * @return The packageFqName.
        */
-      @java.lang.Override
       public java.lang.String getPackageFqName() {
-        return instance.getPackageFqName();
+        java.lang.Object ref = packageFqName_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            packageFqName_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
@@ -3472,10 +4603,18 @@ public final class JvmModuleProtoBuf {
        * <code>string package_fq_name = 1 [features = { ... }</code>
        * @return The bytes for packageFqName.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.protobuf.ByteString
           getPackageFqNameBytes() {
-        return instance.getPackageFqNameBytes();
+        java.lang.Object ref = packageFqName_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          packageFqName_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
       }
       /**
        * <pre>
@@ -3488,8 +4627,10 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setPackageFqName(
           java.lang.String value) {
-        copyOnWrite();
-        instance.setPackageFqName(value);
+        if (value == null) { throw new NullPointerException(); }
+        packageFqName_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
         return this;
       }
       /**
@@ -3501,8 +4642,9 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearPackageFqName() {
-        copyOnWrite();
-        instance.clearPackageFqName();
+        packageFqName_ = getDefaultInstance().getPackageFqName();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
         return this;
       }
       /**
@@ -3516,11 +4658,21 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setPackageFqNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setPackageFqNameBytes(value);
+        if (value == null) { throw new NullPointerException(); }
+        packageFqName_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringArrayList shortClassName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      private void ensureShortClassNameIsMutable() {
+        if (!shortClassName_.isModifiable()) {
+          shortClassName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(shortClassName_);
+        }
+        bitField0_ |= 0x00000002;
+      }
       /**
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
@@ -3532,11 +4684,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string short_class_name = 2;</code>
        * @return A list containing the shortClassName.
        */
-      @java.lang.Override
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getShortClassNameList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getShortClassNameList());
+        shortClassName_.makeImmutable();
+        return shortClassName_;
       }
       /**
        * <pre>
@@ -3549,9 +4700,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string short_class_name = 2;</code>
        * @return The count of shortClassName.
        */
-      @java.lang.Override
       public int getShortClassNameCount() {
-        return instance.getShortClassNameCount();
+        return shortClassName_.size();
       }
       /**
        * <pre>
@@ -3565,9 +4715,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The shortClassName at the given index.
        */
-      @java.lang.Override
       public java.lang.String getShortClassName(int index) {
-        return instance.getShortClassName(index);
+        return shortClassName_.get(index);
       }
       /**
        * <pre>
@@ -3581,10 +4730,9 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the value to return.
        * @return The bytes of the shortClassName at the given index.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.protobuf.ByteString
           getShortClassNameBytes(int index) {
-        return instance.getShortClassNameBytes(index);
+        return shortClassName_.getByteString(index);
       }
       /**
        * <pre>
@@ -3601,8 +4749,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setShortClassName(
           int index, java.lang.String value) {
-        copyOnWrite();
-        instance.setShortClassName(index, value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureShortClassNameIsMutable();
+        shortClassName_.set(index, value);
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
       /**
@@ -3619,8 +4770,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addShortClassName(
           java.lang.String value) {
-        copyOnWrite();
-        instance.addShortClassName(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureShortClassNameIsMutable();
+        shortClassName_.add(value);
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
       /**
@@ -3637,8 +4791,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllShortClassName(
           java.lang.Iterable<java.lang.String> values) {
-        copyOnWrite();
-        instance.addAllShortClassName(values);
+        ensureShortClassNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, shortClassName_);
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
       /**
@@ -3653,8 +4810,10 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearShortClassName() {
-        copyOnWrite();
-        instance.clearShortClassName();
+        shortClassName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);;
+        onChanged();
         return this;
       }
       /**
@@ -3671,11 +4830,21 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addShortClassNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.addShortClassNameBytes(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureShortClassNameIsMutable();
+        shortClassName_.add(value);
+        bitField0_ |= 0x00000002;
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.Internal.IntList multifileFacadeShortNameId_ = emptyIntList();
+      private void ensureMultifileFacadeShortNameIdIsMutable() {
+        if (!multifileFacadeShortNameId_.isModifiable()) {
+          multifileFacadeShortNameId_ = makeMutableCopy(multifileFacadeShortNameId_);
+        }
+        bitField0_ |= 0x00000004;
+      }
       /**
        * <pre>
        * For each name in short_class_name, index of the name of the corresponding multi-file facade class in multifile_facade_short_name + 1,
@@ -3686,11 +4855,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @return A list containing the multifileFacadeShortNameId.
        */
-      @java.lang.Override
       public java.util.List<java.lang.Integer>
           getMultifileFacadeShortNameIdList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getMultifileFacadeShortNameIdList());
+        multifileFacadeShortNameId_.makeImmutable();
+        return multifileFacadeShortNameId_;
       }
       /**
        * <pre>
@@ -3702,9 +4870,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
        * @return The count of multifileFacadeShortNameId.
        */
-      @java.lang.Override
       public int getMultifileFacadeShortNameIdCount() {
-        return instance.getMultifileFacadeShortNameIdCount();
+        return multifileFacadeShortNameId_.size();
       }
       /**
        * <pre>
@@ -3717,9 +4884,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The multifileFacadeShortNameId at the given index.
        */
-      @java.lang.Override
       public int getMultifileFacadeShortNameId(int index) {
-        return instance.getMultifileFacadeShortNameId(index);
+        return multifileFacadeShortNameId_.getInt(index);
       }
       /**
        * <pre>
@@ -3729,13 +4895,17 @@ public final class JvmModuleProtoBuf {
        * </pre>
        *
        * <code>repeated int32 multifile_facade_short_name_id = 3;</code>
+       * @param index The index to set the value at.
        * @param value The multifileFacadeShortNameId to set.
        * @return This builder for chaining.
        */
       public Builder setMultifileFacadeShortNameId(
           int index, int value) {
-        copyOnWrite();
-        instance.setMultifileFacadeShortNameId(index, value);
+
+        ensureMultifileFacadeShortNameIdIsMutable();
+        multifileFacadeShortNameId_.setInt(index, value);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -3750,8 +4920,11 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder addMultifileFacadeShortNameId(int value) {
-        copyOnWrite();
-        instance.addMultifileFacadeShortNameId(value);
+
+        ensureMultifileFacadeShortNameIdIsMutable();
+        multifileFacadeShortNameId_.addInt(value);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -3767,8 +4940,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllMultifileFacadeShortNameId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
-        copyOnWrite();
-        instance.addAllMultifileFacadeShortNameId(values);
+        ensureMultifileFacadeShortNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeShortNameId_);
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -3782,11 +4958,20 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearMultifileFacadeShortNameId() {
-        copyOnWrite();
-        instance.clearMultifileFacadeShortNameId();
+        multifileFacadeShortNameId_ = emptyIntList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringArrayList multifileFacadeShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      private void ensureMultifileFacadeShortNameIsMutable() {
+        if (!multifileFacadeShortName_.isModifiable()) {
+          multifileFacadeShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(multifileFacadeShortName_);
+        }
+        bitField0_ |= 0x00000008;
+      }
       /**
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
@@ -3799,11 +4984,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string multifile_facade_short_name = 4;</code>
        * @return A list containing the multifileFacadeShortName.
        */
-      @java.lang.Override
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getMultifileFacadeShortNameList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getMultifileFacadeShortNameList());
+        multifileFacadeShortName_.makeImmutable();
+        return multifileFacadeShortName_;
       }
       /**
        * <pre>
@@ -3817,9 +5001,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string multifile_facade_short_name = 4;</code>
        * @return The count of multifileFacadeShortName.
        */
-      @java.lang.Override
       public int getMultifileFacadeShortNameCount() {
-        return instance.getMultifileFacadeShortNameCount();
+        return multifileFacadeShortName_.size();
       }
       /**
        * <pre>
@@ -3834,9 +5017,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The multifileFacadeShortName at the given index.
        */
-      @java.lang.Override
       public java.lang.String getMultifileFacadeShortName(int index) {
-        return instance.getMultifileFacadeShortName(index);
+        return multifileFacadeShortName_.get(index);
       }
       /**
        * <pre>
@@ -3851,10 +5033,9 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the value to return.
        * @return The bytes of the multifileFacadeShortName at the given index.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.protobuf.ByteString
           getMultifileFacadeShortNameBytes(int index) {
-        return instance.getMultifileFacadeShortNameBytes(index);
+        return multifileFacadeShortName_.getByteString(index);
       }
       /**
        * <pre>
@@ -3872,8 +5053,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setMultifileFacadeShortName(
           int index, java.lang.String value) {
-        copyOnWrite();
-        instance.setMultifileFacadeShortName(index, value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.set(index, value);
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -3891,8 +5075,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addMultifileFacadeShortName(
           java.lang.String value) {
-        copyOnWrite();
-        instance.addMultifileFacadeShortName(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.add(value);
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -3910,8 +5097,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllMultifileFacadeShortName(
           java.lang.Iterable<java.lang.String> values) {
-        copyOnWrite();
-        instance.addAllMultifileFacadeShortName(values);
+        ensureMultifileFacadeShortNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, multifileFacadeShortName_);
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -3927,8 +5117,10 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearMultifileFacadeShortName() {
-        copyOnWrite();
-        instance.clearMultifileFacadeShortName();
+        multifileFacadeShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);;
+        onChanged();
         return this;
       }
       /**
@@ -3946,11 +5138,22 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addMultifileFacadeShortNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.addMultifileFacadeShortNameBytes(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureMultifileFacadeShortNameIsMutable();
+        multifileFacadeShortName_.add(value);
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringArrayList classWithJvmPackageNameShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+      private void ensureClassWithJvmPackageNameShortNameIsMutable() {
+        if (!classWithJvmPackageNameShortName_.isModifiable()) {
+          classWithJvmPackageNameShortName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(classWithJvmPackageNameShortName_);
+        }
+        bitField0_ |= 0x00000010;
+      }
       /**
        * <pre>
        * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
@@ -3960,11 +5163,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @return A list containing the classWithJvmPackageNameShortName.
        */
-      @java.lang.Override
-      public java.util.List<java.lang.String>
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
           getClassWithJvmPackageNameShortNameList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getClassWithJvmPackageNameShortNameList());
+        classWithJvmPackageNameShortName_.makeImmutable();
+        return classWithJvmPackageNameShortName_;
       }
       /**
        * <pre>
@@ -3975,9 +5177,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        * @return The count of classWithJvmPackageNameShortName.
        */
-      @java.lang.Override
       public int getClassWithJvmPackageNameShortNameCount() {
-        return instance.getClassWithJvmPackageNameShortNameCount();
+        return classWithJvmPackageNameShortName_.size();
       }
       /**
        * <pre>
@@ -3989,9 +5190,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNameShortName at the given index.
        */
-      @java.lang.Override
       public java.lang.String getClassWithJvmPackageNameShortName(int index) {
-        return instance.getClassWithJvmPackageNameShortName(index);
+        return classWithJvmPackageNameShortName_.get(index);
       }
       /**
        * <pre>
@@ -4003,10 +5203,9 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the value to return.
        * @return The bytes of the classWithJvmPackageNameShortName at the given index.
        */
-      @java.lang.Override
       public org.jetbrains.kotlin.protobuf.ByteString
           getClassWithJvmPackageNameShortNameBytes(int index) {
-        return instance.getClassWithJvmPackageNameShortNameBytes(index);
+        return classWithJvmPackageNameShortName_.getByteString(index);
       }
       /**
        * <pre>
@@ -4021,8 +5220,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder setClassWithJvmPackageNameShortName(
           int index, java.lang.String value) {
-        copyOnWrite();
-        instance.setClassWithJvmPackageNameShortName(index, value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.set(index, value);
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -4037,8 +5239,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addClassWithJvmPackageNameShortName(
           java.lang.String value) {
-        copyOnWrite();
-        instance.addClassWithJvmPackageNameShortName(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.add(value);
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -4053,8 +5258,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllClassWithJvmPackageNameShortName(
           java.lang.Iterable<java.lang.String> values) {
-        copyOnWrite();
-        instance.addAllClassWithJvmPackageNameShortName(values);
+        ensureClassWithJvmPackageNameShortNameIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNameShortName_);
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -4067,8 +5275,10 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNameShortName() {
-        copyOnWrite();
-        instance.clearClassWithJvmPackageNameShortName();
+        classWithJvmPackageNameShortName_ =
+          org.jetbrains.kotlin.protobuf.LazyStringArrayList.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);;
+        onChanged();
         return this;
       }
       /**
@@ -4083,11 +5293,21 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addClassWithJvmPackageNameShortNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.addClassWithJvmPackageNameShortNameBytes(value);
+        if (value == null) { throw new NullPointerException(); }
+        ensureClassWithJvmPackageNameShortNameIsMutable();
+        classWithJvmPackageNameShortName_.add(value);
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNameMultifileFacadeShortNameId_ = emptyIntList();
+      private void ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable() {
+        if (!classWithJvmPackageNameMultifileFacadeShortNameId_.isModifiable()) {
+          classWithJvmPackageNameMultifileFacadeShortNameId_ = makeMutableCopy(classWithJvmPackageNameMultifileFacadeShortNameId_);
+        }
+        bitField0_ |= 0x00000020;
+      }
       /**
        * <pre>
        * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
@@ -4101,11 +5321,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @return A list containing the classWithJvmPackageNameMultifileFacadeShortNameId.
        */
-      @java.lang.Override
       public java.util.List<java.lang.Integer>
           getClassWithJvmPackageNameMultifileFacadeShortNameIdList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getClassWithJvmPackageNameMultifileFacadeShortNameIdList());
+        classWithJvmPackageNameMultifileFacadeShortNameId_.makeImmutable();
+        return classWithJvmPackageNameMultifileFacadeShortNameId_;
       }
       /**
        * <pre>
@@ -4120,9 +5339,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
        * @return The count of classWithJvmPackageNameMultifileFacadeShortNameId.
        */
-      @java.lang.Override
       public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
-        return instance.getClassWithJvmPackageNameMultifileFacadeShortNameIdCount();
+        return classWithJvmPackageNameMultifileFacadeShortNameId_.size();
       }
       /**
        * <pre>
@@ -4138,9 +5356,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNameMultifileFacadeShortNameId at the given index.
        */
-      @java.lang.Override
       public int getClassWithJvmPackageNameMultifileFacadeShortNameId(int index) {
-        return instance.getClassWithJvmPackageNameMultifileFacadeShortNameId(index);
+        return classWithJvmPackageNameMultifileFacadeShortNameId_.getInt(index);
       }
       /**
        * <pre>
@@ -4153,13 +5370,17 @@ public final class JvmModuleProtoBuf {
        * </pre>
        *
        * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7;</code>
+       * @param index The index to set the value at.
        * @param value The classWithJvmPackageNameMultifileFacadeShortNameId to set.
        * @return This builder for chaining.
        */
       public Builder setClassWithJvmPackageNameMultifileFacadeShortNameId(
           int index, int value) {
-        copyOnWrite();
-        instance.setClassWithJvmPackageNameMultifileFacadeShortNameId(index, value);
+
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        classWithJvmPackageNameMultifileFacadeShortNameId_.setInt(index, value);
+        bitField0_ |= 0x00000020;
+        onChanged();
         return this;
       }
       /**
@@ -4177,8 +5398,11 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder addClassWithJvmPackageNameMultifileFacadeShortNameId(int value) {
-        copyOnWrite();
-        instance.addClassWithJvmPackageNameMultifileFacadeShortNameId(value);
+
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        classWithJvmPackageNameMultifileFacadeShortNameId_.addInt(value);
+        bitField0_ |= 0x00000020;
+        onChanged();
         return this;
       }
       /**
@@ -4197,8 +5421,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllClassWithJvmPackageNameMultifileFacadeShortNameId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
-        copyOnWrite();
-        instance.addAllClassWithJvmPackageNameMultifileFacadeShortNameId(values);
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNameMultifileFacadeShortNameId_);
+        bitField0_ |= 0x00000020;
+        onChanged();
         return this;
       }
       /**
@@ -4215,11 +5442,19 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNameMultifileFacadeShortNameId() {
-        copyOnWrite();
-        instance.clearClassWithJvmPackageNameMultifileFacadeShortNameId();
+        classWithJvmPackageNameMultifileFacadeShortNameId_ = emptyIntList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.Internal.IntList classWithJvmPackageNamePackageId_ = emptyIntList();
+      private void ensureClassWithJvmPackageNamePackageIdIsMutable() {
+        if (!classWithJvmPackageNamePackageId_.isModifiable()) {
+          classWithJvmPackageNamePackageId_ = makeMutableCopy(classWithJvmPackageNamePackageId_);
+        }
+        bitField0_ |= 0x00000040;
+      }
       /**
        * <pre>
        * For each name in class_with_jvm_package_name_short_name, the index (into PackageTable#jvm_package_name) of the JVM package name.
@@ -4233,11 +5468,10 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @return A list containing the classWithJvmPackageNamePackageId.
        */
-      @java.lang.Override
       public java.util.List<java.lang.Integer>
           getClassWithJvmPackageNamePackageIdList() {
-        return java.util.Collections.unmodifiableList(
-            instance.getClassWithJvmPackageNamePackageIdList());
+        classWithJvmPackageNamePackageId_.makeImmutable();
+        return classWithJvmPackageNamePackageId_;
       }
       /**
        * <pre>
@@ -4252,9 +5486,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
        * @return The count of classWithJvmPackageNamePackageId.
        */
-      @java.lang.Override
       public int getClassWithJvmPackageNamePackageIdCount() {
-        return instance.getClassWithJvmPackageNamePackageIdCount();
+        return classWithJvmPackageNamePackageId_.size();
       }
       /**
        * <pre>
@@ -4270,9 +5503,8 @@ public final class JvmModuleProtoBuf {
        * @param index The index of the element to return.
        * @return The classWithJvmPackageNamePackageId at the given index.
        */
-      @java.lang.Override
       public int getClassWithJvmPackageNamePackageId(int index) {
-        return instance.getClassWithJvmPackageNamePackageId(index);
+        return classWithJvmPackageNamePackageId_.getInt(index);
       }
       /**
        * <pre>
@@ -4285,13 +5517,17 @@ public final class JvmModuleProtoBuf {
        * </pre>
        *
        * <code>repeated int32 class_with_jvm_package_name_package_id = 6;</code>
+       * @param index The index to set the value at.
        * @param value The classWithJvmPackageNamePackageId to set.
        * @return This builder for chaining.
        */
       public Builder setClassWithJvmPackageNamePackageId(
           int index, int value) {
-        copyOnWrite();
-        instance.setClassWithJvmPackageNamePackageId(index, value);
+
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        classWithJvmPackageNamePackageId_.setInt(index, value);
+        bitField0_ |= 0x00000040;
+        onChanged();
         return this;
       }
       /**
@@ -4309,8 +5545,11 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder addClassWithJvmPackageNamePackageId(int value) {
-        copyOnWrite();
-        instance.addClassWithJvmPackageNamePackageId(value);
+
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        classWithJvmPackageNamePackageId_.addInt(value);
+        bitField0_ |= 0x00000040;
+        onChanged();
         return this;
       }
       /**
@@ -4329,8 +5568,11 @@ public final class JvmModuleProtoBuf {
        */
       public Builder addAllClassWithJvmPackageNamePackageId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
-        copyOnWrite();
-        instance.addAllClassWithJvmPackageNamePackageId(values);
+        ensureClassWithJvmPackageNamePackageIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNamePackageId_);
+        bitField0_ |= 0x00000040;
+        onChanged();
         return this;
       }
       /**
@@ -4347,97 +5589,126 @@ public final class JvmModuleProtoBuf {
        * @return This builder for chaining.
        */
       public Builder clearClassWithJvmPackageNamePackageId() {
-        copyOnWrite();
-        instance.clearClassWithJvmPackageNamePackageId();
+        classWithJvmPackageNamePackageId_ = emptyIntList();
+        bitField0_ = (bitField0_ & ~0x00000040);
+        onChanged();
         return this;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.jvm.PackageParts)
     }
-    private byte memoizedIsInitialized = 2;
-    @java.lang.Override
-    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-    protected final java.lang.Object dynamicMethod(
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        java.lang.Object arg0, java.lang.Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts();
-        }
-        case NEW_BUILDER: {
-          return new Builder();
-        }
-        case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "bitField0_",
-              "packageFqName_",
-              "shortClassName_",
-              "multifileFacadeShortNameId_",
-              "multifileFacadeShortName_",
-              "classWithJvmPackageNameShortName_",
-              "classWithJvmPackageNamePackageId_",
-              "classWithJvmPackageNameMultifileFacadeShortNameId_",
-            };
-            java.lang.String info =
-                "\u0004\u0007\u0000\u0001\u0001\u0007\u0007\u0000\u0006\u0001\u0001\u1508\u0000\u0002" +
-                "\u001a\u0003\'\u0004\u001a\u0005\u001a\u0006\'\u0007\'";
-            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-        }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
-        }
-        case GET_PARSER: {
-          org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts> parser = PARSER;
-          if (parser == null) {
-            synchronized (org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser =
-                    new DefaultInstanceBasedParser<org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts>(
-                        DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
-            }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return memoizedIsInitialized;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        memoizedIsInitialized = (byte) (arg0 == null ? 0 : 1);
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
-    }
-
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.metadata.jvm.PackageParts)
     private static final org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts DEFAULT_INSTANCE;
     static {
-      PackageParts defaultInstance = new PackageParts();
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = defaultInstance;
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-        PackageParts.class, defaultInstance);
+      DEFAULT_INSTANCE = new org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts();
     }
 
     public static org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static volatile org.jetbrains.kotlin.protobuf.Parser<PackageParts> PARSER;
+    private static final org.jetbrains.kotlin.protobuf.Parser<PackageParts>
+        PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<PackageParts>() {
+      @java.lang.Override
+      public PackageParts parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
 
     public static org.jetbrains.kotlin.protobuf.Parser<PackageParts> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
+      return PARSER;
     }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<PackageParts> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf.PackageParts getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor;
+  private static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_metadata_jvm_Module_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor;
+  private static final 
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_fieldAccessorTable;
 
+  public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      getDescriptor() {
+    return descriptor;
+  }
+  private static  org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      descriptor;
   static {
+    java.lang.String[] descriptorData = {
+      "\n&core/metadata.jvm/src/jvm_module.proto" +
+      "\022!org.jetbrains.kotlin.metadata.jvm\032 cor" +
+      "e/metadata/src/metadata.proto\"\316\003\n\006Module" +
+      "\022F\n\rpackage_parts\030\001 \003(\0132/.org.jetbrains." +
+      "kotlin.metadata.jvm.PackageParts\022G\n\016meta" +
+      "data_parts\030\002 \003(\0132/.org.jetbrains.kotlin." +
+      "metadata.jvm.PackageParts\022\030\n\020jvm_package" +
+      "_name\030\003 \003(\t\022@\n\014string_table\030\004 \001(\0132*.org." +
+      "jetbrains.kotlin.metadata.StringTable\022O\n" +
+      "\024qualified_name_table\030\005 \001(\01321.org.jetbra" +
+      "ins.kotlin.metadata.QualifiedNameTable\022=" +
+      "\n\nannotation\030\006 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.Annotation\022G\n\031optional_annota" +
+      "tion_class\030\020 \003(\0132$.org.jetbrains.kotlin." +
+      "metadata.Class\"\271\002\n\014PackageParts\022\036\n\017packa" +
+      "ge_fq_name\030\001 \001(\tB\005\252\001\002\010\003\022\030\n\020short_class_n" +
+      "ame\030\002 \003(\t\022&\n\036multifile_facade_short_name" +
+      "_id\030\003 \003(\005\022#\n\033multifile_facade_short_name" +
+      "\030\004 \003(\t\022.\n&class_with_jvm_package_name_sh" +
+      "ort_name\030\005 \003(\t\022B\n:class_with_jvm_package" +
+      "_name_multifile_facade_short_name_id\030\007 \003" +
+      "(\005\022.\n&class_with_jvm_package_name_packag" +
+      "e_id\030\006 \003(\005B\030B\021JvmModuleProtoBuf\222\003\002 \003b\010ed" +
+      "itionsp\350\007"
+    };
+    descriptor = org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
+      .internalBuildGeneratedFileFrom(descriptorData,
+        new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor[] {
+          org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor(),
+        });
+    internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_org_jetbrains_kotlin_metadata_jvm_Module_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_metadata_jvm_Module_descriptor,
+        new java.lang.String[] { "PackageParts", "MetadataParts", "JvmPackageName", "StringTable", "QualifiedNameTable", "Annotation", "OptionalAnnotationClass", });
+    internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_metadata_jvm_PackageParts_descriptor,
+        new java.lang.String[] { "PackageFqName", "ShortClassName", "MultifileFacadeShortNameId", "MultifileFacadeShortName", "ClassWithJvmPackageNameShortName", "ClassWithJvmPackageNameMultifileFacadeShortNameId", "ClassWithJvmPackageNamePackageId", });
+    descriptor.resolveAllFeaturesImmutable();
+    org.jetbrains.kotlin.metadata.ProtoBuf.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

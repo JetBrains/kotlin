@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrDoWhileOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.Loop loop = 1 [features = { ... }</code>
@@ -19,4 +19,8 @@ public interface IrDoWhileOrBuilder extends
    * @return The loop.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.Loop getLoop();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.Loop loop = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.LoopOrBuilder getLoopOrBuilder();
 }

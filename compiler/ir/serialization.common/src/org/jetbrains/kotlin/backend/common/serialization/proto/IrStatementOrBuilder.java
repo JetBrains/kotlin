@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrStatementOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int64 coordinates = 1 [features = { ... }</code>
@@ -30,6 +30,10 @@ public interface IrStatementOrBuilder extends
    * @return The declaration.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration getDeclaration();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrBuilder getDeclarationOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 3;</code>
@@ -41,6 +45,10 @@ public interface IrStatementOrBuilder extends
    * @return The expression.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExpression();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression expression = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getExpressionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody block_body = 4;</code>
@@ -52,6 +60,10 @@ public interface IrStatementOrBuilder extends
    * @return The blockBody.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody getBlockBody();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody block_body = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBodyOrBuilder getBlockBodyOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch branch = 5;</code>
@@ -63,6 +75,10 @@ public interface IrStatementOrBuilder extends
    * @return The branch.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch getBranch();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch branch = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrBranchOrBuilder getBranchOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch catch = 6;</code>
@@ -74,6 +90,10 @@ public interface IrStatementOrBuilder extends
    * @return The catch.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch getCatch();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch catch = 6;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrCatchOrBuilder getCatchOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody synthetic_body = 7;</code>
@@ -85,6 +105,10 @@ public interface IrStatementOrBuilder extends
    * @return The syntheticBody.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody getSyntheticBody();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody synthetic_body = 7;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyOrBuilder getSyntheticBodyOrBuilder();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase getStatementCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase getStatementCase();
 }

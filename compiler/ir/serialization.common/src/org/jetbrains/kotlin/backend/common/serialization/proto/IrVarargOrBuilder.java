@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrVarargOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>int32 element_type = 1 [features = { ... }</code>
@@ -33,4 +33,14 @@ public interface IrVarargOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement element = 2;</code>
    */
   int getElementCount();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement element = 2;</code>
+   */
+  java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElementOrBuilder> 
+      getElementOrBuilderList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement element = 2;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElementOrBuilder getElementOrBuilder(
+      int index);
 }

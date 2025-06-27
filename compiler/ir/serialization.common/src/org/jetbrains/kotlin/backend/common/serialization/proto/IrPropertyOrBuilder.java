@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrPropertyOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrPropertyOrBuilder extends
    * @return The base.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase base = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBaseOrBuilder getBaseOrBuilder();
 
   /**
    * <code>int32 name = 2 [features = { ... }</code>
@@ -41,6 +45,10 @@ public interface IrPropertyOrBuilder extends
    * @return The backingField.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrField getBackingField();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFieldOrBuilder getBackingFieldOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
@@ -52,6 +60,10 @@ public interface IrPropertyOrBuilder extends
    * @return The getter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getGetterOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
@@ -63,4 +75,8 @@ public interface IrPropertyOrBuilder extends
    * @return The setter.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getSetterOrBuilder();
 }

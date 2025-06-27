@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrFunctionExpressionOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction function = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrFunctionExpressionOrBuilder extends
    * @return The function.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getFunction();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction function = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionOrBuilder getFunctionOrBuilder();
 
   /**
    * <code>int32 origin_name = 2 [features = { ... }</code>

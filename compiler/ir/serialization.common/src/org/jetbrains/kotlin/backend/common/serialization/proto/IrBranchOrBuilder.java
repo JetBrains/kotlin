@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrBranchOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 1 [features = { ... }</code>
@@ -19,6 +19,10 @@ public interface IrBranchOrBuilder extends
    * @return The condition.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getCondition();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression condition = 1 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getConditionOrBuilder();
 
   /**
    * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 2 [features = { ... }</code>
@@ -30,4 +34,8 @@ public interface IrBranchOrBuilder extends
    * @return The result.
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getResult();
+  /**
+   * <code>.org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression result = 2 [features = { ... }</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpressionOrBuilder getResultOrBuilder();
 }

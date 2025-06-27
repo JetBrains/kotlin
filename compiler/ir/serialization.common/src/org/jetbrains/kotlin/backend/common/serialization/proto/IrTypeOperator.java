@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
  * Protobuf enum {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator}
  */
 public enum IrTypeOperator
-    implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
   /**
    * <code>CAST = 1;</code>
    */
@@ -56,6 +56,15 @@ public enum IrTypeOperator
   REINTERPRET_CAST(11),
   ;
 
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      IrTypeOperator.class.getName());
+  }
   /**
    * <code>CAST = 1;</code>
    */
@@ -102,14 +111,13 @@ public enum IrTypeOperator
   public static final int REINTERPRET_CAST_VALUE = 11;
 
 
-  @java.lang.Override
   public final int getNumber() {
     return value;
   }
 
   /**
-   * @param value The number of the enum to look for.
-   * @return The enum associated with the given number.
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
    * @deprecated Use {@link #forNumber(int)} instead.
    */
   @java.lang.Deprecated
@@ -117,6 +125,10 @@ public enum IrTypeOperator
     return forNumber(value);
   }
 
+  /**
+   * @param value The numeric wire value of the corresponding enum entry.
+   * @return The enum associated with the given numeric wire value.
+   */
   public static IrTypeOperator forNumber(int value) {
     switch (value) {
       case 1: return CAST;
@@ -141,25 +153,34 @@ public enum IrTypeOperator
   private static final org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<
       IrTypeOperator> internalValueMap =
         new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<IrTypeOperator>() {
-          @java.lang.Override
           public IrTypeOperator findValueByNumber(int number) {
             return IrTypeOperator.forNumber(number);
           }
         };
 
-  public static org.jetbrains.kotlin.protobuf.Internal.EnumVerifier 
-      internalGetVerifier() {
-    return IrTypeOperatorVerifier.INSTANCE;
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+      getValueDescriptor() {
+    return getDescriptor().getValues().get(ordinal());
+  }
+  public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptorForType() {
+    return getDescriptor();
+  }
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.getDescriptor().getEnumTypes().get(1);
   }
 
-  private static final class IrTypeOperatorVerifier implements 
-       org.jetbrains.kotlin.protobuf.Internal.EnumVerifier { 
-          static final org.jetbrains.kotlin.protobuf.Internal.EnumVerifier           INSTANCE = new IrTypeOperatorVerifier();
-          @java.lang.Override
-          public boolean isInRange(int number) {
-            return IrTypeOperator.forNumber(number) != null;
-          }
-        };
+  private static final IrTypeOperator[] VALUES = values();
+
+  public static IrTypeOperator valueOf(
+      org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+    if (desc.getType() != getDescriptor()) {
+      throw new java.lang.IllegalArgumentException(
+        "EnumValueDescriptor is not for this type.");
+    }
+    return VALUES[desc.getIndex()];
+  }
 
   private final int value;
 

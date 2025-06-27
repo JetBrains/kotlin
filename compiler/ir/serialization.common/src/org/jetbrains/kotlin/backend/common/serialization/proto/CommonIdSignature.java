@@ -8,18 +8,47 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 /**
  * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature}
  */
-public  final class CommonIdSignature extends
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite<
-        CommonIdSignature, CommonIdSignature.Builder> implements
+public final class CommonIdSignature extends
+    org.jetbrains.kotlin.protobuf.GeneratedMessage implements
     // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
     CommonIdSignatureOrBuilder {
+private static final long serialVersionUID = 0L;
+  static {
+    org.jetbrains.kotlin.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+      org.jetbrains.kotlin.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+      /* major= */ 4,
+      /* minor= */ 29,
+      /* patch= */ 3,
+      /* suffix= */ "",
+      CommonIdSignature.class.getName());
+  }
+  // Use CommonIdSignature.newBuilder() to construct.
+  private CommonIdSignature(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+    super(builder);
+  }
   private CommonIdSignature() {
     packageFqName_ = emptyIntList();
     declarationFqName_ = emptyIntList();
   }
+
+  public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+      getDescriptor() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor;
+  }
+
+  @java.lang.Override
+  protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internalGetFieldAccessorTable() {
+    return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+            org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.class, org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.Builder.class);
+  }
+
   private int bitField0_;
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.protobuf.Internal.IntList packageFqName_;
+  @SuppressWarnings("serial")
+  private org.jetbrains.kotlin.protobuf.Internal.IntList packageFqName_ =
+      emptyIntList();
   /**
    * <code>repeated int32 package_fq_name = 1;</code>
    * @return A list containing the packageFqName.
@@ -33,7 +62,6 @@ public  final class CommonIdSignature extends
    * <code>repeated int32 package_fq_name = 1;</code>
    * @return The count of packageFqName.
    */
-  @java.lang.Override
   public int getPackageFqNameCount() {
     return packageFqName_.size();
   }
@@ -42,55 +70,15 @@ public  final class CommonIdSignature extends
    * @param index The index of the element to return.
    * @return The packageFqName at the given index.
    */
-  @java.lang.Override
   public int getPackageFqName(int index) {
     return packageFqName_.getInt(index);
   }
   private int packageFqNameMemoizedSerializedSize = -1;
-  private void ensurePackageFqNameIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.IntList tmp = packageFqName_;
-    if (!tmp.isModifiable()) {
-      packageFqName_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-  /**
-   * <code>repeated int32 package_fq_name = 1;</code>
-   * @param index The index to set the value at.
-   * @param value The packageFqName to set.
-   */
-  private void setPackageFqName(
-      int index, int value) {
-    ensurePackageFqNameIsMutable();
-    packageFqName_.setInt(index, value);
-  }
-  /**
-   * <code>repeated int32 package_fq_name = 1;</code>
-   * @param value The packageFqName to add.
-   */
-  private void addPackageFqName(int value) {
-    ensurePackageFqNameIsMutable();
-    packageFqName_.addInt(value);
-  }
-  /**
-   * <code>repeated int32 package_fq_name = 1;</code>
-   * @param values The packageFqName to add.
-   */
-  private void addAllPackageFqName(
-      java.lang.Iterable<? extends java.lang.Integer> values) {
-    ensurePackageFqNameIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, packageFqName_);
-  }
-  /**
-   * <code>repeated int32 package_fq_name = 1;</code>
-   */
-  private void clearPackageFqName() {
-    packageFqName_ = emptyIntList();
-  }
 
   public static final int DECLARATION_FQ_NAME_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.protobuf.Internal.IntList declarationFqName_;
+  @SuppressWarnings("serial")
+  private org.jetbrains.kotlin.protobuf.Internal.IntList declarationFqName_ =
+      emptyIntList();
   /**
    * <code>repeated int32 declaration_fq_name = 2;</code>
    * @return A list containing the declarationFqName.
@@ -104,7 +92,6 @@ public  final class CommonIdSignature extends
    * <code>repeated int32 declaration_fq_name = 2;</code>
    * @return The count of declarationFqName.
    */
-  @java.lang.Override
   public int getDeclarationFqNameCount() {
     return declarationFqName_.size();
   }
@@ -113,55 +100,13 @@ public  final class CommonIdSignature extends
    * @param index The index of the element to return.
    * @return The declarationFqName at the given index.
    */
-  @java.lang.Override
   public int getDeclarationFqName(int index) {
     return declarationFqName_.getInt(index);
   }
   private int declarationFqNameMemoizedSerializedSize = -1;
-  private void ensureDeclarationFqNameIsMutable() {
-    org.jetbrains.kotlin.protobuf.Internal.IntList tmp = declarationFqName_;
-    if (!tmp.isModifiable()) {
-      declarationFqName_ =
-          org.jetbrains.kotlin.protobuf.GeneratedMessageLite.mutableCopy(tmp);
-     }
-  }
-  /**
-   * <code>repeated int32 declaration_fq_name = 2;</code>
-   * @param index The index to set the value at.
-   * @param value The declarationFqName to set.
-   */
-  private void setDeclarationFqName(
-      int index, int value) {
-    ensureDeclarationFqNameIsMutable();
-    declarationFqName_.setInt(index, value);
-  }
-  /**
-   * <code>repeated int32 declaration_fq_name = 2;</code>
-   * @param value The declarationFqName to add.
-   */
-  private void addDeclarationFqName(int value) {
-    ensureDeclarationFqNameIsMutable();
-    declarationFqName_.addInt(value);
-  }
-  /**
-   * <code>repeated int32 declaration_fq_name = 2;</code>
-   * @param values The declarationFqName to add.
-   */
-  private void addAllDeclarationFqName(
-      java.lang.Iterable<? extends java.lang.Integer> values) {
-    ensureDeclarationFqNameIsMutable();
-    org.jetbrains.kotlin.protobuf.AbstractMessageLite.addAll(
-        values, declarationFqName_);
-  }
-  /**
-   * <code>repeated int32 declaration_fq_name = 2;</code>
-   */
-  private void clearDeclarationFqName() {
-    declarationFqName_ = emptyIntList();
-  }
 
   public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 3;
-  private long memberUniqId_;
+  private long memberUniqId_ = 0L;
   /**
    * <code>int64 member_uniq_id = 3;</code>
    * @return Whether the memberUniqId field is set.
@@ -178,24 +123,9 @@ public  final class CommonIdSignature extends
   public long getMemberUniqId() {
     return memberUniqId_;
   }
-  /**
-   * <code>int64 member_uniq_id = 3;</code>
-   * @param value The memberUniqId to set.
-   */
-  private void setMemberUniqId(long value) {
-    bitField0_ |= 0x00000001;
-    memberUniqId_ = value;
-  }
-  /**
-   * <code>int64 member_uniq_id = 3;</code>
-   */
-  private void clearMemberUniqId() {
-    bitField0_ = (bitField0_ & ~0x00000001);
-    memberUniqId_ = 0L;
-  }
 
   public static final int FLAGS_FIELD_NUMBER = 4;
-  private long flags_;
+  private long flags_ = 0L;
   /**
    * <code>int64 flags = 4 [default = 0];</code>
    * @return Whether the flags field is set.
@@ -212,24 +142,9 @@ public  final class CommonIdSignature extends
   public long getFlags() {
     return flags_;
   }
-  /**
-   * <code>int64 flags = 4 [default = 0];</code>
-   * @param value The flags to set.
-   */
-  private void setFlags(long value) {
-    bitField0_ |= 0x00000002;
-    flags_ = value;
-  }
-  /**
-   * <code>int64 flags = 4 [default = 0];</code>
-   */
-  private void clearFlags() {
-    bitField0_ = (bitField0_ & ~0x00000002);
-    flags_ = 0L;
-  }
 
   public static final int DEBUG_INFO_FIELD_NUMBER = 5;
-  private int debugInfo_;
+  private int debugInfo_ = 0;
   /**
    * <code>int32 debug_info = 5;</code>
    * @return Whether the debugInfo field is set.
@@ -246,155 +161,531 @@ public  final class CommonIdSignature extends
   public int getDebugInfo() {
     return debugInfo_;
   }
-  /**
-   * <code>int32 debug_info = 5;</code>
-   * @param value The debugInfo to set.
-   */
-  private void setDebugInfo(int value) {
-    bitField0_ |= 0x00000004;
-    debugInfo_ = value;
+
+  private byte memoizedIsInitialized = -1;
+  @java.lang.Override
+  public final boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    memoizedIsInitialized = 1;
+    return true;
   }
-  /**
-   * <code>int32 debug_info = 5;</code>
-   */
-  private void clearDebugInfo() {
-    bitField0_ = (bitField0_ & ~0x00000004);
-    debugInfo_ = 0;
+
+  @java.lang.Override
+  public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                      throws java.io.IOException {
+    getSerializedSize();
+    if (getPackageFqNameList().size() > 0) {
+      output.writeUInt32NoTag(10);
+      output.writeUInt32NoTag(packageFqNameMemoizedSerializedSize);
+    }
+    for (int i = 0; i < packageFqName_.size(); i++) {
+      output.writeInt32NoTag(packageFqName_.getInt(i));
+    }
+    if (getDeclarationFqNameList().size() > 0) {
+      output.writeUInt32NoTag(18);
+      output.writeUInt32NoTag(declarationFqNameMemoizedSerializedSize);
+    }
+    for (int i = 0; i < declarationFqName_.size(); i++) {
+      output.writeInt32NoTag(declarationFqName_.getInt(i));
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeInt64(3, memberUniqId_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      output.writeInt64(4, flags_);
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      output.writeInt32(5, debugInfo_);
+    }
+    getUnknownFields().writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    {
+      int dataSize = 0;
+      for (int i = 0; i < packageFqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(packageFqName_.getInt(i));
+      }
+      size += dataSize;
+      if (!getPackageFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      packageFqNameMemoizedSerializedSize = dataSize;
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < declarationFqName_.size(); i++) {
+        dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32SizeNoTag(declarationFqName_.getInt(i));
+      }
+      size += dataSize;
+      if (!getDeclarationFqNameList().isEmpty()) {
+        size += 1;
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(dataSize);
+      }
+      declarationFqNameMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(3, memberUniqId_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(4, flags_);
+    }
+    if (((bitField0_ & 0x00000004) != 0)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, debugInfo_);
+    }
+    size += getUnknownFields().getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+     return true;
+    }
+    if (!(obj instanceof org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)) {
+      return super.equals(obj);
+    }
+    org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature other = (org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature) obj;
+
+    if (!getPackageFqNameList()
+        .equals(other.getPackageFqNameList())) return false;
+    if (!getDeclarationFqNameList()
+        .equals(other.getDeclarationFqNameList())) return false;
+    if (hasMemberUniqId() != other.hasMemberUniqId()) return false;
+    if (hasMemberUniqId()) {
+      if (getMemberUniqId()
+          != other.getMemberUniqId()) return false;
+    }
+    if (hasFlags() != other.hasFlags()) return false;
+    if (hasFlags()) {
+      if (getFlags()
+          != other.getFlags()) return false;
+    }
+    if (hasDebugInfo() != other.hasDebugInfo()) return false;
+    if (hasDebugInfo()) {
+      if (getDebugInfo()
+          != other.getDebugInfo()) return false;
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+    return true;
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    if (getPackageFqNameCount() > 0) {
+      hash = (37 * hash) + PACKAGE_FQ_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getPackageFqNameList().hashCode();
+    }
+    if (getDeclarationFqNameCount() > 0) {
+      hash = (37 * hash) + DECLARATION_FQ_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getDeclarationFqNameList().hashCode();
+    }
+    if (hasMemberUniqId()) {
+      hash = (37 * hash) + MEMBER_UNIQ_ID_FIELD_NUMBER;
+      hash = (53 * hash) + org.jetbrains.kotlin.protobuf.Internal.hashLong(
+          getMemberUniqId());
+    }
+    if (hasFlags()) {
+      hash = (37 * hash) + FLAGS_FIELD_NUMBER;
+      hash = (53 * hash) + org.jetbrains.kotlin.protobuf.Internal.hashLong(
+          getFlags());
+    }
+    if (hasDebugInfo()) {
+      hash = (37 * hash) + DEBUG_INFO_FIELD_NUMBER;
+      hash = (53 * hash) + getDebugInfo();
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
+    memoizedHashCode = hash;
+    return hash;
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       java.nio.ByteBuffer data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       java.nio.ByteBuffer data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data);
+    return PARSER.parseFrom(data);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, data, extensionRegistry);
+    return PARSER.parseFrom(data, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input);
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input);
   }
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
-    return org.jetbrains.kotlin.protobuf.GeneratedMessageLite.parseFrom(
-        DEFAULT_INSTANCE, input, extensionRegistry);
+    return org.jetbrains.kotlin.protobuf.GeneratedMessage
+        .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
+  @java.lang.Override
+  public Builder newBuilderForType() { return newBuilder(); }
   public static Builder newBuilder() {
-    return (Builder) DEFAULT_INSTANCE.createBuilder();
+    return DEFAULT_INSTANCE.toBuilder();
   }
   public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature prototype) {
-    return DEFAULT_INSTANCE.createBuilder(prototype);
+    return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+  @java.lang.Override
+  public Builder toBuilder() {
+    return this == DEFAULT_INSTANCE
+        ? new Builder() : new Builder().mergeFrom(this);
   }
 
+  @java.lang.Override
+  protected Builder newBuilderForType(
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+    Builder builder = new Builder(parent);
+    return builder;
+  }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature}
    */
   public static final class Builder extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature, Builder> implements
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
       // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
       org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignatureOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.newBuilder()
-    private Builder() {
-      super(DEFAULT_INSTANCE);
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor;
     }
 
+    @java.lang.Override
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.class, org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.Builder.class);
+    }
 
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.newBuilder()
+    private Builder() {
+
+    }
+
+    private Builder(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      super(parent);
+
+    }
+    @java.lang.Override
+    public Builder clear() {
+      super.clear();
+      bitField0_ = 0;
+      packageFqName_ = emptyIntList();
+      declarationFqName_ = emptyIntList();
+      memberUniqId_ = 0L;
+      flags_ = 0L;
+      debugInfo_ = 0;
+      return this;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptorForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.KotlinIr.internal_static_org_jetbrains_kotlin_backend_common_serialization_proto_CommonIdSignature_descriptor;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.getDefaultInstance();
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature result = buildPartial();
+      if (!result.isInitialized()) {
+        throw newUninitializedMessageException(result);
+      }
+      return result;
+    }
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature result = new org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        packageFqName_.makeImmutable();
+        result.packageFqName_ = packageFqName_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        declarationFqName_.makeImmutable();
+        result.declarationFqName_ = declarationFqName_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.memberUniqId_ = memberUniqId_;
+        to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.flags_ = flags_;
+        to_bitField0_ |= 0x00000002;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.debugInfo_ = debugInfo_;
+        to_bitField0_ |= 0x00000004;
+      }
+      result.bitField0_ |= to_bitField0_;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+      if (other instanceof org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature) {
+        return mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)other);
+      } else {
+        super.mergeFrom(other);
+        return this;
+      }
+    }
+
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.getDefaultInstance()) return this;
+      if (!other.packageFqName_.isEmpty()) {
+        if (packageFqName_.isEmpty()) {
+          packageFqName_ = other.packageFqName_;
+          packageFqName_.makeImmutable();
+          bitField0_ |= 0x00000001;
+        } else {
+          ensurePackageFqNameIsMutable();
+          packageFqName_.addAll(other.packageFqName_);
+        }
+        onChanged();
+      }
+      if (!other.declarationFqName_.isEmpty()) {
+        if (declarationFqName_.isEmpty()) {
+          declarationFqName_ = other.declarationFqName_;
+          declarationFqName_.makeImmutable();
+          bitField0_ |= 0x00000002;
+        } else {
+          ensureDeclarationFqNameIsMutable();
+          declarationFqName_.addAll(other.declarationFqName_);
+        }
+        onChanged();
+      }
+      if (other.hasMemberUniqId()) {
+        setMemberUniqId(other.getMemberUniqId());
+      }
+      if (other.hasFlags()) {
+        setFlags(other.getFlags());
+      }
+      if (other.hasDebugInfo()) {
+        setDebugInfo(other.getDebugInfo());
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
+      onChanged();
+      return this;
+    }
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      return true;
+    }
+
+    @java.lang.Override
+    public Builder mergeFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              int v = input.readInt32();
+              ensurePackageFqNameIsMutable();
+              packageFqName_.addInt(v);
+              break;
+            } // case 8
+            case 10: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              ensurePackageFqNameIsMutable();
+              while (input.getBytesUntilLimit() > 0) {
+                packageFqName_.addInt(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            } // case 10
+            case 16: {
+              int v = input.readInt32();
+              ensureDeclarationFqNameIsMutable();
+              declarationFqName_.addInt(v);
+              break;
+            } // case 16
+            case 18: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              ensureDeclarationFqNameIsMutable();
+              while (input.getBytesUntilLimit() > 0) {
+                declarationFqName_.addInt(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            } // case 18
+            case 24: {
+              memberUniqId_ = input.readInt64();
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 24
+            case 32: {
+              flags_ = input.readInt64();
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 32
+            case 40: {
+              debugInfo_ = input.readInt32();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 40
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.unwrapIOException();
+      } finally {
+        onChanged();
+      } // finally
+      return this;
+    }
+    private int bitField0_;
+
+    private org.jetbrains.kotlin.protobuf.Internal.IntList packageFqName_ = emptyIntList();
+    private void ensurePackageFqNameIsMutable() {
+      if (!packageFqName_.isModifiable()) {
+        packageFqName_ = makeMutableCopy(packageFqName_);
+      }
+      bitField0_ |= 0x00000001;
+    }
     /**
      * <code>repeated int32 package_fq_name = 1;</code>
      * @return A list containing the packageFqName.
      */
-    @java.lang.Override
     public java.util.List<java.lang.Integer>
         getPackageFqNameList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getPackageFqNameList());
+      packageFqName_.makeImmutable();
+      return packageFqName_;
     }
     /**
      * <code>repeated int32 package_fq_name = 1;</code>
      * @return The count of packageFqName.
      */
-    @java.lang.Override
     public int getPackageFqNameCount() {
-      return instance.getPackageFqNameCount();
+      return packageFqName_.size();
     }
     /**
      * <code>repeated int32 package_fq_name = 1;</code>
      * @param index The index of the element to return.
      * @return The packageFqName at the given index.
      */
-    @java.lang.Override
     public int getPackageFqName(int index) {
-      return instance.getPackageFqName(index);
+      return packageFqName_.getInt(index);
     }
     /**
      * <code>repeated int32 package_fq_name = 1;</code>
+     * @param index The index to set the value at.
      * @param value The packageFqName to set.
      * @return This builder for chaining.
      */
     public Builder setPackageFqName(
         int index, int value) {
-      copyOnWrite();
-      instance.setPackageFqName(index, value);
+
+      ensurePackageFqNameIsMutable();
+      packageFqName_.setInt(index, value);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -403,8 +694,11 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder addPackageFqName(int value) {
-      copyOnWrite();
-      instance.addPackageFqName(value);
+
+      ensurePackageFqNameIsMutable();
+      packageFqName_.addInt(value);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -414,8 +708,11 @@ public  final class CommonIdSignature extends
      */
     public Builder addAllPackageFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      copyOnWrite();
-      instance.addAllPackageFqName(values);
+      ensurePackageFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, packageFqName_);
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -423,47 +720,56 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder clearPackageFqName() {
-      copyOnWrite();
-      instance.clearPackageFqName();
+      packageFqName_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      onChanged();
       return this;
     }
 
+    private org.jetbrains.kotlin.protobuf.Internal.IntList declarationFqName_ = emptyIntList();
+    private void ensureDeclarationFqNameIsMutable() {
+      if (!declarationFqName_.isModifiable()) {
+        declarationFqName_ = makeMutableCopy(declarationFqName_);
+      }
+      bitField0_ |= 0x00000002;
+    }
     /**
      * <code>repeated int32 declaration_fq_name = 2;</code>
      * @return A list containing the declarationFqName.
      */
-    @java.lang.Override
     public java.util.List<java.lang.Integer>
         getDeclarationFqNameList() {
-      return java.util.Collections.unmodifiableList(
-          instance.getDeclarationFqNameList());
+      declarationFqName_.makeImmutable();
+      return declarationFqName_;
     }
     /**
      * <code>repeated int32 declaration_fq_name = 2;</code>
      * @return The count of declarationFqName.
      */
-    @java.lang.Override
     public int getDeclarationFqNameCount() {
-      return instance.getDeclarationFqNameCount();
+      return declarationFqName_.size();
     }
     /**
      * <code>repeated int32 declaration_fq_name = 2;</code>
      * @param index The index of the element to return.
      * @return The declarationFqName at the given index.
      */
-    @java.lang.Override
     public int getDeclarationFqName(int index) {
-      return instance.getDeclarationFqName(index);
+      return declarationFqName_.getInt(index);
     }
     /**
      * <code>repeated int32 declaration_fq_name = 2;</code>
+     * @param index The index to set the value at.
      * @param value The declarationFqName to set.
      * @return This builder for chaining.
      */
     public Builder setDeclarationFqName(
         int index, int value) {
-      copyOnWrite();
-      instance.setDeclarationFqName(index, value);
+
+      ensureDeclarationFqNameIsMutable();
+      declarationFqName_.setInt(index, value);
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -472,8 +778,11 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder addDeclarationFqName(int value) {
-      copyOnWrite();
-      instance.addDeclarationFqName(value);
+
+      ensureDeclarationFqNameIsMutable();
+      declarationFqName_.addInt(value);
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -483,8 +792,11 @@ public  final class CommonIdSignature extends
      */
     public Builder addAllDeclarationFqName(
         java.lang.Iterable<? extends java.lang.Integer> values) {
-      copyOnWrite();
-      instance.addAllDeclarationFqName(values);
+      ensureDeclarationFqNameIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, declarationFqName_);
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -492,18 +804,20 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder clearDeclarationFqName() {
-      copyOnWrite();
-      instance.clearDeclarationFqName();
+      declarationFqName_ = emptyIntList();
+      bitField0_ = (bitField0_ & ~0x00000002);
+      onChanged();
       return this;
     }
 
+    private long memberUniqId_ ;
     /**
      * <code>int64 member_uniq_id = 3;</code>
      * @return Whether the memberUniqId field is set.
      */
     @java.lang.Override
     public boolean hasMemberUniqId() {
-      return instance.hasMemberUniqId();
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>int64 member_uniq_id = 3;</code>
@@ -511,7 +825,7 @@ public  final class CommonIdSignature extends
      */
     @java.lang.Override
     public long getMemberUniqId() {
-      return instance.getMemberUniqId();
+      return memberUniqId_;
     }
     /**
      * <code>int64 member_uniq_id = 3;</code>
@@ -519,8 +833,10 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder setMemberUniqId(long value) {
-      copyOnWrite();
-      instance.setMemberUniqId(value);
+
+      memberUniqId_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -528,18 +844,20 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder clearMemberUniqId() {
-      copyOnWrite();
-      instance.clearMemberUniqId();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      memberUniqId_ = 0L;
+      onChanged();
       return this;
     }
 
+    private long flags_ ;
     /**
      * <code>int64 flags = 4 [default = 0];</code>
      * @return Whether the flags field is set.
      */
     @java.lang.Override
     public boolean hasFlags() {
-      return instance.hasFlags();
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>int64 flags = 4 [default = 0];</code>
@@ -547,7 +865,7 @@ public  final class CommonIdSignature extends
      */
     @java.lang.Override
     public long getFlags() {
-      return instance.getFlags();
+      return flags_;
     }
     /**
      * <code>int64 flags = 4 [default = 0];</code>
@@ -555,8 +873,10 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder setFlags(long value) {
-      copyOnWrite();
-      instance.setFlags(value);
+
+      flags_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -564,18 +884,20 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder clearFlags() {
-      copyOnWrite();
-      instance.clearFlags();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      flags_ = 0L;
+      onChanged();
       return this;
     }
 
+    private int debugInfo_ ;
     /**
      * <code>int32 debug_info = 5;</code>
      * @return Whether the debugInfo field is set.
      */
     @java.lang.Override
     public boolean hasDebugInfo() {
-      return instance.hasDebugInfo();
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <code>int32 debug_info = 5;</code>
@@ -583,7 +905,7 @@ public  final class CommonIdSignature extends
      */
     @java.lang.Override
     public int getDebugInfo() {
-      return instance.getDebugInfo();
+      return debugInfo_;
     }
     /**
      * <code>int32 debug_info = 5;</code>
@@ -591,8 +913,10 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder setDebugInfo(int value) {
-      copyOnWrite();
-      instance.setDebugInfo(value);
+
+      debugInfo_ = value;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -600,87 +924,59 @@ public  final class CommonIdSignature extends
      * @return This builder for chaining.
      */
     public Builder clearDebugInfo() {
-      copyOnWrite();
-      instance.clearDebugInfo();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      debugInfo_ = 0;
+      onChanged();
       return this;
     }
 
     // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
   }
-  @java.lang.Override
-  @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
-  protected final java.lang.Object dynamicMethod(
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite.MethodToInvoke method,
-      java.lang.Object arg0, java.lang.Object arg1) {
-    switch (method) {
-      case NEW_MUTABLE_INSTANCE: {
-        return new org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature();
-      }
-      case NEW_BUILDER: {
-        return new Builder();
-      }
-      case BUILD_MESSAGE_INFO: {
-          java.lang.Object[] objects = new java.lang.Object[] {
-            "bitField0_",
-            "packageFqName_",
-            "declarationFqName_",
-            "memberUniqId_",
-            "flags_",
-            "debugInfo_",
-          };
-          java.lang.String info =
-              "\u0004\u0005\u0000\u0001\u0001\u0005\u0005\u0000\u0002\u0000\u0001\'\u0002\'\u0003" +
-              "\u1002\u0000\u0004\u1002\u0001\u0005\u1004\u0002";
-          return newMessageInfo(DEFAULT_INSTANCE, info, objects);
-      }
-      // fall through
-      case GET_DEFAULT_INSTANCE: {
-        return DEFAULT_INSTANCE;
-      }
-      case GET_PARSER: {
-        org.jetbrains.kotlin.protobuf.Parser<org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature> parser = PARSER;
-        if (parser == null) {
-          synchronized (org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature.class) {
-            parser = PARSER;
-            if (parser == null) {
-              parser =
-                  new DefaultInstanceBasedParser<org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature>(
-                      DEFAULT_INSTANCE);
-              PARSER = parser;
-            }
-          }
-        }
-        return parser;
-    }
-    case GET_MEMOIZED_IS_INITIALIZED: {
-      return (byte) 1;
-    }
-    case SET_MEMOIZED_IS_INITIALIZED: {
-      return null;
-    }
-    }
-    throw new UnsupportedOperationException();
-  }
-
 
   // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature)
   private static final org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature DEFAULT_INSTANCE;
   static {
-    CommonIdSignature defaultInstance = new CommonIdSignature();
-    // New instances are implicitly immutable so no need to make
-    // immutable.
-    DEFAULT_INSTANCE = defaultInstance;
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.registerDefaultInstance(
-      CommonIdSignature.class, defaultInstance);
+    DEFAULT_INSTANCE = new org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature();
   }
 
   public static org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static volatile org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature> PARSER;
+  private static final org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature>
+      PARSER = new org.jetbrains.kotlin.protobuf.AbstractParser<CommonIdSignature>() {
+    @java.lang.Override
+    public CommonIdSignature parsePartialFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (org.jetbrains.kotlin.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
+    }
+  };
 
   public static org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature> parser() {
-    return DEFAULT_INSTANCE.getParserForType();
+    return PARSER;
   }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.protobuf.Parser<CommonIdSignature> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
 }

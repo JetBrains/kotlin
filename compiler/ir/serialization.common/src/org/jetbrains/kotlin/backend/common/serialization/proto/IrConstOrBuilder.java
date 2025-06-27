@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 public interface IrConstOrBuilder extends
     // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrConst)
-    org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+    org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
   /**
    * <code>bool null = 1;</code>
@@ -127,5 +127,5 @@ public interface IrConstOrBuilder extends
    */
   int getString();
 
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase getValueCase();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase getValueCase();
 }

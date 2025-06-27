@@ -66,7 +66,7 @@ dependencies {
     embedded(project(":core:descriptors.runtime")) { isTransitive = false }
     embedded(project(":core:util.runtime")) { isTransitive = false }
     embedded("javax.inject:javax.inject:1") { isTransitive = false }
-    embedded(protobufLite()) { isTransitive = false }
+    embedded(protobufFull()) { isTransitive = false }
 
     compileOnly("org.jetbrains:annotations:13.0")
 
