@@ -306,7 +306,7 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+                            useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive = true) ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
@@ -318,7 +318,7 @@ abstract class TypeCheckerStateForConstraintSystem(
 
                     is FlexibleTypeMarker ->
                         when {
-                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+                            useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive = false) ->
                                 // (Foo..Bar) <: T! -- (Foo!! .. Bar?) <: T
                                 createFlexibleType(
                                     subType.lowerBound().makeDefinitelyNotNullOrNotNull(),
@@ -418,7 +418,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
         val simplifiedSuperType = when {
-            typeVariable.isFlexible() && useRefinedBoundsForTypeVariableInFlexiblePosition() ->
+            typeVariable.isFlexible() && useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive = false) ->
                 createFlexibleType(
                     superType.lowerBoundIfFlexible().makeDefinitelyNotNullOrNotNull(),
                     superType.upperBoundIfFlexible().withNullability(true)

@@ -337,7 +337,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
      * In fact it may be done during the fix of KT-76065 (dropping JavaTypeParameterDefaultRepresentationWithDNN)
      */
-    fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
+    fun useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive: Boolean): Boolean
 
     /**
      * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)

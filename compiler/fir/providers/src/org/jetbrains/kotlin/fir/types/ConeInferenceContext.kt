@@ -679,9 +679,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (this as? ConeIntersectionType)?.upperBoundForApproximation
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = session.languageVersionSettings.supportsFeature(
-        LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
-    )
+    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive: Boolean): Boolean =
+        with(session.languageVersionSettings) {
+            supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ||
+                    aggressive && supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)
+        }
 
     override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
         require(this is ConeKotlinType)

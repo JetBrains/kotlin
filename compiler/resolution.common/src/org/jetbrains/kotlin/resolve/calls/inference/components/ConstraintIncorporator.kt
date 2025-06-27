@@ -82,7 +82,7 @@ class ConstraintIncorporator(
     context(c: Context)
     private fun directWithVariable(typeVariable: TypeVariableMarker, constraint: Constraint) {
         val shouldBeTypeVariableFlexible =
-            if (c.useRefinedBoundsForTypeVariableInFlexiblePosition())
+            if (c.useRefinedBoundsForTypeVariableInFlexiblePosition(aggressive = false))
                 false
             else
                 with(utilContext) { typeVariable.shouldBeFlexible() }

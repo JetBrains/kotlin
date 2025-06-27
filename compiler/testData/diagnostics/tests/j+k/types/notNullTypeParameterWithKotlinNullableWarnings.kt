@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // SKIP_JAVAC
 // LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// LATEST_LV_DIFFERENCE
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 

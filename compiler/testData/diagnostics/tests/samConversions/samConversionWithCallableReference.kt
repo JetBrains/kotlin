@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LATEST_LV_DIFFERENCE
 
 // FILE: Consumer.java
 public interface Consumer<T> {

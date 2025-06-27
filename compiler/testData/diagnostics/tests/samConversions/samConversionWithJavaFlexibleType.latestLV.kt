@@ -21,11 +21,11 @@ fun test(){
     }
 
     val sam : Supplier<String> = Supplier {
-        <!TYPE_MISMATCH!>JavaBox(null).a<!>
+        JavaBox(null).a
     }
 
     val sam2 = object : Supplier<String> {
-        override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>() = JavaBox(null).a
+        override fun get() = JavaBox(null).a
     }
 }
 

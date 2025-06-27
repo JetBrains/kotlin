@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN
+// LATEST_LV_DIFFERENCE
 // ISSUE: KT-67651
 // FULL_JDK
 
