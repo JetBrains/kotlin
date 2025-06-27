@@ -22,7 +22,7 @@
     </dependencies>
 
     <properties>
-        <kotlin.compiler.jdkHome>${jdk_1_7}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>
     </properties>
 
     <build>
