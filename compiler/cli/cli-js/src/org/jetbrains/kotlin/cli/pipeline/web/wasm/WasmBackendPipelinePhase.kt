@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -92,7 +93,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         writeCompilationResult(
             result = res,
             dir = outputDir,
-            fileNameBase = outputName
+            fileNameBase = outputName,
+            messageCollector = configuration.messageCollector
         )
         return res
     }
@@ -193,7 +195,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             writeCompilationResult(
                 result = res,
                 dir = outputDir,
-                fileNameBase = outputName
+                fileNameBase = outputName,
+                messageCollector = configuration.messageCollector
             )
 
             return res

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -471,7 +473,8 @@ ${generateExports(exports)}
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String
+    fileNameBase: String,
+    messageCollector: MessageCollector? = null
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -492,10 +495,17 @@ fun writeCompilationResult(
     }
     if (result.useDebuggerCustomFormatters) {
         val fileName = "custom-formatters.js"
-        val systemClassLoader = ClassLoader.getSystemClassLoader()
-        val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName) ?: error("Resource $fileName not found")
+        val classLoader = WasmCompilerResult::class.java.classLoader
+        val customFormattersInputStream = classLoader.getResourceAsStream(fileName)
 
-        Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
+        if (customFormattersInputStream == null) {
+            messageCollector?.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "Resource $fileName not found in classpath"
+            )
+        } else {
+            Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 
     if (result.dts != null) {
