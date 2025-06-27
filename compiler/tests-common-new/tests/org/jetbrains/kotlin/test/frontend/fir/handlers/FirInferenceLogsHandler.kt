@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -45,11 +46,13 @@ class FirInferenceLogsHandler(
         ensureNoStrayDumps()
         if (FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS !in testServices.moduleStructure.allDirectives || inferenceLoggers.isEmpty()) return
 
-        for (format in testServices.moduleStructure.allDirectives.inferenceLogsFormats) {
-            val dumper = format.dumper
-            val dumpFile = format.file
-            testServices.assertions.assertEqualsToFile(dumpFile, dumper.renderDump(inferenceLoggers))
-        }
+        testServices.assertions.assertAll(
+            testServices.moduleStructure.allDirectives.inferenceLogsFormats.map { format ->
+                val dumper = format.dumper
+                val dumpFile = format.file
+                { testServices.assertions.assertEqualsToFile(dumpFile, dumper.renderDump(inferenceLoggers)) }
+            }
+        )
     }
 
     private fun ensureNoStrayDumps() {
