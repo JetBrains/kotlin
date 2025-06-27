@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
+import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 

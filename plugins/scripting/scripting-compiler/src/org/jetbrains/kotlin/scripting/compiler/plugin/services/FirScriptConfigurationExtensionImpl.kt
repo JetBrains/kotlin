@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -261,14 +262,6 @@ private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: Sour
 
 private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
     definitionProvider?.getDefaultDefinition()?.compilationConfiguration
-
-fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
-    is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
-    is KtVirtualFileSourceFile -> VirtualFileScriptSource(virtualFile)
-    is KtIoFileSourceFile -> FileScriptSource(file)
-    is KtInMemoryTextSourceFile -> StringScriptSource(text.toString(), name)
-    else -> null
-}
 
 internal fun getOrLoadConfiguration(session: FirSession, file: KtSourceFile): ScriptCompilationConfiguration? {
     val service = checkNotNull(session.scriptDefinitionProviderService)
