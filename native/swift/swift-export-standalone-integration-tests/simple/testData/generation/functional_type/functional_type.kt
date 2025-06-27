@@ -36,6 +36,12 @@ fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
 // todo: support(as with functions - we can drop optional nothings from C representation)
 // fun consume_block_with_opt_never(block: (Int, Nothing?) -> Int): Nothing = TODO()
 
+// MODULE: optional_closure
+// EXPORT_TO_SWIFT
+// FILE: optional_closure.kt
+
+fun consume_opt_closure(arg: (()->Unit)?): Unit = TODO()
+
 // MODULE: functional_types
 // EXPORT_TO_SWIFT
 // FILE: functional_types.kt

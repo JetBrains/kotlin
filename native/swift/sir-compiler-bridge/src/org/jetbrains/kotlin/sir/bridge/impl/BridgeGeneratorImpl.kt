@@ -443,6 +443,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             is Bridge.AsObject,
             is Bridge.AsObjCBridged,
             is Bridge.AsExistential,
+            is Bridge.AsBlock,
                 -> Bridge.AsOptionalWrapper(bridge)
 
             is Bridge.AsOpaqueObject -> {
@@ -875,7 +876,7 @@ private sealed class Bridge(
 
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject || wrappedObject is AsExistential)
+                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject || wrappedObject is AsExistential || wrappedObject is AsBlock)
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
                         " ?? ${wrappedObject.inSwiftSources.renderNil()}"
             }
@@ -884,13 +885,12 @@ private sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential -> "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
+                    is AsObject, is AsExistential, is AsBlock -> "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
                         wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                     }; } }()"
                     is AsIs,
                     is AsOpaqueObject,
                     is AsOutError,
-                    is AsBlock,
                         -> TODO("not yet supported")
 
                     is AsOptionalWrapper, AsOptionalNothing -> error("there is not optional wrappers for optional")
@@ -969,7 +969,7 @@ private sealed class Bridge(
                 |}()""".trimMargin()
             }
 
-            override fun renderNil(): String = error("we do not support wrapping closures into optionals yet - PUT TICKET HERE")
+            override fun renderNil(): String = "nil"
         }
     }
 

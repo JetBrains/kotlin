@@ -139,7 +139,7 @@ public class SirTypeProviderImpl(
                         SirFunctionalType(
                             parameterTypes = listOfNotNull(kaType.receiverType?.translateType(ctx)) + kaType.parameterTypes.map { it.translateType(ctx) },
                             returnType = kaType.returnType.translateType(ctx)
-                        )
+                        ).optionalIfNeeded(kaType)
                     }
                 }
                 is KaTypeParameterType -> ctx.translateTypeParameterType(kaType)
