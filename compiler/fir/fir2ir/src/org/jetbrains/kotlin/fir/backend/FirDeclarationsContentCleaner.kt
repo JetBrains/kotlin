@@ -5,95 +5,105 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.types.resolvedType
 
-class FirDeclarationsContentCleaner(configuration: Fir2IrConfiguration) {
-    // Don't modify the fir tree in...
-    private val doNotClean: Boolean =
-        configuration.allowNonCachedDeclarations || // IDE debugger mode
-                configuration.skipBodies // KAPT mode
+sealed class FirDeclarationsContentCleaner {
+    abstract fun cleanFile(file: FirFile)
+    abstract fun cleanClass(regularClass: FirRegularClass)
+    abstract fun cleanAnonymousObject(anonymousObject: FirAnonymousObject)
+    abstract fun cleanConstructor(constructor: FirConstructor)
+    abstract fun cleanSimpleFunction(simpleFunction: FirSimpleFunction)
+    abstract fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction)
+    abstract fun cleanValueParameter(valueParameter: FirValueParameter)
+    abstract fun cleanProperty(property: FirProperty)
+    abstract fun cleanEnumEntry(enumEntry: FirEnumEntry)
+    abstract fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer)
 
-    fun cleanFile(file: FirFile) {
-        if (doNotClean) return
-        file.replaceControlFlowGraphReference(null)
-    }
+    companion object {
+        fun create(configuration: Fir2IrConfiguration): FirDeclarationsContentCleaner = when {
+            // Don't modify the fir tree in...
+            configuration.allowNonCachedDeclarations || // IDE debugger mode
+                    configuration.skipBodies // KAPT mode
+                -> DoNothing
 
-    fun cleanClass(regularClass: FirRegularClass) {
-        if (doNotClean) return
-        regularClass.replaceControlFlowGraphReference(null)
-    }
-
-    fun cleanAnonymousObject(anonymousObject: FirAnonymousObject) {
-        if (doNotClean) return
-        anonymousObject.replaceControlFlowGraphReference(null)
-    }
-
-    fun cleanConstructor(constructor: FirConstructor) {
-        if (doNotClean) return
-        constructor.replaceControlFlowGraphReference(null)
-        constructor.replaceBody(null)
-        constructor.replaceDelegatedConstructor(null)
-    }
-
-    fun cleanSimpleFunction(simpleFunction: FirSimpleFunction) {
-        if (doNotClean) return
-        simpleFunction.replaceControlFlowGraphReference(null)
-        simpleFunction.replaceBody(null)
-    }
-
-    fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        if (doNotClean) return
-        anonymousFunction.replaceControlFlowGraphReference(null)
-        anonymousFunction.replaceBody(null)
-    }
-
-    fun cleanValueParameter(valueParameter: FirValueParameter) {
-        if (doNotClean) return
-        valueParameter.replaceControlFlowGraphReference(null)
-        valueParameter.defaultValue?.let { defaultValue ->
-            val stub = buildExpressionStub {
-                source = defaultValue.source
-                coneTypeOrNull = defaultValue.resolvedType
-            }
-            valueParameter.replaceInitializer(stub)
+            else -> CleanBodies
         }
     }
 
-    fun cleanProperty(property: FirProperty) {
-        if (doNotClean) return
-        property.replaceInitializer(null)
-        property.replaceControlFlowGraphReference(null)
-        property.getter?.let { cleanPropertyAccessor(it) }
-        property.setter?.let { cleanPropertyAccessor(it) }
+    object DoNothing : FirDeclarationsContentCleaner() {
+        override fun cleanFile(file: FirFile) {}
+        override fun cleanClass(regularClass: FirRegularClass) {}
+        override fun cleanAnonymousObject(anonymousObject: FirAnonymousObject) {}
+        override fun cleanConstructor(constructor: FirConstructor) {}
+        override fun cleanSimpleFunction(simpleFunction: FirSimpleFunction) {}
+        override fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction) {}
+        override fun cleanValueParameter(valueParameter: FirValueParameter) {}
+        override fun cleanProperty(property: FirProperty) {}
+        override fun cleanEnumEntry(enumEntry: FirEnumEntry) {}
+        override fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {}
     }
 
-    fun cleanPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
-        if (doNotClean) return
-        propertyAccessor.replaceControlFlowGraphReference(null)
-        propertyAccessor.replaceBody(null)
-    }
+    object CleanBodies : FirDeclarationsContentCleaner() {
+        override fun cleanFile(file: FirFile) {
+            file.replaceControlFlowGraphReference(null)
+        }
 
-    fun cleanEnumEntry(enumEntry: FirEnumEntry) {
-        if (doNotClean) return
-        enumEntry.replaceInitializer(null)
-    }
+        override fun cleanClass(regularClass: FirRegularClass) {
+            regularClass.replaceControlFlowGraphReference(null)
+        }
 
-    fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
-        if (doNotClean) return
-        anonymousInitializer.replaceControlFlowGraphReference(null)
-        anonymousInitializer.replaceBody(null)
+        override fun cleanAnonymousObject(anonymousObject: FirAnonymousObject) {
+            anonymousObject.replaceControlFlowGraphReference(null)
+        }
+
+        override fun cleanConstructor(constructor: FirConstructor) {
+            constructor.replaceControlFlowGraphReference(null)
+            constructor.replaceBody(null)
+            constructor.replaceDelegatedConstructor(null)
+        }
+
+        override fun cleanSimpleFunction(simpleFunction: FirSimpleFunction) {
+            simpleFunction.replaceControlFlowGraphReference(null)
+            simpleFunction.replaceBody(null)
+        }
+
+        override fun cleanAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+            anonymousFunction.replaceControlFlowGraphReference(null)
+            anonymousFunction.replaceBody(null)
+        }
+
+        override fun cleanValueParameter(valueParameter: FirValueParameter) {
+            valueParameter.replaceControlFlowGraphReference(null)
+            valueParameter.defaultValue?.let { defaultValue ->
+                val stub = buildExpressionStub {
+                    source = defaultValue.source
+                    coneTypeOrNull = defaultValue.resolvedType
+                }
+                valueParameter.replaceInitializer(stub)
+            }
+        }
+
+        override fun cleanProperty(property: FirProperty) {
+            property.replaceInitializer(null)
+            property.replaceControlFlowGraphReference(null)
+            property.getter?.let { cleanPropertyAccessor(it) }
+            property.setter?.let { cleanPropertyAccessor(it) }
+        }
+
+        private fun cleanPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+            propertyAccessor.replaceControlFlowGraphReference(null)
+            propertyAccessor.replaceBody(null)
+        }
+
+        override fun cleanEnumEntry(enumEntry: FirEnumEntry) {
+            enumEntry.replaceInitializer(null)
+        }
+
+        override fun cleanAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+            anonymousInitializer.replaceControlFlowGraphReference(null)
+            anonymousInitializer.replaceBody(null)
+        }
     }
 }
