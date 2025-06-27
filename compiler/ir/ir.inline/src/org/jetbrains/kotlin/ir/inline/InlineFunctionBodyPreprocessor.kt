@@ -170,7 +170,9 @@ internal class InlineFunctionBodyPreprocessor(
             return copier.typeOfNodes[expression]?.let { oldType ->
                 // We should neither erase nor substitute non-reified type parameters in the `typeOf` call so that reflection is able
                 // to create a proper KTypeParameter for it. See KT-60175, KT-30279.
-                strategy.postProcessTypeOf(expression, nonReifiedTypeParameterUnsubsitutor.substitute(oldType))
+                expression.apply {
+                    typeArguments[0] = nonReifiedTypeParameterUnsubsitutor.substitute(oldType)
+                }
             } ?: expression
         }
     }
