@@ -257,7 +257,7 @@ private val KtFakeSourceElementKind.shouldIgnoreSimpleDiagnostic: Boolean
 
 fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?, session: FirSession): KtDiagnostic? =
     when (val symbol = this) {
-        is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId, session)
+        is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId?.classId, session)
         is FirClassLikeSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(
             source,
             symbol,

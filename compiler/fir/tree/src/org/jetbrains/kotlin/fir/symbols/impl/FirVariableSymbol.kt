@@ -97,8 +97,8 @@ sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbo
 }
 
 class FirLocalPropertySymbol() : FirPropertySymbol() {
-    override val callableId: CallableId
-        get() = CallableId(name)
+    override val callableId: CallableId?
+        get() = null
 }
 
 open class FirMemberPropertySymbol(override val callableId: CallableId) : FirPropertySymbol()
@@ -132,7 +132,7 @@ class FirBackingFieldSymbol : FirVariableSymbol<FirBackingField>() {
 }
 
 class FirDelegateFieldSymbol(val correspondingPropertySymbol: FirPropertySymbol) : FirVariableSymbol<FirProperty>() {
-    override val callableId: CallableId
+    override val callableId: CallableId?
         get() = correspondingPropertySymbol.callableId
 }
 

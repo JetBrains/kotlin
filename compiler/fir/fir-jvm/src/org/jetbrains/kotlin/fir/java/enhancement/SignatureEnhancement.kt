@@ -179,7 +179,7 @@ class FirSignatureEnhancement(
                     }
                 }
 
-                val symbol = FirFieldSymbol(original.callableId)
+                val symbol = FirFieldSymbol(original.callableId!!)
                 buildJavaField {
                     this.containingClassSymbol = owner.symbol
                     source = firElement.source

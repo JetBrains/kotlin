@@ -278,7 +278,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
             val containingClass = dispatchReceiverLookupTag.toRegularClassSymbol(session)!!
             FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                 session,
-                FirMemberPropertySymbol(CallableId(containingClass.classId, originalSymbol.callableId.callableName)),
+                FirMemberPropertySymbol(CallableId(containingClass.classId, originalSymbol.name)),
                 firProperty,
                 derivedClassLookupTag = dispatchReceiverLookupTag,
                 newDispatchReceiverType = containingClass.defaultType(),

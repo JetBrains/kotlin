@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -291,7 +292,9 @@ class FirRenderer(
                     idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
                 }
                 is FirVariable -> {
-                    idRenderer.renderCallableId(callableDeclaration.symbol.callableId)
+                    idRenderer.renderCallableId(callableDeclaration.symbol.let {
+                        it.callableId ?: CallableId(it.name)
+                    })
                 }
                 else -> {}
             }
@@ -954,13 +957,15 @@ class FirRenderer(
 
         override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference) {
             print("F|")
-            print(backingFieldReference.resolvedSymbol.fir.propertySymbol.callableId)
+            print(backingFieldReference.resolvedSymbol.fir.propertySymbol.let { it.callableId ?: CallableId(it.name) })
             print("|")
         }
 
         override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
             print("D|")
-            print(delegateFieldReference.resolvedSymbol.callableId)
+            print(delegateFieldReference.resolvedSymbol.let {
+                it.callableId ?: CallableId(it.name)
+            })
             print("|")
         }
 

@@ -173,7 +173,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             map: MutableMap<CallableId, List<S>>
         ) {
             val callableId = symbol.callableId
-            map.merge(callableId, listOf(symbol)) { a, b -> a + b }
+            map.merge(callableId!!, listOf(symbol)) { a, b -> a + b }
             data.state.callableContainerMap[symbol] = data.file
         }
 

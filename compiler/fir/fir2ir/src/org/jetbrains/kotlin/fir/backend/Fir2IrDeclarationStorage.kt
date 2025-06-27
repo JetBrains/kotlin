@@ -1441,7 +1441,7 @@ class Fir2IrDeclarationStorage(
         val callableOrigin = callableDeclaration.origin
         val parentLookupTag = fakeOverrideOwnerLookupTag ?: callableDeclaration.containingClassLookupTag()
         return findIrParent(
-            callableId.packageName,
+            callableId!!.packageName,
             parentLookupTag,
             firBasedSymbol,
             callableOrigin

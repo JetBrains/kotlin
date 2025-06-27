@@ -451,7 +451,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                     it.fir.classKind.isSingleton,
                     it.ownTypeParameterSymbols.size
                 )
-                is FirVariableSymbol<*> -> WhenMissingCase.EnumCheckIsMissing(it.callableId)
+                is FirVariableSymbol<*> -> WhenMissingCase.EnumCheckIsMissing(it.callableId!!)
                 else -> null
             }
         }

@@ -34,7 +34,7 @@ internal data class FirJsStableName(
                             else -> false
                         }
                     } else {
-                        !symbol.callableId.isLocal && symbol.effectiveVisibility.publicApi
+                        symbol.callableId?.isLocal == false && symbol.effectiveVisibility.publicApi
                     }
                 }
                 else -> false

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.util.Multimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.util.plusAssign
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
@@ -316,7 +317,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val resolvedSymbol = (reference as? FirResolvedNamedReference)?.resolvedSymbol
             val callable = resolvedSymbol?.fir as? FirCallableDeclaration ?: return@report ""
             buildString {
-                append(callable.symbol.callableId.asFqNameForDebugInfo().asString())
+                append(callable.symbol.let { it.callableId ?: CallableId(it.name) }.asFqNameForDebugInfo().asString())
                 append(" in ")
                 if (callable.containingClassForStaticMemberAttr == null) {
                     append("implicit ")
@@ -359,7 +360,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     private fun FirBasedSymbol<*>.fqNameUnsafe(): FqNameUnsafe? = when (this) {
         is FirClassLikeSymbol<*> -> classId.asSingleFqName().toUnsafe()
-        is FirCallableSymbol<*> -> callableId.asFqNameForDebugInfo().toUnsafe()
+        is FirCallableSymbol<*> -> callableId?.asFqNameForDebugInfo()?.toUnsafe()
         else -> null
     }
 }

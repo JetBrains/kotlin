@@ -335,13 +335,13 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         val returnTypeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
         calleeReference = when {
             returnTypeRef is FirErrorTypeRef -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate, returnTypeRef.diagnostic,
+                fakeSource, symbol.name, candidate, returnTypeRef.diagnostic,
             )
 
-            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.callableId.callableName, candidate)
+            candidate.isSuccessful -> FirNamedReferenceWithCandidate(fakeSource, symbol.name, candidate)
 
             else -> FirErrorReferenceWithCandidate(
-                fakeSource, symbol.callableId.callableName, candidate,
+                fakeSource, symbol.name, candidate,
                 createConeDiagnosticForCandidateWithError(candidate.applicability, candidate),
             )
         }

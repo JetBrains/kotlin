@@ -50,7 +50,7 @@ fun FirAnnotation.forEachAnnotationTarget(session: FirSession, action: (Name) ->
     fun take(arg: FirExpression) {
         val callableSymbol = arg.toResolvedCallableSymbol(session) ?: return
         if (callableSymbol.containingClassLookupTag()?.classId == StandardClassIds.AnnotationTarget) {
-            action(callableSymbol.callableId.callableName)
+            action(callableSymbol.name)
         }
     }
 
