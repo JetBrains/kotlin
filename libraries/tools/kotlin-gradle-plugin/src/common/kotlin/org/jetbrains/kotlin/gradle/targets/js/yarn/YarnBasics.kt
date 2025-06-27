@@ -74,6 +74,10 @@ abstract class YarnBasics internal constructor(
                 addAll(args)
                 if (logger.isDebugEnabled) add("--verbose")
                 if (yarn.ignoreScripts) add("--ignore-scripts")
+                add("--network-concurrency")
+                add("1")
+                add("--mutex")
+                add("network")
             }.filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.nodeExecutable
