@@ -30,7 +30,17 @@ abstract class YarnBasics : NpmApiExecution<YarnEnvironment> {
                 )
                 .plus(
                     if (yarn.ignoreScripts) "--ignore-scripts" else ""
-                ).filter { it.isNotEmpty() }
+                )
+                .plus(
+                    // It is necessary for different Yarn processes to not interfere with each other
+                    listOf(
+                        "--network-concurrency",
+                        "1",
+                        "--mutex",
+                        "network",
+                    )
+                )
+                .filter { it.isNotEmpty() }
 
             val nodeExecutable = nodeJs.nodeExecutable
             if (!yarn.ignoreScripts) {
