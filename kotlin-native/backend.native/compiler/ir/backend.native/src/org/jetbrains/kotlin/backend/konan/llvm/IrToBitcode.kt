@@ -215,7 +215,6 @@ private interface CodeContext {
 
 internal class CodeGeneratorVisitor(
         val generationState: NativeGenerationState,
-        val irBuiltins: IrBuiltIns,
         val lifetimes: Map<IrElement, Lifetime>
 ) : IrVisitorVoid() {
     private val context = generationState.context
@@ -2344,8 +2343,8 @@ internal class CodeGeneratorVisitor(
     }
 
     private inner class SuspensionPointScope(val suspensionPointId: IrVariable,
-                                             val bbResume: LLVMBasicBlockRef,
-                                             val bbResumeId: Int): InnerScopeImpl() {
+                                             val bbResume: LLVMBasicBlockRef
+    ): InnerScopeImpl() {
         override fun genGetValue(value: IrValueDeclaration, resultSlot: LLVMValueRef?): LLVMValueRef {
             if (value == suspensionPointId) {
                 return functionGenerationContext.blockAddress(bbResume)
@@ -2356,9 +2355,9 @@ internal class CodeGeneratorVisitor(
 
     private fun evaluateSuspensionPoint(expression: IrSuspensionPoint): LLVMValueRef {
         val bbResume = functionGenerationContext.basicBlock("resume", expression.resumeResult.startLocation)
-        val id = currentCodeContext.addResumePoint(bbResume)
+        currentCodeContext.addResumePoint(bbResume)
 
-        using (SuspensionPointScope(expression.suspensionPointIdParameter, bbResume, id)) {
+        using (SuspensionPointScope(expression.suspensionPointIdParameter, bbResume)) {
             continuationBlock(expression.type, expression.result.startLocation).run {
                 val normalResult = evaluateExpression(expression.result)
                 functionGenerationContext.jump(this, normalResult)

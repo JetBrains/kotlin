@@ -260,7 +260,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
 private class InlineClassTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
     private val symbols = context.symbols
-    private val irBuiltIns = context.irBuiltIns
 
     private val builtBoxUnboxFunctions = mutableListOf<IrFunction>()
 
@@ -378,7 +377,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
     private fun buildBoxFunction(irClass: IrClass, function: IrFunction) {
         val builder = context.createIrBuilder(function.symbol)
-        val cache = BoxCache.values().toList().atMostOne { context.irBuiltIns.getKotlinClass(it) == irClass }
+        val cache = BoxCache.entries.atMostOne { context.irBuiltIns.getKotlinClass(it) == irClass }
 
         function.body = builder.irBlockBody(function) {
             val valueToBox = function.parameters[0]

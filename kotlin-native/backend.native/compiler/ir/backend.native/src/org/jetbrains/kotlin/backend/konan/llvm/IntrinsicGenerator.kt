@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
@@ -153,9 +152,6 @@ private fun getIntrinsicType(function: IrFunction): IntrinsicType {
     return IntrinsicType.valueOf(value)
 }
 
-internal fun tryGetConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType? =
-        if (constructor.owner.isConstantConstructorIntrinsic) getConstantConstructorIntrinsicType(constructor) else null
-
 private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
     val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
     val value = annotation.getAnnotationStringValue()!!
@@ -294,7 +290,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             }
 
     fun evaluateConstantConstructorFields(constant: IrConstantObject, args: List<ConstValue>) : List<ConstValue> {
-        return when (val intrinsicType = getConstantConstructorIntrinsicType(constant.constructor)) {
+        return when (getConstantConstructorIntrinsicType(constant.constructor)) {
             ConstantConstructorIntrinsicType.KCLASS_IMPL -> {
                 require(args.isEmpty())
                 val typeArgument = constant.typeArguments[0]
@@ -320,9 +316,6 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun reportNonLoweredIntrinsic(intrinsicType: IntrinsicType): Nothing =
             context.reportCompilationError("Intrinsic of type $intrinsicType should be handled by previous lowering phase")
-
-    private fun reportNonLoweredIntrinsic(intrinsicType: ConstantConstructorIntrinsicType): Nothing =
-            context.reportCompilationError("Constant constructor intrinsic of type $intrinsicType should be handled by previous lowering phase")
 
 
     private fun FunctionGenerationContext.emitIdentity(args: List<LLVMValueRef>): LLVMValueRef =
