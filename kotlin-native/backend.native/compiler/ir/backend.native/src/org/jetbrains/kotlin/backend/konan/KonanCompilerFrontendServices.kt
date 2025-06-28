@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
+import org.jetbrains.kotlin.backend.FrontendContext
+import org.jetbrains.kotlin.backend.FrontendServices
+import org.jetbrains.kotlin.backend.NativeFrontendConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
@@ -15,7 +17,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal fun StorageComponentContainer.initContainer(config: NativeFrontendConfig, configuration: CompilerConfiguration) {
     useImpl<FrontendServices>()
@@ -47,7 +48,7 @@ internal fun StorageComponentContainer.initContainer(config: NativeFrontendConfi
                 get() = configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
 
             override val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
-                get() = config.unitSuspendFunctionObjCExport
+                get() = TODO()
 
             override val ignoreInterfaceMethodCollisions: Boolean
                 get() = configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
@@ -62,5 +63,3 @@ internal fun ComponentProvider.postprocessComponents(context: FrontendContext, f
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }
-
-class FrontendServices(val deprecationResolver: DeprecationResolver)

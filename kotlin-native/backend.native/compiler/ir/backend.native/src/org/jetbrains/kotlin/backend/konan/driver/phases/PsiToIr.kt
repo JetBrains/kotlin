@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
-import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jebrains.kotlin.backend.native.BasicPhaseContext
+import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.psiToIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc

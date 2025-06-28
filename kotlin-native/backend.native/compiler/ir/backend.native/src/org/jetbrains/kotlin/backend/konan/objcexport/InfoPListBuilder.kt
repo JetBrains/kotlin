@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jebrains.kotlin.backend.native.getExportedDependencies
+import org.jebrains.kotlin.backend.native.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -173,8 +176,8 @@ internal class InfoPListBuilder(
 
         val mainPackage = mainPackageGuesser.guess(
                 moduleDescriptor,
-                moduleDescriptor.getIncludedLibraryDescriptors(config),
-                moduleDescriptor.getExportedDependencies(config),
+                moduleDescriptor.getIncludedLibraryDescriptors(config.resolve),
+                moduleDescriptor.getExportedDependencies(config.resolve),
         )
         val bundleID = mainPackage.child(Name.identifier(bundleName)).asString()
 

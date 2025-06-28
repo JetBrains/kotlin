@@ -12,7 +12,28 @@ import llvm.LLVMContextCreate
 import llvm.LLVMContextDispose
 import llvm.LLVMDisposeModule
 import llvm.LLVMOpaqueModule
+import org.jebrains.kotlin.backend.native.BaseNativeConfig
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jebrains.kotlin.backend.native.getIncludedLibraryDescriptors
+import org.jebrains.kotlin.backend.native.startTopLevel
+import org.jetbrains.kotlin.backend.Fir2IrInput
+import org.jetbrains.kotlin.backend.FirOutput
+import org.jetbrains.kotlin.backend.FrontendContext
+import org.jetbrains.kotlin.backend.FrontendContextImpl
+import org.jetbrains.kotlin.backend.FrontendPhaseOutput
+import org.jetbrains.kotlin.backend.NativeFrontendConfig
+import org.jetbrains.kotlin.backend.SerializerOutput
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.driver.FirSerializerInput
+import org.jetbrains.kotlin.backend.driver.SpecialBackendChecksInput
+import org.jetbrains.kotlin.backend.driver.runFir2Ir
+import org.jetbrains.kotlin.backend.driver.runFir2IrSerializer
+import org.jetbrains.kotlin.backend.driver.runFirFrontend
+import org.jetbrains.kotlin.backend.driver.runFirSerializer
+import org.jetbrains.kotlin.backend.driver.runPreSerializationLowerings
+import org.jetbrains.kotlin.backend.driver.runSpecialBackendChecks
+import org.jetbrains.kotlin.backend.driver.writeKlib
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
@@ -293,7 +314,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
-            frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
+            frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config.resolve).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
             psiToIrOutput.irBuiltIns,
             psiToIrOutput.irModules,

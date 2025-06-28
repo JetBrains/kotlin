@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
+import org.jebrains.kotlin.backend.native.BaseNativeConfig
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy

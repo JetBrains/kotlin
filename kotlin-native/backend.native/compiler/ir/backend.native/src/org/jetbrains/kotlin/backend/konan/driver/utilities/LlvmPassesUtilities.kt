@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.PhaseContext
+import org.jebrains.kotlin.backend.native.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity

@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.PhaseContext
+import org.jebrains.kotlin.backend.native.BasicPhaseContext
+import org.jebrains.kotlin.backend.native.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule

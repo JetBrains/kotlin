@@ -5,63 +5,29 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.FrontendPhaseOutput
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.Fir2IrOutput
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
-import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.backend.konan.objcexport.createTestBundle
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.inline.konan.nativeLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-internal data class SpecialBackendChecksInput(
-        val irModule: IrModuleFragment,
-        val irBuiltIns: IrBuiltIns,
-        val symbols: KonanSymbols,
-        val target: KonanTarget,
-) : KotlinBackendIrHolder {
-    override val kotlinIr: IrElement
-        get() = irModule
-}
-
-internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, SpecialBackendChecksInput>(
-        "SpecialBackendChecks",
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
-) { context, input ->
-    SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns, input.target).lower(input.irModule)
-}
 
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
         name = "CopyDefaultValuesToActual",
@@ -69,42 +35,6 @@ internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<Pha
         postactions = getDefaultIrActions(),
 ) { _, input ->
     ExpectToActualDefaultValueCopier(input.first, input.second).process()
-}
-
-internal fun <T : PhaseContext> PhaseEngine<T>.runSpecialBackendChecks(input: SpecialBackendChecksInput) {
-    runPhase(SpecialBackendChecksPhase, input)
-}
-
-internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
-    val diagnosticReporter = DiagnosticReporterFactory.createReporter(environment.configuration.messageCollector)
-    val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
-            diagnosticReporter,
-            environment.configuration.languageVersionSettings
-    )
-    val loweringContext = NativePreSerializationLoweringContext(
-            fir2IrOutput.fir2irActualizedResult.irBuiltIns,
-            environment.configuration,
-            irDiagnosticReporter,
-    )
-    val preSerializationLowered = newEngine(loweringContext) { engine ->
-        engine.runPreSerializationLoweringPhases(
-                fir2IrOutput.fir2irActualizedResult,
-                nativeLoweringsOfTheFirstPhase(environment.configuration.languageVersionSettings),
-        )
-    }
-    // TODO: After KT-73624, generate native diagnostic tests for `compiler/testData/diagnostics/irInliner/syntheticAccessors`
-    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticReporter,
-            environment.configuration.messageCollector,
-            environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
-    )
-    if (diagnosticReporter.hasErrors) {
-        throw KonanCompilationException("Compilation failed: there were some diagnostics during IR Inliner")
-    }
-
-    return fir2IrOutput.copy(
-            fir2irActualizedResult = preSerializationLowered,
-    )
 }
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(

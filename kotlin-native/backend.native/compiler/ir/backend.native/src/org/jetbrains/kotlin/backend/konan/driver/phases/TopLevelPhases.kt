@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.FrontendContext
+import org.jetbrains.kotlin.backend.FrontendPhaseInput
+import org.jetbrains.kotlin.backend.FrontendPhaseOutput
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
+import org.jetbrains.kotlin.backend.driver.SpecialBackendChecksInput
+import org.jetbrains.kotlin.backend.driver.runSpecialBackendChecks
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary

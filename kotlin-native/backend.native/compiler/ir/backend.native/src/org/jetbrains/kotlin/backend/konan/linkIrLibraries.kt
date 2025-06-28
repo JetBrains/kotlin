@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jebrains.kotlin.backend.native.getExportedDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
@@ -126,7 +127,7 @@ internal fun IrLinkerContext.linkIrLibraries(
     )
 
     val irDeserializer = run {
-        val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
+        val exportedDependencies = (moduleDescriptor.getExportedDependencies(config.resolve) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(

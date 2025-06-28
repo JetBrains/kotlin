@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
@@ -17,7 +19,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
@@ -563,58 +565,58 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
-        specializeSharedVariableBoxes,
-        interopPhase,
-        specialInteropIntrinsicsPhase,
-        dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
-        removeExpectDeclarationsPhase,
-        stripTypeAliasDeclarationsPhase,
-        assertionRemoverPhase,
-        volatilePhase,
-        delegatedPropertyOptimizationPhase,
-        propertyReferencePhase,
-        functionReferencePhase,
-        postInlinePhase,
-        contractsDslRemovePhase,
-        annotationImplementationPhase,
-        rangeContainsLoweringPhase,
-        forLoopsPhase,
-        flattenStringConcatenationPhase,
-        stringConcatenationPhase,
-        stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
-        enumConstructorsPhase,
-        initializersPhase,
-        inventNamesForLocalClasses,
-        localFunctionsPhase,
-        tailrecPhase,
-        defaultParameterExtentPhase,
-        innerClassPhase,
-        dataClassesPhase,
-        ifNullExpressionsFusionPhase,
-        staticCallableReferenceOptimizationPhase,
-        singleAbstractMethodPhase,
-        enumWhenPhase,
-        finallyBlocksPhase,
-        enumClassPhase,
-        enumUsagePhase,
-        varargPhase,
-        kotlinNothingValueExceptionPhase,
-        coroutinesPhase,
+    specializeSharedVariableBoxes,
+    interopPhase,
+    specialInteropIntrinsicsPhase,
+    dumpTestsPhase.takeIf { this.configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
+    removeExpectDeclarationsPhase,
+    stripTypeAliasDeclarationsPhase,
+    assertionRemoverPhase,
+    volatilePhase,
+    delegatedPropertyOptimizationPhase,
+    propertyReferencePhase,
+    functionReferencePhase,
+    postInlinePhase,
+    contractsDslRemovePhase,
+    annotationImplementationPhase,
+    rangeContainsLoweringPhase,
+    forLoopsPhase,
+    flattenStringConcatenationPhase,
+    stringConcatenationPhase,
+    stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
+    enumConstructorsPhase,
+    initializersPhase,
+    inventNamesForLocalClasses,
+    localFunctionsPhase,
+    tailrecPhase,
+    defaultParameterExtentPhase,
+    innerClassPhase,
+    dataClassesPhase,
+    ifNullExpressionsFusionPhase,
+    staticCallableReferenceOptimizationPhase,
+    singleAbstractMethodPhase,
+    enumWhenPhase,
+    finallyBlocksPhase,
+    enumClassPhase,
+    enumUsagePhase,
+    varargPhase,
+    kotlinNothingValueExceptionPhase,
+    coroutinesPhase,
         // Either of these could be turned off without losing correctness.
-        coroutinesLivenessAnalysisPhase, // This is more optimal
-        coroutinesLivenessAnalysisFallbackPhase, // While this is simple
-        expressionBodyTransformPhase,
-        objectClassesPhase,
-        staticInitializersPhase,
-        optimizeCastsPhase.takeIf { this.genericSafeCasts },
-        typeOperatorPhase,
-        builtinOperatorPhase,
-        bridgesPhase,
-        exportInternalAbiPhase.takeIf { this.produce.isCache },
-        useInternalAbiPhase,
-        eraseGenericCallsReturnTypesPhase,
-        autoboxPhase,
-        constructorsLoweringPhase,
+    coroutinesLivenessAnalysisPhase, // This is more optimal
+    coroutinesLivenessAnalysisFallbackPhase, // While this is simple
+    expressionBodyTransformPhase,
+    objectClassesPhase,
+    staticInitializersPhase,
+    optimizeCastsPhase.takeIf { this.genericSafeCasts },
+    typeOperatorPhase,
+    builtinOperatorPhase,
+    bridgesPhase,
+    exportInternalAbiPhase.takeIf { this.produce.isCache },
+    useInternalAbiPhase,
+    eraseGenericCallsReturnTypesPhase,
+    autoboxPhase,
+    constructorsLoweringPhase,
 )
 
 private fun createFileLoweringPhase(

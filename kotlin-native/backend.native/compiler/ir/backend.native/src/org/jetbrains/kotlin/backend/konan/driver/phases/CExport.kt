@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.getExportedDependencies
+import org.jebrains.kotlin.backend.native.getExportedDependencies
+import org.jetbrains.kotlin.backend.FrontendPhaseOutput
 import java.io.File
 
 internal val BuildCExports = createSimpleNamedCompilerPhase<IrLinkerContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
@@ -24,7 +25,7 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<IrLinkerContext, Fro
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
     CAdapterGenerator(
             context.symbolTable!!,
-            input.moduleDescriptor.getExportedDependencies(context.config),
+            input.moduleDescriptor.getExportedDependencies(context.config.resolve),
             typeTranslator
     ).buildExports(input.moduleDescriptor)
 }

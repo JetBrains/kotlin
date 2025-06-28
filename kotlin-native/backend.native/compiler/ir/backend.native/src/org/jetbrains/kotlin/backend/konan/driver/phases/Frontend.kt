@@ -5,56 +5,27 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import com.intellij.openapi.project.Project
+import org.jebrains.kotlin.backend.native.BaseNativeConfig
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
-import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.BasicBackendPhaseContext
+import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.FrontendContext
+import org.jetbrains.kotlin.backend.FrontendContextImpl
+import org.jetbrains.kotlin.backend.FrontendPhaseInput
+import org.jetbrains.kotlin.backend.FrontendPhaseOutput
+import org.jetbrains.kotlin.backend.NativeFrontendConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-sealed class FrontendPhaseOutput {
-    object ShouldNotGenerateCode : FrontendPhaseOutput()
-
-    data class Full(
-            val moduleDescriptor: ModuleDescriptor,
-            val bindingContext: BindingContext,
-            val frontendServices: FrontendServices,
-            val environment: KotlinCoreEnvironment,
-    ) : FrontendPhaseOutput()
-}
-
-interface FrontendContext : PhaseContext {
-    var frontendServices: FrontendServices
-    val config: NativeFrontendConfig
-}
-
-internal class FrontendContextImpl(
-        override val config: NativeFrontendConfig,
-) : BasicPhaseContext(config.configuration), FrontendContext {
-    override lateinit var frontendServices: FrontendServices
-}
-
-data class FrontendPhaseInput(
-        val environment: KotlinCoreEnvironment,
-        val project: Project,
-)
-
 internal inline fun <C : PhaseContext, T> PhaseEngine<C>.startFrontendEngine(
-        baseNativeConfig: BaseNativeConfig,
-        body: (PhaseEngine<FrontendContext>) -> T): T
+    baseNativeConfig: BaseNativeConfig,
+    body: (PhaseEngine<FrontendContext>) -> T): T
 {
     return useContext(FrontendContextImpl(NativeFrontendConfig(baseNativeConfig)), body)
 }

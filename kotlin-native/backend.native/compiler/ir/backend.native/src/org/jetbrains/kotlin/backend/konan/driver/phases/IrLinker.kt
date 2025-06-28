@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.konan.IrLinkerOutput
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jebrains.kotlin.backend.native.BasicPhaseContext
+import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.linkIrLibraries
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc

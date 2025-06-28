@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.BaseNativeConfig
-import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
+import org.jebrains.kotlin.backend.native.BaseNativeConfig
+import org.jebrains.kotlin.backend.native.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.PhaseContext
+import org.jebrains.kotlin.backend.native.PhaseContext
 
 interface BackendPhaseContext : PhaseContext, ConfigChecks
 
