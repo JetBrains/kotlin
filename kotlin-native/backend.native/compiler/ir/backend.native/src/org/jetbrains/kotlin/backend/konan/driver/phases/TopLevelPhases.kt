@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -37,24 +38,30 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
+internal fun PhaseEngine<PhaseContext>.runFrontend(
+        config: KonanConfig,
+        environment: KotlinCoreEnvironment,
+        project: Project,
+): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
         throw Error("Attempt to run K1 from unsupported LV=${languageVersion}")
     }
 
-    val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
+    val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, FrontendPhaseInput(environment, project)) }
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
 internal fun PhaseEngine<PhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
+        project: Project,
         isProducingLibrary: Boolean,
-): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary, {}).first
+): PsiToIrOutput = runPsiToIr(frontendOutput, project, isProducingLibrary, {}).first
 
 internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
+        project: Project,
         isProducingLibrary: Boolean,
         produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
 ): Pair<PsiToIrOutput, T> {
@@ -62,7 +69,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
     val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary)
+        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, project, isProducingLibrary)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput

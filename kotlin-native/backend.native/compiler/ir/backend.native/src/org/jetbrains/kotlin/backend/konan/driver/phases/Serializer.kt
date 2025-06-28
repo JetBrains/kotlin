@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
@@ -23,6 +24,7 @@ internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
         val psiToIrOutput: PsiToIrOutput.ForKlib?,
         val produceHeaderKlib: Boolean,
+        val project: Project,
 )
 
 typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
@@ -52,7 +54,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase(
     val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = config.configuration.languageVersionSettings,
             metadataVersion = config.configuration.klibMetadataVersionOrDefault(),
-            project = config.project,
+            project = input.project,
             exportKDoc = context.shouldExportKDoc(),
             skipExpects = !config.metadataKlib,
             includeOnlyModuleContent = true,
@@ -67,7 +69,8 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
     moduleDescriptor: ModuleDescriptor,
     psiToIrResult: PsiToIrOutput.ForKlib?,
     produceHeaderKlib: Boolean = false,
+    project: Project,
 ): SerializerOutput {
-    val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib)
+    val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib, project)
     return this.runPhase(SerializerPhase, input)
 }

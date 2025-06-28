@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -30,11 +31,11 @@ internal object TopDownAnalyzerFacadeForKonan {
 
     private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
 
-    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
+    fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext, project: Project): AnalysisResult {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>")
 
-        val projectContext = ProjectContext(config.project, "TopDownAnalyzer for Konan")
+        val projectContext = ProjectContext(project, "TopDownAnalyzer for Konan")
 
         val module = nativeFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
                 moduleName, projectContext.storageManager, origin = CurrentKlibModuleOrigin)
@@ -91,7 +92,7 @@ internal object TopDownAnalyzerFacadeForKonan {
         }
 
         val analyzerForKonan = container.get<LazyTopDownAnalyzer>()
-        val project = context.config.project
+        val project = projectContext.project
         val moduleDescriptor = moduleContext.module
         val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
 

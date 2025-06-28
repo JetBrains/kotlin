@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
@@ -21,13 +22,18 @@ internal data class Fir2IrOutput(
         val usedLibraries: Set<KotlinResolvedLibrary>
 )
 
+internal data class Fir2IrInput(
+        val firOutput: FirOutput.Full,
+        val project: Project,
+)
+
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(
         "Fir2Ir",
         outputIfNotEnabled = { _, _, _, _ -> error("Fir2Ir phase cannot be disabled") }
-) { context: PhaseContext, input: FirOutput.Full ->
+) { context: PhaseContext, input: Fir2IrInput ->
     context.fir2Ir(input)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runFir2Ir(input: FirOutput.Full): Fir2IrOutput {
+internal fun <T : PhaseContext> PhaseEngine<T>.runFir2Ir(input: Fir2IrInput): Fir2IrOutput {
     return this.runPhase(Fir2IrPhase, input)
 }

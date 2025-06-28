@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
@@ -41,20 +42,25 @@ internal class FrontendContextImpl(
     override lateinit var frontendServices: FrontendServices
 }
 
+internal data class FrontendPhaseInput(
+        val environment: KotlinCoreEnvironment,
+        val project: Project,
+)
+
 internal val FrontendPhase = createSimpleNamedCompilerPhase(
         "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }
-) { context: FrontendContext, input: KotlinCoreEnvironment ->
+) { context: FrontendContext, (environment, project): FrontendPhaseInput ->
     lateinit var analysisResult: AnalysisResult
 
     do {
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
                 context.messageCollector,
-                input.configuration.languageVersionSettings,
-                input.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+                environment.configuration.languageVersionSettings,
+                environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
 
-        val sourceFiles = input.getSourceFiles()
+        val sourceFiles = environment.getSourceFiles()
 
         require(context.config.produce == CompilerOutputKind.LIBRARY || sourceFiles.isEmpty()) {
             "Internal error: no source files should have been passed here (${sourceFiles.first().virtualFilePath} in particular)\n" +
@@ -64,14 +70,14 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
 
         // Build AST and binding info.
         analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
-            TopDownAnalyzerFacadeForKonan.analyzeFiles(sourceFiles, context)
+            TopDownAnalyzerFacadeForKonan.analyzeFiles(sourceFiles, context, project)
         }
         if (analyzerWithCompilerReport.hasErrors()) {
             throw KonanCompilationException()
         }
         analysisResult = analyzerWithCompilerReport.analysisResult
         if (analysisResult is AnalysisResult.RetryWithAdditionalRoots) {
-            input.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
+            environment.addKotlinSourceRoots(analysisResult.additionalKotlinRoots)
         }
     } while (analysisResult is AnalysisResult.RetryWithAdditionalRoots)
 
@@ -79,7 +85,7 @@ internal val FrontendPhase = createSimpleNamedCompilerPhase(
     val bindingContext = analysisResult.bindingContext
 
     if (analysisResult.shouldGenerateCode) {
-        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices, input)
+        FrontendPhaseOutput.Full(moduleDescriptor, bindingContext, context.frontendServices, environment)
     } else {
         FrontendPhaseOutput.ShouldNotGenerateCode
     }

@@ -44,7 +44,7 @@ internal fun PsiToIrContext.psiToIr(
         useLinkerWhenProducingLibrary: Boolean
 ): PsiToIrOutput {
     val symbolTable = symbolTable!!
-    val (moduleDescriptor, environment, isProducingLibrary) = input
+    val (moduleDescriptor, environment, project, isProducingLibrary) = input
     // Translate AST to high level IR.
     val messageCollector = config.configuration.messageCollector
 
@@ -57,7 +57,7 @@ internal fun PsiToIrContext.psiToIr(
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 
-    val pluginExtensions = IrGenerationExtension.getInstances(config.project)
+    val pluginExtensions = IrGenerationExtension.getInstances(project)
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 

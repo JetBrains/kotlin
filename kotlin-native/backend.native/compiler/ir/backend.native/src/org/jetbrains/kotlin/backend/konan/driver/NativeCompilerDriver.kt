@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import com.intellij.openapi.project.Project
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.LLVMContextCreate
@@ -31,22 +32,22 @@ import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
  */
 internal class NativeCompilerDriver(private val performanceManager: PerformanceManager?) {
 
-    fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
+    fun run(config: KonanConfig, environment: KotlinCoreEnvironment, project: Project) {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
                     if (!config.compileFromBitcode.isNullOrEmpty()) produceBinaryFromBitcode(engine, config, config.compileFromBitcode!!)
                     else when (config.produce) {
-                        CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
-                        CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
-                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
-                        CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
+                        CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment, project)
+                        CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment, project)
+                        CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment, project)
+                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment, project)
+                        CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment, project)
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
-                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
+                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment, project)
+                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment, project)
+                        CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment, project)
+                        CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment, project)
                     }
                 }
             }
@@ -59,13 +60,18 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      * - Info.plist
      * - Binary (if -Xomit-framework-binary is not passed).
      */
-    private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+    private fun produceObjCFramework(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment,
+            project: Project
+    ) {
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment, project) } ?: return
 
         val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, project, isProducingLibrary = false) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
             if (config.omitFrameworkBinary) {
@@ -82,11 +88,16 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
-    private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+    private fun produceCLibrary(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment,
+            project: Project,
+    ) {
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment, project) } ?: return
 
         val (psiToIrOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            engine.runPsiToIr(frontendOutput, project, isProducingLibrary = false) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
                 } else {
@@ -102,11 +113,16 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
 
-    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceKlib(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment,
+            project: Project,
+    ) {
         val serializerOutput = if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
-            serializeKLibK2(engine, config, environment)
+            serializeKLibK2(engine, config, environment, project)
         else
-            serializeKlibK1(engine, config, environment)
+            serializeKlibK1(engine, config, environment, project = project)
         serializerOutput?.let {
             performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
                 engine.writeKlib(it)
@@ -117,7 +133,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     private fun serializeKLibK2(
             engine: PhaseEngine<PhaseContext>,
             config: KonanConfig,
-            environment: KotlinCoreEnvironment
+            environment: KotlinCoreEnvironment,
+            project: Project,
     ): SerializerOutput? {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFirFrontend(environment) }
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
@@ -129,7 +146,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             }
         } else {
             val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-                engine.runFir2Ir(frontendOutput)
+                engine.runFir2Ir(Fir2IrInput(frontendOutput, project))
             }
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
@@ -158,20 +175,21 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     private fun serializeKlibK1(
             engine: PhaseEngine<PhaseContext>,
             config: KonanConfig,
-            environment: KotlinCoreEnvironment
+            environment: KotlinCoreEnvironment,
+            project: Project,
     ): SerializerOutput? {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return null
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment, project) } ?: return null
         val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             if (config.metadataKlib) {
                 null
             } else {
-                engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+                engine.runPsiToIr(frontendOutput, project, isProducingLibrary = true) as PsiToIrOutput.ForKlib
             }
         }
         val headerKlibPath = config.headerKlibPath
         if (!headerKlibPath.isNullOrEmpty()) {
             val headerKlib = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
+                engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true, project)
             }
             performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
                 engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
@@ -181,17 +199,22 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
         }
         return performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-            engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
+            engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, project = project)
         }
     }
 
     /**
      * Produce a single binary artifact.
      */
-    private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+    private fun produceBinary(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment,
+            project: Project,
+    ) {
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment, project) } ?: return
 
-        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
+        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPsiToIr(frontendOutput, project, isProducingLibrary = false) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
@@ -223,14 +246,19 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      *
      * See https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html
      */
-    private fun produceBundle(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceBundle(
+            engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
+            environment: KotlinCoreEnvironment,
+            project: Project,
+    ) {
         require(config.target.family.isAppleFamily)
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
-        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
+        val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment, project) } ?: return
         val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(CreateTestBundlePhase, frontendOutput)
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+            engine.runPsiToIr(frontendOutput, project, isProducingLibrary = false)
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.KonanConfig
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 data class PsiToIrInput(
         val moduleDescriptor: ModuleDescriptor,
         val environment: KotlinCoreEnvironment,
+        val project: Project,
         val isProducingLibrary: Boolean,
 )
 

@@ -3,8 +3,8 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
 internal fun PhaseContext.fir2Ir(
-        input: FirOutput.Full,
+        input: Fir2IrInput,
 ): Fir2IrOutput {
     var builtInsModule: KotlinBuiltIns? = null
 
@@ -69,10 +69,10 @@ internal fun PhaseContext.fir2Ir(
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter(messageCollector)
 
     val fir2IrConfiguration = Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter)
-    val actualizedResult = input.firResult.convertToIrAndActualize(
+    val actualizedResult = input.firOutput.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,
             fir2IrConfiguration,
-            IrGenerationExtension.getInstances(config.project),
+            IrGenerationExtension.getInstances(input.project),
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
@@ -122,7 +122,7 @@ internal fun PhaseContext.fir2Ir(
         throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
     }
 
-    return Fir2IrOutput(input.firResult, symbols, actualizedResult, usedLibraries)
+    return Fir2IrOutput(input.firOutput.firResult, symbols, actualizedResult, usedLibraries)
 }
 
 private fun PhaseContext.createKonanSymbols(
