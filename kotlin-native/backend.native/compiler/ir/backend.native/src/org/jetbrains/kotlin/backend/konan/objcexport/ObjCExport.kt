@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
@@ -32,7 +33,7 @@ internal class ObjCExportedInterface(
 )
 
 internal fun produceObjCExportInterface(
-        context: PhaseContext,
+        context: BackendPhaseContext,
         moduleDescriptor: ModuleDescriptor,
         frontendServices: FrontendServices,
 ): ObjCExportedInterface {
@@ -243,5 +244,5 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
     }
 }
 
-internal val PhaseContext.objCExportTopLevelNamePrefix: String
+internal val BackendPhaseContext.objCExportTopLevelNamePrefix: String
     get() = abbreviate(config.fullExportedNamePrefix)

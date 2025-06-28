@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
@@ -31,7 +32,7 @@ internal data class WriteBitcodeFileInput(
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
  */
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext, WriteBitcodeFileInput>(
+internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<BackendPhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
 ) { context, (llvmModule, outputFile) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
@@ -57,9 +58,9 @@ internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase
 }
 
 internal class OptimizationState(
-        konanConfig: KonanConfig,
+        override val config: KonanConfig,
         val llvmConfig: LlvmPipelineConfig
-) : BasicPhaseContext(konanConfig)
+) : BasicPhaseContext(config.configuration), BackendPhaseContext
 
 internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(

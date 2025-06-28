@@ -6,21 +6,27 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.IrLinkerContext
 import org.jetbrains.kotlin.backend.konan.cexport.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import java.io.File
 
-internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
+internal val BuildCExports = createSimpleNamedCompilerPhase<IrLinkerContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
         "BuildCExports",
         outputIfNotEnabled = { _, _, _, _ -> error("") }
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
-    CAdapterGenerator(context, input.environment.configuration, typeTranslator).buildExports(input.moduleDescriptor)
+    CAdapterGenerator(
+            context.symbolTable!!,
+            input.moduleDescriptor.getExportedDependencies(context.config),
+            typeTranslator
+    ).buildExports(input.moduleDescriptor)
 }
 
 internal data class CExportGenerateApiInput(
@@ -30,7 +36,7 @@ internal data class CExportGenerateApiInput(
         val cppAdapterFile: File,
 )
 
-internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportGenerateApiInput>(
+internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<BackendPhaseContext, CExportGenerateApiInput>(
         name = "CExportGenerateApi",
 ) { context, input ->
     CAdapterApiExporter(
@@ -47,7 +53,7 @@ internal class CExportCompileAdapterInput(
         val bitcodeAdapterFile: File,
 )
 
-internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportCompileAdapterInput>(
+internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<BackendPhaseContext, CExportCompileAdapterInput>(
         name = "CExportCompileAdapter",
 ) { context, input ->
     produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)

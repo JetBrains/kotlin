@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.IrLinkerContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 /**
  * Create internal representation of Objective-C wrapper.
  */
-internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full, ObjCExportedInterface>(
+internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<BackendPhaseContext, FrontendPhaseOutput.Full, ObjCExportedInterface>(
         "ObjCExportInterface",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
@@ -34,7 +35,7 @@ internal data class CreateObjCFrameworkInput(
 /**
  * Create Objective-C framework in the given directory without binary.
  */
-internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseContext, CreateObjCFrameworkInput>(
+internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<BackendPhaseContext, CreateObjCFrameworkInput>(
         "CreateObjCFramework",
 ) { context, input ->
     val config = context.config
@@ -46,7 +47,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseCont
 /**
  * Create specification for bridges between exported Objective-C interfaces and their Kotlin origins.
  */
-internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<PsiToIrContext, ObjCExportedInterface, ObjCExportCodeSpec>(
+internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<IrLinkerContext, ObjCExportedInterface, ObjCExportCodeSpec>(
         "ObjCExportCodeCodeSpec",
         outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
 ) { context, input ->

@@ -1,8 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
+import org.jetbrains.kotlin.backend.konan.driver.phases.FrontendContext
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -18,8 +17,14 @@ import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.name.Name
 
+sealed class FirOutput {
+    object ShouldNotGenerateCode : FirOutput()
+
+    data class Full(val firResult: FirResult) : FirOutput()
+}
+
 @OptIn(SessionConfiguration::class)
-internal inline fun <F> PhaseContext.firFrontend(
+internal inline fun <F> FrontendContext.firFrontend(
         input: KotlinCoreEnvironment,
         files: List<F>,
         fileHasSyntaxErrors: (F) -> Boolean,
@@ -84,7 +89,7 @@ internal inline fun <F> PhaseContext.firFrontend(
     }
 }
 
-internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
+internal fun FrontendContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR
@@ -104,7 +109,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
     )
 }
 
-internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
+internal fun FrontendContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
     val configuration = input.configuration
     val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     // FIR

@@ -9,8 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
@@ -37,21 +36,21 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
-internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
+internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder, BackendPhaseContext {
     val llvm: BasicLlvmHelpers
     val llvmContext: LLVMContextRef
 }
 
 internal class BitcodePostProcessingContextImpl(
-        config: KonanConfig,
+        override val config: KonanConfig,
         override val llvmModule: LLVMModuleRef,
         override val llvmContext: LLVMContextRef
-) : BitcodePostProcessingContext, BasicPhaseContext(config) {
+) : BitcodePostProcessingContext, BasicPhaseContext(config.configuration), BackendPhaseContext {
     override val llvm: BasicLlvmHelpers = BasicLlvmHelpers(this, llvmModule)
 }
 
 internal class NativeGenerationState(
-    config: KonanConfig,
+    override val config: KonanConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
     val context: Context,
@@ -60,7 +59,7 @@ internal class NativeGenerationState(
     val llvmModuleSpecification: LlvmModuleSpecification,
     val outputFiles: OutputFiles,
     val llvmModuleName: String,
-) : BasicPhaseContext(config), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext {
+) : BasicPhaseContext(config.configuration), BackendContextHolder, LlvmIrHolder, BitcodePostProcessingContext, BackendPhaseContext {
     val outputFile = outputFiles.mainFileName
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))

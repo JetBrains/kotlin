@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
-internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
+internal fun determineLinkerOutput(context: BackendPhaseContext): LinkerOutputKind =
         when (context.config.produce) {
             CompilerOutputKind.FRAMEWORK -> {
                 val staticFramework = context.config.produceStaticFramework
@@ -152,7 +152,7 @@ internal class Linker(
     }
 }
 
-internal fun runLinkerCommands(context: PhaseContext, commands: List<Command>, cachingInvolved: Boolean) = try {
+internal fun runLinkerCommands(context: BackendPhaseContext, commands: List<Command>, cachingInvolved: Boolean) = try {
     commands.forEach {
         it.logWith(context::log)
         it.execute()

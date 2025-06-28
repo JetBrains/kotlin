@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.konan.file.File
@@ -26,13 +25,12 @@ internal data class KlibWriterInput(
         val produceHeaderKlib: Boolean,
 )
 
-internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
+internal val WriteKlibPhase = createSimpleNamedCompilerPhase<FrontendContext, KlibWriterInput>(
         "WriteKlib",
 ) { context, input ->
     val config = context.config
     val configuration = config.configuration
-    val outputFiles = OutputFiles(input.customOutputPath
-            ?: config.outputPath, config.target, config.produce)
+    val outputFiles = OutputFiles(input.customOutputPath ?: config.outputPath, config.target, config.produce)
     val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
     val output = outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
@@ -92,7 +90,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibW
     )
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
+internal fun <T : FrontendContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
         customOutputPath: String? = null,
         produceHeaderKlib: Boolean = false,

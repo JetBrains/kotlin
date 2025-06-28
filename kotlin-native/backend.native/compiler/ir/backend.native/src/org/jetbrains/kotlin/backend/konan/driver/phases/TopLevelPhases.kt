@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
@@ -38,47 +40,57 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-internal fun PhaseEngine<PhaseContext>.runFrontend(
-        config: KonanConfig,
+internal fun PhaseEngine<out FrontendContext>.runK1Frontend(
         environment: KotlinCoreEnvironment,
         project: Project,
 ): FrontendPhaseOutput.Full? {
-    val languageVersion = config.languageVersionSettings.languageVersion
+    val languageVersion = context.config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
     if (languageVersion.usesK2 && kotlinSourceRoots.isNotEmpty()) {
         throw Error("Attempt to run K1 from unsupported LV=${languageVersion}")
     }
-
-    val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, FrontendPhaseInput(environment, project)) }
+    val frontendOutput = runPhase(FrontendPhase, FrontendPhaseInput(environment, project))
     return frontendOutput as? FrontendPhaseOutput.Full
 }
 
-internal fun PhaseEngine<PhaseContext>.runPsiToIr(
+internal fun PhaseEngine<out FrontendContext>.runPsiToIr(
         frontendOutput: FrontendPhaseOutput.Full,
         project: Project,
-        isProducingLibrary: Boolean,
-): PsiToIrOutput = runPsiToIr(frontendOutput, project, isProducingLibrary, {}).first
-
-internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full,
-        project: Project,
-        isProducingLibrary: Boolean,
-        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
-): Pair<PsiToIrOutput, T> {
-    val config = this.context.config
-    val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
-        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, project, isProducingLibrary)
+        target: KonanTarget,
+): PsiToIrOutput {
+    val psiToIrContext = PsiToIrContextImpl(context.configuration, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val psiToIrOutput = useContext(psiToIrContext) { psiToIrEngine ->
+        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, project)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
-        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
-        output to additionalOutput
+        psiToIrEngine.runSpecialBackendChecks(SpecialBackendChecksInput(output.irModule, output.irBuiltIns, output.symbols, target))
+        output
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
-    return psiToIrOutput to additionalOutput
+    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule to psiToIrOutput.irBuiltIns)
+    return psiToIrOutput
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
+
+internal fun PhaseEngine<BackendPhaseContext>.runIrLinker(
+        frontendOutput: FrontendPhaseOutput.Full,
+): IrLinkerOutput = runIrLinker(frontendOutput, {}).first
+
+internal fun <T> PhaseEngine<BackendPhaseContext>.runIrLinker(
+        frontendOutput: FrontendPhaseOutput.Full,
+        produceAdditionalOutput: (PhaseEngine<out IrLinkerContext>) -> T
+): Pair<IrLinkerOutput, T> {
+    val config = this.context.config
+    val irLinkerContext = IrLinkerContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val (irLinkerOutput, additionalOutput) = useContext(irLinkerContext) { irLinkerEngine ->
+        val additionalOutput = produceAdditionalOutput(irLinkerEngine)
+        val irLinkerInput = IrLinkerInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
+        val output = irLinkerEngine.runPhase(IrLinkerPhase, irLinkerInput)
+        output to additionalOutput
+    }
+    runPhase(CopyDefaultValuesToActualPhase, irLinkerOutput.irModule to irLinkerOutput.irBuiltIns)
+    return irLinkerOutput to additionalOutput
+}
+
+internal fun <C : BackendPhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
@@ -271,7 +283,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
     }
 }
 
-internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult) {
+internal fun <C : BackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult) {
     useContext(context) { bitcodeEngine ->
         val tempFiles = createTempFiles(context.config, null)
         val bitcodeFile = tempFiles.create(context.config.shortModuleName ?: "out", ".bc").javaFile()
@@ -390,7 +402,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
 }
 
 
-internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
+internal fun <C : BackendPhaseContext> PhaseEngine<C>.compileAndLink(
         moduleCompilationOutput: ModuleCompilationOutput,
         linkerOutputFile: String,
         outputFiles: OutputFiles,

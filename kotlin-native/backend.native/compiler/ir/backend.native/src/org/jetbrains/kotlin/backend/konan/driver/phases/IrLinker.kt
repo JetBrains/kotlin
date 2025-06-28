@@ -6,32 +6,39 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.IrLinkerContext
+import org.jetbrains.kotlin.backend.konan.IrLinkerInput
+import org.jetbrains.kotlin.backend.konan.IrLinkerOutput
+import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
-import org.jetbrains.kotlin.backend.konan.PsiToIrContext
-import org.jetbrains.kotlin.backend.konan.PsiToIrInput
-import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
-import org.jetbrains.kotlin.backend.konan.psiToIr
+import org.jetbrains.kotlin.backend.konan.linkIrLibraries
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
-internal class PsiToIrContextImpl(
-        configuration: CompilerConfiguration,
+internal class IrLinkerContextImpl(
+        override val config: KonanConfig,
         private val moduleDescriptor: ModuleDescriptor,
         override val bindingContext: BindingContext,
-) : BasicPhaseContext(configuration), PsiToIrContext {
+) : BasicPhaseContext(config.configuration), IrLinkerContext, BackendPhaseContext {
+
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
 
     override val reflectionTypes: KonanReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
+    }
+
+    override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        moduleDescriptor.builtIns as KonanBuiltIns
     }
 
     override fun dispose() {
@@ -41,8 +48,10 @@ internal class PsiToIrContextImpl(
     }
 }
 
-internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrOutput>(
-        "PsiToIr",
+internal val IrLinkerPhase = createSimpleNamedCompilerPhase<IrLinkerContext, IrLinkerInput, IrLinkerOutput>(
+        "IrLinker",
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
-) { context, input -> context.psiToIr(input) }
+) { context, input ->
+    context.linkIrLibraries(input)
+}

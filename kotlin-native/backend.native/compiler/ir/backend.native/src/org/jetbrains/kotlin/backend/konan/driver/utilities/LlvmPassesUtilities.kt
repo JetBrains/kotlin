@@ -11,7 +11,8 @@ import llvm.LLVMPrintModuleToFile
 import org.jetbrains.kotlin.config.phaser.Action
 import org.jetbrains.kotlin.config.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -28,7 +29,7 @@ interface LlvmIrHolder {
 /**
  * Create action that searches context and data for LLVM IR and dumps it.
  */
-private fun <Data, Context : PhaseContext> createLlvmDumperAction(): Action<Data, Context> =
+private fun <Data, Context : BackendPhaseContext> createLlvmDumperAction(): Action<Data, Context> =
         fun(state: ActionState, data: Data, context: Context) {
             if (state.phase.name in context.config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
                 val llvmModule = findLlvmModule(data, context)
@@ -56,7 +57,7 @@ private fun <Data, Context : PhaseContext> createLlvmDumperAction(): Action<Data
 /**
  *
  */
-private fun <Data, Context : PhaseContext> createLlvmVerifierAction(): Action<Data, Context> =
+private fun <Data, Context : BackendPhaseContext> createLlvmVerifierAction(): Action<Data, Context> =
         fun(actionState: ActionState, data: Data, context: Context) {
             if (!context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
                 return
@@ -87,5 +88,5 @@ private fun <Data, Context : PhaseContext> findLlvmModule(data: Data, context: C
 /**
  * Default set of dump and validate actions for LLVM phases.
  */
-internal fun <Data, Context : PhaseContext> getDefaultLlvmModuleActions(): Set<Action<Data, Context>> =
+internal fun <Data, Context : BackendPhaseContext> getDefaultLlvmModuleActions(): Set<Action<Data, Context>> =
         setOf(createLlvmDumperAction(), createLlvmVerifierAction())

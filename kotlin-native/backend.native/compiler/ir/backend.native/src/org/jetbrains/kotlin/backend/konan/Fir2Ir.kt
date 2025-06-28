@@ -1,10 +1,8 @@
 package org.jetbrains.kotlin.backend.konan
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrInput
-import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -21,6 +19,8 @@ import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
+import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -31,18 +31,32 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+
+data class Fir2IrOutput(
+        val firResult: FirResult,
+        val symbols: KonanSymbols,
+        val fir2irActualizedResult: Fir2IrActualizedResult,
+        val usedLibraries: Set<KotlinResolvedLibrary>
+)
+
+data class Fir2IrInput(
+        val firOutput: FirOutput.Full,
+        val project: Project,
+        val resolvedLibraries: KotlinLibraryResolveResult,
+)
 
 internal fun PhaseContext.fir2Ir(
         input: Fir2IrInput,
 ): Fir2IrOutput {
     var builtInsModule: KotlinBuiltIns? = null
 
-    val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
-    val configuration = config.configuration
+    val resolvedLibraries = input.resolvedLibraries.getFullResolvedList()
     val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
         val storageManager = LockBasedStorageManager("ModulesStructure")
 
@@ -128,5 +142,5 @@ internal fun PhaseContext.fir2Ir(
 private fun PhaseContext.createKonanSymbols(
         irBuiltIns: IrBuiltIns,
 ): KonanSymbols {
-    return KonanSymbols(this, irBuiltIns, this.config.configuration)
+    return KonanSymbols(this, irBuiltIns, this.configuration)
 }

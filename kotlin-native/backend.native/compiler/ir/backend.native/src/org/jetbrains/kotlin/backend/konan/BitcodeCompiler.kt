@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.File
 typealias ObjectFile = String
 
 internal class BitcodeCompiler(
-        private val context: PhaseContext,
+        private val context: BackendPhaseContext,
 ) {
 
     private val config = context.config

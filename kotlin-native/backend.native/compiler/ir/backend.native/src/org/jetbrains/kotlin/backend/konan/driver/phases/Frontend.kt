@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.TopDownAnalyzerFacadeForKonan
-import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BasicBackendPhaseContext
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -32,22 +36,30 @@ sealed class FrontendPhaseOutput {
     ) : FrontendPhaseOutput()
 }
 
-internal interface FrontendContext : PhaseContext {
+interface FrontendContext : PhaseContext {
     var frontendServices: FrontendServices
+    val config: NativeFrontendConfig
 }
 
 internal class FrontendContextImpl(
-        config: KonanConfig
-) : BasicPhaseContext(config), FrontendContext {
+        override val config: NativeFrontendConfig,
+) : BasicPhaseContext(config.configuration), FrontendContext {
     override lateinit var frontendServices: FrontendServices
 }
 
-internal data class FrontendPhaseInput(
+data class FrontendPhaseInput(
         val environment: KotlinCoreEnvironment,
         val project: Project,
 )
 
-internal val FrontendPhase = createSimpleNamedCompilerPhase(
+internal inline fun <C : PhaseContext, T> PhaseEngine<C>.startFrontendEngine(
+        baseNativeConfig: BaseNativeConfig,
+        body: (PhaseEngine<FrontendContext>) -> T): T
+{
+    return useContext(FrontendContextImpl(NativeFrontendConfig(baseNativeConfig)), body)
+}
+
+val FrontendPhase = createSimpleNamedCompilerPhase(
         "Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FrontendPhaseOutput.ShouldNotGenerateCode }
 ) { context: FrontendContext, (environment, project): FrontendPhaseInput ->

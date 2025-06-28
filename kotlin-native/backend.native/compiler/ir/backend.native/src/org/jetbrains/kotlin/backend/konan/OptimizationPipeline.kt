@@ -9,7 +9,7 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.konan.target.*
 import java.io.Closeable
@@ -49,7 +49,7 @@ data class LlvmPipelineConfig(
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
 )
 
-private fun getCpuModel(context: PhaseContext): String {
+private fun getCpuModel(context: BackendPhaseContext): String {
     val target = context.config.target
     val configurables: Configurables = context.config.platform.configurables
     return configurables.targetCpu ?: run {
@@ -58,10 +58,10 @@ private fun getCpuModel(context: PhaseContext): String {
     }
 }
 
-private fun getCpuFeatures(context: PhaseContext): String =
+private fun getCpuFeatures(context: BackendPhaseContext): String =
         context.config.platform.configurables.targetCpuFeatures ?: ""
 
-private fun tryGetInlineThreshold(context: PhaseContext): Int? {
+private fun tryGetInlineThreshold(context: BackendPhaseContext): Int? {
     val configurables: Configurables = context.config.platform.configurables
     return configurables.llvmInlineThreshold?.let {
         it.toIntOrNull() ?: run {
@@ -111,7 +111,7 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
 internal fun createLTOFinalPipelineConfig(
-        context: PhaseContext,
+        context: BackendPhaseContext,
         targetTriple: String,
         closedWorld: Boolean,
         timePasses: Boolean = false,
@@ -335,7 +335,7 @@ class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext
     }
 }
 
-internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
+internal fun RelocationModeFlags.currentRelocationMode(context: BackendPhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode
             LinkerOutputKind.STATIC_LIBRARY -> staticLibraryRelocationMode

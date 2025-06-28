@@ -86,7 +86,7 @@ internal object TopDownAnalyzerFacadeForKonan {
                 context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
                 additionalPackages
         ) {
-            initContainer(context.config)
+            initContainer(context.config, context.configuration)
         }.apply {
             postprocessComponents(context, files)
         }

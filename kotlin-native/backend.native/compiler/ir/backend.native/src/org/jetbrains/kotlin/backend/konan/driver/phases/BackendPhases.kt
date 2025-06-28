@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativePreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.addFile
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -46,44 +49,30 @@ internal data class SpecialBackendChecksInput(
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbols: KonanSymbols,
+        val target: KonanTarget,
 ) : KotlinBackendIrHolder {
     override val kotlinIr: IrElement
         get() = irModule
 }
 
-internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrContext, SpecialBackendChecksInput>(
+internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, SpecialBackendChecksInput>(
         "SpecialBackendChecks",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, input ->
-    SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns).lower(input.irModule)
+    SpecialBackendChecksTraversal(context, input.symbols, input.irBuiltIns, input.target).lower(input.irModule)
 }
 
-internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
-        "SpecialBackendChecks",
-) { context, input ->
-    val moduleFragment = input.fir2irActualizedResult.irModuleFragment
-    SpecialBackendChecksTraversal(
-            context,
-            input.symbols,
-            input.fir2irActualizedResult.irBuiltIns,
-    ).lower(moduleFragment)
-}
-
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
+internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { _, input ->
-    ExpectToActualDefaultValueCopier(input.irModule, input.irBuiltIns).process()
+    ExpectToActualDefaultValueCopier(input.first, input.second).process()
 }
 
-internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
-    runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
-}
-
-internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrOutput: Fir2IrOutput) {
-    runPhase(K2SpecialBackendChecksPhase, fir2IrOutput)
+internal fun <T : PhaseContext> PhaseEngine<T>.runSpecialBackendChecks(input: SpecialBackendChecksInput) {
+    runPhase(SpecialBackendChecksPhase, input)
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runPreSerializationLowerings(fir2IrOutput: Fir2IrOutput, environment: KotlinCoreEnvironment): Fir2IrOutput {
@@ -136,7 +125,7 @@ internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationSt
     file.addChild(makeEntryPoint(context))
 }
 
-internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full>(
+internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<BackendPhaseContext, FrontendPhaseOutput.Full>(
         "CreateTestBundlePhase",
 ) { context, input ->
     val config = context.config

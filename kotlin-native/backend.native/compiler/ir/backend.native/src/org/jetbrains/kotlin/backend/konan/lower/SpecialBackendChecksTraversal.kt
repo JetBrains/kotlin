@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.checkers.EscapeAnalysisChecker
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.types.Variance
@@ -49,9 +50,10 @@ internal class SpecialBackendChecksTraversal(
         private val context: PhaseContext,
         private val symbols: KonanSymbols,
         private val irBuiltIns: IrBuiltIns,
+        private val target: KonanTarget,
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptChildrenVoid(BackendChecker(context, symbols, irBuiltIns, irFile))
+        irFile.acceptChildrenVoid(BackendChecker(context, target, symbols, irBuiltIns, irFile))
         // EscapeAnalysisChecker only makes sense when compiling stdlib.
         irFile.acceptChildrenVoid(EscapeAnalysisChecker(context, symbols, irFile))
     }
@@ -59,11 +61,11 @@ internal class SpecialBackendChecksTraversal(
 
 private class BackendChecker(
         private val context: PhaseContext,
+        val target: KonanTarget,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
 ) : IrVisitorVoid() {
-    val target = context.config.target
 
     fun reportError(location: IrElement, message: String): Nothing =
             context.reportCompilationError(message, irFile, location)

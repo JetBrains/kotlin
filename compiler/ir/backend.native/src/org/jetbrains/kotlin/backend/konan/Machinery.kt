@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan.driver
+package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
@@ -12,14 +12,14 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
-import org.jetbrains.kotlin.backend.konan.ConfigChecks
-import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.phaseConfig
 
 /**
  * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
- * effectively just a wrapper around [KonanConfig]. Still, it is more than enough in many cases.
+ * effectively just a wrapper around [CompilerConfiguration]. Still, it is more than enough in many cases.
  *
  * There is a fuzzy line between phase Input/Output and Context. We can consider them as a spectre:
  * * On the one end there is a [org.jetbrains.kotlin.backend.konan.Context] (circa 1.8.0). It has a lot of properties,
@@ -35,25 +35,31 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
  * * On the other hand, middle- and bitcode phases are hard to decouple due to the way the code was written many years ago.
  * It will take some time to rewrite it properly.
  */
-internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext, DisposableContext
+interface PhaseContext : LoggingContext, ErrorReportingContext, DisposableContext {
+    val configuration: CompilerConfiguration
 
-internal open class BasicPhaseContext(
-        override val config: KonanConfig,
+    fun shouldExportKDoc() = configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
+
+    fun shouldPrintFiles() = configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
+}
+
+open class BasicPhaseContext(
+        override val configuration: CompilerConfiguration
 ) : PhaseContext {
     override var inVerbosePhase = false
 
     override val messageCollector: MessageCollector
-        get() = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        get() = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     override fun dispose() {
 
     }
 }
 
-internal fun PhaseEngine.Companion.startTopLevel(config: KonanConfig, body: (PhaseEngine<PhaseContext>) -> Unit) {
+public fun PhaseEngine.Companion.startTopLevel(configuration: CompilerConfiguration, body: (PhaseEngine<PhaseContext>) -> Unit) {
     val phaserState = PhaserState()
-    val phaseConfig = config.phaseConfig
-    val context = BasicPhaseContext(config)
+    val phaseConfig = configuration.phaseConfig!!
+    val context = BasicPhaseContext(configuration)
     val topLevelPhase = object : NamedCompilerPhase<PhaseContext, Any, Unit>("Compiler") {
         override fun phaseBody(context: PhaseContext, input: Any) {
             val engine = PhaseEngine(phaseConfig, phaserState, context)

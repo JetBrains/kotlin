@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
+import org.jetbrains.kotlin.backend.konan.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
-        val psiToIrOutput: PsiToIrOutput.ForKlib?,
+        val psiToIrOutput: PsiToIrOutput?,
         val produceHeaderKlib: Boolean,
         val project: Project,
 )
@@ -32,7 +33,7 @@ typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.S
 internal val SerializerPhase = createSimpleNamedCompilerPhase(
         "Serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, emptyList()) }
-) { context: PhaseContext, input: SerializerInput ->
+) { context: FrontendContext, input: SerializerInput ->
     val config = context.config
     val messageCollector = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
@@ -65,11 +66,11 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase(
     SerializerOutput(serializedMetadata, serializedIr, neededLibraries)
 }
 
-internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
-    moduleDescriptor: ModuleDescriptor,
-    psiToIrResult: PsiToIrOutput.ForKlib?,
-    produceHeaderKlib: Boolean = false,
-    project: Project,
+internal fun <T : FrontendContext> PhaseEngine<T>.runSerializer(
+        moduleDescriptor: ModuleDescriptor,
+        psiToIrResult: PsiToIrOutput?,
+        produceHeaderKlib: Boolean = false,
+        project: Project,
 ): SerializerOutput {
     val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib, project)
     return this.runPhase(SerializerPhase, input)
