@@ -191,6 +191,7 @@ private class SyntheticAccessorTransformer(
         isAccessible(context, currentScope, inlineScopeResolver, withSuper, thisObjReference, fromOtherClassLoader = true)
 
     private fun handleLambdaMetafactoryIntrinsic(call: IrCall, thisSymbol: IrClassSymbol?): IrExpression {
+        // TODO change after KT-78719
         val implFunRef = call.arguments[1] as? IrFunctionReference
             ?: throw AssertionError("'implMethodReference' is expected to be 'IrFunctionReference': ${call.dump()}")
         val implFunSymbol = implFunRef.symbol

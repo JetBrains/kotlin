@@ -67,6 +67,7 @@ internal sealed class MetafactoryArgumentsResult {
 internal class LambdaMetafactoryArguments(
     val samMethod: IrSimpleFunction,
     val fakeInstanceMethod: IrSimpleFunction,
+    // TODO change after KT-78719
     val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>,
     val shouldBeSerializable: Boolean,
