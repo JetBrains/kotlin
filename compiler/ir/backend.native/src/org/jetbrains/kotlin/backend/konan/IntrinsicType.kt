@@ -3,9 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan.llvm
+package org.jetbrains.kotlin.backend.konan
 
-internal enum class IntrinsicType {
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+
+enum class IntrinsicType {
     PLUS,
     MINUS,
     TIMES,
@@ -99,3 +105,20 @@ internal enum class IntrinsicType {
     GET_AND_SET_ARRAY_ELEMENT,
     GET_AND_ADD_ARRAY_ELEMENT
 }
+
+fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
+    tryGetIntrinsicType(callSite.symbol.owner)
+
+fun tryGetIntrinsicType(function: IrFunction): IntrinsicType? =
+    if (function.isTypedIntrinsic) getIntrinsicType(function) else null
+
+fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(callSite.symbol.owner)
+
+fun getIntrinsicType(function: IrFunction): IntrinsicType {
+    val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
+    val value = annotation.getAnnotationStringValue()!!
+    return IntrinsicType.valueOf(value)
+}
+
+val IrFunction.isTypedIntrinsic: Boolean
+    get() = annotations.hasAnnotation(KonanFqNames.typedIntrinsic)

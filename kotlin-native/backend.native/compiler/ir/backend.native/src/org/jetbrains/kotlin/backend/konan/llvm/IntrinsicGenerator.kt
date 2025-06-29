@@ -43,20 +43,6 @@ internal interface IntrinsicGeneratorEnvironment {
     fun getStaticFieldPointer(field: IrField): LLVMValueRef
 }
 
-internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
-        tryGetIntrinsicType(callSite.symbol.owner)
-
-internal fun tryGetIntrinsicType(function: IrFunction): IntrinsicType? =
-        if (function.isTypedIntrinsic) getIntrinsicType(function) else null
-
-private fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(callSite.symbol.owner)
-
-private fun getIntrinsicType(function: IrFunction): IntrinsicType {
-    val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
-    val value = annotation.getAnnotationStringValue()!!
-    return IntrinsicType.valueOf(value)
-}
-
 private fun getConstantConstructorIntrinsicType(constructor: IrConstructorSymbol): ConstantConstructorIntrinsicType {
     val annotation = constructor.owner.annotations.findAnnotation(KonanFqNames.constantConstructorIntrinsic)!!
     val value = annotation.getAnnotationStringValue()!!
