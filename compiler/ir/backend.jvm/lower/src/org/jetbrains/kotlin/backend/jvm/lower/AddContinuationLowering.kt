@@ -299,7 +299,15 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 return declaration
             }
 
-            private fun transformToView(function: IrSimpleFunction): List<IrFunction> {
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                val function = expression.invokeFunction
+                if (function.isSuspend) {
+                    expression.invokeFunction = transformToView(function).single()
+                }
+                return super.visitRichFunctionReference(expression)
+            }
+
+            private fun transformToView(function: IrSimpleFunction): List<IrSimpleFunction> {
                 function.accept(this, null)
 
                 val capturesCrossinline = function.isCapturingCrossinline()

@@ -8,12 +8,33 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 
 @PhaseDescription("JvmUpgradeCallableReferences")
-internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
+internal class JvmUpgradeCallableReferences(override val context: JvmBackendContext) : UpgradeCallableReferences(
     context = context,
     upgradeFunctionReferencesAndLambdas = true,
     upgradePropertyReferences = true,
     upgradeLocalDelegatedPropertyReferences = true,
     upgradeSamConversions = true
-)
+) {
+    override fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent): IrElement {
+        val function = expression.symbol.owner
+        if (function.symbol == context.symbols.indyLambdaMetafactoryIntrinsic) {
+            for ((i, element) in expression.arguments.withIndex()) {
+                expression.arguments[i] = if (i == 1) {
+                    element?.transformChildren(this, data)
+                    element
+                } else {
+                    element?.transform(this, data)
+                }
+            }
+            return expression
+        }
+        expression.transformChildren(this, data)
+        return expression
+    }
+}

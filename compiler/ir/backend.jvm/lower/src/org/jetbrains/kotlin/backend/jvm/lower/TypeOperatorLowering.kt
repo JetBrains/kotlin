@@ -471,6 +471,7 @@ internal class TypeOperatorLowering(private val backendContext: JvmBackendContex
 
         val samMethodRef = call.arguments[0] as? IrRawFunctionReference
             ?: fail("'samMethodType' should be 'IrRawFunctionReference'")
+        // TODO change after KT-78719
         val implFunRef = call.arguments[1] as? IrFunctionReference
             ?: fail("'implMethodReference' is expected to be 'IrFunctionReference'")
         val implFunSymbol = implFunRef.symbol

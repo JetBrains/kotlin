@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @PhaseDescription("UpgradeCallableReferences")
 open class UpgradeCallableReferences(
-    val context: LoweringContext,
+    open val context: LoweringContext,
     val upgradeFunctionReferencesAndLambdas: Boolean = true,
     val upgradePropertyReferences: Boolean = true,
     val upgradeLocalDelegatedPropertyReferences: Boolean = true,
@@ -43,6 +43,8 @@ open class UpgradeCallableReferences(
     fun lower(irFunction: IrFunction) {
         irFunction.transform(UpgradeTransformer(), irFunction)
     }
+
+    open fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent) = this.visitCall(expression, data)
 
     companion object {
         fun selectSAMOverriddenFunction(type: IrType): IrSimpleFunctionSymbol {
@@ -83,6 +85,8 @@ open class UpgradeCallableReferences(
                 parameter.kind = IrParameterKind.Regular
             }
         }
+
+        override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement = processCallExpression(expression, data)
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)
@@ -302,14 +306,6 @@ open class UpgradeCallableReferences(
             )
         }
 
-        // TODO delete once the lowering is moved
-        private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
-            addValueParameter("\$completion", continuationType())
-
-        // TODO delete once the lowering is moved
-        private fun IrFunction.continuationType(): IrType =
-            context.symbols.continuationClass.typeWith(returnType).makeNullable()
-
         private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
@@ -358,9 +354,6 @@ open class UpgradeCallableReferences(
                         this.name = Name.identifier("p${index++}")
                         this.type = type
                     }
-                }
-                if (isSuspend) {
-                    addCompletionValueParameter()
                 }
                 this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {

@@ -61,6 +61,7 @@ private val IrDeclaration.original: IrDeclaration
     get() = (this.attributeOwnerId as? IrDeclaration) ?: this
 
 @Deprecated("Use IrStatement.unwrapRichInlineLambda instead", ReplaceWith("unwrapRichInlineLambda()"))
+// TODO remove after KT-78719
 fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
     is IrBlock -> statements.lastOrNull()?.unwrapInlineLambda()
     is IrFunctionReference -> takeIf { it.origin == IrStatementOrigin.INLINE_LAMBDA }

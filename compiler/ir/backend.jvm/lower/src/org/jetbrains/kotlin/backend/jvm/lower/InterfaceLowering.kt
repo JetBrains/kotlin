@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import kotlin.collections.get
 
 /**
  * Moves interface members with default implementations to the associated DefaultImpls classes with bridges. It then performs a traversal
@@ -280,6 +282,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         )
     }
 
+    // TODO remove after KT-78719
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val newFunction = removedFunctions[expression.symbol]?.owner
         return super.visitFunctionReference(
@@ -297,5 +300,11 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                 expression
             }
         )
+    }
+
+    override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+        val newFunction = removedFunctions[expression.invokeFunction.symbol]?.owner
+        if (newFunction != null) expression.invokeFunction = newFunction
+        return super.visitRichFunctionReference(expression)
     }
 }
