@@ -38,7 +38,7 @@ class NativeFrontendDriver(private val performanceManager: PerformanceManager?) 
         project: Project,
     ) {
         engine.useContext(FrontendContextImpl(NativeFrontendConfig(config))) { engine ->
-            val serializerOutput = serializeKLibK2(engine, engine.context.config, environment, project)
+            val serializerOutput = serializeKLibK2(engine, environment, project)
             serializerOutput?.let {
                 performanceManager.tryMeasurePhaseTime(PhaseType.KlibWriting) {
                     engine.writeKlib(it)
@@ -49,7 +49,6 @@ class NativeFrontendDriver(private val performanceManager: PerformanceManager?) 
 
     private fun serializeKLibK2(
         engine: PhaseEngine<out FrontendContext>,
-        config: NativeFrontendConfig,
         environment: KotlinCoreEnvironment,
         project: Project,
     ): SerializerOutput? {
@@ -57,6 +56,7 @@ class NativeFrontendDriver(private val performanceManager: PerformanceManager?) 
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
+        val config = engine.context.config
         return if (config.metadataKlib) {
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFirSerializer(frontendOutput)
