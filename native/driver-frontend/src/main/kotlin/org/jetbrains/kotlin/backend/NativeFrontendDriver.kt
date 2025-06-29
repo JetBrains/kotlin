@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 import org.jetbrains.kotlin.backend.common.phaser.startTopLevel
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.driver.FirSerializerInput
-import org.jetbrains.kotlin.backend.driver.SpecialBackendChecksInput
 import org.jetbrains.kotlin.backend.driver.runFir2Ir
 import org.jetbrains.kotlin.backend.driver.runFir2IrSerializer
 import org.jetbrains.kotlin.backend.driver.runFirFrontend
 import org.jetbrains.kotlin.backend.driver.runFirSerializer
 import org.jetbrains.kotlin.backend.driver.runPreSerializationLowerings
-import org.jetbrains.kotlin.backend.driver.runSpecialBackendChecks
 import org.jetbrains.kotlin.backend.driver.writeKlib
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.konan.file.File
@@ -79,15 +77,6 @@ class NativeFrontendDriver(private val performanceManager: PerformanceManager?) 
                 // By providing the same path for both regular output and header klib we can skip emitting the full klib.
                 if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
             }
-
-            engine.runSpecialBackendChecks(
-                SpecialBackendChecksInput(
-                    fir2IrOutput.fir2irActualizedResult.irModuleFragment,
-                    fir2IrOutput.fir2irActualizedResult.irBuiltIns,
-                    fir2IrOutput.symbols,
-                    config.target
-                )
-            )
 
             val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
                 engine.runPreSerializationLowerings(fir2IrOutput, environment)
