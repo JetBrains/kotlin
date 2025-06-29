@@ -61,6 +61,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
 
     ::JvmInventNamesForLocalFunctions,
     ::JvmLocalDeclarationsLowering,
+    ::JvmUpgradeCallableReferences,
     ::JvmLocalDeclarationPopupLowering,
 
     ::StaticCallableReferenceLowering,
@@ -108,7 +109,6 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::AdditionalClassAnnotationLowering,
     ::RecordEnclosingMethodsLowering,
     ::TypeOperatorLowering,
-    ::JvmUpgradeCallableReferences,
     ::ReplaceKFunctionInvokeWithFunctionInvoke,
     ::JvmKotlinNothingValueExceptionLowering,
     ::MakePropertyDelegateMethodsStaticLowering,

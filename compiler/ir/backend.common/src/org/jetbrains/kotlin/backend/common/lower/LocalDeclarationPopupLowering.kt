@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.util.transformInPlace
 
 /**
  * Moves local declarations into nearest declaration container.
@@ -38,6 +41,12 @@ open class LocalDeclarationPopupLowering(
                 declaration.getter.transformStatement(this)
                 declaration.setter?.transformStatement(this)
                 return declaration.delegate.transformStatement(this)
+            }
+
+            override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                expression.boundValues.transformInPlace(this, null)
+                expression.invokeFunction.transformChildrenVoid()
+                return expression
             }
 
             override fun visitClassNew(declaration: IrClass): IrStatement = visitClassOrFunction(declaration)

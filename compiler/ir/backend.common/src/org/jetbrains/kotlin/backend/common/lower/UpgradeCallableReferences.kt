@@ -33,7 +33,6 @@ open class UpgradeCallableReferences(
     val upgradeLocalDelegatedPropertyReferences: Boolean = true,
     val upgradeSamConversions: Boolean = true,
     val upgradeExtractedAdaptedBlocks: Boolean = false,
-    val addCompletionParameterInWrapperFunction: Boolean = false,
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -43,6 +42,9 @@ open class UpgradeCallableReferences(
     fun lower(irFunction: IrFunction) {
         irFunction.transform(UpgradeTransformer(), irFunction)
     }
+
+    open fun IrTransformer<IrDeclarationParent>.processCallExpression(expression: IrCall, data: IrDeclarationParent) =
+        this.visitFunctionAccess(expression, data)
 
 
     private data class AdaptedBlock(
@@ -72,6 +74,8 @@ open class UpgradeCallableReferences(
                 parameter.kind = IrParameterKind.Regular
             }
         }
+
+        override fun visitCall(expression: IrCall, data: IrDeclarationParent): IrElement = processCallExpression(expression, data)
 
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)
@@ -333,14 +337,6 @@ open class UpgradeCallableReferences(
             )
         }
 
-        // TODO delete once the lowering is moved
-        private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
-            addValueParameter("\$completion", continuationType())
-
-        // TODO delete once the lowering is moved
-        private fun IrFunction.continuationType(): IrType =
-            context.symbols.continuationClass.typeWith(returnType).makeNullable()
-
         private fun IrCallableReference<*>.buildUnsupportedForLocalFunction(
             captured: List<Pair<IrValueParameter, IrExpression>>,
             parent: IrDeclarationParent,
@@ -389,9 +385,6 @@ open class UpgradeCallableReferences(
                         this.name = Name.identifier("p${index++}")
                         this.type = type
                     }
-                }
-                if (addCompletionParameterInWrapperFunction && isSuspend) {
-                    addCompletionValueParameter()
                 }
                 this.body = context.createIrBuilder(symbol).run {
                     irBlockBody {
