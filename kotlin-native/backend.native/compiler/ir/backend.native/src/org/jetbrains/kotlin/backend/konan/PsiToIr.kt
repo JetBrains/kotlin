@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.project.Project
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer

@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.backend
 
 import com.intellij.openapi.project.Project
-import org.jebrains.kotlin.backend.native.BasicPhaseContext
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.BasicPhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,6 +30,10 @@ sealed class FrontendPhaseOutput {
 interface FrontendContext : PhaseContext {
     var frontendServices: FrontendServices
     val config: NativeFrontendConfig
+
+    fun shouldExportKDoc() = configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
+
+    fun shouldPrintFiles() = configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
 }
 
 data class FrontendPhaseInput(

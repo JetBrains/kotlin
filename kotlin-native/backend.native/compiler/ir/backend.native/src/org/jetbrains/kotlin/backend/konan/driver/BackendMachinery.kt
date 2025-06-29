@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jebrains.kotlin.backend.native.BaseNativeConfig
-import org.jebrains.kotlin.backend.native.BasicPhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 
 interface BackendPhaseContext : PhaseContext, ConfigChecks
 

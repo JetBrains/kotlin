@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 val IR_DECLARATION_ORIGIN_VOLATILE = IrDeclarationOriginImpl("VOLATILE")
 

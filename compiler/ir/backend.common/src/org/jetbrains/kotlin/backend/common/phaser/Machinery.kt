@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jebrains.kotlin.backend.native
+package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.DisposableContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -38,10 +36,6 @@ import org.jetbrains.kotlin.config.phaseConfig
  */
 interface PhaseContext : LoggingContext, ErrorReportingContext, DisposableContext {
     val configuration: CompilerConfiguration
-
-    fun shouldExportKDoc() = configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
-
-    fun shouldPrintFiles() = configuration.getBoolean(KonanConfigKeys.PRINT_FILES)
 }
 
 open class BasicPhaseContext(

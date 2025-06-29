@@ -3,12 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jebrains.kotlin.backend.native.driver.utilities
+package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.config.phaser.Action
-import org.jetbrains.kotlin.backend.common.phaser.getIrDumper
-import org.jetbrains.kotlin.backend.common.phaser.getIrValidator
-import org.jebrains.kotlin.backend.native.PhaseContext
 
 /**
  * IR dump and verify actions.

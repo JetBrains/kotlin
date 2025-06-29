@@ -91,6 +91,8 @@ internal fun <T> PhaseEngine<BackendPhaseContext>.runIrLinker(
         val output = irLinkerEngine.runPhase(IrLinkerPhase, irLinkerInput)
         output to additionalOutput
     }
+    // TODO: Important! It is not correct to check on the second phase.
+    runSpecialBackendChecks(SpecialBackendChecksInput(irLinkerOutput.irModule, irLinkerOutput.irBuiltIns, irLinkerOutput.symbols, context.config.target))
     runPhase(CopyDefaultValuesToActualPhase, irLinkerOutput.irModule to irLinkerOutput.irBuiltIns)
     return irLinkerOutput to additionalOutput
 }

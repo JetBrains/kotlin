@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext
-import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.common.phaser.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment

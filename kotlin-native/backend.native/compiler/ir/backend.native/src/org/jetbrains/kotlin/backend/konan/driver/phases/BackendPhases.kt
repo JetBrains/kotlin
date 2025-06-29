@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jebrains.kotlin.backend.native.PhaseContext
-import org.jebrains.kotlin.backend.native.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.getDefaultIrActions
 import org.jetbrains.kotlin.backend.FrontendPhaseOutput
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.Fir2IrInput
 import org.jetbrains.kotlin.backend.Fir2IrOutput
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 import org.jetbrains.kotlin.backend.fir2Ir
 
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(

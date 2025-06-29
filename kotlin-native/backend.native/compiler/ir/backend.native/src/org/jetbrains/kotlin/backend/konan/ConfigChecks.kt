@@ -30,4 +30,5 @@ interface ConfigChecks {
 
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
+    fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
 }

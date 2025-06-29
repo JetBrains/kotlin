@@ -14,9 +14,9 @@ import llvm.LLVMDisposeModule
 import llvm.LLVMOpaqueModule
 import org.jebrains.kotlin.backend.native.BaseNativeConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 import org.jebrains.kotlin.backend.native.getIncludedLibraryDescriptors
-import org.jebrains.kotlin.backend.native.startTopLevel
+import org.jetbrains.kotlin.backend.common.phaser.startTopLevel
 import org.jetbrains.kotlin.backend.Fir2IrInput
 import org.jetbrains.kotlin.backend.FirOutput
 import org.jetbrains.kotlin.backend.FrontendContext

@@ -316,10 +316,6 @@ class KonanConfig(private val baseNativeConfig: BaseNativeConfig) {
 
     internal val produce get() = configuration.get(KonanConfigKeys.PRODUCE)!!
 
-    internal val metadataKlib get() = configuration.getBoolean(CommonConfigurationKeys.METADATA_KLIB)
-
-    internal val headerKlibPath get() = configuration.get(KonanConfigKeys.HEADER_KLIB)?.removeSuffixIfPresent(".klib")
-
     internal val produceStaticFramework get() = configuration.getBoolean(KonanConfigKeys.STATIC_FRAMEWORK)
 
     internal val purgeUserLibs: Boolean
@@ -388,9 +384,6 @@ class KonanConfig(private val baseNativeConfig: BaseNativeConfig) {
 
     internal val nativeLibraries: List<String> =
             configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
-
-    internal val languageVersionSettings =
-            configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
 
     internal val friendModuleFiles: Set<File> =
             configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
@@ -558,13 +551,6 @@ class KonanConfig(private val baseNativeConfig: BaseNativeConfig) {
      */
     internal val compileFromBitcode: String? by lazy {
         configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE)
-    }
-
-    /**
-     * Path to serialized dependencies to use for bitcode compilation.
-     */
-    internal val readSerializedDependencies: String? by lazy {
-        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES)
     }
 
     /**

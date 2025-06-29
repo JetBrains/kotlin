@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jebrains.kotlin.backend.native.BasicPhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.BasicPhaseContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.driver.BackendPhaseContext

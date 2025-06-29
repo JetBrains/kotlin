@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jebrains.kotlin.backend.native.BasicPhaseContext
-import org.jebrains.kotlin.backend.native.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.BasicPhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits

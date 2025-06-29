@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend
 
-import org.jebrains.kotlin.backend.native.PhaseContext
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.cli.common.*

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend
 
 import com.intellij.openapi.project.Project
 import org.jebrains.kotlin.backend.native.BaseNativeConfig
-import org.jebrains.kotlin.backend.native.PhaseContext
-import org.jebrains.kotlin.backend.native.startTopLevel
+import org.jetbrains.kotlin.backend.common.phaser.PhaseContext
+import org.jetbrains.kotlin.backend.common.phaser.startTopLevel
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.driver.FirSerializerInput
 import org.jetbrains.kotlin.backend.driver.SpecialBackendChecksInput
