@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.backend.NativeFrontendConfig
 import org.jetbrains.kotlin.backend.SerializerOutput
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.driver.FirSerializerInput
-import org.jetbrains.kotlin.backend.driver.SpecialBackendChecksInput
 import org.jetbrains.kotlin.backend.driver.runFir2Ir
 import org.jetbrains.kotlin.backend.driver.runFir2IrSerializer
 import org.jetbrains.kotlin.backend.driver.runFirFrontend
 import org.jetbrains.kotlin.backend.driver.runFirSerializer
 import org.jetbrains.kotlin.backend.driver.runPreSerializationLowerings
-import org.jetbrains.kotlin.backend.driver.runSpecialBackendChecks
 import org.jetbrains.kotlin.backend.driver.writeKlib
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
