@@ -52,7 +52,7 @@ abstract class BaseDaemonSessionTest {
 
     open val defaultDaemonJvmOptions
         get() = DaemonJVMOptions(
-            maxMemory = "384m"
+            maxHeapSize = "384m"
         )
 
     @AfterEach
