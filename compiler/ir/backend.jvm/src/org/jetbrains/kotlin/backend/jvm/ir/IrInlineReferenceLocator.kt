@@ -44,6 +44,7 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
      * @param parameter The parameter of [callee] to which the lambda is passed.
      * @param scope The declaration in scope of which [callee] is being called.
      */
+    // TODO remove after KT-78719
     abstract fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration)
 
     /**
@@ -54,9 +55,7 @@ abstract class IrInlineReferenceLocator(private val context: JvmBackendContext) 
      * @param parameter The parameter of [callee] to which the lambda is passed.
      * @param scope The declaration in scope of which [callee] is being called.
      */
-    open fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
-        TODO()
-    }
+    open fun visitInlineLambda(argument: IrRichFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {}
 }
 
 /**
@@ -101,11 +100,25 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
      */
     private val privateInlineFunctionCallSites = mutableMapOf<IrFunction, Set<IrDeclaration>>()
 
+    // TODO remove after KT-78719
     override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
         // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
         // but these lambdas are effectively inline
         inlineCallSites[argument.symbol.owner] =
             CallSite(scope, approximateToPackage = parameter.isCrossinline && !callee.isCoroutineIntrinsic())
+    }
+
+    override fun visitInlineLambda(
+        argument: IrRichFunctionReference,
+        callee: IrFunction,
+        parameter: IrValueParameter,
+        scope: IrDeclaration
+    ) {
+        // suspendCoroutine and suspendCoroutineUninterceptedOrReturn accept crossinline lambdas to disallow non-local returns,
+        // but these lambdas are effectively inline
+        inlineCallSites[argument.invokeFunction] =
+            CallSite(scope, approximateToPackage = parameter.isCrossinline && !callee.isCoroutineIntrinsic())
+
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
@@ -232,6 +245,7 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
  * @param onLambda The closure to execute for each such lambda. Accepts the lambda expression, the inline function being called,
  *   the parameter of that inline function to which the lambda is passed, and the scope in which the inline function is called.
  */
+// TODO remove after KT-78719
 inline fun IrFile.findInlineLambdas(
     context: JvmBackendContext, crossinline onLambda: (IrFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
 ) = accept(
@@ -246,8 +260,36 @@ inline fun IrFile.findInlineLambdas(
     null,
 )
 
+inline fun IrFile.findRichInlineLambdas(
+    context: JvmBackendContext, crossinline onLambda: (IrRichFunctionReference, IrFunction, IrValueParameter, IrDeclaration) -> Unit,
+) = accept(
+    object : IrInlineReferenceLocator(context) {
+        override fun visitInlineLambda(
+            argument: IrFunctionReference,
+            callee: IrFunction,
+            parameter: IrValueParameter,
+            scope: IrDeclaration,
+        ) {}
+
+        override fun visitInlineLambda(
+            argument: IrRichFunctionReference,
+            callee: IrFunction,
+            parameter: IrValueParameter,
+            scope: IrDeclaration,
+        ) = onLambda(argument, callee, parameter, scope)
+    },
+    null,
+)
+
 /**
  * Runs [IrInlineScopeResolver] on this [IrFile] and returns the scope resolver instance.
  */
+// TODO remove after KT-78719
 fun IrFile.findInlineCallSites(context: JvmBackendContext) =
+    IrInlineScopeResolver(context).apply { accept(this, null) }
+
+/**
+ * Runs [IrInlineScopeResolver] on this [IrFile] and returns the scope resolver instance.
+ */
+fun IrFile.findRichInlineCallSites(context: JvmBackendContext) =
     IrInlineScopeResolver(context).apply { accept(this, null) }

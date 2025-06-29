@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
+import org.jetbrains.kotlin.backend.jvm.ir.findRichInlineLambdas
 import org.jetbrains.kotlin.backend.jvm.isEnclosedInConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 
@@ -21,8 +22,12 @@ internal class JvmLocalDeclarationPopupLowering(context: JvmBackendContext) : Lo
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
     override fun lower(irFile: IrFile) {
+        // TODO remove after KT-78719
         irFile.findInlineLambdas(context as JvmBackendContext) { argument, _, _, scope ->
             inlineLambdaToScope[argument.symbol.owner] = scope
+        }
+        irFile.findRichInlineLambdas(context as JvmBackendContext) { argument, _, _, scope ->
+            inlineLambdaToScope[argument.invokeFunction] = scope
         }
         super.lower(irFile)
         inlineLambdaToScope.clear()

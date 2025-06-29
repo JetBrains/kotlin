@@ -272,6 +272,7 @@ open class InnerClassConstructorCallsLowering(val context: CommonBackendContext)
                 return expression
             }
 
+            // TODO remove after KT-78719
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
