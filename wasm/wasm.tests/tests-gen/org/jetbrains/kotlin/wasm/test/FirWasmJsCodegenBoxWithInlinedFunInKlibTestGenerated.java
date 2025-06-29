@@ -7062,6 +7062,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     }
 
     @Test
+    @TestMetadata("inlineAnonymousParameter.kt")
+    public void testInlineAnonymousParameter() {
+      runTest("compiler/testData/codegen/box/contextParameters/inlineAnonymousParameter.kt");
+    }
+
+    @Test
     @TestMetadata("inlineContextualReceiverLambda.kt")
     public void testInlineContextualReceiverLambda() {
       runTest("compiler/testData/codegen/box/contextParameters/inlineContextualReceiverLambda.kt");
@@ -12737,6 +12743,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @TestMetadata("kt52702.kt")
     public void testKt52702() {
       runTest("compiler/testData/codegen/box/defaultArguments/kt52702.kt");
+    }
+
+    @Test
+    @TestMetadata("kt59326.kt")
+    public void testKt59326() {
+      runTest("compiler/testData/codegen/box/defaultArguments/kt59326.kt");
     }
 
     @Test
@@ -18625,6 +18637,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     @TestMetadata("capturedStarProjection.kt")
     public void testCapturedStarProjection() {
       runTest("compiler/testData/codegen/box/inference/capturedStarProjection.kt");
+    }
+
+    @Test
+    @TestMetadata("capturedTypeAsLambdaInputType.kt")
+    public void testCapturedTypeAsLambdaInputType() {
+      runTest("compiler/testData/codegen/box/inference/capturedTypeAsLambdaInputType.kt");
     }
 
     @Test
@@ -39099,6 +39117,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       public void testQualifiedNameWithDollars() {
         runTest("compiler/testData/codegen/box/reflection/classes/qualifiedNameWithDollars.kt");
       }
+
+      @Test
+      @TestMetadata("toStringWasm.kt")
+      public void testToStringWasm() {
+        runTest("compiler/testData/codegen/box/reflection/classes/toStringWasm.kt");
+      }
     }
 
     @Nested
@@ -39482,6 +39506,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("classes.kt")
       public void testClasses() {
         runTest("compiler/testData/codegen/box/reflection/typeOf/classes.kt");
+      }
+
+      @Test
+      @TestMetadata("definitelyNotNullType.kt")
+      public void testDefinitelyNotNullType() {
+        runTest("compiler/testData/codegen/box/reflection/typeOf/definitelyNotNullType.kt");
       }
 
       @Test
@@ -40312,6 +40342,46 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("jaggedDeep.kt")
       public void testJaggedDeep() {
         runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CatchParameter {
+      @Test
+      public void testAllFilesPresentInCatchParameter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Test
+      @TestMetadata("nestedReifiedCatch.kt")
+      public void testNestedReifiedCatch() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nestedReifiedCatch.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableExceptionType.kt")
+      public void testNullableExceptionType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableExceptionType.kt");
+      }
+
+      @Test
+      @TestMetadata("nullableNothing.kt")
+      public void testNullableNothing() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableNothing.kt");
+      }
+
+      @Test
+      @TestMetadata("reificationClash.kt")
+      public void testReificationClash() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/reificationClash.kt");
+      }
+
+      @Test
+      @TestMetadata("tryCatchReifiedType.kt")
+      public void testTryCatchReifiedType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
       }
     }
   }
@@ -44640,6 +44710,34 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("withoutElse.kt")
       public void testWithoutElse() {
         runTest("compiler/testData/codegen/box/when/enumOptimization/withoutElse.kt");
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/when/exhaustiveness")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Exhaustiveness {
+      @Test
+      public void testAllFilesPresentInExhaustiveness() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/when/exhaustiveness"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeBoolean.kt")
+      public void testExhaustiveWithNegativeBoolean() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeBoolean.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeEnum.kt")
+      public void testExhaustiveWithNegativeEnum() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeEnum.kt");
+      }
+
+      @Test
+      @TestMetadata("exhaustiveWithNegativeSealed.kt")
+      public void testExhaustiveWithNegativeSealed() {
+        runTest("compiler/testData/codegen/box/when/exhaustiveness/exhaustiveWithNegativeSealed.kt");
       }
     }
 
