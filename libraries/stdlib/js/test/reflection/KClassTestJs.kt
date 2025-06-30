@@ -11,7 +11,7 @@ class KClassTestJs {
 
     @Test
     fun testQualifiedName() {
-        @Suppress("UNSUPPORTED")
+        @Suppress("UNSUPPORTED", "UNSUPPORTED_REFLECTION_API")
         assertFailsWith<NotImplementedError> { KClassTestJs::class.qualifiedName }
     }
 
