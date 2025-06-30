@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
+import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.fail
 import java.io.File
@@ -31,11 +30,7 @@ object KlibCompilerInvocationTestUtils {
         val testDir: File
         val buildDir: File
         val stdlibFile: File
-        val testModeConstructorParameters: Map<String, String>
         val targetBackend: TargetBackend
-
-        // Customize the source code of a module before compiling it to a KLIB.
-        fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
 
         // A way to check if a test is ignored or not. Override this function if necessary.
         fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
@@ -48,6 +43,19 @@ object KlibCompilerInvocationTestUtils {
         fun onIgnoredTest()
     }
 
+    data class TestStructure(
+        val projectInfo: ProjectInfo,
+        val modules: Map<String, ModuleUnderTest>,
+    ) {
+        data class ModuleUnderTest(val moduleInfo: ModuleInfo, val testDataDir: File?, val sourceDir: File, val outputDir: File) {
+            val klibFile get() = outputDir.resolve("${moduleInfo.moduleName}.klib")
+        }
+    }
+
+    interface TestStructureExtractor {
+        fun extractTestStructure(testDataPath: File): TestStructure
+    }
+
     /** [BinaryArtifact] is a representation of a platform-specific binary artifact. */
     interface BinaryArtifact
 
@@ -55,10 +63,8 @@ object KlibCompilerInvocationTestUtils {
     interface ArtifactBuilder<BA : BinaryArtifact> {
         /** Build a KLIB from a module. */
         fun buildKlib(
-            moduleName: String,
-            buildDirs: ModuleBuildDirs,
+            module: ModuleUnderTest,
             dependencies: Dependencies,
-            klibFile: File,
             compilerEdition: KlibCompilerEdition,
             compilerArguments: List<String>,
         )
@@ -104,117 +110,142 @@ object KlibCompilerInvocationTestUtils {
 
     fun <BA : BinaryArtifact> runTest(
         testConfiguration: TestConfiguration,
+        testStructureExtractor: TestStructureExtractor,
         artifactBuilder: ArtifactBuilder<BA>,
         binaryRunner: BinaryRunner<BA>,
         compilerEditionChange: KlibCompilerChangeScenario,
-    ) =
-        with(testConfiguration) {
-            val projectName = testDir.name
+    ) {
+        val testStructure = testStructureExtractor.extractTestStructure(testDataPath = testConfiguration.testDir)
 
-            val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
-            val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
-
-            if (isIgnoredTest(projectInfo)) {
-                return onIgnoredTest() // Ignore muted tests.
-            }
-
-            val modulesMap: Map<String, ModuleUnderTest> = buildMap {
-                projectInfo.modules.forEach { moduleName ->
-                    val moduleTestDir = File(testDir, moduleName)
-                    KtUsefulTestCase.assertExists(moduleTestDir)
-
-                    val moduleInfoFile = File(moduleTestDir, MODULE_INFO_FILE)
-                    val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
-
-                    val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
-
-                    // Populate the source dir with *.kt files.
-                    copySources(from = moduleTestDir, to = moduleBuildDirs.sourceDir)
-
-                    // Customize the source dir if necessary.
-                    customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
-
-                    // Include PL utils into the main module.
-                    if (moduleName == MAIN_MODULE_NAME) {
-                        val utilsDir = testDir.parentFile.parentFile.resolve(PL_UTILS_DIR)
-                        KtUsefulTestCase.assertExists(utilsDir)
-
-                        copySources(from = utilsDir, to = moduleBuildDirs.sourceDir) { contents ->
-                            contents.replace(
-                                TEST_MODE_PLACEHOLDER,
-                                buildString {
-                                    append("TestMode(")
-                                    testModeConstructorParameters.entries.joinTo(this) { it.key + " = " + it.value }
-                                    append(")")
-                                }
-                            )
-                        }
-                    }
-
-                    moduleBuildDirs.outputDir.apply { mkdirs() }
-
-                    this[moduleName] = ModuleUnderTest(
-                        info = moduleInfo,
-                        testDir = moduleTestDir,
-                        buildDirs = moduleBuildDirs
-                    )
-                }
-            }
-
-            // Collect all dependencies for building the final binary file.
-            var binaryDependencies = Dependencies.EMPTY
-
-            projectInfo.steps.forEach { projectStep ->
-                projectStep.order.forEach { moduleName ->
-                    val moduleUnderTest = modulesMap[moduleName] ?: fail { "No module $moduleName found on step ${projectStep.id}" }
-                    val (moduleInfo, moduleTestDir, moduleBuildDirs) = moduleUnderTest
-                    val moduleStep = moduleInfo.steps.getValue(projectStep.id)
-
-                    moduleStep.modifications.forEach { modification ->
-                        modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
-                    }
-
-                    moduleBuildDirs.outputDir.listFiles()?.forEach(File::deleteRecursively)
-
-                    val regularDependencies = hashSetOf<Dependency>()
-                    val friendDependencies = hashSetOf<Dependency>()
-
-                    moduleStep.dependencies.forEach { dependency ->
-                        if (dependency.moduleName == "stdlib")
-                            regularDependencies += Dependency("stdlib", stdlibFile)
-                        else {
-                            val klibFile = modulesMap[dependency.moduleName]?.klibFile
-                                ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
-                            val moduleDependency = Dependency(dependency.moduleName, klibFile)
-                            regularDependencies += moduleDependency
-                            if (dependency.isFriend) friendDependencies += moduleDependency
-                        }
-                    }
-
-                    val dependencies = Dependencies(regularDependencies, friendDependencies)
-                    binaryDependencies = binaryDependencies.mergeWith(dependencies)
-
-                    val compilerEdition = compilerEditionChange.getCompilerEditionForKlib(moduleStep.compilerCodename)
-
-                    artifactBuilder.buildKlib(
-                        moduleInfo.moduleName,
-                        moduleBuildDirs,
-                        dependencies,
-                        moduleUnderTest.klibFile,
-                        compilerEdition,
-                        moduleStep.cliArguments,
-                    )
-                }
-            }
-
-            val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
-            val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
-
-            val binaryArtifact = artifactBuilder.buildBinary(mainModuleDependency, binaryDependencies)
-            binaryRunner.runBinary(binaryArtifact)
+        if (testConfiguration.isIgnoredTest(testStructure.projectInfo)) {
+            return testConfiguration.onIgnoredTest() // Ignore muted tests.
         }
 
-    private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {
+        // Collect all dependencies for building the final binary file.
+        var binaryDependencies = Dependencies.EMPTY
+
+        testStructure.projectInfo.steps.forEach { projectStep ->
+            projectStep.order.forEach { moduleName ->
+                val moduleUnderTest = testStructure.modules[moduleName]
+                    ?: fail { "No module $moduleName found on step ${projectStep.id}" }
+
+                val (moduleInfo, moduleTestDataDir, moduleSourceDir, moduleOutputDir) = moduleUnderTest
+                val moduleStep = moduleInfo.steps.getValue(projectStep.id)
+
+                moduleStep.modifications.forEach { modification ->
+                    moduleTestDataDir ?: fail { "No test data dir for module $moduleName on step ${projectStep.id}" }
+                    modification.execute(moduleTestDataDir, moduleSourceDir)
+                }
+
+                moduleOutputDir.listFiles()?.forEach(File::deleteRecursively)
+
+                val regularDependencies = hashSetOf<Dependency>()
+                val friendDependencies = hashSetOf<Dependency>()
+
+                moduleStep.dependencies.forEach { dependency ->
+                    if (dependency.moduleName == "stdlib")
+                        regularDependencies += Dependency("stdlib", testConfiguration.stdlibFile)
+                    else {
+                        val klibFile = testStructure.modules[dependency.moduleName]?.klibFile
+                            ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
+                        val moduleDependency = Dependency(dependency.moduleName, klibFile)
+                        regularDependencies += moduleDependency
+                        if (dependency.isFriend) friendDependencies += moduleDependency
+                    }
+                }
+
+                val dependencies = Dependencies(regularDependencies, friendDependencies)
+                binaryDependencies = binaryDependencies.mergeWith(dependencies)
+
+                val compilerEdition = compilerEditionChange.getCompilerEditionForKlib(moduleStep.compilerCodename)
+
+                artifactBuilder.buildKlib(
+                    module = moduleUnderTest,
+                    dependencies = dependencies,
+                    compilerEdition = compilerEdition,
+                    compilerArguments = moduleStep.cliArguments,
+                )
+            }
+        }
+
+        val mainModuleKlibFile = testStructure.modules[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
+        val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
+
+        val binaryArtifact = artifactBuilder.buildBinary(mainModuleDependency, binaryDependencies)
+        binaryRunner.runBinary(binaryArtifact)
+    }
+
+    const val MAIN_MODULE_NAME = "main"
+}
+
+abstract class PartialLinkageTestStructureExtractor : KlibCompilerInvocationTestUtils.TestStructureExtractor {
+    protected abstract val buildDir: File
+
+    // Platform-specific `TestMode()` constructor parameters.
+    protected abstract val testModeConstructorParameters: Map<String, String>
+
+    // Customize the source code of a module before compiling it to a KLIB.
+    protected abstract fun customizeModuleSources(moduleName: String, moduleSourceDir: File)
+
+    override fun extractTestStructure(testDataPath: File): KlibCompilerInvocationTestUtils.TestStructure {
+        assertTrue(testDataPath.isDirectory) { "Not a directory: $testDataPath" }
+
+        val projectInfoFile = File(testDataPath, PROJECT_INFO_FILE)
+        val projectInfo = ProjectInfoParser(projectInfoFile).parse(testDataPath.name)
+
+        val modules = mutableMapOf<String, ModuleUnderTest>()
+
+        projectInfo.modules.forEach { moduleName ->
+            val moduleTestDataDir = File(testDataPath, moduleName)
+            assertExists(moduleTestDataDir)
+
+            val moduleInfoFile = File(moduleTestDataDir, MODULE_INFO_FILE)
+            val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
+
+            val moduleBuildDir = buildDir.resolve(moduleName)
+            if (moduleBuildDir.exists()) moduleBuildDir.deleteRecursively()
+
+            val moduleSourceDir = moduleBuildDir.resolve(SOURCE_DIR_NAME).apply { mkdirs() }
+            val moduleOutputDir = moduleBuildDir.resolve(OUTPUT_DIR_NAME).apply { mkdirs() }
+
+            // Populate the source dir with *.kt files.
+            copySources(from = moduleTestDataDir, to = moduleSourceDir)
+
+            // Customize the source dir if necessary.
+            customizeModuleSources(moduleName, moduleSourceDir)
+
+            // Include PL utils into the main module.
+            if (moduleName == MAIN_MODULE_NAME) {
+                val utilsDir = testDataPath.parentFile.parentFile.resolve(PL_UTILS_DIR)
+                assertExists(utilsDir)
+
+                copySources(from = utilsDir, to = moduleSourceDir) { contents ->
+                    contents.replace(
+                        TEST_MODE_PLACEHOLDER,
+                        buildString {
+                            append("TestMode(")
+                            testModeConstructorParameters.entries.joinTo(this) { it.key + " = " + it.value }
+                            append(")")
+                        }
+                    )
+                }
+            }
+
+            modules[moduleName] = ModuleUnderTest(
+                moduleInfo,
+                testDataDir = moduleTestDataDir,
+                sourceDir = moduleSourceDir,
+                outputDir = moduleOutputDir,
+            )
+        }
+
+        return KlibCompilerInvocationTestUtils.TestStructure(
+            projectInfo = projectInfo,
+            modules = modules,
+        )
+    }
+
+    protected fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {
         var anyFilePatched = false
 
         from.walk().filter { it.isFile && (it.extension == "kt" || it.extension == "js") }.forEach { sourceFile ->
@@ -235,29 +266,13 @@ object KlibCompilerInvocationTestUtils {
         check(patchSourceFile == null || anyFilePatched) { "No source files have been patched" }
     }
 
-    fun createModuleDirs(buildDir: File, moduleName: String): ModuleBuildDirs {
-        val moduleBuildDir = buildDir.resolve(moduleName)
+    companion object {
+        const val MAIN_MODULE_NAME = "main"
 
-        if (moduleBuildDir.exists()) moduleBuildDir.deleteRecursively()
+        private const val SOURCE_DIR_NAME = "sources"
+        private const val OUTPUT_DIR_NAME = "outputs"
 
-        val moduleSourceDir = moduleBuildDir.resolve(SOURCE_DIR_NAME).apply { mkdirs() }
-        val moduleOutputDir = moduleBuildDir.resolve(OUTPUT_DIR_NAME).apply { mkdirs() }
-
-        return ModuleBuildDirs(moduleSourceDir, moduleOutputDir)
+        private const val PL_UTILS_DIR = "__utils__"
+        private const val TEST_MODE_PLACEHOLDER = "__UNKNOWN_TEST_MODE__"
     }
-
-    data class ModuleBuildDirs(val sourceDir: File, val outputDir: File) {
-        internal companion object {
-            const val SOURCE_DIR_NAME = "sources"
-            const val OUTPUT_DIR_NAME = "outputs"
-        }
-    }
-
-    private data class ModuleUnderTest(val info: ModuleInfo, val testDir: File, val buildDirs: ModuleBuildDirs) {
-        val klibFile get() = buildDirs.outputDir.resolve("${info.moduleName}.klib")
-    }
-
-    const val MAIN_MODULE_NAME = "main"
-    private const val PL_UTILS_DIR = "__utils__"
-    private const val TEST_MODE_PLACEHOLDER = "__UNKNOWN_TEST_MODE__"
 }

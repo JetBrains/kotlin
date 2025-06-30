@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.js.test.ir
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.klib.KlibCompilerChangeScenario
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
+import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
+import java.io.File
 
 abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.NO_IC)
 abstract class AbstractJsPartialLinkageNoICES6TestCase : AbstractJsPartialLinkageTestCase(CompilerType.NO_IC_WITH_ES6)
@@ -21,13 +23,44 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
             buildDir = buildDir,
             compilerType = compilerType,
         )
+        val testStructureExtractor = JsPartialLinkageTestStructureExtractor(buildDir)
         val artifactBuilder = JsCompilerInvocationTestArtifactBuilder(configuration)
 
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
+            testStructureExtractor = testStructureExtractor,
             artifactBuilder = artifactBuilder,
             binaryRunner = JsCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
+    }
+}
+
+internal class JsPartialLinkageTestStructureExtractor(
+    override val buildDir: File,
+) : PartialLinkageTestStructureExtractor() {
+    override val testModeConstructorParameters = mapOf("isJs" to "true")
+
+    override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
+        if (moduleName == KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME) {
+            // Add the @JsExport annotation to make the box function visible to Node.
+            moduleSourceDir.walkTopDown().forEach { file ->
+                if (file.extension == "kt") {
+                    var modified = false
+                    val lines = file.readLines().map { line ->
+                        if (line.startsWith("fun $BOX_FUN_FQN()")) {
+                            modified = true
+                            "@OptIn(ExperimentalJsExport::class) @JsExport $line"
+                        } else
+                            line
+                    }
+                    if (modified) file.writeText(lines.joinToString("\n"))
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val BOX_FUN_FQN = "box"
     }
 }

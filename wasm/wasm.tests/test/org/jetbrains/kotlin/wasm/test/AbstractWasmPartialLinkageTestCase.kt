@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
+import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
@@ -48,22 +48,11 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
     ) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
-        override val testModeConstructorParameters = mapOf("isWasm" to "true")
         override val targetBackend get() = TargetBackend.WASM
 
-        override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
-            if (moduleName == MAIN_MODULE_NAME) {
-                File(moduleSourceDir, "runner.kt")
-                    .writeText("@kotlin.wasm.WasmExport fun runBoxTest() = println($BOX_FUN_FQN())")
-            }
-        }
 
         override fun onIgnoredTest() {
             /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
-        }
-
-        companion object {
-            private const val BOX_FUN_FQN = "box"
         }
     }
 
@@ -77,10 +66,28 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
 
         KlibCompilerInvocationTestUtils.runTest(
             testConfiguration = configuration,
+            testStructureExtractor = WasmPartialLinkageTestStructureExtractor(buildDir),
             artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = WasmCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
+    }
+}
+
+internal class WasmPartialLinkageTestStructureExtractor(
+    override val buildDir: File,
+) : PartialLinkageTestStructureExtractor() {
+    override val testModeConstructorParameters = mapOf("isWasm" to "true")
+
+    override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
+        if (moduleName == KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME) {
+            File(moduleSourceDir, "runner.kt")
+                .writeText("@kotlin.wasm.WasmExport fun runBoxTest() = println($BOX_FUN_FQN())")
+        }
+    }
+
+    companion object {
+        private const val BOX_FUN_FQN = "box"
     }
 }
 
@@ -94,21 +101,19 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
     private val configuration: AbstractWasmPartialLinkageTestCase.WasmTestConfiguration,
 ) : KlibCompilerInvocationTestUtils.ArtifactBuilder<WasmCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
-        moduleName: String,
-        buildDirs: ModuleBuildDirs,
+        module: KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest,
         dependencies: Dependencies,
-        klibFile: File,
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
     ) {
         val kotlinSourceFilePaths = mutableListOf<String>()
 
-        buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
+        module.sourceDir.walkTopDown().forEach { sourceFile ->
             if (sourceFile.isFile) when (sourceFile.extension) {
                 "kt" -> kotlinSourceFilePaths += sourceFile.absolutePath
                 "js" -> {
                     // This is needed to preserve *.js files from test data which are required for tests with `external` declarations:
-                    sourceFile.copyTo(buildDirs.outputDir.resolve(sourceFile.relativeTo(buildDirs.sourceDir)), overwrite = true)
+                    sourceFile.copyTo(module.outputDir.resolve(sourceFile.relativeTo(module.sourceDir)), overwrite = true)
                 }
             }
         }
@@ -117,8 +122,8 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         runCompilerViaCLI(
             listOf(
                 K2JSCompilerArguments::irProduceKlibFile.cliArgument,
-                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
-                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
+                K2JSCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
                 // Halt on any unexpected warning.
                 K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
                 // Tests suppress the INVISIBLE_REFERENCE check.
