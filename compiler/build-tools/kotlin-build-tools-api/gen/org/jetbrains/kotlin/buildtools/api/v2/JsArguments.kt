@@ -5,6 +5,7 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.jvm.JvmField
 
+@ExperimentalCompilerArgument
 public interface JsArguments : WasmArguments {
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JsArgument<V>): V

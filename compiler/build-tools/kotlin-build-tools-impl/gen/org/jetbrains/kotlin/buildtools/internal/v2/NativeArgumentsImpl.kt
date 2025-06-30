@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -109,7 +111,6 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: K2NativeCompilerArguments = K2NativeCompilerArguments()): K2NativeCompilerArguments {
     if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.enableAssertions = get(ENABLE_ASSERTIONS) }
     if ("G" in optionsMap) { arguments.debug = get(G) }

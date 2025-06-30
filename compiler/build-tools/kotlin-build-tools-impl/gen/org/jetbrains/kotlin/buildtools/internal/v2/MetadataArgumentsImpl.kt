@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -26,7 +28,6 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
     if ("D" in optionsMap) { arguments.destination = get(D) }
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }

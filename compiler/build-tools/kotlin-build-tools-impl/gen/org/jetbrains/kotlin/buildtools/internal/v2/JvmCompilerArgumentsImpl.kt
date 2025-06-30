@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -94,7 +96,6 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     if ("D" in optionsMap) { arguments.destination = get(D) }
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }

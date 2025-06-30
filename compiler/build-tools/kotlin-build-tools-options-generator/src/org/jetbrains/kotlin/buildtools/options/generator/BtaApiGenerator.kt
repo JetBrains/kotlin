@@ -9,7 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
-import org.jetbrains.kotlin.arguments.dsl.types.*
+import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
@@ -19,23 +19,15 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 
-// TODO: workaround for now, but we should expose these in the arguments module in a way that doesn't need listing enums and their accessors explicitly here
-internal val enumNameAccessors = mutableMapOf(
-    JvmTarget::class to JvmTarget::targetName,
-    ExplicitApiMode::class to ExplicitApiMode::modeName,
-    KotlinVersion::class to KotlinVersion::versionName,
-    ReturnValueCheckerMode::class to ReturnValueCheckerMode::modeState
-)
-@Suppress("UNCHECKED_CAST")
-internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
-    ?: error("Unknown enum in compiler arguments. Must be one of: ${enumNameAccessors.keys.joinToString()}.")
-
 class BtaApiGenerator(val genDir: Path) : BtaGenerator {
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): TypeName {
         val className = level.name.capitalizeAsciiOnly()
         FileSpec.Companion.builder(API_PACKAGE, className).apply {
             addType(
                 TypeSpec.Companion.interfaceBuilder(className).apply {
+                    if (level.name in experimentalLevelNames) {
+                        addAnnotation(ANNOTATION_EXPERIMENTAL)
+                    }
                     parentClass?.let { addSuperinterface(it) }
                     val argument = generateArgumentType(className)
                     val argumentTypeName = ClassName(API_PACKAGE, className, argument)
