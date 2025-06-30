@@ -7,10 +7,9 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
+import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
-import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -18,14 +17,21 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -36,13 +42,48 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.DFS
 
+internal interface LinkKlibsContext : PhaseContext {
+    val symbolTable: SymbolTable?
+
+    val reflectionTypes: KonanReflectionTypes
+
+    val builtIns: KonanBuiltIns
+
+    val bindingContext: BindingContext
+
+    val stdlibModule: ModuleDescriptor
+        get() = this.builtIns.any.module
+}
+
+data class LinkKlibsInput(
+        val moduleDescriptor: ModuleDescriptor,
+        val environment: KotlinCoreEnvironment,
+        val isProducingLibrary: Boolean,
+)
+
+internal class LinkKlibsOutput(
+        val irModules: Map<String, IrModuleFragment>,
+        val irModule: IrModuleFragment,
+        val irBuiltIns: IrBuiltIns,
+        val symbols: KonanSymbols,
+        val symbolTable: ReferenceSymbolTable,
+        val irLinker: KonanIrLinker,
+) : KotlinBackendIrHolder {
+
+    override val kotlinIr: IrElement
+        get() = irModule
+}
+
+
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun PsiToIrContext.linkKlibs(
-        input: PsiToIrInput,
+internal fun LinkKlibsContext.linkKlibs(
+        input: LinkKlibsInput,
         useLinkerWhenProducingLibrary: Boolean
-): PsiToIrOutput {
+): LinkKlibsOutput {
     val symbolTable = symbolTable!!
     val (moduleDescriptor, environment, isProducingLibrary) = input
     // Translate AST to high level IR.
@@ -237,13 +278,13 @@ internal fun PsiToIrContext.linkKlibs(
     }
 
     return if (isProducingLibrary) {
-        PsiToIrOutput.ForKlib(mainModule, generatorContext.irBuiltIns, symbols)
+        TODO()
     } else if (libraryToCache == null) {
-        PsiToIrOutput.ForBackend(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer as KonanIrLinker)
+        LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer as KonanIrLinker)
     } else {
         val libraryName = libraryToCache.klib.libraryName
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
-        PsiToIrOutput.ForBackend(
+        LinkKlibsOutput(
                 irModules = modules.filterKeys { it != libraryName },
                 irModule = libraryModule,
                 irBuiltIns = generatorContext.irBuiltIns,

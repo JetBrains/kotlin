@@ -68,29 +68,29 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
+    runPhase(CopyDefaultValuesToActualPhase, Pair(psiToIrOutput.irModule, psiToIrOutput.irBuiltIns))
     return psiToIrOutput to additionalOutput
 }
 
 internal fun PhaseEngine<PhaseContext>.linkKlibs(
         frontendOutput: FrontendPhaseOutput.Full,
-): PsiToIrOutput = linkKlibs(frontendOutput, {}).first
+): LinkKlibsOutput = linkKlibs(frontendOutput, {}).first
 
 internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
         frontendOutput: FrontendPhaseOutput.Full,
-        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
-): Pair<PsiToIrOutput, T> {
+        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
-    val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
+    val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val (linkKlibsOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
         val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary = false)
-        val output = psiToIrEngine.runPhase(LinkKlibsPhase, psiToIrInput)
+        val linkKlibsInput = LinkKlibsInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary = false)
+        val output = psiToIrEngine.runPhase(LinkKlibsPhase, linkKlibsInput)
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
         output to additionalOutput
     }
-    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
-    return psiToIrOutput to additionalOutput
+    runPhase(CopyDefaultValuesToActualPhase, Pair(linkKlibsOutput.irModule, linkKlibsOutput.irBuiltIns))
+    return linkKlibsOutput to additionalOutput
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {

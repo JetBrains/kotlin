@@ -51,7 +51,7 @@ internal data class SpecialBackendChecksInput(
         get() = irModule
 }
 
-internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrContext, SpecialBackendChecksInput>(
+internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, SpecialBackendChecksInput>(
         "SpecialBackendChecks",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
@@ -70,15 +70,15 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
     ).lower(moduleFragment)
 }
 
-internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, PsiToIrOutput>(
+internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, Pair<IrModuleFragment, IrBuiltIns>>(
         name = "CopyDefaultValuesToActual",
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
-) { _, input ->
-    ExpectToActualDefaultValueCopier(input.irModule, input.irBuiltIns).process()
+) { _, (irModule, irBuiltins) ->
+    ExpectToActualDefaultValueCopier(irModule, irBuiltins).process()
 }
 
-internal fun <T : PsiToIrContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
+internal fun <T : PhaseContext> PhaseEngine<T>.runSpecialBackendChecks(irModule: IrModuleFragment, irBuiltIns: IrBuiltIns, symbols: KonanSymbols) {
     runPhase(SpecialBackendChecksPhase, SpecialBackendChecksInput(irModule, irBuiltIns, symbols))
 }
 

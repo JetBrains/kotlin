@@ -382,7 +382,7 @@ internal class ExportedElement(
  * First phase of C export: walk given declaration descriptors and create [CAdapterExportedElements] from them.
  */
 internal class CAdapterGenerator(
-        private val context: PsiToIrContext,
+        private val context: LinkKlibsContext,
         private val configuration: CompilerConfiguration,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
