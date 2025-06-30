@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-internal val Distribution.compilerFingerprint: String
+val Distribution.systemCacheRootDirectory: File
+    get() = File(konanHome).resolve("klib/cache")
+
+val Distribution.compilerFingerprint: String
     get() = File(konanHome).resolve("konan/compiler.fingerprint").readText().trim()
 
-internal fun Distribution.runtimeFingerprint(target: KonanTarget): String = File(konanHome).resolve("konan/targets/$target/runtime.fingerprint").readText().trim()
+fun Distribution.runtimeFingerprint(target: KonanTarget): String = File(konanHome).resolve("konan/targets/$target/runtime.fingerprint").readText().trim()
