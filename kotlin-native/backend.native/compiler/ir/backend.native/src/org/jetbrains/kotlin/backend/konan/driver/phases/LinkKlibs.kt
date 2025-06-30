@@ -51,5 +51,5 @@ internal val LinkKlibsPhase = createSimpleNamedCompilerPhase<LinkKlibsContext, L
         postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("LinkKlibs phase cannot be disabled") }
 ) { context, input ->
-    context.linkKlibs(input, useLinkerWhenProducingLibrary = false)
+    context.linkKlibs(input)
 }

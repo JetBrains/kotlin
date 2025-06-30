@@ -1,8 +1,5 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
@@ -31,9 +28,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -42,7 +37,6 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -67,7 +61,6 @@ internal interface LinkKlibsContext : PhaseContext {
 data class LinkKlibsInput(
         val moduleDescriptor: ModuleDescriptor,
         val environment: KotlinCoreEnvironment,
-        val isProducingLibrary: Boolean,
 )
 
 internal class LinkKlibsOutput(
@@ -86,14 +79,12 @@ internal class LinkKlibsOutput(
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun LinkKlibsContext.linkKlibs(
-        input: LinkKlibsInput,
-        useLinkerWhenProducingLibrary: Boolean
+        input: LinkKlibsInput
 ): LinkKlibsOutput {
     val symbolTable = symbolTable!!
-    val (moduleDescriptor, environment, isProducingLibrary) = input
+    val (moduleDescriptor, environment) = input
     // Translate AST to high level IR.
     val messageCollector = config.configuration.messageCollector
-
     val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
@@ -102,8 +93,6 @@ internal fun LinkKlibsContext.linkKlibs(
             messageCollector::checkNoUnboundSymbols
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
-
-    val pluginExtensions = IrGenerationExtension.getInstances(config.project)
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
@@ -137,21 +126,7 @@ internal fun LinkKlibsContext.linkKlibs(
             this.config.configuration
     )
 
-    val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
-        // Enable lazy IR generation for newly-created symbols inside BE
-        stubGenerator.unboundSymbolGeneration = true
-
-        object : IrDeserializer {
-            override fun getDeclaration(symbol: IrSymbol) = functionIrClassFactory.getDeclaration(symbol)
-                    ?: stubGenerator.getDeclaration(symbol)
-
-            override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
-                error("Should not be called")
-            }
-
-            override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
-        }
-    } else {
+    val irDeserializer = run {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
@@ -209,9 +184,9 @@ internal fun LinkKlibsContext.linkKlibs(
                     val kotlinLibrary = (dependency.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
                     val isFullyCachedLibrary = kotlinLibrary != null &&
                             config.cachedLibraries.isLibraryCached(kotlinLibrary) && kotlinLibrary != config.libraryToCache?.klib
-                    if (isFullyCachedLibrary && kotlinLibrary?.isHeader == true)
+                    if (isFullyCachedLibrary && kotlinLibrary.isHeader)
                         linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
-                    else if (isProducingLibrary || isFullyCachedLibrary)
+                    else if (isFullyCachedLibrary)
                         linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
                     else
                         linker.deserializeIrModuleHeader(dependency, kotlinLibrary, dependency.name.asString())
@@ -230,23 +205,6 @@ internal fun LinkKlibsContext.linkKlibs(
             }
         }
     }
-
-    translator.addPostprocessingStep { module ->
-        val pluginContext = IrPluginContextImpl(
-                generatorContext.moduleDescriptor,
-                generatorContext.bindingContext,
-                generatorContext.languageVersionSettings,
-                generatorContext.symbolTable,
-                generatorContext.typeTranslator,
-                generatorContext.irBuiltIns,
-                linker = irDeserializer,
-                messageCollector = messageCollector
-        )
-        pluginExtensions.forEach { extension ->
-            extension.generate(module, pluginContext)
-        }
-    }
-
     val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
@@ -256,7 +214,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
     messageCollector.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
-    val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
+    val modules = irDeserializer.modules
 
     if (config.configuration.getBoolean(KonanConfigKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
@@ -268,24 +226,20 @@ internal fun LinkKlibsContext.linkKlibs(
     // where the files are being initialized in order one by one.
     modules.values.forEach { module -> module.files.sortBy { it.fileEntry.name } }
 
-    if (!isProducingLibrary) {
-        // TODO: find out what should be done in the new builtins/symbols about it
-        if (stdlibIsBeingCached) {
-            (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
-        }
-        (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
-                (modules.values + mainModule).single { it.descriptor == this.stdlibModule }
+    // TODO: find out what should be done in the new builtins/symbols about it
+    if (stdlibIsBeingCached) {
+        (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.buildAllClasses()
     }
+    (functionIrClassFactory as? BuiltInFictitiousFunctionIrClassFactory)?.module =
+            (modules.values + mainModule).single { it.descriptor == this.stdlibModule }
 
     mainModule.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(mainModule.descriptor)) }
     modules.values.forEach { module ->
         module.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(module.descriptor)) }
     }
 
-    return if (isProducingLibrary) {
-        TODO()
-    } else if (libraryToCache == null) {
-        LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer as KonanIrLinker)
+    return if (libraryToCache == null) {
+        LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer)
     } else {
         val libraryName = libraryToCache.klib.libraryName
         val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
@@ -295,7 +249,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 irBuiltIns = generatorContext.irBuiltIns,
                 symbols = symbols,
                 symbolTable = symbolTable,
-                irLinker = irDeserializer as KonanIrLinker
+                irLinker = irDeserializer
         )
     }
 }
@@ -304,7 +258,7 @@ internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         private val stubGenerator: DeclarationStubGenerator,
-): CInteropModuleDeserializerFactory {
+) : CInteropModuleDeserializerFactory {
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,
