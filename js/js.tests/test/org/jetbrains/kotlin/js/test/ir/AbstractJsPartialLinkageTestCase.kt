@@ -18,7 +18,7 @@ abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkage
 abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsCompilerInvocationTest(compilerType) {
     // The entry point to generated test classes.
     fun runTest(@TestDataFile testPath: String) {
-        val configuration = JsTestConfiguration(
+        val configuration = JsCompilerInvocationTestConfiguration(
             testPath = testPath,
             buildDir = buildDir,
             compilerType = compilerType,

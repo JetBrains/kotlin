@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest.CompilerType
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
@@ -50,20 +51,6 @@ abstract class AbstractJsCompilerInvocationTest(protected val compilerType: Comp
     @AfterEach
     fun clearArtifacts() {
         buildDir.deleteRecursively()
-    }
-
-    class JsTestConfiguration(
-        testPath: String,
-        override val buildDir: File,
-        val compilerType: CompilerType,
-    ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-        override val testDir: File = File(testPath).absoluteFile
-        override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
-        override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
-
-        override fun onIgnoredTest() {
-            /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
-        }
     }
 }
 
@@ -139,6 +126,20 @@ internal object JsKlibTestSettings {
     }
 }
 
+internal class JsCompilerInvocationTestConfiguration(
+    testPath: String,
+    override val buildDir: File,
+    val compilerType: CompilerType,
+) : KlibCompilerInvocationTestUtils.TestConfiguration {
+    override val testDir: File = File(testPath).absoluteFile
+    override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
+    override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
+
+    override fun onIgnoredTest() {
+        /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
+    }
+}
+
 internal class JsCompilerInvocationTestBinaryArtifact(
     val mainModuleName: String,
     val boxFunctionFqName: String,
@@ -146,7 +147,7 @@ internal class JsCompilerInvocationTestBinaryArtifact(
 ) : KlibCompilerInvocationTestUtils.BinaryArtifact
 
 internal class JsCompilerInvocationTestArtifactBuilder(
-    private val configuration: AbstractJsCompilerInvocationTest.JsTestConfiguration,
+    private val configuration: JsCompilerInvocationTestConfiguration,
 ) : KlibCompilerInvocationTestUtils.ArtifactBuilder<JsCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
         module: KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest,

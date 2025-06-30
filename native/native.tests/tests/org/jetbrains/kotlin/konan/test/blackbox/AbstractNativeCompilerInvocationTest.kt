@@ -44,14 +44,17 @@ abstract class AbstractNativeCompilerInvocationTest :
 
     final override fun runBinary(binaryArtifact: NativeCompilerInvocationTestBinaryArtifact) =
         with(binaryArtifact) { runExecutableAndVerify(testCase, executable) }
+}
 
-    class NativeTestConfiguration(testPath: String, val settings: Settings) : KlibCompilerInvocationTestUtils.TestConfiguration {
-        override val testDir = getAbsoluteFile(testPath)
-        override val buildDir get() = settings.get<Binaries>().testBinariesDir
-        override val stdlibFile get() = settings.get<KotlinNativeHome>().stdlibFile
-        override val targetBackend get() = TargetBackend.NATIVE
-        override fun onIgnoredTest() = throw TestAbortedException()
-    }
+class NativeCompilerInvocationTestConfiguration(
+    testPath: String,
+    val settings: Settings
+) : KlibCompilerInvocationTestUtils.TestConfiguration {
+    override val testDir = getAbsoluteFile(testPath)
+    override val buildDir get() = settings.get<Binaries>().testBinariesDir
+    override val stdlibFile get() = settings.get<KotlinNativeHome>().stdlibFile
+    override val targetBackend get() = TargetBackend.NATIVE
+    override fun onIgnoredTest() = throw TestAbortedException()
 }
 
 class NativeCompilerInvocationTestBinaryArtifact(
@@ -60,7 +63,7 @@ class NativeCompilerInvocationTestBinaryArtifact(
 ) : KlibCompilerInvocationTestUtils.BinaryArtifact
 
 class NativeCompilerInvocationTestArtifactBuilder(
-    private val configuration: AbstractNativeCompilerInvocationTest.NativeTestConfiguration
+    private val configuration: NativeCompilerInvocationTestConfiguration
 ) : KlibCompilerInvocationTestUtils.ArtifactBuilder<NativeCompilerInvocationTestBinaryArtifact> {
     private val settings get() = configuration.settings
 

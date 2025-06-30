@@ -32,7 +32,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocati
         // So let's just disable them instead of wasting CI times.
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
-        val configuration = NativeTestConfiguration(testPath, settings = testRunSettings)
+        val configuration = NativeCompilerInvocationTestConfiguration(testPath, settings = testRunSettings)
         val testStructureExtractor = NativePartialLinkageTestStructureExtractor(settings = testRunSettings)
         val artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(configuration = configuration)
 
