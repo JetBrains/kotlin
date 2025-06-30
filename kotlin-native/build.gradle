@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.nativeDistribution.InvalidateStaleCaches
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
@@ -254,6 +255,8 @@ tasks.register("distCompilerFingerprint", PrepareDistributionFingerprint) {
     input.from(tasks.named("distKonanProperties"))
 
     output = nativeDistribution.map { it.compilerFingerprint }
+
+    finalizedBy("distInvalidateStaleCaches") // if the fingerprint has updated, some caches may need to be invalidated
 }
 
 tasks.register("distTools", Sync) {
@@ -329,6 +332,8 @@ targetList.each { target ->
     tasks.register("${target}CrossDistRuntimeFingerprint", PrepareDistributionFingerprint) {
         input.from(tasks.named("${target}CrossDistBitcodeCopy"))
         output = nativeDistribution.map { it.runtimeFingerprint(target) }
+
+        finalizedBy("distInvalidateStaleCaches") // if the fingerprint has updated, some caches may need to be invalidated
     }
 
     tasks.register("${target}CrossDistRuntime") {
@@ -348,6 +353,8 @@ targetList.each { target ->
         tasks.register("${target}StdlibCache", Sync) {
             dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
+            // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+            mustRunAfter("distInvalidateStaleCaches")
 
             into(nativeDistribution.map { it.cache("stdlib", target) })
 
@@ -383,6 +390,18 @@ tasks.register("crossDist") {
             "distDef",
             "distStdlib",
             "crossDistStdlibCache"
+}
+
+tasks.register("distInvalidateStaleCaches", InvalidateStaleCaches) {
+    distributionAsDirectory.set(nativeDistribution.map { it.root })
+    // If the build graph includes any of the fingerprint updates, this task must run after them.
+    // However, it shouldn't force any of the fingerprints to be computed (e.g. when building :kotlin-native:dist
+    // this task should run after compiler and host runtime fingerprint updates, but shouldn't force fingerprint from an iOS simulator
+    // to be computed)
+    mustRunAfter("distCompilerFingerprint")
+    targetList.each { target ->
+        mustRunAfter("${target}CrossDistRuntimeFingerprint")
+    }
 }
 
 tasks.register("bundle") {
@@ -489,6 +508,9 @@ configure([bundleRegular, bundlePrebuilt]) {
     } else {
         dependsOn(mergeCrossBundleTask)
     }
+
+    // Bundle tasks read the entire contents of the Native distribution. Make sure this happens after invalid stale caches are removed
+    mustRunAfter("distInvalidateStaleCaches")
 
     destinationDirectory.set(file('.'))
 
