@@ -71,9 +71,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
     }
 
     private fun dfsForOverrides(currentFunction: IrSimpleFunction, afterChild: (IrSimpleFunction) -> Unit) {
-        for (overriddenSymbol in currentFunction.overriddenSymbols) {
-            dfsForOverrides(overriddenSymbol.owner, afterChild)
-        }
+        dfsForOverrides(currentFunction.overriddenSymbols, afterChild)
         if (currentFunction.isDeclaration) {
             afterChild(currentFunction)
         }
