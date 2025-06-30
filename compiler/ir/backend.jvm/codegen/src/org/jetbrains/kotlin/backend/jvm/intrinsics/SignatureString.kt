@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 /**
- * Computes the JVM signature of a given IrFunction. The function is passed as an IrRichFunctionReference
+ * Computes the JVM signature of a given IrFunction. The function is passed as an IrRawFunctionReference
  * to the single argument of the intrinsic.
  */
 object SignatureString : IntrinsicMethod() {
