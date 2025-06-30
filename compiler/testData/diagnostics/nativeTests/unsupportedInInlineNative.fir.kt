@@ -7,7 +7,7 @@ inline fun inlineFun() {
     <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> LocalClass {}
 
     run {
-        fun localFun2() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun2() {}
     }
 }
 

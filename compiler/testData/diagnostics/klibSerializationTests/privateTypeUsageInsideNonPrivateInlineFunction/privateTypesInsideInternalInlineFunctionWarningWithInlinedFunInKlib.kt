@@ -95,6 +95,7 @@ private class B {
         makeEffectivelyPrivateLocal()
         privateInline()
         <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+        object : Generic<A>() {}
         null as A
         null as A.Nested
         A::class
@@ -113,6 +114,7 @@ internal class C {
                 makeEffectivelyPrivateLocal()
                 privateInline()
                 <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : Generic<A>() {}
+                object : Generic<A>() {}
                 null as A
                 null as A.Nested
                 A::class
@@ -141,6 +143,7 @@ internal fun inlineInsideAnonymousObject() {
             privateInline()
             Inner()
             <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> Local : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
+            object : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
             null as A
             null as A.Nested
             A::class

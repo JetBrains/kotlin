@@ -5,8 +5,8 @@ inline val z: Int
     get()  {
 
     <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> A {
-        fun a() {
-           class AInner {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> a() {
+           <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> AInner {}
         }
     }
 
@@ -15,7 +15,7 @@ inline val z: Int
     }
 
     <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> local() {
-        fun localInner() {}
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localInner() {}
     }
     return 1
 }

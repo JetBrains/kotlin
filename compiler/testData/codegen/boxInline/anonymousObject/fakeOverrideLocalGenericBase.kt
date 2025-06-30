@@ -14,7 +14,7 @@ open class A<T> {
 
 inline fun inlineFun(): String {
     abstract <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> B<T, K> : A<T>() {
-        fun fromstr(s: String, convert: (String) -> K): K = convert(s)
+        <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> fromstr(s: String, convert: (String) -> K): K = convert(s)
     }
     <!NOT_YET_SUPPORTED_IN_INLINE!>class<!> C() : B<Char, Char>()
 

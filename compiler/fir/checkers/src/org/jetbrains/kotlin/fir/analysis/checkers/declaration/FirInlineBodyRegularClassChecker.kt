@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 object FirInlineBodyRegularClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
-
-        if (!declaration.classKind.isSingleton && context.containingDeclarations.lastOrNull() === inlineFunctionBodyContext.inlineFunction.symbol) {
+        if (FirInlineBodySimpleFunctionChecker.isInsideInlineContext() && !declaration.classKind.isSingleton) {
             reporter.reportOn(declaration.source, FirErrors.NOT_YET_SUPPORTED_IN_INLINE, "Local classes")
         }
     }
