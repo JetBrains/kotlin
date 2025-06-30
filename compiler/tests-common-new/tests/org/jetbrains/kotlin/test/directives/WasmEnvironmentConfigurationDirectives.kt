@@ -21,8 +21,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Generate wasm with the updated EH proposal turned on",
     )
 
-    val USE_JS_TAG by directive(
-        description = "Generate wasm with usage of WebAssembly.JSTag inside a EH proposal",
+    val WASM_NO_JS_TAG by directive(
+        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions",
     )
 
     val WASM_ALLOW_FQNAME_IN_KCLASS by directive(

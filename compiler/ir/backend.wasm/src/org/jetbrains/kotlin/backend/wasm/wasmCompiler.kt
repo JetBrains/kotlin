@@ -155,13 +155,12 @@ fun compileWasm(
     useDebuggerCustomFormatters: Boolean,
     generateDwarf: Boolean
 ): WasmCompilerResult {
-    val useJsTag = configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
     val isWasmJsTarget = configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
     val wasmCompiledModuleFragment = WasmCompiledModuleFragment(
         wasmCompiledFileFragments,
         configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS),
-        isWasmJsTarget && useJsTag,
+        isWasmJsTarget,
     )
 
     val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments()
@@ -212,6 +211,8 @@ fun compileWasm(
             jsFuns.addAll(fragment.jsFuns.values)
             jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
         }
+
+        val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)
 
         jsUninstantiatedWrapper = generateAsyncJsWrapper(
             jsModuleImports,
@@ -345,12 +346,15 @@ $jsCodeBodyIndented
     if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";
     }
-    
+
     const wasmFilePath = $pathJsStringLiteral;
+
+    const wasmTag =${if (useJsTag) " WebAssembly.JSTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
+
     const importObject = {
         js_code,
         intrinsics: {
-            ${if (useJsTag) "js_error_tag: WebAssembly.JSTag" else ""}
+            tag: wasmTag
         },
 $imports
     };

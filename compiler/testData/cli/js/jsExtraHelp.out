@@ -53,7 +53,7 @@ where advanced options include:
                              Use traps instead of throwing exceptions.
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
-  -Xwasm-attach-js-exception Attach a thrown by JS-value to the JsException class
+  -Xwasm-no-jstag            Don't use WebAssembly.JSTag for throwing and catching exceptions
   -Xwasm-debugger-custom-formatters
                              Generates devtools custom formatters (https://firefox-source-docs.mozilla.org/devtools-user/custom_formatters) for Kotlin/Wasm values
   -Xwasm-source-map-include-mappings-from-unavailable-sources

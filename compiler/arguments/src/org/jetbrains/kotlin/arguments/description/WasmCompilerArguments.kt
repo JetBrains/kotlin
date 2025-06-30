@@ -112,9 +112,10 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-attach-js-exception"
-        compilerName = "wasmUseJsTag"
-        description = "Attach a thrown by JS-value to the JsException class".asReleaseDependent()
+
+        name = "Xwasm-no-jstag"
+        compilerName = "wasmNoJsTag"
+        description = "Don't use WebAssembly.JSTag for throwing and catching exceptions".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         @OptIn(TemporaryCompilerArgumentLifecycle::class)

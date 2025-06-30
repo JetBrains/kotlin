@@ -6314,11 +6314,11 @@
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-attach-js-exception",
+                                        "name": "Xwasm-no-jstag",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Attach a thrown by JS-value to the JsException class",
+                                            "current": "Don't use WebAssembly.JSTag for throwing and catching exceptions",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,
