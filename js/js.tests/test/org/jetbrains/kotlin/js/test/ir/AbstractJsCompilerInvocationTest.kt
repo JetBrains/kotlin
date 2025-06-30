@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
@@ -60,38 +59,10 @@ abstract class AbstractJsCompilerInvocationTest(protected val compilerType: Comp
     ) : KlibCompilerInvocationTestUtils.TestConfiguration {
         override val testDir: File = File(testPath).absoluteFile
         override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
-        override val testModeConstructorParameters = mapOf("isJs" to "true")
-        override val targetBackend
-            get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
-
-        override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
-            if (moduleName == MAIN_MODULE_NAME)
-                customizeMainModuleSources(moduleSourceDir)
-        }
+        override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
 
         override fun onIgnoredTest() {
             /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
-        }
-
-        private fun customizeMainModuleSources(moduleSourceDir: File) {
-            // Add the @JsExport annotation to make the box function visible to Node.
-            moduleSourceDir.walkTopDown().forEach { file ->
-                if (file.extension == "kt") {
-                    var modified = false
-                    val lines = file.readLines().map { line ->
-                        if (line.startsWith("fun $BOX_FUN_FQN()")) {
-                            modified = true
-                            "@OptIn(ExperimentalJsExport::class) @JsExport $line"
-                        } else
-                            line
-                    }
-                    if (modified) file.writeText(lines.joinToString("\n"))
-                }
-            }
-        }
-
-        companion object {
-            private const val BOX_FUN_FQN = "box"
         }
     }
 }
@@ -178,23 +149,21 @@ internal class JsCompilerInvocationTestArtifactBuilder(
     private val configuration: AbstractJsCompilerInvocationTest.JsTestConfiguration,
 ) : KlibCompilerInvocationTestUtils.ArtifactBuilder<JsCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
-        moduleName: String,
-        buildDirs: ModuleBuildDirs,
+        module: KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest,
         dependencies: Dependencies,
-        klibFile: File,
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
     ) {
         require(compilerEdition == CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
-        val kotlinSourceFilePaths = composeSourceFile(buildDirs)
+        val kotlinSourceFilePaths = composeSourceFile(module.sourceDir, module.outputDir)
 
         // Build KLIB:
         runCompilerViaCLI(
             listOf(
                 K2JSCompilerArguments::irProduceKlibFile.cliArgument,
-                K2JSCompilerArguments::outputDir.cliArgument, klibFile.parentFile.absolutePath,
-                K2JSCompilerArguments::moduleName.cliArgument, moduleName,
+                K2JSCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
+                K2JSCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
                 // Halt on any unexpected warning.
                 K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
                 // Tests suppress the INVISIBLE_REFERENCE check.
@@ -209,14 +178,14 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         )
     }
 
-    private fun composeSourceFile(buildDirs: ModuleBuildDirs): MutableList<String> {
+    private fun composeSourceFile(moduleSourceDir: File, moduleOutputDir: File): MutableList<String> {
         val kotlinSourceFilePaths = mutableListOf<String>()
-        buildDirs.sourceDir.walkTopDown().forEach { sourceFile ->
+        moduleSourceDir.walkTopDown().forEach { sourceFile ->
             if (sourceFile.isFile) when (sourceFile.extension) {
                 "kt" -> kotlinSourceFilePaths += sourceFile.absolutePath
                 "js" -> {
                     // This is needed to preserve *.js files from test data which are required for tests with `external` declarations:
-                    sourceFile.copyTo(buildDirs.outputDir.resolve(sourceFile.relativeTo(buildDirs.sourceDir)), overwrite = true)
+                    sourceFile.copyTo(moduleOutputDir.resolve(sourceFile.relativeTo(moduleSourceDir)), overwrite = true)
                 }
             }
         }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
-import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
@@ -51,33 +50,6 @@ abstract class AbstractNativeCompilerInvocationTest :
         override val buildDir get() = settings.get<Binaries>().testBinariesDir
         override val stdlibFile get() = settings.get<KotlinNativeHome>().stdlibFile
         override val targetBackend get() = TargetBackend.NATIVE
-
-        override val testModeConstructorParameters = buildMap {
-            this["isNative"] = "true"
-
-            val cacheMode = settings.get<CacheMode>()
-            when {
-                cacheMode.useStaticCacheForUserLibraries -> {
-                    this["staticCache"] = "TestMode.Scope.EVERYWHERE"
-                    this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
-                }
-                cacheMode.useStaticCacheForDistributionLibraries -> {
-                    this["staticCache"] = "TestMode.Scope.DISTRIBUTION"
-                    this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
-                }
-            }
-        }
-
-        override fun customizeModuleSources(moduleName: String, moduleSourceDir: File) {
-            if (moduleName == MAIN_MODULE_NAME)
-                customizeMainModuleSources(moduleSourceDir)
-        }
-
-        private fun customizeMainModuleSources(moduleSourceDir: File) {
-            // Add a "box" function launcher to the main module.
-            moduleSourceDir.resolve(LAUNCHER_FILE_NAME).writeText(generateBoxFunctionLauncher("box"))
-        }
-
         override fun onIgnoredTest() = throw TestAbortedException()
     }
 }
@@ -100,27 +72,26 @@ class NativeCompilerInvocationTestArtifactBuilder(
     private val producedKlibs = linkedSetOf<ProducedKlib>() // IMPORTANT: The order makes sense!
 
     private val executableArtifact: Executable by lazy {
-        val (_, outputDir) = KlibCompilerInvocationTestUtils.createModuleDirs(
-            settings.get<Binaries>().testBinariesDir,
-            LAUNCHER_MODULE_NAME
-        )
+        val outputDir = settings.get<Binaries>().testBinariesDir.resolve(LAUNCHER_MODULE_NAME).apply { mkdirs() }
         val executableFile = outputDir.resolve("app." + settings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
         Executable(executableFile)
     }
 
     override fun buildKlib(
-        moduleName: String,
-        buildDirs: ModuleBuildDirs,
+        module: KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest,
         dependencies: Dependencies,
-        klibFile: File,
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
-        val klibArtifact = KLIB(klibFile)
+        val klibArtifact = KLIB(module.klibFile)
 
-        val testCase = createTestCase(moduleName, buildDirs.sourceDir, COMPILER_ARGS.plusCompilerArgs(compilerArguments))
+        val testCase = createTestCase(
+            moduleName = module.moduleInfo.moduleName,
+            moduleSourceDir = module.sourceDir,
+            compilerArgs = COMPILER_ARGS.plusCompilerArgs(compilerArguments)
+        )
 
         val compilation = LibraryCompilation(
             settings = settings,
@@ -132,7 +103,12 @@ class NativeCompilerInvocationTestArtifactBuilder(
 
         compilation.result.assertSuccess() // <-- trigger compilation
 
-        producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
+        // Remember the artifact with its dependencies.
+        producedKlibs += ProducedKlib(
+            module.moduleInfo.moduleName,
+            klibArtifact,
+            dependencies
+        )
     }
 
     override fun buildBinary(
