@@ -15,14 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.file
-
-private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
         val generationState: NativeGenerationState,
@@ -35,18 +31,11 @@ internal class NativeInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
-        if (function.body != null) {
-            // TODO this `if` check can be dropped after KT-72441
-            if (function.wasLowered != true) {
-                lower(function)
-                function.wasLowered = true
-            }
+        if (function.body != null)
             return function
-        }
 
         context.getInlineFunctionDeserializer(function).deserializeInlineFunction(function)
         lower(function)
-        function.wasLowered = true
 
         return function
     }
