@@ -1,0 +1,5 @@
+expression: Build.VERSION_CODES.CUPCAKE
+constant: 3
+constantValueKind: IntValue
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED
