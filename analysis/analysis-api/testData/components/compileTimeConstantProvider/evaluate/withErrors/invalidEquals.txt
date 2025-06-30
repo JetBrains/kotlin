@@ -1,3 +1,5 @@
 expression: 5 == 5.toLong()
 constant: true
 constantValueKind: BooleanValue
+constantValueSource: BINARY_EXPRESSION
+constantValueSourceText: 5 == 5.toLong()

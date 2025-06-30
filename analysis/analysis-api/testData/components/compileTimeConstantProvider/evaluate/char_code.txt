@@ -1,3 +1,5 @@
 expression: 'c'.code
 constant: 99
 constantValueKind: IntValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: 'c'.code

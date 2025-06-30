@@ -1,3 +1,5 @@
 expression: bar
 constant: 42
 constantValueKind: IntValue
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED
