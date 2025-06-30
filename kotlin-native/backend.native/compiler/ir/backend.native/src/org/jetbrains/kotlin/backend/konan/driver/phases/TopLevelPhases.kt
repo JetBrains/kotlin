@@ -72,6 +72,27 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
+internal fun PhaseEngine<PhaseContext>.linkKlibs(
+        frontendOutput: FrontendPhaseOutput.Full,
+): PsiToIrOutput = linkKlibs(frontendOutput, {}).first
+
+internal fun <T> PhaseEngine<PhaseContext>.linkKlibs(
+        frontendOutput: FrontendPhaseOutput.Full,
+        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
+): Pair<PsiToIrOutput, T> {
+    val config = this.context.config
+    val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
+    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
+        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
+        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary = false)
+        val output = psiToIrEngine.runPhase(LinkKlibsPhase, psiToIrInput)
+        psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
+        output to additionalOutput
+    }
+    runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput)
+    return psiToIrOutput to additionalOutput
+}
+
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment, performanceManager: PerformanceManager?) {
     val config = context.config
     useContext(backendContext) { backendEngine ->
