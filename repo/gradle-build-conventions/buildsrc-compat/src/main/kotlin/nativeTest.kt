@@ -174,6 +174,10 @@ private open class NativeArgsProvider @Inject constructor(
         }
     }
 
+    @get:Internal
+    val nativeHomeHack =
+        customNativeHome.orElse(providers.provider { project.project(":kotlin-native").isolated.projectDirectory.dir("dist").asFile.absolutePath } )
+
     @Classpath
     protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
         if (customNativeHome.isPresent) {
@@ -210,7 +214,7 @@ private open class NativeArgsProvider @Inject constructor(
     override fun asArguments(): Iterable<String> {
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
-            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.files.minByOrNull { it.path.length }!!.absolutePath}",
+            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHomeHack.get()}",
             "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
