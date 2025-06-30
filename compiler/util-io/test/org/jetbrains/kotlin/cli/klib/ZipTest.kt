@@ -123,8 +123,7 @@ class ZipTest {
         }
     }
 
-    // TODO: This test is supposed to fail.
-    @Test
+    @Test(expected = ZipException::class)
     fun testSymlinkToFileOutsideCompressedDirectory1() {
         val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
@@ -133,8 +132,7 @@ class ZipTest {
         }
     }
 
-    // TODO: This test is supposed to fail.
-    @Test
+    @Test(expected = ZipException::class)
     fun testSymlinkToFileOutsideCompressedDirectory2() {
         val externalFile = tmpDir.child("externalFile").apply { writeBytes(Random(System.nanoTime()).nextBytes(100)) }
 
@@ -143,8 +141,7 @@ class ZipTest {
         }
     }
 
-    // TODO: This test is supposed to fail.
-    @Test
+    @Test(expected = ZipException::class)
     fun testSymlinkToDirectoryOutsideCompressedDirectory1() {
         val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
 
@@ -153,8 +150,7 @@ class ZipTest {
         }
     }
 
-    // TODO: This test is supposed to fail.
-    @Test
+    @Test(expected = ZipException::class)
     fun testSymlinkToDirectoryOutsideCompressedDirectory2() {
         val externalDir = tmpDir.child("externalDir").apply { mkdirs() }
 
@@ -206,6 +202,11 @@ class ZipTest {
                     assertTime(entry.creationTime)
                     assertTime(entry.lastModifiedTime)
                     assertTime(entry.lastAccessTime)
+
+                    if (!entry.isDirectory) {
+                        assertTrue(entry.method > 0, "Compression rate is not set for ${entry.name} in $compressed.")
+                    }
+
                     zipInputStream.closeEntry()
                     entry = zipInputStream.nextEntry
                 }
