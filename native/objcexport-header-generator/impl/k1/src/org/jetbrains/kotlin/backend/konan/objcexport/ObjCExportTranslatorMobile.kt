@@ -22,7 +22,8 @@ class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjC
                     mapper,
                     namer,
                     ObjCExportProblemCollector.SILENT,
-                    configuration.objcGenerics
+                    configuration.objcGenerics,
+                    configuration.objcExportBlockExplicitParameterNames
                 )
             )
         }

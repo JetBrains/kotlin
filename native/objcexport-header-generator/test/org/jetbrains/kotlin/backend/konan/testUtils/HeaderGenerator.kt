@@ -35,6 +35,8 @@ interface HeaderGenerator {
         val exportedDependencies: Set<Path> = emptySet(),
 
         val explicitMethodFamily: Boolean = false,
+
+        val objcExportBlockExplicitParameterNames: Boolean = false,
     )
 
 

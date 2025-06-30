@@ -117,6 +117,7 @@ private class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : Head
             namer = namer,
             problemCollector = ObjCExportProblemCollector.SILENT,
             objcGenerics = true,
+            objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
             shouldExportKDoc = true,
             additionalImports = emptyList()
         )

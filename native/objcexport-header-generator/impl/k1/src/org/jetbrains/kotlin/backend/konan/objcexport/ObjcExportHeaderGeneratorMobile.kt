@@ -17,8 +17,9 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
     namer: ObjCExportNamer,
     problemCollector: ObjCExportProblemCollector,
     objcGenerics: Boolean,
+    objcExportBlockExplicitParameterNames: Boolean,
     private val restrictToLocalModules: Boolean,
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, objcExportBlockExplicitParameterNames, problemCollector) {
 
     companion object {
         fun createInstance(
@@ -40,6 +41,7 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 namer,
                 problemCollector,
                 configuration.objcGenerics,
+                configuration.objcExportBlockExplicitParameterNames,
                 restrictToLocalModules
             )
         }
