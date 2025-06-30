@@ -13,6 +13,8 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -88,9 +90,15 @@ fun KtDeclaration.getNameWithPositionString(): String {
  * 'library1.jar!/library/A.class'  // An element in a class file 'A.class' in the JAR `library1.jar`.
  * ```
  */
-fun KtElement.renderLocationDescription(): String = buildString {
-    val ktFile = containingKtFile
+fun KtElement.renderLocationDescription(): String {
+    // Fallback builtins are sourced from the test's runtime. We shouldn't use the containing JAR file as a location description, since it
+    // might change based on the test environment.
+    val module = KotlinProjectStructureProvider.getModule(project, this@renderLocationDescription, useSiteModule = null)
+    if (module is KaBuiltinsModule) {
+        return "'fallback builtins'"
+    }
 
+    val ktFile = containingKtFile
     val virtualFile = ktFile.virtualFile
     val fileSystem = virtualFile.fileSystem
     val fileDescription = if (fileSystem is CoreJarFileSystem) {
@@ -99,10 +107,13 @@ fun KtElement.renderLocationDescription(): String = buildString {
     } else {
         virtualFile.name
     }
-    append("'$fileDescription'")
 
-    if (!ktFile.isCompiled) {
-        append(" ${position()}")
+    return buildString {
+        append("'$fileDescription'")
+
+        if (!ktFile.isCompiled) {
+            append(" ${position()}")
+        }
     }
 }
 
