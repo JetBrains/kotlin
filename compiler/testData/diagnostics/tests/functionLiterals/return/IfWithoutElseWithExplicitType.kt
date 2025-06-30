@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 val flag = true
 
 val a: () -> Int = l@ {

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 // LANGUAGE: +ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-56169

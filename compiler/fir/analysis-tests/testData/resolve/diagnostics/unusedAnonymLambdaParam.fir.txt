@@ -62,7 +62,7 @@ FILE: unusedAnonymLambdaParam.kt
     }
     public final fun bar7(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(a: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
-            lval b: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            lval b: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 R|/baz|(R|<local>/a|)
             }
 

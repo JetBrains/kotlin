@@ -8,7 +8,7 @@ null
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] suspendLambda.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        suspend [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        suspend [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 

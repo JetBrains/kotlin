@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun noArgs() {}
@@ -113,8 +112,8 @@ fun testTwoLambdas() {
 
 fun f1(): (() -> Unit) -> (() -> Unit) -> Unit {
     return <!RETURN_TYPE_MISMATCH!>{ l1 ->
-        l1()
-        <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!>
+        <!RETURN_TYPE_MISMATCH!>l1()
+        <!UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE!>{ <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>l2<!> -> <!UNRESOLVED_REFERENCE!>l2<!>() }<!><!>
     }<!>
 }
 

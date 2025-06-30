@@ -3,7 +3,7 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|kotlin/suspend|<R|kotlin/Unit|>(suspend [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+R|kotlin/suspend|<R|kotlin/Unit|>(suspend [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
     ^ Unit
 }
 )
@@ -11,7 +11,7 @@ R|kotlin/suspend|<R|kotlin/Unit|>(suspend [ResolvedTo(BODY_RESOLVE)] fun <anonym
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] suspendLambda.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        suspend [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        suspend [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Any] fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^ Unit
         }
 

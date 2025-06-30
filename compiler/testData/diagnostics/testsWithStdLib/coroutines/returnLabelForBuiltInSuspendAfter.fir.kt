@@ -26,7 +26,7 @@ fun bar() {
     val x = suspend@{
         suspend {
             // Might be resolved to outer lambda, but doesn't make sense because suspend-lambdas here is noinline
-            <!RETURN_NOT_ALLOWED!>return@suspend<!>
+            <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@suspend<!>
         }
     }
 }

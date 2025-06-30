@@ -18,7 +18,7 @@ FILE: RedeclaredValsAndVars.fir.kt
         lval y: R|kotlin/Int| = Int(2)
         lval _: R|kotlin/Int| = Int(3)
         lval _: R|kotlin/Int| = Int(4)
-        fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+        fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             lvar a: R|kotlin/Int| = Int(10)
             lvar a: R|kotlin/Int| = Int(11)
         }
