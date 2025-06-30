@@ -12,7 +12,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
@@ -104,7 +104,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         }
 
         @OptIn(KtImplementationDetail::class)
-        return isContractPresentPsiCheck()
+        return isLegacyContractPresentPsiCheck()
     }
 
     override fun getTextOffset(): Int {

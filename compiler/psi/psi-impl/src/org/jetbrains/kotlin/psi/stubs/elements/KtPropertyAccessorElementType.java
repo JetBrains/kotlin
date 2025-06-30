@@ -29,7 +29,7 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
                 psi.isGetter(),
                 psi.hasBody(),
                 psi.hasBlockBody(),
-                KtPsiUtilKt.isContractPresentPsiCheck(psi)
+                KtPsiUtilKt.isLegacyContractPresentPsiCheck(psi)
         );
     }
 

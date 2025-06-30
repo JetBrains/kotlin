@@ -11,7 +11,7 @@ import com.intellij.util.io.StringRef
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
-import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
 import java.io.IOException
@@ -32,7 +32,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
         val isExplicitDelegationCall = psi.getDelegationCallOrNull()?.isImplicit == false
 
         @OptIn(KtImplementationDetail::class)
-        val mayHaveContract = psi.isContractPresentPsiCheck()
+        val mayHaveContract = psi.isLegacyContractPresentPsiCheck()
         return KotlinSecondaryConstructorStubImpl(
             parent = parentStub,
             containingClassName = StringRef.fromString(psi.name),

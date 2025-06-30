@@ -281,7 +281,7 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
  * but **true** does not guarantee that the declaration has a contract.
  */
 @KtImplementationDetail
-fun KtDeclarationWithBody.isContractPresentPsiCheck(): Boolean {
+fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
     if (hasModifier(KtTokens.OPERATOR_KEYWORD)) return false
 
     return bodyBlockExpression?.firstStatement?.isContractDescriptionCallPsiCheck() == true

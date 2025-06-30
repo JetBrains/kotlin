@@ -209,6 +209,6 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
             return stub.mayHaveContract();
         }
 
-        return KtPsiUtilKt.isContractPresentPsiCheck(this);
+        return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
     }
 }

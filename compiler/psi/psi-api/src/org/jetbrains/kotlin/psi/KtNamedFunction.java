@@ -272,7 +272,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
             return stub.mayHaveContract();
         }
 
-        return KtPsiUtilKt.isContractPresentPsiCheck(this);
+        return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
     }
 
     public boolean mayHaveContract(boolean isAllowedOnMembers) {
