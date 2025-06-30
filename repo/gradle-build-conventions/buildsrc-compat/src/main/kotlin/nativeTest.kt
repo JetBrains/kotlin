@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -148,10 +149,13 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Optional
     val releasedCompilerDist: DirectoryProperty = objects.directoryProperty()
 
+    @get:Input
+    val testTargetWithDefault = testTarget.orElse(HostManager.hostName)
+
     @get:Classpath
-    protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
+    protected val nativeHome: ConfigurableFileTree = objects.fileTree().apply {
         if (customNativeHome.isPresent) {
-            from(customNativeHome)
+            setDir(customNativeHome)
         } else {
             val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
                 listOfNotNull(
@@ -165,18 +169,19 @@ private open class NativeArgsProvider @Inject constructor(
                 )
             )
 
-            from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist").asFileTree.matching {
-                if (!requirePlatformLibs) {
-                    exclude { it.path.contains("platform") }
-                    exclude { it.path.contains("cache") }
-                }
-            }).builtBy(nativeHomeBuiltBy.get())
+            setDir(project.project(":kotlin-native").isolated.projectDirectory.dir("dist"))
+            if (!requirePlatformLibs) {
+                include(
+                    "bin/",
+                    "konan/",
+                    "tools/",
+                    "klib/common/",
+                    "klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-cache/",
+                )
+            }
+            builtBy(nativeHomeBuiltBy.get())
         }
     }
-
-    @get:Internal
-    val nativeHomeHack =
-        customNativeHome.orElse(providers.provider { project.project(":kotlin-native").isolated.projectDirectory.dir("dist").asFile.absolutePath } )
 
     @Classpath
     protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
@@ -195,7 +200,6 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Classpath
     val xcTestConfiguration: ConfigurableFileCollection = objects.fileCollection().apply {
         val xcTestEnabled = xctestFramework.map { it == "true" }.orElse(false)
-        val testTargetWithDefault = testTarget.orElse(HostManager.hostName)
         val isAppleTarget: Provider<Boolean> =
             testTargetWithDefault.map { KonanTarget.predefinedTargets[it]?.family?.isAppleFamily ?: false }.orElse(false)
         if (xcTestEnabled.get() && isAppleTarget.get()) {
@@ -214,7 +218,7 @@ private open class NativeArgsProvider @Inject constructor(
     override fun asArguments(): Iterable<String> {
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
-            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHomeHack.get()}",
+            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.dir.absolutePath}",
             "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
