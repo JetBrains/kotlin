@@ -652,7 +652,7 @@ class CacheMetadata(
         val fullCompilerConfiguration: String,
 )
 
-internal object CacheMetadataSerializer {
+object CacheMetadataSerializer {
     fun serialize(writer: Writer, metadata: CacheMetadata) {
         // Serializing as `Properties` prepends current date. This makes the resulting artifact
         // depend on more than just the inputs, breaking reproducibility.
