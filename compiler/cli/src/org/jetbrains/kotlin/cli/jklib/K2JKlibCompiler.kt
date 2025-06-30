@@ -492,7 +492,9 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 mainModule, symbolTable, irBuiltIns,
                 DescriptorByIdSignatureFinderImpl(mainModule, mangler),
                 JvmGeneratorExtensionsImpl(configuration)
-            )
+            ).apply {
+                unboundSymbolGeneration = true
+            }
         val linker = JKlibLinker(
             module = mainModule,
             messageCollector = messageCollector,
