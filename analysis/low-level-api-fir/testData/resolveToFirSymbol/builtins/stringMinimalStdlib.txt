@@ -1,4 +1,4 @@
-KtClass 'String' in 'abi-comparator-2.2.255-SNAPSHOT.jar!/kotlin/kotlin.kotlin_builtins':
+KtClass 'String' in 'fallback builtins':
   public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSequence|, R|java/io/Serializable| {
       public final companion object Companion : R|kotlin/Any| {
       }

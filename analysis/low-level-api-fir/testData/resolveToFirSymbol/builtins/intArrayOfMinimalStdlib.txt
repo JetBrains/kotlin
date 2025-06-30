@@ -1,4 +1,4 @@
-KtNamedFunction 'intArrayOf' in 'abi-comparator-2.2.255-SNAPSHOT.jar!/kotlin/kotlin.kotlin_builtins':
+KtNamedFunction 'intArrayOf' in 'fallback builtins':
   public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
 
 
