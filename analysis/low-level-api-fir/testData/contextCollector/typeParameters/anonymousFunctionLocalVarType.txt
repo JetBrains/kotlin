@@ -28,7 +28,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionLocalVarType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval anon: R|(T) -> T| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|T| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval anon: R|(T) -> T| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|T| <inline=NoInline>  {
             [ResolvedTo(BODY_RESOLVE)] lval y: R|T| = R|<local>/x|
             ^ R|<local>/y|
         }

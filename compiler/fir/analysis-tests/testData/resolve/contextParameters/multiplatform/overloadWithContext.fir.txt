@@ -93,7 +93,7 @@ FILE: jvm.kt
         context(a: R|kotlin/Int|)
         public final val foo: R|() -> kotlin/Unit|
             public get(): R|() -> kotlin/Unit| {
-                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                     ^ Unit
                 }
 
@@ -195,7 +195,7 @@ FILE: jvm.kt
         context(a: R|kotlin/Int|)
         public final val foo: R|() -> kotlin/Unit|
             public get(): R|() -> kotlin/Unit| {
-                ^ fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                     ^ Unit
                 }
 

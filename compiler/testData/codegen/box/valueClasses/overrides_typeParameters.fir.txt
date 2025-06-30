@@ -703,8 +703,8 @@ final class Overrides_typeParametersKt$box$lam1$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam1$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -715,8 +715,8 @@ final class Overrides_typeParametersKt$box$lam11$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam11$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -727,8 +727,8 @@ final class Overrides_typeParametersKt$box$lam13$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam13$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -739,8 +739,8 @@ final class Overrides_typeParametersKt$box$lam15$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam15$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -751,20 +751,8 @@ final class Overrides_typeParametersKt$box$lam17$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam17$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
-}
-
-@kotlin.Metadata
-final class Overrides_typeParametersKt$box$lam19$1 {
-    // source: 'overrides_typeParameters.kt'
-    enclosing method Overrides_typeParametersKt.box()Ljava/lang/String;
-    public final static field INSTANCE: Overrides_typeParametersKt$box$lam19$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam19$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -775,8 +763,8 @@ final class Overrides_typeParametersKt$box$lam3$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam3$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -787,8 +775,8 @@ final class Overrides_typeParametersKt$box$lam5$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam5$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -799,8 +787,8 @@ final class Overrides_typeParametersKt$box$lam7$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam7$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -811,8 +799,8 @@ final class Overrides_typeParametersKt$box$lam9$1 {
     inner (anonymous) class Overrides_typeParametersKt$box$lam9$1
     static method <clinit>(): void
     method <init>(): void
+    public final method invoke(): XPoint
     public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): java.lang.Void
 }
 
 @kotlin.Metadata
@@ -890,7 +878,6 @@ public final class Overrides_typeParametersKt {
     inner (anonymous) class Overrides_typeParametersKt$box$lam13$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam15$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam17$1
-    inner (anonymous) class Overrides_typeParametersKt$box$lam19$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam3$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam5$1
     inner (anonymous) class Overrides_typeParametersKt$box$lam7$1
@@ -900,71 +887,72 @@ public final class Overrides_typeParametersKt {
     private final static method box$lambda$0(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$1(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$10(): kotlin.Unit
-    private final static method box$lambda$100(p0: java.lang.Object): double
-    private final static method box$lambda$101(): double
-    private final static method box$lambda$102(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
-    private final static method box$lambda$103(): double
-    private final static method box$lambda$104(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
-    private final static method box$lambda$105(): double
-    private final static method box$lambda$106(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
-    private final static method box$lambda$107(): double
-    private final static method box$lambda$108(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
-    private final static method box$lambda$11(): java.lang.String
-    private final static method box$lambda$12(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
-    private final static method box$lambda$13(): java.lang.String
-    private final static method box$lambda$14(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
-    private final static method box$lambda$15(): boolean
-    private final static method box$lambda$16(p0: java.lang.Object, p1: java.lang.Object): boolean
-    private final static method box$lambda$17(): boolean
-    private final static method box$lambda$18(p0: java.lang.Object, p1: java.lang.Object): boolean
-    private final static method box$lambda$19(): boolean
+    private final static method box$lambda$100(): double
+    private final static method box$lambda$101(p0: java.lang.Object): double
+    private final static method box$lambda$102(): double
+    private final static method box$lambda$103(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$104(): double
+    private final static method box$lambda$105(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$106(): double
+    private final static method box$lambda$107(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$108(): double
+    private final static method box$lambda$109(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): double
+    private final static method box$lambda$11(): kotlin.Unit
+    private final static method box$lambda$12(): java.lang.String
+    private final static method box$lambda$13(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
+    private final static method box$lambda$14(): java.lang.String
+    private final static method box$lambda$15(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
+    private final static method box$lambda$16(): boolean
+    private final static method box$lambda$17(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$18(): boolean
+    private final static method box$lambda$19(p0: java.lang.Object, p1: java.lang.Object): boolean
     private final static method box$lambda$2(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$20(p0: java.lang.Object, p1: java.lang.Object): boolean
-    private final static method box$lambda$21(): boolean
-    private final static method box$lambda$22(p0: java.lang.Object, p1: java.lang.Object): boolean
-    private final static method box$lambda$23(): boolean
-    private final static method box$lambda$24(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    private final static method box$lambda$25(): boolean
-    private final static method box$lambda$26(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    private final static method box$lambda$27(): boolean
-    private final static method box$lambda$28(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    private final static method box$lambda$29(): boolean
+    private final static method box$lambda$20(): boolean
+    private final static method box$lambda$21(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$22(): boolean
+    private final static method box$lambda$23(p0: java.lang.Object, p1: java.lang.Object): boolean
+    private final static method box$lambda$24(): boolean
+    private final static method box$lambda$25(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$26(): boolean
+    private final static method box$lambda$27(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
+    private final static method box$lambda$28(): boolean
+    private final static method box$lambda$29(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     private final static method box$lambda$3(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$30(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
-    private final static method box$lambda$31(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$30(): boolean
+    private final static method box$lambda$31(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): boolean
     private final static method box$lambda$32(p0: java.lang.Object, p1: java.lang.Object): int
-    private final static method box$lambda$33(): double
-    private final static method box$lambda$34(p0: java.lang.Object): double
-    private final static method box$lambda$35(): double
-    private final static method box$lambda$36(p0: java.lang.Object, p1: java.lang.Object): double
-    private final static method box$lambda$37(): double
-    private final static method box$lambda$38(p0: java.lang.Object): double
-    private final static method box$lambda$39(): double
+    private final static method box$lambda$33(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$34(): double
+    private final static method box$lambda$35(p0: java.lang.Object): double
+    private final static method box$lambda$36(): double
+    private final static method box$lambda$37(p0: java.lang.Object, p1: java.lang.Object): double
+    private final static method box$lambda$38(): double
+    private final static method box$lambda$39(p0: java.lang.Object): double
     private final static method box$lambda$4(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$40(p0: java.lang.Object, p1: java.lang.Object): double
-    private final static method box$lambda$41(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
-    private final static method box$lambda$42(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$43(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
-    private final static method box$lambda$44(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$45(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$40(): double
+    private final static method box$lambda$41(p0: java.lang.Object, p1: java.lang.Object): double
+    private final static method box$lambda$42(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$43(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$44(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
+    private final static method box$lambda$45(p0: RealOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
     private final static method box$lambda$46(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
     private final static method box$lambda$47(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
     private final static method box$lambda$48(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
-    private final static method box$lambda$49(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$49(p0: java.lang.Object, p1: java.lang.Object, p2: RealOverride): kotlin.Unit
     private final static method box$lambda$5(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$50(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
     private final static method box$lambda$51(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
     private final static method box$lambda$52(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$53(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
+    private final static method box$lambda$53(p0: GenericFakeOverride, p1: java.lang.Object, p2: java.lang.Object): kotlin.Unit
     private final static method box$lambda$54(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
     private final static method box$lambda$55(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
     private final static method box$lambda$56(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
-    private final static method box$lambda$57(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
+    private final static method box$lambda$57(p0: java.lang.Object, p1: java.lang.Object, p2: ReifiedFakeOverride): kotlin.Unit
     private final static method box$lambda$58(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
     private final static method box$lambda$59(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
     private final static method box$lambda$6(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$60(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
-    private final static method box$lambda$61(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$61(p0: java.lang.Object, p1: java.lang.Object, p2: GenericFakeOverrideWithMFVCUpperBound): kotlin.Unit
     private final static method box$lambda$62(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$63(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$64(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
@@ -977,35 +965,35 @@ public final class Overrides_typeParametersKt {
     private final static method box$lambda$70(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$71(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$72(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$73(p0: java.lang.Object, p1: java.lang.Object): int
+    private final static method box$lambda$73(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$74(p0: java.lang.Object, p1: java.lang.Object): int
     private final static method box$lambda$75(p0: java.lang.Object, p1: java.lang.Object): int
-    private final static method box$lambda$76(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$76(p0: java.lang.Object, p1: java.lang.Object): int
     private final static method box$lambda$77(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$78(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$78(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$79(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$8(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$80(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$80(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
     private final static method box$lambda$81(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
     private final static method box$lambda$82(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$83(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$84(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
-    private final static method box$lambda$85(): double
-    private final static method box$lambda$86(p0: java.lang.Object): double
-    private final static method box$lambda$87(): double
-    private final static method box$lambda$88(p0: java.lang.Object): double
-    private final static method box$lambda$89(): double
-    private final static method box$lambda$9(): kotlin.Unit
-    private final static method box$lambda$90(p0: java.lang.Object): double
-    private final static method box$lambda$91(): double
-    private final static method box$lambda$92(p0: java.lang.Object): double
-    private final static method box$lambda$93(): double
-    private final static method box$lambda$94(p0: java.lang.Object): double
-    private final static method box$lambda$95(): double
-    private final static method box$lambda$96(p0: java.lang.Object): double
-    private final static method box$lambda$97(): double
-    private final static method box$lambda$98(p0: java.lang.Object): double
-    private final static method box$lambda$99(): double
+    private final static method box$lambda$83(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$84(p0: java.lang.Object, p1: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$85(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): kotlin.Unit
+    private final static method box$lambda$86(): double
+    private final static method box$lambda$87(p0: java.lang.Object): double
+    private final static method box$lambda$88(): double
+    private final static method box$lambda$89(p0: java.lang.Object): double
+    private final static method box$lambda$9(): int
+    private final static method box$lambda$90(): double
+    private final static method box$lambda$91(p0: java.lang.Object): double
+    private final static method box$lambda$92(): double
+    private final static method box$lambda$93(p0: java.lang.Object): double
+    private final static method box$lambda$94(): double
+    private final static method box$lambda$95(p0: java.lang.Object): double
+    private final static method box$lambda$96(): double
+    private final static method box$lambda$97(p0: java.lang.Object): double
+    private final static method box$lambda$98(): double
+    private final static method box$lambda$99(p0: java.lang.Object): double
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static method genericFunctionIC-lld4ICU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
