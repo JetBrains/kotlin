@@ -34,7 +34,11 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty("${KotlinJsCompilerType.jsCompilerProperty}.nowarn"),
         DeprecatedProperty("kotlin.mpp.androidGradlePluginCompatibility.nowarn"), // Since 2.1.0
         DeprecatedProperty("kotlin.experimental.swift-export.enabled"),
-        DeprecatedProperty("kotlin.native.useEmbeddableCompilerJar"), // Since 2.2.10
+        DeprecatedProperty(
+            "kotlin.native.useEmbeddableCompilerJar",
+            "This property is no longer needed. The embeddable compiler jar is always used for Kotlin/Native projects." +
+                    " It was removed in 2.2.10, see https://kotl.in/KT-51301 for details."
+        ), // Since 2.2.10
         DeprecatedProperty(
             propertyName = "kotlin.incremental.useClasspathSnapshot",
             details = "History based incremental compilation approach for JVM platform is removed." +
