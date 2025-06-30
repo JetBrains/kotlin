@@ -1481,7 +1481,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''.", TO_STRING, STRING)
         map.put(OPERATOR_MODIFIER_REQUIRED, "''operator'' modifier is required on ''{0}'' in ''{1}''.", TO_STRING, STRING)
         map.put(OPERATOR_CALL_ON_CONSTRUCTOR, "Constructor of ''{0}'' cannot be used as an operator.", STRING)
-        map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''.", TO_STRING)
+        map.put(INFIX_MODIFIER_REQUIRED, "''infix'' modifier is required on ''{0}''.", SYMBOL)
         map.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''.", TO_STRING, STRING)
         map.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''.", TO_STRING, STRING)
         map.put(INAPPLICABLE_OPERATOR_MODIFIER, "''operator'' modifier is not applicable to function: {0}.", STRING)
