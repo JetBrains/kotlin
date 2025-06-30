@@ -1,3 +1,5 @@
 expression: 4294967296u
 constant: 4294967296uL
 constantValueKind: ULongValue
+constantValueSource: INTEGER_CONSTANT
+constantValueSourceText: 4294967296u
