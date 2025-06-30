@@ -356,11 +356,12 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             it
         })
         val outputKind = OutputKind.valueOf((arguments.produce ?: "ir").uppercase())
-        val klibDestination = if (outputKind == OutputKind.LIBRARY) destination else
-            File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
-                require(!it.exists) { "Collision writing intermediate KLib $it" }
-                it.deleteOnExit()
-            }
+//        val klibDestination = if (outputKind == OutputKind.LIBRARY) destination else
+//            File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+//                require(!it.exists) { "Collision writing intermediate KLib $it" }
+//                it.deleteOnExit()
+//            }
+        val klibDestination = destination
         val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, klibDestination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
 
