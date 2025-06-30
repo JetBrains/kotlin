@@ -1,26 +1,26 @@
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
-  anchor -> [FirMemberPropertySymbol util/left]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
+  anchor -> [FirRegularPropertySymbol util/left]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryWithType.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-destructEntryWithType.kts>

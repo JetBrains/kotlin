@@ -7,8 +7,8 @@ owner -> FirConstructorSymbol /correct.correct
 context -> FirValueParameterSymbol <local>/x from FirConstructorSymbol /correct.correct
 
 @base()
-owner -> FirMemberPropertySymbol /correct.x
-context -> FirMemberPropertySymbol /correct.x
+owner -> FirRegularPropertySymbol /correct.x
+context -> FirRegularPropertySymbol /correct.x
 
 @base()
 owner -> FirConstructorSymbol /correct.correct
@@ -67,24 +67,24 @@ owner -> FirNamedFunctionSymbol /foo
 context -> FirNamedFunctionSymbol /foo
 
 @base()
-owner -> FirMemberPropertySymbol /z
-context -> FirMemberPropertySymbol /z
+owner -> FirRegularPropertySymbol /z
+context -> FirRegularPropertySymbol /z
 
 @base()
-owner -> FirMemberPropertySymbol /x
-context -> FirMemberPropertySymbol /x
-context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /x
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /x
+owner -> FirRegularPropertySymbol /x
+context -> FirRegularPropertySymbol /x
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /x
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /x
 
 @base()
-owner -> FirMemberPropertySymbol /x
-context -> FirMemberPropertySymbol /x
-context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /x
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /x
+owner -> FirRegularPropertySymbol /x
+context -> FirRegularPropertySymbol /x
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /x
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /x
 
 @base()
-owner -> FirMemberPropertySymbol /x
-context -> FirMemberPropertySymbol /x
+owner -> FirRegularPropertySymbol /x
+context -> FirRegularPropertySymbol /x
 
 @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#)
 owner -> FirRegularClassSymbol derived
@@ -97,17 +97,17 @@ context -> FirRegularClassSymbol derived
 @derived(IntegerLiteral(1))
 owner -> FirConstructorSymbol /correctDerived.correctDerived
 context -> FirValueParameterSymbol <local>/x from FirConstructorSymbol /correctDerived.correctDerived
-context -> FirMemberPropertySymbol /correctDerived.x
-context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /correctDerived.x
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /correctDerived.x
+context -> FirRegularPropertySymbol /correctDerived.x
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /correctDerived.x
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /correctDerived.x
 
 @derived(IntegerLiteral(1))
 owner -> FirConstructorSymbol /correctDerived.correctDerived
 context -> FirValueParameterSymbol <local>/x from FirConstructorSymbol /correctDerived.correctDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirMemberPropertySymbol /correctDerived.x
-context -> FirMemberPropertySymbol /correctDerived.x
+owner -> FirRegularPropertySymbol /correctDerived.x
+context -> FirRegularPropertySymbol /correctDerived.x
 
 @base()
 owner -> FirConstructorSymbol /correctDerived.correctDerived
@@ -162,21 +162,21 @@ owner -> FirNamedFunctionSymbol /fooDerived
 context -> FirNamedFunctionSymbol /fooDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirMemberPropertySymbol /zDerived
-context -> FirMemberPropertySymbol /zDerived
+owner -> FirRegularPropertySymbol /zDerived
+context -> FirRegularPropertySymbol /zDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirMemberPropertySymbol /xDerived
-context -> FirMemberPropertySymbol /xDerived
-context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /xDerived
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /xDerived
+owner -> FirRegularPropertySymbol /xDerived
+context -> FirRegularPropertySymbol /xDerived
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /xDerived
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /xDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirMemberPropertySymbol /xDerived
-context -> FirMemberPropertySymbol /xDerived
-context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /xDerived
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /xDerived
+owner -> FirRegularPropertySymbol /xDerived
+context -> FirRegularPropertySymbol /xDerived
+context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /xDerived
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /xDerived
 
 @derived(IntegerLiteral(1))
-owner -> FirMemberPropertySymbol /xDerived
-context -> FirMemberPropertySymbol /xDerived
+owner -> FirRegularPropertySymbol /xDerived
+context -> FirRegularPropertySymbol /xDerived

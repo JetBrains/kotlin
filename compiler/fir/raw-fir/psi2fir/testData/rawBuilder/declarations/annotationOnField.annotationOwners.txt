@@ -3,20 +3,20 @@ owner -> FirConstructorSymbol /SomeClass.SomeClass
 context -> FirConstructorSymbol /SomeClass.SomeClass
 
 @FIELD:Ann()
-owner -> FirMemberPropertySymbol /SomeClass.simpleProperty
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /SomeClass.simpleProperty
+owner -> FirRegularPropertySymbol /SomeClass.simpleProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.simpleProperty
 
 @FIELD:Ann()
-owner -> FirMemberPropertySymbol /SomeClass.simplePropertyWithAnnotationList
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+owner -> FirRegularPropertySymbol /SomeClass.simplePropertyWithAnnotationList
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.simplePropertyWithAnnotationList
 
 @FIELD:Ann()
-owner -> FirMemberPropertySymbol /SomeClass.delegatedProperty
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /SomeClass.delegatedProperty
+owner -> FirRegularPropertySymbol /SomeClass.delegatedProperty
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.delegatedProperty
 
 @FIELD:Ann()
-owner -> FirMemberPropertySymbol /SomeClass.propertyWithCustomGetter
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /SomeClass.propertyWithCustomGetter
+owner -> FirRegularPropertySymbol /SomeClass.propertyWithCustomGetter
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /SomeClass.propertyWithCustomGetter
 
 @FIELD:Ann()
 owner -> FirValueParameterSymbol <local>/s from FirNamedFunctionSymbol /SomeClass.anotherFun
@@ -35,5 +35,5 @@ owner -> FirRegularClassSymbol SomeClass
 context -> FirRegularClassSymbol SomeClass
 
 @FIELD:Ann()
-owner -> FirMemberPropertySymbol /WithPrimaryConstructor.a
-context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /WithPrimaryConstructor.a
+owner -> FirRegularPropertySymbol /WithPrimaryConstructor.a
+context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /WithPrimaryConstructor.a

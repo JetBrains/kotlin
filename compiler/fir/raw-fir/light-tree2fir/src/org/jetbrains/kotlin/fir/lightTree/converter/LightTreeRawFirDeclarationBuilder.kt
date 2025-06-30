@@ -1394,7 +1394,7 @@ class LightTreeRawFirDeclarationBuilder(
         val propertySymbol = if (isLocal) {
             FirLocalPropertySymbol()
         } else {
-            FirMemberPropertySymbol(callableIdForName(propertyName))
+            FirRegularPropertySymbol(callableIdForName(propertyName))
         }
 
         withContainerSymbol(propertySymbol, isLocal) {

@@ -1,62 +1,62 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>
-  context -> FirTypeParameterSymbol F from FirMemberPropertySymbol /propertyToResolve
-  anchor -> [FirMemberPropertySymbol /propertyToResolve]
+  context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
+  anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirTypeParameterSymbol F from FirMemberPropertySymbol /propertyToResolve
-  anchor -> [FirMemberPropertySymbol /propertyToResolve]
+  context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
+  anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirTypeParameterSymbol F from FirMemberPropertySymbol /propertyToResolve
-  anchor -> [FirMemberPropertySymbol /propertyToResolve]
+  context -> FirTypeParameterSymbol F from FirRegularPropertySymbol /propertyToResolve
+  anchor -> [FirRegularPropertySymbol /propertyToResolve]
 
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitType.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {

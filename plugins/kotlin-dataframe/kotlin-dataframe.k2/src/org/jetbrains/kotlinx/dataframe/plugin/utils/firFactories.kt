@@ -30,7 +30,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
     source: KtSourceElement?,
 ): FirProperty {
-    val firPropertySymbol = FirMemberPropertySymbol(callableId)
+    val firPropertySymbol = FirRegularPropertySymbol(callableId)
     return buildProperty {
         this.source = source
         propertyName.columnNameAnnotation?.let {

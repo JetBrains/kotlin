@@ -1,37 +1,37 @@
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirMemberPropertySymbol util/property
+  context -> FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirMemberPropertySymbol util/property
+  context -> FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirMemberPropertySymbol util/property
+  context -> FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/property
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/property
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/property
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(0).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol util/property
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(1).R|kotlin/Int.plus|(R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol util/property
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(str = Int(2).R|kotlin/Int.plus|(R|util/constant|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol util/property
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol util/property
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntryUsage.kts

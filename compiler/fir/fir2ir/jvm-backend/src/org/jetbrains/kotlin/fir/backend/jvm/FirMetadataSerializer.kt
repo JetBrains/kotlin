@@ -288,7 +288,7 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         origin = FirDeclarationOrigin.Source
 
         val newPropertySymbol = when (val oldSymbol = property.symbol) {
-            is FirMemberPropertySymbol, is FirErrorPropertySymbol -> FirMemberPropertySymbol(oldSymbol.callableId)
+            is FirRegularPropertySymbol, is FirErrorPropertySymbol -> FirRegularPropertySymbol(oldSymbol.callableId)
             is FirLocalPropertySymbol -> FirLocalPropertySymbol()
         }
         symbol = newPropertySymbol

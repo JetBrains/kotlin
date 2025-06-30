@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -182,7 +181,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
 
     private fun buildPseudoPropertyByName(name: Name): FirProperty = buildProperty {
         this.name = name
-        this.symbol = FirMemberPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
+        this.symbol = FirRegularPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 
         status = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,

@@ -1,22 +1,22 @@
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol <local>/explicitType
-  anchor -> [FirMemberPropertySymbol <local>/explicitType]
+  context -> FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  F
-  context -> FirReceiverParameterSymbol from FirMemberPropertySymbol <local>/explicitType
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol <local>/explicitType]
+  context -> FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/explicitType
-  anchor -> [FirMemberPropertySymbol <local>/explicitType]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/explicitType
-  anchor -> [FirMemberPropertySymbol <local>/explicitType]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 @R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Number
-  context -> FirTypeParameterSymbol F from FirMemberPropertySymbol <local>/explicitType
-  anchor -> [FirMemberPropertySymbol <local>/explicitType]
+  context -> FirTypeParameterSymbol F from FirRegularPropertySymbol <local>/explicitType
+  anchor -> [FirRegularPropertySymbol <local>/explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterAnnotationsInLocalClassScript.kts>

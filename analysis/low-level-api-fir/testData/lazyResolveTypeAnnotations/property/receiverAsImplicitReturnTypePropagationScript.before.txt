@@ -1,14 +1,14 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/String
   context -> FirNamedFunctionSymbol /bar
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol /foo]
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol /foo]
 
 FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagationScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverAsImplicitReturnTypePropagationScript.kts>
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverAsImplicitReturnTypePropagationScript.kts
         public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirMemberPropertySymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirRegularPropertySymbol /foo]] fun [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] R|kotlin/collections/List<kotlin/collections/Collection<kotlin/String>>|.bar(): R|@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|Anno|(LAZY_EXPRESSION)  kotlin/String>>| {
             ^bar this@R|/bar|.R|/foo|
         }
 

@@ -776,7 +776,7 @@ open class PsiRawFirBuilder(
             }
 
             val propertyName = nameAsSafeName
-            val propertySymbol = FirMemberPropertySymbol(callableIdForName(propertyName))
+            val propertySymbol = FirRegularPropertySymbol(callableIdForName(propertyName))
             withContainerSymbol(propertySymbol) {
                 val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
                 val parameterAnnotations = mutableListOf<FirAnnotationCall>()
@@ -2308,7 +2308,7 @@ open class PsiRawFirBuilder(
             val propertySymbol = if (isLocal) {
                 FirLocalPropertySymbol()
             } else {
-                FirMemberPropertySymbol(callableIdForName(propertyName))
+                FirRegularPropertySymbol(callableIdForName(propertyName))
             }
 
             withContainerSymbol(propertySymbol, isLocal) {

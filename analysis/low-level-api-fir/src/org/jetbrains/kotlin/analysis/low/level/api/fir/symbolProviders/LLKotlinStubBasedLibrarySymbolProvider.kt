@@ -367,7 +367,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                 declarationOrigin = propertyOrigin,
             )
 
-            val symbol = FirMemberPropertySymbol(callableId)
+            val symbol = FirRegularPropertySymbol(callableId)
             val rootContext = StubBasedFirDeserializationContext.createRootContext(
                 session = session,
                 moduleData = session.moduleData,

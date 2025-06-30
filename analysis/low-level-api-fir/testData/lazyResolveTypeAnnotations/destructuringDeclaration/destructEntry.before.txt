@@ -1,25 +1,25 @@
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirMemberPropertySymbol util/left
+  context -> FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirMemberPropertySymbol util/left
+  context -> FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirMemberPropertySymbol util/left
+  context -> FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 @R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol util/left
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol util/left
   anchor -> [FirConstructorSymbol util/MyPair.MyPair]
 
 FILE: [ResolvedTo(IMPORTS)] destructEntry.kts

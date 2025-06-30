@@ -1,134 +1,134 @@
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/doo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/doo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/foo
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/foo
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 @R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol <local>/baz
-  anchor -> [FirMemberPropertySymbol util/bar]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol <local>/baz
+  anchor -> [FirRegularPropertySymbol util/bar]
 
 FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberPropertyScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-propagationToLocalMemberPropertyScript.kts>

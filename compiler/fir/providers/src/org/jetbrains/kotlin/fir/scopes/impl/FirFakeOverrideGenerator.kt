@@ -386,11 +386,11 @@ object FirFakeOverrideGenerator {
         return symbolForSubstitutionOverride
     }
 
-    fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirMemberPropertySymbol {
+    fun createSymbolForSubstitutionOverride(baseSymbol: FirPropertySymbol, derivedClassId: ClassId? = null): FirRegularPropertySymbol {
         return if (derivedClassId == null) {
-            FirMemberPropertySymbol(baseSymbol.callableId)
+            FirRegularPropertySymbol(baseSymbol.callableId)
         } else {
-            FirMemberPropertySymbol(CallableId(derivedClassId, baseSymbol.callableId.callableName))
+            FirRegularPropertySymbol(CallableId(derivedClassId, baseSymbol.callableId.callableName))
         }
     }
 

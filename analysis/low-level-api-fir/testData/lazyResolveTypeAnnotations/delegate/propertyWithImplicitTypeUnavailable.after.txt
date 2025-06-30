@@ -1,49 +1,49 @@
 @R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 @R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.Companion.explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeUnavailable.kt

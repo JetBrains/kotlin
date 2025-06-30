@@ -1,49 +1,49 @@
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirMemberPropertySymbol /propertyToResolve
+  context -> FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol /propertyToResolve
+  context -> FirValueParameterSymbol <local>/<set-?> from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 @R|Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol /propertyToResolve
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol /propertyToResolve
   anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
 
 FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailableScript.kts

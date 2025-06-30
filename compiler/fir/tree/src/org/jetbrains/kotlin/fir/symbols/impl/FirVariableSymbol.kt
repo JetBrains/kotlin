@@ -96,18 +96,24 @@ sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbo
     }
 }
 
+/**
+ * Used for purely local properties, which are declared in a functions
+ */
 class FirLocalPropertySymbol() : FirPropertySymbol() {
     override val callableId: CallableId
         get() = CallableId(name)
 }
 
-open class FirMemberPropertySymbol(override val callableId: CallableId) : FirPropertySymbol()
+/**
+ * Used for top-level and member properties, including member properties of local classes / anonymous objects
+ */
+open class FirRegularPropertySymbol(override val callableId: CallableId) : FirPropertySymbol()
 
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
     override val intersections: Collection<FirCallableSymbol<*>>,
     override val containsMultipleNonSubsumed: Boolean,
-) : FirMemberPropertySymbol(callableId), FirIntersectionCallableSymbol
+) : FirRegularPropertySymbol(callableId), FirIntersectionCallableSymbol
 
 class FirIntersectionOverrideFieldSymbol(
     callableId: CallableId,

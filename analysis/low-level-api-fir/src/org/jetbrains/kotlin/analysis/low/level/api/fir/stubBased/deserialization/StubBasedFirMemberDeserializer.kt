@@ -340,7 +340,7 @@ internal class StubBasedFirMemberDeserializer(
     ): FirProperty {
         val callableName = property.nameAsSafeName
         val callableId = CallableId(c.packageFqName, c.relativeClassName, callableName)
-        val symbol = existingSymbol ?: FirMemberPropertySymbol(callableId)
+        val symbol = existingSymbol ?: FirRegularPropertySymbol(callableId)
         val local = c.childContext(property, containingDeclarationSymbol = symbol)
 
         val returnTypeRef = property.typeReference?.toTypeRef(local)

@@ -1,66 +1,66 @@
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Incomplete code>
-  context -> FirReceiverParameterSymbol from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirReceiverParameterSymbol from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  ERROR CLASS: Incomplete code
-  context -> FirReceiverParameterSymbol from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirReceiverParameterSymbol from FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirReceiverParameterSymbol from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirReceiverParameterSymbol from FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirTypeParameterSymbol T from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirTypeParameterSymbol T from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 @R|myPack/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirTypeParameterSymbol T from FirMemberPropertySymbol myPack/variableToResolve
-  anchor -> [FirMemberPropertySymbol myPack/variableToResolve]
+  context -> FirTypeParameterSymbol T from FirRegularPropertySymbol myPack/variableToResolve
+  anchor -> [FirRegularPropertySymbol myPack/variableToResolve]
 
 FILE: [ResolvedTo(IMPORTS)] explicitTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-explicitTypeScript.kts>

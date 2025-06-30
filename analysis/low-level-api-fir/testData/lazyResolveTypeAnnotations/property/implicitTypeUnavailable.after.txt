@@ -1,49 +1,49 @@
 @R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>
-  context -> FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>
-  context -> FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int
-  context -> FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int
-  context -> FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int>
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 @R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), this@R|lowlevel/Obj|.R|lowlevel/Obj.prop|))  kotlin/Int
-  context -> FirBackingFieldSymbol <local>/field from FirMemberPropertySymbol lowlevel/implicitType
+  context -> FirBackingFieldSymbol <local>/field from FirRegularPropertySymbol lowlevel/implicitType
   anchor -> [FirNamedFunctionSymbol lowlevel/Obj.explicitType]
 
 FILE: [ResolvedTo(IMPORTS)] implicitTypeUnavailable.kt

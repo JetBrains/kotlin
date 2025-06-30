@@ -1,14 +1,14 @@
 @R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol low/resolveMe
-  anchor -> [FirMemberPropertySymbol low/resolveMe]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
+  anchor -> [FirRegularPropertySymbol low/resolveMe]
 
 @R|low/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|low/Anno|(LAZY_EXPRESSION)  kotlin/String>
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol low/resolveMe
-  anchor -> [FirMemberPropertySymbol low/resolveMe]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
+  anchor -> [FirRegularPropertySymbol low/resolveMe]
 
 @R|low/Anno|(LAZY_EXPRESSION)  kotlin/String
-  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirMemberPropertySymbol low/resolveMe
-  anchor -> [FirMemberPropertySymbol low/resolveMe]
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirRegularPropertySymbol low/resolveMe
+  anchor -> [FirRegularPropertySymbol low/resolveMe]
 
 FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-implicitTypeFromIncorrectSetterScript.kts>
