@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
@@ -471,7 +473,8 @@ ${generateExports(exports)}
 fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
-    fileNameBase: String
+    fileNameBase: String,
+    messageCollector: MessageCollector? = null
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -493,7 +496,14 @@ fun writeCompilationResult(
     if (result.useDebuggerCustomFormatters) {
         val fileName = "custom-formatters.js"
         val classLoader = WasmCompilerResult::class.java.classLoader
-        val customFormattersInputStream = classLoader.getResourceAsStream(fileName)
+        val customFormattersInputStream = classLoader.getResourceAsStream(fileName) ?: run {
+            val message = "Custom formatters won't work because a required resource is missing from the compiler: $fileName"
+            messageCollector?.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                message
+            )
+            "console.warn(\"$message\");".byteInputStream()
+        }
 
         Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
     }

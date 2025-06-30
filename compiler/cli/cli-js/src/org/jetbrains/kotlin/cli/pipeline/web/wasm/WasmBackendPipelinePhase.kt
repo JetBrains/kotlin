@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -137,7 +138,8 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
 
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
         val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
-        val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
+        val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS) &&
+                configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
 
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
