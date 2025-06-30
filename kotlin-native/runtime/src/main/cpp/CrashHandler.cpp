@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <array>
 #include <mutex>
+#include <unistd.h>
 
 #include "KAssert.h"
 #include "Porting.h"
@@ -16,6 +17,7 @@
 
 #include <mach/exception_types.h>
 #include <mach/mach_init.h>
+#include <sys/sysctl.h>
 #endif
 
 namespace {
@@ -24,10 +26,26 @@ namespace {
         return kotlin::compiler::minidumpLocation() != nullptr;
     }
 
+    bool isDebuggerAttached() {
+        int mib[4];
+        struct kinfo_proc info;
+        size_t size;
+
+        mib[0] = CTL_KERN;
+        mib[1] = KERN_PROC;
+        mib[2] = KERN_PROC_PID;
+        mib[3] = getpid();
+
+        size = sizeof(info);
+        if (sysctl(mib, 4, &info, &size, nullptr, 0) == 0) {
+            return (info.kp_proc.p_flag & P_TRACED) != 0;
+        }
+        return false;
+    }
+
     std::unique_ptr<google_breakpad::ExceptionHandler> gExceptionHandler = nullptr;
 
     bool exceptionFilter(void* context) {
-        // TODO handle only certain signals?
         return true;
     }
 
@@ -35,7 +53,6 @@ namespace {
                           const char* minidump_id,
                           void* context,
                           bool succeeded) {
-        // TODO handle only certain signals?
         if (succeeded) {
             konan::consoleErrorf("Minidump written to \"%s/%s.dmp\"\n", dump_dir, minidump_id);
         } else {
@@ -49,6 +66,13 @@ namespace {
 void kotlin::crashHandlerInit() noexcept {
 #if KONAN_OSX
     if (minidumpsEnabled()) {
+        // Don't initialize crash handler if we're running under a debugger
+        // to avoid interfering with debugger breakpoints
+        if (isDebuggerAttached()) {
+            RuntimeLogInfo({logging::Tag::kRT}, "Debugger detected, skipping crash handler initialization");
+            return;
+        }
+
         RuntimeLogInfo({logging::Tag::kRT}, "Initializing crash handler, minidumps will be written to \"%s\"",
                        compiler::minidumpLocation());
 
@@ -66,7 +90,7 @@ void kotlin::crashHandlerInit() noexcept {
 
 void kotlin::writeMinidump() noexcept {
 #if KONAN_OSX
-    if (minidumpsEnabled()) {
+    if (gExceptionHandler != nullptr) {
         gExceptionHandler->WriteMinidump();
     }
 #endif
