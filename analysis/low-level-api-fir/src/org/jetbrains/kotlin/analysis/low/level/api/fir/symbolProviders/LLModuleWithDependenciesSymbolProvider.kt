@@ -98,30 +98,27 @@ internal class LLModuleWithDependenciesSymbolProvider(
         LLKotlinStubBasedLibraryMultifileClassPartCallableSymbolProvider(session)
     }
 
-    @FirSymbolProviderInternals
-    fun getTopLevelDeserializedCallableSymbolsToWithoutDependencies(
-        destination: MutableList<FirCallableSymbol<*>>,
+    @OptIn(FirSymbolProviderInternals::class)
+    fun getTopLevelDeserializedCallableSymbolsWithoutDependencies(
         packageFqName: FqName,
         shortName: Name,
         callableDeclaration: KtCallableDeclaration,
-    ) {
-        val sizeBefore = destination.size
-
+    ): List<FirCallableSymbol<*>> = buildList {
         providers.forEach { provider ->
             when (provider) {
                 is LLKotlinStubBasedLibrarySymbolProvider ->
-                    destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
+                    addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
 
                 is AbstractFirDeserializedSymbolProvider ->
-                    provider.getTopLevelCallableSymbolsTo(destination, packageFqName, shortName)
+                    provider.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
 
                 else -> {}
             }
         }
 
         // Must be called after the original search as this is only a fallback solution
-        if (sizeBefore == destination.size && providers.any { it is LLKotlinStubBasedLibrarySymbolProvider }) {
-            multifileClassPartCallableSymbolProvider.addCallableIfNeeded(destination, packageFqName, shortName, callableDeclaration)
+        if (isEmpty() && providers.any { it is LLKotlinStubBasedLibrarySymbolProvider }) {
+            multifileClassPartCallableSymbolProvider.addCallableIfNeeded(this, packageFqName, shortName, callableDeclaration)
         }
     }
 
