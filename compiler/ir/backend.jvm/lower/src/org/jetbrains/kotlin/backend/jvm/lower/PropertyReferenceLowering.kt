@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.inline.loadCompiledInlineFunction
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.usesLocalExceptParameterNullCheck
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -527,7 +528,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
 }
 
 /**
- * An origin for IrFunctionReferences which prevents inline class mangling. This only exists because of
+ * An [IrAttribute] for [IrRawFunctionReference]s which prevents inline class mangling. This only exists because of
  * inconsistencies between `RuntimeTypeMapper` and `KotlinTypeMapper`. The `RuntimeTypeMapper` does not
  * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
  * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
