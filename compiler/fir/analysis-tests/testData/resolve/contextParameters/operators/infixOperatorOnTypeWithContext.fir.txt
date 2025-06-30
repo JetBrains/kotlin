@@ -18,11 +18,11 @@ FILE: infixOperatorOnTypeWithContext.kt
     public final infix fun R|kotlin/Int|.infixWithContextValue(a: R|@ContextFunctionTypeParams(1) context(A) () -> kotlin/String|): R|kotlin/Unit| {
     }
     public final fun usage(): R|kotlin/Unit| {
-        infixWithContext@fun <anonymous>(a: R|A|): R|kotlin/String| <inline=Unknown>  {
+        infixWithContext@fun <anonymous>(a: R|A|): R|kotlin/String| <inline=NoInline>  {
             ^ R|<local>/a|.R|/A.foo|(String())
         }
         .R|/infixWithContext|(Int(1))
-        infixWithContext@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+        infixWithContext@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ R|/implicit<Inapplicable(INAPPLICABLE): /implicit>#|<R|A|>().R|/A.foo|(String())
         }
         .R|/infixWithContext<None of the following candidates is applicable because of receiver type mismatch: [/infixWithContext]>#|(Int(1))

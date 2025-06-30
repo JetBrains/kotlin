@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // CHECK_TYPE
 
 fun noCoercionLastExpressionUsedAsReturnArgument() {

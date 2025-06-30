@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // WITH_STDLIB
 // LANGUAGE: -ForbidInferringPostponedTypeVariableIntoDeclaredUpperBound
 // ISSUE: KT-50520
 
 fun box(): String {
     <!CANNOT_INFER_PARAMETER_TYPE!>buildList<!> {
-        val foo = { <!CANNOT_INFER_PARAMETER_TYPE!>first<!>() }
+        val foo = <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ <!CANNOT_INFER_PARAMETER_TYPE!>first<!>() }<!>
         add(0, foo)
     }
     return "OK"
