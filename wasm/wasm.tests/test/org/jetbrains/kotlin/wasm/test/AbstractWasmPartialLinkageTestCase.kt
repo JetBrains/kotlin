@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestStructureExtractor
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase.CompilerType
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
@@ -41,24 +42,9 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         buildDir.deleteRecursively()
     }
 
-    class WasmTestConfiguration(
-        testPath: String,
-        override val buildDir: File,
-        val compilerType: CompilerType,
-    ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-        override val testDir: File = File(testPath).absoluteFile
-        override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
-        override val targetBackend get() = TargetBackend.WASM
-
-
-        override fun onIgnoredTest() {
-            /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
-        }
-    }
-
     // The entry point to generated test classes.
     fun runTest(@TestDataFile testPath: String) {
-        val configuration = WasmTestConfiguration(
+        val configuration = WasmCompilerInvocationTestConfiguration(
             testPath = testPath,
             buildDir = buildDir,
             compilerType = compilerType,
@@ -71,6 +57,21 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
             binaryRunner = WasmCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
+    }
+}
+
+internal class WasmCompilerInvocationTestConfiguration(
+    testPath: String,
+    override val buildDir: File,
+    val compilerType: CompilerType,
+) : KlibCompilerInvocationTestUtils.TestConfiguration {
+    override val testDir: File = File(testPath).absoluteFile
+    override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
+    override val targetBackend get() = TargetBackend.WASM
+
+
+    override fun onIgnoredTest() {
+        /* Do nothing specific. JUnit 3 does not support programmatic tests muting. */
     }
 }
 
@@ -98,7 +99,7 @@ internal class WasmCompilerInvocationTestBinaryArtifact(
 ) : KlibCompilerInvocationTestUtils.BinaryArtifact
 
 internal class WasmCompilerInvocationTestArtifactBuilder(
-    private val configuration: AbstractWasmPartialLinkageTestCase.WasmTestConfiguration,
+    private val configuration: WasmCompilerInvocationTestConfiguration,
 ) : KlibCompilerInvocationTestUtils.ArtifactBuilder<WasmCompilerInvocationTestBinaryArtifact> {
     override fun buildKlib(
         module: KlibCompilerInvocationTestUtils.TestStructure.ModuleUnderTest,
