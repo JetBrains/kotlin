@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
 import org.jetbrains.kotlin.konan.file.use
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.outputStream
 import kotlin.test.assertFailsWith
 
-class ZipTest {
-
+class UnzipTest {
     @Rule
     @JvmField
     val currentTestName = TestName()
@@ -29,8 +30,12 @@ class ZipTest {
 
     @Before
     fun setUp() {
-        tmpDir = org.jetbrains.kotlin.konan.file.createTempDir(currentTestName.methodName)
-        tmpDir.deleteOnExitRecursively()
+        tmpDir = createTempDir(currentTestName.methodName)
+    }
+
+    @After
+    fun tearDown() {
+        tmpDir.deleteRecursively()
     }
 
     @Test
@@ -62,8 +67,10 @@ class ZipTest {
 }
 
 private fun createMaliciousArchive(file: File) {
-    ZipOutputStream(FileOutputStream(java.io.File(file.path))).use {
-        it.putNextEntry(ZipEntry("../definitelySafe.txt"))
-        it.closeEntry()
+    file.javaPath.outputStream().use { outputStream ->
+        ZipOutputStream(outputStream).use { zipOutputStream ->
+            zipOutputStream.putNextEntry(ZipEntry("../definitelySafe.txt"))
+            zipOutputStream.closeEntry()
+        }
     }
 }
