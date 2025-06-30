@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
+import org.jetbrains.kotlin.backend.konan.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.util.klibMetadataVersionOrDefault
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
-        val psiToIrOutput: PsiToIrOutput.ForKlib?,
+        val psiToIrOutput: PsiToIrOutput?,
         val produceHeaderKlib: Boolean,
 )
 
@@ -65,7 +66,7 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
     moduleDescriptor: ModuleDescriptor,
-    psiToIrResult: PsiToIrOutput.ForKlib?,
+    psiToIrResult: PsiToIrOutput?,
     produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
     val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib)

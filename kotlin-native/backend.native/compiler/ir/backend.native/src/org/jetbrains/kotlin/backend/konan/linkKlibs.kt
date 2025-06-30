@@ -9,10 +9,13 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.phaser.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializerFactory
+import org.jetbrains.kotlin.backend.konan.serialization.KonanInteropModuleDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -29,9 +32,11 @@ import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -293,4 +298,23 @@ internal fun LinkKlibsContext.linkKlibs(
                 irLinker = irDeserializer as KonanIrLinker
         )
     }
+}
+
+internal class KonanCInteropModuleDeserializerFactory(
+        private val cachedLibraries: CachedLibraries,
+        private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+        private val stubGenerator: DeclarationStubGenerator,
+): CInteropModuleDeserializerFactory {
+    override fun createIrModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            klib: KotlinLibrary,
+            moduleDependencies: Collection<IrModuleDeserializer>,
+    ): IrModuleDeserializer = KonanInteropModuleDeserializer(
+            moduleDescriptor,
+            klib,
+            moduleDependencies,
+            cachedLibraries.isLibraryCached(klib),
+            cenumsProvider,
+            stubGenerator,
+    )
 }

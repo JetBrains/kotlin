@@ -50,26 +50,18 @@ internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environm
 }
 
 internal fun PhaseEngine<PhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full,
-        isProducingLibrary: Boolean,
-): PsiToIrOutput = runPsiToIr(frontendOutput, isProducingLibrary, {}).first
-
-internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
-        frontendOutput: FrontendPhaseOutput.Full,
-        isProducingLibrary: Boolean,
-        produceAdditionalOutput: (PhaseEngine<out PsiToIrContext>) -> T
-): Pair<PsiToIrOutput, T> {
+        frontendOutput: FrontendPhaseOutput.Full
+): PsiToIrOutput {
     val config = this.context.config
     val psiToIrContext = PsiToIrContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.bindingContext)
-    val (psiToIrOutput, additionalOutput) = useContext(psiToIrContext) { psiToIrEngine ->
-        val additionalOutput = produceAdditionalOutput(psiToIrEngine)
-        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment, isProducingLibrary)
+    val psiToIrOutput = useContext(psiToIrContext) { psiToIrEngine ->
+        val psiToIrInput = PsiToIrInput(frontendOutput.moduleDescriptor, frontendOutput.environment)
         val output = psiToIrEngine.runPhase(PsiToIrPhase, psiToIrInput)
         psiToIrEngine.runSpecialBackendChecks(output.irModule, output.irBuiltIns, output.symbols)
-        output to additionalOutput
+        output
     }
     runPhase(CopyDefaultValuesToActualPhase, Pair(psiToIrOutput.irModule, psiToIrOutput.irBuiltIns))
-    return psiToIrOutput to additionalOutput
+    return psiToIrOutput
 }
 
 internal fun PhaseEngine<PhaseContext>.linkKlibs(
