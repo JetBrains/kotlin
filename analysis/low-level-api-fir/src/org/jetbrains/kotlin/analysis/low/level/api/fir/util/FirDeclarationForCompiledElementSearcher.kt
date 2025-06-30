@@ -6,20 +6,14 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
@@ -29,7 +23,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -77,12 +70,10 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         if (isTopLevel) {
             val packageFqName = declaration.containingKtFile.packageFqName
 
-            @OptIn(FirSymbolProviderInternals::class)
             return when (val symbolProvider = session.symbolProvider) {
-                is LLModuleWithDependenciesSymbolProvider -> buildList {
-                    symbolProvider.getTopLevelDeserializedCallableSymbolsToWithoutDependencies(this, packageFqName, shortName, declaration)
-                    symbolProvider.friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
-                }
+                is LLModuleWithDependenciesSymbolProvider ->
+                    symbolProvider.getTopLevelDeserializedCallableSymbolsWithoutDependencies(packageFqName, shortName, declaration)
+
                 else -> symbolProvider.getTopLevelCallableSymbols(packageFqName, shortName)
             }
         }
@@ -152,13 +143,10 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         val classId = declaration.getClassId() ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
         val classCandidate = when (val symbolProvider = session.symbolProvider) {
-            is LLModuleWithDependenciesSymbolProvider -> {
+            is LLModuleWithDependenciesSymbolProvider ->
                 symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId, declaration)
-                    ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
-            }
-            else -> {
-                symbolProvider.getClassLikeSymbolByClassId(classId)
-            }
+
+            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
         }
 
         if (
@@ -233,20 +221,6 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             ?: errorWithFirSpecificEntries("We should be able to find a symbol for property accessor", psi = declaration)
     }
 }
-
-// Returns a built-in provider for a Kotlin standard library, as built-in declarations are its logical part.
-// Returns one for built-ins modules as well, as these modules have empty scope and their content comes from the dependency provider.
-private val LLModuleWithDependenciesSymbolProvider.friendBuiltinsProvider: FirSymbolProvider?
-    get() {
-        val moduleData = this.session.moduleData
-        if (hasPackageWithoutDependencies(StandardClassIds.BASE_KOTLIN_PACKAGE)
-            || moduleData is LLFirModuleData && moduleData.ktModule is KaBuiltinsModule
-        ) {
-            return dependencyProvider.providers.find { it.session is LLFirBuiltinsAndCloneableSession }
-        }
-
-        return null
-    }
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
     withEntry("Candidates count", candidates.size.toString())
