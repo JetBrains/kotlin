@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -30,7 +32,6 @@ public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) }
     if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH) }
