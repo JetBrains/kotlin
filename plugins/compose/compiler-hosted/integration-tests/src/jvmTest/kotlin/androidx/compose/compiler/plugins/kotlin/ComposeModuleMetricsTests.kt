@@ -59,6 +59,7 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
             @Composable fun B(b: Int) { used(b) }
             @Composable fun C(c: Int = 0) { used(c) }
             @Composable fun D(d: Int = makeInt()) { used(d) }
+            @Composable fun D(d: Int = 0, content: @Composable () -> Unit = { C(d) }) { used(d) }
             @Composable fun E(e: Unstable) { used(e)}
             @Composable fun F(f: Unstable? = null) { used(f) }
         """,
@@ -71,7 +72,11 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
               stable c: Int = @static 0
             )
             restartable skippable fun D(
-              stable d: Int = @dynamic makeInt()
+              stable d: Int = @dynamic <expression>
+            )
+            restartable skippable fun D(
+              stable d: Int = @static 0
+              unused stable content: Function2<Composer, Int, Unit>? = @static <expression>
             )
             restartable fun E(
               unstable e: Unstable

@@ -22,16 +22,16 @@ import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.IrSourcePrinterVisitor
 import androidx.compose.compiler.plugins.kotlin.lower.isUnitOrNullableUnit
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtParameter
 import java.io.File
 
 @JvmDefaultWithCompatibility
@@ -501,7 +501,6 @@ class FunctionMetricsImpl(
         val defaultStatic: Boolean,
         val used: Boolean,
     ) {
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun print(out: Appendable, src: IrSourcePrinterVisitor) = with(out) {
             if (!used) append("unused ")
             when {
@@ -515,12 +514,11 @@ class FunctionMetricsImpl(
                 append(" = ")
                 if (defaultStatic) append("@static ")
                 else append("@dynamic ")
-                val psi = declaration.symbol.descriptor.findPsi() as? KtParameter
-                val str = psi?.defaultValue?.text
-                if (str != null) {
-                    append(str)
+
+                if (default is IrConst || default is IrGetValue) {
+                    default.acceptVoid(src)
                 } else {
-                    default.accept(src, null)
+                    append("<expression>")
                 }
             }
         }
