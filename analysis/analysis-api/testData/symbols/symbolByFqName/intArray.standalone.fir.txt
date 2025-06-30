@@ -1,6 +1,6 @@
 KaNamedClassSymbol:
   annotations: []
-  classId: kotlin/Nothing
+  classId: kotlin/IntArray
   classKind: CLASS
   companionObject: null
   compilerVisibility: Public
@@ -14,12 +14,25 @@ KaNamedClassSymbol:
   isInner: false
   location: TOP_LEVEL
   modality: FINAL
-  name: Nothing
+  name: IntArray
   origin: LIBRARY
-  superTypes: []
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Cloneable
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: java/io/Serializable
+  ]
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null

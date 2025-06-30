@@ -52,7 +52,11 @@ internal class KotlinStandaloneProjectStructureProvider(
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
 
         val virtualFile = containingFile.virtualFile
-        if (virtualFile != null && virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+        if (
+            virtualFile != null &&
+            virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION &&
+            virtualFile in builtinsModule.contentScope
+        ) {
             return builtinsModule
         }
 

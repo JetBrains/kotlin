@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -389,9 +388,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             for (file in sourceKtFiles) {
                 if (!file.isCompiled) continue
 
-                // Special handling for builtins is required as normally they are indexed by [loadBuiltIns],
-                // so [buildStubByVirtualFile] skips them explicitly, but actually stubs for them exist
-                val stub = buildStubByVirtualFile(file.virtualFile, binaryClassCache, preserveBuiltins = skipBuiltins)
+                val stub = buildStubByVirtualFile(file.virtualFile, binaryClassCache)
 
                 // Only files for which stub exists should be indexed, so some synthetic classes should be ignored.
                 // This behavior is closer to real indices.
@@ -461,7 +458,7 @@ class KotlinStandaloneDeclarationProviderFactory(
             VfsUtilCore.visitChildrenRecursively(binaryRoot, object : VirtualFileVisitor<Void>() {
                 override fun visitFile(file: VirtualFile): Boolean {
                     if (!file.isDirectory) {
-                        val stub = buildStubByVirtualFile(file, binaryClassCache, preserveBuiltins = false) ?: return true
+                        val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
                         put(file, stub)
                     }
                     return true
@@ -472,7 +469,6 @@ class KotlinStandaloneDeclarationProviderFactory(
     private fun buildStubByVirtualFile(
         file: VirtualFile,
         binaryClassCache: ClsKotlinBinaryClassCache,
-        preserveBuiltins: Boolean,
     ): KotlinFileStubImpl? {
         val fileContent = FileContentImpl.createByFile(file)
         val fileType = fileContent.fileType
@@ -481,7 +477,7 @@ class KotlinStandaloneDeclarationProviderFactory(
                 KotlinClsStubBuilder()
             }
 
-            KotlinBuiltInFileType if preserveBuiltins || file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+            KotlinBuiltInFileType -> {
                 builtInDecompiler.stubBuilder
             }
 
@@ -493,10 +489,20 @@ class KotlinStandaloneDeclarationProviderFactory(
     }
 
     private fun processCollectedBinaryStubs(stubs: Map<VirtualFile, KotlinFileStubImpl>, isSharedStubs: Boolean) {
-        stubs.forEach { entry ->
-            val stub = registerStub(entry.value, entry.key, isSharedStubs)
-            processStub(stub)
+        val (builtinEntries, otherEntries) = stubs.entries.partition { entry -> entry.key.fileType == KotlinBuiltInFileType }
+
+        fun process(entries: List<Map.Entry<VirtualFile, KotlinFileStubImpl>>) {
+            entries.forEach { entry ->
+                val stub = registerStub(entry.value, entry.key, isSharedStubs)
+                processStub(stub)
+            }
         }
+
+        process(otherEntries)
+
+        // Due to KT-78748, we have to index builtin declarations last so that class declarations are preferred. Note that this currently
+        // only affects Analysis API tests, since production Standalone doesn't index binary declarations as stubs.
+        process(builtinEntries)
     }
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {

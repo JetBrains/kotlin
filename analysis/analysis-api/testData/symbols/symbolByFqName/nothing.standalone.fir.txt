@@ -1,6 +1,6 @@
 KaNamedClassSymbol:
   annotations: []
-  classId: kotlin/Any
+  classId: kotlin/Nothing
   classKind: CLASS
   companionObject: null
   compilerVisibility: Public
@@ -13,13 +13,13 @@ KaNamedClassSymbol:
   isInline: false
   isInner: false
   location: TOP_LEVEL
-  modality: OPEN
-  name: Any
+  modality: FINAL
+  name: Nothing
   origin: LIBRARY
   superTypes: []
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null

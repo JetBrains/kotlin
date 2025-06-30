@@ -1,7 +1,7 @@
 KaNamedClassSymbol:
   annotations: []
-  classId: kotlin/Array
-  classKind: CLASS
+  classId: kotlin/collections/Iterator
+  classKind: INTERFACE
   companionObject: null
   compilerVisibility: Public
   contextReceivers: []
@@ -13,22 +13,14 @@ KaNamedClassSymbol:
   isInline: false
   isInner: false
   location: TOP_LEVEL
-  modality: FINAL
-  name: Array
+  modality: ABSTRACT
+  name: Iterator
   origin: LIBRARY
   superTypes: [
     KaUsualClassType:
       annotations: []
       typeArguments: []
       type: kotlin/Any
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Cloneable
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: java/io/Serializable
   ]
   typeParameters: [
     KaTypeParameterSymbol:
@@ -42,14 +34,14 @@ KaNamedClassSymbol:
       name: T
       origin: LIBRARY
       upperBounds: []
-      variance: INVARIANT
+      variance: OUT_VARIANCE
       visibility: LOCAL
       getContainingFileSymbol: null
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null

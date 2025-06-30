@@ -1,6 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: kotlin/collections/List.listIterator
+  callableId: kotlin/collections/List.get
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -13,74 +13,19 @@ KaNamedFunctionSymbol:
   isExternal: false
   isInfix: false
   isInline: false
-  isOperator: false
+  isOperator: true
   isOverride: false
   isStatic: false
   isSuspend: false
   isTailRec: false
   location: CLASS
   modality: ABSTRACT
-  name: listIterator
+  name: get
   origin: LIBRARY
   receiverParameter: null
-  returnType: KaUsualClassType:
+  returnType: KaTypeParameterType:
     annotations: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotations: []
-        type: E
-    ]
-    type: kotlin/collections/ListIterator<E>
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
-  getDispatchReceiver(): KaUsualClassType:
-    annotations: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotations: []
-        type: E
-    ]
-    type: kotlin/collections/List<E>
-  getContainingFileSymbol: null
-  getContainingJvmClassName: kotlin.collections.List
-  canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
-
-KaNamedFunctionSymbol:
-  annotations: []
-  callableId: kotlin/collections/List.listIterator
-  compilerVisibility: Public
-  contextParameters: []
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isActual: false
-  isBuiltinFunctionInvoke: false
-  isExpect: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  isTailRec: false
-  location: CLASS
-  modality: ABSTRACT
-  name: listIterator
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KaUsualClassType:
-    annotations: []
-    typeArguments: [
-      KaTypeParameterType:
-        annotations: []
-        type: E
-    ]
-    type: kotlin/collections/ListIterator<E>
+    type: E
   typeParameters: []
   valueParameters: [
     KaValueParameterSymbol:
@@ -110,7 +55,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.List
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: PUBLIC
@@ -124,6 +69,6 @@ KaNamedFunctionSymbol:
     type: kotlin/collections/List<E>
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.collections.List
-  canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  canBeOperator: true
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null

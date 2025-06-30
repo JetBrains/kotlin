@@ -29,7 +29,7 @@ KaJavaFieldSymbol:
 
 KaJavaFieldSymbol:
   annotations: []
-  callableId: /JavaClass.field
+  callableId: /JavaClass.field2
   compilerVisibility: Public
   contextReceivers: []
   isActual: false
@@ -39,7 +39,7 @@ KaJavaFieldSymbol:
   isVal: false
   location: CLASS
   modality: FINAL
-  name: field
+  name: field2
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaFlexibleType:
@@ -113,7 +113,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: PUBLIC
@@ -124,7 +124,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -166,7 +166,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -208,7 +208,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaConstructorSymbol:
