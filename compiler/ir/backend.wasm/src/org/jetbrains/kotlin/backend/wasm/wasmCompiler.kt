@@ -492,8 +492,8 @@ fun writeCompilationResult(
     }
     if (result.useDebuggerCustomFormatters) {
         val fileName = "custom-formatters.js"
-        val systemClassLoader = ClassLoader.getSystemClassLoader()
-        val customFormattersInputStream = systemClassLoader.getResourceAsStream(fileName) ?: error("Resource $fileName not found")
+        val classLoader = WasmCompilerResult::class.java.classLoader
+        val customFormattersInputStream = classLoader.getResourceAsStream(fileName)
 
         Files.copy(customFormattersInputStream, Paths.get(dir.path, fileName), StandardCopyOption.REPLACE_EXISTING)
     }
