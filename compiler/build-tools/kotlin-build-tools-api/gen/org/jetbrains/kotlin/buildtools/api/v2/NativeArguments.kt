@@ -7,6 +7,7 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.jvm.JvmField
 
+@ExperimentalCompilerArgument
 public interface NativeArguments : CommonKlibBasedArguments {
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: NativeArgument<V>): V

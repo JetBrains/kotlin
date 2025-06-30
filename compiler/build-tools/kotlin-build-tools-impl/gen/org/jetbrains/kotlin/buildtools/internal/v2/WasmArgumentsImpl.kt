@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -39,7 +41,6 @@ public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgume
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: K2WasmCompilerArguments): K2WasmCompilerArguments {
     if ("X_WASM" in optionsMap) { arguments.wasm = get(X_WASM) }
     if ("X_WASM_TARGET" in optionsMap) { arguments.wasmTarget = get(X_WASM_TARGET) }

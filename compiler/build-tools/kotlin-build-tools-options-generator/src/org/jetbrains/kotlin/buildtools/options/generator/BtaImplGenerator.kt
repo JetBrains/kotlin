@@ -5,19 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.options.generator
 
-import com.squareup.kotlinpoet.ANY
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
-import com.squareup.kotlinpoet.typeNameOf
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
@@ -36,6 +25,10 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val className = apiClassName + "Impl"
         FileSpec.Companion.builder(IMPL_PACKAGE, className).apply {
+            addAnnotation(
+                AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
+                    .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
+            )
             addType(
                 TypeSpec.Companion.classBuilder(className).apply {
                     parentClass?.let { superclass(it) }
@@ -56,10 +49,6 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                         annotation<Suppress> {
                             addMember("%S", "DEPRECATION")
                         }
-                        addAnnotation(
-                            AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
-                                .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
-                        )
                         returns(compilerArgumentsClass)
                     }
 

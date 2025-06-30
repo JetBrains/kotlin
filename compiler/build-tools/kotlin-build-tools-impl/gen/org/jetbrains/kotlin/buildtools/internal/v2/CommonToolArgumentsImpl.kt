@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCompilerArgument::class)
+
 package org.jetbrains.kotlin.buildtools.`internal`.v2
 
 import kotlin.Any
@@ -26,7 +28,6 @@ public open class CommonToolArgumentsImpl : V2CommonToolArguments {
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
     if ("VERSION" in optionsMap) { arguments.version = get(VERSION) }
     if ("VERBOSE" in optionsMap) { arguments.verbose = get(VERBOSE) }
