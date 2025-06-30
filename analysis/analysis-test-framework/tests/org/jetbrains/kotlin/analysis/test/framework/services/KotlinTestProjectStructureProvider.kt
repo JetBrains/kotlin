@@ -33,7 +33,10 @@ class KotlinTestProjectStructureProvider(
         val virtualFile = containingFile.virtualFile
 
         if (virtualFile != null) {
-            if (virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            if (
+                virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION &&
+                virtualFile in builtinsModule.contentScope
+            ) {
                 return builtinsModule
             }
 
