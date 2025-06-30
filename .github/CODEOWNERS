@@ -225,6 +225,7 @@
 
 /docs/analysis/ @JetBrains/kotlin-analysis-api
 /docs/code_authoring_and_core_review.md vsevolod.tolstopyatov@jetbrains.com simon.ogorodnik@jetbrains.com
+/docs/changelogs/ @JetBrains/kotlin-release
 
 /generators/ReadMe.md @JetBrains/kotlin-build-infrastructure
 /generators/analysis-api-generator/ @JetBrains/kotlin-analysis-api
