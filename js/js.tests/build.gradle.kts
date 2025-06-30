@@ -328,8 +328,11 @@ val prepareNpmTestData by task<Copy> {
     from(packageJsonFile)
     into(node.nodeProjectDir)
 }
-tasks.named("npmSetRegistry").configure {
-    mustRunAfter(prepareNpmTestData)
+
+if (kotlinBuildProperties.isCacheRedirectorEnabled) {
+    tasks.named("npmSetRegistry").configure {
+        mustRunAfter(prepareNpmTestData)
+    }
 }
 
 val npmInstall by tasks.getting(NpmTask::class) {
