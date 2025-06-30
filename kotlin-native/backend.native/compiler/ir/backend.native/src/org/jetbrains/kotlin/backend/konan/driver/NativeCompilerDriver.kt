@@ -71,7 +71,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             if (config.omitFrameworkBinary) {
                 return
             }
-            require(psiToIrOutput is PsiToIrOutput.ForBackend)
             Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
         }
 
@@ -94,8 +93,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 }
             }
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
@@ -192,8 +189,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
         val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
     }
@@ -228,29 +223,28 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         require(config.produce == CompilerOutputKind.TEST_BUNDLE)
 
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
-        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(CreateTestBundlePhase, frontendOutput)
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+            engine.linkKlibs(frontendOutput)
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule, performanceManager)
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 
     private fun createBackendContext(
             config: KonanConfig,
             frontendOutput: FrontendPhaseOutput.Full,
-            psiToIrOutput: PsiToIrOutput.ForBackend,
+            linkKlibsOutput: LinkKlibsOutput,
             additionalDataSetter: (Context) -> Unit = {}
     ) = Context(
             config,
             frontendOutput.moduleDescriptor.getIncludedLibraryDescriptors(config).toSet() + frontendOutput.moduleDescriptor,
             frontendOutput.moduleDescriptor.builtIns as KonanBuiltIns,
-            psiToIrOutput.irBuiltIns,
-            psiToIrOutput.irModules,
-            psiToIrOutput.irLinker,
-            psiToIrOutput.symbols,
-            psiToIrOutput.symbolTable,
+            linkKlibsOutput.irBuiltIns,
+            linkKlibsOutput.irModules,
+            linkKlibsOutput.irLinker,
+            linkKlibsOutput.symbols,
+            linkKlibsOutput.symbolTable,
     ).also {
         additionalDataSetter(it)
     }

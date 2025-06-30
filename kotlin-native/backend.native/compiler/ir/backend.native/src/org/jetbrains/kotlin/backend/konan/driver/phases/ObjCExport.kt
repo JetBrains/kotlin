@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
@@ -46,7 +47,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseCont
 /**
  * Create specification for bridges between exported Objective-C interfaces and their Kotlin origins.
  */
-internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<PsiToIrContext, ObjCExportedInterface, ObjCExportCodeSpec>(
+internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<LinkKlibsContext, ObjCExportedInterface, ObjCExportCodeSpec>(
         "ObjCExportCodeCodeSpec",
         outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
 ) { context, input ->
