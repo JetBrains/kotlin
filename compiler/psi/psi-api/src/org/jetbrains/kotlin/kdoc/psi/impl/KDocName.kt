@@ -48,8 +48,13 @@ class KDocName(node: ASTNode) : KtElementImpl(node) {
     fun getNameTextRange(): TextRange {
         val dot = node.findChildByType(KtTokens.DOT)
         val textRange = textRange
-        val nameStart = if (dot != null) dot.textRange.endOffset - textRange.startOffset else 0
-        return TextRange(nameStart, textRange.length)
+        var nameStart = if (dot != null) dot.textRange.endOffset - textRange.startOffset else 0
+        var nameEnd = textRange.length
+        if (nameEnd - nameStart >= 2 && text[nameStart] == '`' && text[nameEnd - 1] == '`') { // Unquote the identifier
+            nameStart++
+            nameEnd--
+        }
+        return TextRange(nameStart, nameEnd)
     }
 
     fun getNameText(): String = getNameTextRange().substring(text)
