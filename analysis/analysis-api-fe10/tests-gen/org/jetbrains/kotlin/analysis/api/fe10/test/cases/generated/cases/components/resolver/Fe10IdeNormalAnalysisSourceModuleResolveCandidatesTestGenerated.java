@@ -3808,6 +3808,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified"), Pattern.compile("^(.+)\\.kt$"), null, true, "withTestCompilerPluginEnabled");
       }
 
+      @Test
+      @TestMetadata("backtickedIdentifiers.kt")
+      public void testBacktickedIdentifiers() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/backtickedIdentifiers.kt");
+      }
+
       @Nested
       @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/qualified/callables")
       @TestDataPath("$PROJECT_ROOT")
