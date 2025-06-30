@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -264,6 +265,7 @@ internal object FirReferenceResolveHelper {
             is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             is FirTypeParameter -> getSybmolsByTypeParameter(symbolBuilder, fir)
             is FirResolvedReifiedParameterReference -> getSymbolsByResolvedReifiedTypeParameterReference(symbolBuilder, fir)
+            is FirErrorExpression -> handleErrorExpression(fir, expression, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
@@ -387,6 +389,24 @@ internal object FirReferenceResolveHelper {
 
     private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
         return resolvedArgumentMapping?.values?.firstOrNull { it.name == name }
+    }
+
+    private fun handleErrorExpression(
+        fir: FirErrorExpression,
+        expression: KtSimpleNameExpression,
+        symbolBuilder: KaSymbolByFirBuilder,
+    ): List<KaSymbol> {
+        val diagnostic = fir.diagnostic
+        return when (expression) {
+            is KtOperationReferenceExpression if expression.operationSignTokenType in KtTokens.AUGMENTED_ASSIGNMENTS && diagnostic is ConeOperatorAmbiguityError -> {
+                diagnostic.candidates.map { candidate ->
+                    candidate.symbol.buildSymbol(symbolBuilder)
+                }
+            }
+            else -> {
+                emptyList()
+            }
+        }
     }
 
     private fun handleUnknownFirElement(

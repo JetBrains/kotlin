@@ -155,7 +155,8 @@ KtNameReferenceExpression(505,508): 'foo'
 
 KtOperationReferenceExpression(509,511): '+='
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    0: (in ROOT) operator fun Test.plus(i: kotlin.Int): Test
+    1: (in ROOT) operator fun Test.plusAssign(i: kotlin.Int)
 
 KtNameReferenceExpression(518,521): 'foo'
   KtSimpleNameReference:
@@ -166,7 +167,8 @@ KtNameReferenceExpression(518,521): 'foo'
 
 KtOperationReferenceExpression(522,524): '-='
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    0: (in ROOT) operator fun Test.minus(i: kotlin.Int): Test
+    1: (in ROOT) operator fun Test.minusAssign(i: kotlin.Int)
 
 KtNameReferenceExpression(531,534): 'foo'
   KtSimpleNameReference:
@@ -177,7 +179,8 @@ KtNameReferenceExpression(531,534): 'foo'
 
 KtOperationReferenceExpression(535,537): '/='
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    0: (in ROOT) operator fun Test.div(i: kotlin.Int): Test
+    1: (in ROOT) operator fun Test.divAssign(i: kotlin.Int)
 
 KtNameReferenceExpression(544,547): 'foo'
   KtSimpleNameReference:
@@ -188,7 +191,8 @@ KtNameReferenceExpression(544,547): 'foo'
 
 KtOperationReferenceExpression(548,550): '*='
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    0: (in ROOT) operator fun Test.times(i: kotlin.Int): Test
+    1: (in ROOT) operator fun Test.timesAssign(i: kotlin.Int)
 
 KtNameReferenceExpression(557,560): 'foo'
   KtSimpleNameReference:
@@ -199,4 +203,5 @@ KtNameReferenceExpression(557,560): 'foo'
 
 KtOperationReferenceExpression(561,563): '%='
   KtSimpleNameReference:
-    Nothing (Unresolved reference)
+    0: (in ROOT) operator fun Test.rem(i: kotlin.Int): Test
+    1: (in ROOT) operator fun Test.remAssign(i: kotlin.Int)
