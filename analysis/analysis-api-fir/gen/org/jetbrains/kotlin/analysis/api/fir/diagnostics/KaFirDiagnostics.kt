@@ -1356,7 +1356,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface OperatorModifierRequired : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OperatorModifierRequired::class
         val functionSymbol: KaFunctionSymbol
-        val name: String
     }
 
     interface OperatorCallOnConstructor : KaFirDiagnostic<PsiElement> {

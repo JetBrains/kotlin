@@ -577,7 +577,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val OPERATOR_MODIFIER_REQUIRED by error<PsiElement> {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
-            parameter<String>("name")
         }
         val OPERATOR_CALL_ON_CONSTRUCTOR by error<PsiElement> {
             parameter<String>("name")

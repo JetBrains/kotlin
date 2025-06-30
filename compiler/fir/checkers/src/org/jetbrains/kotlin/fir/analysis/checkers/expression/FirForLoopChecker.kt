@@ -143,7 +143,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                                     is OperatorCallOfNonOperatorFunction -> {
                                         val symbol = it.function
                                         reporter.reportOn(
-                                            reportSource, OPERATOR_MODIFIER_REQUIRED, symbol, symbol.name.asString()
+                                            reportSource, OPERATOR_MODIFIER_REQUIRED, symbol,
                                         )
                                     }
                                 }
@@ -157,7 +157,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                 val symbol = calleeReference.resolvedSymbol
                 if (symbol is FirNamedFunctionSymbol) {
                     if (!symbol.isOperator) {
-                        reporter.reportOn(reportSource, OPERATOR_MODIFIER_REQUIRED, symbol, symbol.name.asString())
+                        reporter.reportOn(reportSource, OPERATOR_MODIFIER_REQUIRED, symbol)
                         // Don't return true as we want to report other errors
                     }
                 }
