@@ -12,7 +12,7 @@ FILE: main.kt
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(3)).R|kotlin/Int.toString|()
         }
         )
-        lval y: R|(kotlin/Int) -> kotlin/String| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| <inline=Unknown>  {
+        lval y: R|(kotlin/Int) -> kotlin/String| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
 

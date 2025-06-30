@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LATEST_LV_DIFFERENCE
 // ISSUE: KT-47922
 
 package whencase.castissue
@@ -14,13 +13,13 @@ abstract class NonSealedBase {
 
 sealed class ToState
 
-val sealedTest: SealedBase.() -> ToState? = <!INITIALIZER_TYPE_MISMATCH!>{
-    <!NO_ELSE_IN_WHEN!>when<!>(this) {}
-}<!>
+val sealedTest: SealedBase.() -> ToState? = {
+    <!RETURN_TYPE_MISMATCH!><!NO_ELSE_IN_WHEN!>when<!>(this) {}<!>
+}
 
-val nonSealedTest: NonSealedBase.() -> ToState? = <!INITIALIZER_TYPE_MISMATCH!>{
-    when(this) {}
-}<!>
+val nonSealedTest: NonSealedBase.() -> ToState? = {
+    <!RETURN_TYPE_MISMATCH!>when(this) {}<!>
+}
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionalType, lambdaLiteral, nestedClass, nullableType, objectDeclaration,
 propertyDeclaration, sealed, typeWithExtension, whenExpression, whenWithSubject */
