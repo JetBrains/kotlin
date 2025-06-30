@@ -354,6 +354,11 @@ internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         name = "InlineAllFunctions",
 )
 
+private val typeOfProcessingLowering = createFileLoweringPhase(
+        lowering = ::TypeOfProcessingLowering,
+        name = "TypeOfProcessingLowering",
+)
+
 private val specializeSharedVariableBoxes = createFileLoweringPhase(
         lowering = { context: Context -> SharedVariablesPrimitiveBoxSpecializationLowering(context, context.symbols) },
         name = "SpecializeSharedVariableBoxes",
@@ -562,6 +567,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
 )
 
 internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNull(
+        typeOfProcessingLowering,
         specializeSharedVariableBoxes,
         interopPhase,
         specialInteropIntrinsicsPhase,

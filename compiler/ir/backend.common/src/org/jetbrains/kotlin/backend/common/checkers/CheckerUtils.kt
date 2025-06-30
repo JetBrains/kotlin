@@ -100,15 +100,11 @@ private fun IrDeclarationWithVisibility.isVisibleAsPrivate(file: IrFile): Boolea
 /**
  * The set of declarations' fully qualified names references to which we don't want to check for visibility violations.
  *
- * FIXME: We need to get rid of this list of exceptions (KT-70295, KT-69947).
+ * FIXME: We need to get rid of this list of exceptions (KT-69947).
  */
 private val FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS: Set<FqName> = listOf(
     "kotlin.wasm.internal.wasmTypeId",        // TODO: stop it leaking through kotlin.reflect.findAssociatedObject() inline function from Kotlin/Wasm stdlib, KT-76285
     "kotlin.coroutines.CoroutineImpl",        // TODO: stop it leaking through kotlin.coroutines.intrinsics.startCoroutineUninterceptedOrReturn() inline function in Kotlin/Wasm stdlib, KT-76285
-    "kotlin.native.internal.KClassImpl",          // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
-    "kotlin.native.internal.KTypeImpl",           // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
-    "kotlin.native.internal.KTypeProjectionList", // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
-    "kotlin.native.internal.KTypeParameterImpl",  // TODO: stop it leaking through kotlin.reflect.typeOf() in Kotlin/Native, KT-77293
 ).mapTo(hashSetOf(), ::FqName)
 
 // Most of the internal annotations declared in these packages make visibility checks fail (KT-78100)
@@ -116,12 +112,7 @@ private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
     listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
-    for (excludedFqName in FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS) {
-        if (hasEqualFqName(excludedFqName)) return true
-        val owner = owner
-        if (owner is IrDeclaration && (owner.parent as? IrDeclaration)?.symbol?.hasEqualFqName(excludedFqName) == true) return true
-    }
-    return false
+    return FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any { excludedFqName -> hasEqualFqName(excludedFqName) }
 }
 
 internal fun checkVisibility(
