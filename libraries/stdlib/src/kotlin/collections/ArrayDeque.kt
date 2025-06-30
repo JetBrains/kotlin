@@ -157,6 +157,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the first element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeFirstOrNull(): E? = if (isEmpty()) null else removeFirst()
 
     /**
@@ -177,9 +178,10 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     /**
      * Removes the last element from this deque and returns that removed element, or returns `null` if this deque is empty.
      */
+    @IgnorableReturnValue
     public fun removeLastOrNull(): E? = if (isEmpty()) null else removeLast()
 
-    // MutableList, MutableCollection\
+    // MutableList, MutableCollection
     @IgnorableReturnValue
     public override fun add(element: E): Boolean {
         addLast(element)

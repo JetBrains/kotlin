@@ -52,6 +52,7 @@ public expect interface Appendable {
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public fun <T : Appendable> T.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): T {
     @Suppress("UNCHECKED_CAST")
     return append(value, startIndex, endIndex) as T
@@ -60,6 +61,7 @@ public fun <T : Appendable> T.appendRange(value: CharSequence, startIndex: Int, 
 /**
  * Appends all arguments to the given [Appendable].
  */
+@IgnorableReturnValue
 public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
     for (item in value)
         append(item)
@@ -69,16 +71,19 @@ public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
 /** Appends a line feed character (`\n`) to this Appendable. */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Appendable.appendLine(): Appendable = append('\n')
 
 /** Appends value to the given Appendable and a line feed character (`\n`) after it. */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Appendable.appendLine(value: CharSequence?): Appendable = append(value).appendLine()
 
 /** Appends value to the given Appendable and a line feed character (`\n`) after it. */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun Appendable.appendLine(value: Char): Appendable = append(value).appendLine()
 
 

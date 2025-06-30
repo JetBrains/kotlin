@@ -100,6 +100,7 @@ public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8)
  *
  * **Note** It is the caller's responsibility to close both of these resources.
  */
+@IgnorableReturnValue
 public fun InputStream.copyTo(out: OutputStream, bufferSize: Int = DEFAULT_BUFFER_SIZE): Long {
     var bytesCopied: Long = 0
     val buffer = ByteArray(bufferSize)
