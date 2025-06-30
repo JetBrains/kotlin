@@ -65,7 +65,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
             engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            val (psiToIrOutput, objCCodeSpec) = engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
             if (config.omitFrameworkBinary) {
@@ -86,7 +86,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
         val (psiToIrOutput, cAdapterElements) = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+            engine.linkKlibs(frontendOutput) {
                 if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
                     it.runPhase(BuildCExports, frontendOutput)
                 } else {
@@ -191,7 +191,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) } ?: return
 
-        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
+        val psiToIrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.linkKlibs(frontendOutput) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
 
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)

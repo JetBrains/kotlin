@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.linkKlibs
 import org.jetbrains.kotlin.backend.konan.psiToIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
