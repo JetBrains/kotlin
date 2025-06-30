@@ -111,4 +111,38 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/topLevelCallableAmbiguitySourceSingleModule.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Builtins {
+    @Test
+    public void testAllFilesPresentInBuiltins() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("intArrayOfFullStdlib.kt")
+    public void testIntArrayOfFullStdlib() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/intArrayOfFullStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("intArrayOfMinimalStdlib.kt")
+    public void testIntArrayOfMinimalStdlib() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/intArrayOfMinimalStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("stringFullStdlib.kt")
+    public void testStringFullStdlib() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/stringFullStdlib.kt");
+    }
+
+    @Test
+    @TestMetadata("stringMinimalStdlib.kt")
+    public void testStringMinimalStdlib() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/builtins/stringMinimalStdlib.kt");
+    }
+  }
 }

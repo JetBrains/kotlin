@@ -1,0 +1,6 @@
+KtNamedFunction 'intArrayOf' in 'abi-comparator-2.2.255-SNAPSHOT.jar!/kotlin/kotlin.kotlin_builtins':
+  public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
+
+
+KtNamedFunction 'intArrayOf' in 'kotlin-stdlib-jvm-minimal-for-test.jar!/kotlin/kotlin.kotlin_builtins':
+  public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
