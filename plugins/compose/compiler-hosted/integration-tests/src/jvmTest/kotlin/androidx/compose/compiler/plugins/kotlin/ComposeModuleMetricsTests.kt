@@ -47,6 +47,26 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
     )
 
     @Test
+    fun testFqnClassesTxt() = assertClasses(
+        """
+            package com.example
+            
+            class Foo { var x: Int = 0 }
+            class Bar(val x: Int = 0)
+        """,
+        """
+            unstable class com.example.Foo {
+              stable var x: Int
+              <runtime stability> = Unstable
+            }
+            stable class com.example.Bar {
+              stable val x: Int
+              <runtime stability> = Stable
+            }
+        """
+    )
+
+    @Test
     fun testComposablesTxt() = assertComposables(
         """
             import androidx.compose.runtime.*
@@ -84,6 +104,40 @@ class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(
             restartable skippable fun F(
               unstable f: Unstable? = @static null
             )
+        """
+    )
+
+    @Test
+    fun testFqnComposablesTxt() = assertComposables(
+        """
+            package com.example
+            
+            import androidx.compose.runtime.*
+            
+            @Composable fun A() {}
+            @Composable fun String.B() {}
+            
+            interface T {
+                @Composable fun Content() {
+                    Content(0)
+                }
+                
+                @Composable fun Content(int: Int)
+            }
+        """,
+        """
+            restartable skippable fun com.example.A()
+            restartable skippable fun com.example.B(
+              unused stable <this>: String
+            )
+            open fun com.example.T.Content(
+              <this>: T
+            )
+            abstract fun com.example.T.Content(
+              stable int: Int
+              <this>: T
+            )
+
         """
     )
 
