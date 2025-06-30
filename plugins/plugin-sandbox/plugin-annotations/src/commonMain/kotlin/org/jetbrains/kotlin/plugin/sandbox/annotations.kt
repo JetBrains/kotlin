@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 
 annotation class AllOpen
 annotation class AllOpen2
+annotation class AddSupertype(val value: KClass<*>)
 
 annotation class DummyFunction
 

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.plugin.sandbox.fir.generators.*
+import org.jetbrains.kotlin.plugin.sandbox.fir.supertypeswithoverrides.MissingOverrideStatusTransformer
+import org.jetbrains.kotlin.plugin.sandbox.fir.supertypeswithoverrides.SimpleAddSupertypeExtension
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.FirNumberSignAttributeExtension
 import org.jetbrains.kotlin.plugin.sandbox.fir.types.SandboxFunctionTypeKindExtension
 import org.jetbrains.kotlin.plugin.sandbox.ir.GeneratedDeclarationsIrBodyFiller
@@ -47,6 +49,10 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::NestedClassGeneratorWithLocalClassesSupport
         +::NestedClassSupertypesDependantOnAnnotationArgumentAdder
         +::SupertypesDependantOnAnnotationArgumentComponent
+
+        // Test generators for https://github.com/JetBrains/kotlin/pull/5466
+        +::MissingOverrideStatusTransformer
+        +::SimpleAddSupertypeExtension
     }
 }
 
