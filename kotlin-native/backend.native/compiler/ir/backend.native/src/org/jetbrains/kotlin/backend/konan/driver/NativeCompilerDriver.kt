@@ -162,7 +162,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             if (config.metadataKlib) {
                 null
             } else {
-                engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+                engine.runPsiToIr(frontendOutput)
             }
         }
         val headerKlibPath = config.headerKlibPath
