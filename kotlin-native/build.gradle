@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
+import org.jetbrains.kotlin.nativeDistribution.InvalidateStaleCaches
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
@@ -366,6 +367,7 @@ targetList.each { target ->
         tasks.register("${target}StdlibCache", Sync) {
             dependsOn "distStdlib"
             dependsOn ":kotlin-native:runtime:${target}StdlibCache"
+            dependsOn("invalidateStaleCaches")
 
             into(nativeDistribution.map { it.cache("stdlib", target) })
 
@@ -401,6 +403,14 @@ tasks.register("crossDist") {
             "distDef",
             "distStdlib",
             "crossDistStdlibCache"
+}
+
+tasks.register("invalidateStaleCaches", InvalidateStaleCaches) {
+    distributionAsDirectory.set(nativeDistribution.map { it.root })
+    mustRunAfter("distCompilerFingerprint")
+    targetList.each { target ->
+        mustRunAfter("${target}CrossDistRuntimeFingerprint")
+    }
 }
 
 tasks.register("bundle") {

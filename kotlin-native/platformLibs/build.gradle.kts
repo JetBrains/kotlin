@@ -126,6 +126,7 @@ enabledTargets(platformManager).forEach { target ->
                 // Requires Native distribution with stdlib klib and its cache for `targetName`.
                 this.compilerDistribution.set(dist)
                 dependsOn(":kotlin-native:${targetName}CrossDist")
+                dependsOn(":kotlin-native:invalidateStaleCaches")
                 inputs.dir(dist.map { it.stdlibCache(targetName) }) // manually depend on the contents of stdlib cache
 
                 // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
