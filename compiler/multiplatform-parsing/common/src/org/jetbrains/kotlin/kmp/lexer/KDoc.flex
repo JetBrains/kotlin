@@ -44,11 +44,10 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
 WHITE_SPACE_CHAR    =[\ \t\f\n]
 
 DIGIT=[0-9]
-ALPHA=[:jletter:]
-TAG_NAME={ALPHA}({ALPHA}|{DIGIT})*
-QUALIFIED_NAME_START={ALPHA}
-QUALIFIED_NAME_CHAR={ALPHA}|{DIGIT}|[\.]
-QUALIFIED_NAME={QUALIFIED_NAME_START}{QUALIFIED_NAME_CHAR}*
+LETTER = [:jletter:]
+PLAIN_IDENTIFIER = {LETTER} ({LETTER} | {DIGIT})*
+IDENTIFIER = {PLAIN_IDENTIFIER} | `[^`\n]+`
+QUALIFIED_NAME = {IDENTIFIER} ([\.] {IDENTIFIER}?)* // Handle incorrect/incomplete qualifiers for correct resolving
 CODE_LINK=\[{QUALIFIED_NAME}\]
 CODE_FENCE_START=("```" | "~~~").*
 CODE_FENCE_END=("```" | "~~~")
@@ -69,7 +68,7 @@ CODE_FENCE_END=("```" | "~~~")
             return KDocTokens.LEADING_ASTERISK
 }
 
-<CONTENTS_BEGINNING> "@"{TAG_NAME} {
+<CONTENTS_BEGINNING> "@"{PLAIN_IDENTIFIER} {
             val tag = KDocKnownTag.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos))
             yybegin(if (tag != null && tag.isReferenceRequired) TAG_BEGINNING else TAG_TEXT_BEGINNING)
             return KDocTokens.TAG_NAME
