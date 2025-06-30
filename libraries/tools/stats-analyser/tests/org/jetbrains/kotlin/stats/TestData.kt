@@ -51,6 +51,7 @@ object TestData {
             irPreLoweringStats = totalTime * 0.01,
             irSerializationStats = totalTime * 0.01,
             klibWritingStats = totalTime * 0.01,
+            irLinkageStats = totalTime * 0.01,
             irLoweringStats = totalTime * 0.01,
             backendStats = totalTime * 0.16,
             findJavaClassStats = SideStats(increment, totalTime * 0.04),

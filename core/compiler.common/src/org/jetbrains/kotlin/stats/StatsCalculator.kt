@@ -98,6 +98,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         var irPreLoweringStats: Time = Time.ZERO
         var irSerializationStats: Time = Time.ZERO
         var klibWritingStats: Time = Time.ZERO
+        var irLinkageStats: Time = Time.ZERO
         var irLoweringStats: Time = Time.ZERO
         var backendStats: Time = Time.ZERO
         var findJavaClassStats: SideStats = SideStats.EMPTY
@@ -129,6 +130,7 @@ class StatsCalculator(val reportsData: ReportsData) {
             irPreLoweringStats += moduleStats.irPreLoweringStats
             irSerializationStats += moduleStats.irSerializationStats
             klibWritingStats += moduleStats.klibWritingStats
+            irLinkageStats += moduleStats.irLinkageStats
             irLoweringStats += moduleStats.irLoweringStats
             backendStats += moduleStats.backendStats
             findJavaClassStats += moduleStats.findJavaClassStats
@@ -161,6 +163,7 @@ class StatsCalculator(val reportsData: ReportsData) {
                 irPreLoweringStats = irPreLoweringStats.let { if (total) it else it / size },
                 irSerializationStats = irSerializationStats.let { if (total) it else it / size },
                 klibWritingStats = klibWritingStats.let { if (total) it else it / size },
+                irLinkageStats = irLinkageStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
                 findJavaClassStats = findJavaClassStats.let { if (total) it else it / size },

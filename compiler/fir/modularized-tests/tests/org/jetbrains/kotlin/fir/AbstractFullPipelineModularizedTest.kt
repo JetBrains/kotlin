@@ -344,6 +344,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
                 unitStats.irPreLoweringStats?.millis?.let { put("Pre-lowering", it) }
                 unitStats.irSerializationStats?.millis?.let { put("Serialization", it) }
                 unitStats.klibWritingStats?.millis?.let { put("Klib writing", it) }
+                unitStats.irLinkageStats?.millis?.let { put("IR linker", it) }
                 unitStats.irLoweringStats?.millis?.let { put("Lowering", it) }
                 unitStats.backendStats?.millis?.let { put("Generation", it) }
             }

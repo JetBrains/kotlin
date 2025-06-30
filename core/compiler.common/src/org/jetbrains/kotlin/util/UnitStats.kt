@@ -46,6 +46,7 @@ data class UnitStats(
     val irPreLoweringStats: Time?,
     val irSerializationStats: Time?,
     val klibWritingStats: Time?,
+    val irLinkageStats: Time?,
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
@@ -69,6 +70,7 @@ data class UnitStats(
                 irPreLoweringStats +
                 irSerializationStats +
                 klibWritingStats +
+                irLinkageStats +
                 irLoweringStats +
                 backendStats +
                 findJavaClassStats?.time +
@@ -105,6 +107,7 @@ enum class PhaseType {
     IrPreLowering,
     IrSerialization,
     KlibWriting,
+    IrLinkage,
     IrLowering,
     Backend,
 }
@@ -199,6 +202,7 @@ fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.TranslationToIr, translationToIrStats)
     action(PhaseType.IrPreLowering, irPreLoweringStats)
     action(PhaseType.IrSerialization, irSerializationStats)
+    action(PhaseType.IrLinkage, irLinkageStats)
     action(PhaseType.KlibWriting, klibWritingStats)
     action(PhaseType.IrLowering, irLoweringStats)
     action(PhaseType.Backend, backendStats)
@@ -216,6 +220,7 @@ val phaseTypeName = mapOf(
     PhaseType.IrPreLowering to "IR PRE-LOWERING",
     PhaseType.IrSerialization to "IR SERIALIZATION",
     PhaseType.KlibWriting to "KLIB WRITING",
+    PhaseType.IrLinkage to "IR LINKAGE",
     PhaseType.IrLowering to "IR LOWERING",
     PhaseType.Backend to "BACKEND",
 )
