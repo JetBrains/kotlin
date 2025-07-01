@@ -677,24 +677,27 @@ internal class PartiallyLinkedIrTreePatcher(
                 }
         }
 
-        override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrRichPropertyReference {
-            expression.transformChildrenVoid(this)
-
-            // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
-            expression.reflectionTargetLinkageError = expression.checkReferencedDeclaration(expression.reflectionTargetSymbol)
-            if (expression.reflectionTargetLinkageError != null) {
-                (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
-                    // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
-                    // we also to need create stubs for the property's getter and setter to not leave unbound IR.
-                    if (property.getter == null) {
-                        property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+        override fun visitRichPropertyReference(expression: IrRichPropertyReference) = expression.maybeThrowLinkageError {
+            // While the classifier of IrRichPropertyReference.type is always a KPropertyN, which should be present in stdlib,
+            // its type argument may be some missing type.
+            checkExpressionType(type)
+                ?: run {
+                    // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
+                    expression.reflectionTargetLinkageError = expression.checkReferencedDeclaration(expression.reflectionTargetSymbol)
+                    if (expression.reflectionTargetLinkageError != null) {
+                        (expression.reflectionTargetSymbol?.owner as? IrProperty)?.let { property ->
+                            // checkReferencedDeclaration() above generates a stub for reflectionTargetSymbol itself, but
+                            // we also to need create stubs for the property's getter and setter to not leave unbound IR.
+                            if (property.getter == null) {
+                                property.getter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                            }
+                            if (expression.setterFunction != null && property.setter == null) {
+                                property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
+                            }
+                        }
                     }
-                    if (expression.setterFunction != null && property.setter == null) {
-                        property.setter = stubGenerator.getDeclaration(IrSimpleFunctionSymbolImpl()) as IrSimpleFunction
-                    }
+                    null
                 }
-            }
-            return expression
         }
 
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
