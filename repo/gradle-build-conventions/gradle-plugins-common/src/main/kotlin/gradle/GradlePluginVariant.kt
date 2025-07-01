@@ -30,4 +30,9 @@ enum class GradlePluginVariant(
     GRADLE_88("gradle88", "8.8", "8.8", "https://docs.gradle.org/8.8/javadoc/", "1.9"),
     GRADLE_811("gradle811", "8.11", "8.11", "https://docs.gradle.org/8.11/javadoc/", "2.0"),
     GRADLE_813("gradle813", "8.13", "8.13", "https://docs.gradle.org/current/javadoc/", "2.0"),
+    ;
+
+    companion object {
+        const val GRADLE_COMMON = "8.14"
+    }
 }

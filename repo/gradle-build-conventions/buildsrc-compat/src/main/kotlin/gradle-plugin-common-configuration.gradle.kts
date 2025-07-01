@@ -67,61 +67,10 @@ tasks.named("jar") {
 }
 
 if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    // Used for Gradle 8.0+ versions
-    val gradle80SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_80,
-        commonSourceSet = commonSourceSet
+    createGradlePluginVariants(
+        commonSourceSet = commonSourceSet,
+        publishShadowedJar = true,
     )
-    publishShadowedJar(gradle80SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.1+ versions
-    val gradle81SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_81,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle81SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.2+ versions
-    val gradle82SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_82,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle82SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.5+ versions
-    val gradle85SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_85,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle85SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.6+ versions
-    val gradle86SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_86,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle86SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.8+ versions
-    val gradle88SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_88,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle88SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.11+ versions
-    val gradle811SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_811,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle811SourceSet, commonSourceSet)
-
-    // Used for Gradle 8.13+ versions
-    val gradle813SourceSet = createGradlePluginVariant(
-        GradlePluginVariant.GRADLE_813,
-        commonSourceSet = commonSourceSet
-    )
-    publishShadowedJar(gradle813SourceSet, commonSourceSet)
 }
 
 disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsInRuntimeClasspath()
