@@ -162,7 +162,7 @@ internal constructor(
      * }
      * ```
      *
-     * Will create the following SourceSets:
+     * Will create the following shared [SourceSet][KotlinSourceSet]s:
      *
      * - `iosMain`, `iosTest`
      * - `appleMain`, `appleTest`
