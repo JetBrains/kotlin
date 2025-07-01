@@ -116,4 +116,22 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
   public void testTypeParamFlexibleUpperBound() {
     runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/typeParamFlexibleUpperBound.kt");
   }
+
+  @Test
+  @TestMetadata("unitType.kt")
+  public void testUnitType() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/unitType.kt");
+  }
+
+  @Test
+  @TestMetadata("unitTypeNullable.kt")
+  public void testUnitTypeNullable() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/unitTypeNullable.kt");
+  }
+
+  @Test
+  @TestMetadata("unitTypeTypealias.kt")
+  public void testUnitTypeTypealias() {
+    runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/unitTypeTypealias.kt");
+  }
 }
