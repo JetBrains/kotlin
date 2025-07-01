@@ -96,8 +96,12 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
             return null
         }
 
+        @OptIn(RequiresDeclarationInScope::class)
         return getSymbolByPsiInScope(classId, declaration, createContext(declaration))
     }
+
+    @RequiresOptIn("This function requires that the declaration is contained in the search scope.")
+    annotation class RequiresDeclarationInScope
 
     /**
      * Returns the already cached or newly computed symbol for exactly the given [declaration].
@@ -107,6 +111,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      * [declaration] is contained in the [searchScope]. Furthermore, the same applies when accessing [ambiguityCache], as otherwise we might
      * load symbols for declarations that aren't in the scope of the symbol provider.
      */
+    @RequiresDeclarationInScope
     fun getSymbolByPsiInScope(classId: ClassId, declaration: E, context: CONTEXT): V? {
         // Fast path: Query the cache normally. The *vast majority* of class IDs will not have ambiguities, hence most symbols will be
         // contained in the main cache.
