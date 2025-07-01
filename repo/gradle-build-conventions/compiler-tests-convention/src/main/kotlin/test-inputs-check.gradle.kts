@@ -159,10 +159,11 @@ tasks.withType<Test>().names.forEach { taskName ->
                             )
                             .replace(
                                 "{{temp_dir}}",
-                                (parentsReadPermission(File(tempDir)) +
-                                        """permission java.io.FilePermission "$tempDir/-", "read,write,delete";""" +
-                                        """permission java.io.FilePermission "$tempDir", "read";"""
-                                        ).joinToString("\n    ")
+                                listOf(tempDir, System.getProperty("java.io.tmpdir")).flatMap {
+                                    parentsReadPermission(File(it)) +
+                                            """permission java.io.FilePermission "$it/-", "read,write,delete";""" +
+                                            """permission java.io.FilePermission "$it", "read";"""
+                                }.joinToString("\n    ")
                             )
                             .replace(
                                 "{{jdk}}",
