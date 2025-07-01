@@ -178,5 +178,10 @@ private val defaultKotlinHierarchyTemplate = KotlinHierarchyTemplate {
                 withAndroidNative()
             }
         }
+
+        group("web") {
+            withJs()
+            withWasmJs()
+        }
     }
 }
