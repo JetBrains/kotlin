@@ -145,6 +145,7 @@ fun createCompilerConfiguration(
         configuration.useEs6Classes = true
         configuration.compileSuspendAsJsGenerator = true
         configuration.compileLambdasAsEs6ArrowFunctions = JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS !in module.directives
+        configuration.compileLongAsBigint = true
     }
 
     if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {

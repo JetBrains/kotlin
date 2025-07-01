@@ -7847,6 +7847,37 @@
                                                 }
                                             },
                                             {
+                                                "name": "Xes-long-as-bigint",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": true,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": null,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.2.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                }
+                                            },
+                                            {
                                                 "name": "Xtyped-arrays",
                                                 "shortName": null,
                                                 "deprecatedName": null,

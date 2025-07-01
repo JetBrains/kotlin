@@ -76,6 +76,8 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS by key<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
 
+    val COMPILE_LONG_AS_BIGINT by key<Boolean>("compile Long as BigInt")
+
     val GENERATE_REGION_COMMENTS by key<Boolean>(
         "generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA"
     )
