@@ -61,7 +61,7 @@ object CodeFragmentCapturedValueAnalyzer {
         val selfSymbols = CodeFragmentDeclarationCollector().apply { codeFragment.accept(this) }.symbols.toSet()
         val capturedVisitor = CodeFragmentCapturedValueVisitor(resolutionFacade, selfSymbols)
         codeFragment.accept(capturedVisitor)
-        return CodeFragmentCapturedValueData(capturedVisitor.values, capturedVisitor.files, capturedVisitor.reifiedTypeParameters)
+        return CodeFragmentCapturedValueData(capturedVisitor.values, capturedVisitor.files)
     }
 }
 
@@ -69,7 +69,6 @@ object CodeFragmentCapturedValueAnalyzer {
 class CodeFragmentCapturedValueData(
     val symbols: List<CodeFragmentCapturedSymbol>,
     val files: List<KtFile>,
-    val reifiedTypeParameters: Set<FirTypeParameterSymbol>,
 )
 
 private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
@@ -93,7 +92,6 @@ private class CodeFragmentCapturedValueVisitor(
 ) : FirDefaultVisitorVoid() {
     private val collectedMappings = LinkedHashMap<CodeFragmentCapturedId, CodeFragmentCapturedSymbol>()
     private val collectedFiles = LinkedHashSet<KtFile>()
-    private val collectedReifiedTypeParameters = HashSet<FirTypeParameterSymbol>()
 
     private val assignmentLhs = mutableListOf<FirBasedSymbol<*>>()
 
@@ -102,9 +100,6 @@ private class CodeFragmentCapturedValueVisitor(
 
     val files: List<KtFile>
         get() = collectedFiles.toList()
-
-    val reifiedTypeParameters: Set<FirTypeParameterSymbol>
-        get() = collectedReifiedTypeParameters.toSet()
 
     private val session: FirSession
         get() = resolutionFacade.useSiteFirSession
@@ -215,19 +210,6 @@ private class CodeFragmentCapturedValueVisitor(
                     processCall(element, symbol)
                 }
             }
-            is FirResolvedTypeRef -> {
-                processConeType(element.coneType)
-            }
-        }
-    }
-
-    private fun processConeType(type: ConeKotlinType) {
-        if (type is ConeTypeParameterType) {
-            val symbol = type.lookupTag.typeParameterSymbol
-            if (symbol.isReified) collectedReifiedTypeParameters.add(symbol)
-        }
-        for (typeArgument in type.typeArguments) {
-            typeArgument.type?.let { processConeType(it) }
         }
     }
 
@@ -314,8 +296,6 @@ private class CodeFragmentCapturedValueVisitor(
         }
 
     private fun registerFileIfRequired(symbol: FirBasedSymbol<*>) {
-        if (symbol is FirTypeParameterSymbol && symbol.isReified) collectedReifiedTypeParameters.add(symbol)
-
         val needsRegistration = when (symbol) {
             is FirRegularClassSymbol -> symbol.isLocal
             is FirAnonymousObjectSymbol -> true
