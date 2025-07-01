@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase.Companion.collectAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,25 +27,17 @@ import java.util.*
  *
  * Initial issue: [KT-71787](https://youtrack.jetbrains.com/issue/KT-71787)
  */
-abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApiBasedTest() {
+abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
     private object Directives : SimpleDirectivesContainer() {
-        /**
-         * This directive has to be in sync with [AbstractRawFirBuilderLazyBodiesByStubTest]
-         * as [AbstractLLAnnotationArgumentsCalculatorTest] is supposed to work as an extension to the stub test.
-         */
-        val IGNORE_TREE_ACCESS by stringDirective("Disables the test. The YT issue number has to be provided")
-
         val STUB_DIFFERENCE by directive("Indicates that stub-based and AST-based annotations differ")
     }
 
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
-
-        val stubBasedAnnotations = collectStubBasedAndAssertAstBasedAnnotations(mainFile, testServices)
-        val astBasedAnnotations = collectAnnotations(mainFile)
+    override fun doTest(astBasedFile: KtFile, stubBasedFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val stubBasedAnnotations = collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile, testServices)
+        val astBasedAnnotations = collectAnnotations(astBasedFile)
         testServices.assertConsistency(
             astBasedAnnotations = astBasedAnnotations,
             stubBasedAnnotations = stubBasedAnnotations,
@@ -131,28 +121,20 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractAnalysisApi
         val annotations = firFile.collectAnnotations()
         annotations.mapIndexed { index, annotationWithContext ->
             val annotationCall = annotationWithContext.annotation
-            val result = runCatching {
+            val isCalculatedSuccessfully = computeAstLoadingAware {
                 FirLazyBodiesCalculator.calculateAnnotation(annotationCall, resolutionFacade.useSiteFirSession)
-            }
-
-            result.exceptionOrNull()?.let { exception ->
-                if (exception.message?.startsWith("Access to tree elements not allowed for") != true) {
-                    throw exception
-                }
-            }
+            } != null
 
             AnnotationResult(
                 globalIndex = index,
                 annotation = annotationCall.render().trim(),
-                isCalculatedSuccessfully = result.isSuccess,
+                isCalculatedSuccessfully = isCalculatedSuccessfully,
                 context = annotationWithContext.context,
             )
         }
     }
 
-    private fun collectStubBasedAndAssertAstBasedAnnotations(file: KtFile, testServices: TestServices): List<AnnotationResult> {
-        val stubBasedFile = AbstractRawFirBuilderLazyBodiesByStubTest.createKtFile(file, disposable)
-
+    private fun collectStubBasedAndAssertAstBasedAnnotations(stubBasedFile: KtFile, testServices: TestServices): List<AnnotationResult> {
         // We analyze the stub-based file, so all failed annotations represent annotations which
         // weren't able to calculate arguments via stubs
         val (stubBasedAnnotations, astBasedAnnotations) = collectAnnotations(stubBasedFile).partition {
