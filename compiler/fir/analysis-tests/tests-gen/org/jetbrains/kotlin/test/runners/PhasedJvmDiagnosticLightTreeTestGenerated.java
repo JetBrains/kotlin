@@ -39639,9 +39639,21 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
-        @TestMetadata("unneededUnstableSmartcast.kt")
-        public void testUnneededUnstableSmartcast() {
-          runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unneededUnstableSmartcast.kt");
+        @TestMetadata("unstableSmartCastUnneededForConcreteProperty.kt")
+        public void testUnstableSmartCastUnneededForConcreteProperty() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unstableSmartCastUnneededForConcreteProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("unstableSmartCastUnneededForGenericPropertyA.kt")
+        public void testUnstableSmartCastUnneededForGenericPropertyA() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unstableSmartCastUnneededForGenericPropertyA.kt");
+        }
+
+        @Test
+        @TestMetadata("unstableSmartCastUnneededForGenericPropertyB.kt")
+        public void testUnstableSmartCastUnneededForGenericPropertyB() {
+          runTest("compiler/testData/diagnostics/tests/smartCasts/inference/unstableSmartCastUnneededForGenericPropertyB.kt");
         }
       }
 

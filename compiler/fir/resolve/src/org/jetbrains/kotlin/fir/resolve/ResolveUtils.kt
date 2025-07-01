@@ -557,6 +557,17 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
     val originalTypeWithAliases = expression.resolvedType
     val originalType = originalTypeWithAliases.fullyExpandedType()
 
+    // TODO(KT-79370): This is a hack related to KT-78595, which should eventually be handled by resolution.
+    // Properties with type parameters must have custom getters and therefore can never be smart-cast.
+    // Resolution currently has trouble resolving type arguments that are part of smart-cast expressions.
+    // When type inference can handle type arguments in smart-cast expressions, this should be removed.
+    if (smartcastStatement.upperTypesStability == SmartcastStability.PROPERTY_WITH_GETTER && expression is FirPropertyAccessExpression) {
+        val symbol = expression.calleeReference.symbol
+        if (symbol is FirPropertySymbol && symbol.typeParameterSymbols.isNotEmpty()) {
+            return expression
+        }
+    }
+
     val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
 
     val intersectedUpperType = when {
