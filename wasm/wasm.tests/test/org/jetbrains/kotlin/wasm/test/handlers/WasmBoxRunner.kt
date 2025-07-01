@@ -64,7 +64,7 @@ class WasmBoxRunner(
                         console.log('test passed');
                 """.trimIndent()
 
-        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
+        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult): List<Throwable> {
             val dir = File(outputDirBase, mode)
             dir.mkdirs()
 
@@ -133,17 +133,20 @@ class WasmBoxRunner(
                     )
                 }
 
-            processExceptions(exceptions)
-
-            when (mode) {
+            return exceptions + when (mode) {
                 "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
                 "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
+                "dev" -> emptyList() // no additional checks required
+                else -> error("Unknown mode: $mode")
             }
         }
 
-        writeToFilesAndRunTest("dev", artifacts.compilerResult)
-        writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE)
-        artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) }
+        val allExceptions =
+            writeToFilesAndRunTest("dev", artifacts.compilerResult) +
+                    writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE) +
+                    (artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) } ?: emptyList())
+
+        processExceptions(allExceptions)
     }
 }
 
@@ -178,7 +181,7 @@ internal fun WasmVM.runWithCaughtExceptions(
     return null
 }
 
-fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>) {
+fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>): List<Throwable> {
     val expectedDceSizes =
         InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
             .map {
@@ -187,17 +190,17 @@ fun checkExpectedDceOutputSize(debugMode: DebugMode, testFileContent: String, te
                 val size = it.substring(i + 1)
                 extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
             }
-    assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes, filesToIgnore)
+    return assertExpectedSizesMatchActual(debugMode, testDir, expectedDceSizes, filesToIgnore)
 }
 
-fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>) {
+fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File, filesToIgnore: Set<File>): List<Throwable> {
     val expectedOptimizeSizes = InTextDirectivesUtils
         .findListWithPrefixes(testFileContent, "// WASM_OPT_EXPECTED_OUTPUT_SIZE: ")
         .lastOrNull()
         ?.filter(Char::isDigit)
-        ?.toInt() ?: return
+        ?.toInt() ?: return emptyList()
 
-    assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
+    return assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
 }
 
 private fun assertExpectedSizesMatchActual(
@@ -205,7 +208,7 @@ private fun assertExpectedSizesMatchActual(
     testDir: File,
     fileExtensionToItsExpectedSize: Iterable<Pair<String, Int>>,
     filesToIgnore: Set<File>
-) {
+): List<Throwable> {
     val filesByExtension = testDir.listFiles()?.filterNot { it in filesToIgnore }?.groupBy { it.extension }.orEmpty()
 
     val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
@@ -230,5 +233,7 @@ private fun assertExpectedSizesMatchActual(
         if (totalSize !in expectedMinSize..expectedMaxSize) message else null
     }
 
-    if (errors.isNotEmpty()) throw AssertionError(errors.joinToString("\n"))
+    if (errors.isNotEmpty()) return listOf(AssertionError(errors.joinToString("\n")))
+
+    return emptyList()
 }
