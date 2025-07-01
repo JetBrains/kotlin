@@ -26,11 +26,6 @@ tasks.withType<Test>().names.forEach { taskName ->
             val defineJDKEnvVariables: List<Int> = listOf(8, 11, 17, 21)
             inputs.property("javaVersion", javaVersion)
 
-            val nativeHome = project.providers.gradleProperty("kotlin.internal.native.test.nativeHome").orElse(
-                project.providers.gradleProperty("kn.nativeHome")
-            )
-            val nativeHomeDefault: Provider<Directory> =
-                testInputsCheck.isNative.filter { it }.map { project.project(":kotlin-native").isolated.projectDirectory.dir("dist") }
             val konanDataDir: String =
                 project.extra.has("konan.data.dir").let { if (it) project.extra["konan.data.dir"] else null } as String?
                     ?: System.getenv("KONAN_DATA_DIR")
@@ -144,9 +139,6 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "/bin/sh", "execute";""",
                                         """permission java.io.FilePermission "${nativeHome.getOrElse(nativeHomeDefault.get().asFile.absolutePath)}/-" , "read,write,delete";""",
                                     )
-                                    if (nativeHome.isPresent) {
-                                        konanPermissions.add("""permission java.io.FilePermission "${nativeHome.get()}/-" , "read,write,delete";""")
-                                    }
                                     if (testInputsCheck.useXcode.get()) {
                                         // Should we consider those files inputs? I need to think about the execute permission
                                         // in any case I need to check where those paths come from to avoid hardcoding

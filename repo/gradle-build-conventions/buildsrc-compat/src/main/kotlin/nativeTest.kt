@@ -1,13 +1,19 @@
 import TestProperty.*
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -15,7 +21,10 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.register
 import org.gradle.process.CommandLineArgumentProvider
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -65,7 +74,6 @@ private open class NativeArgsProvider @Inject constructor(
     project: Project,
     objects: ObjectFactory,
     providers: ProviderFactory,
-    @Internal val requirePlatformLibs: Boolean = false,
 ) : CommandLineArgumentProvider {
     @get:Input
     @get:Optional
@@ -134,9 +142,6 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Input
     protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild
 
-    @get:Internal
-    protected val customNativeHome: Provider<String?> = providers.testProperty(KOTLIN_NATIVE_HOME)
-
     @get:Classpath
     val customCompilerDependencies: ConfigurableFileCollection = objects.fileCollection()
 
@@ -154,52 +159,13 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Input
     val testTargetWithDefault = testTarget.orElse(HostManager.hostName)
 
-    @get:Internal
-    protected val internalNativeHomeDir: Provider<File> = customNativeHome.map { File(it) }
-        .orElse(project.project(":kotlin-native").isolated.projectDirectory.dir("dist").asFile)
-
-    @get:Classpath
-    protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (customNativeHome.isPresent) {
-            from(customNativeHome)
-        } else {
-            val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
-                listOfNotNull(
-                    ":kotlin-native:${it}CrossDist",
-                    if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
-                )
-            }.orElse(
-                listOfNotNull(
-                    ":kotlin-native:dist",
-                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
-                )
-            )
-
-            val distDir = project.project(":kotlin-native").isolated.projectDirectory.dir("dist")
-            if (!requirePlatformLibs) {
-                from(distDir.dir("bin/"))
-                from(distDir.dir("konan/"))
-                from(distDir.dir("tools/"))
-                from(distDir.dir("klib/common/"))
-                from(distDir.dir("klib/cache/${testTargetWithDefault.get()}-gSTATIC-system/stdlib-cache/"))
-            } else {
-                from(distDir)
-            }
-            builtBy(nativeHomeBuiltBy.get())
-        }
-    }
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val nativeHome: DirectoryProperty = objects.directoryProperty()
 
     @Classpath
     protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (customNativeHome.isPresent) {
-            from(customNativeHome.map { File(it, "konan/lib/kotlin-native-compiler-embeddable.jar") })
-        } else {
-            from(
-                project.configurations.detachedConfiguration(
-                    project.dependencies.project(":kotlin-native:prepare:kotlin-native-compiler-embeddable"),
-                )
-            )
-        }
+        from(nativeHome.file("konan/lib/kotlin-native-compiler-embeddable.jar"))
         from(customCompilerDependencies)
     }
 
@@ -240,7 +206,7 @@ private open class NativeArgsProvider @Inject constructor(
     override fun asArguments(): Iterable<String> {
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
-            "-D${KOTLIN_NATIVE_HOME.fullName}=${internalNativeHomeDir.get().absolutePath}",
+            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.get().asFile.absolutePath}",
             "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
@@ -269,6 +235,105 @@ private open class NativeArgsProvider @Inject constructor(
 private fun ProviderFactory.testProperty(property: TestProperty) =
     gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
 
+private open class NativeTestPrepareCompilerDistribution @Inject constructor(
+    objectFactory: ObjectFactory,
+    layout: ProjectLayout,
+    private val execOperations: ExecOperations,
+    private val fileSystemOperations: FileSystemOperations,
+) : DefaultTask() {
+    /**
+     * Root of the source native distribution
+     */
+    @get:Internal("dependency on paths is set by nativeDistributionInput")
+    val nativeDistributionRoot: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    /**
+     * Where to place the distribution to be used by the test.
+     *
+     * NOTE: The tests may write to this directory to update compiler caches, this task will attempt to preserve these caches
+     * if possible.
+     */
+    @get:OutputDirectory
+    val output: DirectoryProperty = objectFactory.directoryProperty().convention(layout.buildDirectory.dir(name))
+
+    /**
+     * When set to true, the resulting distribution will contain platform libraries
+     */
+    @get:Input
+    val requirePlatformLibs: Property<Boolean> = objectFactory.property(Boolean::class)
+
+    /**
+     * compiler-cache-invalidator tool
+     */
+    @get:Classpath
+    protected val compilerCacheInvalidator = objectFactory.fileCollection().apply {
+        if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
+            from(
+                project.configurations.detachedConfiguration(
+                    project.dependencies.project(":kotlin-native:tools:compiler-cache-invalidator").apply {
+                        attributes {
+                            attribute(
+                                Category.CATEGORY_ATTRIBUTE,
+                                objectFactory.named(Category.LIBRARY)
+                            )
+                            attribute(
+                                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                                objectFactory.named(LibraryElements.JAR)
+                            )
+                            attribute(
+                                Usage.USAGE_ATTRIBUTE,
+                                objectFactory.named(Usage.JAVA_RUNTIME)
+                            )
+                        }
+                    })
+            )
+        }
+    }
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE) // calculated manually
+    protected val nativeDistributionInput
+        get() = nativeDistributionRoot.asFileTree.matching {
+            if (!requirePlatformLibs.get()) {
+                exclude("klib/platform")
+                exclude("klib/cache/*/org.jetbrains.kotlin.native.platform.*-cache")
+            }
+        }
+
+    @get:Input
+    @Suppress("UNUSED") // used by Gradle via reflection
+    protected val nativeDistributionInputRelativePaths
+        get() = nativeDistributionRoot.elements.zip(nativeDistributionInput.elements) { root, input ->
+            val rootFile = root.single().asFile
+            input.map { it.asFile.toRelativeString(rootFile) }.sorted()
+        }
+
+    @TaskAction
+    fun run() {
+        // 1. Clean up everything but caches from existing directory
+        fileSystemOperations.delete {
+            delete(output.asFileTree.matching {
+                exclude("klib/cache")
+            })
+        }
+        // 2. Copy everything from the other native distribution.
+        //    This will effectively merge the incoming native distribution with the stored caches.
+        fileSystemOperations.copy {
+            into(output)
+            from(nativeDistributionInput)
+        }
+        // 3. Now remove stale caches.
+        execOperations.javaexec {
+            classpath(compilerCacheInvalidator)
+            mainClass.set("org.jetbrains.kotlin.nativecacheinvalidator.cli.NativeCacheInvalidatorCLI")
+            args("--dist=${output.get().asFile.absolutePath}")
+            if (logger.isInfoEnabled) {
+                args("-v")
+            }
+        }
+    }
+}
+
 /**
  * @param taskName Name of Gradle task.
  * @param tag Optional JUnit test tag. See https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
@@ -292,23 +357,46 @@ fun Project.nativeTest(
     maxMetaspaceSizeMb: Int = 512,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
-) = projectTest(
-    taskName,
-    jUnitMode = JUnitMode.JUnit5,
-    maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
-    maxMetaspaceSizeMb = maxMetaspaceSizeMb,
-    defineJDKEnvVariables = defineJDKEnvVariables,
-) {
-    group = "verification"
+): TaskProvider<Test> {
+    val nativeDistribution = tasks.register<NativeTestPrepareCompilerDistribution>("$taskName-dist") {
+        this.requirePlatformLibs.set(requirePlatformLibs)
+        val customNativeHome = providers.testProperty(KOTLIN_NATIVE_HOME)
+        if (customNativeHome.isPresent) {
+            nativeDistributionRoot.from(customNativeHome)
+        } else {
+            val testTarget = providers.testProperty(TEST_TARGET)
+            val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
+                listOfNotNull(
+                    ":kotlin-native:${it}CrossDist",
+                    if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
+                )
+            }.orElse(
+                listOfNotNull(
+                    ":kotlin-native:dist",
+                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
+                )
+            )
 
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        workingDir = rootDir
+            nativeDistributionRoot.from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist")).builtBy(nativeHomeBuiltBy.get())
+        }
+    }
+    return projectTest(
+        taskName,
+        jUnitMode = JUnitMode.JUnit5,
+        maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
+        maxMetaspaceSizeMb = maxMetaspaceSizeMb,
+        defineJDKEnvVariables = defineJDKEnvVariables,
+    ) {
+        group = "verification"
 
-        // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
-        // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+        if (kotlinBuildProperties.isKotlinNativeEnabled) {
+            workingDir = rootDir
 
-        // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
+            // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
+            // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
+            javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+
+            // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
         // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
         // Switch back to Parallel GC to mitigate the test execution time degradation:
         jvmArgs("-XX:+UseParallelGC")
@@ -318,72 +406,74 @@ fun Project.nativeTest(
         // So using G1 GC makes those tests fail because they expect the format of Parallel GC statistics.
 
         // Effectively remove the limit for the amount of stack trace elements in Throwable.
-        jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
+            jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
 
-        // Double the stack size. This is needed to compile some marginal tests with extra-deep IR tree, which requires a lot of stack frames
-        // for visiting it. Example: codegen/box/strings/concatDynamicWithConstants.kt
-        // Such tests are successfully compiled in old test infra with the default 1 MB stack just by accident. New test infra requires ~55
-        // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
-        jvmArgs("-Xss2m")
+            // Double the stack size. This is needed to compile some marginal tests with extra-deep IR tree, which requires a lot of stack frames
+            // for visiting it. Example: codegen/box/strings/concatDynamicWithConstants.kt
+            // Such tests are successfully compiled in old test infra with the default 1 MB stack just by accident. New test infra requires ~55
+            // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
+            jvmArgs("-Xss2m")
 
-        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
-            this.customCompilerDependencies.from(customCompilerDependencies)
-            this.compilerPluginDependencies.from(compilerPluginDependencies)
-            this.customTestDependencies.from(customTestDependencies)
-            if (customCompilerDist != null) {
-                this.customCompilerDist.fileProvider(customCompilerDist.map { it.destinationDir })
-            }
-        })
-
-        val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
-        if (!kotlinBuildProperties.isTeamcityBuild
-            && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
-        ) {
-            logger.info("$path JIT C2 compiler has been disabled")
-            jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
-        }
-
-        // Pass the current Gradle task name so test can use it in logging.
-        environment("GRADLE_TASK_NAME", path)
-
-        useJUnitPlatform {
-            tag?.let { includeTags(it) }
-        }
-
-        if (!allowParallelExecution) {
-            systemProperty("junit.jupiter.execution.parallel.enabled", "false")
-        }
-
-        doFirst {
-            logger.info(
-                buildString {
-                    appendLine("$path parallel test execution parameters:")
-                    append("  Available CPU cores = $availableCpuCores")
-                    systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
-                        append("\n  $key = $value")
-                    }
+            jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java).apply {
+                this.nativeHome.set(nativeDistribution.flatMap { it.output })
+                this.customCompilerDependencies.from(customCompilerDependencies)
+                this.compilerPluginDependencies.from(compilerPluginDependencies)
+                this.customTestDependencies.from(customTestDependencies)
+                if (customCompilerDist != null) {
+                    this.customCompilerDist.fileProvider(customCompilerDist.map { it.destinationDir })
                 }
-            )
-        }
-    } else
-        doFirst {
-            throw GradleException(
-                """
+            })
+
+            val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
+            if (!kotlinBuildProperties.isTeamcityBuild
+                && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4
+            ) {
+                logger.info("$path JIT C2 compiler has been disabled")
+                jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
+            }
+
+            // Pass the current Gradle task name so test can use it in logging.
+            environment("GRADLE_TASK_NAME", path)
+
+            useJUnitPlatform {
+                tag?.let { includeTags(it) }
+            }
+
+            if (!allowParallelExecution) {
+                systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+            }
+
+            doFirst {
+                logger.info(
+                    buildString {
+                        appendLine("$path parallel test execution parameters:")
+                        append("  Available CPU cores = $availableCpuCores")
+                        systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
+                            append("\n  $key = $value")
+                        }
+                    }
+                )
+            }
+        } else
+            doFirst {
+                throw GradleException(
+                    """
                     Can't run task $path. The Kotlin/Native part of the project is currently disabled.
                     Make sure that "kotlin.native.enabled" is set to "true" in local.properties file, or is passed
                     as a Gradle command-line parameter via "-Pkotlin.native.enabled=true".
                 """.trimIndent()
-            )
-        }
+                )
+            }
 
-    // This environment variable is here for two reasons:
-    // 1. It is also used for the cinterop tool itself. So it is good to have it here as well,
-    //    just to make the tests match the production as closely as possible.
-    // 2. It disables a certain machinery in libclang that is known to cause troubles.
-    //    (see e.g. https://youtrack.jetbrains.com/issue/KT-61299 for more details).
-    //    Strictly speaking, it is not necessary since we beat them by other means,
-    //    but it is still nice to have it as a failsafe.
-    environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
+        // This environment variable is here for two reasons:
+        // 1. It is also used for the cinterop tool itself. So it is good to have it here as well,
+        //    just to make the tests match the production as closely as possible.
+        // 2. It disables a certain machinery in libclang that is known to cause troubles.
+        //    (see e.g. https://youtrack.jetbrains.com/issue/KT-61299 for more details).
+        //    Strictly speaking, it is not necessary since we beat them by other means,
+        //    but it is still nice to have it as a failsafe.
+        environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
-    body()
+        body()
+    }
 }
