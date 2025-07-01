@@ -85,7 +85,8 @@ binaryCompatibilityValidator {
     }
 }
 
-val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
+val unpublishedCompilerRuntimeDependencies = listOf(
+    // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
@@ -596,6 +597,22 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
 
         systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)
+
+        //region custom Maven Local directory
+        // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
+        // The functional tests require artifacts are published to Maven Local.
+        // To make sure the tests uses the same `maven.repo.local` as is configured
+        // in the buildscript, forward the value of `maven.repo.local` into the test process.
+        val mavenRepoLocal = providers.systemProperty("maven.repo.local")
+        inputs.property("maven.repo.local", mavenRepoLocal)
+        jvmArgumentProviders.add {
+            buildList {
+                if (mavenRepoLocal.isPresent) {
+                    add("-Dmaven.repo.local=${mavenRepoLocal.get()}")
+                }
+            }
+        }
+        //endregion
     }
 
     dependencies {
