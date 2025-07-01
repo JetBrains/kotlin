@@ -426,15 +426,10 @@ private val excludeDeclarationsFromCodegenPhase = makeIrModulePhase(
     name = "ExcludeDeclarationsFromCodegen",
 )
 
-private val unhandledExceptionLowering = makeIrModulePhase(
-    ::UnhandledExceptionLowering,
-    name = "UnhandledExceptionLowering",
-)
-
 private val tryCatchCanonicalization = makeIrModulePhase(
     ::TryCatchCanonicalization,
     name = "TryCatchCanonicalization",
-    prerequisite = setOf(inlineAllFunctionsPhase, unhandledExceptionLowering)
+    prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
 private val bridgesConstructionPhase = makeIrModulePhase(
@@ -696,7 +691,6 @@ fun getWasmLowerings(
 
         invokeOnExportedFunctionExitLowering,
 
-        unhandledExceptionLowering,
         tryCatchCanonicalization,
 
         forLoopsLoweringPhase,

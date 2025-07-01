@@ -203,5 +203,4 @@ fun box() {
 // test.kt:29 $mightThrow (8, 22, 16)
 // test.kt:7 $foo (13)
 // test.kt:8 $foo (8)
-// test.kt:48 $box (4)
 // test.kt:49 $box (1)

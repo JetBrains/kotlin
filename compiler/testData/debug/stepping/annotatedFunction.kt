@@ -46,5 +46,4 @@ fun box() {
 // test.kt:8 $C.f (5)
 // test.kt:20 $box (4)
 // test.kt:18 $box$local (5)
-// test.kt:20 $box (4)
 // test.kt:21 $box (1)
