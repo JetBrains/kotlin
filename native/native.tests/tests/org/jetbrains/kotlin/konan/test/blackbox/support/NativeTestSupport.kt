@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.backend.konan.GC
+import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -287,7 +288,7 @@ object NativeTestSupport {
         ClassLevelProperty.GC_TYPE.readValueOrNull(enforcedProperties, GC.values()).let { GCType(it) }
 
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
-        ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.values(), default = GCScheduler.UNSPECIFIED)
+        ClassLevelProperty.GC_SCHEDULER.readValueOrNull(enforcedProperties, GCSchedulerType.values()).let { GCScheduler(it) }
 
     private fun computeBinaryOptions(enforcedProperties: EnforcedProperties): BinaryOptions =
         ClassLevelProperty.BINARY_OPTIONS.readValue(
@@ -403,7 +404,7 @@ object NativeTestSupport {
 
         // Aggressively adjust timeout in case of an aggressive scheduler
         val scheduler = output.filterIsInstance<GCScheduler>().firstOrNull()
-        if (scheduler == GCScheduler.AGGRESSIVE) {
+        if (scheduler?.scheduler == GCSchedulerType.AGGRESSIVE) {
             executionTimeout *= 2
         }
 

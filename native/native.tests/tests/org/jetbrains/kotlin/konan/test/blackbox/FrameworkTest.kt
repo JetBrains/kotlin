@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.backend.konan.GC
+import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
@@ -340,7 +341,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         // test must make huge amount of repetitions to make sure there's no race conditions, so bigger timeout is needed. Double is not enough
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 10)
         val testCase = generateObjCFramework(testName, checks = checks)
-        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>() != GCScheduler.AGGRESSIVE) listOf() else
+        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>().scheduler != GCSchedulerType.AGGRESSIVE) listOf() else
             listOf("-D", "AGGRESSIVE_GC")
         compileAndRunSwift(testName, testCase, swiftExtraOpts)
     }
@@ -501,7 +502,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         }
         val swiftExtraOpts = buildList {
             addAll(swiftOpts)
-            if (testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE) {
+            if (testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE) {
                 add("-D")
                 add("AGGRESSIVE_GC")
             }

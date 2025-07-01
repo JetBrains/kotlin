@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
+import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
@@ -28,7 +29,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractKlibLinkageTest() {
         // There is no major profit from running these tests with this scheduler. On the other hand,
         // we have to significantly increase timeouts to make such configurations pass.
         // So let's just disable them instead of wasting CI times.
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
         PartialLinkageTestUtils.runTest(NativeTestConfiguration(testPath))
     }
 
