@@ -1,4 +1,5 @@
 // TARGET_BACKEND: WASM
+// WASM_NO_JS_TAG
 /// MODULE: main
 // FILE: main.kt
 
@@ -6,9 +7,7 @@ import kotlin.wasm.WasmExport
 
 @WasmExport
 fun runWithException() {
-    throw AssertionError("Some random exception").apply {
-        println(this.stackTraceToString())
-    }
+    throw AssertionError("Some random exception")
 }
 
 fun box() = "OK"
@@ -21,12 +20,8 @@ try {
     runWithException()
     nothrow = true
 } catch(e) {
-    if (!(e instanceof Error)) {
-        throw Error("Expected instance of Error, but '" + e.name +"' ('" + e.constructor.name + "') was received")
-    }
-
-    if (e.name !== "AssertionError" ) {
-        throw Error("Wrong e.name = '" + e.name + "'")
+    if (!(e instanceof WebAssembly.Exception)) {
+        throw "Expected to have WebAssembly.Exception, but '" + e.name +"' ('" + e.constructor.name + "') was received"
     }
 }
 
