@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest.Compiler
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
-import org.jetbrains.kotlin.klib.KlibCompilerEdition.CUSTOM
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
@@ -187,7 +186,10 @@ internal class JsCompilerInvocationTestArtifactBuilder(
     override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
+        compilerEdition: KlibCompilerEdition,
     ): JsCompilerInvocationTestBinaryArtifact {
+        require(compilerEdition == CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
         // The modules in `Dependencies.regularDependencies` are already in topological order.
         // It is important to pass the provided and the produced JS files to Node in exactly the same order.
         val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {

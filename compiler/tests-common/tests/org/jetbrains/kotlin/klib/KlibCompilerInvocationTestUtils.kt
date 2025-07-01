@@ -68,7 +68,11 @@ object KlibCompilerInvocationTestUtils {
         )
 
         /** Build a binary (executable) file given the main KLIB and the rest of dependencies. */
-        fun buildBinary(mainModule: Dependency, otherDependencies: Dependencies): BA
+        fun buildBinary(
+            mainModule: Dependency,
+            otherDependencies: Dependencies,
+            compilerEdition: KlibCompilerEdition,
+        ): BA
     }
 
     /** [BinaryRunner] component is capable of running [BinaryArtifact]s in a platform-specific way. */
@@ -153,12 +157,10 @@ object KlibCompilerInvocationTestUtils {
                 val dependencies = Dependencies(regularDependencies, friendDependencies)
                 binaryDependencies = binaryDependencies.mergeWith(dependencies)
 
-                val compilerEdition = compilerEditionChange.getCompilerEditionForKlib(moduleStep.compilerCodename)
-
                 artifactBuilder.buildKlib(
                     module = moduleUnderTest,
                     dependencies = dependencies,
-                    compilerEdition = compilerEdition,
+                    compilerEdition = compilerEditionChange.getCompilerEditionForKlib(moduleStep.compilerCodename),
                     compilerArguments = moduleStep.cliArguments,
                 )
             }
@@ -167,7 +169,12 @@ object KlibCompilerInvocationTestUtils {
         val mainModuleKlibFile = testStructure.modules[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
         val mainModuleDependency = Dependency(MAIN_MODULE_NAME, mainModuleKlibFile)
 
-        val binaryArtifact = artifactBuilder.buildBinary(mainModuleDependency, binaryDependencies)
+        val binaryArtifact = artifactBuilder.buildBinary(
+            mainModule = mainModuleDependency,
+            otherDependencies = binaryDependencies,
+            compilerEdition = compilerEditionChange.getCompilerEditionForBinary(),
+        )
+
         binaryRunner.runBinary(binaryArtifact)
     }
 
