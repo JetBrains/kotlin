@@ -42,14 +42,14 @@ import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitut
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -91,6 +91,61 @@ internal class KaFirTypeProvider(
         val approximatedConeType = PublicTypeApproximator.approximateToDenotableSubtype(
             coneType,
             rootModuleSession
+        )
+
+        return approximatedConeType?.asKaType()
+    }
+
+    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? {
+        if (!analysisSession.analysisScope.contains(position)) {
+            errorWithAttachment("The given position is not within the analysis scope of the session") {
+                withPsiEntry("position", position)
+            }
+        }
+
+        val firFile = position.containingKtFile.getOrBuildFirFile(resolutionFacade)
+        val scopeContext = ContextCollector.process(resolutionFacade, firFile, position)
+        val scopeClassifiers = scopeContext?.towerDataContext?.localScopes?.map { localScope ->
+            localScope.classes
+        }
+
+        /**
+         * This map construction is required to avoid shadowed local types:
+         *
+         * ```kotlin
+         * fun test(flag: Boolean) {
+         *     class Foo
+         *     val x = Foo()
+         *
+         *     if (flag) {
+         *         class Fo<caret>o
+         *         <expr>x</expr>
+         *     }
+         * }
+         * ```
+         *
+         * In the example above there are two local classes `Foo`.
+         * `x` has a type of outer local `Foo`, however, the denotable approximation is required in scope where another `Foo` is introduced.
+         * Hence, we cannot approximate `x` as `Foo`, as it would resolve to another `Foo` type in this scope.
+         *
+         * That's why here we build a map of class symbols that are resolved for different names in the current context.
+         * It iterates through all the scopes from the outermost to the localmost and puts all named classifiers into the map.
+         * If there is already some classifier stored for a given name, then another more local classifier shadows the previous one in the map.
+         */
+        val allAccessibleClassifiers = HashMap<Name, FirRegularClassSymbol>().apply {
+            scopeClassifiers?.forEach { currentScope ->
+                this.putAll(currentScope)
+            }
+        }
+
+        val approximatedConeType = PublicTypeApproximator.approximateToDenotableSupertype(
+            coneType,
+            rootModuleSession,
+            approximateLocalTypes = true,
+            shouldApproximateLocalType = { _, typeMarker ->
+                if (typeMarker !is ConeLookupTagBasedType) return@approximateToDenotableSupertype false
+                allAccessibleClassifiers.get(typeMarker.lookupTag.name) != typeMarker.toRegularClassSymbol(analysisSession.firSession)
+            }
         )
 
         return approximatedConeType?.asKaType()
