@@ -156,11 +156,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidProjectExtens
 	public fun target (Lkotlin/jvm/functions/Function1;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector {
-	public abstract fun invoke (Ljava/lang/Object;)V
-	public abstract fun invoke (Ljava/lang/Object;Lorg/gradle/api/Action;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
 }
 
@@ -169,18 +164,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile$DefaultIm
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lorg/gradle/api/Action;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompile;Lorg/gradle/api/Action;)V
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies, org/gradle/api/plugins/jvm/PlatformDependencyModifiers {
-	public abstract fun getApi ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getTestCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getTestImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun getTestRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
-	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
