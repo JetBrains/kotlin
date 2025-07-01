@@ -47,6 +47,7 @@ interface ObjCExportLazy {
         fun getCompilerModuleName(moduleInfo: ModuleInfo): String
         val objcGenerics: Boolean
         val objcExportBlockExplicitParameterNames: Boolean
+            get() = false
 
         val disableSwiftMemberNameMangling: Boolean
             get() = false

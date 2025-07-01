@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.tooling.core.withClosure
  */
 internal fun ObjCBlockPointerType.allTypes(): List<ObjCType> {
     return this.withClosure<ObjCType> { type ->
-        if (type is ObjCBlockPointerType) listOf(type.returnType) + type.parameters.map { it.type }
+        if (type is ObjCBlockPointerType) listOf(type.returnType) + type.parameterTypes
         else emptyList()
     }.toList()
 }
