@@ -43,7 +43,7 @@ PERFORMANCE_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noex
 
 gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
     impl_(std::make_unique<Impl>(allocator, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads())) {
-    RuntimeLogInfo({kTagGC}, "Parallel Mark & Concurrent Sweep GC initialized");
+    RuntimeLogDebug({kTagGC}, "%s GC initialized", internal::PmcsGCTraits::kName);
 }
 
 gc::GC::~GC() {

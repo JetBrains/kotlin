@@ -70,7 +70,7 @@ private:
  * Parallel mark dispatcher.
  * Mark can be performed on one or more threads.
  * Each threads wanting to participate have to execute an appropriate run- routine when ready to mark.
- * There must be exactly one executor of a `runMainInSTW()`.
+ * There must be exactly one executor of a `markInSTW()`.
  *
  * Mark workers are able to balance work between each other through sharing/stealing.
  */
@@ -116,17 +116,16 @@ public:
 
     explicit ParallelMark(bool mutatorsCooperate);
 
-    void beginMarkingEpoch(gc::GCHandle gcHandle);
-    void endMarkingEpoch();
+    void setupBeforeSTW(gc::GCHandle gcHandle);
 
     /** To be run by a single "main" GC thread during STW. */
-    void runMainInSTW();
+    void markInSTW();
 
     /**
      * To be run by mutator threads that would like to participate in mark.
      * Will wait for STW detection by a "main" routine.
      */
-    void runOnMutator(mm::ThreadData& mutatorThread);
+    void markOnMutator(mm::ThreadData& mutatorThread);
 
     /**
      * To be run by auxiliary GC threads.
@@ -164,6 +163,7 @@ private:
     void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
     void parallelMark(ParallelProcessor::Worker& worker);
+    void endMarkingEpoch();
 
     std::optional<ParallelProcessor::Worker> createWorker();
 

@@ -18,7 +18,7 @@ using namespace kotlin;
 namespace {
 
 std::atomic<ObjHeader* (*)(ObjHeader*)> weakRefBarrier = nullptr;
-std::atomic<int64_t> weakProcessingEpoch = 0;
+std::atomic<uint64_t> weakProcessingEpoch = 0;
 
 ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     if (!weakReferee) return nullptr;
@@ -90,7 +90,7 @@ PERFORMANCE_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocate
     }
 }
 
-void gc::EnableWeakRefBarriers(int64_t epoch) noexcept {
+void gc::EnableWeakRefBarriers(uint64_t epoch) noexcept {
     auto mutators = mm::ThreadRegistry::Instance().LockForIter();
     weakProcessingEpoch.store(epoch, std::memory_order_relaxed);
     weakRefBarrier.store(weakRefBarrierImpl, std::memory_order_seq_cst);

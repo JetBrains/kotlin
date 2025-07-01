@@ -66,7 +66,7 @@ void switchPhase(BarriersPhase from, BarriersPhase to) noexcept {
 }
 
 auto& markDispatcher() noexcept {
-    return mm::GlobalData::Instance().gc().impl().markDispatcher_;
+    return mm::GlobalData::Instance().gc().impl().mark_;
 }
 
 inline constexpr auto kTagBarriers = logging::Tag::kBarriers;

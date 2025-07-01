@@ -29,7 +29,7 @@ private:
 };
 
 // Must be called during STW.
-void EnableWeakRefBarriers(int64_t epoch) noexcept;
+void EnableWeakRefBarriers(uint64_t epoch) noexcept;
 void DisableWeakRefBarriers() noexcept;
 
 OBJ_GETTER(WeakRefRead, std_support::atomic_ref<ObjHeader*> weakReferee) noexcept;

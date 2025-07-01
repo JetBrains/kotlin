@@ -14,6 +14,6 @@ void gc::test_support::reconfigureGCParallelism(
         return;
     }
     auto mainGCLock = mm::GlobalData::Instance().gc().gcLock();
-    gc.markDispatcher_.reset(maxParallelism, mutatorsCooperate, [&gc] { gc.auxThreads_.stopThreads(); });
+    gc.mark_.reset(maxParallelism, mutatorsCooperate, [&gc] { gc.auxThreads_.stopThreads(); });
     gc.auxThreads_.startThreads(auxGCThreads);
 }

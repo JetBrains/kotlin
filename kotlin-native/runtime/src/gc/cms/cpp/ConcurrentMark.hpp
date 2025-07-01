@@ -110,7 +110,7 @@ public:
     private:
         void ensureFlushActionExecuted() noexcept;
 
-        ConcurrentMark& mark_;
+        [[maybe_unused]] ConcurrentMark& mark_;
         mm::ThreadData& threadData_;
 
         ManuallyScoped<MutatorQueue, true> markQueue_{};
@@ -120,17 +120,12 @@ public:
         std::atomic<bool> published_ = false;
     };
 
-    void beginMarkingEpoch(GCHandle gcHandle);
-    void endMarkingEpoch();
+    void setupBeforeSTW(GCHandle gcHandle);
 
     /** To be run by a single "main" GC thread during STW. */
-    void runMainInSTW();
+    void markInSTW();
 
-    /**
-     * To be run by mutator threads that would like to participate in mark.
-     * Will wait for STW detection by a "main" routine.
-     */
-    void runOnMutator(mm::ThreadData& mutatorThread);
+    void requestShutdown() { /* no-op */ }
 
     /**
      * Weak reference reads may be mutually exclusive with certain parts of mark oprocess.
@@ -156,6 +151,7 @@ private:
     void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
     bool tryTerminateMark(std::size_t& everSharedBatches) noexcept;
     void flushMutatorQueues() noexcept;
+    void endMarkingEpoch();
 
     void resetMutatorFlags();
 
