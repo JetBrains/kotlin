@@ -94,7 +94,7 @@ class WasmBoxRunner(
                                     <script type="module">
                                         let test = document.getElementById("test")
                                         try {
-                                            await import("./test.mjs");
+                                            await import("./${collectedJsArtifacts.entryPath}");
                                             test.style.backgroundColor = "#0f0";
                                             test.textContent = "OK"
                                         } catch(e) {
