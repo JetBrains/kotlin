@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractDiagnosticCollectorVisitor(
     @set:PrivateForInline var context: CheckerContextForProvider,
@@ -196,6 +198,23 @@ abstract class AbstractDiagnosticCollectorVisitor(
             }
         } else {
             visitExpression(block, data)
+        }
+    }
+
+    override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: Nothing?) {
+        suppressOrThrowError(lazyBlock)
+        super.visitLazyBlock(lazyBlock, data)
+    }
+
+    override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: Nothing?) {
+        suppressOrThrowError(lazyExpression)
+        super.visitLazyExpression(lazyExpression, data)
+    }
+
+    private fun suppressOrThrowError(element: FirElement) {
+        if (System.getProperty("kotlin.suppress.lazy.expression.access").toBoolean()) return
+        errorWithAttachment("${element::class.simpleName} should be calculated before accessing") {
+            withFirEntry("firElement", element)
         }
     }
 
