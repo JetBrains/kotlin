@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.common.lower.SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.lower.SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
+import org.jetbrains.kotlin.backend.wasm.toCatchThrowableOrJsException
 import org.jetbrains.kotlin.backend.wasm.utils.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -158,33 +157,13 @@ class BodyGenerator(
 
         val sourceLocation = expression.getSourceLocation()
 
-        if (!backendContext.isWasmJsTarget || !backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)) {
-            body.buildThrow(wasmFileCodegenContext.throwableTagIndex, sourceLocation)
+        if (backendContext.isWasmJsTarget) {
+            // For wasm-js target call `throwValue` to throw the attached JavaScript value (typically an Error object)
+            body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.throwValue), sourceLocation)
             return
         }
 
-        when (expression.type) {
-            wasmSymbols.jsRelatedSymbols.jsException.defaultType -> {
-                generateInstanceFieldAccess(wasmSymbols.jsRelatedSymbols.jsExceptionThrownValue, expression.value.getSourceLocation())
-                body.buildThrow(wasmFileCodegenContext.jsExceptionTagIndex, sourceLocation)
-            }
-            irBuiltIns.throwableType -> {
-                val tmp = functionContext.referenceLocal(functionContext.defineTmpVariable(wasmModuleTypeTransformer.transformType(irBuiltIns.throwableType)))
-                body.buildSetLocal(tmp, SourceLocation.NoLocation)
-                body.buildGetLocal(tmp, SourceLocation.NoLocation)
-                body.buildRefTestStatic(wasmFileCodegenContext.referenceGcType(wasmSymbols.jsRelatedSymbols.jsException), sourceLocation)
-                body.buildIf("is_js_exception")
-                body.buildGetLocal(tmp, SourceLocation.NoLocation)
-                body.buildRefCastStatic(wasmFileCodegenContext.referenceGcType(wasmSymbols.jsRelatedSymbols.jsException), SourceLocation.NoLocation)
-                generateInstanceFieldAccess(wasmSymbols.jsRelatedSymbols.jsExceptionThrownValue, expression.value.getSourceLocation())
-                body.buildThrow(wasmFileCodegenContext.jsExceptionTagIndex, sourceLocation)
-                body.buildElse()
-                body.buildGetLocal(tmp, SourceLocation.NoLocation)
-                body.buildThrow(wasmFileCodegenContext.throwableTagIndex, sourceLocation)
-                body.buildEnd()
-            }
-            else -> body.buildThrow(wasmFileCodegenContext.throwableTagIndex, sourceLocation)
-        }
+        body.buildThrow(exceptionTagId, sourceLocation)
     }
 
     override fun visitTry(aTry: IrTry) {
@@ -203,119 +182,208 @@ class BodyGenerator(
     }
 
     /**
-     * The typical Kotlin try/catch:
+     * Generates WebAssembly code for a Kotlin try-catch-finally expression following the new exception handling proposal.
      *
-     * ```kotlin
-     * try {
-     *    RESULT_EXPRESSION
-     * } catch (e: ExceptionType) {
-     *    CATCH_EXPRESSION
-     * }
-     * ```
-     *
-     * Is translated into:
-     *
-     * ```wat
-     * block $catch_block (BLOCK_TYPE)
-     *     block $try_block (EXCEPTION_TYPE)
-     *         try_table (EXCEPTION_TYPE) catch IDX $try_block
-     *             TRANSLATED_RESULT_EXPRESSION
-     *             br $catch_block
-     *         end
-     *     end
-     *     TRANSLATED_CATCH_EXPRESSION
-     * end
-     * ```
-     *
+     * The function handles three cases:
+     * 1. try-finally blocks (transformed into try-catch(Throwable))
+     * 2. try-catch blocks with exception handlers
+     * 3. simple try-catch blocks
      */
     private fun generateTryFollowingNewProposal(aTry: IrTry) {
-        val canUseJsTag = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
-
-        val lastCatchBlock = aTry.catches.last()
-        val firstCatchBlock = aTry.catches.first()
-        val hasOnlySingleCatchBlock = lastCatchBlock === firstCatchBlock
+        val catchBlock = aTry.catches.single()
 
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(aTry.type)
-        val needCatchAllOnly = lastCatchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION
-        val areTwoCatchWithTheSameBody =
-            backendContext.isWasmJsTarget && firstCatchBlock.origin === SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
 
-        val topLevelCatchLabel = body.buildBlock(resultType)
+        // Always generate top level block with $resultType used for success breaks.  
+        body.buildBlock(null, resultType) { topLevelBlock ->
+            when {
+                /* 
+                Kotlin try-finally block at this point expected to be transformed into try-catch(Throwable).
+                Note here we have only a finally block for a failure case, a success path is covered separately on IR level.
 
-        val firstCatchParameterIsJsException = backendContext.isWasmJsTarget &&
-                firstCatchBlock.catchParameter.type == wasmSymbols.jsRelatedSymbols.jsException.defaultType
+                Generate the following wasm code:
+                ```wat
+                block $topLevelBlock (result $resultType)
+                    block $toCatchAll (result exnref)
+                        try_table (catch_all_ref $toCatchAll)
+                            <try>
+                            br $topLevelBlock
+                        end
+                        unreachable
+                    end ;; $toCatchAll
+                    <finally>
+                    throw_ref
+                end
+                ```
+                */
+                catchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION -> {
+                    buildTryWithCatchAll(aTry, successLevel = topLevelBlock)
 
-        val nestedCatchLabel = runIf(!needCatchAllOnly && firstCatchParameterIsJsException && (!hasOnlySingleCatchBlock || !canUseJsTag)) {
-            body.buildBlock(wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType))
+                    // catch_all_ref
+                    buildFinallyBody(catchBlock)
+                    body.buildThrowRef(SourceLocation.NoLocation("Rethrow exception after finally block"))
+                }
+
+                /* 
+                Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+                If there were catch blocks with non-Throwable type, they are replaced with ifs.
+                Uses catch_all as a fallback mechanism to ensure the catch block executes for any exception type, 
+                it's required in this case since original try-catch contained a catch with Throwable or JsException. 
+
+                Generate the following wasm code:
+                ```wat
+                
+                block $topLevelBlock (result $resultType)
+                    block $toCatch (result externref | ref Throwable)
+                        block $toCatchAll (result exnref)
+                            try_table (catch $exn_tag $toCatch) (catch_all_ref $toCatchAll)
+                                <try>
+                                br $topLevelBlock
+                            end
+                            unreachable
+                        end ;; $toCatchAll
+                        ;; TODO KT-78898 K/Wasm: investigate if we can get additional info in catch_all blocks by going through JS    
+                        ;; Drop exnref which is unneeded now.
+                        drop
+                        ;; Use catch_all to make sure that catches for Throwable and JsException are executed for any exception.  
+                        ;; There is no information about the exception in this case, so we put `null` to the stack as a result of the try block.  
+                        ref.null $rawExceptionType
+                    end 
+                    
+                    ;; for wasm-js {
+                    call $getKotlinException
+                    ;; }
+                    
+                    <catches>
+                end
+                ```
+                */
+                catchBlock.toCatchThrowableOrJsException -> {
+                    body.buildBlock(null, rawExceptionType) { toCatch ->
+                        buildTryWithCatchAll(aTry, successLevel = topLevelBlock, { body.createNewCatch(exceptionTagId, toCatch) })
+
+                        // catch_all_ref
+                        body.buildDrop(SourceLocation.NoLocation("Drop exnref after catch_all_ref"))
+                        body.buildRefNull(rawExceptionType.getHeapType(), SourceLocation.NoLocation("Push null to the stack for further processing"))
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
+
+                /* 
+                Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+                If there were catch blocks with non-Throwable type, they are replaced with ifs.
+                A simple try-catch-end block can be generated here since the original try-catch block 
+                contains neither Throwable nor JsException handlers.
+
+                We generate the following wasm code:
+                block $topLevelBlock (result $resultType)
+                    block $toCatch (result externref | ref Throwable)
+                        try_table (catch $exn_tag $toCatch) (catch_all_ref $toCatchAll)
+                            <try>
+                            br $topLevelBlock
+                        end
+                        unreachable
+                    end 
+                    <catches>
+                end
+                */
+                else -> {
+                    body.buildBlock(null, rawExceptionType) { toCatch ->
+                        body.buildTryTable(body.createNewCatch(exceptionTagId, toCatch)) {
+                            generateExpression(aTry.tryResult)
+                            body.buildBr(
+                                topLevelBlock,
+                                SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                            )
+                        }
+
+                        body.buildUnreachableForVerifier()
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
+            }
         }
+    }
 
-        val tryBlockType = when {
-            needCatchAllOnly -> WasmExnRefType
-            firstCatchParameterIsJsException -> if (canUseJsTag) WasmExternRef else null
-            else -> wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
-        }
+    /**
+     * Actual/raw reference type used to throw and catch exceptions.
+     *
+     * For wasm-js target:
+     * - Uses `externref` type to handle JavaScript Error objects directly.
+     * - JavaScript exceptions are wrapped in JsException for Kotlin code.
+     * - Kotlin exceptions are wrapped in JavaScript Error with reference to original exception.
+     * - Uses `WebAssembly.JSTag` for seamless exception handling between Kotlin and JavaScript.
+     * - Falls back to `WebAssembly.Tag` with same signature when `WebAssembly.JSTag` is unavailable,
+     *   allowing the same wasm binary to work in both environments.
+     *
+     * For wasm-wasi target:
+     * - Uses `ref Throwable` type, typed reference to Kotlin's Throwable class.
+     */
+    private val rawExceptionType =
+        if (backendContext.isWasmJsTarget)
+            WasmExternRef
+        else
+            wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
+                ?: error("Can't transform Throwable type to wasm block result type")
 
-        val tryBlockLabel = body.buildBlock(tryBlockType)
+    private fun buildFinallyBody(catchBlock: IrCatch) {
+        val composite = catchBlock.result as IrComposite
+        assert(composite.statements.last().isSimpleRethrowing(catchBlock)) { "Last throw is not rethrowing" }
+        composite.statements.dropLast(1).forEach(::generateStatement)
+    }
 
-        val catchList = when {
-            needCatchAllOnly -> listOf(body.createNewCatchAllRef(tryBlockLabel))
-            nestedCatchLabel != null -> listOf(
-                body.createNewCatch(wasmFileCodegenContext.throwableTagIndex, nestedCatchLabel),
-                if (canUseJsTag) body.createNewCatch(wasmFileCodegenContext.jsExceptionTagIndex, tryBlockLabel)
-                else body.createNewCatchAll(tryBlockLabel)
+    private fun buildCatchBlockBody(catchBlock: IrCatch) {
+        // wasm stack: 
+        // for wasm-js: [externref]
+        // otherwise: [Throwable]
+
+        if (backendContext.isWasmJsTarget) {
+            // wasm stack: [externref] 
+            // basically, it's a reference to JS Error
+
+            body.buildCall(
+                wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.getKotlinException),
+                catchBlock.catchParameter.getSourceLocation()
             )
-            else -> listOf(
-                body.createNewCatch(
-                    if (tryBlockType === WasmExternRef) wasmFileCodegenContext.jsExceptionTagIndex else wasmFileCodegenContext.throwableTagIndex,
-                    tryBlockLabel
+        }
+        // wasm stack for all targets: [Throwable]
+
+        catchBlock.initializeCatchParameter()
+        generateExpression(catchBlock.result)
+    }
+
+    /**
+     * Generates wasm code with the following structure:
+     * ```wat
+     * block $toCatchAll (result exnref)
+     *     try_table [(additionalCatch)] (catch_all_ref $toCatchAll)
+     *         <try>
+     *         br $successLevel
+     *     end
+     *     unreachable
+     * end
+     * ```
+     */
+    private fun buildTryWithCatchAll(aTry: IrTry, successLevel: Int, additionalCatch: (() -> WasmImmediate.Catch)? = null) {
+        body.buildBlock(null, WasmExnRefType) { toCatchAll ->
+            val catches =
+                if (additionalCatch != null)
+                    arrayOf(additionalCatch(), body.createNewCatchAllRef(toCatchAll))
+                else
+                    arrayOf(body.createNewCatchAllRef(toCatchAll))
+
+            body.buildTryTable(catches = catches) {
+                generateExpression(aTry.tryResult)
+                body.buildBr(
+                    successLevel,
+                    SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
                 )
-            )
-        }
-
-        body.buildTryTable(null, catchList, tryBlockType)
-        generateExpression(aTry.tryResult)
-        body.buildBr(topLevelCatchLabel, SourceLocation.NoLocation(""))
-        body.buildEnd()
-
-        body.buildEnd() // tryBlockLabel
-
-        if (needCatchAllOnly) {
-            val composite = lastCatchBlock.result as IrComposite
-            assert(composite.statements.last().isSimpleRethrowing(lastCatchBlock)) { "Last throw is not rethrowing" }
-            composite.statements.dropLast(1).forEach(::generateStatement)
-            body.buildThrowRef(SourceLocation.NoLocation)
-            body.buildEnd() // topLevelCatchLabel
-            return
-        }
-
-        if (nestedCatchLabel != null) {
-            if (!canUseJsTag) {
-                body.buildRefNull(WasmHeapType.Simple.Extern, SourceLocation.NoLocation(""))
             }
 
-            firstCatchBlock.wrapJsThrownValueIntoJsException()
-
-            if (!areTwoCatchWithTheSameBody) {
-                firstCatchBlock.initializeCatchParameter()
-                generateExpression(firstCatchBlock.result)
-                body.buildBr(topLevelCatchLabel, SourceLocation.NoLocation(""))
-            }
-
-            body.buildEnd() // nestedCatchLabel
-
-            if (hasOnlySingleCatchBlock && !canUseJsTag) {
-                body.buildThrow(wasmFileCodegenContext.throwableTagIndex, SourceLocation.NoLocation(""))
-                body.buildEnd() // topLevelCatchLabel
-                return
-            }
-        } else if (tryBlockType === WasmExternRef) {
-            lastCatchBlock.wrapJsThrownValueIntoJsException()
+            body.buildUnreachableForVerifier()
         }
-
-        lastCatchBlock.initializeCatchParameter()
-        generateExpression(lastCatchBlock.result)
-
-        body.buildEnd() // topLevelCatchLabel
     }
 
     private fun IrCatch.initializeCatchParameter() {
@@ -325,109 +393,128 @@ class BodyGenerator(
         }
     }
 
-    private fun IrCatch.wrapJsThrownValueIntoJsException() {
-        body.buildCall(
-            wasmFileCodegenContext.referenceFunction(wasmSymbols.jsRelatedSymbols.createJsException),
-            catchParameter.getSourceLocation()
-        )
-    }
-
     private fun IrStatement.isSimpleRethrowing(catchBlock: IrCatch): Boolean =
         ((this as IrThrow).value as IrGetValue).symbol == catchBlock.catchParameter.symbol
 
     /**
-     * The typical Kotlin try/catch:
+     * Generates WebAssembly code for a Kotlin try-catch-finally expression following the old exception handling proposal.
      *
-     * ```kotlin
-     * try {
-     *    RESULT_EXPRESSION
-     * } catch (e: ExceptionType) {
-     *    CATCH_EXPRESSION
-     * }
-     * ```
-     *
-     * Is translated into:
-     *
-     * ```wat
-     * try (BLOCK_TYPE)
-     *     TRANSLATED_RESULT_EXPRESSION
-     * catch IDX
-     *     TRANSLATED_CATCH_EXPRESSION
-     * end
-     * ```
-     *
+     * This function handles three main cases:
+     * 1. try-finally blocks (transformed into try-catch(Throwable))
+     * 2. try-catch blocks with Throwable/JsException handlers
+     * 3. try-catch blocks without Throwable/JsException handlers
      */
     private fun generateTryFollowingOldProposal(aTry: IrTry) {
-        val canUseJsTag = backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_JS_TAG)
+        val catchBlock = aTry.catches.single()
 
-        val lastCatchBlock = aTry.catches.last()
-        val firstCatchBlock = aTry.catches.first()
-        val hasOnlySingleCatchBlock = lastCatchBlock === firstCatchBlock
-
+        // type of <try> in terms of wasm types
         val resultType = wasmModuleTypeTransformer.transformBlockResultType(aTry.type)
-        var topLevelBlockLabel: Int? = null
-        val areTwoCatchWithTheSameBody = backendContext.isWasmJsTarget && (
-                lastCatchBlock.origin === SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION ||
-                        firstCatchBlock.origin === SYNTHETIC_JS_EXCEPTION_HANDLER_TO_SUPPORT_CATCH_THROWABLE
-                )
 
-        val lastCatchParameterIsJsException = backendContext.isWasmJsTarget &&
-                lastCatchBlock.catchParameter.type == wasmSymbols.jsRelatedSymbols.jsException.defaultType
+        when {
+            /* 
+            Kotlin try-finally block at this point expected to be transformed into try-catch(Throwable).
+            Note here we have only a finally block for a failure case, a success path is covered separately on IR level.
 
-        if (areTwoCatchWithTheSameBody) {
-            topLevelBlockLabel = body.buildBlock(resultType)
-        }
+            We generate the following wasm code:
+            ```wat
+            try (result $resultType)
+                <try>
+            catch_all | catch ;;  wasm-js | wasm-wasi 
+                <finally>
+                rethrow | throw $exn_tag
+            end
+            ```
+            */
+            catchBlock.origin == SYNTHETIC_CATCH_FOR_FINALLY_EXPRESSION -> {
+                body.buildTry(resultType) {
+                    generateExpression(aTry.tryResult)
 
-        val tryResultType = when {
-            areTwoCatchWithTheSameBody -> wasmModuleTypeTransformer.transformBlockResultType(irBuiltIns.throwableType)
-            else -> resultType
-        }
+                    if (backendContext.isWasmJsTarget) {
+                        body.buildCatchAll()
 
-        body.buildTry(null, tryResultType)
-        generateExpression(aTry.tryResult)
+                        buildFinallyBody(catchBlock)
+                        body.buildInstr(
+                            WasmOp.RETHROW,
+                            SourceLocation.NoLocation("Rethrow exception after finally block"),
+                            relativeTryLevelForRethrowInFinallyBlock
+                        )
+                    } else {
+                        // WasmEdge and maybe some other standalone VMs don't support rethrow instruction.
+                        body.buildCatch(exceptionTagId)
 
-        topLevelBlockLabel?.let { body.buildBr(it, SourceLocation.NoLocation("")) }
-
-        val tag = if (!lastCatchParameterIsJsException || !canUseJsTag)
-            wasmFileCodegenContext.throwableTagIndex
-        else
-            wasmFileCodegenContext.jsExceptionTagIndex
-
-        body.buildCatch(tag, SourceLocation.NextLocation)
-
-        if (tag === wasmFileCodegenContext.jsExceptionTagIndex) {
-            lastCatchBlock.wrapJsThrownValueIntoJsException()
-        }
-
-        if (lastCatchParameterIsJsException && !canUseJsTag) {
-            body.buildThrow(wasmFileCodegenContext.throwableTagIndex, SourceLocation.NoLocation(""))
-        } else if (!areTwoCatchWithTheSameBody) {
-            lastCatchBlock.initializeCatchParameter()
-            generateExpression(lastCatchBlock.result)
-        }
-
-        if (!hasOnlySingleCatchBlock || (lastCatchParameterIsJsException && !canUseJsTag) || areTwoCatchWithTheSameBody) {
-            if (canUseJsTag) {
-                body.buildCatch(wasmFileCodegenContext.jsExceptionTagIndex)
-            } else {
-                body.buildCatchAll()
-                body.buildRefNull(WasmHeapType.Simple.Extern, SourceLocation.NoLocation(""))
+                        buildCatchBlockBody(catchBlock)
+                    }
+                }
             }
 
-            firstCatchBlock.wrapJsThrownValueIntoJsException()
+            /* 
+            Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+            If there were catch blocks with non-Throwable type, they are replaced with ifs.
+            Since the original try-catch contained a catch with Throwable or JsException, 
+            we need to guarantee that the catch block will be executed for any exception, so we use catch_all as fallback.
 
-            if (!areTwoCatchWithTheSameBody) {
-                firstCatchBlock.initializeCatchParameter()
-                generateExpression(firstCatchBlock.result)
+            We generate the following wasm code:
+            ```wat
+            block $topLevelBlockLabel (result $resultType)
+                try (result $rawExceptionType)
+                    <try>
+                    br $topLevelBlockLabel
+                catch $exnTag
+                    ;; Do nothing, just let a reference on the top of the stack further.
+                catch_all
+                    ;; Use catch_all to make sure that catches for Throwable and JsException are executed for any exception.  
+                    ;; There is no information about the exception in this case, so we put `null` to the stack as a result of the try block.  
+                    ref.null $rawExceptionType
+                end
+                <catch(es)>
+            end
+            ```
+            */
+            catchBlock.toCatchThrowableOrJsException -> {
+                body.buildBlock(null, resultType) { topLevelBlockLabel ->
+                    body.buildTry(rawExceptionType) {
+                        generateExpression(aTry.tryResult)
+
+                        body.buildBr(
+                            topLevelBlockLabel,
+                            SourceLocation.NoLocation("Branch to success level after finish try block without any exception")
+                        )
+
+                        body.buildCatch(exceptionTagId, SourceLocation.NextLocation)
+
+                        body.buildCatchAll()
+                        body.buildRefNull(rawExceptionType.getHeapType(), SourceLocation.NoLocation("Set null ref for catch_all"))
+                    }
+
+                    buildCatchBlockBody(catchBlock)
+                }
             }
-        }
 
-        body.buildEnd() // try
+            /* 
+            Kotlin try-catch block at this point expected to be transformed into try-catch(Throwable).
+            If there were catch blocks with non-Throwable type, they are replaced with ifs.
+            Since the original try-catch didn't contain any catch with Throwable or JsException, 
+            we can generate a simple try-catch-end block.
 
-        if (areTwoCatchWithTheSameBody) {
-            lastCatchBlock.initializeCatchParameter()
-            generateExpression(lastCatchBlock.result)
-            body.buildEnd() // topLevelBlockLabel
+            We generate the following wasm code:
+            ```wat
+            try (result $resultType)
+                <try>
+            catch $exnTag
+                <catch(es)>
+            end
+            ```
+            */
+            else -> {
+                body.buildTry(resultType) {
+
+                    generateExpression(aTry.tryResult)
+
+                    body.buildCatch(exceptionTagId, SourceLocation.NextLocation)
+
+                    buildCatchBlockBody(catchBlock)
+                }
+            }
         }
     }
 
@@ -850,6 +937,21 @@ class BodyGenerator(
         }
 
         val location = call.getSourceLocation()
+
+        if (backendContext.isWasmJsTarget) {
+            when (function.symbol) {
+                wasmSymbols.jsRelatedSymbols.throw0 -> {
+                    if (backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+                        body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
+                        return true
+                    }
+
+                    body.buildThrow(exceptionTagId, location)
+                    return true
+                }
+                else -> {}
+            }
+        }
 
         when (function.symbol) {
             wasmSymbols.wasmTypeId -> {
@@ -1437,5 +1539,7 @@ class BodyGenerator(
         val vTableSpecialITableFieldId = WasmSymbol(0)
         val rttiImplementedIFacesFieldId = WasmSymbol(0)
         val rttiSuperClassFieldId = WasmSymbol(1)
+        private val exceptionTagId = WasmSymbol(0)
+        private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }
 }

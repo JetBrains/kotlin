@@ -90,7 +90,8 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     }
 
     if (context.isWasmJsTarget) {
-        add(context.wasmSymbols.jsRelatedSymbols.createJsException.owner)
+        add(context.wasmSymbols.jsRelatedSymbols.getKotlinException.owner)
+        add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
     }
 
     // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
