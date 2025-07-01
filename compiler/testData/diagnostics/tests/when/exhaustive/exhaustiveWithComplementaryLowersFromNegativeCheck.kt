@@ -10,7 +10,7 @@ enum class MyEnum { A, B, C }
 fun negSimpleEnum(x: MyEnum): Int {
     if (x != MyEnum.C) return 0
 
-    return when (x) {
+    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
         MyEnum.C -> 3
     }
 }
@@ -20,7 +20,7 @@ fun simpleVar(i: MyEnum): Int {
     if (x == MyEnum.A) return 1
     x = MyEnum.A
 
-    return when (x) {
+    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
         MyEnum.A -> 2
     }
 }
