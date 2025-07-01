@@ -17,10 +17,15 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -31,9 +36,11 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -850,4 +857,56 @@ class KotlinGradleIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-78785: build script resolves Gradle version specific jars")
+    @Test
+    fun buildScriptResolvesGradleVersionSpecificJars() {
+        fun resolveKgpJars(gradleVersion: GradleVersion): List<File> {
+            return project("empty", gradleVersion) {
+                plugins {
+                    kotlin("jvm")
+                }
+            }.buildScriptReturn {
+                listOf(
+                    KotlinMultiplatformExtension::class.java.protectionDomain.codeSource.location,
+                    KotlinGradlePluginDsl::class.java.protectionDomain.codeSource.location,
+                ).map { File(it.toURI()) }
+            }.buildAndReturn()
+        }
+
+        val resolvedJars = mapOf(
+            TestVersions.Gradle.MIN_SUPPORTED to resolveKgpJars(
+                gradleVersion = GradleVersion.version(TestVersions.Gradle.MIN_SUPPORTED)
+            ),
+            TestVersions.Gradle.G_8_6 to resolveKgpJars(
+                gradleVersion = GradleVersion.version(TestVersions.Gradle.G_8_6)
+            ),
+            TestVersions.Gradle.MAX_SUPPORTED to resolveKgpJars(
+                gradleVersion = GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED)
+            ),
+        ).mapValues {
+            it.value.map {
+                it.toPath().toList().last().pathString
+            }
+        }
+
+        assertEquals(
+            mapOf(
+                TestVersions.Gradle.MIN_SUPPORTED to listOf(
+                    "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}.jar",
+                    "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}.jar",
+                ),
+                TestVersions.Gradle.G_8_6 to listOf(
+                    "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}-gradle86.jar",
+                    "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}-gradle86.jar",
+                ),
+                TestVersions.Gradle.MAX_SUPPORTED to listOf(
+                    "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}-gradle813.jar",
+                    "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}-gradle813.jar",
+                ),
+            ),
+            resolvedJars,
+        )
+    }
+
 }

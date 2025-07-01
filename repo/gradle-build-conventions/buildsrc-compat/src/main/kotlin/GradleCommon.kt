@@ -52,8 +52,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import plugins.KotlinBuildPublishingPlugin.Companion.DEFAULT_MAIN_PUBLICATION_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
+import plugins.signLibraryPublication
 import java.io.File
 
 /**
@@ -111,8 +113,8 @@ fun Project.configureCommonPublicationSettingsForGradle(
                     }
                 }
         }
+        configureDefaultPublishing(signingRequired)
     }
-    configureDefaultPublishing(signingRequired)
 }
 
 /**
@@ -180,17 +182,35 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:8.14") {
+            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_COMMON}") {
                 capabilities {
                     requireCapability("org.gradle.experimental:gradle-public-api-internal")
                 }
             }
             if (this@createGradleCommonSourceSet.name !in testPlugins) {
-                compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
-                    capabilities {
-                        requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-                    }
-                }
+                compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api"))
+            }
+        }
+    }
+
+    afterEvaluate {
+        // The common source set compilation artifacts are never intended for runtime consumption
+        configurations.getByName(commonSourceSet.runtimeElementsConfigurationName).isCanBeConsumed = false
+
+        listOf(
+            /**
+             * Common source set outgoing variants should be a superset of attributes relative to [FIXED_CONFIGURATION_SUFFIX]. These
+             * variants are not published, but they are used to resolve interproject dependencies
+             */
+            commonSourceSet.apiElementsConfigurationName,
+        ).forEach {
+            val outgoingVariant = configurations.getByName(it)
+            commonVariantAttributes().execute(outgoingVariant)
+            outgoingVariant.attributes {
+                attribute(
+                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                    objects.named(GradlePluginVariant.GRADLE_COMMON),
+                )
             }
         }
     }
@@ -199,6 +219,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
         this@createGradleCommonSourceSet.extensions.configure<JavaPluginExtension> {
             registerFeature(commonSourceSet.name) {
                 usingSourceSet(commonSourceSet)
+                capability(project.group.toString(), project.name, project.version.toString())
                 disablePublication()
             }
         }
@@ -454,6 +475,16 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     }
                 }
             }
+
+        listOf(
+            compileClasspathConfigurationName,
+            runtimeClasspathConfigurationName,
+        ).forEach {
+            configurations.getByName(it).attributes.attribute(
+                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                objects.named(GradlePluginVariant.GRADLE_MIN.minimalSupportedGradleVersion),
+            )
+        }
     }
 
     val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
@@ -477,10 +508,10 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
 /**
  * Adding plugin variants: https://docs.gradle.org/current/userguide/implementing_gradle_plugins.html#plugin-with-variants
  */
-fun Project.createGradlePluginVariant(
+private fun Project.createGradlePluginVariant(
     variant: GradlePluginVariant,
     commonSourceSet: SourceSet,
-    isGradlePlugin: Boolean = true,
+    publishShadowedJar: Boolean,
 ): SourceSet {
     val variantSourceSet = sourceSets.create(variant.sourceSetName) {
         excludeGradleCommonDependencies(this)
@@ -491,9 +522,7 @@ fun Project.createGradlePluginVariant(
         extensions.configure<JavaPluginExtension> {
             registerFeature(variantSourceSet.name) {
                 usingSourceSet(variantSourceSet)
-                if (isGradlePlugin) {
-                    capability(project.group.toString(), project.name, project.version.toString())
-                }
+                capability(project.group.toString(), project.name, project.version.toString())
 
                 if (kotlinBuildProperties.publishGradlePluginsJavadoc) {
                     withJavadocJar()
@@ -557,15 +586,15 @@ fun Project.createGradlePluginVariant(
             variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
         }
         if (this@createGradlePluginVariant.name !in testPlugins) {
-            variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
-                capabilities {
-                    requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
-                }
-            }
+            variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api"))
         }
     }
 
     registerValidatePluginTasks(variantSourceSet)
+
+    if (publishShadowedJar) {
+        publishShadowedJar(variantSourceSet, commonSourceSet)
+    }
 
     return variantSourceSet
 }
@@ -825,6 +854,7 @@ fun Project.disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsIn
                 listOf("-Dkotlinx.coroutines.stacktrace.recovery=false")
             } else {
                 emptyList()
+
             }
         }
     }
@@ -842,3 +872,58 @@ fun Project.excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath() {
 }
 
 private fun Project.gradleEmbeddedStdlib(): File = (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
+
+fun Project.configureGradlePluginDependency(
+    withPublication: Boolean,
+) {
+    plugins.apply("java-library")
+    plugins.apply("org.jetbrains.kotlin.jvm")
+    if (withPublication) {
+        plugins.apply("maven-publish")
+    }
+
+    configureBuildToolsApiVersionForGradleCompatibility()
+    configureCommonPublicationSettingsForGradle(signLibraryPublication)
+    addBomCheckTask()
+    extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
+
+    val commonSourceSet = createGradleCommonSourceSet()
+    reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
+    createGradlePluginVariants(
+        commonSourceSet = commonSourceSet,
+        publishShadowedJar = false
+    )
+
+    if (withPublication) {
+        (extensions.getByName("publishing") as PublishingExtension).apply {
+            publications {
+                register<MavenPublication>(DEFAULT_MAIN_PUBLICATION_NAME) {
+                    from(components["java"])
+                    suppressAllPomMetadataWarnings() // Don't warn about additional published variants
+                }
+            }
+        }
+    }
+}
+
+fun Project.createGradlePluginVariants(
+    commonSourceSet: SourceSet,
+    publishShadowedJar: Boolean,
+) {
+    listOf(
+        GradlePluginVariant.GRADLE_80,
+        GradlePluginVariant.GRADLE_81,
+        GradlePluginVariant.GRADLE_82,
+        GradlePluginVariant.GRADLE_85,
+        GradlePluginVariant.GRADLE_86,
+        GradlePluginVariant.GRADLE_88,
+        GradlePluginVariant.GRADLE_811,
+        GradlePluginVariant.GRADLE_813,
+    ).forEach { variant ->
+        createGradlePluginVariant(
+            variant = variant,
+            commonSourceSet = commonSourceSet,
+            publishShadowedJar = publishShadowedJar,
+        )
+    }
+}
