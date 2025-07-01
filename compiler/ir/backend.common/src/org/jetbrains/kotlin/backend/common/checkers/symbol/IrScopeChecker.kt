@@ -108,24 +108,28 @@ internal class IrScopeContextUpdater(val scopeContext: IrScopeCheckerContext) : 
 
 internal class IrScopeChecker(val scopeContext: IrScopeCheckerContext) : IrSymbolChecker {
 
+
     private fun IrSymbol.getVisibility(): SymbolVisibility {
         if (!isBound) return SymbolVisibility.Global
         if (this is IrReturnableBlockSymbol) return SymbolVisibility.Local
         if (this is IrLocalDelegatedPropertySymbol) return SymbolVisibility.Local
         val owner = owner as? IrDeclaration ?: return SymbolVisibility.Global
-        if (owner.isLocal) {
-            return when (owner) {
-                is IrClass -> SymbolVisibility.InFile(owner.file)
-                is IrFunction if owner.dispatchReceiverParameter != null && owner.parent is IrClass -> SymbolVisibility.InFile(owner.file)
-                is IrProperty -> SymbolVisibility.InFile(owner.file)
-                else -> SymbolVisibility.Local
+        return when {
+            owner.isLocal -> {
+                when (owner) {
+                    is IrClass -> SymbolVisibility.InFile(owner.file)
+                    is IrFunction if owner.dispatchReceiverParameter != null && owner.parent is IrClass -> SymbolVisibility.InFile(owner.file)
+                    is IrProperty -> SymbolVisibility.InFile(owner.file)
+                    else -> SymbolVisibility.Local
+                }
             }
+            owner.isPrivate -> SymbolVisibility.InFile(owner.file)
+            else -> SymbolVisibility.Global
         }
-        if (owner.parentDeclarationsWithSelf.any { it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility) }) {
-            return SymbolVisibility.InFile(owner.file)
-        }
-        return SymbolVisibility.Global
     }
+
+    private val IrDeclaration.isPrivate: Boolean
+        get() = parentDeclarationsWithSelf.any { it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility) }
 
     override fun check(symbol: IrSymbol, container: IrElement, context: CheckerContext) {
         if (container is IrSymbolOwner && symbol == container.symbol) return
