@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache.RequiresDeclarationInScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -268,6 +269,9 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             withPsiEntry("declaration", declaration, module)
         }
 
+        // We can assume that the outer class is in the scope since we're deserializing it with this symbol provider. Since the nested class
+        // is in the same file as its outer class, it's definitely also in the scope of the symbol provider.
+        @OptIn(RequiresDeclarationInScope::class)
         return classCache.getSymbolByPsiInScope(classId, declaration, parentContext)
     }
 
