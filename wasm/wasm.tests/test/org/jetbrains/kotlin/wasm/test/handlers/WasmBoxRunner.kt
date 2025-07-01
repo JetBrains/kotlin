@@ -108,8 +108,16 @@ class WasmBoxRunner(
                 println(" ------ $mode JS   file://$path/index.uninstantiated.mjs")
                 println(" ------ $mode JS   file://$path/index.mjs")
                 println(" ------ $mode Test file://$path/test.mjs")
-                val projectName = "kotlin"
-                println(" ------ $mode HTML http://0.0.0.0:63342/$projectName/${dir.path}/index.html")
+
+                val rootStartIndex = path.indexOf("wasm/wasm.tests")
+                if (rootStartIndex >= 0) {
+                    val pathRelativeToProjectRoot = path.substring(rootStartIndex)
+                    val projectName = "kotlin"
+                    val baseUrl = System.getProperty("kotlin.wasm.sources.base.url", "http://0.0.0.0:63342/$projectName")
+                    println(" ------ $mode HTML $baseUrl/$pathRelativeToProjectRoot/index.html")
+                }
+
+
                 for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
                     println(" ------ $mode External ESM file://$path/${mjsFile.name}")
                 }
