@@ -46,7 +46,7 @@ data class UnitStats(
     val irLoweringStats: Time?,
     val backendStats: Time?,
 
-    val loweringStats: List<Pair<String, Time>>? = null,
+    val individualLoweringStats: List<LoweringStats>? = null,
 
     // Null in case of java files not used
     val findJavaClassStats: SideStats? = null,
@@ -136,6 +136,8 @@ data class SideStats(
 
 data class GarbageCollectionStats(val kind: String, val millis: Long, val count: Long)
 
+data class LoweringStats(val name: String, val time: Time, val parentPhaseType: PhaseType)
+
 fun UnitStats.forEachPhaseMeasurement(action: (PhaseType, Time?) -> Unit) {
     action(PhaseType.Initialization, initStats)
     action(PhaseType.Analysis, analysisStats)
@@ -176,17 +178,15 @@ fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
                     }
         )
 
-        if (phaseType == PhaseType.IrPreLowering) {
-            loweringStats?.forEach { (loweringName, loweringTime) ->
-                action(
-                    "%20s%8s ms".format("LOWERING", loweringTime.millis) +
-                            if (linesCount != 0) {
-                                "%12.3f loc/s ($loweringName)".format(Locale.ENGLISH, getLinesPerSecond(loweringTime))
-                            } else {
-                                " ($loweringName)"
-                            }
-                )
-            }
+        individualLoweringStats?.filter { it.parentPhaseType == phaseType }?.forEach { (loweringName, loweringTime) ->
+            action(
+                "%20s%8s ms".format("LOWERING", loweringTime.millis) +
+                        if (linesCount != 0) {
+                            "%12.3f loc/s ($loweringName)".format(Locale.ENGLISH, getLinesPerSecond(loweringTime))
+                        } else {
+                            " ($loweringName)"
+                        }
+            )
         }
     }
 

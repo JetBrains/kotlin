@@ -44,14 +44,8 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
 
         addTimeMetricNs(gradleBuildTime, time.nanos)
 
-        if (phaseType == PhaseType.IrPreLowering) {
-            val preLowerings = GradleBuildTime.IR_PRE_LOWERING.children()?.filterIsInstance<GradleBuildTime>()
-            val loweringsStatsMap = moduleStats.loweringStats?.toMap()
-            preLowerings?.forEach { gradleBuildTime ->
-                loweringsStatsMap?.get(gradleBuildTime.getReadableString())?.let { time ->
-                    addTimeMetricNs(gradleBuildTime, time.nanos)
-                }
-            }
+        moduleStats.individualLoweringStats?.filter { it.parentPhaseType == phaseType }?.forEach { (name, time) ->
+            addDynamicTimeMetricNs(name, gradleBuildTime, time.nanos)
         }
 
         if (phaseType == PhaseType.Analysis) {

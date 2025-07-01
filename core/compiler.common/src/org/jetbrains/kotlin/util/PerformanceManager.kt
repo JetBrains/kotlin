@@ -43,7 +43,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private var currentLoweringTime: Time? = null
     private var currentLowering: String? = null
-    private val loweringMeasurements = LinkedHashMap<String, Time>()
+    private val loweringMeasurements = LinkedHashMap<Pair<String, PhaseType>, Time>()
 
     var isExtendedStatsEnabled: Boolean = false
         private set
@@ -121,7 +121,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             klibWritingTime,
             irLoweringTime,
             backendTime,
-            loweringMeasurements.toList(),
+            loweringMeasurements.map { (key, time) ->
+                val (name, phaseType) = key
+                LoweringStats(name, time, phaseType)
+            },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -211,7 +214,8 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         assert(currentLoweringTime != null)
         assert(currentLowering == loweringName)
 
-        loweringMeasurements[loweringName] = (loweringMeasurements[loweringName] ?: Time.ZERO) + (currentTime() - currentLoweringTime!!)
+        loweringMeasurements[loweringName to currentPhaseType] =
+            (loweringMeasurements[loweringName to currentPhaseType] ?: Time.ZERO) + (currentTime() - currentLoweringTime!!)
         currentLoweringTime = null
     }
 
