@@ -27,7 +27,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppC
         }
 
         declaration.symbol.processAllDeclaredCallables(context.session) { function ->
-            if (function !is FirNamedFunctionSymbol || !function.isOverride || !function.hasBody) return@processAllDeclaredCallables
+            if (function !is FirNamedFunctionSymbol || !function.hasBody) return@processAllDeclaredCallables
             var methodOfAny = false
             if (function.valueParameterSymbols.isEmpty() &&
                 (function.name == HASHCODE_NAME || function.name == TO_STRING)

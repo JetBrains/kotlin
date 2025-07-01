@@ -16,6 +16,7 @@ public final class Boo /* Boo*/ {
 }
 
 public final class Derived /* Derived*/ implements Base {
+  @java.lang.Override()
   @org.jetbrains.annotations.Nullable()
   public @org.jetbrains.annotations.Nullable() java.lang.Object foo(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() kotlin.Unit>);//  foo(@org.jetbrains.annotations.NotNull() kotlin.coroutines.Continuation<? super @org.jetbrains.annotations.NotNull() kotlin.Unit>)
 

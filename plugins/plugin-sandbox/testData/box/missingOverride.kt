@@ -1,5 +1,4 @@
 // ISSUE: KT-78351
-// IGNORE_BACKEND: ANY
 import org.jetbrains.kotlin.plugin.sandbox.AddSupertype
 
 interface Target {
