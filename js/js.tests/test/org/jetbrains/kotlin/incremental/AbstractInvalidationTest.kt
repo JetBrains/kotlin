@@ -11,6 +11,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinLibraryFile
 import org.jetbrains.kotlin.ir.backend.js.ic.KotlinSourceFileMap
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
@@ -29,10 +30,6 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
-import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
-import org.jetbrains.kotlin.js.config.friendLibraries
-import org.jetbrains.kotlin.js.config.includes
-import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
@@ -147,13 +144,13 @@ abstract class AbstractInvalidationTest(
         includedLibrary: String? = null,
     ): CompilerConfiguration {
         val copy = environment.configuration.copy()
-        copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
-        copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
-        copy.put(JSConfigurationKeys.SOURCE_MAP, true)
-        copy.put(JSConfigurationKeys.USE_ES6_CLASSES, targetBackend == TargetBackend.JS_IR_ES6)
-        copy.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, targetBackend == TargetBackend.JS_IR_ES6)
-        copy.put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, targetBackend == TargetBackend.JS_IR_ES6)
+        copy.moduleName = moduleName
+        copy.moduleKind = moduleKind
+        copy.propertyLazyInitialization = true
+        copy.sourceMap = true
+        copy.useEs6Classes = targetBackend == TargetBackend.JS_IR_ES6
+        copy.compileSuspendAsJsGenerator = targetBackend == TargetBackend.JS_IR_ES6
+        copy.compileLambdasAsEs6ArrowFunctions = targetBackend == TargetBackend.JS_IR_ES6
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
             languageFeatures.forEach {

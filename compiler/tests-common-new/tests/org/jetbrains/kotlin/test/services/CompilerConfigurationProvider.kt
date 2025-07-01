@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.TEST_ONLY_PLUGIN_REGISTRATION_CALLBACK
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.isApplicableTo
-import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import java.io.File
 
 abstract class CompilerConfigurationProvider(val testServices: TestServices) : TestService {
@@ -134,35 +134,26 @@ fun createCompilerConfiguration(
     configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
-        configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, true)
+        configuration.generateStrictImplicitExport = true
     }
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives) {
-        configuration.put(JSConfigurationKeys.GENERATE_DTS, true)
+        configuration.generateDts = true
     }
 
     if (JsEnvironmentConfigurationDirectives.ES6_MODE in module.directives) {
-        configuration.put(JSConfigurationKeys.USE_ES6_CLASSES, true)
-        configuration.put(JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR, true)
-        configuration.put(
-            JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS,
-            JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS !in module.directives,
-        )
+        configuration.useEs6Classes = true
+        configuration.compileSuspendAsJsGenerator = true
+        configuration.compileLambdasAsEs6ArrowFunctions = JsEnvironmentConfigurationDirectives.DISABLE_ES6_ARROWS !in module.directives
     }
 
     if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
-        configuration[CommonConfigurationKeys.USE_FIR] = true
+        configuration.useFir = true
     }
 
-    configuration.put(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
-    configuration.put(
-        CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, testServices),
-    )
-    configuration.put(
-        CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
-        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, testServices),
-    )
+    configuration.verifyIr = IrVerificationMode.ERROR
+    configuration.enableIrVisibilityChecks = !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, testServices)
+    configuration.enableIrVarargTypesChecks = !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, testServices)
 
     val messageCollector = MessageCollectorForCompilerTests(System.err, CompilerTestMessageRenderer(module))
     configuration.messageCollector = messageCollector
