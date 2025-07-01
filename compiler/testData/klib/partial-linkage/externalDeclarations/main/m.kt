@@ -8,11 +8,7 @@ fun box() = abiTest {
     expectSuccess("ExternalClassInheritedFromAbstractExternalClass.abstractFunction") { ecifaec.abstractFunction() }
     expectSuccess("ExternalClassInheritedFromAbstractExternalClass.removedAbstractFunction") { ecifaec.removedAbstractFunction() }
 
-    val expectedExceptionMessage = when (testMode.isWasm) {
-        true -> "Exception was thrown while running JavaScript code"
-        else -> "Calling abstract function AbstractExternalClass.addedAbstractFunction"
-    }
-    expectRuntimeFailure(expectedExceptionMessage) { ecifaec.addedAbstractFunction() }
+    expectRuntimeFailure("Calling abstract function AbstractExternalClass.addedAbstractFunction") { ecifaec.addedAbstractFunction() }
     expectSuccess("AbstractExternalClass.function") { ecifaec.function() }
     expectFailure(linkage("Function 'removedFunction' can not be called: No function found for symbol '/ExternalClassInheritedFromAbstractExternalClass.removedFunction'")) { ecifaec.callRemovedFunction() }
     expectSuccess("AbstractExternalClass.addedFunction") { ecifaec.addedFunction() }
