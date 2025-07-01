@@ -153,6 +153,7 @@ public actual fun Int.toString(radix: Int): String = asDynamic().toString(checkR
  *
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
+@OptIn(BoxedLongImplementation::class)
 @SinceKotlin("1.2")
 public actual fun Long.toString(radix: Int): String =
     this.toStringImpl(checkRadix(radix))
