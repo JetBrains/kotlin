@@ -367,15 +367,8 @@ internal fun fromNumber(value: Double): Long {
     }
 }
 
-private const val TWO_PWR_16_DBL_ = (1 shl 16).toDouble()
-
-private const val TWO_PWR_24_DBL_ = (1 shl 24).toDouble()
-
 //private val TWO_PWR_32_DBL_ = TWO_PWR_16_DBL_ * TWO_PWR_16_DBL_
 private const val TWO_PWR_32_DBL_ = (1 shl 16).toDouble() * (1 shl 16).toDouble()
-
-//private val TWO_PWR_64_DBL_ = TWO_PWR_32_DBL_ * TWO_PWR_32_DBL_
-private const val TWO_PWR_64_DBL_ = ((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())
 
 //private val TWO_PWR_63_DBL_ = TWO_PWR_64_DBL_ / 2
 private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())) / 2
@@ -391,5 +384,3 @@ private val MAX_VALUE = Long(-1, -1 ushr 1)
 private val MIN_VALUE = Long(0, 1 shl 31)
 
 private val TWO_PWR_24_ = fromInt(1 shl 24)
-
-
