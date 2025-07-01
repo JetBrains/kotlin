@@ -1173,7 +1173,9 @@ public actual class Int private constructor() : Number(), Comparable<Int> {
 
 /** Represents a 64-bit signed integer. */
 @Suppress("NOTHING_TO_INLINE")
-public actual class Long internal constructor(internal val low: Int, internal val high: Int) : Number(), Comparable<Long> {
+public actual class Long
+@BoxedLongApi
+internal constructor(@property:BoxedLongApi internal val low: Int, @property:BoxedLongApi internal val high: Int) : Number(), Comparable<Long> {
     public actual companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -1231,6 +1233,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * or a positive number if it's greater than other.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override operator fun compareTo(other: Long): Int =
         this.compare(other)
 
@@ -1269,6 +1272,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual operator fun plus(other: Long): Long =
         this.add(other)
 
@@ -1299,6 +1303,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual operator fun minus(other: Long): Long =
         this.subtract(other)
 
@@ -1329,6 +1334,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual operator fun times(other: Long): Long =
         this.multiply(other)
 
@@ -1359,6 +1365,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual operator fun div(other: Long): Long =
         this.divide(other)
 
@@ -1409,6 +1416,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      */
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual operator fun rem(other: Long): Long =
         this.modulo(other)
 
@@ -1521,6 +1529,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun shl(bitCount: Int): Long =
         shiftLeft(bitCount)
 
@@ -1531,6 +1540,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun shr(bitCount: Int): Long =
         shiftRight(bitCount)
 
@@ -1541,26 +1551,31 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The shift distance actually used is therefore always in the range `0..63`.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun ushr(bitCount: Int): Long =
         shiftRightUnsigned(bitCount)
 
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun and(other: Long): Long =
         Long(this.low and other.low, this.high and other.high)
 
     /** Performs a bitwise OR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun or(other: Long): Long =
         Long(this.low or other.low, this.high or other.high)
 
     /** Performs a bitwise XOR operation between the two values. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual infix fun xor(other: Long): Long =
         Long(this.low xor other.low, this.high xor other.high)
 
     /** Inverts the bits in this value. */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual fun inv(): Long =
         Long(low.inv(), high.inv())
 
@@ -1573,6 +1588,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toByte(): Byte =
         low.toByte()
 
@@ -1587,6 +1603,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toChar(): Char =
         low.toChar()
 
@@ -1599,6 +1616,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toShort(): Short =
         low.toShort()
 
@@ -1611,6 +1629,7 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toInt(): Int =
         low
 
@@ -1638,17 +1657,21 @@ public actual class Long internal constructor(internal val low: Int, internal va
      * the one with zero at least significant bit of mantissa is selected.
      */
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toDouble(): Double =
         toNumber()
 
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun toString(): String =
         this.toStringImpl(radix = 10)
 
     @kotlin.internal.IntrinsicConstEvaluation
+    @OptIn(BoxedLongApi::class)
     public actual override fun equals(other: Any?): Boolean =
         other is Long && equalsLong(other)
 
+    @OptIn(BoxedLongApi::class)
     public actual override fun hashCode(): Int =
         hashCode(this)
 

@@ -25,13 +25,14 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         if (thisKind == PrimitiveType.LONG) {
             annotations += "Suppress(\"NOTHING_TO_INLINE\")"
             primaryConstructor {
+                annotations += "BoxedLongApi"
                 visibility = MethodVisibility.INTERNAL
                 parameter {
-                    name = "internal val low"
+                    name = "@property:BoxedLongApi internal val low"
                     type = PrimitiveType.INT.capitalized
                 }
                 parameter {
-                    name = "internal val high"
+                    name = "@property:BoxedLongApi internal val high"
                     type = PrimitiveType.INT.capitalized
                 }
             }
@@ -55,6 +56,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     else -> error("Unsupported binary operation: $methodName")
                 }
                 "this.$implMethod(other)".setAsExpressionBody()
+                annotations += "OptIn(BoxedLongApi::class)"
             } else {
                 modifySignature { isInline = true }
                 "this${thisKind.castToIfNecessary(otherKind)}.${methodName}(other${otherKind.castToIfNecessary(thisKind)})".setAsExpressionBody()
@@ -92,6 +94,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                 else -> error(methodName)
             }
             "$implMethod(bitCount)".setAsExpressionBody()
+            annotations += "OptIn(BoxedLongApi::class)"
         }
     }
 
@@ -102,39 +105,56 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
             } else {
                 "Long(this.low $methodName other.low, this.high $methodName other.high)".setAsExpressionBody()
             }
+            annotations += "OptIn(BoxedLongApi::class)"
         }
     }
 
     override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            var assumesBoxedImplementation = false
             when (otherKind) {
                 PrimitiveType.CHAR,
                 PrimitiveType.BYTE,
-                PrimitiveType.SHORT -> "low.to${otherKind.capitalized}()"
-                PrimitiveType.INT -> "low"
+                PrimitiveType.SHORT -> {
+                    assumesBoxedImplementation = true
+                    "low.to${otherKind.capitalized}()"
+                }
+                PrimitiveType.INT -> {
+                    assumesBoxedImplementation = true
+                    "low"
+                }
                 PrimitiveType.LONG -> "this"
                 PrimitiveType.FLOAT -> "toDouble().toFloat()"
-                PrimitiveType.DOUBLE -> "toNumber()"
+                PrimitiveType.DOUBLE -> {
+                    assumesBoxedImplementation = true
+                    "toNumber()"
+                }
                 else -> error("Unsupported type $otherKind for Long conversion")
             }.setAsExpressionBody()
+            if (assumesBoxedImplementation) {
+                annotations += "OptIn(BoxedLongApi::class)"
+            }
         }
     }
 
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             "other is Long && equalsLong(other)".setAsExpressionBody()
+            annotations += "OptIn(BoxedLongApi::class)"
         }
     }
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             "this.toStringImpl(radix = 10)".setAsExpressionBody()
+            annotations += "OptIn(BoxedLongApi::class)"
         }
     }
 
     override fun MethodBuilder.modifyGeneratedHashCode(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             "hashCode(this)".setAsExpressionBody()
+            annotations += "OptIn(BoxedLongApi::class)"
         } else {
             noBody()
         }

@@ -17,8 +17,10 @@ internal fun numberToShort(a: dynamic): Short = toShort(numberToInt(a))
 internal fun toByte(@Suppress("UNUSED_PARAMETER") a: dynamic): Byte = js("a << 24 >> 24").unsafeCast<Byte>()
 internal fun toShort(@Suppress("UNUSED_PARAMETER") a: dynamic): Short = js("a << 16 >> 16").unsafeCast<Short>()
 
+@BoxedLongApi
 internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
 
+@BoxedLongApi
 internal fun toLong(a: dynamic): Long = fromInt(a)
 
 internal fun doubleToInt(a: Double): Int = when {

@@ -23,12 +23,14 @@ private val lowIndex = run {
 }
 private val highIndex = 1 - lowIndex
 
+@OptIn(BoxedLongApi::class)
 internal fun doubleToRawBits(value: Double): Long {
     bufFloat64[0] = value
     return Long(bufInt32[lowIndex], bufInt32[highIndex])
 }
 
 @PublishedApi
+@OptIn(BoxedLongApi::class)
 internal fun doubleFromBits(value: Long): Double {
     bufInt32[lowIndex] = value.low
     bufInt32[highIndex] = value.high
