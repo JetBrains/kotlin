@@ -112,6 +112,18 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     }
 
     @Test
+    @TestMetadata("namelessClassAmbiguitySourceSingleModule.kt")
+    public void testNamelessClassAmbiguitySourceSingleModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/namelessClassAmbiguitySourceSingleModule.kt");
+    }
+
+    @Test
+    @TestMetadata("namelessNestedClassAmbiguitySourceSingleModule.kt")
+    public void testNamelessNestedClassAmbiguitySourceSingleModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/namelessNestedClassAmbiguitySourceSingleModule.kt");
+    }
+
+    @Test
     @TestMetadata("nestedClassAmbiguityLibraryMultiModule.kt")
     public void testNestedClassAmbiguityLibraryMultiModule() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassAmbiguityLibraryMultiModule.kt");
@@ -127,6 +139,12 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     @TestMetadata("nestedClassAmbiguitySourceSingleModule.kt")
     public void testNestedClassAmbiguitySourceSingleModule() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassAmbiguitySourceSingleModule.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClassInNamelessClassAmbiguitySourceSingleModule.kt")
+    public void testNestedClassInNamelessClassAmbiguitySourceSingleModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/nestedClassInNamelessClassAmbiguitySourceSingleModule.kt");
     }
 
     @Test
