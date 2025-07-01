@@ -51,10 +51,16 @@ class WasmBoxRunner(
                         actualResult = jsModule.box();
                     } catch(e) {
                         console.log('Failed with exception!')
-                        console.log('Message: ' + e.message)
-                        console.log('Name:    ' + e.name)
-                        console.log('Stack:')
-                        console.log(e.stack)
+
+                        if (e instanceof Error) {
+                            console.log('Message: ' + e.message)
+                            console.log('Name:    ' + e.name)
+                            console.log('Stack:')
+                            console.log(e.stack)
+                        } else {
+                            console.log('e: ' + e)
+                            console.log('typeof e: ' + typeof e)
+                        }
                     }
     
                     if (actualResult !== "OK")
