@@ -25,8 +25,9 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
                 if (context.config.target.family == Family.ANDROID) {
                     val configuration = context.config.configuration
                     val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-                    if (androidProgramType.linkerOutputKindOverride != null) {
-                        return@run androidProgramType.linkerOutputKindOverride
+                    when (androidProgramType) {
+                        AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
+                        AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
                     }
                 }
                 LinkerOutputKind.EXECUTABLE
