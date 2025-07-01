@@ -165,13 +165,6 @@ internal class JsCompilerInvocationTestArtifactBuilder(
                 K2JSCompilerArguments::irProduceKlibFile.cliArgument,
                 K2JSCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
-                // Halt on any unexpected warning.
-                K2JSCompilerArguments::allWarningsAsErrors.cliArgument,
-                // Tests suppress the INVISIBLE_REFERENCE check.
-                // However, JS doesn't produce the INVISIBLE_REFERENCE error;
-                // As result, it triggers a suppression error warning about the redundant suppression.
-                // This flag is used to disable the warning.
-                K2JSCompilerArguments::dontWarnOnErrorSuppression.cliArgument
             ),
             dependencies.toCompilerArgs(),
             compilerArguments,
@@ -215,9 +208,6 @@ internal class JsCompilerInvocationTestArtifactBuilder(
                 K2JSCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
                 K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
-                // IMPORTANT: Omitting PL arguments here. The default PL mode should be in effect.
-                // "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=INFO",
-                K2JSCompilerArguments::allWarningsAsErrors.cliArgument
             ),
             listOf(
                 K2JSCompilerArguments::cacheDirectory.cliArgument,
