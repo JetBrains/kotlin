@@ -4,12 +4,18 @@
 fun throwSomeJsException(): Int = js("{ throw new TypeError('Test'); }")
 fun throwSomeJsPrimitive(): Int = js("{ throw 'Test'; }")
 fun throwSomeKotlinException(): Int = throw IllegalStateException("Test")
-inline fun <reified T: Throwable> wasThrown(fn: () -> Any?): Boolean {
+fun throwNumberFromJs(): Int = js("{ throw 42; }")
+fun throwNullFromJs(): Int = js("{ throw null; }")
+
+@JsName("TypeError")
+external class JsTypeError : JsAny
+
+inline fun <reified T : Throwable> wasThrown(fn: () -> Any?): Boolean {
     try {
-       fn()
+        fn()
         return false
     } catch (e: Throwable) {
-       return e is T
+        return e is T
     }
     return true
 }
@@ -18,6 +24,24 @@ inline fun <reified T: Throwable> wasThrown(fn: () -> Any?): Boolean {
 fun jsPrimitiveWithFinally(): Boolean {
     try {
         throwSomeJsPrimitive()
+        return false
+    } finally {
+        return true
+    }
+    return false
+}
+fun jsNumberWithFinally(): Boolean {
+    try {
+        throwNumberFromJs()
+        return false
+    } finally {
+        return true
+    }
+    return false
+}
+fun jsNullWithFinally(): Boolean {
+    try {
+        throwNullFromJs()
         return false
     } finally {
         return true
@@ -53,6 +77,28 @@ fun jsPrimitiveWithCatchThrowable(): Boolean {
     }
     return false
 }
+fun jsNumberWithCatchThrowable(): Boolean {
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: Throwable) {
+        return e is JsException &&
+                e.message == "Exception was thrown while running JavaScript code" &&
+                e.thrownValue == null
+    }
+    return false
+}
+fun jsNullWithCatchThrowable(): Boolean {
+    try {
+        throwNullFromJs()
+        return false
+    } catch (e: Throwable) {
+        return e is JsException &&
+                e.message == "Exception was thrown while running JavaScript code" &&
+                e.thrownValue == null
+    }
+    return false
+}
 fun jsExceptionWithCatchThrowable(): Boolean {
     try {
         throwSomeJsException()
@@ -76,6 +122,24 @@ fun kotlinExceptionWithCatchThrowable(): Boolean {
 fun jsPrimitiveWithCatchJsException(): Boolean {
     try {
         throwSomeJsPrimitive()
+        return false
+    } catch (e: JsException) {
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+    }
+    return false
+}
+fun jsNumberWithCatchJsException(): Boolean {
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: JsException) {
+        return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
+    }
+    return false
+}
+fun jsNullWithCatchJsException(): Boolean {
+    try {
+        throwNullFromJs()
         return false
     } catch (e: JsException) {
         return e.message == "Exception was thrown while running JavaScript code" && e.thrownValue == null
@@ -111,6 +175,24 @@ fun jsPrimitiveWithCatchIllegalStateException(): Boolean {
     }
     return true
 }
+fun jsNumberWithCatchIllegalStateException(): Boolean {
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: IllegalStateException) {
+        return false
+    }
+    return true
+}
+fun jsNullWithCatchIllegalStateException(): Boolean {
+    try {
+        throwNullFromJs()
+        return false
+    } catch (e: IllegalStateException) {
+        return false
+    }
+    return true
+}
 fun jsExceptionWithCatchIllegalStateException(): Boolean {
     try {
         throwSomeJsException()
@@ -135,6 +217,30 @@ fun jsPrimitiveWithCatchThrowableAndFinally(): Boolean {
     var finalException: Throwable? = null
     try {
         throwSomeJsPrimitive()
+        return false
+    } catch (e: Throwable) {
+        finalException = e
+    } finally {
+        return finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+    }
+    return false
+}
+fun jsNumberWithCatchThrowableAndFinally(): Boolean {
+    var finalException: Throwable? = null
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: Throwable) {
+        finalException = e
+    } finally {
+        return finalException is JsException && finalException.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+    }
+    return false
+}
+fun jsNullWithCatchThrowableAndFinally(): Boolean {
+    var finalException: Throwable? = null
+    try {
+        throwNullFromJs()
         return false
     } catch (e: Throwable) {
         finalException = e
@@ -181,6 +287,30 @@ fun jsPrimitiveWithCatchJsExceptionAndFinally(): Boolean {
     }
     return false
 }
+fun jsNumberWithCatchJsExceptionAndFinally(): Boolean {
+    var finalException: JsException? = null
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: JsException) {
+        finalException = e
+    } finally {
+        return finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+    }
+    return false
+}
+fun jsNullWithCatchJsExceptionAndFinally(): Boolean {
+    var finalException: JsException? = null
+    try {
+        throwNullFromJs()
+        return false
+    } catch (e: JsException) {
+        finalException = e
+    } finally {
+        return finalException?.message == "Exception was thrown while running JavaScript code" && finalException.thrownValue == null
+    }
+    return false
+}
 fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
     var finalException: JsException? = null
     try {
@@ -211,6 +341,30 @@ fun jsPrimitiveWithCatchIllegalStateExceptionAndFinally(): Boolean {
     var finalException: IllegalStateException? = null
     try {
         throwSomeJsPrimitive()
+        return false
+    } catch (e: IllegalStateException) {
+        finalException = e
+    } finally {
+        return finalException == null
+    }
+    return true
+}
+fun jsNumberWithCatchIllegalStateExceptionAndFinally(): Boolean {
+    var finalException: IllegalStateException? = null
+    try {
+        throwNumberFromJs()
+        return false
+    } catch (e: IllegalStateException) {
+        finalException = e
+    } finally {
+        return finalException == null
+    }
+    return true
+}
+fun jsNullWithCatchIllegalStateExceptionAndFinally(): Boolean {
+    var finalException: IllegalStateException? = null
+    try {
+        throwNullFromJs()
         return false
     } catch (e: IllegalStateException) {
         finalException = e
@@ -1393,36 +1547,50 @@ fun kotlinExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFi
 fun box(): String {
     // Finally only
     if (!jsPrimitiveWithFinally()) return "Issue with try with finally on a JS primitive thrown"
+    if (!jsNumberWithFinally()) return "Issue with try with finally on a JS number thrown"
+    if (!jsNullWithFinally()) return "Issue with try with finally on a JS null thrown"
     if (!jsExceptionWithFinally()) return "Issue with try with finally on a JS Error thrown"
     if (!kotlinExceptionWithFinally()) return "Issue with try with finally on a Kotlin Exception thrown"
 
     // Catch Throwable only
     if (!jsPrimitiveWithCatchThrowable()) return "Issue with try with catch Throwable only on a JS primitive thrown"
+    if (!jsNumberWithCatchThrowable()) return "Issue with try with catch Throwable only on a JS number thrown"
+    if (!jsNullWithCatchThrowable()) return "Issue with try with catch Throwable only on a JS null thrown"
     if (!jsExceptionWithCatchThrowable()) return "Issue with try with catch Throwable only on a JS Error thrown"
     if (!kotlinExceptionWithCatchThrowable()) return "Issue with try with catch Throwable only on a Kotlin Exception thrown"
 
     // Catch JsException only
     if (!jsPrimitiveWithCatchJsException()) return "Issue with try with catch JsException only on a JS primitive thrown"
+    if (!jsNumberWithCatchJsException()) return "Issue with try with catch JsException only on a JS number thrown"
+    if (!jsNullWithCatchJsException()) return "Issue with try with catch JsException only on a JS null thrown"
     if (!jsExceptionWithCatchJsException()) return "Issue with try with catch JsException only on a JS Error thrown"
     if (!wasThrown<IllegalStateException> {  kotlinExceptionWithCatchJsException() }) return "Issue with try with catch JsException only on a Kotlin Exception thrown"
 
     // Catch IllegalStateException only
     if (!wasThrown<JsException> { jsPrimitiveWithCatchIllegalStateException() }) return "Issue with try with catch IllegalStateException only on a JS primitive thrown"
+    if (!wasThrown<JsException> { jsNumberWithCatchIllegalStateException() }) return "Issue with try with catch IllegalStateException only on a JS number thrown"
+    if (!wasThrown<JsException> { jsNullWithCatchIllegalStateException() }) return "Issue with try with catch IllegalStateException only on a JS null thrown"
     if (!wasThrown<JsException> { jsExceptionWithCatchIllegalStateException() }) return "Issue with try with catch IllegalStateException only on a JS Error thrown"
     if (!kotlinExceptionWithCatchIllegalStateException()) return "Issue with try with catch IllegalStateException only on a Kotlin Exception thrown"
 
     // Catch Throwable and finally
     if (!jsPrimitiveWithCatchThrowableAndFinally()) return "Issue with try with catch Throwable and finally on a JS primitive thrown"
+    if (!jsNumberWithCatchThrowableAndFinally()) return "Issue with try with catch Throwable and finally on a JS number thrown"
+    if (!jsNullWithCatchThrowableAndFinally()) return "Issue with try with catch Throwable and finally on a JS null thrown"
     if (!jsExceptionWithCatchThrowableAndFinally()) return "Issue with try with catch Throwable and finally on a JS Error thrown"
     if (!kotlinExceptionWithCatchThrowableAndFinally()) return "Issue with try with catch Throwable and finally on a Kotlin Exception thrown"
 
     // Catch JsException and finally
     if (!jsPrimitiveWithCatchJsExceptionAndFinally()) return "Issue with try with catch JsException and finally on a JS primitive thrown"
+    if (!jsNumberWithCatchJsExceptionAndFinally()) return "Issue with try with catch JsException and finally on a JS number thrown"
+    if (!jsNullWithCatchJsExceptionAndFinally()) return "Issue with try with catch JsException and finally on a JS null thrown"
     if (!jsExceptionWithCatchJsExceptionAndFinally()) return "Issue with try with catch JsException and finally on a JS Error thrown"
     if (!kotlinExceptionWithCatchJsExceptionAndFinally()) return "Issue with try with catch JsException only on a Kotlin Exception thrown"
 
     // Catch IllegalStateException and finally
     if (!jsPrimitiveWithCatchIllegalStateExceptionAndFinally()) return "Issue with try with catch IllegalStateException and finally on a JS primitive thrown"
+    if (!jsNumberWithCatchIllegalStateExceptionAndFinally()) return "Issue with try with catch IllegalStateException and finally on a JS number thrown"
+    if (!jsNullWithCatchIllegalStateExceptionAndFinally()) return "Issue with try with catch IllegalStateException and finally on a JS null thrown"
     if (!jsExceptionWithCatchIllegalStateExceptionAndFinally()) return "Issue with try with catch IllegalStateException and finally on a JS Error thrown"
     if (!kotlinExceptionWithCatchIllegalStateExceptionAndFinally()) return "Issue with try with catch IllegalStateException and finally on a Kotlin Exception thrown"
 
