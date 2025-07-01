@@ -602,8 +602,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsModuleImports = deserializeJsModuleImports(),
         exports = deserializeExports(),
         stringPoolSize = deserializeNullableIntSymbol(),
-        throwableTagIndex = deserializeNullableIntSymbol(),
-        jsExceptionTagIndex = deserializeNullableIntSymbol(),
         fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
         testFunctionDeclarators = deserializeTestFunctionDeclarators(),

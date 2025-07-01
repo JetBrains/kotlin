@@ -159,23 +159,25 @@ class WasmExpressionBuilder(val expression: MutableList<WasmInstr>, val skipComm
         buildInstr(WasmOp.THROW_REF, location)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun buildTry(label: String?, resultType: WasmType? = null) {
+    fun buildTry(resultType: WasmType? = null, body: (Int) -> Unit) {
         buildInstrWithNoLocation(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+        body(numberOfNestedBlocks)
+        buildEnd()
     }
 
-    @Suppress("UNUSED_PARAMETER")
     fun buildTryTable(
-        label: String?,
-        catches: List<WasmImmediate.Catch>,
-        resultType: WasmType? = null
+        vararg catches: WasmImmediate.Catch,
+        resultType: WasmType? = null,
+        body: (Int) -> Unit
     ) {
         buildInstrWithNoLocation(
             WasmOp.TRY_TABLE,
             WasmImmediate.BlockType.Value(resultType),
             WasmImmediate.ConstI32(catches.size),
-            *catches.toTypedArray()
+            *catches
         )
+        body(numberOfNestedBlocks)
+        buildEnd()
     }
 
     fun createNewCatch(tagIdx: WasmSymbol<Int>, absoluteBlockLevel: Int) =

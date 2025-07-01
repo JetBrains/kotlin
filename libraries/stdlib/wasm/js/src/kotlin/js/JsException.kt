@@ -15,7 +15,7 @@ private val stackPlaceHolder: ExternalInterfaceType = js("''")
  *
  * @property thrownValue value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
  * */
-public class JsException internal constructor(public val thrownValue: JsAny?) : Throwable(null, null, stackPlaceHolder) {
+public class JsException internal constructor(public val thrownValue: JsAny?) : Throwable(null, null, null) {
     private var _message: String? = null
     override val message: String
         get() {
@@ -28,7 +28,7 @@ public class JsException internal constructor(public val thrownValue: JsAny?) : 
         }
 
     private var _jsStack: ExternalInterfaceType? = null
-    internal override val jsStack: ExternalInterfaceType
+    override val jsStack: ExternalInterfaceType
         get() {
             var value = _jsStack
             if (value == null) {
@@ -40,7 +40,10 @@ public class JsException internal constructor(public val thrownValue: JsAny?) : 
 }
 
 @JsName("Error")
-private external class JsError : JsAny {
+internal external class JsError : JsAny {
     val message: String
+    var name: String
     val stack: ExternalInterfaceType
+    val cause: JsError?
+    var kotlinException: JsReference<Throwable>?
 }
