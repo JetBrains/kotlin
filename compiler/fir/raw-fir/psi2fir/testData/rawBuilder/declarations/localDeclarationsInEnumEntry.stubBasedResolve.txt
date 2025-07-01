@@ -1,0 +1,17 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localDeclarationsInEnumEntry.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SomeEnum] constructor(): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeEnum] enum entry A: R|SomeEnum| = LAZY_EXPRESSION
+        public final static [ResolvedTo(TYPES)] [ContainingClassKey=SomeEnum] fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static [ResolvedTo(TYPES)] [ContainingClassKey=SomeEnum] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+        public final static [ResolvedTo(TYPES)] [ContainingClassKey=SomeEnum] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public [ResolvedTo(TYPES)] get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
+    }

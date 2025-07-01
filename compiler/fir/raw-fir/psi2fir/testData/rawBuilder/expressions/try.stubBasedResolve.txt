@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] try.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun some(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] modifications.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun simple(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<kotlin/String>|.modify(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/Any|.modify(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] noParameterTypRefInSetter.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

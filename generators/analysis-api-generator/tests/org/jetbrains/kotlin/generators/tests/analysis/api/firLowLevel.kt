@@ -40,6 +40,14 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractLLSourceAnnotationArgumentsCalculatorTest> {
             model("rawBuilder", pattern = TestGeneratorUtil.KT)
         }
+
+        testClass<AbstractLLSourceStubBasedResolutionTest> {
+            model("rawBuilder", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractLLScriptStubBasedResolutionTest> {
+            model("rawBuilder", pattern = TestGeneratorUtil.KTS)
+        }
     }
 
     testGroup("analysis/low-level-api-fir/tests-gen", "analysis/low-level-api-fir/testData") {
