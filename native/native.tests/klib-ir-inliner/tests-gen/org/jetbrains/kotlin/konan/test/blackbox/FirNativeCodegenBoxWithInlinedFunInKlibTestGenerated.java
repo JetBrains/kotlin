@@ -43542,6 +43542,24 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/returnInExpressionBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("klibIrInliner")
+    @UseExtTestCaseGroupProvider()
+    public class ReturnInExpressionBody {
+      @Test
+      public void testAllFilesPresentInReturnInExpressionBody() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("returnInExpressionBody.kt")
+      public void testReturnInExpressionBody() {
+        runTest("compiler/testData/codegen/box/returnInExpressionBody/returnInExpressionBody.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")

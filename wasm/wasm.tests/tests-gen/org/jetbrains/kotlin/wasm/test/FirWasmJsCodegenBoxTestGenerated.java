@@ -40405,6 +40405,22 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/returnInExpressionBody")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ReturnInExpressionBody {
+    @Test
+    public void testAllFilesPresentInReturnInExpressionBody() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/returnInExpressionBody"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+    }
+
+    @Test
+    @TestMetadata("returnInExpressionBody.kt")
+    public void testReturnInExpressionBody() {
+      runTest("compiler/testData/codegen/box/returnInExpressionBody/returnInExpressionBody.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
   public class SafeCall {
