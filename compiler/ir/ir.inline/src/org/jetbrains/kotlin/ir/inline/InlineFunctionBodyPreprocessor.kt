@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 internal class InlineFunctionBodyPreprocessor(
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>,
-    val strategy: CallInlinerStrategy,
 ) {
     @Suppress("UNCHECKED_CAST")
     private val parametersToSubstitute: Map<IrTypeParameterSymbol, IrType> =
