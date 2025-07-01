@@ -30,35 +30,12 @@ fun IrFunctionSymbol.isConsideredAsPrivateForInlining(): Boolean = this.isBound 
  */
 fun IrFunctionSymbol.isConsideredAsPrivateAndNotLocalForInlining(): Boolean = this.isBound && owner.isEffectivelyPrivate() && !owner.isLocal
 
-interface CallInlinerStrategy {
-    /**
-     * TypeOf function requires some custom backend-specific processing. This is a customization point for that.
-     *
-     * @param expression is a copy of original IrCall with types substituted by normal rules
-     * @param nonSubstitutedTypeArgument is typeArgument of call with only reified type parameters substituted
-     *
-     * @return new node to insert instead of typeOf call.
-     */
-    fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression
-    fun at(container: IrDeclaration, expression: IrExpression) {}
-
-    object DEFAULT : CallInlinerStrategy {
-        override fun postProcessTypeOf(expression: IrCall, nonSubstitutedTypeArgument: IrType): IrExpression {
-            return expression.apply {
-                typeArguments[0] = nonSubstitutedTypeArgument
-            }
-        }
-    }
-}
-
 enum class InlineMode {
     PRIVATE_INLINE_FUNCTIONS,
     ALL_INLINE_FUNCTIONS,
 }
 
-abstract class InlineFunctionResolver(
-    val callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
-) {
+abstract class InlineFunctionResolver() {
     protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
 
     protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
@@ -80,8 +57,7 @@ abstract class InlineFunctionResolver(
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
     private val inlineMode: InlineMode,
-    callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
-) : InlineFunctionResolver(callInlinerStrategy) {
+) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
