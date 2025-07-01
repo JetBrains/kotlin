@@ -8,7 +8,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.creating
+import org.gradle.kotlin.dsl.getValue
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.text.get
 
 class UklibFromKGPFragmentsTests {
 
@@ -173,8 +173,9 @@ class UklibFromKGPFragmentsTests {
                         identifier = "commonMain",
                         attributes = setOf("android", "ios_arm64", "ios_x64", "js_ir", "jvm", "wasm_js", "wasm_wasi")
                     ),
-                ),
-                multiplatformExtension.testFragments().toSet()
+                    TestAttributesFragment(identifier = "webMain", attributes = setOf("js_ir", "wasm_js")),
+                ).sorted().joinToString("\n"),
+                multiplatformExtension.testFragments().toSet().sorted().joinToString("\n"),
             )
         }
     }
@@ -329,7 +330,11 @@ class UklibFromKGPFragmentsTests {
     internal data class TestAttributesFragment(
         val identifier: String,
         val attributes: Set<String>,
-    )
+    ) : Comparable<TestAttributesFragment> {
+        override fun compareTo(other: TestAttributesFragment): Int {
+            return this.toString().compareTo(other.toString())
+        }
+    }
 
     private suspend fun KotlinMultiplatformExtension.testFragments(): List<TestAttributesFragment> =
         validateKgpModelIsUklibCompliantAndCreateKgpFragments().map {

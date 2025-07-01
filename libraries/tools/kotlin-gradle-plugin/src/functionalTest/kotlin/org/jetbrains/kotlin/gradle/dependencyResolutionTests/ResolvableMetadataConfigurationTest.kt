@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
+import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -281,12 +281,17 @@ class LanguageSettingsTests {
             "nativeTest" to "compileKotlinMetadata",
             "wasmJsMain" to "compileKotlinWasmJs",
             "wasmJsTest" to "compileTestKotlinWasmJs",
+            "webMain" to "compileKotlinMetadata",
+            "webTest" to "compileKotlinMetadata",
         )
         val actualTasks = project.kotlinExtension.sourceSets.associate { sourceSet ->
             sourceSet.name to (sourceSet.languageSettings as DefaultLanguageSettingsBuilder).compilerPluginOptionsTask.value?.name
         }
 
-        assertEquals(sourceSetToCompileTask, actualTasks)
+        assertEquals(
+            sourceSetToCompileTask.entries.joinToString(separator = "\n") { "${it.key} = ${it.value}" },
+            actualTasks.entries.joinToString(separator = "\n") { "${it.key} = ${it.value}" },
+        )
     }
 
     companion object {
