@@ -139,23 +139,13 @@ class MutableCheckerContext private constructor(
         return this
     }
 
-    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext): CheckerContextForProvider {
+    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): CheckerContextForProvider {
         inlineFunctionBodyContext = context
         return this
     }
 
-    override fun unsetInlineFunctionBodyContext(): CheckerContextForProvider {
-        inlineFunctionBodyContext = null
-        return this
-    }
-
-    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext): CheckerContextForProvider {
+    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider {
         lambdaBodyContext = context
-        return this
-    }
-
-    override fun unsetLambdaBodyContext(): CheckerContextForProvider {
-        lambdaBodyContext = null
         return this
     }
 

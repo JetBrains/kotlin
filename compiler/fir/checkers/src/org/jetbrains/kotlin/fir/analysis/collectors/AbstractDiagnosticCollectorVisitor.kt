@@ -300,6 +300,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     @OptIn(PrivateForInline::class)
     private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
+        val oldContext = context.inlineFunctionBodyContext
         return try {
             if (isInline) {
                 context = context.setInlineFunctionBodyContext(createInlineFunctionBodyContext(function, context.session))
@@ -307,13 +308,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
             block()
         } finally {
             if (isInline) {
-                context = context.unsetInlineFunctionBodyContext()
+                context = context.setInlineFunctionBodyContext(oldContext)
             }
         }
     }
 
     @OptIn(PrivateForInline::class)
     private inline fun <T> withLambdaBodyIfApplicable(function: FirAnonymousFunction, block: () -> T): T {
+        val oldContext = context.lambdaBodyContext
         return try {
             if (function.isLambda) {
                 context = context.setLambdaBodyContext(createLambdaBodyContext(function, context))
@@ -321,7 +323,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
             block()
         } finally {
             if (function.isLambda) {
-                context = context.unsetLambdaBodyContext()
+                context = context.setLambdaBodyContext(oldContext)
             }
         }
     }
@@ -445,7 +447,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
     @OptIn(PrivateForInline::class)
     private inline fun <R> suppressInlineFunctionBodyContext(block: () -> R): R {
         val oldInlineFunctionBodyContext = context.inlineFunctionBodyContext?.also {
-            context = context.unsetInlineFunctionBodyContext()
+            context = context.setInlineFunctionBodyContext(null)
         }
         return try {
             block()

@@ -54,13 +54,9 @@ abstract class CheckerContextForProvider(
 
     abstract fun exitContractBody(): CheckerContextForProvider
 
-    abstract fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext): CheckerContextForProvider
+    abstract fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): CheckerContextForProvider
 
-    abstract fun unsetInlineFunctionBodyContext(): CheckerContextForProvider
-
-    abstract fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext): CheckerContextForProvider
-
-    abstract fun unsetLambdaBodyContext(): CheckerContextForProvider
+    abstract fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider
 
     abstract fun enterFile(file: FirFile): CheckerContextForProvider
 

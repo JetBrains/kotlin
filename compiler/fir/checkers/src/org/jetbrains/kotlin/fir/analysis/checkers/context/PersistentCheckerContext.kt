@@ -141,15 +141,11 @@ class PersistentCheckerContext private constructor(
 
     override fun exitContractBody(): CheckerContextForProvider = toggleContractBody(newValue = false)
 
-    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext): PersistentCheckerContext =
+    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): PersistentCheckerContext =
         copy(inlineFunctionBodyContext = context)
 
-    override fun unsetInlineFunctionBodyContext(): CheckerContextForProvider = copy(inlineFunctionBodyContext = null)
-
-    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext): CheckerContextForProvider =
+    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider =
         copy(lambdaBodyContext = context)
-
-    override fun unsetLambdaBodyContext(): CheckerContextForProvider = copy(lambdaBodyContext = null)
 
     override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFileSymbol = file.symbol)
 
