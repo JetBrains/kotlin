@@ -24,6 +24,8 @@ object BinaryenConfig {
         // GC Optimization Guidebook -- https://github.com/WebAssembly/binaryen/wiki/GC-Optimization-Guidebook
         // Optimizer Cookbook -- https://github.com/WebAssembly/binaryen/wiki/Optimizer-Cookbook
         //
+        "--no-inline=kotlin.wasm.internal.throwValue",
+        "--no-inline=kotlin.wasm.internal.getKotlinException",
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",
