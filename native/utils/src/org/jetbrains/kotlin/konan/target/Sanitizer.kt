@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-enum class SanitizerKind {
-    ADDRESS,
-    THREAD,
-}
+typealias SanitizerKind = org.jetbrains.kotlin.backend.konan.SanitizerKind
 
 /**
  * Suffix for [KonanTarget] name.

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.KotlinPaths
-import java.io.File
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     override val platform: TargetPlatform = NativePlatforms.unspecifiedNativePlatform

@@ -10,8 +10,6 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
-import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
-import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
@@ -446,8 +444,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (target.family == Family.ANDROID) {
             val androidProgramType = configuration.get(BinaryOptions.androidProgramType)
                     ?: AndroidProgramType.Default
-            if (androidProgramType.konanMainOverride != null) {
-                return@lazy androidProgramType.konanMainOverride
+            val konanMainOverride = androidProgramType.konanMainOverride
+            if (konanMainOverride != null) {
+                return@lazy konanMainOverride
             }
         }
         "Konan_main"
