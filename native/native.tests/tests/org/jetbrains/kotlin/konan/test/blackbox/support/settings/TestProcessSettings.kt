@@ -156,13 +156,7 @@ enum class Sanitizer(val compilerFlag: String?) {
 /**
  * Garbage collector type.
  */
-enum class GCType(val gc: GC?) {
-    UNSPECIFIED(null),
-    NOOP(GC.NOOP),
-    STWMS(GC.STOP_THE_WORLD_MARK_AND_SWEEP),
-    PMCS(GC.PARALLEL_MARK_CONCURRENT_SWEEP),
-    CMS(GC.CONCURRENT_MARK_AND_SWEEP);
-
+class GCType(val gc: GC?) {
     override fun toString() = gc?.shortcut?.let { "(-Xbinary=gc=$it)" }.orEmpty()
 }
 

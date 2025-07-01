@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.backend.konan.GC
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
@@ -354,7 +355,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testPermanentObjects() {
         val testName = "permanentObjects"
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP) { "Test requires GC to actually happen" }
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP) { "Test requires GC to actually happen" }
 
         val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
         compileAndRunSwift(testName, testCase)
@@ -504,7 +505,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
                 add("-D")
                 add("AGGRESSIVE_GC")
             }
-            if (testRunSettings.get<GCType>() == GCType.NOOP) {
+            if (testRunSettings.get<GCType>().gc == GC.NOOP) {
                 add("-D")
                 add("NOOP_GC")
             }
