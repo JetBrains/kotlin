@@ -104,6 +104,8 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
     ) {
+        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
         val kotlinSourceFilePaths = mutableListOf<String>()
 
         module.sourceDir.walkTopDown().forEach { sourceFile ->
@@ -133,7 +135,10 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
     override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
+        compilerEdition: KlibCompilerEdition,
     ): WasmCompilerInvocationTestBinaryArtifact {
+        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
         val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
         runCompilerViaCLI(

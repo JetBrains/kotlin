@@ -115,7 +115,10 @@ class NativeCompilerInvocationTestArtifactBuilder(
     override fun buildBinary(
         mainModule: Dependency,
         otherDependencies: Dependencies,
+        compilerEdition: KlibCompilerEdition,
     ): NativeCompilerInvocationTestBinaryArtifact {
+        require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
+
         val cacheDependencies = if (settings.get<CacheMode>().useStaticCacheForUserLibraries) {
             producedKlibs.map { producedKlib ->
                 buildCacheForKlib(producedKlib)
