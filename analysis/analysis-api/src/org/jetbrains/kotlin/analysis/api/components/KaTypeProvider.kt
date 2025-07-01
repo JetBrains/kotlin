@@ -90,11 +90,47 @@ public interface KaTypeProvider : KaSessionComponent {
      * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] subtype, or returns the given type itself if it is
      * already denotable.
      *
-     * @see approximateToDenotableSubtype
+     * @see approximateToDenotableSupertype
      */
     @KaExperimentalApi
     public fun KaType.approximateToDenotableSubtypeOrSelf(): KaType = withValidityAssertion {
         return approximateToDenotableSubtype() ?: this
+    }
+
+    /**
+     * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] supertype based on the given [position].
+     *
+     * This [position] is used when approximating local types. If the given type is local, then the function returns the first supertype, which is visible from the given [position].
+     *
+     * The function returns `null` if the type is already denotable and does not need approximation. Otherwise, for a type `T`, returns a
+     * denotable type `S` such that `T <: S`, with all type arguments of `S` also being denotable.
+     *
+     * Example:
+     * ```kotlin
+     * <position_1>
+     * fun foo() {
+     *     open class <position_2> A
+     *
+     *     fun bar() = <expr>object: A() {}</expr>
+     * }
+     * ```
+     *
+     * In the example above we are trying to approximate the type of `object: A() {}` expression, which is a local type `<anonymous>: A`.
+     * When this type is approximated using `<position_2>` the function returns `A`, as this type is visible from this position.
+     * However, when approximating from `<position_1>`, the function returns `Any`, as `A` is not visible from this position, so the only option left is `Any`.
+     */
+    @KaExperimentalApi
+    public fun KaType.approximateToDenotableSupertype(position: KtElement): KaType?
+
+    /**
+     * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] subtype based on the given [position], or returns the given type itself if it is
+     * already denotable.
+     *
+     * @see approximateToDenotableSupertype
+     */
+    @KaExperimentalApi
+    public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): KaType? = withValidityAssertion {
+        return approximateToDenotableSupertype(position) ?: this
     }
 
     /**
