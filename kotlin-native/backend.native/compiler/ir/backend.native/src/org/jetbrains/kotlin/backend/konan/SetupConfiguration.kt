@@ -514,34 +514,11 @@ private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOpt
 fun parseBinaryOptions(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): List<BinaryOptionWithValue<*>> {
-    val keyValuePairs = parseKeyValuePairs(arguments.binaryOptions, configuration) ?: return emptyList()
-
-    return keyValuePairs.mapNotNull { (key, value) ->
-        val option = BinaryOptions.getByName(key)
-        if (option == null) {
-            configuration.report(STRONG_WARNING, "Unknown binary option '$key'")
-            null
-        } else {
-            parseBinaryOption(option, value, configuration)
-        }
-    }
-}
-
-private fun <T : Any> parseBinaryOption(
-        option: BinaryOption<T>,
-        valueName: String,
-        configuration: CompilerConfiguration
-): BinaryOptionWithValue<T>? {
-    val value = option.valueParser.parse(valueName)
-    return if (value == null) {
-        configuration.report(STRONG_WARNING, "Unknown value '$valueName' of binary option '${option.name}'. " +
-                "Possible values are: ${option.valueParser.validValuesHint}")
-        null
-    } else {
-        BinaryOptionWithValue(option, value)
-    }
-}
+): List<BinaryOptionWithValue<*>> = parseBinaryOptions(
+        arguments.binaryOptions,
+        reportWarning = { configuration.report(STRONG_WARNING, it) },
+        reportError = { configuration.report(ERROR, it) },
+)
 
 private fun parseOverrideKonanProperties(
         arguments: K2NativeCompilerArguments,
