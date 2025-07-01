@@ -73,12 +73,12 @@ internal class KaFirTypeProvider(
         return approximatedConeType?.asKaType()
     }
 
-    override fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
+    override fun KaType.approximateToDenotableSubtype(): KaType? = withValidityAssertion {
         require(this is KaFirType)
         val coneType = coneType
         val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
             coneType,
-            PublicTypeApproximator.PublicApproximatorConfiguration(approximateLocalTypes = approximateLocalTypes),
+            PublicTypeApproximator.PublicApproximatorConfiguration(approximateLocalTypes = false),
         )
 
         return approximatedConeType?.asKaType()

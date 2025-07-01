@@ -23,7 +23,7 @@ public interface KaRendererTypeApproximator {
 
                 return when (position) {
                     Variance.INVARIANT -> effectiveType
-                    Variance.IN_VARIANCE -> effectiveType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes = false)
+                    Variance.IN_VARIANCE -> effectiveType.approximateToDenotableSubtypeOrSelf()
                     Variance.OUT_VARIANCE -> effectiveType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes = false)
                 }
             }
