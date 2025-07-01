@@ -151,6 +151,7 @@ abstract class AbstractInvalidationTest(
         copy.useEs6Classes = targetBackend == TargetBackend.JS_IR_ES6
         copy.compileSuspendAsJsGenerator = targetBackend == TargetBackend.JS_IR_ES6
         copy.compileLambdasAsEs6ArrowFunctions = targetBackend == TargetBackend.JS_IR_ES6
+        copy.compileLongAsBigint = targetBackend == TargetBackend.JS_IR_ES6
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
             languageFeatures.forEach {
