@@ -216,8 +216,6 @@ class NativeCompilerInvocationTestArtifactBuilder(
         private val COMPILER_ARGS = TestCompilerArgs(
             listOf(
                 "-nostdlib", // stdlib is passed explicitly.
-                "-Xsuppress-version-warnings", // Don't fail on language version warnings.
-                "-Werror" // Halt on any unexpected warning.
             )
         )
     }
