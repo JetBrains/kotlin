@@ -163,31 +163,28 @@ internal constructor(
      * ```
      *
      * Will create the following SourceSets:
-     * `[iosMain, iosTest, appleMain, appleTest, linuxMain, linuxTest, nativeMain, nativeTest]
      *
+     * - `iosMain`, `iosTest`
+     * - `appleMain`, `appleTest`
+     * - `linuxMain`, `linuxTest`
+     * - `nativeMain`, `nativeTest`
+     * - `webMain`, `webTest`
      *
      * Hierarchy:
-     * ```
-     *                                                                     common
-     *                                                                        |
-     *                                                      +-----------------+-------------------+
-     *                                                      |                                     |
-     *
-     *                                                    native                                 ...
-     *
-     *                                                     |
-     *                                                     |
-     *                                                     |
-     *         +----------------------+--------------------+-----------------------+
-     *         |                      |                    |                       |
-     *
-     *       apple                  linux                mingw              androidNative
-     *
-     *         |
-     *  +-----------+------------+------------+
-     *  |           |            |            |
-     *
-     * macos       ios         tvos        watchos
+     * ```text
+     *                                    common
+     *                                      │
+     *                         ┌────────────┴──────────────┬──────┐
+     *                         │                           │      │
+     *                       native                       web    ...
+     *                         │
+     *             ┌───────┬───┴───┬───────────┐
+     *             │       │       │           │
+     *           apple   linux   mingw   androidNative
+     *             │
+     *   ┌──────┬──┴──┬────────┐
+     *   │      │     │        │
+     * macos   ios   tvos   watchos
      * ```
      *
      * @see KotlinHierarchyTemplate.extend
