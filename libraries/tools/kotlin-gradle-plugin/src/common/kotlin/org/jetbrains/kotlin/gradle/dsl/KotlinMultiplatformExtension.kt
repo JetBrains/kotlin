@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 internal fun ExtensionContainer.KotlinMultiplatformExtension(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ): KotlinMultiplatformExtension {
     val targetsContainer = objectFactory.newInstance<DefaultKotlinTargetsContainer>()
     val presetsContainer = objectFactory.DefaultKotlinTargetContainerWithPresetFunctions(targetsContainer.targets)
@@ -64,7 +64,7 @@ internal constructor(
 
     @InternalKotlinGradlePluginApi
     constructor(
-        project: Project
+        project: Project,
     ) : this(
         project = project,
         targetsContainer = project.objects.newInstance<KotlinTargetsContainer>(),
@@ -76,7 +76,7 @@ internal constructor(
     override fun js(
         name: String,
         compiler: KotlinJsCompilerType,
-        configure: KotlinJsTargetDsl.() -> Unit
+        configure: KotlinJsTargetDsl.() -> Unit,
     ): KotlinJsTargetDsl {
         @Suppress("UNCHECKED_CAST")
         return presetFunctions.configureOrCreate(
@@ -328,7 +328,7 @@ internal fun KotlinMultiplatformExtension.supportedAppleTargets() = targets
     .matching { it.konanTarget.family.isAppleFamily }
 
 private abstract class DefaultKotlinTargetsContainer @Inject constructor(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ) : KotlinTargetsContainer {
     override val targets: NamedDomainObjectCollection<KotlinTarget> =
         objectFactory.domainObjectContainer(KotlinTarget::class.java)

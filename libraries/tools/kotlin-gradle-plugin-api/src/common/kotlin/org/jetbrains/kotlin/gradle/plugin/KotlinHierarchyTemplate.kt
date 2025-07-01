@@ -35,7 +35,6 @@ sealed interface KotlinHierarchyTemplate {
          *  - Projects that define custom target names matching one of the shared source sets. For example, `kotlin.linuxX64("linux")`.
          *
          * The default hierarchy is:
-         *
          * ```text
          *                                    common
          *                                      │
