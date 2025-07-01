@@ -1,0 +1,3 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] namedArgument.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] first: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] second: R|kotlin/Boolean| = LAZY_EXPRESSION, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] third: R|kotlin/Double| = LAZY_EXPRESSION): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }

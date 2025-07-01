@@ -1,0 +1,52 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] collectionLiterals.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann1 : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann1] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann1.arr] arr: R|kotlin/IntArray|): R|Ann1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val arr: R|kotlin/IntArray| = R|<local>/arr|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann1] get(): R|kotlin/IntArray|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann2 : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann2] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann2.arr] arr: R|kotlin/DoubleArray|): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val arr: R|kotlin/DoubleArray| = R|<local>/arr|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann2] get(): R|kotlin/DoubleArray|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann3 : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann3] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann3.arr] arr: R|kotlin/Array<kotlin/String>|): R|Ann3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val arr: R|kotlin/Array<kotlin/String>| = R|<local>/arr|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann3] get(): R|kotlin/Array<kotlin/String>|
+
+    }
+    @R|Ann1|[Types](arr = <implicitArrayOf>()) @R|Ann2|[Types](arr = <implicitArrayOf>()) @R|Ann3|[Types](arr = <implicitArrayOf>()) public final [ResolvedTo(BODY_RESOLVE)] class Zero : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Zero] constructor(): R|Zero| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Ann1|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class First : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=First] constructor(): R|First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|Ann2|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Second : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Second] constructor(): R|Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|Ann3|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Third : R|kotlin/Any| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Third] constructor(): R|Third| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

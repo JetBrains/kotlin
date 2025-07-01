@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] locals.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun withLocals([ResolvedTo(EXPECT_ACTUAL_MATCHING)] p: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }

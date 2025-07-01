@@ -1,0 +1,12 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] noPrimaryConstructor.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NoPrimary : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NoPrimary] get(): R|kotlin/String|
+
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=NoPrimary] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/String|): R|NoPrimary| { LAZY_BLOCK }
+
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NoPrimary] constructor(): R|NoPrimary| {
+            LAZY_this<R|NoPrimary|>
+        }
+
+    }

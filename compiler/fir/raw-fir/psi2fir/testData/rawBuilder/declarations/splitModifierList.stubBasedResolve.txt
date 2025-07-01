@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] splitModifierList.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class A : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class B : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test0 = R|@R|A|()  @R|B|()  kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test1 = R|@R|A|()  @R|A|()  kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test2 = R|@R|A|()  @R|B|()  kotlin/Int|
+    public final [ResolvedTo(COMPANION_GENERATION)] typealias Test3 = @R|A|[Unresolved]() ( (R|@R|A|()  kotlin/Int|) -> R|kotlin/Int| )
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test4 = R|@R|A|()  @R|B|()  kotlin/Int?|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test5 = R|@R|A|()  @R|B|()  kotlin/Int?|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test6 = R|@R|A|()  @R|B|()  kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test7 = R|@R|A|()  @R|B|()  kotlin/Int?|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test8 = R|@R|A|()  @R|B|()  kotlin/Int?|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Test9 = R|@R|A|()  @R|B|()  kotlin/Int?|
