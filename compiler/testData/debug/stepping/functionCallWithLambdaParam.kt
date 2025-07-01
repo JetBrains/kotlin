@@ -73,5 +73,4 @@ fun foo(f: () -> Unit) {
 // test.kt:11 $box$lambda.invoke (5)
 // test.kt:15 $foo (4)
 // test.kt:16 $foo (1)
-// test.kt:9 $box (4)
 // test.kt:12 $box (1)

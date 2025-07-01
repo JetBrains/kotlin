@@ -144,5 +144,4 @@ fun box() {
 // test.kt:22 $stringSwitch (16)
 // test.kt:17 $stringSwitch (13)
 // test.kt:24 $stringSwitch (1)
-// test.kt:29 $box (4)
 // test.kt:30 $box (1)

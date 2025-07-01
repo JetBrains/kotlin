@@ -165,5 +165,4 @@ fun box() {
 // test.kt:12 $foo (19)
 // test.kt:11 $foo (12)
 // test.kt:16 $foo (1)
-// test.kt:19 $box (4)
 // test.kt:20 $box (1)

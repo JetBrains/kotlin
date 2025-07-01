@@ -113,9 +113,4 @@ fun box() {
 // EXPECTATIONS WASM
 // test.kt:16 $B.setValue (19, 28)
 // test.kt:17 $B.setValue (5)
-// EXPECTATIONS ClassicFrontend WASM
-// test.kt:23 $box (4)
-// EXPECTATIONS FIR WASM
-// test.kt:23 $box (6)
-// EXPECTATIONS WASM
 // test.kt:24 $box (1)
