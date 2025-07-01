@@ -1,4 +1,5 @@
-IGNORE_BACKEND: JS_IR, WASM
+IGNORE_BACKEND: JS_IR
+// ^^^ On JS callable references do not implement many of the expected behaviors, see e.g. KT-15101.
 
 MODULES: lib1, lib2, main
 
