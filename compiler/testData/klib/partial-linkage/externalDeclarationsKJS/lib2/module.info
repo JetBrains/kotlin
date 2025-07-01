@@ -1,2 +1,3 @@
 STEP 0:
     dependencies: stdlib, lib1
+    arguments: -Xdont-warn-on-error-suppression
