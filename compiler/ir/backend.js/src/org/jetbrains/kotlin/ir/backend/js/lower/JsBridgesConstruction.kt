@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStableJsName
 import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -39,6 +40,9 @@ class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstructi
             function,
             context
         )
+
+    override fun getFunctionImplementation(function: IrSimpleFunction): IrSimpleFunction =
+        if (function.isDeclaration) function else function.realOverrideTarget
 
     override fun getBridgeOrigin(bridge: IrSimpleFunction): IrDeclarationOrigin =
         when {

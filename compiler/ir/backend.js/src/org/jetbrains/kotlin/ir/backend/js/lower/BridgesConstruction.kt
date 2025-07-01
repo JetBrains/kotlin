@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
@@ -49,6 +48,8 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
     abstract fun getFunctionSignature(function: IrSimpleFunction): Any
+
+    abstract fun getFunctionImplementation(function: IrSimpleFunction): IrSimpleFunction
 
     /**
      * Usually just returns [irFunction]'s parameters, but special transformations may be required if,
@@ -96,7 +97,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         // into some of the super-classes and will be inherited in this class
         if (bridgesDfsRoots.isEmpty()) return null
 
-        val implementation = function.realOverrideTarget
+        val implementation = getFunctionImplementation(function)
         val implementationSignature = getFunctionSignature(implementation)
 
         val implementedBridges = mutableSetOf<Any>()
@@ -220,5 +221,5 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 }
 
-private val IrSimpleFunction.isDeclaration
+internal val IrSimpleFunction.isDeclaration
     get() = isReal || resolveFakeOverride()?.parentAsClass?.isInterface == true
