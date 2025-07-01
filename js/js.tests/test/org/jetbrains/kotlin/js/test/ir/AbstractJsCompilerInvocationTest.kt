@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest.CompilerType
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
-import org.jetbrains.kotlin.klib.KlibCompilerEdition.CURRENT
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.Dependency
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -152,18 +152,18 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         compilerEdition: KlibCompilerEdition,
         compilerArguments: List<String>,
     ) {
-        require(compilerEdition == CURRENT) { "Partial Linkage tests accept only Current compiler" }
-
         val kotlinSourceFilePaths = composeSourceFile(module.sourceDir, module.outputDir)
+        val preprocessedDependencies = dependencies.replaceStdlib(compilerEdition)
 
         // Build KLIB:
         runCompilerViaCLI(
+            compilerEdition,
             listOf(
                 K2JSCompilerArguments::irProduceKlibFile.cliArgument,
                 K2JSCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
             ),
-            dependencies.toCompilerArgs(),
+            preprocessedDependencies.toCompilerArgs(),
             compilerArguments,
             kotlinSourceFilePaths
         )
@@ -188,12 +188,12 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         otherDependencies: Dependencies,
         compilerEdition: KlibCompilerEdition,
     ): JsCompilerInvocationTestBinaryArtifact {
-        require(compilerEdition == CURRENT) { "Partial Linkage tests accept only Current compiler" }
+        val preprocessedDependencies = otherDependencies.replaceStdlib(compilerEdition)
 
         // The modules in `Dependencies.regularDependencies` are already in topological order.
         // It is important to pass the provided and the produced JS files to Node in exactly the same order.
         val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {
-            otherDependencies.regularDependencies.mapTo(this, ::ModuleDetails)
+            preprocessedDependencies.regularDependencies.mapTo(this, ::ModuleDetails)
             this += ModuleDetails(mainModule)
         }
         val knownModuleNames: Set<ModuleName> = knownModulesInTopologicalOrder.mapTo(hashSetOf(), ModuleDetails::name)
@@ -201,6 +201,7 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
         runCompilerViaCLI(
+            compilerEdition,
             listOf(
                 K2JSCompilerArguments::irProduceJs.cliArgument,
                 K2JSCompilerArguments::irPerModule.cliArgument,
@@ -213,7 +214,7 @@ internal class JsCompilerInvocationTestArtifactBuilder(
                 K2JSCompilerArguments::cacheDirectory.cliArgument,
                 configuration.buildDir.resolve("libs-cache").absolutePath
             ).takeIf { configuration.compilerType.useIc },
-            otherDependencies.toCompilerArgs(),
+            preprocessedDependencies.toCompilerArgs(),
             listOf(K2JSCompilerArguments::useEsClasses.cliArgument).takeIf { configuration.compilerType.es6Mode }
         )
 
@@ -244,6 +245,18 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         )
     }
 
+    private fun Dependencies.replaceStdlib(compilerEdition: KlibCompilerEdition): Dependencies =
+        if (compilerEdition == KlibCompilerEdition.CURRENT)
+            this
+        else Dependencies(
+            regularDependencies = regularDependencies.replaceStdLib(),
+            friendDependencies = friendDependencies
+        )
+
+    private fun Set<Dependency>.replaceStdLib(): Set<Dependency> = mapToSetOrEmpty {
+        if (it.moduleName == "stdlib") Dependency("stdlib", JsKlibTestSettings.customJsCompilerArtifacts.jsStdLib) else it
+    }.toSet()
+
     private fun Dependencies.toCompilerArgs(): List<String> = buildList {
         if (regularDependencies.isNotEmpty()) {
             this += K2JSCompilerArguments::libraries.cliArgument
@@ -254,12 +267,12 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         }
     }
 
-    private fun runCompilerViaCLI(vararg compilerArgs: List<String?>?, compilerEdition: KlibCompilerEdition = CURRENT) {
+    private fun runCompilerViaCLI(compilerEdition: KlibCompilerEdition, vararg compilerArgs: List<String?>?) {
         val allCompilerArgs = compilerArgs.flatMap { args -> args.orEmpty().filterNotNull() }.toTypedArray()
 
         val invokeCompiler = when (compilerEdition) {
-            CUSTOM -> customCompilerCall()
-            CURRENT -> currentCompilerCall()
+            KlibCompilerEdition.CURRENT -> currentCompilerCall()
+            KlibCompilerEdition.CUSTOM -> customCompilerCall()
         }
 
         val compilerXmlOutput = ByteArrayOutputStream()
