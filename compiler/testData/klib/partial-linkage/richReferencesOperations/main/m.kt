@@ -4,7 +4,6 @@ fun box() = abiTest {
     // fun
     expectSuccess(true) { createRemovedFunReference() is kotlin.reflect.KFunction<*> }
     expectFailure(linkage("Reference to function 'removedFun' can not be evaluated: No function found for symbol '/removedFun'")) { removedFunReferenceName() }
-    expectFailure(linkage("Reference to function 'removedFun' can not be evaluated: No function found for symbol '/removedFun'")) { removedFunReferenceReturnType() }
     expectFailure(linkage("Reference to function 'removedFun' can not be evaluated: No function found for symbol '/removedFun'")) { removedFunReferenceHashCode() }
     expectFailure(linkage("Reference to function 'removedFun' can not be evaluated: No function found for symbol '/removedFun'")) { removedFunReferenceEquals() }
     expectFailure(linkage("Reference to function 'removedFun' can not be evaluated: No function found for symbol '/removedFun'")) { removedFunReferenceToString() }
@@ -13,7 +12,6 @@ fun box() = abiTest {
     // constructor
     expectSuccess(true) { createRemovedCtorReference() is kotlin.reflect.KFunction<*> }
     expectFailure(linkage("Reference to constructor 'ClassWithRemovedCtor.<init>' can not be evaluated: No constructor found for symbol '/ClassWithRemovedCtor.<init>'")) { removedCtorReferenceName() }
-    expectFailure(linkage("Reference to constructor 'ClassWithRemovedCtor.<init>' can not be evaluated: No constructor found for symbol '/ClassWithRemovedCtor.<init>'")) { removedCtorReferenceReturnType() }
     expectFailure(linkage("Reference to constructor 'ClassWithRemovedCtor.<init>' can not be evaluated: No constructor found for symbol '/ClassWithRemovedCtor.<init>'")) { removedCtorReferenceHashCode() }
     expectFailure(linkage("Reference to constructor 'ClassWithRemovedCtor.<init>' can not be evaluated: No constructor found for symbol '/ClassWithRemovedCtor.<init>'")) { removedCtorReferenceEquals() }
     expectFailure(linkage("Reference to constructor 'ClassWithRemovedCtor.<init>' can not be evaluated: No constructor found for symbol '/ClassWithRemovedCtor.<init>'")) { removedCtorReferenceToString() }
@@ -24,7 +22,6 @@ fun box() = abiTest {
     // val
     expectSuccess(true) { createRemovedValReference() is kotlin.reflect.KProperty0<*> }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceName() }
-    expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceReturnType() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedVal' can not be evaluated: No property found for symbol '/removedVal'")) { removedValReferenceToString() }
@@ -34,7 +31,6 @@ fun box() = abiTest {
     // var
     expectSuccess(true) { createRemovedVarReference() is kotlin.reflect.KMutableProperty0<*> }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceName() }
-    expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceReturnType() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceHashCode() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceEquals() }
     expectFailure(linkage("Reference to property 'removedVar' can not be evaluated: No property found for symbol '/removedVar'")) { removedVarReferenceToString() }
@@ -45,7 +41,6 @@ fun box() = abiTest {
     // var by ::var
     expectSuccess(true) { createRemovedVarDelegateReference() is kotlin.reflect.KMutableProperty0<*> }
     expectSuccess("removedVarDelegate") { removedVarDelegateReferenceName() }
-    expectSuccess { removedVarDelegateReferenceReturnType(); "OK" }
     expectSuccess { removedVarDelegateReferenceHashCode(); "OK" }
     expectSuccess(false) { removedVarDelegateReferenceEquals() }
     expectSuccess { removedVarDelegateReferenceToString(); "OK" }

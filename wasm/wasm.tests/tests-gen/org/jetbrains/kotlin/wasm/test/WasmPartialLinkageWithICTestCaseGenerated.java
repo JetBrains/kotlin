@@ -175,6 +175,12 @@ public class WasmPartialLinkageWithICTestCaseGenerated extends AbstractWasmParti
   }
 
   @Test
+  @TestMetadata("richReferencesOperationsNative")
+  public void testRichReferencesOperationsNative() {
+    runTest("compiler/testData/klib/partial-linkage/richReferencesOperationsNative/");
+  }
+
+  @Test
   @TestMetadata("severalInheritedImplementations")
   public void testSeveralInheritedImplementations() {
     runTest("compiler/testData/klib/partial-linkage/severalInheritedImplementations/");

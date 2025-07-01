@@ -1,7 +1,6 @@
 // fun
 fun createRemovedFunReference(): Any = ::removedFun
 fun removedFunReferenceName(): String = ::removedFun.name
-fun removedFunReferenceReturnType(): Any = ::removedFun.returnType
 fun removedFunReferenceHashCode(): Int = ::removedFun.hashCode()
 fun removedFunReferenceEquals(): Boolean = ::removedFun.equals(Any())
 fun removedFunReferenceToString(): String = ::removedFun.toString()
@@ -10,7 +9,6 @@ fun removedFunReferenceInvoke(): Int = ::removedFun.invoke(123)
 // constructor
 fun createRemovedCtorReference(): Any = ::ClassWithRemovedCtor
 fun removedCtorReferenceName(): String = ::ClassWithRemovedCtor.name
-fun removedCtorReferenceReturnType(): Any = ::ClassWithRemovedCtor.returnType
 fun removedCtorReferenceHashCode(): Int = ::ClassWithRemovedCtor.hashCode()
 fun removedCtorReferenceEquals(): Boolean = ::ClassWithRemovedCtor.equals(Any())
 fun removedCtorReferenceToString(): String = ::ClassWithRemovedCtor.toString()
@@ -21,7 +19,6 @@ fun funReferenceWithErrorInReceiver(): Any = removedGetRegularClassInstance()::f
 // val
 fun createRemovedValReference(): Any = ::removedVal
 fun removedValReferenceName(): String = ::removedVal.name
-fun removedValReferenceReturnType(): Any = ::removedVal.returnType
 fun removedValReferenceHashCode(): Int = ::removedVal.hashCode()
 fun removedValReferenceEquals(): Boolean = ::removedVal.equals(Any())
 fun removedValReferenceToString(): String = ::removedVal.toString()
@@ -31,7 +28,6 @@ fun removedValReferenceGet(): Int = ::removedVal.get()
 // var
 fun createRemovedVarReference(): Any = ::removedVar
 fun removedVarReferenceName(): String = ::removedVar.name
-fun removedVarReferenceReturnType(): Any = ::removedVar.returnType
 fun removedVarReferenceHashCode(): Int = ::removedVar.hashCode()
 fun removedVarReferenceEquals(): Boolean = ::removedVar.equals(Any())
 fun removedVarReferenceToString(): String = ::removedVar.toString()
@@ -43,7 +39,6 @@ fun removedVarReferenceSet(): Unit = ::removedVar.set(123)
 private var removedVarDelegate: Int by ::removedVar
 fun createRemovedVarDelegateReference(): Any = ::removedVarDelegate
 fun removedVarDelegateReferenceName(): String = ::removedVarDelegate.name
-fun removedVarDelegateReferenceReturnType(): Any = ::removedVarDelegate.returnType
 fun removedVarDelegateReferenceHashCode(): Int = ::removedVarDelegate.hashCode()
 fun removedVarDelegateReferenceEquals(): Boolean = ::removedVarDelegate.equals(Any())
 fun removedVarDelegateReferenceToString(): String = ::removedVarDelegate.toString()
