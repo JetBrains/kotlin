@@ -11,6 +11,8 @@ interface BuildMetricsReporter<B : BuildTime, P : BuildPerformanceMetric> {
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)
+    fun addDynamicTimeMetricNs(time: String, parent: B, durationNs: Long)
+
     @Deprecated("Use addTimeMetricNs instead", ReplaceWith("addTimeMetricNs(time, durationNs)"))
     fun addTimeMetricMs(time: B, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
 

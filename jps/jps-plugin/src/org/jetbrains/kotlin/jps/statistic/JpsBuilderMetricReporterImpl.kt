@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.compilerRunner.JpsCompilationResult
 import java.net.InetAddress
 import java.util.*
-import kotlin.collections.ArrayList
 
 class JpsBuilderMetricReporterImpl(
     chunk: ModuleChunk,
@@ -86,7 +85,8 @@ class JpsBuilderMetricReporterImpl(
             kotlinVersion = kotlinVersion,
             hostName = hostName,
             finishTime = finishTime,
-            buildTimesMetrics = buildMetrics.buildTimes.asMapMs(),
+            buildTimesMetrics = buildMetrics.buildTimes.buildTimesMapMs(),
+            dynamicBuildTimesMetrics = buildMetrics.buildTimes.dynamicBuildTimesMapMs(),
             performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap(),
             compilerArguments = compilerArguments,
             nonIncrementalAttributes = emptySet(),

@@ -47,7 +47,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
 
     private var currentLoweringTime: Time? = null
     private var currentLowering: String? = null
-    private val loweringMeasurements = LinkedHashMap<String, Time>()
+    private val loweringMeasurements = LinkedHashMap<Pair<String, PhaseType>, Time>()
 
     var isExtendedStatsEnabled: Boolean = false
         private set
@@ -126,7 +126,10 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
             klibWritingTime,
             irLoweringTime,
             backendTime,
-            loweringMeasurements.toList(),
+            loweringMeasurements.map { (key, time) ->
+                val (name, phaseType) = key
+                LoweringStats(name, time, phaseType)
+            },
             findJavaClassStats,
             findKotlinClassStats,
             gcMeasurements.values.toList(),
@@ -212,11 +215,12 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         currentLowering = loweringName
     }
 
-    fun notifyLoweringFinished(loweringName: String) {
+    fun notifyLoweringFinished(loweringName: String, parentPhaseType: PhaseType) {
         assert(currentLoweringTime != null)
         assert(currentLowering == loweringName)
 
-        loweringMeasurements[loweringName] = (loweringMeasurements[loweringName] ?: Time.ZERO) + (currentTime() - currentLoweringTime!!)
+        loweringMeasurements[loweringName to parentPhaseType] =
+            (loweringMeasurements[loweringName to parentPhaseType] ?: Time.ZERO) + (currentTime() - currentLoweringTime!!)
         currentLoweringTime = null
     }
 
@@ -407,14 +411,14 @@ inline fun <T> PerformanceManager?.tryMeasurePhaseTime(phaseType: PhaseType, blo
     }
 }
 
-inline fun <T> PerformanceManager?.tryMeasureLoweringTime(loweringName: String, block: () -> T): T {
+inline fun <T> PerformanceManager?.tryMeasureLoweringTime(loweringName: String, parentPhaseType: PhaseType, block: () -> T): T {
     if (this == null) return block()
 
     try {
         notifyLoweringStarted(loweringName)
         return block()
     } finally {
-        notifyLoweringFinished(loweringName)
+        notifyLoweringFinished(loweringName, parentPhaseType)
     }
 }
 
