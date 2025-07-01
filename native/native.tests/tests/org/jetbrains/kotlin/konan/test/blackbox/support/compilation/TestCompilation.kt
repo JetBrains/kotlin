@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryOptions
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
@@ -51,6 +52,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
+    private val binaryOptions: BinaryOptions,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val compilerPlugins: CompilerPlugins,
     protected val cacheMode: CacheMode,
@@ -58,7 +60,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
-    protected abstract val binaryOptions: Map<String, String>
+    protected abstract val binaryOptionsObsolete: Map<String, String>
     protected open val tryPassSystemCacheDirectory: Boolean = true
 
     // Runs the compiler and memorizes the result on property access.
@@ -99,7 +101,8 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
         add("-Xllvm-variant=dev")
-        addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
+        addFlattened(binaryOptionsObsolete.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
+        addFlattened(binaryOptions.options) { listOf("-Xbinary=$it") }
     }
 
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
@@ -260,6 +263,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     allocator: Allocator,
     private val pipelineType: PipelineType,
     cacheMode: CacheMode,
+    binaryOptions: BinaryOptions,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
@@ -271,6 +275,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     classLoader = classLoader,
     optimizationMode = optimizationMode,
     compilerOutputInterceptor = compilerOutputInterceptor,
+    binaryOptions = binaryOptions,
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = compilerPlugins,
     cacheMode = cacheMode,
@@ -327,6 +332,7 @@ class LibraryCompilation(
     allocator = settings.get(),
     pipelineType = settings.get(),
     cacheMode = settings.get(),
+    binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -334,7 +340,7 @@ class LibraryCompilation(
     expectedArtifact = expectedArtifact
 ) {
     private val useHeaders: Boolean = settings.get<CacheMode>().useHeaders
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
+    override val binaryOptionsObsolete get() = ObsoleteBinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
@@ -378,13 +384,14 @@ class ObjCFrameworkCompilation(
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
+    binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
+    override val binaryOptionsObsolete get() = ObsoleteBinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
@@ -424,6 +431,7 @@ class BinaryLibraryCompilation(
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = settings.get(),
+    binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -431,7 +439,7 @@ class BinaryLibraryCompilation(
     expectedArtifact = expectedArtifact
 ) {
     private val cinterfaceMode = settings.get<CInterfaceMode>().compilerFlag
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
+    override val binaryOptionsObsolete get() = ObsoleteBinaryOptions.RuntimeAssertionsMode.defaultForTesting(optimizationMode, freeCompilerArgs.assertionsMode)
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         if (kind == BinaryLibraryKind.DYNAMIC && targets.testTarget.family == Family.MINGW) {
@@ -625,6 +633,7 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(sourceModules),
     cacheMode = cacheMode,
+    binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -654,7 +663,7 @@ class ExecutableCompilation(
     expectedArtifact = expectedArtifact,
     tryPassSystemCacheDirectory
 ) {
-    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
+    override val binaryOptionsObsolete = ObsoleteBinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
@@ -742,6 +751,7 @@ class StaticCacheCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
+    binaryOptions = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     cacheMode = settings.get(),
@@ -759,7 +769,7 @@ class StaticCacheCompilation(
     }
 
     override val sourceModules get() = emptyList<TestModule>()
-    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.forUseWithCache
+    override val binaryOptionsObsolete get() = ObsoleteBinaryOptions.RuntimeAssertionsMode.forUseWithCache
 
     private val makePerFileCache: Boolean = makePerFileCacheOverride ?: settings.get<CacheMode>().makePerFileCaches
 
@@ -823,7 +833,7 @@ internal class TestBundleCompilation(
     expectedArtifact,
     tryPassSystemCacheDirectory
 ) {
-    override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
+    override val binaryOptionsObsolete = ObsoleteBinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode, optimizationMode, freeCompilerArgs.assertionsMode)
 
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
@@ -914,7 +924,8 @@ class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilatio
     }
 }
 
-private object BinaryOptions {
+// TODO: Have to be replaced with proper binary options or removed.
+private object ObsoleteBinaryOptions {
     object RuntimeAssertionsMode {
         // Here the 'default' is in the sense the default for testing, not the default for the compiler.
         fun defaultForTesting(optimizationMode: OptimizationMode, assertionsMode: AssertionsMode) =

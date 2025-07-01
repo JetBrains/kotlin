@@ -180,6 +180,8 @@ enum class GCScheduler(val compilerFlag: String?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
+class BinaryOptions(val options: List<String>)
+
 enum class Allocator(val compilerFlag: String?) {
     UNSPECIFIED(null),
     STD("-Xallocator=std"),

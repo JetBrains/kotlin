@@ -44,6 +44,7 @@ private enum class TestProperty(shortName: String) {
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
+    BINARY_OPTIONS("binaryOptions"),
     SHARED_TEST_EXECUTION("sharedTestExecution"),
     EAGER_GROUP_CREATION("eagerGroupCreation"),
     XCTEST_FRAMEWORK("xctest"),
@@ -95,6 +96,10 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Input
     @get:Optional
     protected val gcType = providers.testProperty(GC_TYPE)
+
+    @get:Input
+    @get:Optional
+    protected val binaryOptions = providers.testProperty(BINARY_OPTIONS)
 
     @get:Input
     @get:Optional
@@ -217,6 +222,7 @@ private open class NativeArgsProvider @Inject constructor(
             optimizationMode.orNull?.let { "-D${OPTIMIZATION_MODE.fullName}=$it" },
             useThreadStateChecker.orNull?.let { "-D${USE_THREAD_STATE_CHECKER.fullName}=$it" },
             gcType.orNull?.let { "-D${GC_TYPE.fullName}=$it" },
+            binaryOptions.orNull?.let { "-D${BINARY_OPTIONS.fullName}=$it" },
             gcScheduler.orNull?.let { "-D${GC_SCHEDULER.fullName}=$it" },
             allocator.orNull?.let { "-D${ALLOCATOR.fullName}=$it" },
             cacheMode.orNull?.let { "-D${CACHE_MODE.fullName}=$it" },
