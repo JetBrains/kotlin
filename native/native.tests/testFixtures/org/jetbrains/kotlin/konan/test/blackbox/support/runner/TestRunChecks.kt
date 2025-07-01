@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtilRt
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.needSmallBinary
@@ -225,7 +226,8 @@ sealed interface TestRunCheck {
                     if (testTarget.family.isAppleFamily) {
                         add("CHECK-APPLE")
                     }
-                    if (testTarget.needSmallBinary() || optimizationMode == OptimizationMode.DEBUG) {
+                    if (testTarget.needSmallBinary() || optimizationMode == OptimizationMode.DEBUG
+                        || settings.get<ExplicitBinaryOptions>().getOrNull<Boolean>(BinaryOptions.smallBinary) == true) {
                         add("CHECK-SMALLBINARY")
                     } else {
                         add("CHECK-BIGBINARY")

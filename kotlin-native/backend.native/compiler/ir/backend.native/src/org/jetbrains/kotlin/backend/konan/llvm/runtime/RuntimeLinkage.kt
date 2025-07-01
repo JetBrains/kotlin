@@ -10,7 +10,7 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.MandatoryOptimizationPipeline
 import org.jetbrains.kotlin.backend.konan.ModuleOptimizationPipeline
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.RuntimeLinkageStrategy
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
 import org.jetbrains.kotlin.backend.konan.createLTOPipelineConfigForRuntime
 import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.getName

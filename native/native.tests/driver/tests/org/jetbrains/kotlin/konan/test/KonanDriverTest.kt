@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleModule
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.testProcessExecutor
@@ -59,7 +59,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
             assertFalse(
@@ -128,7 +128,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         val testCase = generateTestCaseWithSingleModule(sourcesRoot = null)
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
@@ -152,7 +152,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // Only test with -opt enabled
         Assumptions.assumeTrue(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         val testCase = generateTestCaseWithSingleModule(sourcesRoot = null)
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }

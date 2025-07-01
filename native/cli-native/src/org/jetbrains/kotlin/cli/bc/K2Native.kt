@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -226,7 +227,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 }
 
-typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.backend.konan.BinaryOptionWithValue<T>
+typealias BinaryOptionWithValue<T> = org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue<T>
 
 @Suppress("unused")
 fun parseBinaryOptions(

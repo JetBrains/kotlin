@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.target.*
 import java.io.Closeable
 
@@ -74,7 +75,7 @@ private fun tryGetInlineThreshold(context: PhaseContext): Int? {
 }
 
 /**
- * Creates [LlvmPipelineConfig] that is used for [RuntimeLinkageStrategy.LinkAndOptimize].
+ * Creates [LlvmPipelineConfig] that is used for [org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy.LinkAndOptimize].
  * There is no DCE or internalization here because optimized module will be linked later.
  * Still, runtime is not intended to be debugged by user, and we can optimize it pretty aggressively
  * even in debug compilation.

@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.test.blackbox.support.AcceptablePropertyValues
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
@@ -55,7 +55,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
     fun assumeNoAggressiveScheduler() {
         // Aggressive scheduler is too slow for some tests KT-76415.
         // And we don't have an API to disable only a subset of the tests: KT-76524.
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
     }
 
     @TestFactory

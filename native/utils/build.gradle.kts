@@ -10,6 +10,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$coreDepsVersion")
     api(project(":kotlin-util-io"))
     api(project(":kotlin-util-klib"))
+//    api(project(":native:binary-options"))
     api(platform(project(":kotlin-gradle-plugins-bom")))
 
     testImplementation(libs.junit4)

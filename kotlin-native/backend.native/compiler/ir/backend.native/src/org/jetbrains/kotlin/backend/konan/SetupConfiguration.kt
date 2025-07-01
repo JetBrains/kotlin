@@ -15,6 +15,12 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.Freezing
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.MemoryModel
+import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -236,7 +242,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         else -> {
             val validValues = enumValues<GC>().map {
                 val fullName = "$it".lowercase()
-                it.shortcut?.let { short ->
+                it.shortcut.let { short ->
                     "$fullName (or: $short)"
                 } ?: fullName
             }.joinToString("|")
@@ -506,43 +512,18 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
-class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
-
 private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
-    this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
+    this.put(binaryOptionWithValue.compilerConfigurationKey, binaryOptionWithValue.value)
 }
 
 fun parseBinaryOptions(
         arguments: K2NativeCompilerArguments,
         configuration: CompilerConfiguration
-): List<BinaryOptionWithValue<*>> {
-    val keyValuePairs = parseKeyValuePairs(arguments.binaryOptions, configuration) ?: return emptyList()
-
-    return keyValuePairs.mapNotNull { (key, value) ->
-        val option = BinaryOptions.getByName(key)
-        if (option == null) {
-            configuration.report(STRONG_WARNING, "Unknown binary option '$key'")
-            null
-        } else {
-            parseBinaryOption(option, value, configuration)
-        }
-    }
-}
-
-private fun <T : Any> parseBinaryOption(
-        option: BinaryOption<T>,
-        valueName: String,
-        configuration: CompilerConfiguration
-): BinaryOptionWithValue<T>? {
-    val value = option.valueParser.parse(valueName)
-    return if (value == null) {
-        configuration.report(STRONG_WARNING, "Unknown value '$valueName' of binary option '${option.name}'. " +
-                "Possible values are: ${option.valueParser.validValuesHint}")
-        null
-    } else {
-        BinaryOptionWithValue(option, value)
-    }
-}
+): List<BinaryOptionWithValue<*>> = parseBinaryOptions(
+        arguments.binaryOptions,
+        reportWarning = { configuration.report(STRONG_WARNING, it) },
+        reportError = { configuration.report(ERROR, it) },
+)
 
 private fun parseOverrideKonanProperties(
         arguments: K2NativeCompilerArguments,
