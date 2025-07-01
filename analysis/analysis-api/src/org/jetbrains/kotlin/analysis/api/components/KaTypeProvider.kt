@@ -53,22 +53,19 @@ public interface KaTypeProvider : KaSessionComponent {
      *
      * The function returns `null` if the type is already denotable and does not need approximation. Otherwise, for a type `T`, returns a
      * denotable type `S` such that `S <: T`, with all type arguments of `S` also being denotable.
-     *
-     * @param approximateLocalTypes Whether locally declared types should be approximated to non-local subtypes. Avoiding local type
-     *  approximation is sensible when the resulting [KaType] is analyzed in the same local context.
      */
     @KaExperimentalApi
-    public fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType?
+    public fun KaType.approximateToDenotableSubtype(): KaType?
 
     /**
      * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] subtype, or returns the given type itself if it is
      * already denotable.
      *
-     * @see approximateToSubPublicDenotable
+     * @see approximateToDenotableSubtype
      */
     @KaExperimentalApi
-    public fun KaType.approximateToSubPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
-        return approximateToSubPublicDenotable(approximateLocalTypes) ?: this
+    public fun KaType.approximateToDenotableSubtypeOrSelf(): KaType = withValidityAssertion {
+        return approximateToDenotableSubtype() ?: this
     }
 
     /**

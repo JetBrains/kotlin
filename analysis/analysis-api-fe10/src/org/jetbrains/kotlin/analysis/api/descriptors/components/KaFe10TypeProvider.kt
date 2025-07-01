@@ -68,9 +68,9 @@ internal class KaFe10TypeProvider(
             ?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
+    override fun KaType.approximateToDenotableSubtype(): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
-        return typeApproximator.approximateToSubType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
+        return typeApproximator.approximateToSubType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes = false))
             ?.toKtType(analysisContext)
     }
 
