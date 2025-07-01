@@ -16,6 +16,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(project(":native:kotlin-native-utils"))
+    testApi(project(":native:binary-options"))
     testApi(project(":native:executors"))
 
     testImplementation(projectTests(":generators:test-generator"))

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.backend.konan.GC
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -155,14 +156,14 @@ enum class Sanitizer(val compilerFlag: String?) {
 /**
  * Garbage collector type.
  */
-enum class GCType(val compilerFlag: String?) {
+enum class GCType(val gc: GC?) {
     UNSPECIFIED(null),
-    NOOP("-Xbinary=gc=noop"),
-    STWMS("-Xbinary=gc=stwms"),
-    PMCS("-Xbinary=gc=pmcs"),
-    CMS("-Xbinary=gc=cms");
+    NOOP(GC.NOOP),
+    STWMS(GC.STOP_THE_WORLD_MARK_AND_SWEEP),
+    PMCS(GC.PARALLEL_MARK_CONCURRENT_SWEEP),
+    CMS(GC.CONCURRENT_MARK_AND_SWEEP);
 
-    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+    override fun toString() = gc?.shortcut?.let { "(-Xbinary=gc=$it)" }.orEmpty()
 }
 
 enum class GCScheduler(val compilerFlag: String?) {
