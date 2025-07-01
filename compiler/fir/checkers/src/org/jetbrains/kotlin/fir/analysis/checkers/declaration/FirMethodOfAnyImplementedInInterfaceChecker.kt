@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
@@ -27,7 +26,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppC
         }
 
         declaration.symbol.processAllDeclaredCallables(context.session) { function ->
-            if (function !is FirNamedFunctionSymbol || !function.isOverride || !function.hasBody) return@processAllDeclaredCallables
+            if (function !is FirNamedFunctionSymbol || !function.hasBody) return@processAllDeclaredCallables
             var methodOfAny = false
             if (function.valueParameterSymbols.isEmpty() &&
                 function.contextParameterSymbols.isEmpty() &&

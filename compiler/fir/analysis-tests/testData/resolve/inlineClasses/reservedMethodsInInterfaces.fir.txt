@@ -1,6 +1,6 @@
 FILE: reservedMethodsInInterfaces.kt
     public abstract interface Lib : R|kotlin/Any| {
-        public open override fun hashCode(): R|kotlin/Boolean| {
+        public open fun hashCode(): R|kotlin/Boolean| {
             ^hashCode Boolean(true)
         }
 
@@ -28,7 +28,7 @@ FILE: reservedMethodsInInterfaces.kt
             ^equals Boolean(true)
         }
 
-        public open override fun hashCode(): R|kotlin/Boolean| {
+        public open fun hashCode(): R|kotlin/Boolean| {
             ^hashCode Boolean(true)
         }
 
@@ -80,7 +80,7 @@ FILE: reservedMethodsInInterfaces.kt
             ^equals Boolean(true)
         }
 
-        public open override fun hashCode(): R|kotlin/Boolean| {
+        public open fun hashCode(): R|kotlin/Boolean| {
             ^hashCode Boolean(true)
         }
 

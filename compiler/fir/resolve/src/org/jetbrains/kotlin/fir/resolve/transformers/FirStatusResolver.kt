@@ -265,7 +265,6 @@ class FirStatusResolver(
                     acc || (overriddenStatus as FirDeclarationStatusImpl)[modifier]
                 }
             }
-            status[FirDeclarationStatusImpl.Modifier.OVERRIDE] = true
         }
 
         val parentEffectiveVisibility = when {

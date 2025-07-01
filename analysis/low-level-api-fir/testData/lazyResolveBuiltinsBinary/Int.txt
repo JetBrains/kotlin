@@ -1887,7 +1887,7 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun compareTo([ResolvedTo(STATUS)] other: R|kotlin/Short|): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(STATUS)] fun compareTo([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(STATUS)] fun compareTo([ResolvedTo(STATUS)] other: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(STATUS)] fun compareTo([ResolvedTo(STATUS)] other: R|kotlin/Long|): R|kotlin/Int| { LAZY_BLOCK }
 
@@ -1993,23 +1993,23 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final [ResolvedTo(STATUS)] fun inv(): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toByte(): R|kotlin/Byte| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toByte(): R|kotlin/Byte| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toChar(): R|kotlin/Char| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toChar(): R|kotlin/Char| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toShort(): R|kotlin/Short| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toShort(): R|kotlin/Short| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toInt(): R|kotlin/Int| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toInt(): R|kotlin/Int| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toLong(): R|kotlin/Long| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toLong(): R|kotlin/Long| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toFloat(): R|kotlin/Float| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toFloat(): R|kotlin/Float| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toDouble(): R|kotlin/Double| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toDouble(): R|kotlin/Double| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
 
-    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+    @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
 
 }
 
@@ -2102,16 +2102,16 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final infix [ResolvedTo(BODY_RESOLVE)] fun xor([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Boolean|): R|kotlin/Boolean| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Boolean|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Boolean|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
         }
 
     }
@@ -2161,7 +2161,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
 
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/Int| {
@@ -2305,31 +2305,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -2397,7 +2397,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
 
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Char|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Char|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Char| {
@@ -2442,13 +2442,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
         }
 
     }
@@ -2592,7 +2592,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Float|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/Double| {
@@ -2697,31 +2697,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryMinus(): R|kotlin/Double| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -2771,19 +2771,19 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         public final [ResolvedTo(BODY_RESOLVE)] val ordinal: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] get(): R|kotlin/Int|
 
-        public final override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|E|): R|kotlin/Int| {
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|E|): R|kotlin/Int| {
         }
 
         protected final [ResolvedTo(BODY_RESOLVE)] fun clone(): R|kotlin/Any| {
         }
 
-        public final override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
-        public final override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
     }
@@ -2850,7 +2850,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Float|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Float|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Double|): R|kotlin/Int| {
@@ -2958,31 +2958,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun unaryMinus(): R|kotlin/Float| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -3040,7 +3040,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/Int| {
@@ -3199,31 +3199,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] fun inv(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -3282,7 +3282,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Float|): R|kotlin/Int| {
@@ -3438,31 +3438,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final [ResolvedTo(BODY_RESOLVE)] fun inv(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -3608,7 +3608,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Byte|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Short|): R|kotlin/Int| {
         }
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Int|): R|kotlin/Int| {
@@ -3749,31 +3749,31 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         @R|kotlin/SinceKotlin|[Types]() @R|kotlin/WasExperimental|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun rangeUntil([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Long|): R|kotlin/ranges/LongRange| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toByte(): R|kotlin/Byte| {
         }
 
-        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
+        @R|kotlin/Deprecated|[Types]() @R|kotlin/DeprecatedSinceKotlin|[Types]() @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toChar(): R|kotlin/Char| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toShort(): R|kotlin/Short| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toInt(): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toLong(): R|kotlin/Long| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toFloat(): R|kotlin/Float| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toDouble(): R|kotlin/Double| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
     }
@@ -3820,25 +3820,25 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
 
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] val length: R|kotlin/Int|
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] val length: R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=String] get(): R|kotlin/Int|
 
         @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public final operator [ResolvedTo(BODY_RESOLVE)] fun plus([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/String| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: R|kotlin/Int|): R|kotlin/Char| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: R|kotlin/Int|): R|kotlin/Char| {
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun subSequence([ResolvedTo(BODY_RESOLVE)] startIndex: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] endIndex: R|kotlin/Int|): R|kotlin/CharSequence| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun subSequence([ResolvedTo(BODY_RESOLVE)] startIndex: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] endIndex: R|kotlin/Int|): R|kotlin/CharSequence| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/String|): R|kotlin/Int| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun compareTo([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/String|): R|kotlin/Int| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
         }
 
-        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        @R|kotlin/internal/IntrinsicConstEvaluation|[Types]() public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
     }
@@ -3889,7 +3889,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
             super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
         }
 
     }

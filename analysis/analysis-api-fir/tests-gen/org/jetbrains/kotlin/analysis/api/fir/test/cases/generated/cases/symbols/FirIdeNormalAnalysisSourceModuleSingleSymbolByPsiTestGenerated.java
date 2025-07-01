@@ -996,6 +996,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated exte
     }
 
     @Test
+    @TestMetadata("missingOverride.kt")
+    public void testMissingOverride() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/withTestCompilerPluginEnabled/missingOverride.kt");
+    }
+
+    @Test
     @TestMetadata("statusCompilerPlugin.kt")
     public void testStatusCompilerPlugin() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/withTestCompilerPluginEnabled/statusCompilerPlugin.kt");

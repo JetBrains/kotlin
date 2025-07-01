@@ -25,7 +25,6 @@ public abstract interface Base /* Base*/ {
 
 public final class Derived /* Derived*/ implements Base {
   @Ann(t = {})
-  @java.lang.Override()
   public void foo(@Ann(t = {}) @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  foo(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public  Derived(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() Base);//  .ctor(@org.jetbrains.annotations.NotNull() Base)

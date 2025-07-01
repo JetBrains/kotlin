@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfT
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
@@ -313,10 +314,15 @@ internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isO
             return false
         }
 
-        return ifSource { backingPsi }?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: run {
-            // Resolved status is needed for the case when the library declaration is analyzed as sources
-            firSymbol.resolvedStatus.isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
-                directlyOverriddenSymbols.any()
+        ifSource {
+            if (backingPsi?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
+                return true
             }
+        }
+
+        // Resolved status is needed as compiler plugins might add the modifier
+        return firSymbol.isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
+            // A workaround for the case when the library declaration is analyzed as sources
+            directlyOverriddenSymbols.any()
         }
     }
