@@ -184,3 +184,7 @@ fun FirQualifiedAccessExpression.isConstructorCallOnTypealiasWithInnerRhs(): Boo
         it.origin == FirDeclarationOrigin.Synthetic.TypeAliasConstructor && it.receiverParameterSymbol != null
     } == true
 }
+
+internal fun <T : FirDeclaration, R> filterOutSymbolsFromCache(cache: Map<T, R>, filterOutSymbols: Set<FirBasedSymbol<*>>): Map<T, R> {
+    return cache.filterKeys { !filterOutSymbols.contains(it.symbol) }
+}

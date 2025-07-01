@@ -450,6 +450,12 @@ class CallAndReferenceGenerator(
         }
     }
 
+    internal fun convertSubstitutedInlineLambda(expression: FirQualifiedAccessExpression): IrExpression? {
+        val valueParam = (expression as? FirPropertyAccessExpression)?.toResolvedCallableSymbol() as? FirValueParameterSymbol ?: return null
+        val argument = extensions.findInjectedInlineLambdaArgument(valueParam) ?: return null
+        return visitor.convertToIrExpression(argument)
+    }
+
     internal fun injectGetValueCall(element: FirElement, calleeReference: FirReference): IrExpression? {
         val injectedValue = findInjectedValue(calleeReference)
         if (injectedValue != null) {
@@ -481,6 +487,10 @@ class CallAndReferenceGenerator(
         noArguments: Boolean = false,
     ): IrExpression = convertCatching(qualifiedAccess, conversionScope) {
         injectGetValueCall(qualifiedAccess, qualifiedAccess.calleeReference)?.let { return it }
+
+        convertSubstitutedInlineLambda(qualifiedAccess)?.let {
+            return it.patchDeclarationParents(conversionScope.parent())
+        }
 
         val irType = type.toIrType()
         val samConstructorCall = qualifiedAccess.tryConvertToSamConstructorCall(irType)

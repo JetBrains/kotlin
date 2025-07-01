@@ -45,7 +45,7 @@ abstract class AbstractCodeFragmentCapturingTest : AbstractAnalysisApiBasedTest(
             frontendErrors
         }
 
-        val capturedValueData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, firCodeFragment)
+        val capturedValueData = CodeFragmentCapturedValueAnalyzer.analyze(resolutionFacade, firCodeFragment, emptyMap())
 
 
         val actualText = buildString {

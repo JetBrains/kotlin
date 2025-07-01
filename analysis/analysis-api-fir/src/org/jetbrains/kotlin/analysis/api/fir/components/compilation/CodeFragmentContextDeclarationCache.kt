@@ -16,13 +16,23 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 /**
  * A cache for data to be passed between from the context file to the [KtCodeFragment].
  *
  * @param contextDeclaration A non-local declaration containing the context [PsiElement] of a code fragment.
+ *
+ * @param firstNonInlineNonLocalFunInStack The first (in the direction from top to bottom) non-inline and non-local declaration
+ * in the execution stack
+ *
+ * @param selfSymbols Symbols of the declarations declared inside code fragment or captured inline lambdas
  */
-internal class CodeFragmentContextDeclarationCache(private val contextDeclaration: KtDeclaration) {
+internal class CodeFragmentContextDeclarationCache(
+    private val contextDeclaration: KtDeclaration,
+    private val firstNonInlineNonLocalFunInStack: KtDeclaration?,
+    private val selfSymbols: Set<FirBasedSymbol<*>>,
+) {
     /** A list of scope caches we accumulated when compiling the code fragment context. */
     private val collectedLocalScopes = mutableListOf<Fir2IrScopeCache>()
 
@@ -37,16 +47,22 @@ internal class CodeFragmentContextDeclarationCache(private val contextDeclaratio
 
         val declaration = symbol.owner as? IrDeclaration ?: return
 
-        /** Check if we are inside [contextDeclaration] */
-        val isInsideContextDeclaration = generateSequence(declaration) { it.parent as? IrDeclaration }
+        /** Check if we are inside [contextDeclaration] or [firstNonInlineNonLocalFunInStack]
+         * Local functions from both of them might be captured by the code fragment
+         */
+        val shouldBeCollected = generateSequence(declaration) { it.parent as? IrDeclaration }
             .filterIsInstance<IrMetadataSourceOwner>()
-            .any { it.metadata?.source?.psi == contextDeclaration }
+            .any {
+                val psi = it.metadata?.source?.psi
+                psi == contextDeclaration || psi == firstNonInlineNonLocalFunInStack
+            }
 
-        if (isInsideContextDeclaration) {
-            /** [Fir2IrScopeCache.clone] here is necessary as the scope cache is cleaned up before popping. */
-            collectedLocalScopes.add(cache.clone())
+        if (shouldBeCollected) {
+            /** Cloning here is necessary as the scope cache is cleaned up before popping. */
+            collectedLocalScopes.add(cache.cloneFilteringSymbols(selfSymbols))
         }
     }
+
 
     /**
      * Mapping between initial and desugared representations of local functions from the context module.
@@ -66,8 +82,8 @@ internal class CodeFragmentContextDeclarationCache(private val contextDeclaratio
 
         localDeclarationsData = evaluatorData?.localDeclarationsData
 
-        // Reuse the contextual module's member storage
-        customCommonMemberStorage = commonMemberStorage
-            .apply { localCallableCache.addAll(collectedLocalScopes) }
+        customCommonMemberStorage = commonMemberStorage.cloneFilteringSymbols(selfSymbols).apply {
+            localCallableCache.addAll(collectedLocalScopes.map { it.cloneFilteringSymbols(selfSymbols) })
+        }
     }
 }

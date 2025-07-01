@@ -1,0 +1,503 @@
+// class version 52.0 (52)
+// access flags 0x30
+// signature Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+// declaration: CodeFragment$run$1$complexLambda$1$prop$1$l$1 extends kotlin.jvm.internal.Lambda implements kotlin.jvm.functions.Function0<java.lang.Integer>
+final class CodeFragment$run$1$complexLambda$1$prop$1$l$1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment$run$1$complexLambda$1$prop$1 invoke ()Ljava/lang/Integer;
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$complexLambda$1$prop$1 null null
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$complexLambda$1$prop$1$l$1 null null
+
+  // access flags 0x19
+  public final static LCodeFragment$run$1$complexLambda$1$prop$1$l$1; INSTANCE
+
+  // access flags 0x0
+  <init>()V
+   L0
+    ALOAD 0
+    ICONST_0
+    INVOKESPECIAL kotlin/jvm/internal/Lambda.<init> (I)V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1$l$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x11
+  public final invoke()Ljava/lang/Integer;
+   L0
+    LINENUMBER 53 L0
+    SIPUSH 10000
+    INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1$l$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x1041
+  public synthetic bridge invoke()Ljava/lang/Object;
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    INVOKEVIRTUAL CodeFragment$run$1$complexLambda$1$prop$1$l$1.invoke ()Ljava/lang/Integer;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1$l$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x8
+  static <clinit>()V
+    NEW CodeFragment$run$1$complexLambda$1$prop$1$l$1
+    DUP
+    INVOKESPECIAL CodeFragment$run$1$complexLambda$1$prop$1$l$1.<init> ()V
+    PUTSTATIC CodeFragment$run$1$complexLambda$1$prop$1$l$1.INSTANCE : LCodeFragment$run$1$complexLambda$1$prop$1$l$1;
+    RETURN
+    MAXSTACK = 2
+    MAXLOCALS = 0
+}
+
+
+// class version 52.0 (52)
+// access flags 0x30
+// signature Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+// declaration: CodeFragment$run$1$complexLambda$1$prop$1 extends kotlin.jvm.internal.Lambda implements kotlin.jvm.functions.Function0<java.lang.Integer>
+final class CodeFragment$run$1$complexLambda$1$prop$1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment$run$1$complexLambda$1 <init> ()V
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$complexLambda$1$prop$1 null null
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$complexLambda$1$prop$1$l$1 null null
+
+  // access flags 0x19
+  public final static LCodeFragment$run$1$complexLambda$1$prop$1; INSTANCE
+
+  // access flags 0x0
+  <init>()V
+   L0
+    ALOAD 0
+    ICONST_0
+    INVOKESPECIAL kotlin/jvm/internal/Lambda.<init> (I)V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x11
+  public final invoke()Ljava/lang/Integer;
+   L0
+    LINENUMBER 53 L0
+    BIPUSH 10
+    ISTORE 1
+   L1
+    IINC 1 100
+    LDC LCodeFragment;.class
+    LDC "run$localFunWithLocalClass"
+    ICONST_1
+    ANEWARRAY java/lang/Class
+    ASTORE 4
+    ALOAD 4
+    ICONST_0
+    GETSTATIC java/lang/Integer.TYPE : Ljava/lang/Class;
+    AASTORE
+    ALOAD 4
+    INVOKEVIRTUAL java/lang/Class.getDeclaredMethod (Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+    ASTORE 3
+    ALOAD 3
+    ICONST_1
+    INVOKEVIRTUAL java/lang/reflect/Method.setAccessible (Z)V
+    ALOAD 3
+    ACONST_NULL
+    ICONST_1
+    ANEWARRAY java/lang/Object
+    ASTORE 4
+    ALOAD 4
+    ICONST_0
+    SIPUSH 1000
+    INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
+    AASTORE
+    ALOAD 4
+    INVOKEVIRTUAL java/lang/reflect/Method.invoke (Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    CHECKCAST java/lang/Integer
+    INVOKEVIRTUAL java/lang/Integer.intValue ()I
+    ISTORE 2
+   L2
+    LDC LCodeFragment;.class
+    LDC "run$createFunWithLocalObj"
+    ICONST_0
+    ANEWARRAY java/lang/Class
+    INVOKEVIRTUAL java/lang/Class.getDeclaredMethod (Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
+    ASTORE 4
+    ALOAD 4
+    ICONST_1
+    INVOKEVIRTUAL java/lang/reflect/Method.setAccessible (Z)V
+    ALOAD 4
+    ACONST_NULL
+    ICONST_0
+    ANEWARRAY java/lang/Object
+    INVOKEVIRTUAL java/lang/reflect/Method.invoke (Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    CHECKCAST kotlin/jvm/functions/Function0
+    INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)
+    CHECKCAST java/lang/Number
+    INVOKEVIRTUAL java/lang/Number.intValue ()I
+    ISTORE 3
+   L3
+    GETSTATIC CodeFragment$run$1$complexLambda$1$prop$1$l$1.INSTANCE : LCodeFragment$run$1$complexLambda$1$prop$1$l$1;
+    CHECKCAST kotlin/jvm/functions/Function0
+    ASTORE 4
+   L4
+    ILOAD 1
+    ILOAD 2
+    IADD
+    ILOAD 3
+    IADD
+    ALOAD 4
+    INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)
+    CHECKCAST java/lang/Number
+    INVOKEVIRTUAL java/lang/Number.intValue ()I
+    IADD
+    INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
+    ARETURN
+   L5
+    LOCALVARIABLE x I L1 L5 1
+    LOCALVARIABLE y I L2 L5 2
+    LOCALVARIABLE z I L3 L5 3
+    LOCALVARIABLE l Lkotlin/jvm/functions/Function0; L4 L5 4
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1; L0 L5 0
+    MAXSTACK = 5
+    MAXLOCALS = 5
+
+  // access flags 0x1041
+  public synthetic bridge invoke()Ljava/lang/Object;
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    INVOKEVIRTUAL CodeFragment$run$1$complexLambda$1$prop$1.invoke ()Ljava/lang/Integer;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1$prop$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x8
+  static <clinit>()V
+    NEW CodeFragment$run$1$complexLambda$1$prop$1
+    DUP
+    INVOKESPECIAL CodeFragment$run$1$complexLambda$1$prop$1.<init> ()V
+    PUTSTATIC CodeFragment$run$1$complexLambda$1$prop$1.INSTANCE : LCodeFragment$run$1$complexLambda$1$prop$1;
+    RETURN
+    MAXSTACK = 2
+    MAXLOCALS = 0
+}
+
+
+// class version 52.0 (52)
+// access flags 0x31
+public final class CodeFragment$run$1$complexLambda$1 {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment run ()I
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0017\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0017\u0010\u0002\u001a\u0008\u0012\u0004\u0012\u00020\u00040\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0005\u0010\u0006"}, d2={"CodeFragment$run$1$complexLambda$1", "", "prop", "Lkotlin/Function0;", "", "getProp", "()Lkotlin/jvm/functions/Function0;"})
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$complexLambda$1$prop$1 null null
+
+  // access flags 0x12
+  // signature Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+  // declaration: prop extends kotlin.jvm.functions.Function0<java.lang.Integer>
+  private final Lkotlin/jvm/functions/Function0; prop
+
+  // access flags 0x0
+  <init>()V
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    ALOAD 0
+    GETSTATIC CodeFragment$run$1$complexLambda$1$prop$1.INSTANCE : LCodeFragment$run$1$complexLambda$1$prop$1;
+    CHECKCAST kotlin/jvm/functions/Function0
+    PUTFIELD CodeFragment$run$1$complexLambda$1.prop : Lkotlin/jvm/functions/Function0;
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x11
+  // signature ()Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+  // declaration: kotlin.jvm.functions.Function0<java.lang.Integer> getProp()
+  public final getProp()Lkotlin/jvm/functions/Function0;
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    GETFIELD CodeFragment$run$1$complexLambda$1.prop : Lkotlin/jvm/functions/Function0;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$complexLambda$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+}
+
+
+// class version 52.0 (52)
+// access flags 0x31
+public final class CodeFragment$run$1$createFunWithLocalObj$1$1 {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment$run$1$createFunWithLocalObj$1 invoke ()Ljava/lang/Integer;
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001R\u0014\u0010\u0002\u001a\u00020\u0003X\u0086D\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0004\u0010\u0005"}, d2={"CodeFragment$run$1$createFunWithLocalObj$1$1", "", "x", "", "getX", "()I"})
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1$1 null null
+
+  // access flags 0x12
+  private final I x
+
+  // access flags 0x0
+  <init>()V
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    ALOAD 0
+    ICONST_1
+    PUTFIELD CodeFragment$run$1$createFunWithLocalObj$1$1.x : I
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$createFunWithLocalObj$1$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x11
+  public final getX()I
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    GETFIELD CodeFragment$run$1$createFunWithLocalObj$1$1.x : I
+    IRETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$createFunWithLocalObj$1$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+}
+
+
+// class version 52.0 (52)
+// access flags 0x30
+// signature Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+// declaration: CodeFragment$run$1$createFunWithLocalObj$1 extends kotlin.jvm.internal.Lambda implements kotlin.jvm.functions.Function0<java.lang.Integer>
+final class CodeFragment$run$1$createFunWithLocalObj$1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function0 {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment run$createFunWithLocalObj ()Lkotlin/jvm/functions/Function0;
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48, d1={"\u0000\n\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0002\u0010\u0000\u001a\u00020\u0001H\n\u00a2\u0006\u0004\u0008\u0002\u0010\u0003"}, d2={"<anonymous>", "", "invoke", "()Ljava/lang/Integer;"})
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1$1 null null
+
+  // access flags 0x19
+  public final static LCodeFragment$run$1$createFunWithLocalObj$1; INSTANCE
+
+  // access flags 0x0
+  <init>()V
+   L0
+    ALOAD 0
+    ICONST_0
+    INVOKESPECIAL kotlin/jvm/internal/Lambda.<init> (I)V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$createFunWithLocalObj$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x11
+  public final invoke()Ljava/lang/Integer;
+   L0
+    LINENUMBER 53 L0
+    NEW CodeFragment$run$1$createFunWithLocalObj$1$1
+    DUP
+    INVOKESPECIAL CodeFragment$run$1$createFunWithLocalObj$1$1.<init> ()V
+    INVOKEVIRTUAL CodeFragment$run$1$createFunWithLocalObj$1$1.getX ()I
+    INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$createFunWithLocalObj$1; L0 L1 0
+    MAXSTACK = 2
+    MAXLOCALS = 1
+
+  // access flags 0x1041
+  public synthetic bridge invoke()Ljava/lang/Object;
+   L0
+    LINENUMBER 53 L0
+    ALOAD 0
+    INVOKEVIRTUAL CodeFragment$run$1$createFunWithLocalObj$1.invoke ()Ljava/lang/Integer;
+    ARETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$createFunWithLocalObj$1; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x8
+  static <clinit>()V
+    NEW CodeFragment$run$1$createFunWithLocalObj$1
+    DUP
+    INVOKESPECIAL CodeFragment$run$1$createFunWithLocalObj$1.<init> ()V
+    PUTSTATIC CodeFragment$run$1$createFunWithLocalObj$1.INSTANCE : LCodeFragment$run$1$createFunWithLocalObj$1;
+    RETURN
+    MAXSTACK = 2
+    MAXLOCALS = 0
+}
+
+
+// class version 52.0 (52)
+// access flags 0x31
+public final class CodeFragment$run$1$localFunWithLocalClass$X {
+
+  // compiled from: fragment.kt
+  OUTERCLASS CodeFragment run$localFunWithLocalClass (I)I
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=1, xi=48, d1={"\u0000\u0013\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\u0008\n\u0002\u0008\u0004*\u0001\u0000\u0008\n\u0018\u00002\u00020\u0001B\u000f\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0004\u0008\u0004\u0010\u0005R\u0011\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0008\n\u0000\u001a\u0004\u0008\u0006\u0010\u0007"}, d2={"CodeFragment$run$1$localFunWithLocalClass$X", "", "x", "", "<init>", "(I)V", "getX", "()I"})
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$localFunWithLocalClass$X null X
+
+  // access flags 0x12
+  private final I x
+
+  // access flags 0x1
+  public <init>(I)V
+   L0
+    LINENUMBER 51 L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    ALOAD 0
+    ILOAD 1
+    PUTFIELD CodeFragment$run$1$localFunWithLocalClass$X.x : I
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$localFunWithLocalClass$X; L0 L1 0
+    LOCALVARIABLE x I L0 L1 1
+    MAXSTACK = 2
+    MAXLOCALS = 2
+
+  // access flags 0x11
+  public final getX()I
+   L0
+    LINENUMBER 51 L0
+    ALOAD 0
+    GETFIELD CodeFragment$run$1$localFunWithLocalClass$X.x : I
+    IRETURN
+   L1
+    LOCALVARIABLE this LCodeFragment$run$1$localFunWithLocalClass$X; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+}
+
+
+// class version 52.0 (52)
+// access flags 0x31
+public final class CodeFragment {
+
+  // compiled from: fragment.kt
+
+  @Lkotlin/Metadata;(mv={2, 3, 0}, k=3, xi=48)
+  // access flags 0x18
+  final static INNERCLASS CodeFragment$run$1$createFunWithLocalObj$1 null null
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$localFunWithLocalClass$X null X
+  // access flags 0x19
+  public final static INNERCLASS CodeFragment$run$1$complexLambda$1 null null
+
+  // access flags 0x1
+  public <init>()V
+   L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x19
+  public final static run()I
+   L0
+    LINENUMBER 52 L0
+    LDC 100000
+    ISTORE 0
+   L1
+    LINENUMBER 53 L1
+    NEW CodeFragment$run$1$complexLambda$1
+    DUP
+    INVOKESPECIAL CodeFragment$run$1$complexLambda$1.<init> ()V
+    INVOKEVIRTUAL CodeFragment$run$1$complexLambda$1.getProp ()Lkotlin/jvm/functions/Function0;
+    ASTORE 1
+   L2
+    ALOAD 1
+    INVOKEINTERFACE kotlin/jvm/functions/Function0.invoke ()Ljava/lang/Object; (itf)
+    CHECKCAST java/lang/Number
+    INVOKEVIRTUAL java/lang/Number.intValue ()I
+    ILOAD 0
+    IADD
+   L3
+    IRETURN
+    LOCALVARIABLE complexLambda Lkotlin/jvm/functions/Function0; L2 L3 1
+    LOCALVARIABLE it I L1 L3 0
+    MAXSTACK = 2
+    MAXLOCALS = 2
+
+  // access flags 0x1A
+  private final static run$localFunWithLocalClass(I)I
+   L0
+    LINENUMBER 52 L0
+    NEW CodeFragment$run$1$localFunWithLocalClass$X
+    DUP
+   L1
+    LINENUMBER 53 L1
+    ILOAD 0
+   L2
+    LINENUMBER 52 L2
+    INVOKESPECIAL CodeFragment$run$1$localFunWithLocalClass$X.<init> (I)V
+   L3
+    LINENUMBER 53 L3
+    INVOKEVIRTUAL CodeFragment$run$1$localFunWithLocalClass$X.getX ()I
+   L4
+    LINENUMBER 52 L4
+    IRETURN
+   L5
+    LOCALVARIABLE p I L0 L5 0
+    MAXSTACK = 3
+    MAXLOCALS = 1
+
+  // access flags 0x1A
+  // signature ()Lkotlin/jvm/functions/Function0<Ljava/lang/Integer;>;
+  // declaration: kotlin.jvm.functions.Function0<java.lang.Integer> run$createFunWithLocalObj()
+  private final static run$createFunWithLocalObj()Lkotlin/jvm/functions/Function0;
+   L0
+    LINENUMBER 53 L0
+    GETSTATIC CodeFragment$run$1$createFunWithLocalObj$1.INSTANCE : LCodeFragment$run$1$createFunWithLocalObj$1;
+    CHECKCAST kotlin/jvm/functions/Function0
+    ARETURN
+    MAXSTACK = 1
+    MAXLOCALS = 0
+}

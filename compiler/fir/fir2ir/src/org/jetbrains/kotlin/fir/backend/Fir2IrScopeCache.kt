@@ -6,15 +6,23 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.backend.utils.filterOutSymbolsFromCache
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.ir.symbols.*
 
-class Fir2IrScopeCache {
+class Fir2IrScopeCache() {
     private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameterSymbol>()
 
+    val parameters: Map<FirValueParameter, IrValueParameterSymbol>
+        get() = parameterCache
+
     private val variableCache = mutableMapOf<FirVariable, IrVariableSymbol>()
+
+    val variables: Map<FirVariable, IrVariableSymbol>
+        get() = variableCache
 
     private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunctionSymbol>()
 
@@ -22,6 +30,21 @@ class Fir2IrScopeCache {
         get() = localFunctionCache
 
     private val delegatedPropertyCache = mutableMapOf<FirProperty, IrLocalDelegatedPropertySymbol>()
+
+    val delegatedProperties: Map<FirProperty, IrLocalDelegatedPropertySymbol>
+        get() = delegatedPropertyCache
+
+    constructor(
+        parameters: Map<FirValueParameter, IrValueParameterSymbol>,
+        variables: Map<FirVariable, IrVariableSymbol>,
+        localFunctions: Map<FirFunction, IrSimpleFunctionSymbol>,
+        delegatedProperties: Map<FirProperty, IrLocalDelegatedPropertySymbol>,
+    ) : this() {
+        parameterCache.putAll(parameters)
+        variableCache.putAll(variables)
+        localFunctionCache.putAll(localFunctions)
+        delegatedPropertyCache.putAll(delegatedProperties)
+    }
 
     fun getParameter(parameter: FirValueParameter): IrValueParameterSymbol? {
         return parameterCache[parameter]
@@ -65,14 +88,14 @@ class Fir2IrScopeCache {
                 && delegatedPropertyCache.isEmpty()
     }
 
-    fun clone(): Fir2IrScopeCache {
-        val thisCache = this
-        return Fir2IrScopeCache().apply {
-            parameterCache.putAll(thisCache.parameterCache)
-            variableCache.putAll(thisCache.variableCache)
-            localFunctionCache.putAll(thisCache.localFunctionCache)
-            delegatedPropertyCache.putAll(thisCache.delegatedPropertyCache)
-        }
+    // Should be updated respectively when adding new properties
+    fun cloneFilteringSymbols(filterOutSymbols: Set<FirBasedSymbol<*>>): Fir2IrScopeCache {
+        return Fir2IrScopeCache(
+            filterOutSymbolsFromCache(parameters, filterOutSymbols),
+            filterOutSymbolsFromCache(variableCache, filterOutSymbols),
+            filterOutSymbolsFromCache(localFunctionCache, filterOutSymbols),
+            filterOutSymbolsFromCache(delegatedPropertyCache, filterOutSymbols)
+        )
     }
 
     fun clear() {
