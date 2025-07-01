@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleModule
@@ -59,7 +60,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // so the test cannot detect LLVM variant for apple targets on macOS host.
         Assumptions.assumeFalse(targets.hostTarget.family.isAppleFamily && targets.testTarget.family.isAppleFamily)
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
             assertFalse(
@@ -128,7 +129,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
                                         testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG
         ) // KT-65963
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         val testCase = generateTestCaseWithSingleModule(sourcesRoot = null)
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
@@ -152,7 +153,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // Only test with -opt enabled
         Assumptions.assumeTrue(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
         // No need to test with different GC schedulers
-        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
+        Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
         val testCase = generateTestCaseWithSingleModule(sourcesRoot = null)
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }

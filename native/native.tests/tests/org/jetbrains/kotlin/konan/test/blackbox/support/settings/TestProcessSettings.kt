@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
 import org.jetbrains.kotlin.backend.konan.GC
+import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -160,16 +161,9 @@ class GCType(val gc: GC?) {
     override fun toString() = gc?.shortcut?.let { "(-Xbinary=gc=$it)" }.orEmpty()
 }
 
-enum class GCScheduler(val compilerFlag: String?) {
-    UNSPECIFIED(null),
-    MANUAL("-Xbinary=gcSchedulerType=manual"),
-    ADAPTIVE("-Xbinary=gcSchedulerType=adaptive"),
-    AGGRESSIVE("-Xbinary=gcSchedulerType=aggressive"),
-
-    // TODO: Remove these deprecated GC scheduler options.
-    DISABLED("-Xbinary=gcSchedulerType=disabled"),
-    WITH_TIMER("-Xbinary=gcSchedulerType=with_timer"),
-    ON_SAFE_POINTS("-Xbinary=gcSchedulerType=on_safe_points");
+class GCScheduler(val scheduler: GCSchedulerType?) {
+    val compilerFlag: String?
+        get() = scheduler?.let { "-Xbinary=gcSchedulerType=${it.name.lowercase()}" }
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
