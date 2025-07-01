@@ -24,6 +24,7 @@ public actual val Throwable.suppressedExceptions: List<Throwable>
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
+@OptIn(BoxedLongImplementation::class)
 public fun Long.toString(radix: Int): String =
     this.toStringImpl(checkRadix(radix))
 
