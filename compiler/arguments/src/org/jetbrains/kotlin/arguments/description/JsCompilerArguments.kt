@@ -483,6 +483,16 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xes-long-as-bigint"
+        compilerName = "compileLongAsBigInt"
+        description = "Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage".asReleaseDependent()
+        valueType = BooleanType.defaultNull
+
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
+        stubLifecycle()
+    }
+
+    compilerArgument {
         name = "Xtyped-arrays"
         description = """This option does nothing and is left for compatibility with the legacy backend.
 It is deprecated and will be removed in a future release.""".asReleaseDependent()

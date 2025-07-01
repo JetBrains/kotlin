@@ -454,6 +454,16 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xes-long-as-bigint",
+        description = "Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage",
+    )
+    var compileLongAsBigInt: Boolean? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
