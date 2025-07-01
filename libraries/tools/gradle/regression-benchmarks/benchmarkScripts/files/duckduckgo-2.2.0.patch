@@ -1,0 +1,63 @@
+diff --git a/build.gradle b/build.gradle
+index 35e245539..d443550ed 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -73,6 +73,25 @@ afterEvaluate {
+     logger.debug(projectsForK1.join("\n"))
+
+    configure(projectsForK1) {
++        extensions.getByType(org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension.class).compilerVersion.set("2.1.21")
++        configurations {
++            "kotlinCompilerPluginClasspathDebug" {
++                resolutionStrategy.eachDependency {
++                    if (requested.group == "org.jetbrains.kotlin" && requested.name == "kotlin-parcelize-compiler") {
++                        useTarget("org.jetbrains.kotlin:kotlin-parcelize-compiler:2.1.21")
++                        because("Compatible with Kotlin compiler 2.1.21 version")
++                    }
++                }
++            }
++            "kotlinCompilerPluginClasspathPlayDebug" {
++                resolutionStrategy.eachDependency {
++                    if (requested.group == "org.jetbrains.kotlin" && requested.name == "kotlin-annotation-processing-gradle") {
++                        useTarget("org.jetbrains.kotlin:kotlin-annotation-processing-gradle:2.1.21")
++                        because("Compatible with Kotlin compiler 2.1.21 version")
++                    }
++                }
++            }
++        }
+         tasks.withType(KotlinJvmCompile).configureEach { task ->
+             compilerOptions {
+                 languageVersion.set(KotlinVersion.KOTLIN_1_9)
+diff --git a/gradle.properties b/gradle.properties
+index 7d1488ab8..7e88705ea 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -22,5 +22,6 @@ org.gradle.parallel=true
+ org.gradle.configureondemand=true
+ android.defaults.buildfeatures.buildconfig=true
+ android.nonFinalResIds=false
++kotlin.compiler.runViaBuildToolsApi=true
+
+ kotlinVersion=2.2.255-SNAPSHOT
+diff --git a/versions.properties b/versions.properties
+index aa37e7e0f..1933f2a52 100644
+--- a/versions.properties
++++ b/versions.properties
+@@ -17,7 +17,7 @@ plugin.com.osacky.fulladle=0.17.4
+
+ plugin.org.jmailen.kotlinter=5.0.0
+
+-plugin.com.google.devtools.ksp=2.1.20-1.0.32
++plugin.com.google.devtools.ksp=2.2.0-2.0.2
+
+ plugin.com.diffplug.spotless=6.1.2
+
+@@ -49,7 +49,7 @@ version.androidx.legacy=1.0.0
+
+ version.androidx.lifecycle=2.8.5
+
+-version.androidx.room=2.6.1
++version.androidx.room=2.7.2
+
+ version.androidx.swiperefreshlayout=1.1.0
+
