@@ -117,7 +117,7 @@ internal class IrScopeChecker(val scopeContext: IrScopeCheckerContext) : IrSymbo
             return when (owner) {
                 is IrClass -> SymbolVisibility.InFile(owner.file)
                 is IrFunction if owner.dispatchReceiverParameter != null && owner.parent is IrClass -> SymbolVisibility.InFile(owner.file)
-                is IrProperty if owner.parent is IrClass -> SymbolVisibility.InFile(owner.file)
+                is IrProperty -> SymbolVisibility.InFile(owner.file)
                 else -> SymbolVisibility.Local
             }
         }
