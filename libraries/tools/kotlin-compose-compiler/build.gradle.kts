@@ -68,6 +68,17 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                     }
                 }
             }
+
+            val functionalTests = sourceSets.getByName("functionalTest")
+            listOf(
+                functionalTests.compileClasspathConfigurationName,
+                functionalTests.runtimeClasspathConfigurationName,
+            ).forEach {
+                configurations.getByName(it).attributes.attribute(
+                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+                    objects.named(GradlePluginVariant.values().maxBy { GradleVersion.version(it.minimalSupportedGradleVersion) }.minimalSupportedGradleVersion)
+                )
+            }
         }
     }
 
