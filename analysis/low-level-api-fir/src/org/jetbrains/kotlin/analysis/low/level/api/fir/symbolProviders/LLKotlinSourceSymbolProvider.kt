@@ -160,8 +160,8 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         LLAmbiguousClassLikeSymbolCache.withoutContext(this, moduleComponents.module.contentScope) { declaration ->
             val classId = declaration.getClassId() ?: return@withoutContext null
 
-            findClassLikeSymbol(classId, declaration) {
-                FirElementFinder.findClassifierWithPsi(it, classId, declaration)
+            findClassLikeSymbol(classId, declaration) { file ->
+                FirElementFinder.findDeclaration(file, declaration) as? FirClassLikeDeclaration
             }
         }
 

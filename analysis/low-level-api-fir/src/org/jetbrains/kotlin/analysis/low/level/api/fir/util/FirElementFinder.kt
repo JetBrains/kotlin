@@ -34,21 +34,6 @@ internal class FirElementFinder : FirSessionComponent {
             expectedDeclarationAcceptor = { it is FirClassLikeDeclaration },
         )?.target?.let { it as FirClassLikeDeclaration }
 
-        /**
-         * In contrast to [findClassifierWithClassId], this function finds the exact [declaration] if the FIR file contains multiple classes
-         * with the same name.
-         */
-        fun findClassifierWithPsi(
-            firFile: FirFile,
-            classId: ClassId,
-            declaration: KtClassLikeDeclaration,
-        ): FirClassLikeDeclaration? = collectDesignationPath(
-            firFile = firFile,
-            containerClassId = classId.outerClassId,
-            targetDeclarationName = classId.shortClassName,
-            expectedDeclarationAcceptor = { it is FirClassLikeDeclaration && it.psi === declaration }
-        )?.target?.let { it as FirClassLikeDeclaration }
-
         fun collectDesignationPath(
             firFile: FirFile,
             declarationContainerClassId: ClassId?,
