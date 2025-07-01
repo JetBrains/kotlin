@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.utils.createResolvable
 
 private const val ABI_TOOLS_DEPENDENCY_CONFIGURATION = "kotlinInternalAbiValidation"
 
+internal const val ANDROID_RELEASE_BUILD_TYPE = "release"
+
 /**
  * Converts a [KotlinTarget] to a [KlibTarget].
  */
@@ -71,11 +73,14 @@ internal fun Project.prepareAbiClasspath(): Configuration {
 }
 
 /**
- * Executes a given [action] against the compilation with the name [SourceSet.MAIN_SOURCE_SET_NAME].
+ * Executes a given [action] against the compilation with the name [compilationName].
  */
-internal inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.withMainCompilationIfExists(crossinline action: T.() -> Unit) {
-    if (names.contains(SourceSet.MAIN_SOURCE_SET_NAME)) {
-        named(SourceSet.MAIN_SOURCE_SET_NAME).configure { compilation ->
+internal inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.withCompilationIfExists(
+    compilationName: String,
+    crossinline action: T.() -> Unit,
+) {
+    if (names.contains(compilationName)) {
+        named(compilationName).configure { compilation ->
             compilation.action()
         }
     }

@@ -9,12 +9,11 @@ import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.launch
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -46,7 +45,7 @@ private fun Project.processJvmKindTargets(
         val classfiles = files()
         abiValidationTaskSet.addSingleJvmTarget(classfiles)
 
-        singleJvmTarget.compilations.withMainCompilationIfExists {
+        singleJvmTarget.compilations.withCompilationIfExists(KotlinCompilation.MAIN_COMPILATION_NAME) {
             classfiles.from(output.classesDirs)
         }
         return
@@ -59,24 +58,20 @@ private fun Project.processJvmKindTargets(
             val classfiles = files()
             abiValidationTaskSet.addJvmTarget(target.targetName, classfiles)
 
-            target.compilations.withMainCompilationIfExists {
+            target.compilations.withCompilationIfExists(KotlinCompilation.MAIN_COMPILATION_NAME) {
                 classfiles.from(output.classesDirs)
             }
         }
 
     targets
         .asSequence()
-        .filter { target -> target.platformType == KotlinPlatformType.androidJvm }
         .filterIsInstance<KotlinAndroidTarget>()
         .forEach { target ->
             val classfiles = files()
             abiValidationTaskSet.addJvmTarget(target.targetName, classfiles)
 
-            target.compilations.all { compilation ->
-                @Suppress("DEPRECATION")
-                if (compilation.androidVariant?.isTestVariant != true) {
-                    classfiles.from(compilation.output.classesDirs)
-                }
+            target.compilations.withCompilationIfExists(ANDROID_RELEASE_BUILD_TYPE) {
+                classfiles.from(output.classesDirs)
             }
         }
 }
@@ -94,7 +89,7 @@ private fun Project.processNonJvmTargets(
             val klibTarget = target.toKlibTarget()
             launch {
                 if (target.targetIsSupported() && klibTarget.configurableName !in bannedInTests) {
-                    target.compilations.withMainCompilationIfExists {
+                    target.compilations.withCompilationIfExists(KotlinCompilation.MAIN_COMPILATION_NAME) {
                         abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
                     }
                 } else {
