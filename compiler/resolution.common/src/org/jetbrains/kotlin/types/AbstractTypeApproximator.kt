@@ -269,12 +269,13 @@ abstract class AbstractTypeApproximator(
         if (!toSuper) return null
         if (!conf.approximateLocalTypes && !conf.approximateAnonymous) return null
 
-        fun TypeConstructorMarker.isAcceptable(): Boolean {
-            return !(conf.approximateLocalTypes && isLocalType()) && !(conf.approximateAnonymous && isAnonymous())
+        fun KotlinTypeMarker.isAcceptable(constructorMarker: TypeConstructorMarker): Boolean {
+            return !(conf.approximateLocalTypes && conf.shouldApproximateLocalType(ctx, this) && constructorMarker.isLocalType()) &&
+                    !(conf.approximateAnonymous && constructorMarker.isAnonymous())
         }
 
         val constructor = type.typeConstructor()
-        if (constructor.isAcceptable()) return null
+        if (type.isAcceptable(constructor)) return null
         val typeCheckerContext = newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
@@ -295,7 +296,7 @@ abstract class AbstractTypeApproximator(
                 val currentType = queue.removeFirst()
                 if (!visited.add(currentType)) continue
                 val currentConstructor = currentType.typeConstructor()
-                if (currentConstructor.isAcceptable()) {
+                if (currentType.isAcceptable(currentConstructor)) {
                     result = currentType.withNullability(type.isMarkedNullable())
                     break
                 }
