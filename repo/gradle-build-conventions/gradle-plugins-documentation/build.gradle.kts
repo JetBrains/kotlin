@@ -53,5 +53,10 @@ configurations.all {
             useVersion("6.4.0")
             because("CVE-2022-40156, CVE-2022-40155, CVE-2022-40154, CVE-2022-40153, CVE-2022-40152")
         }
+
+        if (requested.group.startsWith("com.fasterxml.jackson")) {
+            useVersion("2.15.0")
+            because("CVE-2025-49128, CVE-2025-52999")
+        }
     }
 }
