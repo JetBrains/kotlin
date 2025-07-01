@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.publishJavaPlatform
 import org.jetbrains.kotlin.gradle.util.MavenModule
 import org.jetbrains.kotlin.gradle.util.parsePom
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.exists
@@ -37,6 +38,48 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
         )
+        
+    @DisplayName("Top-level dependencies block FUS events")
+    @GradleTest
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun testFusCollection(gradleVersion: GradleVersion) {
+        val fusEventName = BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK.name
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    jvm()
+                    sourceSets.commonMain.dependencies {
+                        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                    }
+                }
+            }
+            assertEquals(
+                emptyList(),
+                collectFusEvents(
+                    "assemble",
+                    buildAction = BuildActions.build
+                ).filter { it.startsWith(fusEventName) },
+            )
+            buildScriptInjection {
+                kotlinMultiplatform.dependencies {  }
+            }
+            val action = if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsConst)) {
+                BuildActions.buildAndFail
+            } else {
+                BuildActions.build
+            }
+            assertEquals(
+                listOf("${fusEventName}=true"),
+                collectFusEvents(
+                    "assemble",
+                    buildAction = action
+                ).filter { it.startsWith(fusEventName) },
+            )
+        }
+    }
 
     @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest

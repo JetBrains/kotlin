@@ -48,6 +48,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     KOTLIN_KTS_USED(OR, SAFE),
     KOTLIN_INCREMENTAL_NATIVE_ENABLED(OR, SAFE),
     KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED(OR, SAFE),
+    KMP_TOP_LEVEL_DEPENDENCIES_BLOCK(OR, SAFE),
 
     JS_GENERATE_EXTERNALS(OR, SAFE),
 
@@ -114,6 +115,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ;
 
     companion object {
-        const val VERSION = 14
+        const val VERSION = 15
     }
 }

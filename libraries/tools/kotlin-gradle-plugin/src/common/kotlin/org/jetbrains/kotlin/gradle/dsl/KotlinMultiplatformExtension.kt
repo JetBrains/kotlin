@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmWasiTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import javax.inject.Inject
 
 internal fun ExtensionContainer.KotlinMultiplatformExtension(
@@ -116,6 +118,9 @@ internal constructor(
     fun dependencies(configure: Action<KotlinDependencies>) = dependencies { configure.execute(this) }
 
     fun dependencies(configure: KotlinDependencies.() -> Unit) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.KMP_TOP_LEVEL_DEPENDENCIES_BLOCK, true)
+        }
         when (val dependencies = dependencies) {
             KotlinTopLevelDependenciesBlock.UnavailableInCurrentGradleVersion -> {
                 project.reportDiagnostic(
