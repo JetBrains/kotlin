@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.group
 
+import org.jetbrains.kotlin.backend.konan.GC
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.supportsCoreSymbolication
@@ -27,7 +28,7 @@ private val SUPPORTS_CORE_SYMBOLICATION = "targetSupportsCoreSymbolication"
 private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
 private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
 private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
-private val GC_TYPE_NAMES = GCType.entries.map { it.name }
+private val GC_TYPE_NAMES = GC.entries.map { it.name }
 private val GC_SCHEDULER_NAMES = GCScheduler.entries.map { it.name }
 private val ALLOCATOR_NAMES = Allocator.entries.map { it.name }
 private val THREAD_STATE_CHECKER_NAMES = ThreadStateChecker.entries.map { it.name }
@@ -123,7 +124,7 @@ internal fun Settings.evaluate(directiveValues: List<String?>): Boolean {
                 ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
                 ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
                 ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
-                ClassLevelProperty.GC_TYPE.shortName -> get<GCType>().name to GC_TYPE_NAMES
+                ClassLevelProperty.GC_TYPE.shortName -> get<GCType>().gc?.name to GC_TYPE_NAMES
                 ClassLevelProperty.GC_SCHEDULER.shortName -> get<GCScheduler>().name to GC_SCHEDULER_NAMES
                 ClassLevelProperty.ALLOCATOR.shortName -> get<Allocator>().name to ALLOCATOR_NAMES
                 ClassLevelProperty.USE_THREAD_STATE_CHECKER.shortName -> get<ThreadStateChecker>().name to THREAD_STATE_CHECKER_NAMES
