@@ -92,7 +92,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
 
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
-        gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        gcType.gc?.let { gc -> add("-Xbinary=gc=${gc.shortcut ?: gc.name}") }
         gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         allocator.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
 
