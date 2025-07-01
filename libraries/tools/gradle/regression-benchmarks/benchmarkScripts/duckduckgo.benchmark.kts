@@ -5,7 +5,7 @@
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
     gitCommitSha = "0c100be84e7e91a6c053afd84cece44747bb64fb",
-    stableKotlinVersion = "2.1.20",
+    stableKotlinVersion = "2.2.0",
 )
 
 import java.io.File
