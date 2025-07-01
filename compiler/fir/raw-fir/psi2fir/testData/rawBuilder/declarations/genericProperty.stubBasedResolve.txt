@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] genericProperty.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> genericFoo(): R|T| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|T|.generic: R|T|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|T| { LAZY_BLOCK }

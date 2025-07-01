@@ -1,0 +1,30 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnReceiver.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @RECEIVER:<ERROR TYPE REF: Symbol not found for FunctionReceiverAnnotation>[Types](LAZY_EXPRESSION) R|@<ERROR TYPE REF: Symbol not found for ReceiverTypeAnnotation>(LAZY_EXPRESSION)  kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ReceiverNestedTypeAnnotation>(LAZY_EXPRESSION)  kotlin/String>|.function(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val [ResolvedTo(EXPECT_ACTUAL_MATCHING)] @RECEIVER:<ERROR TYPE REF: Symbol not found for PropertyReceiverAnnotation>[Types](LAZY_EXPRESSION) R|@<ERROR TYPE REF: Symbol not found for ReceiverTypeAnnotation>(LAZY_EXPRESSION)  kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ReceiverNestedTypeAnnotation>(LAZY_EXPRESSION)  kotlin/String>|.property: <implicit>
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>(LAZY_EXPRESSION)  kotlin/Int>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/String>|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun functionWithContextReceivers(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>(LAZY_EXPRESSION)  kotlin/Long>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Boolean>|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val propertyWithContextReceivers: <implicit>
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
+    context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Short>|, [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  ERROR CLASS: Symbol not found for UInt>|)
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Short>|, [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  ERROR CLASS: Symbol not found for UInt>|)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Short>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  ERROR CLASS: Symbol not found for UInt>|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClassWithExplicitConstructor : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Short>|, [ResolvedTo(BODY_RESOLVE)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  ERROR CLASS: Symbol not found for UInt>|)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClassWithExplicitConstructor] constructor(): R|MyClassWithExplicitConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        context([ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  kotlin/Short>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/collections/List<@<ERROR TYPE REF: Symbol not found for ContextReceiverAnnotation>()  ERROR CLASS: Symbol not found for UInt>|)
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClassWithExplicitConstructor] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): R|MyClassWithExplicitConstructor| {
+            LAZY_this<R|MyClassWithExplicitConstructor|>
+        }
+
+    }

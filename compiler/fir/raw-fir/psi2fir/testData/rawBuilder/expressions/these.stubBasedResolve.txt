@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] these.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Some : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bar(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val instance: R|Some|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Some] get(): R|Some| { LAZY_BLOCK }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/String|.extension(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun [ResolvedTo(CONTRACTS)] R|Some|.extension(): <implicit> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] some: R|Some|): R|kotlin/Int| { LAZY_BLOCK }

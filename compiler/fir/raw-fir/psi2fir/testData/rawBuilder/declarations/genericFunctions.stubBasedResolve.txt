@@ -1,0 +1,12 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] genericFunctions.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Any : R|kotlin/Any| {
+    }
+    public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <reified [ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|Any|> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|Any|.safeAs(): R|T?| { LAZY_BLOCK }
+    public abstract [ResolvedTo(BODY_RESOLVE)] class Summator : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Summator] constructor(): R|Summator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> plus([ResolvedTo(BODY_RESOLVE)] first: R|T|, [ResolvedTo(BODY_RESOLVE)] second: R|T|): R|T|
+
+    }

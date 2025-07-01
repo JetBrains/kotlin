@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] whenGuards.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun GuardMustHaveExpression([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun GuardNewlines([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun IfExpressionNotGuard([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/Any|): R|kotlin/Unit| { LAZY_BLOCK }

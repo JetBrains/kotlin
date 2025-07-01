@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationsFileLevel.kt
+    [ResolvedTo(CONSTANT_EVALUATION)] @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>

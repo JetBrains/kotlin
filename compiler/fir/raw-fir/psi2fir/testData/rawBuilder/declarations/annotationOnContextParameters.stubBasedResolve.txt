@@ -1,0 +1,15 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnContextParameters.kt
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for Ann>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun annotationOnContext(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>[Types](LAZY_EXPRESSION) a: R|@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>(LAZY_EXPRESSION)  kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun annotationWithConstructor(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for Ann>[Types]() a: R|@<ERROR TYPE REF: Symbol not found for Ann>()  kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val annotationOnContextProperty: R|kotlin/String|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>[Types](LAZY_EXPRESSION) a: R|@<ERROR TYPE REF: Symbol not found for AnnotationWithConstructor>(LAZY_EXPRESSION)  kotlin/String|)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val annotationWithConstructorProperty: R|kotlin/String|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun functionType([ResolvedTo(SEALED_CLASS_INHERITORS)] f: context(@Ann[Unresolved]() String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun functionTypeWithConstructor([ResolvedTo(SEALED_CLASS_INHERITORS)] f: context(@AnnotationWithConstructor[Unresolved](LAZY_EXPRESSION) String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun functionTypeNamed([ResolvedTo(SEALED_CLASS_INHERITORS)] f: context(@Ann[Unresolved]() String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun functionTypeNamedWithConstructor([ResolvedTo(SEALED_CLASS_INHERITORS)] f: context(@AnnotationWithConstructor[Unresolved](LAZY_EXPRESSION) String)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }

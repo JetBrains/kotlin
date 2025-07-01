@@ -1,0 +1,16 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] contextReceivers.kt
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] b@<ERROR TYPE REF: Symbol not found for B>)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(EXPECT_ACTUAL_MATCHING)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] b@<ERROR TYPE REF: Symbol not found for B>)
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val x: R|kotlin/Int|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    context([ResolvedTo(BODY_RESOLVE)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(BODY_RESOLVE)] b@<ERROR TYPE REF: Symbol not found for B>)
+    public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+        context([ResolvedTo(BODY_RESOLVE)] A@<ERROR TYPE REF: Symbol not found for A>, [ResolvedTo(BODY_RESOLVE)] b@<ERROR TYPE REF: Symbol not found for B>)
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun bar1([ResolvedTo(SEALED_CLASS_INHERITORS)] x: context(A, B)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun bar2([ResolvedTo(SEALED_CLASS_INHERITORS)] x: context(A, B)( R|C|.() -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }

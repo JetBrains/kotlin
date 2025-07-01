@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] noParameterTypRefInFuncionalType.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun x([ResolvedTo(EXPECT_ACTUAL_MATCHING)] p: R|(ERROR CLASS: Symbol not found for a) -> kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

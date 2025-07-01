@@ -1,0 +1,16 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnTypeParameterInWhereClause.kt
+    @R|kotlin/annotation/Repeatable|[Types]() @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class TypeParameterAnn : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=TypeParameterAnn] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/TypeParameterAnn.name] name: R|kotlin/String|): R|TypeParameterAnn| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=TypeParameterAnn] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Foo<@R|TypeParameterAnn|[Types](name = String(T)) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!)) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<@R|TypeParameterAnn|[Types](name = String(T)) @R|TypeParameterAnn|[Types](name = String(Prohibit me!!!)) [ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Any|>(): R|Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

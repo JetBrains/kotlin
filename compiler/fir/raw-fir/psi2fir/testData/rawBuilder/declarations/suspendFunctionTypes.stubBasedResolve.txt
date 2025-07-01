@@ -1,0 +1,4 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] suspendFunctionTypes.kt
+    public final suspend [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> simpleRun([ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|suspend () -> T|): R|T| { LAZY_BLOCK }
+    public final suspend [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<T>|.simpleMap([ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|suspend (T) -> R|): R|R| { LAZY_BLOCK }
+    public? final? suspend [ResolvedTo(SEALED_CLASS_INHERITORS)] fun <[ResolvedTo(SEALED_CLASS_INHERITORS)] T> simpleWith([ResolvedTo(SEALED_CLASS_INHERITORS)] t: T, [ResolvedTo(SEALED_CLASS_INHERITORS)] f: ( suspend T.() -> Unit )): Unit { LAZY_BLOCK }

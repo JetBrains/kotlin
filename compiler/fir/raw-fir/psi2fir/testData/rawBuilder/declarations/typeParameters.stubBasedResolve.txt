@@ -1,0 +1,26 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameters.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface List<[ResolvedTo(BODY_RESOLVE)] out T : R|kotlin/Any|> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] index: R|kotlin/Int|): R|T|
+
+        public abstract infix [ResolvedTo(BODY_RESOLVE)] fun concat([ResolvedTo(BODY_RESOLVE)] other: R|List<T>|): R|List<T>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias StringList = R|List<out kotlin/String>|
+    public final [ResolvedTo(BODY_RESOLVE)] typealias AnyList = R|List<*>|
+    public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractList<[ResolvedTo(BODY_RESOLVE)] out T : R|kotlin/Any|> : R|List<T>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractList] constructor<[ResolvedTo(BODY_RESOLVE)] out T : R|kotlin/Any|>(): R|AbstractList<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class SomeList : R|AbstractList<kotlin/Int>| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SomeList] constructor(): R|SomeList| {
+            LAZY_super<R|AbstractList<kotlin/Int>|>
+        }
+
+        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun get([ResolvedTo(EXPECT_ACTUAL_MATCHING)] index: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public open override infix [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun concat([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|List<kotlin/Int>|): R|List<kotlin/Int>| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] From : R|To|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(EXPECT_ACTUAL_MATCHING)] from: R|List<From>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] to: R|List<To>|): R|kotlin/Unit| { LAZY_BLOCK }
