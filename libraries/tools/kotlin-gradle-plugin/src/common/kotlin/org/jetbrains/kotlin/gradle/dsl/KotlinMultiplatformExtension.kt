@@ -168,15 +168,14 @@ internal constructor(
      * - `appleMain`, `appleTest`
      * - `linuxMain`, `linuxTest`
      * - `nativeMain`, `nativeTest`
-     * - `webMain`, `webTest`
      *
      * Hierarchy:
      * ```text
      *                                    common
      *                                      │
-     *                         ┌────────────┴──────────────┬──────┐
-     *                         │                           │      │
-     *                       native                       web    ...
+     *                         ┌────────────┴──────────────┐
+     *                         │                           │
+     *                       native                       ...
      *                         │
      *             ┌───────┬───┴───┬───────────┐
      *             │       │       │           │
