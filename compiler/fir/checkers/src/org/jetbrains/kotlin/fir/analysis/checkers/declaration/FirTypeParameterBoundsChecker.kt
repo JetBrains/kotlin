@@ -78,8 +78,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         declaration: FirTypeParameter,
         containingDeclaration: FirBasedSymbol<*>,
     ) {
-        if (containingDeclaration is FirNamedFunctionSymbol && containingDeclaration.isOverride) return
-        if (containingDeclaration is FirPropertySymbol && containingDeclaration.isOverride) return
+        if (containingDeclaration is FirCallableSymbol && containingDeclaration.isOverride) return
 
         declaration.symbol.resolvedBounds.forEach { bound ->
             val boundType = bound.coneType
