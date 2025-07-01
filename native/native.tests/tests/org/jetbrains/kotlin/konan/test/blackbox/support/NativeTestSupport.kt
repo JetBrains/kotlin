@@ -203,6 +203,8 @@ object NativeTestSupport {
 
         val gcScheduler = computeGCScheduler(enforcedProperties)
 
+        val binaryOptions = computeBinaryOptions(enforcedProperties)
+
         val allocator = computeAllocator(enforcedProperties)
 
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
@@ -225,6 +227,7 @@ object NativeTestSupport {
         output += threadStateChecker
         output += gcType
         output += gcScheduler
+        output += binaryOptions
         output += allocator
         output += nativeTargets
         output += sanitizer
@@ -284,6 +287,11 @@ object NativeTestSupport {
 
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
         ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.values(), default = GCScheduler.UNSPECIFIED)
+
+    private fun computeBinaryOptions(enforcedProperties: EnforcedProperties): BinaryOptions =
+        ClassLevelProperty.BINARY_OPTIONS.readValue(
+            enforcedProperties, { it.split(",") }, emptyList()
+        ).let(::BinaryOptions)
 
     private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator =
         ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
