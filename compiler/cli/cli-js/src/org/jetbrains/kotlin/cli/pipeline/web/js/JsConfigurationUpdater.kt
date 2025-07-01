@@ -67,7 +67,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         configuration.useEs6Classes = arguments.useEsClasses ?: isES2015
         configuration.compileSuspendAsJsGenerator = arguments.useEsGenerators ?: isES2015
         configuration.compileLambdasAsEs6ArrowFunctions = arguments.useEsArrowFunctions ?: isES2015
-
+        configuration.compileLongAsBigint = arguments.compileLongAsBigInt ?: isES2015
 
         arguments.irSafeExternalBooleanDiagnostic?.let {
             configuration.safeExternalBooleanDiagnostic = it

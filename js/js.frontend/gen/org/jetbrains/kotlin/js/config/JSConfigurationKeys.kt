@@ -109,6 +109,9 @@ object JSConfigurationKeys {
     val COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS = CompilerConfigurationKey.create<Boolean>("lower Kotlin lambdas into arrow functions instead of anonymous functions")
 
     @JvmField
+    val COMPILE_LONG_AS_BIGINT = CompilerConfigurationKey.create<Boolean>("compile Long as BigInt")
+
+    @JvmField
     val GENERATE_REGION_COMMENTS = CompilerConfigurationKey.create<Boolean>("generate special comments at the start and the end of each file block, it allows to fold them and navigate to them in the IDEA")
 
     @JvmField
@@ -302,6 +305,10 @@ var CompilerConfiguration.compileSuspendAsJsGenerator: Boolean
 var CompilerConfiguration.compileLambdasAsEs6ArrowFunctions: Boolean
     get() = getBoolean(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS)
     set(value) { put(JSConfigurationKeys.COMPILE_LAMBDAS_AS_ES6_ARROW_FUNCTIONS, value) }
+
+var CompilerConfiguration.compileLongAsBigint: Boolean
+    get() = getBoolean(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT)
+    set(value) { put(JSConfigurationKeys.COMPILE_LONG_AS_BIGINT, value) }
 
 var CompilerConfiguration.generateRegionComments: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
