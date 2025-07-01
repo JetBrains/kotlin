@@ -1,4 +1,5 @@
 import gradle.GradlePluginVariant
+import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     id("gradle-plugin-dependency-configuration")
@@ -41,3 +42,8 @@ tasks {
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_88,
+)

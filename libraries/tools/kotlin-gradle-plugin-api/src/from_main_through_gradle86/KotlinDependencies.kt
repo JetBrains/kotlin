@@ -19,13 +19,21 @@ private const val TopLevelDependenciesBackwardsDeprecation = "Kotlin top-level d
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinBackwardsDeploymentDependencyCollector {
+    /**
+     * DependencyCollector backwards compatibility
+     */
     operator fun invoke(p: Any)
+    /**
+     * DependencyCollector backwards compatibility
+     */
     operator fun invoke(p: Any, a: org.gradle.api.Action<in org.gradle.api.artifacts.ExternalModuleDependency>)
 }
 
 /**
  * You will see this type if you are compiling against Kotlin Gradle Plugin
  * less than [MinSupportedGradleVersionWithDependencyCollectorsConst]
+ *
+ * @suppress Dokka sees duplicate type from common
  */
 @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
 interface KotlinDependencies : Dependencies {
@@ -71,15 +79,27 @@ interface KotlinDependencies : Dependencies {
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     val testRuntimeOnly: KotlinBackwardsDeploymentDependencyCollector
 
+    /**
+     * Platform function backwards compatibility
+     */
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     fun platform(p: Any)
 
+    /**
+     * Enforced platform function backwards compatibility
+     */
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     fun enforcedPlatform(p: Any)
 
+    /**
+     * Kotlin function backwards compatibility
+     */
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     fun kotlin(module: String): Dependency
 
+    /**
+     * Kotlin function backwards compatibility
+     */
     @Deprecated(TopLevelDependenciesBackwardsDeprecation, level = DeprecationLevel.WARNING)
     fun kotlin(module: String, version: String?): Dependency
 }

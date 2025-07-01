@@ -201,6 +201,11 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinArtifactsExtension$Comp
 	public static final field KOTLIN_NATIVE_ARTIFACTS_DEPRECATION Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector {
+	public abstract fun invoke (Ljava/lang/Object;)V
+	public abstract fun invoke (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
 }
 
@@ -274,6 +279,20 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCompile : 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lkotlin/jvm/functions/Function1;)V
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies {
+	public abstract fun enforcedPlatform (Ljava/lang/Object;)V
+	public abstract fun getApi ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun getTestRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
+	public abstract fun platform (Ljava/lang/Object;)V
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {

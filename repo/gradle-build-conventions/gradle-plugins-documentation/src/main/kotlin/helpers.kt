@@ -100,4 +100,13 @@ fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
             addWorkaroundForElementList(gradlePluginVariant)
         }
     }
+
+    /**
+     * The "main" source set is a peer of [variantSourceSet], so it should be suppressed in the Dokka generation for the variant source set.
+     *
+     * This hack relies on dokkaSourceSets set being unique per AbstractDokkaLeafTask.
+     */
+    dokkaSourceSets.named("main") {
+        suppress.set(true)
+    }
 }
