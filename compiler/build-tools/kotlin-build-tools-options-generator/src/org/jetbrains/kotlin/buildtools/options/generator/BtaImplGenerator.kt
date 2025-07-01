@@ -82,19 +82,19 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                 clazz in enumNameAccessors -> converterFun.addStatement(
                     "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
                     name,
-                    calculateName(argument),
+                    argument.calculateName(),
                     member
                 )
                 argument.valueType is IntType -> converterFun.addStatement(
                     "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
                     name,
-                    calculateName(argument),
+                    argument.calculateName(),
                     member
                 )
                 else -> converterFun.addStatement(
                     "if (%S in optionsMap) { arguments.%N = get(%M) }",
                     name,
-                    calculateName(argument),
+                    argument.calculateName(),
                     member
                 )
             }
