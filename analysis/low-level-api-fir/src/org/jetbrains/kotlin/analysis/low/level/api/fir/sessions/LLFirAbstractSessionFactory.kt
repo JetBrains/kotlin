@@ -736,11 +736,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             // We cannot just merge `LLKotlinSymbolProvider` because not every such symbol provider is a "main" symbol provider, so we could
             // have multiple symbol providers associated with the same module. Combined symbol providers require each `KaModule` to be
             // unique.
-            merge<LLKotlinSymbolProvider>(
-                { it is LLKotlinSourceSymbolProvider || it is LLKotlinStubBasedLibrarySymbolProvider },
-            ) { providers ->
-                LLCombinedKotlinSymbolProvider.merge(session, project, providers)
-            }
+//            merge<LLKotlinSymbolProvider>(
+//                { it is LLKotlinSourceSymbolProvider || it is LLKotlinStubBasedLibrarySymbolProvider },
+//            ) { providers ->
+//                LLCombinedKotlinSymbolProvider.merge(session, project, providers)
+//            }
+            // Possible advantage here: Library symbol providers likely have package sets while source symbol providers do not, so we can
+            // benefit from package sets only with separate combined Kotlin symbol providers.
+            merge<LLKotlinStubBasedLibrarySymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
+            merge<LLKotlinSourceSymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
             merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
