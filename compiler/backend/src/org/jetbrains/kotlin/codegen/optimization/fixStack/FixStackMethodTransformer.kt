@@ -129,12 +129,18 @@ class FixStackMethodTransformer : MethodTransformer() {
             when {
                 pseudoInsn == PseudoInsn.SAVE_STACK_BEFORE_TRY ->
                     transformSaveStackMarker(methodNode, actions, analyzer, marker, localVariablesManager)
-                pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
-                    transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
                 isBeforeInlineMarker(marker) ->
                     transformBeforeInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
                 isAfterInlineMarker(marker) ->
                     transformAfterInlineCallMarker(methodNode, actions, analyzer, marker, localVariablesManager)
+            }
+        }
+        // the second pass is used for RESTORE_STACK_IN_TRY_CATCH as TCF handlers can be located before try-body in bytecode
+        InsnSequence(methodNode.instructions).forEach { marker ->
+            val pseudoInsn = parsePseudoInsnOrNull(marker)
+            when {
+                pseudoInsn == PseudoInsn.RESTORE_STACK_IN_TRY_CATCH ->
+                    transformRestoreStackMarker(methodNode, actions, marker, localVariablesManager)
             }
         }
     }
