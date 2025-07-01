@@ -18,6 +18,7 @@ internal actual fun serializedUuid(uuid: Uuid): Any =
 
 // Avoid bitwise operations with Longs in JS
 @ExperimentalUuidApi
+@OptIn(BoxedLongImplementation::class)
 internal actual fun ByteArray.getLongAt(index: Int): Long {
     return Long(
         high = this.getIntAt(index),
@@ -34,6 +35,7 @@ private fun ByteArray.getIntAt(index: Int): Int {
 
 // Avoid bitwise operations with Longs in JS
 @ExperimentalUuidApi
+@OptIn(BoxedLongImplementation::class)
 internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int) {
     var dstIndex = dstOffset
     if (startIndex < 4) {
@@ -59,6 +61,7 @@ private fun Int.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int,
 
 // Avoid bitwise operations with Longs in JS
 @ExperimentalUuidApi
+@OptIn(BoxedLongImplementation::class)
 internal actual fun ByteArray.setLongAt(index: Int, value: Long) {
     setIntAt(index, value.high)
     setIntAt(index + 4, value.low)
@@ -89,10 +92,13 @@ internal actual fun uuidParseHexDash(hexDashString: String): Uuid {
     val part5a = hexDashString.hexToInt(startIndex = 24, endIndex = 28)
     val part5b = hexDashString.hexToInt(startIndex = 28, endIndex = 36)
 
+    @OptIn(BoxedLongImplementation::class)
     val msb = Long(
         high = part1,
         low = (part2 shl 16) or part3
     )
+
+    @OptIn(BoxedLongImplementation::class)
     val lsb = Long(
         high = (part4 shl 16) or part5a,
         low = part5b
@@ -105,10 +111,13 @@ internal actual fun uuidParseHexDash(hexDashString: String): Uuid {
 @ExperimentalUuidApi
 internal actual fun uuidParseHex(hexString: String): Uuid {
     // 8 hex digits fit into an Int
+    @OptIn(BoxedLongImplementation::class)
     val msb = Long(
         high = hexString.hexToInt(startIndex = 0, endIndex = 8),
         low = hexString.hexToInt(startIndex = 8, endIndex = 16)
     )
+
+    @OptIn(BoxedLongImplementation::class)
     val lsb = Long(
         high = hexString.hexToInt(startIndex = 16, endIndex = 24),
         low = hexString.hexToInt(startIndex = 24, endIndex = 32)

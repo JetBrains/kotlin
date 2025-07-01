@@ -17,12 +17,28 @@
 
 package kotlin
 
+/**
+ * Marks the stdlib functions that implement the pre-BigInt Long boxing.
+ *
+ * If you use a function annotated with this annotation, you assume that [Long] is implemented as a regular class with
+ * two [Int] fields. Don't do it unless you are sure that you also handle the BigInt-backed Long values.
+ *
+ * These declarations will need to be removed when we drop the ES5 target (KT-70480).
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class BoxedLongImplementation
+
+@BoxedLongImplementation
 internal fun Long.toNumber() = high * TWO_PWR_32_DBL_ + getLowBitsUnsigned()
 
-internal fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
+@BoxedLongImplementation
+private fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
 
+@BoxedLongImplementation
 internal fun hashCode(l: Long) = l.low xor l.high
 
+@BoxedLongImplementation
 internal fun Long.toStringImpl(radix: Int): String {
     if (radix < 2 || 36 < radix) {
         throw Exception("radix out of range: $radix")
@@ -76,24 +92,30 @@ internal fun Long.toStringImpl(radix: Int): String {
     }
 }
 
-internal fun Long.negate() = unaryMinus()
+private fun Long.negate() = unaryMinus()
 
-internal fun Long.isZero() = high == 0 && low == 0
+@BoxedLongImplementation
+private fun Long.isZero() = high == 0 && low == 0
 
-internal fun Long.isNegative() = high < 0
+@BoxedLongImplementation
+private fun Long.isNegative() = high < 0
 
-internal fun Long.isOdd() = low and 1 == 1
+@BoxedLongImplementation
+private fun Long.isOdd() = low and 1 == 1
 
+@BoxedLongImplementation
 internal fun Long.equalsLong(other: Long) = high == other.high && low == other.low
 
-internal fun Long.lessThan(other: Long) = compare(other) < 0
+@BoxedLongImplementation
+private fun Long.lessThan(other: Long) = compare(other) < 0
 
-internal fun Long.lessThanOrEqual(other: Long) = compare(other) <= 0
+@BoxedLongImplementation
+private fun Long.greaterThan(other: Long) = compare(other) > 0
 
-internal fun Long.greaterThan(other: Long) = compare(other) > 0
+@BoxedLongImplementation
+private fun Long.greaterThanOrEqual(other: Long) = compare(other) >= 0
 
-internal fun Long.greaterThanOrEqual(other: Long) = compare(other) >= 0
-
+@BoxedLongImplementation
 internal fun Long.compare(other: Long): Int {
     if (equalsLong(other)) {
         return 0;
@@ -111,6 +133,7 @@ internal fun Long.compare(other: Long): Int {
     }
 }
 
+@BoxedLongImplementation
 internal fun Long.add(other: Long): Long {
     // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
 
@@ -142,8 +165,10 @@ internal fun Long.add(other: Long): Long {
     return Long((c16 shl 16) or c00, (c48 shl 16) or c32)
 }
 
+@BoxedLongImplementation
 internal fun Long.subtract(other: Long) = add(other.unaryMinus())
 
+@BoxedLongImplementation
 internal fun Long.multiply(other: Long): Long {
     if (isZero()) {
         return ZERO
@@ -212,6 +237,7 @@ internal fun Long.multiply(other: Long): Long {
     return Long(c16 shl 16 or c00, c48 shl 16 or c32)
 }
 
+@BoxedLongImplementation
 internal fun Long.divide(other: Long): Long {
     if (other.isZero()) {
         throw Exception("division by zero")
@@ -289,8 +315,10 @@ internal fun Long.divide(other: Long): Long {
     return res
 }
 
+@BoxedLongImplementation
 internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
 
+@BoxedLongImplementation
 internal fun Long.shiftLeft(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -305,6 +333,7 @@ internal fun Long.shiftLeft(numBits: Int): Long {
     }
 }
 
+@BoxedLongImplementation
 internal fun Long.shiftRight(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -319,6 +348,7 @@ internal fun Long.shiftRight(numBits: Int): Long {
     }
 }
 
+@BoxedLongImplementation
 internal fun Long.shiftRightUnsigned(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -341,6 +371,7 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long {
  * @return {!Kotlin.Long} The corresponding Long value.
  */
 // TODO: cache
+@BoxedLongImplementation
 internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
 
 /**
@@ -349,6 +380,7 @@ internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
  * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
  * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
  */
+@BoxedLongImplementation
 internal fun fromNumber(value: Double): Long {
     if (value.isNaN()) {
         return ZERO;
@@ -373,14 +405,20 @@ private const val TWO_PWR_32_DBL_ = (1 shl 16).toDouble() * (1 shl 16).toDouble(
 //private val TWO_PWR_63_DBL_ = TWO_PWR_64_DBL_ / 2
 private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())) / 2
 
+@BoxedLongImplementation
 private val ZERO = fromInt(0)
 
+@BoxedLongImplementation
 private val ONE = fromInt(1)
 
+@BoxedLongImplementation
 private val NEG_ONE = fromInt(-1)
 
+@BoxedLongImplementation
 private val MAX_VALUE = Long(-1, -1 ushr 1)
 
+@BoxedLongImplementation
 private val MIN_VALUE = Long(0, 1 shl 31)
 
+@BoxedLongImplementation
 private val TWO_PWR_24_ = fromInt(1 shl 24)
