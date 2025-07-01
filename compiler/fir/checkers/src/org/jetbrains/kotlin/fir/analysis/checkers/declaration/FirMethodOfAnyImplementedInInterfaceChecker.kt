@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
-// TODO: rewrite with declared member scope
 object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
