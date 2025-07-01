@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2.convertToNonRawVersionAfterApproximationInK2
 import org.jetbrains.kotlin.types.model.*
 
 open class TypeApproximatorConfiguration {
@@ -32,6 +33,15 @@ open class TypeApproximatorConfiguration {
     open val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val approximateIntersectionTypesInContravariantPositions get() = false
     open val approximateLocalTypes get() = false
+
+    /**
+     * Defines additional condition for local type approximation.
+     * Should return false if the current local type should be considered as a final approximation.
+     * This check is triggered for every found local supertype of the initial type (including the type itself).
+     * Note that [approximateLocalTypes] should be true for this to have any effect.
+     */
+    open fun shouldApproximateLocalType(ctx: TypeSystemInferenceExtensionContext, type: KotlinTypeMarker): Boolean =
+        true
 
     /**
      * Is only expected to be true for FinalApproximationAfterResolutionAndInference

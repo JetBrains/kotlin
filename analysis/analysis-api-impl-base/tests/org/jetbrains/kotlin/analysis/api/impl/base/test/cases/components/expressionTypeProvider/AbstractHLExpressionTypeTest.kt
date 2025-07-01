@@ -40,7 +40,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
             copyAwareAnalyzeForTest(expression) { contextExpression ->
                 var ktType = contextExpression.expressionType
                 if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
-                    ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
+                    ktType = ktType?.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes = true)
                 }
                 ktType?.render(renderer, position = Variance.INVARIANT)
             }

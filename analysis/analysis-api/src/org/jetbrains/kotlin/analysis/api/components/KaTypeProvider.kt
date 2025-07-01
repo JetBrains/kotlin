@@ -35,6 +35,7 @@ public interface KaTypeProvider : KaSessionComponent {
      *  approximation is sensible when the resulting [KaType] is analyzed in the same local context.
      */
     @KaExperimentalApi
+    @Deprecated("Use `approximateToSuperDenotable` instead", ReplaceWith("this.approximateToSuperDenotable(!approximateLocalTypes)"))
     public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
     /**
@@ -44,8 +45,36 @@ public interface KaTypeProvider : KaSessionComponent {
      * @see approximateToSuperPublicDenotable
      */
     @KaExperimentalApi
+    @Deprecated(
+        "Use `approximateToSuperDenotableOrSelf` instead",
+        ReplaceWith("this.approximateToSuperDenotableOrSelf(!approximateLocalTypes)")
+    )
     public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
+        @Suppress("DEPRECATION")
         return approximateToSuperPublicDenotable(approximateLocalTypes) ?: this
+    }
+
+    /**
+     * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] supertype.
+     *
+     * The function returns `null` if the type is already denotable and does not need approximation. Otherwise, for a type `T`, returns a
+     * denotable type `S` such that `T <: S`, with all type arguments of `S` also being denotable.
+     *
+     * @param allowLocalDenotableTypes Whether locally declared types should be approximated to local supertypes instead of non-local ones. Local type
+     * approximation is sensible when the resulting [KaType] is analyzed in the same local context.
+     */
+    @KaExperimentalApi
+    public fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType?
+
+    /**
+     * Approximates [KaType] to a [denotable][KaTypeInformationProvider.isDenotable] supertype, or returns the given type itself if it is
+     * already denotable.
+     *
+     * @see approximateToDenotableSupertype
+     */
+    @KaExperimentalApi
+    public fun KaType.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes: Boolean): KaType = withValidityAssertion {
+        return approximateToDenotableSupertype(allowLocalDenotableTypes) ?: this
     }
 
     /**

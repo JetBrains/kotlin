@@ -61,24 +61,36 @@ internal class KaFirTypeProvider(
         KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
-        require(this is KaFirType)
         val coneType = coneType
-        val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
+        val approximatedConeType = PublicTypeApproximator.approximateToDenotableSupertype(
             coneType,
             rootModuleSession,
-            approximateLocalTypes = approximateLocalTypes,
+            approximateLocalTypes,
+            shouldApproximateLocalType = { _, _ -> true }
+        )
+
+        return approximatedConeType?.asKaType()
+    }
+
+    override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
+        val coneType = coneType
+        val approximatedConeType = PublicTypeApproximator.approximateToDenotableSupertype(
+            coneType,
+            rootModuleSession,
+            approximateLocalTypes = true,
+            shouldApproximateLocalType = { _, _ -> !allowLocalDenotableTypes }
         )
 
         return approximatedConeType?.asKaType()
     }
 
     override fun KaType.approximateToDenotableSubtype(): KaType? = withValidityAssertion {
-        require(this is KaFirType)
         val coneType = coneType
-        val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
+        val approximatedConeType = PublicTypeApproximator.approximateToDenotableSubtype(
             coneType,
-            PublicTypeApproximator.PublicApproximatorConfiguration(approximateLocalTypes = false),
+            rootModuleSession
         )
 
         return approximatedConeType?.asKaType()
