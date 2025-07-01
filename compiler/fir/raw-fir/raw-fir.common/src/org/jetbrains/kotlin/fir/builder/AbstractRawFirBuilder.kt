@@ -481,7 +481,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     sourceElement,
                     kind,
                     number,
-                    ConeSimpleDiagnostic("Incorrect integer literal: $text", diagnostic)
+                    "integer",
+                    text,
+                    diagnostic,
                 )
             }
             FLOAT_CONSTANT ->
@@ -490,14 +492,18 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                         sourceElement,
                         ConstantValueKind.Float,
                         convertedText,
-                        ConeSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "float",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 } else {
                     buildConstOrErrorExpression(
                         sourceElement,
                         ConstantValueKind.Double,
                         convertedText as? Double,
-                        ConeSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.FloatLiteralOutOfRange)
+                        "double",
+                        text,
+                        DiagnosticKind.FloatLiteralOutOfRange,
                     )
                 }
             CHARACTER_CONSTANT -> {
@@ -506,10 +512,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                     sourceElement,
                     ConstantValueKind.Char,
                     characterWithDiagnostic.value,
-                    ConeSimpleDiagnostic(
-                        "Incorrect character: $text",
-                        characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                    )
+                    "character",
+                    text,
+                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                 )
             }
             BOOLEAN_CONSTANT ->
@@ -586,7 +591,8 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                             )
                         }
                         ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                            val characterWithDiagnostic = escapedStringToCharacter(entry.asText)
+                            val entryText = entry.asText
+                            val characterWithDiagnostic = escapedStringToCharacter(entryText)
                             val unescapedCharacter = characterWithDiagnostic.value
                             if (unescapedCharacter != null) {
                                 sb.append(unescapedCharacter)
@@ -596,10 +602,9 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
                                 entry.toFirSourceElement(),
                                 ConstantValueKind.String,
                                 unescapedCharacter?.toString(),
-                                ConeSimpleDiagnostic(
-                                    "Incorrect character: ${entry.asText}",
-                                    characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
-                                )
+                                "character",
+                                entryText,
+                                characterWithDiagnostic.getDiagnostic() ?: DiagnosticKind.IllegalConstExpression
                             )
                         }
                         SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
@@ -35,13 +37,21 @@ inline val FirAnnotation.unexpandedConeClassLikeType: ConeClassLikeType?
 inline val FirAnnotation.unexpandedClassId: ClassId?
     get() = unexpandedConeClassLikeType?.lookupTag?.classId
 
-fun <T> buildConstOrErrorExpression(source: KtSourceElement?, kind: ConstantValueKind, value: T?, diagnostic: ConeDiagnostic): FirExpression =
-    value?.let {
+fun <T> buildConstOrErrorExpression(
+    source: KtSourceElement?,
+    kind: ConstantValueKind,
+    value: T?,
+    literalType: String,
+    literalValue: Any,
+    diagnosticKind: DiagnosticKind,
+): FirExpression {
+    return value?.let {
         buildLiteralExpression(source, kind, it, setType = false)
     } ?: buildErrorExpression {
         this.source = source
-        this.diagnostic = diagnostic
+        this.diagnostic = ConeSimpleDiagnostic("Incorrect $literalType: $literalValue", diagnosticKind)
     }
+}
 
 inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
