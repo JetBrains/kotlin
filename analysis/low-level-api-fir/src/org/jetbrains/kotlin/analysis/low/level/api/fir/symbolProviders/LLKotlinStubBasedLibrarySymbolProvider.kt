@@ -357,7 +357,6 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     }
 
     private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
-        if (!classId.relativeClassName.isOneSegmentFQN()) return null
         return typeAliasCache.getSymbolByClassId(classId, context = null)
     }
 
