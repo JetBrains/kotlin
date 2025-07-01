@@ -140,7 +140,6 @@ internal class IrScopeChecker(val scopeContext: IrScopeCheckerContext) : IrSymbo
             is SymbolVisibility.Local -> {
                 if (!scopeContext.stack.isVisibleInCurrentScope(symbol)) {
                     context.error(container, "Declaration ${symbol.owner.render()} is visible only in it's local scope")
-                    symbol.getVisibility()
                 }
             }
         }
