@@ -31,7 +31,7 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
     }
 
     val defaultFunctionsImplementation = allPresetEntries.map { kotlinPreset ->
-        generateDefaultPresetFunctionImplementation(kotlinPreset, "configureOrCreate")
+        generateDefaultPresetFunctionImplementation(kotlinPreset)
     }
 
     val className =
@@ -70,9 +70,11 @@ internal fun generateKotlinTargetContainerWithPresetFunctionsInterface(withPrint
         functions.joinToString("\n\n") { it.indented(4) },
         "}",
         defaultContainerClassHeader(defaultImplementationClassname, className),
-        defaultFunctionsImplementation.joinToString("\n\n") { it.indented(4) },
+        defaultFunctionsImplementation.joinToString("\n") { it.indented(4) },
         "}"
-    ).joinToString("\n\n")
+    )
+        .filter { it.isNotBlank() }
+        .joinToString("\n\n")
 
     val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
 
@@ -134,11 +136,8 @@ private fun generatePresetFunctions(
 
 private fun generateDefaultPresetFunctionImplementation(
     presetEntry: KotlinPresetEntry,
-    configureOrCreateFunctionName: String,
+    configureOrCreateFunctionName: String = "configureOrCreate",
 ): String {
-    // Suppress presets deprecation to prevent warnings inside kotlin-gradle-plugin
-    val suppressPresetsDeprecation = "@Suppress(\"DEPRECATION_ERROR\")"
-
     val alsoBlockAfterConfiguration = if (presetEntry.alsoBlockAfterConfiguration != null) {
         """
             .also {
@@ -159,7 +158,6 @@ private fun generateDefaultPresetFunctionImplementation(
     ): ${presetEntry.targetType.renderShort()} =
         $configureOrCreateFunctionName(
             name,
-            ${suppressPresetsDeprecation}
             presets.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
             configure
         )$alsoBlockAfterConfiguration
@@ -174,13 +172,13 @@ private fun defaultContainerClassHeader(
 ) = """
 internal fun ObjectFactory.${defaultImplementationClassname.renderShort()}(
     targets: NamedDomainObjectCollection<KotlinTarget>
-) = newInstance<${defaultImplementationClassname.renderShort()}>(targets)
+): ${defaultImplementationClassname.renderShort()} = newInstance<${defaultImplementationClassname.renderShort()}>(targets)
 
 internal abstract class ${defaultImplementationClassname.renderShort()} @Inject constructor(
     objectFactory: ObjectFactory,
     override val targets: NamedDomainObjectCollection<KotlinTarget>,
 ) : ${className.renderShort()}, ${parentInterface.simpleName} {
-    
+
     val presets: NamedDomainObjectCollection<InternalKotlinTargetPreset<*>> =
         objectFactory.domainObjectContainer(InternalKotlinTargetPreset::class.java)
 """.trimIndent()
