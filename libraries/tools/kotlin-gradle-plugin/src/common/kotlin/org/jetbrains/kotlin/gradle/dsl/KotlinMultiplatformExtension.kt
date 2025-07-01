@@ -43,7 +43,6 @@ internal fun ExtensionContainer.KotlinMultiplatformExtension(
     )
 }
 
-@Suppress("DEPRECATION_ERROR")
 @KotlinGradlePluginPublicDsl
 abstract class KotlinMultiplatformExtension
 @Inject
@@ -217,7 +216,8 @@ internal constructor(
     }
 
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: DeprecatedKotlinTargetHierarchyDsl get() = DeprecatedKotlinTargetHierarchyDsl(this)
+    val targetHierarchy: @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl
+        get() = @Suppress("DEPRECATION_ERROR") DeprecatedKotlinTargetHierarchyDsl(this)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
