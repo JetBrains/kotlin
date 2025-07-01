@@ -18,6 +18,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.component.AdhocComponentWithVariants
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -38,6 +39,7 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
@@ -769,4 +771,41 @@ fun Project.registerValidatePluginTasks(
     }
 
     return validatePluginsTask
+}
+
+/**
+ * Register a kotlin source for a range of Gradle versions [[from], [to]). The sources will be visible to build scripts [from]
+ * [GradlePluginVariant.minimalSupportedGradleVersion] up to but not including [to].
+ *
+ * Use this utility to overwrite or expose some API to build scripts that execute with a range of Gradle versions
+ */
+fun Project.registerKotlinSourceForVersionRange(
+    from: GradlePluginVariant,
+    to: GradlePluginVariant,
+) {
+    if (GradleVersion.version(from.minimalSupportedGradleVersion) >= GradleVersion.version(to.minimalSupportedGradleVersion)) {
+        error("Minimal target version from ${from.minimalSupportedGradleVersion} must be < version to ${to.minimalSupportedGradleVersion}")
+    }
+    val applicableVariants = GradlePluginVariant.values().sortedBy { GradleVersion.version(it.minimalSupportedGradleVersion) }
+        .dropWhile { it != from }
+        .takeWhile { it != to }
+    if (applicableVariants.isEmpty()) {
+        error("Ranged source set [${from}, ${to}) applies to no variants")
+    }
+    val sourceDirectoryName = "from_${applicableVariants.first().sourceSetName}_through_${applicableVariants.last().sourceSetName}"
+    val sourcesDirectory = project.layout.projectDirectory.dir("src/${sourceDirectoryName}")
+    applicableVariants
+        .forEach {
+            val sourceSet = sourceSets.getByName(it.sourceSetName)
+            (sourceSet.extensions.getByName("kotlin") as SourceDirectorySet).srcDir(sourcesDirectory)
+            val kotlinJvmTarget = (extensions.getByName("kotlin") as KotlinSingleJavaTargetExtension).target
+            val compilation = kotlinJvmTarget.compilations.getByName(sourceSet.name)
+            tasks.named<KotlinCompile>(compilation.compileKotlinTaskName).configure {
+                doFirst {
+                    if (sourcesDirectory.asFileTree.isEmpty) {
+                        error("Ranged Gradle version sources directory\n$sourcesDirectory\nis empty. Remove ranged version or add sources to the directory")
+                    }
+                }
+            }
+        }
 }

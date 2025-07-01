@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectors
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
@@ -1535,6 +1536,18 @@ internal object KotlinToolingDiagnostics {
                 .solution {
                     "Please remove '${PropertiesProvider.PropertyNames.KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP}=false' and/or '${PropertiesProvider.PropertyNames.KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY}=false' from your 'gradle.properties' file."
                 }
+        }
+    }
+
+    object KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(
+            currentGradleVersion: GradleVersion,
+            minimumSupportedGradleVersion: GradleVersion,
+        ) = build {
+            title("Kotlin Top Level Dependencies Used With Incompatible Gradle Version")
+                .description("Kotlin top-level dependencies is not available in $currentGradleVersion. Minimum supported version is $minimumSupportedGradleVersion.")
+                .solution("Please upgrade your Gradle version or keep using source set dependencies block (https://kotl.in/source-set-dependencies)")
+                .documentationLink(URI("https://kotl.in/kmp-top-level-dependencies"))
         }
     }
 

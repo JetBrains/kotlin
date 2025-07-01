@@ -6,7 +6,6 @@ commonTest
   test:top-level-api:1.0
   test:top-level-compileOnly:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
 jsMain
@@ -17,7 +16,6 @@ jsTest
   test:top-level-api:1.0
   test:top-level-compileOnly:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
 jvmMain
@@ -28,7 +26,6 @@ jvmTest
   test:top-level-api:1.0
   test:top-level-compileOnly:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
 linuxMain
@@ -39,7 +36,6 @@ linuxTest
   test:top-level-api:1.0
   test:top-level-compileOnly:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
 linuxX64Main
@@ -49,7 +45,6 @@ linuxX64Main
 linuxX64Test
   test:top-level-api:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
 nativeMain
@@ -60,6 +55,5 @@ nativeTest
   test:top-level-api:1.0
   test:top-level-compileOnly:1.0
   test:top-level-implementation:1.0
-  test:top-level-test-api:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0

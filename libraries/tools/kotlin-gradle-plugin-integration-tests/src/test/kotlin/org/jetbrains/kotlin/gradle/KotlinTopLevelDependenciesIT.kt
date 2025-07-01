@@ -5,55 +5,222 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.kotlin.dsl.*
 import org.gradle.util.GradleVersion
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.publish
+import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectorsConst
+import org.jetbrains.kotlin.gradle.testing.PrettyPrint
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
+import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
+import org.jetbrains.kotlin.gradle.uklibs.include
+import org.jetbrains.kotlin.gradle.uklibs.publishJavaPlatform
+import org.jetbrains.kotlin.gradle.util.MavenModule
+import org.jetbrains.kotlin.gradle.util.parsePom
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.exists
+import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 
 @MppGradlePluginTests
-@GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_8_9])
+@GradleTestVersions(additionalVersions = [MinSupportedGradleVersionWithDependencyCollectorsConst])
 class KotlinTopLevelDependenciesIT : KGPBaseTest() {
 
-    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines in Kotlin Build Script")
+    override val defaultBuildOptions =
+        super.defaultBuildOptions.copy(
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+        )
+
+    @DisplayName("Test kts evaluation of top-level dependencies block")
     @GradleTest
-    fun testKotlinTopLevelDependenciesWithCoroutinesKotlin(gradleVersion: GradleVersion) {
-        project("kotlinTopLevelDependenciesSample", gradleVersion) {
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_9)) {
-                buildAndFail("assemble") {
-                    // TODO: Fixme, improve error message here
-                    assertOutputContains("Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:")
-                    assertOutputContains("public open fun NamedDomainObjectProvider<KotlinSourceSet>.invoke(configure: KotlinSourceSet.() -> Unit): Unit defined in org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension")
+    fun testKotlinTopLevelDependenciesKotlin(gradleVersion: GradleVersion) {
+        @Language("kotlin")
+        val dependenciesBlock = """
+            
+            kotlin {
+                dependencies {
+                    implementation(platform("platform:platformDependency:1.0"))
+                    implementation(project(":projectDependency"))
+                    implementation(libs.atomicfu) {
+                        version {
+                            strictly("0.28.0")
+                        }
+                    }
+                    api("org.jetbrains.kotlinx:kotlinx-coroutines-core")
                 }
-                return@project
+            }
+        """.trimIndent()
+        testKotlinDependenciesBlock("emptyKts", gradleVersion, dependenciesBlock)
+    }
+
+    @DisplayName("Test Groovy build script evaluation of top-level dependencies block")
+    @GradleTest
+    fun testKotlinTopLevelDependenciesGroovy(gradleVersion: GradleVersion) {
+        @Language("groovy")
+        val dependenciesBlock = """
+            
+            kotlin {
+                dependencies {
+                    implementation platform("platform:platformDependency:1.0")
+                    implementation(project(":projectDependency"))
+                    implementation(libs.atomicfu) {
+                        version {
+                            strictly("0.28.0")
+                        }
+                    }
+                    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+                }
+            }
+        """.trimIndent()
+        testKotlinDependenciesBlock("empty", gradleVersion, dependenciesBlock)
+    }
+
+    private fun testKotlinDependenciesBlock(
+        template: String,
+        gradleVersion: GradleVersion,
+        consumerDependenciesBlock: String,
+    ) {
+        val targets: KotlinMultiplatformExtension.() -> Unit = {
+            jvm()
+            js(IR) {
+                browser()
+            }
+            linuxX64()
+        }
+        val projectDependency = project(template, gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.group = "foo"
+                kotlinMultiplatform.apply {
+                    targets()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        class ProjectDependency
+                        """.trimIndent()
+                    )
+                }
+            }
+        }
+
+        val platformDependency = project(template, gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "platformDependency"
+            }
+            plugins {
+                `java-platform`
+            }
+            buildScriptInjection {
+                project.dependencies {
+                    constraints.add("api", "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                }
+            }
+        }.publishJavaPlatform(publisherConfiguration = PublisherConfiguration(group = "platform"))
+
+        project(template, gradleVersion) {
+            transferPluginRepositoriesIntoBuildScript()
+            transferPluginDependencyConstraintsIntoBuildscriptClasspathDependencyConstraints()
+            addPublishedProjectToRepositories(platformDependency)
+            include(projectDependency, "projectDependency")
+            val targetScript = if (buildGradle.exists()) buildGradle else buildGradleKts
+
+            @Language("toml")
+            val versionCatalog = """
+                [libraries]
+                atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu" }
+            """.trimIndent()
+            projectPath.resolve("gradle/libs.versions.toml").writeText(versionCatalog)
+
+            targetScript.modify {
+                it.insertBlockToBuildScriptAfterPluginsAndImports(
+                    """
+                    plugins {
+                        id("org.jetbrains.kotlin.multiplatform")
+                    }
+                """.trimIndent()
+                )
+            }
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    val repos = project.repositories.filterIsInstance<MavenArtifactRepository>().map { it.url }
+                    println(repos)
+                    targets()
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        fun main() {
+                          val a = kotlinx.coroutines.Dispatchers.Default
+                          val b = ProjectDependency()
+                          val c = kotlinx.atomicfu.AtomicInt::class
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            targetScript.appendText(consumerDependenciesBlock)
+
+            if (gradleVersion < GradleVersion.version(MinSupportedGradleVersionWithDependencyCollectorsConst)) {
+                buildAndFail(":assemble") {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
+                    // Make sure we went through the configuration phase
+                    assertTasksFailed(":checkKotlinGradlePluginConfigurationErrors")
+                }
             } else {
-                testKotlinTopLevelDependenciesWithCoroutines()
+                testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion)
             }
         }
     }
 
-    @DisplayName("Test kotlin { dependencies {} } block with kotlinx-coroutines in Groovy Build Script")
-    @GradleTest
-    fun testKotlinTopLevelDependenciesWithCoroutinesGroovy(gradleVersion: GradleVersion) {
-        project("kotlinTopLevelDependenciesSampleGroovy", gradleVersion) {
-            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_9)) {
-                buildAndFail("assemble") {
-                    assertOutputContains("Kotlin top-level dependencies is not available in Gradle 7.6.3. Min supported version is Gradle 8.9")
-                }
-                return@project
-            } else {
-                testKotlinTopLevelDependenciesWithCoroutines()
-            }
+    private fun TestProject.testKotlinTopLevelDependenciesCompilationAndPublication(gradleVersion: GradleVersion) {
+        build(":assemble") {
+            assertNoDiagnostic(KotlinToolingDiagnostics.KotlinTopLevelDependenciesUsedInIncompatibleGradleVersion)
         }
-    }
 
-    private fun TestProject.testKotlinTopLevelDependenciesWithCoroutines() {
-        build("assemble")
+        // Verify that the published jvm POM contains the kotlinx-coroutines dependency
+        val pomFile = parsePom(
+            publish(
+                deriveBuildOptions = {
+                    buildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicationBeforeGradle12(gradleVersion)
+                }
+            ).jvmMultiplatformComponent.pom
+        )
 
-        // Verify that the project is publishable
-        build("publish")
-
-        // Verify that the published POM contains the kotlinx-coroutines dependency
-        val pomFile = projectPath.resolve("build/repo/test/kotlinTopLevelDependenciesSample/1.0/kotlinTopLevelDependenciesSample-1.0.pom")
-        assertFileExists(pomFile)
-        assertFileContains(pomFile, "kotlinx-coroutines-core")
+        assertEquals<PrettyPrint<List<MavenModule>>>(
+            mutableListOf(
+                MavenModule(
+                    artifactId = "kotlinx-coroutines-core",
+                    groupId = "org.jetbrains.kotlinx",
+                    scope = "compile",
+                    version = null,
+                ),
+                MavenModule(
+                    artifactId = "kotlin-stdlib",
+                    groupId = "org.jetbrains.kotlin",
+                    scope = "compile",
+                    version = defaultBuildOptions.kotlinVersion,
+                ),
+                MavenModule(
+                    artifactId = "projectDependency-jvm",
+                    groupId = "foo",
+                    scope = "runtime",
+                    version = "unspecified",
+                ),
+                MavenModule(
+                    artifactId = "atomicfu-jvm",
+                    groupId = "org.jetbrains.kotlinx",
+                    scope = "runtime",
+                    version = "0.28.0",
+                ),
+            ).prettyPrinted,
+            pomFile.dependencies().prettyPrinted,
+        )
     }
 }

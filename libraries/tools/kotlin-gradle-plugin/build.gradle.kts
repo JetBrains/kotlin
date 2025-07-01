@@ -29,7 +29,6 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
                 "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
-                "org.jetbrains.kotlin.gradle.KotlinTopLevelDependencies",
             )
         )
     }
@@ -625,3 +624,8 @@ fun avoidPublishingTestFixtures() {
     javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
 }
 avoidPublishingTestFixtures()
+
+registerKotlinSourceForVersionRange(
+    GradlePluginVariant.GRADLE_MIN,
+    GradlePluginVariant.GRADLE_88,
+)
