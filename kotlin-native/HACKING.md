@@ -105,6 +105,11 @@ See the table of property names and values below.
 | `eagerGroupCreation`    | Group more tests into an executable: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `xctest`                | Compile and run tests with XCTest: `false` (default), `true`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
+ #### Passing arbitrary binary options
+
+It is possible to pass binary options to all tests by using `-Pkn.binaryOptions=<key=value>,<key=value>,<key=value>`.
+A list of available binary options is available in [BinaryOptions.kt](../native/binary-options/src/main/kotlin/org/jetbrains/kotlin/backend/konan/BinaryOptions.kt).
+
  #### Generating JUnit test classes
 
 Most compiler integration tests are defined by test data files,
