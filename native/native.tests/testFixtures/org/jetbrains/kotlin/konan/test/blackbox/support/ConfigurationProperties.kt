@@ -77,6 +77,7 @@ enum class ClassLevelProperty(val shortName: String) {
     BINARY_LIBRARY_KIND("binaryLibraryKind"),
     C_INTERFACE_MODE("cInterfaceMode"),
     XCTEST_FRAMEWORK("xctest"),
+    BINARY_OPTIONS("binaryOptions"),
     ;
 
     internal val propertyName = fullPropertyName(shortName)
@@ -95,7 +96,12 @@ internal inline fun <reified E : Enum<E>> ClassLevelProperty.readValue(
     enforcedProperties: EnforcedProperties,
     values: Array<out E>,
     default: E
-): E {
+): E = readValueOrNull(enforcedProperties, values) ?: default
+
+internal inline fun <reified E : Enum<E>> ClassLevelProperty.readValueOrNull(
+    enforcedProperties: EnforcedProperties,
+    values: Array<out E>,
+): E? {
     val optionName = enforcedProperties[this] ?: System.getProperty(propertyName)
     val acceptable = enforcedProperties.isAcceptableValue(this, optionName)
     return if (optionName != null && acceptable) {
@@ -106,8 +112,7 @@ internal inline fun <reified E : Enum<E>> ClassLevelProperty.readValue(
                 values.forEach { value -> appendLine("- ${value.name}: $value") }
             }
         }
-    } else
-        default
+    } else null
 }
 
 private fun fullPropertyName(shortName: String) = "kotlin.internal.native.test.$shortName"

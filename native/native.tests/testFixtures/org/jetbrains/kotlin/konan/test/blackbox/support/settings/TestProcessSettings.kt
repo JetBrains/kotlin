@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -155,28 +160,31 @@ enum class Sanitizer(val compilerFlag: String?) {
 /**
  * Garbage collector type.
  */
-enum class GCType(val compilerFlag: String?) {
-    UNSPECIFIED(null),
-    NOOP("-Xbinary=gc=noop"),
-    STWMS("-Xbinary=gc=stwms"),
-    PMCS("-Xbinary=gc=pmcs"),
-    CMS("-Xbinary=gc=cms");
+class GCType(val gc: GC?) {
+    val compilerFlag: String?
+        get() = gc?.let { "-Xbinary=gc=${it.name.lowercase()}" }
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
-enum class GCScheduler(val compilerFlag: String?) {
-    UNSPECIFIED(null),
-    MANUAL("-Xbinary=gcSchedulerType=manual"),
-    ADAPTIVE("-Xbinary=gcSchedulerType=adaptive"),
-    AGGRESSIVE("-Xbinary=gcSchedulerType=aggressive"),
-
-    // TODO: Remove these deprecated GC scheduler options.
-    DISABLED("-Xbinary=gcSchedulerType=disabled"),
-    WITH_TIMER("-Xbinary=gcSchedulerType=with_timer"),
-    ON_SAFE_POINTS("-Xbinary=gcSchedulerType=on_safe_points");
+class GCScheduler(val scheduler: GCSchedulerType?) {
+    val compilerFlag: String?
+        get() = scheduler?.let { "-Xbinary=gcSchedulerType=${it.name.lowercase()}" }
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
+/**
+ * Explicitly provided binary options.
+ * See [org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions] for details.
+ */
+class ExplicitBinaryOptions(private val rawOptions: List<String>) {
+    val options: List<BinaryOptionWithValue<*>> by lazy {
+        parseBinaryOptions(rawOptions.toTypedArray(), { println(it) }, { error(it) })
+    }
+
+    inline fun <reified T> getOrNull(key: CompilerConfigurationKey<T>): T? =
+        options.singleOrNull { it.compilerConfigurationKey == key }?.value as? T
 }
 
 enum class Allocator(val compilerFlag: String?) {

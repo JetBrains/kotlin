@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family

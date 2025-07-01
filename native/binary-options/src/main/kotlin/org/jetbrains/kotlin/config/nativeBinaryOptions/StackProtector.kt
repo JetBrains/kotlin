@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.config.nativeBinaryOptions
 
-enum class CoreSymbolicationImageListType {
-    ALL_LOADED,
-    ONLY_KOTLIN,
+enum class StackProtectorMode {
+    NO, YES, STRONG, ALL;
 }

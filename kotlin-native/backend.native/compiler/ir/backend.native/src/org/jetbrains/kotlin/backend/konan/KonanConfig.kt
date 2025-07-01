@@ -10,17 +10,30 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
-import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
-import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
+import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.AppStateTracking
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.CoreSymbolicationImageListType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.ObjCExportSuspendFunctionLaunchThreadRestriction
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SourceInfoType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
+import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
@@ -85,7 +98,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
             produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
             produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
-            it !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
+            it.toObsoleteKind() !in target.supportedSanitizers()-> "${it.name} sanitizer is unsupported on ${target.name}"
             else -> null
         }?.let { message ->
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
@@ -95,7 +108,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     private val defaultGC get() = GC.PARALLEL_MARK_CONCURRENT_SWEEP
-    val gc: GC get() = configuration.get(BinaryOptions.gc) ?: run {
+    val gc: GC
+        get() = configuration.get(BinaryOptions.gc) ?: run {
         if (swiftExport) GC.CONCURRENT_MARK_AND_SWEEP else defaultGC
     }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
@@ -442,8 +456,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (target.family == Family.ANDROID) {
             val androidProgramType = configuration.get(BinaryOptions.androidProgramType)
                     ?: AndroidProgramType.Default
-            if (androidProgramType.konanMainOverride != null) {
-                return@lazy androidProgramType.konanMainOverride
+            val konanMainOverride = androidProgramType.konanMainOverride
+            if (konanMainOverride != null) {
+                return@lazy konanMainOverride
             }
         }
         "Konan_main"
@@ -493,7 +508,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (allocationMode != defaultAllocationMode)
             append("-allocator${allocationMode.name}")
         if (gc != defaultGC)
-            append("-gc${gc.shortcut ?: gc.name.lowercase()}")
+            append("-gc${gc.shortcut}")
         if (gcSchedulerType != defaultGCSchedulerType)
             append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)

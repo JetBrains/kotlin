@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -91,14 +92,14 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("smoke.kt")
     fun testInteropObjCSmokeGC() {
-        Assumptions.assumeTrue(testRunSettings.get<GCType>() != GCType.NOOP)
+        Assumptions.assumeTrue(testRunSettings.get<GCType>().gc != GC.NOOP)
         testInteropObjCSmoke("smoke")
     }
 
     @Test
     @TestMetadata("smoke_noopgc.kt")
     fun testInteropObjCSmokeNoopGC() {
-        Assumptions.assumeTrue(testRunSettings.get<GCType>() == GCType.NOOP)
+        Assumptions.assumeTrue(testRunSettings.get<GCType>().gc == GC.NOOP)
         testInteropObjCSmoke("smoke_noopgc")
     }
 
@@ -146,7 +147,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         if (testRunSettings.configurables.targetTriple.isSimulator)
             codesign(dylib.resultingArtifact.path)
 
-        val ignoredTestGTestPatterns = if (testRunSettings.get<GCType>() != GCType.NOOP) emptySet() else setOf(
+        val ignoredTestGTestPatterns = if (testRunSettings.get<GCType>().gc != GC.NOOP) emptySet() else setOf(
             "Kt41811Kt.*",
             "CustomStringKt.testCustomString",
             "Kt42482Kt.testKT42482",
@@ -194,7 +195,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("kt42172")
     fun testKt42172() {
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc != GC.NOOP)
         val execResult = testDylibCinteropExe("kt42172")
         Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
             assertEquals("Executed finalizer", execResult.stdout)
@@ -228,7 +229,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     fun testKt56402() {
         // Test depends on macOS-specific AppKit and some GC
         Assumptions.assumeTrue(targets.testTarget.family == Family.OSX)
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP)
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries) // KT-66032: -tr is incompatible with caches
         val execResult = testDylibCinteropExe(
             "kt56402",
@@ -243,7 +244,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("friendly_dealloc")
     fun testFriendly_dealloc() {
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc != GC.NOOP)
         val execResult = testDylibCinteropExe(
             "friendly_dealloc",
             extraClangOpts = listOf("-fno-objc-arc"),

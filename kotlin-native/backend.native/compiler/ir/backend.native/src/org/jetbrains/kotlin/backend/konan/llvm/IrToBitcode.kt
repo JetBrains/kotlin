@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.SourceInfoType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*

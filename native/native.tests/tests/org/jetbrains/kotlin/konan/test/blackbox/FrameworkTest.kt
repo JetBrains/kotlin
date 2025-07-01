@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
@@ -23,7 +25,6 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
-import kotlin.test.assertEquals
 import kotlin.time.Duration
 
 @ClassicPipeline()
@@ -339,7 +340,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         // test must make huge amount of repetitions to make sure there's no race conditions, so bigger timeout is needed. Double is not enough
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 10)
         val testCase = generateObjCFramework(testName, checks = checks)
-        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>() != GCScheduler.AGGRESSIVE) listOf() else
+        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>().scheduler != GCSchedulerType.AGGRESSIVE) listOf() else
             listOf("-D", "AGGRESSIVE_GC")
         compileAndRunSwift(testName, testCase, swiftExtraOpts)
     }
@@ -361,7 +362,7 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testPermanentObjects() {
         val testName = "permanentObjects"
-        Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP) { "Test requires GC to actually happen" }
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP) { "Test requires GC to actually happen" }
 
         val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
         compileAndRunSwift(testName, testCase)
@@ -521,11 +522,11 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
         }
         val swiftExtraOpts = buildList {
             addAll(swiftOpts)
-            if (testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE) {
+            if (testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE) {
                 add("-D")
                 add("AGGRESSIVE_GC")
             }
-            if (testRunSettings.get<GCType>() == GCType.NOOP) {
+            if (testRunSettings.get<GCType>().gc == GC.NOOP) {
                 add("-D")
                 add("NOOP_GC")
             }

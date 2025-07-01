@@ -18,6 +18,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(project(":native:executors"))
+    testFixturesApi(project(":native:binary-options"))
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
