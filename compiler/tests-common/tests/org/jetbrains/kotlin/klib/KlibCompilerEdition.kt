@@ -64,6 +64,12 @@ enum class KlibCompilerChangeScenario {
      */
     open fun getCompilerEditionForKlib(compilerCodename: String?): KlibCompilerEdition = KlibCompilerEdition.CURRENT
 
+    /**
+     * Get the appropriate [KlibCompilerEdition] for compilation of a binary in
+     * the current [KlibCompilerChangeScenario].
+     */
+    open fun getCompilerEditionForBinary(): KlibCompilerEdition = KlibCompilerEdition.CURRENT
+
     companion object {
         private fun parseCompilerCase(compilerCodename: String?): CompilerCase =
             CompilerCase.entries.firstOrNull { it.name == compilerCodename }
