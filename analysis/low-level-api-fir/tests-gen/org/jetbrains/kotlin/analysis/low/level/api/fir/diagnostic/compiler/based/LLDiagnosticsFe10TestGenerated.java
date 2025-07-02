@@ -34063,6 +34063,18 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("mappingWithWrongNullability.kt")
+      public void testMappingWithWrongNullability() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/mappingWithWrongNullability.kt");
+      }
+
+      @Test
+      @TestMetadata("mappingWithWrongNullabilityWithoutWrtHack.kt")
+      public void testMappingWithWrongNullabilityWithoutWrtHack() {
+        runTest("compiler/testData/diagnostics/tests/platformTypes/mappingWithWrongNullabilityWithoutWrtHack.kt");
+      }
+
+      @Test
       @TestMetadata("methodTypeParameterDefaultBound.kt")
       public void testMethodTypeParameterDefaultBound() {
         runTest("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");

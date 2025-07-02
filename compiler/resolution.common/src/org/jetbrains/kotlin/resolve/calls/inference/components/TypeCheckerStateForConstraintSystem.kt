@@ -329,8 +329,8 @@ abstract class TypeCheckerStateForConstraintSystem(
                                 createTrivialFlexibleTypeOrSelf(
                                     subType.makeDefinitelyNotNullOrNotNull(),
                                 )
-                            !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
                             // Obsolete behavior in 2.2 and earlier versions
+                            !subType.isMarkedNullable() -> createTrivialFlexibleTypeOrSelf(subType)
                             else -> subType
                         }
 
