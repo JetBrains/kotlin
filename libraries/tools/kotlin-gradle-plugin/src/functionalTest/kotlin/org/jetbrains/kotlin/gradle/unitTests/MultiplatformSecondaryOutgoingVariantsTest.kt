@@ -65,7 +65,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 wasmWasi()
                 applyDefaultHierarchyTemplate()
             }
-            repositories.mavenLocal()
         }
         code(project)
         if (evaluate) {

@@ -111,9 +111,8 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isTeamcityBuild) {
-        kotlinVersion
-    } else if (kotlinBuildProperties.isKotlinNativeEnabled) {
+    // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
+    extra["versions.kotlin-native"] = if (kotlinBuildProperties.isKotlinNativeEnabled) {
         kotlinBuildProperties.defaultSnapshotVersion
     } else {
         "2.2.20-dev-5253"
