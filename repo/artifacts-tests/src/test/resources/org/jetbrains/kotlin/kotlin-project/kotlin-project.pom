@@ -331,6 +331,30 @@
             </properties>
         </profile>
         <profile>
+            <id>jdk_1_7_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_1_7}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk_1_7_old</id>
+            <activation>
+                <property>
+                    <name>!env.JDK_1_7</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_1_7>${env.JDK_17}</jdk_1_7>
+            </properties>
+        </profile>
+        <profile>
             <id>jdk_9_0_new</id>
             <activation>
                 <property>
