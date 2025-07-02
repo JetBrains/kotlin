@@ -180,7 +180,12 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                                 static = mutableListOf(
                                     distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile),
                                     resourcesDir.relativeOrAbsolute(dir.asFile),
-                                ),
+                                ).apply {
+                                    if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
+                                        add(project.rootDir.relativeOrAbsolute(dir.asFile))
+                                        add(project.projectDir.relativeOrAbsolute(dir.asFile))
+                                    }
+                                },
                                 client = KotlinWebpackConfig.DevServer.Client(
                                     KotlinWebpackConfig.DevServer.Client.Overlay(
                                         errors = true,
