@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -98,13 +99,11 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         @OptIn(SymbolInternals::class)
         if (targetSymbol.fir.body !is FirSingleExpressionBlock) return null
 
-        val allowWithExplicitType =
-            context.languageVersionSettings.supportsFeature(AllowReturnInExpressionBodyWithExplicitType)
+        val allowWithExplicitType = AllowReturnInExpressionBodyWithExplicitType.isEnabled()
 
         if ((allowWithExplicitType || edgeCase) && targetSymbol.hasExplicitReturnType) return null
 
-        val forbidEdgeCases =
-            context.languageVersionSettings.supportsFeature(ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases)
+        val forbidEdgeCases = ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases.isEnabled() && allowWithExplicitType
 
         return when {
             // Phase 3: Forbid edge cases and report new error
