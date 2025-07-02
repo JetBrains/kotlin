@@ -10,7 +10,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 @Deprecated(
-    "Use BinaryenPlugin instead",
+    "Use BinaryenPlugin instead. Scheduled for removal in Kotlin 2.4.",
     ReplaceWith(
         "BinaryenPlugin",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin"

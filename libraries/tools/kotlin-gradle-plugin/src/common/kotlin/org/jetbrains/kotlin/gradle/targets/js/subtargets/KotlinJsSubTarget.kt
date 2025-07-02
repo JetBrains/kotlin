@@ -7,5 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 
-@Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued", level = DeprecationLevel.ERROR)
+@Deprecated(
+    "The Kotlin/JS legacy target is deprecated and its support completely discontinued. Scheduled for removal in Kotlin 2.3.",
+    level = DeprecationLevel.ERROR,
+)
 abstract class KotlinJsSubTarget : KotlinJsSubTargetDsl

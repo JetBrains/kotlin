@@ -73,7 +73,7 @@ internal constructor(
 
     @get:Internal
     @Deprecated(
-        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.",
+        "ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property. Scheduled for removal in Kotlin 2.4.",
         ReplaceWith("TODO(\"ExecHandleFactory is an internal Gradle API and must be removed to support Gradle 9.0. Please remove usages of this property.\")"),
     )
     @Suppress("unused")
@@ -234,8 +234,9 @@ internal constructor(
 
     @get:Internal
     @Deprecated(
-        "This property is deprecated and will be removed in future. Use devServerProperty instead",
-        replaceWith = ReplaceWith("devServerProperty")
+        "Use devServerProperty instead. Scheduled for removal in Kotlin 2.3.",
+        replaceWith = ReplaceWith("devServerProperty"),
+        level = DeprecationLevel.ERROR,
     )
     var devServer: KotlinWebpackConfig.DevServer
         get() = devServerProperty.get()

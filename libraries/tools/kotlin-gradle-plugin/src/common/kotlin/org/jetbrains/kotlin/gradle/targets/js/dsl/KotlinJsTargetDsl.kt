@@ -216,7 +216,7 @@ interface KotlinJsTargetDsl :
     var moduleName: String?
 
     @Deprecated(
-        message = "produceExecutable() was changed on binaries.executable()",
+        message = "produceExecutable() was changed on binaries.executable(). Scheduled for removal in Kotlin 2.3.",
         replaceWith = ReplaceWith("binaries.executable()"),
         level = DeprecationLevel.ERROR
     )

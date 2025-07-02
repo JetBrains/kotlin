@@ -27,7 +27,8 @@ class NpmVersions : Serializable {
     val karma = NpmPackageVersion("karma", "6.4.4")
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.2.0")
 
-    @Deprecated("Phantom JS is deprecated and will be removed soon")
+    @Deprecated("Phantom JS is deprecated. Scheduled for removal in Kotlin 2.4.")
+    @Suppress("unused")
     val karmaPhantomjsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
     val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "2.1.3")
     val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
