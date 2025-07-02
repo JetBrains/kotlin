@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
@@ -174,8 +175,8 @@ class UklibFromKGPFragmentsTests {
                         attributes = setOf("android", "ios_arm64", "ios_x64", "js_ir", "jvm", "wasm_js", "wasm_wasi")
                     ),
                     TestAttributesFragment(identifier = "webMain", attributes = setOf("js_ir", "wasm_js")),
-                ).sorted().joinToString("\n"),
-                multiplatformExtension.testFragments().toSet().sorted().joinToString("\n"),
+                ).sorted().prettyPrinted,
+                multiplatformExtension.testFragments().toSet().sorted().prettyPrinted,
             )
         }
     }

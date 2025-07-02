@@ -154,8 +154,9 @@ class KotlinHierarchyDslTest {
         }
 
         assertEquals(
-            """
+            /* language=text */ """
             commonMain
+                ├── jvmMain
                 ├── nativeMain
                 │   ├── androidNativeMain
                 │   │   ├── androidNativeArm32Main
@@ -163,43 +164,43 @@ class KotlinHierarchyDslTest {
                 │   │   ├── androidNativeX64Main
                 │   │   └── androidNativeX86Main
                 │   ├── appleMain
-                │   │   ├── watchosMain
-                │   │   │   ├── watchosArm32Main
-                │   │   │   ├── watchosArm64Main
-                │   │   │   ├── watchosDeviceArm64Main
-                │   │   │   ├── watchosSimulatorArm64Main
-                │   │   │   └── watchosX64Main
                 │   │   ├── iosMain
                 │   │   │   ├── iosArm64Main
                 │   │   │   ├── iosSimulatorArm64Main
                 │   │   │   └── iosX64Main
+                │   │   ├── macosMain
+                │   │   │   ├── macosArm64Main
+                │   │   │   └── macosX64Main
                 │   │   ├── tvosMain
                 │   │   │   ├── tvosArm64Main
                 │   │   │   ├── tvosSimulatorArm64Main
                 │   │   │   └── tvosX64Main
-                │   │   └── macosMain
-                │   │       ├── macosArm64Main
-                │   │       └── macosX64Main
+                │   │   └── watchosMain
+                │   │       ├── watchosArm32Main
+                │   │       ├── watchosArm64Main
+                │   │       ├── watchosDeviceArm64Main
+                │   │       ├── watchosSimulatorArm64Main
+                │   │       └── watchosX64Main
                 │   ├── linuxMain
                 │   │   ├── linuxArm64Main
                 │   │   └── linuxX64Main
                 │   └── mingwMain
                 │       └── mingwX64Main
-                ├── webMain
-                │   ├── jsMain
-                │   └── wasmJsMain
-                ├── jvmMain
-                └── wasmWasiMain
+                ├── wasmWasiMain
+                └── webMain
+                    ├── jsMain
+                    └── wasmJsMain
             """.trimIndent(),
-            buildTreeString(
+            renderSourceSetsAsTree(
                 kotlin,
                 "commonMain",
             )
         )
 
         assertEquals(
-            """
+            /* language=text */ """
             commonTest
+                ├── jvmTest
                 ├── nativeTest
                 │   ├── androidNativeTest
                 │   │   ├── androidNativeArm32Test
@@ -207,35 +208,34 @@ class KotlinHierarchyDslTest {
                 │   │   ├── androidNativeX64Test
                 │   │   └── androidNativeX86Test
                 │   ├── appleTest
-                │   │   ├── watchosTest
-                │   │   │   ├── watchosArm32Test
-                │   │   │   ├── watchosArm64Test
-                │   │   │   ├── watchosDeviceArm64Test
-                │   │   │   ├── watchosSimulatorArm64Test
-                │   │   │   └── watchosX64Test
                 │   │   ├── iosTest
                 │   │   │   ├── iosArm64Test
                 │   │   │   ├── iosSimulatorArm64Test
                 │   │   │   └── iosX64Test
+                │   │   ├── macosTest
+                │   │   │   ├── macosArm64Test
+                │   │   │   └── macosX64Test
                 │   │   ├── tvosTest
                 │   │   │   ├── tvosArm64Test
                 │   │   │   ├── tvosSimulatorArm64Test
                 │   │   │   └── tvosX64Test
-                │   │   └── macosTest
-                │   │       ├── macosArm64Test
-                │   │       └── macosX64Test
+                │   │   └── watchosTest
+                │   │       ├── watchosArm32Test
+                │   │       ├── watchosArm64Test
+                │   │       ├── watchosDeviceArm64Test
+                │   │       ├── watchosSimulatorArm64Test
+                │   │       └── watchosX64Test
                 │   ├── linuxTest
                 │   │   ├── linuxArm64Test
                 │   │   └── linuxX64Test
                 │   └── mingwTest
                 │       └── mingwX64Test
-                ├── webTest
-                │   ├── jsTest
-                │   └── wasmJsTest
-                ├── jvmTest
-                └── wasmWasiTest
+                ├── wasmWasiTest
+                └── webTest
+                    ├── jsTest
+                    └── wasmJsTest
             """.trimIndent(),
-            buildTreeString(
+            renderSourceSetsAsTree(
                 kotlin,
                 "commonTest",
             )
@@ -611,27 +611,14 @@ private data class StringSet(private val set: Set<String>) : Set<String> by set 
  * @param[rootSourceSetName] Name of the root source set. Good choices are `commonMain` or `commonTest`.
  * @param[node] The type of node we're rendering. The first node is `null`. Do not configure manually, this function is called recursively.
  */
-private fun buildTreeString(
+private fun renderSourceSetsAsTree(
     kotlin: KotlinMultiplatformExtension,
     rootSourceSetName: String,
     margin: String = "",
     node: TreeNode? = null,
 ): String {
-
-    fun countChildren(sourceSetName: String): Int =
-        kotlin.dependingSourceSetNames(sourceSetName).count()
-
     val childSourceSets = kotlin.dependingSourceSetNames(rootSourceSetName)
-        .sortedWith { o1, o2 ->
-            val o1ChildrenCount = countChildren(o1)
-            val o2ChildrenCount = countChildren(o2)
-            when {
-                // sort intermediate source sets (with children) above leaf source sets (without children)
-                o1ChildrenCount > o2ChildrenCount -> -1
-                o1ChildrenCount < o2ChildrenCount -> +1
-                else -> o1.compareTo(o2)
-            }
-        }
+        .sorted()
 
     val nextMargin = if (node == TreeNode.Intermediate) "$margin│   " else "$margin    "
 
@@ -643,7 +630,7 @@ private fun buildTreeString(
             val isLastEntry = entry == childSourceSets.last()
             val nextNode = if (isLastEntry) TreeNode.Last else TreeNode.Intermediate
             appendLine(
-                buildTreeString(
+                renderSourceSetsAsTree(
                     kotlin = kotlin,
                     rootSourceSetName = entry,
                     margin = nextMargin,
