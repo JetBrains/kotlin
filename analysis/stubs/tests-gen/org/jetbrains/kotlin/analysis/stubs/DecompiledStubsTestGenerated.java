@@ -2060,6 +2060,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("annotatedContract.kt")
+    public void testAnnotatedContract() {
+      runTest("compiler/testData/psi/contracts/annotatedContract.kt");
+    }
+
+    @Test
     @TestMetadata("contracts.kt")
     public void testContracts() {
       runTest("compiler/testData/psi/contracts/contracts.kt");
@@ -2099,6 +2105,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     @TestMetadata("nonKotlinContractCall2.kt")
     public void testNonKotlinContractCall2() {
       runTest("compiler/testData/psi/contracts/nonKotlinContractCall2.kt");
+    }
+
+    @Test
+    @TestMetadata("operator.kt")
+    public void testOperator() {
+      runTest("compiler/testData/psi/contracts/operator.kt");
     }
 
     @Test
