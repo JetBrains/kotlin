@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -246,6 +246,28 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             default("isUnitCoerced") {
+                value = error
+                withGetter = true
+            }
+        }
+
+        impl(legacyRawContractDescription) {
+
+        }
+
+        impl(lazyContractDescription) {
+            val error = """error("FirLazyContractDescription should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
+
+            default("contractCall") {
+                value = error
+                withGetter = true
+            }
+
+            default("diagnostic") {
                 value = error
                 withGetter = true
             }

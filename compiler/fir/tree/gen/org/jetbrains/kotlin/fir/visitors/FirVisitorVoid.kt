@@ -1267,6 +1267,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(legacyRawContractDescription)
     }
 
+    final override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: Nothing?) {
+        visitLazyContractDescription(lazyContractDescription)
+    }
+
+    open fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription) {
+        visitElement(lazyContractDescription)
+    }
+
     final override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: Nothing?) {
         visitErrorContractDescription(errorContractDescription)
     }
