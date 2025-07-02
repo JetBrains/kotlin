@@ -9,6 +9,10 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import java.io.PrintWriter
 
 /** Computes the snapshot of a Java class represented by a [ClassNode]. */
 object ClassNodeSnapshotter {
@@ -19,19 +23,40 @@ object ClassNodeSnapshotter {
         return classWriter.toByteArray().hashToLong()
     }
 
-    fun snapshotClassExcludingMembers(classNode: ClassNode, alsoExcludeKotlinMetaData: Boolean = false): Long {
+    fun snapshotClassExcludingMembers(
+        classNode: ClassNode,
+        alsoExcludeKotlinMetaData: Boolean = false,
+        alsoExcludeDebugInfo: Boolean = false,
+    ): Long {
         val originalFields = classNode.fields
         val originalMethods = classNode.methods
         val originalVisibleAnnotations = classNode.visibleAnnotations
+        val originalInvisibleAnnotations = classNode.invisibleAnnotations
+
         classNode.fields = emptyList()
         classNode.methods = emptyList()
         if (alsoExcludeKotlinMetaData) {
-            classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot { it.desc == "Lkotlin/Metadata;" }
+            classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot {
+                it.desc == "Lkotlin/Metadata;"
+            }
         }
+        if (alsoExcludeDebugInfo) {
+            classNode.invisibleAnnotations = originalInvisibleAnnotations?.filterNot {
+                it.desc == "Lkotlin/jvm/internal/SourceDebugExtension;"
+            }
+        }
+
+        println("==snapshotting class ${classNode.name} without memebers: ")
+        PrintWriter(System.out).use {
+            val visitor = TraceClassVisitor(it)
+            classNode.accept(visitor)
+        }
+
         return snapshotClass(classNode).also {
             classNode.fields = originalFields
             classNode.methods = originalMethods
             classNode.visibleAnnotations = originalVisibleAnnotations
+            classNode.invisibleAnnotations = originalInvisibleAnnotations
         }
     }
 

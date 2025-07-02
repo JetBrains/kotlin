@@ -77,15 +77,6 @@ open class ExtraClassInfoGenerator() {
         sortClassMembers(classNode)
 
         // 4. Snapshot the class
-        val classSnapshotExcludingMembers = if (classHeader.kind == KotlinClassHeader.Kind.CLASS) {
-            // Also exclude Kotlin metadata (see `ExtraInfo.classSnapshotExcludingMembers`'s kdoc)
-            snapshotClassExcludingMembers(classNode, alsoExcludeKotlinMetaData = true)
-        } else null
-
-        val constantSnapshots: Map<String, Long> = classNode.fields.associate { fieldNode ->
-            // Note: `fieldNode` is a constant because we kept only fields that are (non-private) constants in `classNode`
-            fieldNode.name to ConstantValueExternalizer.toByteArray(fieldNode.value!!).hashToLong()
-        }
 
         val inlineFunctionOrAccessorSnapshots: Map<InlineFunctionOrAccessor, Long> = classNode.methods.associate { methodNode ->
             // Note:
@@ -101,6 +92,20 @@ open class ExtraClassInfoGenerator() {
             val innerClassPrefix = "${classNode.name}\$${methodNode.name}"
             var methodHash = snapshotMethod(methodNode, classNode.version)
             inlineFunctionsAndAccessors[methodSignature]!! to calculateInlineMethodHash(methodSignature, innerClassPrefix, methodHash)
+        }
+
+        val classSnapshotExcludingMembers = if (classHeader.kind == KotlinClassHeader.Kind.CLASS) {
+            // Also exclude Kotlin metadata (see `ExtraInfo.classSnapshotExcludingMembers`'s kdoc)
+            snapshotClassExcludingMembers(
+                classNode,
+                alsoExcludeKotlinMetaData = true,
+                alsoExcludeDebugInfo = inlineFunctionOrAccessorSnapshots.isEmpty(),
+            )
+        } else null
+
+        val constantSnapshots: Map<String, Long> = classNode.fields.associate { fieldNode ->
+            // Note: `fieldNode` is a constant because we kept only fields that are (non-private) constants in `classNode`
+            fieldNode.name to ConstantValueExternalizer.toByteArray(fieldNode.value!!).hashToLong()
         }
 
         return ExtraInfo(classSnapshotExcludingMembers, constantSnapshots, inlineFunctionOrAccessorSnapshots)

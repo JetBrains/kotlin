@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.moduleWithoutInlineSnapshotting
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 
@@ -42,6 +43,68 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
             app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = WITH_BOTH_CHANGES)
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("When inlined lambda's debug info changes, its call site is recompiled")
+    @TestMetadata("ic-scenarios/inline-local-class/lambda-body-change/lib")
+    fun testMainCase2(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
+            val app = module(
+                "ic-scenarios/inline-local-class/lambda-body-change/app",
+                dependencies = listOf(lib),
+            )
+
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = INITIAL_OUTPUT)
+
+            // idea: calculate's abi is the same, but it has different line numbers and thus different debug info
+            lib.changeFile("com/example/ictest/inlinedLambda.kt") {
+                it.replace(
+                    "inline fun calculate(): Int {",
+                    """
+                        private val bar1 = 21246233
+                        private val bar2 = 688876543
+                        
+                        inline fun calculate(): Int {
+                    """.trimIndent())
+            }
+
+            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
+            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = INITIAL_OUTPUT)
+
+            // ok ,but is it because the class is different or the fun is different?
+
+            lib.changeFile("com/example/ictest/inlinedLambda.kt") {
+                """
+                    package com.example.ictest
+
+                    inline fun calculate(): Int {
+                        return 123
+                    }
+                """.trimIndent()
+            }
+
+            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
+            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "123")
+
+            lib.changeFile("com/example/ictest/inlinedLambda.kt") {
+                it.replace(
+                    "inline fun calculate(): Int {",
+                    """
+                        private val bar1 = 21246233
+                        private val bar2 = 688876543
+                        
+                        inline fun calculate(): Int {
+                    """.trimIndent())
+            }
+
+            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
+            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "123")
         }
     }
 
@@ -361,6 +424,28 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             lib.replaceFileWithVersion("inlinedInnerClass.kt", "modified")
 
             lib.compile(expectedDirtySet = setOf("inlinedInnerClass.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
+        }
+    }
+
+    //TODO delete this test?
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Negative scenario: demonstrate that lambda gets copied to the call site")
+    @TestMetadata("ic-scenarios/inline-local-class/lambda-body-change/lib")
+    fun tmpTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
+            val app = moduleWithoutInlineSnapshotting(
+                "ic-scenarios/inline-local-class/lambda-body-change/app",
+                dependencies = listOf(lib),
+            )
+
+            app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
+
+            lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
+
+            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
             app.compile(expectedDirtySet = setOf("callSite.kt"))
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
