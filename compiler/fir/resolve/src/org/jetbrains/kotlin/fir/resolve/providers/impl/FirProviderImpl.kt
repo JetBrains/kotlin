@@ -85,6 +85,16 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             return fqName in state.allSubPackages
         }
 
+        @OptIn(FirSymbolProviderInternals::class)
+        override fun getTopLevelCallableSymbolsWithSimpleName(name: Name): List<FirCallableSymbol<*>> {
+            return buildList {
+                symbolNamesProvider.getPackageNames()?.forEach {
+                    val packageFqName = FqName.fromSegments(it.split("."))
+                    getTopLevelCallableSymbolsTo(this, packageFqName, name)
+                }
+            }
+        }
+
         override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
             override fun getPackageNames(): Set<String> = state.allSubPackages.mapToSetOrEmpty(FqName::asString)
 

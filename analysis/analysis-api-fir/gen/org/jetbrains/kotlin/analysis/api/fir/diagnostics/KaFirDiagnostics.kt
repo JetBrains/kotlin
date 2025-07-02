@@ -4870,6 +4870,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedJsExport::class
     }
 
+    interface JsExportClash : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsExportClash::class
+        val clashedSymbol: KaSymbol
+    }
+
     interface DelegationByDynamic : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = DelegationByDynamic::class
     }

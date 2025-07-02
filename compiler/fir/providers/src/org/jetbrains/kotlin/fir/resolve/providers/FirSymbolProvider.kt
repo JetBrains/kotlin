@@ -64,6 +64,12 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name)
 
     abstract fun hasPackage(fqName: FqName): Boolean
+
+    /**
+     * Returns all top-level callables with the given simple [name]. This method is only implemented by some symbol providers,
+     * at the time of writing only [FirProvider] based implementations.
+     */
+    open fun getTopLevelCallableSymbolsWithSimpleName(name: Name): List<FirCallableSymbol<*>>? = null
 }
 
 private fun FirSession.getClassDeclaredMemberScope(classId: ClassId): FirScope? {

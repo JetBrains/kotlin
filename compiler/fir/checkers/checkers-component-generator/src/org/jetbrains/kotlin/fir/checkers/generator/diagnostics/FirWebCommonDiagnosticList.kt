@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -49,6 +50,9 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
 
     val EXPORT by object : DiagnosticGroup("Export") {
         val NESTED_JS_EXPORT by error<KtElement>()
+        val JS_EXPORT_CLASH by error<KtElement>() {
+            parameter<FirBasedSymbol<*>>("clashedSymbol")
+        }
     }
 
     val JSCODE by object : DiagnosticGroup("JsCode") {

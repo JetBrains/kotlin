@@ -5859,6 +5859,12 @@ internal class NestedJsExportImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NestedJsExport
 
+internal class JsExportClashImpl(
+    override val clashedSymbol: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JsExportClash
+
 internal class DelegationByDynamicImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

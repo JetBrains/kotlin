@@ -142,6 +142,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
     }
 
     @Test
+    @TestMetadata("jsExportClash.kt")
+    public void testJsExportClash() {
+      runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExportClash.kt");
+    }
+
+    @Test
     @TestMetadata("jsExportPromiseUnit.kt")
     public void testJsExportPromiseUnit() {
       runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExportPromiseUnit.kt");
