@@ -424,7 +424,6 @@ enum class LanguageFeature(
     ForbidAnnotationsWithUseSiteTargetOnExpressions(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-75242"),
     ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, enabledInProgressiveMode = true, "KTLC-279"),
     ForbidObjectDelegationToItself(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-17417"),
-    ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(KOTLIN_2_3, enabledInProgressiveMode = true, issue = "KT-25513"),
     JvmIndyAllowLambdasWithAnnotations(KOTLIN_2_3, "KT-76606"),
 
     AllowCheckForErasedTypesInContracts(KOTLIN_2_3, "KT-45683"),
@@ -522,6 +521,7 @@ enum class LanguageFeature(
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, "KT-70722"),
     IrRichCallableReferencesInKlibs(sinceVersion = null, "KT-72734"), // KT-72734, KT-74384, KT-74392
     ExportKlibToOlderAbiVersion(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-76131"),
+    ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType(sinceVersion = null, enabledInProgressiveMode = true, issue = "KTLC-14"),
     ;
 
     constructor(
