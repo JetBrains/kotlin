@@ -17,3 +17,24 @@ internal fun throw0(v: JsAny?): Nothing = implementedAsIntrinsic
 internal fun getKotlinException(v: JsAny?): Throwable {
     return (v as? JsError)?.kotlinException?.get() ?: JsException(v)
 }
+
+@Deprecated("Don't use. To be removed after bootstrap.", level = DeprecationLevel.ERROR)
+@Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+private fun throwJsError(message: String?, wasmTypeName: String?, stack: ExternalInterfaceType?): Nothing {
+    js("""
+    const error = new Error();
+    error.message = message;
+    error.name = wasmTypeName;
+    error.stack = stack;
+    throw error;
+    """)
+}
+
+@Deprecated("Don't use. To be removed after bootstrap.", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
+internal fun throwAsJsException(t: Throwable): Nothing {
+    throwJsError(t.message, getSimpleName(wasmGetObjectRtti(t)), t.jsStack)
+}
+
+@Deprecated("Don't use. To be removed after bootstrap.", level = DeprecationLevel.ERROR)
+internal fun createJsException(jsError: JsAny) = JsException(jsError)
