@@ -284,6 +284,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
+  @TestMetadata("librariesImport.kt")
+  public void testLibrariesImport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/librariesImport.kt");
+  }
+
+  @Test
   @TestMetadata("longStrings.kt")
   public void testLongStrings() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
@@ -311,6 +317,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   @TestMetadata("reflectionOnExternals.kt")
   public void testReflectionOnExternals() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/reflectionOnExternals.kt");
+  }
+
+  @Test
+  @TestMetadata("temporal.kt")
+  public void testTemporal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/temporal.kt");
   }
 
   @Test
