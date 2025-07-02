@@ -1324,6 +1324,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaTypeAr
 public final class org/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode : java/lang/Enum {
 	public static final field DEFAULT Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field DEFAULT_UAST Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
+	public static final field FUNCTION_RETURN_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field GENERIC_ARGUMENT Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE_BOXED Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;

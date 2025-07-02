@@ -41,6 +41,12 @@ asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=false):
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
 
+asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
+  PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
+
+asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
+  PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
+
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
 
@@ -93,6 +99,12 @@ asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=false):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
+  PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
+
+asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
+  PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
+
+asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() Foo.Bar
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):

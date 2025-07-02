@@ -191,7 +191,9 @@ internal class KaFirJavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE -> jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+            KaTypeMappingMode.RETURN_TYPE, KaTypeMappingMode.FUNCTION_RETURN_TYPE ->
+                jvmTypeMapper.typeContext.getOptimalModeForReturnType(expandedType, isAnnotationMethod)
+
             KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
                 val mappingMode = jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
                 if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {

@@ -41,6 +41,12 @@ asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=false):
 asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=true):
   PsiType: int
 
+asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
+  PsiType: int
+
+asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
+  PsiType: int
+
 asPsiType(allowErrorTypes=false, mode=VALUE_PARAMETER, isAnnotationMethod=false):
   PsiType: int
 
@@ -93,6 +99,12 @@ asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=false):
   PsiType: int
 
 asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
+  PsiType: int
+
+asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
+  PsiType: int
+
+asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
   PsiType: int
 
 asPsiType(allowErrorTypes=true, mode=VALUE_PARAMETER, isAnnotationMethod=false):
