@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.vfs.VirtualFileFilter
+import com.intellij.openapi.vfs.findPsiFile
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -42,6 +43,7 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
 
     companion object {
         fun createKtFile(originalFile: KtFile, disposable: Disposable): KtFile {
+            val project = originalFile.project
             val originalProvider = originalFile.viewProvider
             val updatedProvider = object : SingleRootFileViewProvider(
                 originalProvider.manager,
@@ -59,11 +61,17 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
             }
 
             /**
-             * Throw exception on an attempt to load a file tree
+             * Throw an exception on an attempt to load a file tree if the file is stub-based.
              *
              * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
              */
-            updatedProvider.manager.setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, disposable)
+            updatedProvider.manager.setAssertOnFileLoadingFilter(
+                {
+                    val psiFile = it.findPsiFile(project) as? PsiFileImpl
+                    psiFile == null || psiFile.stub != null
+                },
+                disposable,
+            )
 
             val fileWithStub = object : KtFile(updatedProvider, false) {
                 private val fakeStub get() = stubTree?.root as? KotlinFileStub

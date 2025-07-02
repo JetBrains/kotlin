@@ -12,5 +12,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceivers.kt
         }
 
     }
-    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun bar1([ResolvedTo(SEALED_CLASS_INHERITORS)] x: context(A, B)( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun bar2([ResolvedTo(SEALED_CLASS_INHERITORS)] x: context(A, B)( R|C|.() -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bar1([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|@ContextFunctionTypeParams(2) context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bar2([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|@ContextFunctionTypeParams(2) context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) C.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
