@@ -1,6 +1,35 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /JavaClass.field
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: field
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: JavaClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: JavaClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: /JavaClass.foo
+  callableId: /JavaClass.hello
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -20,7 +49,7 @@ KaNamedFunctionSymbol:
   isTailRec: false
   location: CLASS
   modality: OPEN
-  name: foo
+  name: hello
   origin: JAVA_SOURCE
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -42,7 +71,7 @@ KaNamedFunctionSymbol:
 
 KaNamedFunctionSymbol:
   annotations: []
-  callableId: /JavaClass.doo
+  callableId: /JavaClass.method
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -62,13 +91,35 @@ KaNamedFunctionSymbol:
   isTailRec: false
   location: CLASS
   modality: OPEN
-  name: doo
+  name: method
   origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KaFlexibleType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: kotlin/String!
-  typeParameters: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: [
+    KaTypeParameterSymbol:
+      annotations: []
+      compilerVisibility: Local
+      isActual: false
+      isExpect: false
+      isReified: false
+      location: LOCAL
+      modality: FINAL
+      name: T
+      origin: JAVA_SOURCE
+      upperBounds: [
+        KaFlexibleType:
+          annotations: []
+          type: kotlin/Any!
+      ]
+      variance: INVARIANT
+      visibility: LOCAL
+      getContainingFileSymbol: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
@@ -84,16 +135,15 @@ KaNamedFunctionSymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVal: true
-      isVararg: false
+      isVararg: true
       location: LOCAL
       modality: FINAL
-      name: i
+      name: classes
       origin: JAVA_SOURCE
       receiverParameter: null
-      returnType: KaUsualClassType:
+      returnType: KaFlexibleType:
         annotations: []
-        typeArguments: []
-        type: kotlin/Int
+        type: ft<java/lang/Class<out T!>, java/lang/Class<out T!>?>
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
@@ -111,9 +161,41 @@ KaNamedFunctionSymbol:
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
 
-KaNamedFunctionSymbol:
+KaJavaFieldSymbol:
   annotations: []
-  callableId: /JavaClass.getStringValue
+  callableId: /SuperClass.superField
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: false
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: superField
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: SuperClass
+  getContainingFileSymbol: null
+  getContainingJvmClassName: SuperClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: [
+    java/lang/Override()
+      psi: null
+  ]
+  callableId: /SuperClass.getActualRandomNumber
   compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
@@ -133,21 +215,22 @@ KaNamedFunctionSymbol:
   isTailRec: false
   location: CLASS
   modality: OPEN
-  name: getStringValue
+  name: getActualRandomNumber
   origin: JAVA_SOURCE
   receiverParameter: null
-  returnType: KaFlexibleType:
+  returnType: KaUsualClassType:
     annotations: []
-    type: kotlin/String!
+    typeArguments: []
+    type: kotlin/Int
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
   getDispatchReceiver(): KaUsualClassType:
     annotations: []
     typeArguments: []
-    type: JavaClass
+    type: SuperClass
   getContainingFileSymbol: null
-  getContainingJvmClassName: JavaClass
+  getContainingJvmClassName: SuperClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null
@@ -210,7 +293,7 @@ KaNamedFunctionSymbol:
       visibility: PUBLIC
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: PUBLIC
@@ -221,7 +304,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: true
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -263,7 +346,7 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
 KaNamedFunctionSymbol:
@@ -305,7 +388,131 @@ KaNamedFunctionSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: JavaClass.NestedClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: OPEN
+  name: NestedClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: JavaClass.InnerClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: true
+  location: CLASS
+  modality: OPEN
+  name: InnerClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: SuperClass.NestedSuperClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  location: CLASS
+  modality: OPEN
+  name: NestedSuperClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
+  deprecationStatus: null
+
+KaNamedClassSymbol:
+  annotations: []
+  classId: SuperClass.InnerSuperClass
+  classKind: CLASS
+  companionObject: null
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: true
+  location: CLASS
+  modality: OPEN
+  name: InnerSuperClass
+  origin: JAVA_SOURCE
+  superTypes: [
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Any
+  ]
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KaConstructorSymbol:
