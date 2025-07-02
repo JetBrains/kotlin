@@ -1806,6 +1806,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^(.*)\\.kts?$"), null, true);
       }
 
+      @TestMetadata("annotatedContract.kt")
+      public void testAnnotatedContract() {
+        runTest("compiler/testData/psi/contracts/annotatedContract.kt");
+      }
+
       @TestMetadata("contracts.kt")
       public void testContracts() {
         runTest("compiler/testData/psi/contracts/contracts.kt");
@@ -1839,6 +1844,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("nonKotlinContractCall2.kt")
       public void testNonKotlinContractCall2() {
         runTest("compiler/testData/psi/contracts/nonKotlinContractCall2.kt");
+      }
+
+      @TestMetadata("operator.kt")
+      public void testOperator() {
+        runTest("compiler/testData/psi/contracts/operator.kt");
       }
 
       @TestMetadata("PropertyAccessorsContracts.kt")
