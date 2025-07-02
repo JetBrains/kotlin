@@ -63,15 +63,10 @@ private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
         IrValidationAfterInliningAllFunctionsPhase(
             context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
-                // No inline function call sites should remain at this stage.
+            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
+                // No inline function call sites should remain at this stage except for `typeOf`.
                 val inlineFunction = inlineFunctionUseSite.symbol.owner
-                when {
-                    // TODO: remove this condition after the fix of KT-70361:
-                    isTypeOfIntrinsic(inlineFunction.symbol) -> true // temporarily permitted
-
-                    else -> false // forbidden
-                }
+                return@check isTypeOfIntrinsic(inlineFunction.symbol)
             }
         )
     },
