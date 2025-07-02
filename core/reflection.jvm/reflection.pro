@@ -35,6 +35,6 @@
 -keep class kotlin.reflect.jvm.internal.impl.protobuf.GeneratedMessage$ExtendableMessageOrBuilder
 
 # Required for protobuf java lite mode since v3.9.0: https://github.com/protocolbuffers/protobuf/issues/6463
--keepclassmembers class * extends kotlin.reflect.jvm.internal.impl.protobuf.AbstractMessageLite { <fields>; }
+# -keepclassmembers class * extends kotlin.reflect.jvm.internal.impl.protobuf.AbstractMessageLite { <fields>; }
 
 -keep class sun.misc.Unsafe { *; }
