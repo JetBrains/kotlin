@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
+class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T, val rawStringValue: String) {
+    fun asCompilerCliArgument(): String =
+        "-Xbinary=${option.name}=$rawStringValue"
+}
 
 fun parseBinaryOptions(
     argumentValue: Array<String>?,
@@ -36,7 +39,7 @@ private fun <T : Any> parseBinaryOption(
                 "Possible values are: ${option.valueParser.validValuesHint}")
         null
     } else {
-        BinaryOptionWithValue(option, value)
+        BinaryOptionWithValue(option, value, valueName)
     }
 }
 

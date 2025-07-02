@@ -22,13 +22,14 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCo
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryOptions
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.ExplicitBinaryOptions
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.buildArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.backend.konan.BinaryOptions
 import java.io.File
 
 private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationMode) = when (this) {
@@ -52,7 +53,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
-    private val binaryOptions: BinaryOptions,
+    private val binaryOptions: ExplicitBinaryOptions,
     protected val freeCompilerArgs: TestCompilerArgs,
     protected val compilerPlugins: CompilerPlugins,
     protected val cacheMode: CacheMode,
@@ -102,7 +103,13 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         // which might not be available in user distribution.
         add("-Xllvm-variant=dev")
         addFlattened(binaryOptionsObsolete.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
-        addFlattened(binaryOptions.options) { listOf("-Xbinary=$it") }
+        binaryOptions.options
+            .filter {
+                // smallBinary is not compatible with debug.
+                val isSmallBinaryEnabled = it.option.name == BinaryOptions.smallBinary.toString() && (it.value as Boolean)
+                !(isSmallBinaryEnabled && optimizationMode == OptimizationMode.DEBUG)
+            }
+            .forEach { add(it.asCompilerCliArgument()) }
     }
 
     protected abstract fun applySpecificArgs(argsBuilder: ArgsBuilder)
@@ -263,7 +270,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     allocator: Allocator,
     private val pipelineType: PipelineType,
     cacheMode: CacheMode,
-    binaryOptions: BinaryOptions,
+    binaryOptions: ExplicitBinaryOptions,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,

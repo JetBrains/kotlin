@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.backend.konan.BinaryOptionWithValue
 import org.jetbrains.kotlin.backend.konan.GC
 import org.jetbrains.kotlin.backend.konan.GCSchedulerType
+import org.jetbrains.kotlin.backend.konan.parseBinaryOptions
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -168,7 +170,15 @@ class GCScheduler(val scheduler: GCSchedulerType?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
-class BinaryOptions(val options: List<String>)
+/**
+ * Explicitly provided binary options.
+ * See [org.jetbrains.kotlin.backend.konan.BinaryOptions] for details.
+ */
+class ExplicitBinaryOptions(private val rawOptions: List<String>) {
+    val options: List<BinaryOptionWithValue<*>> by lazy {
+        parseBinaryOptions(rawOptions.toTypedArray(), { println(it) }, { error(it) })
+    }
+}
 
 enum class Allocator(val compilerFlag: String?) {
     UNSPECIFIED(null),

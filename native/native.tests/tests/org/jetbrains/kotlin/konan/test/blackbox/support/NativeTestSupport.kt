@@ -216,14 +216,6 @@ object NativeTestSupport {
         val nativeTargets = computeNativeTargets(enforcedProperties, hostManager)
 
         val cacheMode = computeCacheMode(enforcedProperties, distribution, nativeTargets, optimizationMode)
-//        if (cacheMode != CacheMode.WithoutCache) {
-//            assertEquals(ThreadStateChecker.DISABLED, threadStateChecker) {
-//                "Thread state checker can not be used with cache"
-//            }
-//            assertEquals(Sanitizer.NONE, sanitizer) {
-//                "Sanitizer can not be used with cache"
-//            }
-//        }
 
         output += optimizationMode
         output += threadStateChecker
@@ -290,10 +282,10 @@ object NativeTestSupport {
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
         ClassLevelProperty.GC_SCHEDULER.readValueOrNull(enforcedProperties, GCSchedulerType.values()).let { GCScheduler(it) }
 
-    private fun computeBinaryOptions(enforcedProperties: EnforcedProperties): BinaryOptions =
+    private fun computeBinaryOptions(enforcedProperties: EnforcedProperties): ExplicitBinaryOptions =
         ClassLevelProperty.BINARY_OPTIONS.readValue(
             enforcedProperties, { it.split(",") }, emptyList()
-        ).let(::BinaryOptions)
+        ).let(::ExplicitBinaryOptions)
 
     private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator =
         ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
