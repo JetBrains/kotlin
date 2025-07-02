@@ -1,4 +1,4 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] functionTypes.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> simpleRun([ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|() -> T|): R|T| { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R> [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|kotlin/collections/List<T>|.simpleMap([ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|(T) -> R|): R|R| { LAZY_BLOCK }
-    public? final? [ResolvedTo(SEALED_CLASS_INHERITORS)] fun <[ResolvedTo(SEALED_CLASS_INHERITORS)] T> simpleWith([ResolvedTo(SEALED_CLASS_INHERITORS)] t: T, [ResolvedTo(SEALED_CLASS_INHERITORS)] f: ( T.() -> Unit )): Unit { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> simpleWith([ResolvedTo(EXPECT_ACTUAL_MATCHING)] t: R|T|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

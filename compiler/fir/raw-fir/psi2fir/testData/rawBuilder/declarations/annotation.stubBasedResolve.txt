@@ -20,21 +20,33 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|base|[Types]() init { LAZY_BLOCK }
 
     }
-    @R|base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class My : R|kotlin/Enum<My>| {
+    @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] enum class My : R|kotlin/Enum<My>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] constructor(): R|My| {
             super<R|kotlin/Enum<My>|>()
         }
 
-        @R|base|[Types]() public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=My] enum entry FIRST: R|My| = LAZY_EXPRESSION
-        @R|base|[Types]() public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=My] enum entry SECOND: R|My| = LAZY_EXPRESSION
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=My] fun values(): R|kotlin/Array<My>| {
+        @R|base|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] enum entry FIRST: R|My| = object : R|My| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|My|>()
+            }
+
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=My] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|My| {
+        @R|base|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] enum entry SECOND: R|My| = object : R|My| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|My|>()
+            }
+
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
-            public [ResolvedTo(TYPES)] get(): R|kotlin/enums/EnumEntries<My>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] fun values(): R|kotlin/Array<My>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|My| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] val entries: R|kotlin/enums/EnumEntries<My>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<My>|
 
     }
     @R|base|[Types]() public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|base|[Types]() y: R|@R|base|()  kotlin/Int|): R|@R|base|()  kotlin/Int| { LAZY_BLOCK }
@@ -64,21 +76,33 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         }
 
     }
-    @R|derived|[Types](x = Int(1)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyDerived : R|kotlin/Enum<MyDerived>| {
+    @R|derived|[Types](x = Int(1)) public final [ResolvedTo(BODY_RESOLVE)] enum class MyDerived : R|kotlin/Enum<MyDerived>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] constructor(): R|MyDerived| {
             super<R|kotlin/Enum<MyDerived>|>()
         }
 
-        @R|derived|[Types](x = Int(1)) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDerived] enum entry FIRST: R|MyDerived| = LAZY_EXPRESSION
-        @R|derived|[Types](x = Int(1)) public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyDerived] enum entry SECOND: R|MyDerived| = LAZY_EXPRESSION
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyDerived] fun values(): R|kotlin/Array<MyDerived>| {
+        @R|derived|[Types](x = Int(1)) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] enum entry FIRST: R|MyDerived| = object : R|MyDerived| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|MyDerived|>()
+            }
+
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyDerived] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|MyDerived| {
+        @R|derived|[Types](x = Int(1)) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] enum entry SECOND: R|MyDerived| = object : R|MyDerived| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|MyDerived|>()
+            }
+
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
-            public [ResolvedTo(TYPES)] get(): R|kotlin/enums/EnumEntries<MyDerived>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] fun values(): R|kotlin/Array<MyDerived>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyDerived| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] val entries: R|kotlin/enums/EnumEntries<MyDerived>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyDerived>|
 
     }
     @R|derived|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun fooDerived([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|derived|[Types](LAZY_EXPRESSION) y: R|@R|derived|(LAZY_EXPRESSION)  kotlin/Int|): R|@R|derived|(LAZY_EXPRESSION)  kotlin/Int| { LAZY_BLOCK }

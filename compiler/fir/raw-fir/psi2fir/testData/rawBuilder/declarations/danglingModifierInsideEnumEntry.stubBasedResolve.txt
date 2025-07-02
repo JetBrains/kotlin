@@ -10,19 +10,26 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] danglingModifierInsideEnumEntry.kt
     }
     public final const [ResolvedTo(CONTRACTS)] val CONSTANT: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
+    public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnumClass : R|kotlin/Enum<foo/MyEnumClass>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] constructor(): R|foo/MyEnumClass| {
             super<R|kotlin/Enum<foo/MyEnumClass>|>()
         }
 
-        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = LAZY_EXPRESSION
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] enum entry Entry: R|foo/MyEnumClass| = object : R|foo/MyEnumClass| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|foo/<anonymous>| {
+                super<R|foo/MyEnumClass|>()
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] @R|foo/Anno|[Types](i = R|foo/CONSTANT|) <DANGLING MODIFIER: Top level declaration expected>
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|foo/MyEnumClass| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun values(): R|kotlin/Array<foo/MyEnumClass>| {
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
-            public [ResolvedTo(TYPES)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|foo/MyEnumClass| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnumClass] val entries: R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<foo/MyEnumClass>|
 
     }

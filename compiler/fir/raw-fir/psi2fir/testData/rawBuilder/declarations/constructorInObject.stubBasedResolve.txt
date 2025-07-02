@@ -7,20 +7,20 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] constructorInObject.kt
         [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class B : R|kotlin/Enum<B>| {
+    public final [ResolvedTo(BODY_RESOLVE)] enum class B : R|kotlin/Enum<B>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Enum<B>|>()
         }
 
         public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=B] enum entry X: R|B| = LAZY_EXPRESSION
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=B] fun values(): R|kotlin/Array<B>| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] fun values(): R|kotlin/Array<B>| {
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=B] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|B| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|B| {
         }
 
-        public final static [ResolvedTo(TYPES)] [ContainingClassKey=B] val entries: R|kotlin/enums/EnumEntries<B>|
-            public [ResolvedTo(TYPES)] get(): R|kotlin/enums/EnumEntries<B>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] val entries: R|kotlin/enums/EnumEntries<B>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<B>|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {

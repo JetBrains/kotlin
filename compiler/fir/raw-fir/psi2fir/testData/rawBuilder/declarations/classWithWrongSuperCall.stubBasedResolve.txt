@@ -1,59 +1,59 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] classWithWrongSuperCall.kt
     public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(SEALED_CLASS_INHERITORS)] [ContainingClassKey=A] constructor([ResolvedTo(SEALED_CLASS_INHERITORS)] init: ( R|A|.() -> Unit )): R|A| {
-            LAZY_super<R|kotlin/Any|>
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] init: R|A.() -> kotlin/Unit|): R|A| {
+            super<R|kotlin/Any|>()
         }
 
-        public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/String| = LAZY_EXPRESSION
-            public? [ResolvedTo(TYPES)] [ContainingClassKey=A] get(): R|kotlin/String|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/String| = LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object B : R|A| {
-        private [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+        private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object C : R|A| {
-        private [ResolvedTo(TYPES)] [ContainingClassKey=C] constructor(): R|C| {
+        private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : R|A| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=D] constructor(): R|D| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=D] constructor(): R|D| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class E : R|A| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=E] constructor(): R|E| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=E] constructor(): R|E| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class F : R|A| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=F] error_constructor(): R|F| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=F] error_constructor(): R|F| {
             LAZY_super<R|A|>
         }
 
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=F] constructor(): R|F| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=F] constructor(): R|F| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class G : R|A| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=G] error_constructor(): R|G| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=G] error_constructor(): R|G| {
             LAZY_super<R|A|>
         }
 
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=G] constructor(): R|G| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=G] constructor(): R|G| {
             LAZY_super<R|A|>
         }
 
     }
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class H : R|A| {
-        public? [ResolvedTo(TYPES)] [ContainingClassKey=H] constructor(): R|H| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=H] constructor(): R|H| {
             LAZY_super<<implicit>>
         }
 
