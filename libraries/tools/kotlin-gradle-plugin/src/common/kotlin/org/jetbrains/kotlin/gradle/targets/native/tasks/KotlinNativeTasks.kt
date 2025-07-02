@@ -489,6 +489,7 @@ internal constructor(
             args.metadataKlib = sharedCompilationData != null
             args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
+            args.exportKDoc = true
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
             args.nopack = produceUnpackagedKlib.get()
 
