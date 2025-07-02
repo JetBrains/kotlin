@@ -278,6 +278,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: D): R =
         visitContractDescription(legacyRawContractDescription, data)
 
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): R =
+        visitLegacyRawContractDescription(lazyContractDescription, data)
+
     override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): R =
         visitContractDescription(errorContractDescription, data)
 }
