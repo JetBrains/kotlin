@@ -63,7 +63,7 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }
 
-        val producerConsumerVisibility: MutableMap<String, List<String>> = mapOf(
+        val producerConsumerVisibility = mapOf(
             "common" to listOf(
                 "Producer_commonMain",
             ),
