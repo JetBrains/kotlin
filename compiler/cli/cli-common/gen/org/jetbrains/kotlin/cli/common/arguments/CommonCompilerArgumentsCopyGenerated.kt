@@ -91,6 +91,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.verifyIrVisibility = from.verifyIrVisibility
     to.warningLevels = from.warningLevels?.copyOf()
     to.whenGuards = from.whenGuards
+    to.xdataFlowBasedExhaustiveness = from.xdataFlowBasedExhaustiveness
 
     return to
 }

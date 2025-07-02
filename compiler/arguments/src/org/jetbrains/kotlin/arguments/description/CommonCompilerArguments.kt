@@ -708,6 +708,18 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "-Xdata-flow-based-exhaustiveness"
+        description = "Enable `when` exhaustiveness improvements that rely on data-flow analysis.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.DataFlowBasedExhaustiveness))
+
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
+        stubLifecycle()
+    }
+
+
+    compilerArgument {
         name = "Xdirect-java-actualization"
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
