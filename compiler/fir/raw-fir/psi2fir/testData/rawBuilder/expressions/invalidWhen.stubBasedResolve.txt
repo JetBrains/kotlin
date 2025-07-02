@@ -5,4 +5,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] invalidWhen.kt
         }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun someFun(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun someFun(): R|kotlin/Unit| { LAZY_BLOCK }

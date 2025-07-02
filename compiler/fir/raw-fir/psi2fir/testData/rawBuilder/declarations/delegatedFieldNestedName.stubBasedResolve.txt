@@ -9,7 +9,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] delegatedFieldNestedName.kt
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Base<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Second<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {

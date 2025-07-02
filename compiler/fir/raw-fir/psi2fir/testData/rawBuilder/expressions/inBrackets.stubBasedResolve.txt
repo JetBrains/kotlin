@@ -1,2 +1,2 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] inBrackets.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] e: R|kotlin/Int.() -> kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] e: R|kotlin/Int.() -> kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
+import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -31,8 +32,21 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTes
 
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
-            TestCase.assertFalse("${FirLazyBlock::class.qualifiedName} should not present in the tree", element is FirLazyBlock)
-            TestCase.assertFalse("${FirLazyExpression::class.qualifiedName} should not present in the tree", element is FirLazyExpression)
+            TestCase.assertFalse(
+                "${FirLazyBlock::class.simpleName} should not present in the tree",
+                element is FirLazyBlock,
+            )
+
+            TestCase.assertFalse(
+                "${FirLazyExpression::class.simpleName} should not present in the tree",
+                element is FirLazyExpression,
+            )
+
+            TestCase.assertFalse(
+                "${FirLazyContractDescription::class.simpleName} should not present in the tree",
+                element is FirLazyContractDescription,
+            )
+
             element.acceptChildren(this)
         }
     }

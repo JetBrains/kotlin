@@ -14,4 +14,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] derivedClass.kt
         }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Any|> create([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|T|): R|Derived<T>| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Any|> create([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|T|): R|Derived<T>| { LAZY_BLOCK }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isPartialBodyResolvable
+import org.jetbrains.kotlin.fir.contracts.builder.buildLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -59,7 +60,7 @@ private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
 
     decreasePhase(newPhase)
     if (this is FirContractDescriptionOwner && hasLegacyContract) {
-        replaceContractDescription(newContractDescription = null)
+        replaceContractDescription(newContractDescription = buildLazyContractDescription())
     }
 
     replaceBody(buildLazyBlock())

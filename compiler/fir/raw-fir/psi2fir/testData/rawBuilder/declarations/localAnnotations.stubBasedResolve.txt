@@ -1,2 +1,2 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] localAnnotations.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
