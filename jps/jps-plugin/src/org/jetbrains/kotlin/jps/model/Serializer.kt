@@ -13,7 +13,6 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.*
@@ -23,7 +22,6 @@ class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
     override fun getProjectExtensionSerializers() = listOf(
         KotlinCommonCompilerArgumentsSerializer(),
         Kotlin2JvmCompilerArgumentsSerializer(),
-        Kotlin2JsCompilerArgumentsSerializer(),
         KotlinCompilerSettingsSerializer(),
         KotlinJpsPluginSettingsSerializer()
     )
@@ -96,14 +94,6 @@ internal class KotlinCommonCompilerArgumentsSerializer : BaseJpsCompilerSettings
     override fun onLoad(project: JpsProject, settings: CommonCompilerArguments.DummyImpl) {
         settings.setApiVersionToLanguageVersionIfNeeded()
         project.kotlinCommonCompilerArguments = settings
-    }
-}
-
-internal class Kotlin2JsCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JSCompilerArguments>(
-    SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION, ::K2JSCompilerArguments
-) {
-    override fun onLoad(project: JpsProject, settings: K2JSCompilerArguments) {
-        project.k2JsCompilerArguments = settings
     }
 }
 

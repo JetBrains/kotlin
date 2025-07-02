@@ -107,29 +107,6 @@ class JpsKotlinCompilerRunner {
         }
     )
 
-    fun runK2MetadataCompiler(
-        commonArguments: CommonCompilerArguments,
-        k2MetadataArguments: K2MetadataCompilerArguments,
-        compilerSettings: CompilerSettings,
-        environment: JpsCompilerEnvironment,
-        destination: String,
-        classpath: Collection<String>,
-        sourceFiles: Collection<File>,
-        buildMetricReporter: JpsBuilderMetricReporter?,
-    ) {
-        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2MetadataArguments))
-
-        val classpathSet = arguments.classpath?.split(File.pathSeparator)?.toMutableSet() ?: mutableSetOf()
-        classpathSet.addAll(classpath)
-        arguments.classpath = classpath.joinToString(File.pathSeparator)
-        arguments.freeArgs = sourceFiles.map { it.absolutePath }
-        arguments.destination = arguments.destination ?: destination
-
-        withCompilerSettings(compilerSettings) {
-            runCompiler(KotlinCompilerClass.METADATA, arguments, environment, buildMetricReporter)
-        }
-    }
-
     fun runK2JvmCompiler(
         commonArguments: CommonCompilerArguments,
         k2jvmArguments: K2JVMCompilerArguments,
@@ -141,43 +118,16 @@ class JpsKotlinCompilerRunner {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
         setupK2JvmArguments(moduleFile, arguments)
         withCompilerSettings(compilerSettings) {
-            runCompiler(KotlinCompilerClass.JVM, arguments, environment, buildMetricReporter)
-        }
-    }
-
-    fun runK2JsCompiler(
-        commonArguments: CommonCompilerArguments,
-        k2jsArguments: K2JSCompilerArguments,
-        compilerSettings: CompilerSettings,
-        environment: JpsCompilerEnvironment,
-        allSourceFiles: Collection<File>,
-        commonSources: Collection<File>,
-        sourceMapRoots: Collection<File>,
-        libraries: List<String>,
-        friendModules: List<String>,
-        outputFile: File,
-        buildMetricReporter: JpsBuilderMetricReporter?,
-    ) {
-        log.debug("K2JS: common arguments: " + ArgumentUtils.convertArgumentsToStringList(commonArguments))
-        log.debug("K2JS: JS arguments: " + ArgumentUtils.convertArgumentsToStringList(k2jsArguments))
-
-        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jsArguments))
-        log.debug("K2JS: merged arguments: " + ArgumentUtils.convertArgumentsToStringList(arguments))
-
-        setupK2JsArguments(outputFile, allSourceFiles, commonSources, libraries, friendModules, arguments)
-        if (arguments.sourceMap) {
-            arguments.sourceMapBaseDirs = sourceMapRoots.joinToString(File.pathSeparator) { it.path }
-        }
-
-        log.debug("K2JS: arguments after setup" + ArgumentUtils.convertArgumentsToStringList(arguments))
-
-        withCompilerSettings(compilerSettings) {
-            runCompiler(KotlinCompilerClass.JS, arguments, environment, buildMetricReporter)
+            try {
+                compileWithDaemonOrFallback(arguments, environment, buildMetricReporter)
+            } catch (e: Throwable) {
+                MessageCollectorUtil.reportException(environment.messageCollector, e)
+                reportInternalCompilerError(environment.messageCollector)
+            }
         }
     }
 
     private fun compileWithDaemonOrFallback(
-        compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment,
         buildMetricReporter: JpsBuilderMetricReporter?,
@@ -185,37 +135,17 @@ class JpsKotlinCompilerRunner {
         log.debug("Using kotlin-home = " + environment.kotlinPaths.homePath)
 
         withDaemonOrFallback(
-            withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment, buildMetricReporter) },
-            fallback = { fallbackCompileStrategy(compilerArgs, compilerClassName, environment) }
+            withDaemon = { compileWithDaemon(compilerArgs, environment, buildMetricReporter) },
+            fallback = { fallbackCompileStrategy(compilerArgs, environment) }
         )
     }
 
-    private fun runCompiler(
-        compilerClassName: String,
-        compilerArgs: CommonCompilerArguments,
-        environment: JpsCompilerEnvironment,
-        buildMetricReporter: JpsBuilderMetricReporter?,
-    ) {
-        try {
-            compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment, buildMetricReporter)
-        } catch (e: Throwable) {
-            MessageCollectorUtil.reportException(environment.messageCollector, e)
-            reportInternalCompilerError(environment.messageCollector)
-        }
-    }
-
     private fun compileWithDaemon(
-        compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment,
         buildMetricReporter: JpsBuilderMetricReporter?,
     ): Int? {
-        val targetPlatform = when (compilerClassName) {
-            KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
-            KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
-            KotlinCompilerClass.METADATA -> CompileService.TargetPlatform.METADATA
-            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
-        }
+        val targetPlatform = CompileService.TargetPlatform.JVM
         val compilerMode = CompilerMode.JPS_COMPILER
         val verbose = compilerArgs.verbose
         val options = CompilationOptions(
@@ -321,7 +251,6 @@ class JpsKotlinCompilerRunner {
 
     private fun fallbackCompileStrategy(
         compilerArgs: CommonCompilerArguments,
-        compilerClassName: String,
         environment: JpsCompilerEnvironment,
     ) {
         if ("true" == System.getProperty("kotlin.jps.tests") && "true" == System.getProperty(FAIL_ON_FALLBACK_PROPERTY)) {
@@ -342,7 +271,7 @@ class JpsKotlinCompilerRunner {
 
         val rc = environment.withProgressReporter { progress ->
             progress.compilationStarted()
-            CompilerRunnerUtil.invokeExecMethod(compilerClassName, withAdditionalCompilerArgs(compilerArgs), environment, out)
+            CompilerRunnerUtil.invokeExecMethod(KotlinCompilerClass.JVM, withAdditionalCompilerArgs(compilerArgs), environment, out)
         }
 
         // exec() returns an ExitCode object, class of which is loaded with a different class loader,
@@ -358,25 +287,6 @@ class JpsKotlinCompilerRunner {
             noStdlib = true
             noReflect = true
             noJdk = true
-        }
-    }
-
-    private fun setupK2JsArguments(
-        _outputFile: File,
-        allSourceFiles: Collection<File>,
-        _commonSources: Collection<File>,
-        _libraries: List<String>,
-        _friendModules: List<String>,
-        settings: K2JSCompilerArguments,
-    ) {
-        with(settings) {
-            freeArgs = allSourceFiles.map { it.path }.toMutableList()
-            irProduceKlibDir = true
-            commonSources = _commonSources.map { it.path }.toTypedArray()
-            outputDir = _outputFile.parent
-            moduleName = _outputFile.nameWithoutExtension
-            libraries = _libraries.joinToString(File.pathSeparator)
-            friendModules = _friendModules.joinToString(File.pathSeparator)
         }
     }
 

@@ -92,8 +92,6 @@ abstract class AbstractIncrementalJpsTest(
 
     // is used to compare lookup dumps in a human readable way (lookup symbols are hashed in an actual lookup storage)
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
-    private var isJvmICEnabledBackup: Boolean = false
-    private var isJsICEnabledBackup: Boolean = false
 
     protected var mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -405,8 +403,6 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun performAdditionalModifications(modifications: List<Modification>) {
     }
 
-    protected open fun generateModuleSources(modulesTxt: ModulesTxt) = Unit
-
     // null means one module
     private fun configureModules(): ModulesTxt? {
         JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject).outputUrl =
@@ -483,7 +479,6 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         // configure module contents
-        generateModuleSources(modulesTxt)
         modulesTxt.modules.forEach { module ->
             val sourceDirName = "${module.name}/src"
             val sourceDestinationDir = File(workDir, sourceDirName)
