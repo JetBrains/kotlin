@@ -505,10 +505,8 @@ private fun parseDebugPrefixMap(
     }
 }.toMap()
 
-class BinaryOptionWithValue<T : Any>(val option: BinaryOption<T>, val value: T)
-
 private fun <T : Any> CompilerConfiguration.put(binaryOptionWithValue: BinaryOptionWithValue<T>) {
-    this.put(binaryOptionWithValue.option.compilerConfigurationKey, binaryOptionWithValue.value)
+    this.put(binaryOptionWithValue.compilerConfigurationKey, binaryOptionWithValue.value)
 }
 
 fun parseBinaryOptions(
