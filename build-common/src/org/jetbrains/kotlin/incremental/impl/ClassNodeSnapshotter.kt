@@ -19,19 +19,34 @@ object ClassNodeSnapshotter {
         return classWriter.toByteArray().hashToLong()
     }
 
-    fun snapshotClassExcludingMembers(classNode: ClassNode, alsoExcludeKotlinMetaData: Boolean = false): Long {
+    fun snapshotClassExcludingMembers(
+        classNode: ClassNode,
+        alsoExcludeKotlinMetaData: Boolean = false,
+        alsoExcludeDebugInfo: Boolean = false,
+    ): Long {
         val originalFields = classNode.fields
         val originalMethods = classNode.methods
         val originalVisibleAnnotations = classNode.visibleAnnotations
+        val originalInvisibleAnnotations = classNode.invisibleAnnotations
+
         classNode.fields = emptyList()
         classNode.methods = emptyList()
         if (alsoExcludeKotlinMetaData) {
-            classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot { it.desc == "Lkotlin/Metadata;" }
+            classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot {
+                it.desc == "Lkotlin/Metadata;"
+            }
         }
+        if (alsoExcludeDebugInfo) {
+            classNode.invisibleAnnotations = originalInvisibleAnnotations?.filterNot {
+                it.desc == "Lkotlin/jvm/internal/SourceDebugExtension;"
+            }
+        }
+
         return snapshotClass(classNode).also {
             classNode.fields = originalFields
             classNode.methods = originalMethods
             classNode.visibleAnnotations = originalVisibleAnnotations
+            classNode.invisibleAnnotations = originalInvisibleAnnotations
         }
     }
 
