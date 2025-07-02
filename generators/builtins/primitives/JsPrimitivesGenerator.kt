@@ -13,6 +13,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     override fun FileBuilder.modifyGeneratedFile() {
         suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
         suppress("UNUSED_PARAMETER")
+        import("kotlin.js.internal.boxedLong.*")
     }
 
     override fun PropertyBuilder.modifyGeneratedCompanionObjectProperty(thisKind: PrimitiveType) {
