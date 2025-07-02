@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.utils.capitalized
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -36,7 +37,7 @@ open class CompareDistributionSignatures @Inject constructor(
         fun registerForPlatform(project: Project, target: String) {
             register(project, "${target}CheckPlatformAbiCompatibility") {
                 libraries = Libraries.Platform(target)
-                dependsOn(":kotlin-native:${target}PlatformLibs") // The task configures inputs on the insides of the distribution
+                dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distPlatformLibs${target.capitalized}") // The task configures inputs on the insides of the distribution
             }
         }
 
@@ -44,7 +45,7 @@ open class CompareDistributionSignatures @Inject constructor(
         fun registerForStdlib(project: Project) {
             register(project, "checkStdlibAbiCompatibility") {
                 libraries = Libraries.Standard
-                dependsOn(":kotlin-native:distRuntime") // The task configures inputs on the insides of the distribution
+                dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distStdlib") // The task configures inputs on the insides of the distribution
             }
         }
 

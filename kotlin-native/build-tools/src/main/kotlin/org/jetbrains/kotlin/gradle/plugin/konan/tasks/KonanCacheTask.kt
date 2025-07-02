@@ -13,6 +13,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -43,9 +45,21 @@ private abstract class KonanCacheAction : WorkAction<KonanCacheAction.Parameters
 
 @CacheableTask
 open class KonanCacheTask @Inject constructor(
-        objectFactory: ObjectFactory,
+        private val objectFactory: ObjectFactory,
         private val workerExecutor: WorkerExecutor,
 ) : DefaultTask() {
+    open class Dependency @Inject constructor(
+            objectFactory: ObjectFactory,
+    ) {
+        @get:InputDirectory
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        val klib: DirectoryProperty = objectFactory.directoryProperty()
+
+        @get:InputDirectory
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        val cache: DirectoryProperty = objectFactory.directoryProperty()
+    }
+
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val klib: DirectoryProperty = objectFactory.directoryProperty()
@@ -58,6 +72,13 @@ open class KonanCacheTask @Inject constructor(
 
     @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
     val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+
+    @get:Nested
+    protected val dependencies = objectFactory.listProperty(Dependency::class)
+
+    fun dependency(configure: Dependency.() -> Unit) {
+        dependencies.add(objectFactory.newInstance<Dependency>().apply { configure() })
+    }
 
     @get:Classpath
     protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
@@ -87,6 +108,12 @@ open class KonanCacheTask @Inject constructor(
             add("static_cache")
             add("-Xadd-cache=${klib.get().asFile.absolutePath}")
             add("-Xcache-directory=${outputDirectory.get().asFile.parentFile.absolutePath}")
+            dependencies.get().forEach {
+                val klib = it.klib.get().asFile.absolutePath
+                add("-l")
+                add(klib)
+                add("-Xcached-library=$klib,${it.cache.get().asFile.absolutePath}")
+            }
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }

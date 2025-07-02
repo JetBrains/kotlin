@@ -5,19 +5,15 @@
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
-import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.properties.saveProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
-import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.utils.capitalized
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
-
-val kotlinVersion: String by rootProject.extra
 
 plugins {
     id("base")
@@ -474,13 +470,13 @@ tasks.named("clean", Delete::class) {
 
 // region: Stdlib
 
-val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+val nativeStdlib by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
     // Requires Native distribution with the compiler JARs.
     this.compilerDistribution.set(nativeDistribution)
-    dependsOn(":kotlin-native:distCompiler")
+    dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distCompiler")
 
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
@@ -534,27 +530,49 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
     }
 }
 
-val nativeStdlib by tasks.registering(Sync::class) {
-    from(stdlibBuildTask)
-    into(project.layout.buildDirectory.dir("nativeStdlib"))
+val nativeStdlibElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+artifacts {
+    add(nativeStdlibElements.name, nativeStdlib)
 }
 
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
+val stdlibCacheElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-compilation-cache"))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
 cacheableTargetNames.forEach { targetName ->
-    tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+    val stdlibCache = tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
         val dist = nativeDistribution
 
         // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
         this.compilerDistribution.set(dist)
-        dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
+        dependsOn(":kotlin-native:prepare:kotlin-native-distribution:crossDistRuntime${targetName.capitalized}")
         inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
 
-        this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
+        this.klib.fileProvider(nativeStdlib.flatMap { it.outputDirectory.asFile })
         this.target.set(targetName)
-        // This path is used in `:kotlin-native:${targetName}StdlibCache`
         this.outputDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system/$KOTLIN_NATIVE_STDLIB_NAME-cache"))
     }
+    stdlibCacheElements.outgoing.variants.create(targetName).apply {
+        attributes {
+            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, platformManager.targetByName(targetName).withSanitizer())
+        }
+    }.artifact(stdlibCache)
 }
 
 // endregion

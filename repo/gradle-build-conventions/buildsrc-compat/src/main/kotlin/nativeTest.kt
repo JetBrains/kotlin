@@ -156,13 +156,13 @@ private open class NativeArgsProvider @Inject constructor(
         } else {
             val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
                 listOfNotNull(
-                    ":kotlin-native:${it}CrossDist",
-                    if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
+                    ":kotlin-native:prepare:kotlin-native-distribution:crossDist${it.capitalize()}",
+                    if (requirePlatformLibs) ":kotlin-native:prepare:kotlin-native-distribution:distPlatformLibs${it.capitalize()}" else null,
                 )
             }.orElse(
                 listOfNotNull(
-                    ":kotlin-native:dist",
-                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
+                    ":kotlin-native:prepare:kotlin-native-distribution:dist",
+                    if (requirePlatformLibs) ":kotlin-native:prepare:kotlin-native-distribution:distPlatformLibs" else null,
                 )
             )
 
