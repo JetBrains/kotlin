@@ -304,16 +304,6 @@ internal constructor(
     UsesClassLoadersCachingBuildService,
     UsesKonanPropertiesBuildService {
 
-    // used by KSP1 - should be removed via KT-67992 in 2.1.0 release
-    @Deprecated("'execOperations' parameter was removed")
-    internal constructor(
-        compilation: KotlinCompilationInfo,
-        compilerOptions: KotlinNativeCompilerOptions,
-        objectFactory: ObjectFactory,
-        providerFactory: ProviderFactory,
-        @Suppress("UNUSED_PARAMETER") execOperations: ExecOperations,
-    ) : this(compilation, compilerOptions, objectFactory, providerFactory)
-
     @get:Input
     override val outputKind = LIBRARY
 
