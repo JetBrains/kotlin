@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ContextParameters
 interface A {
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>toString<!>() = "Hello"
     override fun <!METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE!>equals<!>(other: Any?) = true
@@ -23,6 +24,25 @@ interface D {
     override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun toString(): String
     override operator fun equals(other: Any?): Boolean
     override <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun hashCode(): Int
+}
+
+interface I {
+    fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>hashCode<!>(): Int
+    context(string: String) fun hashCode(): Int
+    fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>toString<!>(): String
+    context(string: String) fun toString(): String
+}
+
+interface J : I {
+    override fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>hashCode<!>(): Int = 1
+
+    context(string: String)
+    override fun hashCode(): Int = 1
+
+    override fun String.<!EXTENSION_SHADOWED_BY_MEMBER!>toString<!>(): String = ""
+
+    context(string: String)
+    override fun toString(): String = ""
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, interfaceDeclaration, nullableType, operator, override,

@@ -31,6 +31,8 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(MppC
             if (function !is FirNamedFunctionSymbol || !function.isOverride || !function.hasBody) return@processAllDeclaredCallables
             var methodOfAny = false
             if (function.valueParameterSymbols.isEmpty() &&
+                function.contextParameterSymbols.isEmpty() &&
+                function.receiverParameterSymbol == null &&
                 (function.name == HASHCODE_NAME || function.name == TO_STRING)
             ) {
                 methodOfAny = true
