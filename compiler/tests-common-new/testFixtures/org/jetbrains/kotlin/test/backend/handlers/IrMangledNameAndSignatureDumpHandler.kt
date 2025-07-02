@@ -554,7 +554,7 @@ private fun addSignatureTo(
     }
 }
 
-private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addSignatureMangledNameTo(
+private fun <Declaration : Any, Mangler : KotlinMangler<Declaration>> Mangler.addSignatureMangledNameTo(
     collector: MutableList<ComputedMangledName>,
     declaration: Declaration,
     computedBy: ComputedBy

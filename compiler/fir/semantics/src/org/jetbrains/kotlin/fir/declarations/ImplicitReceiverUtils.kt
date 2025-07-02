@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
@@ -235,7 +237,7 @@ class FirTowerDataContext private constructor(
         val implicitValueMapper = object : ImplicitValueMapper {
             val implicitValueCache = HashMap<ImplicitValue<*>, ImplicitValue<*>>()
 
-            override fun <S, T : ImplicitValue<S>> invoke(value: T): T {
+            override fun <S, T : ImplicitValue<S>> invoke(value: T): T where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
                 @Suppress("UNCHECKED_CAST")
                 return implicitValueCache.getOrPut(value) { value.createSnapshot(keepMutable) } as T
             }
