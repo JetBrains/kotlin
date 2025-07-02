@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirValueParameterKind
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
+import org.jetbrains.kotlin.name.SpecialNames
 
 class FirCallableSignatureRendererForReadability : FirCallableSignatureRenderer() {
     override fun renderCallableType(callableDeclaration: FirCallableDeclaration) {
@@ -29,5 +31,12 @@ class FirCallableSignatureRendererForReadability : FirCallableSignatureRenderer(
         valueParameter.defaultValue?.let {
             printer.print(" = ...")
         }
+    }
+
+    override fun renderParameterName(valueParameter: FirValueParameter): String {
+        if (valueParameter.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) {
+            return "_"
+        }
+        return super.renderParameterName(valueParameter)
     }
 }

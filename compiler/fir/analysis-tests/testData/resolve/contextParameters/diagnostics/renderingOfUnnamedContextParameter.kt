@@ -7,7 +7,7 @@ fun foo() {}
 
 context(_: String)
 fun bar() {
-    <!DEPRECATION("context(<unused var>: String) fun foo(): Unit")!>foo<!>()
+    <!DEPRECATION("context(_: String) fun foo(): Unit")!>foo<!>()
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, functionDeclarationWithContext, stringLiteral */
