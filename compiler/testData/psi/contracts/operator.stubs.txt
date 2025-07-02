@@ -5,7 +5,7 @@ PsiJetFileStubImpl[package=]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  FUN[fqName=plus, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=plus]
+  FUN[fqName=plus, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=plus]
     MODIFIER_LIST[operator]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
         CONSTRUCTOR_CALLEE

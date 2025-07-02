@@ -282,7 +282,9 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
  */
 @KtImplementationDetail
 fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
-    return bodyBlockExpression?.firstStatement?.isContractDescriptionCallPsiCheck() == true
+    val statement = bodyBlockExpression?.firstStatement ?: return false
+    val unwrappedExpression = statement.unwrapParenthesesLabelsAndAnnotations() as? KtExpression ?: return false
+    return unwrappedExpression.isContractDescriptionCallPsiCheck()
 }
 
 fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Boolean {
