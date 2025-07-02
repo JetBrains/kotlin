@@ -97,9 +97,9 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                 }
         )
         val returnType = getter.returnType
-        val isDataColumn = returnType.classFqName!!.asString().let {
+        val isDataColumn = returnType.classFqName?.asString()?.let {
             it == DataColumn::class.qualifiedName!! || it == ColumnGroup::class.qualifiedName!!
-        }
+        } ?: false
 
         val get = if (isDataColumn) {
             context
