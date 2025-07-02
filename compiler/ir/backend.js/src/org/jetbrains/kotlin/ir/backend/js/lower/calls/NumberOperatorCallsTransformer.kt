@@ -80,6 +80,30 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(type, OperatorNames.DIV, withLongCoercion(::transformDiv))
             add(type, OperatorNames.REM, withLongCoercion(::transformRem))
         }
+
+        irBuiltIns.longType.let { type ->
+            add(type, OperatorNames.UNARY_PLUS) { it.dispatchReceiver!! }
+            add(type, OperatorNames.UNARY_MINUS, intrinsics.longUnaryMinus)
+
+            add(type, OperatorNames.INC, intrinsics.longIncrement)
+            add(type, OperatorNames.DEC, intrinsics.longDecrement)
+
+            add(type, OperatorNames.ADD, intrinsics.longAdd)
+            add(type, OperatorNames.SUB, intrinsics.longSubtract)
+            add(type, OperatorNames.MUL, intrinsics.longMultiply)
+            add(type, OperatorNames.DIV, intrinsics.longDivide)
+            add(type, OperatorNames.REM, intrinsics.longModulo)
+
+            add(type, OperatorNames.SHL, intrinsics.longShiftLeft)
+            add(type, OperatorNames.SHR, intrinsics.longShiftRight)
+            add(type, OperatorNames.SHRU, intrinsics.longShiftRightUnsigned)
+            add(type, OperatorNames.AND, intrinsics.longAnd)
+            add(type, OperatorNames.OR, intrinsics.longOr)
+            add(type, OperatorNames.XOR, intrinsics.longXor)
+            add(type, OperatorNames.INV, intrinsics.longInv)
+
+            add(type, OperatorNameConventions.HASH_CODE, ::transformHashCode)
+        }
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
@@ -135,6 +159,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                 isFloat() || isDouble() ->
                     // TODO introduce doubleToHashCode?
                     irCall(call, intrinsics.jsGetNumberHashCode)
+                isLong() -> irCall(call, intrinsics.longHashCode)
                 else -> call
             }
         }
