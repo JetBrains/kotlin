@@ -10,6 +10,8 @@
 
 package kotlin
 
+import kotlin.js.internal.boxedLong.*
+
 /** Represents a 8-bit signed integer. */
 public actual class Byte private constructor() : Number(), Comparable<Byte> {
     public actual companion object {

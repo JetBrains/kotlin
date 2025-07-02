@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.js.internal.boxedLong.BoxedLongApi
+
 // TODO use declarations from stdlib
 private external class ArrayBuffer(size: Int)
 private external class Float64Array(buffer: ArrayBuffer)

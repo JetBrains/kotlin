@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.js.internal.boxedLong.BoxedLongApi
+
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.

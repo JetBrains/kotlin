@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.js.internal.boxedLong.BoxedLongApi
+
 // Creates IntRange for {Byte, Short, Int}.rangeTo(x: {Byte, Short, Int})
 internal fun numberRangeToNumber(start: dynamic, endInclusive: dynamic) =
     IntRange(start, endInclusive)
