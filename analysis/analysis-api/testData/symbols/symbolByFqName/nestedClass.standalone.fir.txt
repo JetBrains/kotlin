@@ -44,7 +44,7 @@ KaNamedClassSymbol:
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: null
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
     KaTypeParameterSymbol:
       annotations: []
@@ -60,11 +60,11 @@ KaNamedClassSymbol:
       variance: INVARIANT
       visibility: LOCAL
       getContainingFileSymbol: null
-      getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+      getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
-  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
+  getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
   annotationApplicableTargets: null
   deprecationStatus: null
