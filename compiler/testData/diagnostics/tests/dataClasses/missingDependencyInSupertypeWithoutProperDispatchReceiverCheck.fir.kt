@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76839
-// LANGUAGE: +ProperEagerSupertypeAccessibilityChecksForDispatchReceiver
+// LANGUAGE: -ProperEagerSupertypeAccessibilityChecksForDispatchReceiver
 
 // MODULE: baseLib
 open class A
@@ -19,7 +19,7 @@ data class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>) // crashes backend
 
 fun test() {
     foo {
-        it.<!MISSING_DEPENDENCY_SUPERCLASS!>hashCode<!>() // crashes backend
+        it.hashCode() // crashes backend
     }
 }
 

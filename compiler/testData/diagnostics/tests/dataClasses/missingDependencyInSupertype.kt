@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-76839
+// LANGUAGE: +ProperEagerSupertypeAccessibilityChecksForDispatchReceiver
 
 // MODULE: baseLib
 open class A

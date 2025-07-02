@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
@@ -42,7 +44,13 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val checkedSymbols = SmartSet.create<FirBasedSymbol<*>>()
 
-        val dispatchReceiverSymbol = expression.dispatchReceiver?.resolvedType?.toSymbol(context.session)
+        val dispatchReceiverSymbol = if (
+            context.languageVersionSettings.supportsFeature(LanguageFeature.ProperEagerSupertypeAccessibilityChecksForDispatchReceiver)
+        ) {
+            expression.dispatchReceiver?.resolvedType?.toSymbol(context.session)
+        } else {
+            symbol.dispatchReceiverType?.toSymbol(context.session)
+        }
         val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, isEagerCheck = false)
         dispatchReceiverSymbol?.let(checkedSymbols::add)
 

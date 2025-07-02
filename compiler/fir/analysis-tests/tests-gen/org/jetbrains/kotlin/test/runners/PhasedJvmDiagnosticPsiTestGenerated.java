@@ -9932,6 +9932,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("missingDependencyInSupertypeWithoutProperDispatchReceiverCheck.kt")
+      public void testMissingDependencyInSupertypeWithoutProperDispatchReceiverCheck() {
+        runTest("compiler/testData/diagnostics/tests/dataClasses/missingDependencyInSupertypeWithoutProperDispatchReceiverCheck.kt");
+      }
+
+      @Test
       @TestMetadata("multiDeclaration.kt")
       public void testMultiDeclaration() {
         runTest("compiler/testData/diagnostics/tests/dataClasses/multiDeclaration.kt");
