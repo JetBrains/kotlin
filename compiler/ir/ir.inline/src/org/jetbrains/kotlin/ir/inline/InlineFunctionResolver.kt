@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -36,16 +32,16 @@ enum class InlineMode {
 }
 
 abstract class InlineFunctionResolver() {
-    protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
+    protected open fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>) = false
 
     protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
 
-    fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
+    fun getFunctionDeclarationToInline(expression: IrMemberAccessExpression<IrFunctionSymbol>): IrFunction? {
         if (shouldSkipBecauseOfCallSite(expression)) return null
         return getFunctionDeclaration(expression.symbol)
     }
 
-    fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
+    fun needsInlining(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
         return getFunctionDeclarationToInline(expression) != null
     }
 

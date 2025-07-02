@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
@@ -103,7 +104,6 @@ private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrMod
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
 )
 
-@Suppress("unused")
 private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
@@ -121,17 +121,18 @@ private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
 )
 
-private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
+private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
+        val resolver = PreSerializationNonPrivateInlineFunctionResolver(context, irMangler)
         IrValidationAfterInliningAllFunctionsPhase(
             context,
-            checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+            checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                 // No inline function call sites should remain at this stage.
-                val inlineFunction = inlineFunctionUseSite.symbol.owner
+                val actualCallee = resolver.getFunctionDeclarationToInline(inlineFunctionUseSite)
                 when {
-                    inlineFunction.isExternal -> true
+                    actualCallee?.body == null -> true // does not have a body <=> should not be inlined
                     // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                    isTypeOfIntrinsic(inlineFunction.symbol) -> true
+                    isTypeOfIntrinsic(actualCallee.symbol) -> true
                     else -> false // forbidden
                 }
             }
@@ -158,6 +159,6 @@ fun loweringsOfTheFirstPhase(
         this += validateIrAfterInliningOnlyPrivateFunctions
         this += inlineAllFunctionsPhase(irMangler)
         this += inlineFunctionSerializationPreProcessing
-        this += validateIrAfterInliningAllFunctionsPhase
+        this += validateIrAfterInliningAllFunctionsPhase(irMangler)
     }
 }
