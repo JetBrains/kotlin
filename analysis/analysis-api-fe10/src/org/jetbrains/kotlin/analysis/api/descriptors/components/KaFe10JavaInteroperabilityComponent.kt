@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JavaInteroperabilityComponent(
@@ -92,8 +93,9 @@ internal class KaFe10JavaInteroperabilityComponent(
             KaTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE_AS_IS
             KaTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
             KaTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
-            KaTypeMappingMode.RETURN_TYPE ->
+            KaTypeMappingMode.RETURN_TYPE, KaTypeMappingMode.RETURN_TYPE_FUNCTIONS ->
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
+
             KaTypeMappingMode.VALUE_PARAMETER, KaTypeMappingMode.VALUE_PARAMETER_BOXED -> {
                 val mappingMode = typeMapper.typeContext.getOptimalModeForValueParameter(type.fe10Type)
                 if (this == KaTypeMappingMode.VALUE_PARAMETER_BOXED) {
