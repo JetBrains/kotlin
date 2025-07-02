@@ -5,6 +5,8 @@
 
 package kotlin.uuid
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+
 @ExperimentalUuidApi
 internal actual fun secureRandomUuid(): Uuid {
     val randomBytes = ByteArray(16)

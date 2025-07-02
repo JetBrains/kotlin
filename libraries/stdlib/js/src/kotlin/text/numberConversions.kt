@@ -5,6 +5,9 @@
 
 package kotlin.text
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+import kotlin.js.internal.boxedLong.toStringImpl
+
 
 /**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
