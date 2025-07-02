@@ -10,6 +10,7 @@ Kotlin to JS compiler performance report
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (SharedVariablesLowering)
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (LocalClassesInInlineLambdasPhase)
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (ArrayConstructor)
+            LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineOnlyPrivateFunctions)
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase)
             LOWERING        $UINT>>$ ms            $REAL>>$ loc/s (OuterThisInInlineFunctionsSpecialAccessorLowering)
