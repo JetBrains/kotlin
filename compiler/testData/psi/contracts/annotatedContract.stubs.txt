@@ -34,7 +34,7 @@ check.kt:
         DOT_QUALIFIED_EXPRESSION
           REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=contracts]
-    FUN[fqName=myCheck, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=myCheck]
+    FUN[fqName=myCheck, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=true, name=myCheck]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=OptIn]
           CONSTRUCTOR_CALLEE
