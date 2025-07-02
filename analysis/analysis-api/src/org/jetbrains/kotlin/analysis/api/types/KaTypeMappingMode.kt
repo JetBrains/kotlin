@@ -50,6 +50,12 @@ public enum class KaTypeMappingMode {
     RETURN_TYPE,
 
     /**
+     * Same as [RETURN_TYPE], but Kotlin Unit is mapped to Java `void`.
+     * Should be used only for return types of functions (not properties or getters), because `void` type can't be used anywhere else.
+     */
+    RETURN_TYPE_FUNCTIONS,
+
+    /**
      * The optimal mode to convert a value parameter's type if it's part of the signature.
      */
     VALUE_PARAMETER,

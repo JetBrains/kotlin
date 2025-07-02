@@ -1327,6 +1327,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode : j
 	public static final field GENERIC_ARGUMENT Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field RETURN_TYPE_BOXED Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
+	public static final field RETURN_TYPE_FUNCTIONS Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field SUPER_TYPE Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
 	public static final field VALUE_PARAMETER Lorg/jetbrains/kotlin/analysis/api/types/KaTypeMappingMode;
