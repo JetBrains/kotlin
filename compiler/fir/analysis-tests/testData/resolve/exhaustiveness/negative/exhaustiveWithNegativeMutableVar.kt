@@ -39,7 +39,7 @@ fun simpleVarMutation(initial: MyEnum): Int {
     var x: MyEnum = initial
     if (x == MyEnum.A) return 1
     x = MyEnum.A
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) { // KT-78071
+    return when (x) { // KT-78071
         MyEnum.A -> 2
     }
 }

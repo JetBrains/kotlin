@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-78068
 // LANGUAGE: +DataFlowBasedExhaustiveness
 
@@ -29,7 +29,7 @@ fun simpleEnum(x: Enum): Int {
 
 fun negSimpleEnum(x: Enum): Int {
     if (x != Enum.C) return 0
-    return <!NO_ELSE_IN_WHEN!>when<!> (x) { // KT-78068
+    return when (x) { // KT-78068
         Enum.C -> 3
     }
 }
