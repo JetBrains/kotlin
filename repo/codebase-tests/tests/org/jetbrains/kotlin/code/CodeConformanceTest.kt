@@ -77,7 +77,7 @@ class CodeConformanceTest : TestCase() {
             listOf(
                 "build",
                 "compiler/ir/serialization.js/build/fullRuntime",
-                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
+                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "dependencies",
                 "dependencies/android-sdk/build",
                 "dependencies/protobuf/protobuf-relocated/build",
@@ -101,7 +101,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir/build/",
-                "libraries/stdlib/js-ir/runtime/longjs.kt",
+                "libraries/stdlib/js-ir/runtime/boxedLong.kt",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
                 "libraries/stdlib/js-ir-minimal-for-test/build",
                 "libraries/stdlib/js-v1/.gradle",

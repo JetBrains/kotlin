@@ -5,6 +5,9 @@
 
 package kotlin
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+import kotlin.js.internal.boxedLong.toStringImpl
+
 public actual fun Throwable.stackTraceToString(): String = toString()
 
 public actual fun Throwable.printStackTrace() {

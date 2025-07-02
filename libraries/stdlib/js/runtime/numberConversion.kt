@@ -5,6 +5,10 @@
 
 package kotlin.js
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+import kotlin.js.internal.boxedLong.fromInt
+import kotlin.js.internal.boxedLong.fromNumber
+
 internal fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
 internal fun numberToDouble(@Suppress("UNUSED_PARAMETER") a: dynamic): Double = js("+a").unsafeCast<Double>()
