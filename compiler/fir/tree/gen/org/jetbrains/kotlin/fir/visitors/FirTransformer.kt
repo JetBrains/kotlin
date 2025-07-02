@@ -1267,6 +1267,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLegacyRawContractDescription(legacyRawContractDescription, data)
     }
 
+    open fun transformLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformElement(lazyContractDescription, data)
+    }
+
+    final override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: D): FirContractDescription {
+        return transformLazyContractDescription(lazyContractDescription, data)
+    }
+
     open fun transformErrorContractDescription(errorContractDescription: FirErrorContractDescription, data: D): FirContractDescription {
         return transformElement(errorContractDescription, data)
     }

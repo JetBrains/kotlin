@@ -1290,6 +1290,19 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("diagnostic", coneDiagnosticType, nullable = true)
     }
 
+    val lazyContractDescription: Element by element(Contracts) {
+        kDoc = """
+            A contract description in the psi2fir lazy mode.
+            
+            The description might represent [FirLegacyRawContractDescription] or **null** contract.
+            The description has to be unwrapped before the contract phase.
+            
+            @see org.jetbrains.kotlin.fir.expressions.FirLazyBlock
+            @see org.jetbrains.kotlin.fir.expressions.FirLazyExpression
+        """.trimIndent()
+        parent(legacyRawContractDescription)
+    }
+
     val errorContractDescription: Element by element(Contracts) {
         kDoc = """
                 |Represents a contract description that could not be resolved.

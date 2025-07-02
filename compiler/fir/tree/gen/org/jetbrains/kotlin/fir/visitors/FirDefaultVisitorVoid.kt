@@ -363,6 +363,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitContractDescription(legacyRawContractDescription)
     }
 
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription) {
+        visitLegacyRawContractDescription(lazyContractDescription)
+    }
+
     override fun visitErrorContractDescription(errorContractDescription: FirErrorContractDescription) {
         visitContractDescription(errorContractDescription)
     }
