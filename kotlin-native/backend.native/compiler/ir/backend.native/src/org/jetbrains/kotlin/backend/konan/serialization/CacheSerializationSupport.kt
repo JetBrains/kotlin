@@ -39,7 +39,6 @@ import java.util.Properties
 import kotlin.collections.set
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoParameter
 
 private const val INVALID_INDEX = -1
 
@@ -60,25 +59,15 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
             "Local inline functions are not supported: ${irFunction.render()}"
         }
 
-        val typeParameterSigs = mutableListOf<Int>()
-        val outerReceiverSigs = mutableListOf<Int>()
         val protoFunction = if (outerClasses.isEmpty()) {
             val irProperty = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
             if (irProperty == null)
                 protoDeclaration.irFunction
             else protoDeclaration.irProperty.findAccessor(irProperty, irFunction)
         } else {
-            val firstNotInnerClassIndex = outerClasses.indexOfLast { !it.isInner }
             var protoClass = protoDeclaration.irClass
             outerClasses.indices.forEach { classIndex ->
-                if (classIndex >= firstNotInnerClassIndex /* owner's type parameters are always accessible */) {
-                    (0 until protoClass.typeParameterCount).mapTo(typeParameterSigs) {
-                        BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
-                    }
-                }
                 if (classIndex < outerClasses.size - 1) {
-                    if (classIndex >= firstNotInnerClassIndex)
-                        outerReceiverSigs.add(BinarySymbolData.decode(protoClass.thisReceiver.base.symbol).signatureId)
                     protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
                 }
             }
@@ -86,35 +75,16 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
         }
 
         val functionSignature = BinarySymbolData.decode(protoFunction.base.base.symbol).signatureId
-        (0 until protoFunction.base.typeParameterCount).mapTo(typeParameterSigs) {
-            BinarySymbolData.decode(protoFunction.base.getTypeParameter(it).base.symbol).signatureId
-        }
 
-        fun serializeValueParameter(parameter: ProtoParameter): Int =
-                BinarySymbolData.decode(parameter.base.symbol).signatureId
-
-        val dispatchReceiverSig = if (protoFunction.base.hasDispatchReceiver()) {
-            serializeValueParameter(protoFunction.base.extensionReceiver)
-        } else INVALID_INDEX
-        val contextParameterSigs = protoFunction.base.contextParameterList.map { param ->
-            serializeValueParameter(param)
-        }
-        val extensionReceiverSig = if (protoFunction.base.hasExtensionReceiver()) {
-            serializeValueParameter(protoFunction.base.extensionReceiver)
-        } else INVALID_INDEX
-        val regularParameterSigs = protoFunction.base.regularParameterList.map { param ->
-            serializeValueParameter(param)
-        }
         val defaultValues = protoFunction.base.regularParameterList.map { param ->
             if (param.hasDefaultValue()) param.defaultValue else INVALID_INDEX
         }
 
         return SerializedInlineFunctionReference(
                 SerializedFileReference(fileDeserializationState.file),
-                functionSignature, protoFunction.base.body, irFunction.startOffset, irFunction.endOffset,
-                extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs.toIntArray(),
-                contextParameterSigs.toIntArray(), regularParameterSigs.toIntArray(),
-                typeParameterSigs.toIntArray(), defaultValues.toIntArray()
+                functionSignature, protoFunction.base.body,
+                irFunction.startOffset, irFunction.endOffset,
+                defaultValues.toIntArray()
         )
     }
 }
@@ -150,45 +120,8 @@ internal class InlineFunctionDeserializer(
         val fileDeserializationState = with(deserializer) { inlineFunctionReference.file.deserializationState }
         val declarationDeserializer = fileDeserializationState.declarationDeserializer
 
-        if (packageFragment is IrExternalPackageFragment) {
-            val symbolDeserializer = declarationDeserializer.symbolDeserializer
-            val outerClasses = (function.parent as? IrClass)?.getOuterClasses(takeOnlyInner = true) ?: emptyList()
-            require((outerClasses.getOrNull(0)?.firstNonClassParent ?: function.parent) is IrPackageFragment) {
-                "Local inline functions are not supported: ${function.render()}"
-            }
-
-            var endToEndTypeParameterIndex = 0
-            outerClasses.forEach { outerClass ->
-                outerClass.typeParameters.forEach { parameter ->
-                    val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                    deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-                }
-            }
-            function.typeParameters.forEach { parameter ->
-                val sigIndex = inlineFunctionReference.typeParameterSigs[endToEndTypeParameterIndex++]
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
-
-            var contextParamIndex = 0
-            var regularParamIndex = 0
-            function.parameters.forEach { parameter ->
-                val sigIndex = when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> inlineFunctionReference.dispatchReceiverSig
-                    IrParameterKind.Context -> inlineFunctionReference.contextParameterSigs[contextParamIndex++]
-                    IrParameterKind.ExtensionReceiver -> inlineFunctionReference.extensionReceiverSig
-                    IrParameterKind.Regular -> inlineFunctionReference.regularParameterSigs[regularParamIndex++]
-                }
-                if (parameter.kind != IrParameterKind.Regular) {
-                    require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to ${parameter.kind} parameter for ${function.render()}" }
-                }
-
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-            }
-
-            for (index in 0 until outerClasses.size - 1) {
-                val sigIndex = inlineFunctionReference.outerReceiverSigs[index]
-                deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, outerClasses[index].thisReceiver!!.symbol)
-            }
+        check(packageFragment !is IrExternalPackageFragment) {
+            "No external package fragment is expected: ${function.render()}"
         }
 
         with(declarationDeserializer) {
@@ -433,10 +366,7 @@ private val IrClass.firstNonClassParent: IrDeclarationParent
     }
 
 class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
-                                        val startOffset: Int, val endOffset: Int,
-                                        val extensionReceiverSig: Int, val dispatchReceiverSig: Int, val outerReceiverSigs: IntArray,
-                                        val contextParameterSigs: IntArray, val regularParameterSigs: IntArray, val typeParameterSigs: IntArray,
-                                        val defaultValues: IntArray)
+                                        val startOffset: Int, val endOffset: Int, val defaultValues: IntArray)
 
 internal object InlineFunctionBodyReferenceSerializer {
     fun serialize(bodies: List<SerializedInlineFunctionReference>): ByteArray {
@@ -446,10 +376,7 @@ internal object InlineFunctionBodyReferenceSerializer {
                 +it.file.path
             }
         }
-        val size = stringTable.sizeBytes + bodies.sumOf {
-            Int.SIZE_BYTES * (13 + it.outerReceiverSigs.size + it.contextParameterSigs.size + it.regularParameterSigs.size +
-                    it.typeParameterSigs.size + it.defaultValues.size)
-        }
+        val size = stringTable.sizeBytes + bodies.sumOf { Int.SIZE_BYTES * (7 + it.defaultValues.size) }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
         bodies.forEach {
@@ -459,12 +386,6 @@ internal object InlineFunctionBodyReferenceSerializer {
             stream.writeInt(it.body)
             stream.writeInt(it.startOffset)
             stream.writeInt(it.endOffset)
-            stream.writeInt(it.extensionReceiverSig)
-            stream.writeInt(it.dispatchReceiverSig)
-            stream.writeIntArray(it.outerReceiverSigs)
-            stream.writeIntArray(it.contextParameterSigs)
-            stream.writeIntArray(it.regularParameterSigs)
-            stream.writeIntArray(it.typeParameterSigs)
             stream.writeIntArray(it.defaultValues)
         }
         return stream.buf
@@ -480,17 +401,9 @@ internal object InlineFunctionBodyReferenceSerializer {
             val body = stream.readInt()
             val startOffset = stream.readInt()
             val endOffset = stream.readInt()
-            val extensionReceiverSig = stream.readInt()
-            val dispatchReceiverSig = stream.readInt()
-            val outerReceiverSigs = stream.readIntArray()
-            val contextParameterSigs = stream.readIntArray()
-            val regularParameterSigs = stream.readIntArray()
-            val typeParameterSigs = stream.readIntArray()
             val defaultValues = stream.readIntArray()
             result.add(SerializedInlineFunctionReference(
-                    SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset,
-                    extensionReceiverSig, dispatchReceiverSig, outerReceiverSigs, contextParameterSigs, regularParameterSigs,
-                    typeParameterSigs, defaultValues)
+                    SerializedFileReference(fileFqName, filePath), functionSignature, body, startOffset, endOffset, defaultValues)
             )
         }
     }
