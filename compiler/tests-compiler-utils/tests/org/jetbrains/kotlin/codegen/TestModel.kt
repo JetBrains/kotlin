@@ -119,7 +119,7 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
     protected fun loop(lambda: (String) -> Boolean) {
         while (lineCounter < lines.size) {
             val line = lines[lineCounter]
-            if (line.isBlank()) {
+            if (line.isBlank() || line.trimStart().startsWith("//")) {
                 ++lineCounter
                 continue
             }
