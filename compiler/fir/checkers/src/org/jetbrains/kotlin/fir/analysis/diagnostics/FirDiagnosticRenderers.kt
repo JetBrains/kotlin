@@ -385,7 +385,7 @@ object FirDiagnosticRenderers {
             is FirCallableSymbol<*> -> symbol.callableId.classId
             is FirTypeParameterSymbol -> (symbol.containingDeclarationSymbol as? FirClassLikeSymbol<*>)?.classId
             else -> null
-        }
+        } ?: return@Renderer "'${SYMBOL.render(symbol)}'"
         "'${SYMBOL.render(symbol)}' defined in ${NAME_OF_DECLARATION_OR_FILE.render(containingClassId)}"
     }
 
