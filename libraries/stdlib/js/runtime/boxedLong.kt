@@ -31,15 +31,24 @@ package kotlin.js.internal.boxedLong
 @Retention(AnnotationRetention.BINARY)
 internal annotation class BoxedLongImplementation
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.toNumber
+ */
 @BoxedLongImplementation
 internal fun Long.toNumber() = high * TWO_PWR_32_DBL_ + getLowBitsUnsigned()
 
 @BoxedLongImplementation
 private fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.hashCode
+ */
 @BoxedLongImplementation
 internal fun hashCode(l: Long) = l.low xor l.high
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.toStringImpl
+ */
 @BoxedLongImplementation
 internal fun Long.toStringImpl(radix: Int): String {
     if (radix < 2 || 36 < radix) {
@@ -135,6 +144,9 @@ internal fun Long.compare(other: Long): Int {
     }
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.add
+ */
 @BoxedLongImplementation
 internal fun Long.add(other: Long): Long {
     // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
@@ -167,9 +179,15 @@ internal fun Long.add(other: Long): Long {
     return Long((c16 shl 16) or c00, (c48 shl 16) or c32)
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.subtract
+ */
 @BoxedLongImplementation
 internal fun Long.subtract(other: Long) = add(other.unaryMinus())
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.multiply
+ */
 @BoxedLongImplementation
 internal fun Long.multiply(other: Long): Long {
     if (isZero()) {
@@ -239,6 +257,9 @@ internal fun Long.multiply(other: Long): Long {
     return Long(c16 shl 16 or c00, c48 shl 16 or c32)
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.divide
+ */
 @BoxedLongImplementation
 internal fun Long.divide(other: Long): Long {
     if (other.isZero()) {
@@ -317,9 +338,15 @@ internal fun Long.divide(other: Long): Long {
     return res
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.modulo
+ */
 @BoxedLongImplementation
 internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.shiftLeft
+ */
 @BoxedLongImplementation
 internal fun Long.shiftLeft(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
@@ -335,6 +362,9 @@ internal fun Long.shiftLeft(numBits: Int): Long {
     }
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.shiftRight
+ */
 @BoxedLongImplementation
 internal fun Long.shiftRight(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
@@ -350,6 +380,9 @@ internal fun Long.shiftRight(numBits: Int): Long {
     }
 }
 
+/**
+ * @see kotlin.js.internal.longAsBigInt.shiftRightUnsigned
+ */
 @BoxedLongImplementation
 internal fun Long.shiftRightUnsigned(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
@@ -381,6 +414,8 @@ internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
  * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
  * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
+ *
+ * @see kotlin.js.internal.longAsBigInt.fromNumber
  */
 @BoxedLongImplementation
 internal fun fromNumber(value: Double): Long {
