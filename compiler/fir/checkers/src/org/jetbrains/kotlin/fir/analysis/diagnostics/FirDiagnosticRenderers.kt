@@ -344,7 +344,7 @@ object FirDiagnosticRenderers {
         if (classId == null) {
             "file"
         } else {
-            "'${classId}'"
+            "'${classId.asFqNameString()}'"
         }
     }
 

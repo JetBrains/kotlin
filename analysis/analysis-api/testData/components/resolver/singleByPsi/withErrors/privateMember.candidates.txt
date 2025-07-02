@@ -18,5 +18,5 @@ KtDotQualifiedExpression(59,66): 'a.foo()'
           contextParameters = []
           callableId = /A.foo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in '/A'.>
+    diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'fun foo(): Unit': it is private in 'A'.>
     isInBestCandidates = true
