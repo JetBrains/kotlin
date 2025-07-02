@@ -54,7 +54,7 @@ private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase
 )
 
 private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
-    { context: LoweringContext ->
+    { context: WasmBackendContext ->
         IrValidationAfterInliningAllFunctionsPhase(
             context,
             checkInlineFunctionCallSites = { inlineFunctionUseSite ->
@@ -606,7 +606,6 @@ fun wasmLoweringsOfTheFirstPhase(
         this += upgradeCallableReferences
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
-    this += validateIrAfterInliningAllFunctionsPhase
 }
 
 fun getWasmLowerings(

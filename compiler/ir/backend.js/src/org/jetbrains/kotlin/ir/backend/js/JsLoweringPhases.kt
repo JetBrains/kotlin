@@ -740,7 +740,6 @@ fun jsLoweringsOfTheFirstPhase(
         this += jsCodeOutliningPhaseOnFirstStage
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
-    this += validateIrAfterInliningAllFunctions
 }
 
 fun getJsLowerings(
