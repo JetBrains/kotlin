@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.buildtools.api.tests.BaseTest
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.*
 import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
 import kotlin.io.path.isDirectory

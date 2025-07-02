@@ -9,6 +9,10 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import java.io.PrintWriter
 
 /** Computes the snapshot of a Java class represented by a [ClassNode]. */
 object ClassNodeSnapshotter {
@@ -28,6 +32,13 @@ object ClassNodeSnapshotter {
         if (alsoExcludeKotlinMetaData) {
             classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot { it.desc == "Lkotlin/Metadata;" }
         }
+
+        println("==snapshotting class ${classNode.name} without memebers: ")
+        PrintWriter(System.out).use {
+            val visitor = TraceClassVisitor(it)
+            classNode.accept(visitor)
+        }
+
         return snapshotClass(classNode).also {
             classNode.fields = originalFields
             classNode.methods = originalMethods
