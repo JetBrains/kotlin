@@ -32,6 +32,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
 
             lib.replaceFileWithVersion("com/example/ictest/inlineFun.kt", "changeConstantPool")
 
+            // the recompilation of call site is not necessary yet: constant belongs to the outer class, and it's not copied to the caller
             lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
             app.compile(expectedDirtySet = setOf())
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "even nicer data")
@@ -41,6 +42,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
             app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "bar")
 
+            // and this is different from the second step: now constant belongs to the inline fun itself
             lib.changeFile("com/example/ictest/inlineFun.kt") { it.replace("return \"bar\"", "return \"foo\"") }
             lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
             app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))

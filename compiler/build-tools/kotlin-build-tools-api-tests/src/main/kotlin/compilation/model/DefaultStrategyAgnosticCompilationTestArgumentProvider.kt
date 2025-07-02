@@ -15,10 +15,21 @@ import kotlin.streams.asStream
 
 class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
-        val compilationService = BaseTest.compilationService
-        return sequenceOf(
-            named("in-process", compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy()),
-            named("within daemon", compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(emptyList())),
-        ).map { Arguments.of(it) }.asStream()
+        return namedStrategyArguments().map { Arguments.of(it) }.asStream()
+    }
+
+    companion object {
+        fun namedStrategyArguments() = BaseTest.compilationService.let { compilationService ->
+            sequenceOf(
+                named(
+                    "in-process",
+                    compilationService.makeCompilerExecutionStrategyConfiguration().useInProcessStrategy()
+                ),
+                named(
+                    "within daemon",
+                    compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(emptyList())
+                ),
+            )
+        }
     }
 }
