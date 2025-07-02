@@ -76,7 +76,7 @@ private fun Project.registerUpdateDefFileDependenciesTask(
         targets: List<KonanTarget>,
         shouldUpdate: Boolean,
 ): TaskProvider<UpdateDefFileDependenciesTask> = tasks.register("${family.visibleName}UpdateDefFileDependencies", UpdateDefFileDependenciesTask::class.java) {
-    dependsOn(":kotlin-native:distCompiler")
+    dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distCompiler")
 
     onlyIf("-P${updateDefFileDependenciesFlag} is not set") { shouldUpdate }
     defFiles.from(familyDefFiles(family))

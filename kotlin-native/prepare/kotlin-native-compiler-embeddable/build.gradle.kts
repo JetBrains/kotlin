@@ -122,6 +122,6 @@ projectTest {
         // The tests run the compiler and try to produce an executable on host.
         // So, distribution with stdlib and runtime for host is required.
         nativeDistribution.set(project.nativeDistribution)
-        dependsOn(":kotlin-native:distRuntime")
+        dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distRuntime")
     })
 }
