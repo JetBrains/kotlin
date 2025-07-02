@@ -9,6 +9,9 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] contractDescription.kt
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|kotlin/Boolean|): R|MyClass| { LAZY_BLOCK }
 
     }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun annotated(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun parenthesized(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun labeled(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test_5(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test_6(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test_7(): R|kotlin/Unit| { LAZY_BLOCK }

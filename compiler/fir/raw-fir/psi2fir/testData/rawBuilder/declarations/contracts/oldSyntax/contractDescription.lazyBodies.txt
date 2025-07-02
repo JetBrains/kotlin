@@ -9,6 +9,9 @@ FILE: contractDescription.kt
         public? constructor(x: Boolean): R|MyClass| { LAZY_BLOCK }
 
     }
+    public? final? fun annotated(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun parenthesized(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun labeled(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_5(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_6(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? fun test_7(): R|kotlin/Unit| { LAZY_BLOCK }

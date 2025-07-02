@@ -1,0 +1,4 @@
+@Anno()
+owner -> FirNamedFunctionSymbol /annotated
+context -> FirNamedFunctionSymbol /annotated
+context -> FirNamedFunctionSymbol /annotated
