@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.utils.ResolvedDependencyArtifactPath as KResolvedDep
 import org.jetbrains.kotlin.utils.ResolvedDependencyId as KResolvedDependencyId
 import org.jetbrains.kotlin.utils.ResolvedDependencyVersion as KResolvedDependencyVersion
 
-// TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
 // region Useful extensions
 internal fun MutableList<String>.addArg(parameter: String, value: String) {
     add(parameter)
