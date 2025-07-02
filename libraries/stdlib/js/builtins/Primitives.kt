@@ -1234,6 +1234,12 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override operator fun compareTo(other: Long): Int =
@@ -1273,6 +1279,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.plus(other.toLong())
 
     /** Adds the other value to this value. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual operator fun plus(other: Long): Long =
@@ -1304,6 +1311,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.minus(other.toLong())
 
     /** Subtracts the other value from this value. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual operator fun minus(other: Long): Long =
@@ -1335,6 +1343,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.times(other.toLong())
 
     /** Multiplies this value by the other value. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual operator fun times(other: Long): Long =
@@ -1366,6 +1375,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.div(other.toLong())
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual operator fun div(other: Long): Long =
@@ -1416,6 +1426,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
@@ -1447,6 +1458,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * @sample samples.misc.Builtins.inc
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     public actual operator fun inc(): Long =
         this + 1L
 
@@ -1455,6 +1467,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * @sample samples.misc.Builtins.dec
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     public actual operator fun dec(): Long =
         this - 1L
 
@@ -1464,6 +1477,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this
 
     /** Returns the negative of this value. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun unaryMinus(): Long =
         this.inv() + 1L
@@ -1530,6 +1544,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun shl(bitCount: Int): Long =
@@ -1541,6 +1556,7 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun shr(bitCount: Int): Long =
@@ -1552,34 +1568,39 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun ushr(bitCount: Int): Long =
         shiftRightUnsigned(bitCount)
 
     /** Performs a bitwise AND operation between the two values. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun and(other: Long): Long =
-        Long(this.low and other.low, this.high and other.high)
+        bitwiseAnd(other)
 
     /** Performs a bitwise OR operation between the two values. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun or(other: Long): Long =
-        Long(this.low or other.low, this.high or other.high)
+        bitwiseOr(other)
 
     /** Performs a bitwise XOR operation between the two values. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual infix fun xor(other: Long): Long =
-        Long(this.low xor other.low, this.high xor other.high)
+        bitwiseXor(other)
 
     /** Inverts the bits in this value. */
+    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual fun inv(): Long =
-        Long(low.inv(), high.inv())
+        invert()
 
     /**
      * Converts this [Long] value to [Byte].
@@ -1589,10 +1610,16 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The resulting `Byte` value is represented by the least significant 8 bits of this `Long` value.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toByte(): Byte =
-        low.toByte()
+        convertToByte()
 
     /**
      * Converts this [Long] value to [Char].
@@ -1602,12 +1629,18 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The resulting `Char` code is represented by the least significant 16 bits of this `Long` value.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
     @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toChar(): Char =
-        low.toChar()
+        convertToChar()
 
     /**
      * Converts this [Long] value to [Short].
@@ -1617,10 +1650,16 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The resulting `Short` value is represented by the least significant 16 bits of this `Long` value.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toShort(): Short =
-        low.toShort()
+        convertToShort()
 
     /**
      * Converts this [Long] value to [Int].
@@ -1630,12 +1669,24 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toInt(): Int =
-        low
+        convertToInt()
 
     /** Returns this value. */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toLong(): Long =
         this
@@ -1647,6 +1698,12 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * In case when this `Long` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun toFloat(): Float =
         toDouble().toFloat()
@@ -1658,21 +1715,40 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * In case when this `Long` value is exactly between two `Double`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toDouble(): Double =
         toNumber()
 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun toString(): String =
         this.toStringImpl(radix = 10)
 
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @kotlin.internal.IntrinsicConstEvaluation
     @OptIn(BoxedLongApi::class)
     public actual override fun equals(other: Any?): Boolean =
         other is Long && equalsLong(other)
 
+    // NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+    // depending on whether Longs are represented as JS objects or as BigInt.
+    // However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+    // boxed Longs.
+    // 
+    // TODO(KT-70480): Make bodiless when we drop the ES5 target.
     @OptIn(BoxedLongApi::class)
     public actual override fun hashCode(): Int =
         hashCode(this)
@@ -1683,6 +1759,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
     // (in our standard library, and also in user projects if they use Dukat for generating external declarations).
     // Because `kotlin.Number` is a supertype of `Long` too, there has to be a way for JS to know how to handle Longs.
     // See KT-50202
+    // 
+    // TODO(KT-70480): Remove this when we drop ES5 support
     @JsName("valueOf")
     internal fun valueOf(): Double =
         toDouble()

@@ -36,6 +36,18 @@ internal annotation class BoxedLongApi
 internal fun Long.toNumber() = high * TWO_PWR_32_DBL_ + getLowBitsUnsigned()
 
 @BoxedLongApi
+internal fun Long.convertToByte(): Byte = low.toByte()
+
+@BoxedLongApi
+internal fun Long.convertToChar(): Char = low.toChar()
+
+@BoxedLongApi
+internal fun Long.convertToShort(): Short = low.toShort()
+
+@BoxedLongApi
+internal fun Long.convertToInt(): Int = low
+
+@BoxedLongApi
 private fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
 
 @BoxedLongApi
@@ -95,7 +107,8 @@ internal fun Long.toStringImpl(radix: Int): String {
     }
 }
 
-private fun Long.negate() = unaryMinus()
+@BoxedLongApi
+internal fun Long.negate(): Long = invert() + 1L
 
 @BoxedLongApi
 private fun Long.isZero() = high == 0 && low == 0
@@ -368,6 +381,18 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long {
     }
 }
 
+@BoxedLongApi
+internal fun Long.bitwiseAnd(other: Long) = Long(this.low and other.low, this.high and other.high)
+
+@BoxedLongApi
+internal fun Long.bitwiseOr(other: Long) = Long(this.low or other.low, this.high or other.high)
+
+@BoxedLongApi
+internal fun Long.bitwiseXor(other: Long) = Long(this.low xor other.low, this.high xor other.high)
+
+@BoxedLongApi
+internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
+
 /**
  * Returns a Long representing the given (32-bit) integer value.
  * @param {number} value The 32-bit integer in question.
@@ -412,7 +437,7 @@ private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDoubl
 private val ZERO = fromInt(0)
 
 @BoxedLongApi
-private val ONE = fromInt(1)
+internal val ONE = fromInt(1)
 
 @BoxedLongApi
 private val NEG_ONE = fromInt(-1)

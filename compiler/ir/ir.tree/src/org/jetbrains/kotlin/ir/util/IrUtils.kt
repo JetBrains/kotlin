@@ -90,11 +90,15 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns)
         )
 }
 
-fun IrExpression.implicitCastIfNeededTo(type: IrType) =
+private fun IrExpression.castIfNeededTo(type: IrType, operator: IrTypeOperator): IrExpression =
     if (type == this.type || this.type.isNothing())
         this
     else
-        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, type, this)
+
+fun IrExpression.implicitCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.IMPLICIT_CAST)
+
+fun IrExpression.reinterpretCastIfNeededTo(type: IrType): IrExpression = castIfNeededTo(type, IrTypeOperator.REINTERPRET_CAST)
 
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
     symbol.owner.parameters.any { this.arguments[it.indexInParameters] == null && (!it.isVararg || it.defaultValue != null) }
