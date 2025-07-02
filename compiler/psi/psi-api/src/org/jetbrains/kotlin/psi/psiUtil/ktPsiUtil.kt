@@ -282,8 +282,6 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
  */
 @KtImplementationDetail
 fun KtDeclarationWithBody.isLegacyContractPresentPsiCheck(): Boolean {
-    if (hasModifier(KtTokens.OPERATOR_KEYWORD)) return false
-
     return bodyBlockExpression?.firstStatement?.isContractDescriptionCallPsiCheck() == true
 }
 
