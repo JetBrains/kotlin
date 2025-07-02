@@ -426,6 +426,7 @@ class FirRenderer(
             if (body == null) {
                 bodyRenderer?.renderDelegatedConstructor(delegatedConstructor)
             }
+            contractRenderer?.render(constructor)
             bodyRenderer?.renderBody(body, listOfNotNull<FirStatement>(delegatedConstructor))
         }
 
