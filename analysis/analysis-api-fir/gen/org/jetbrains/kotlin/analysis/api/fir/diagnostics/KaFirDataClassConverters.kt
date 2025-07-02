@@ -6327,6 +6327,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA) { firDiagnostic ->
+        NullabilityMismatchBasedOnExplicitTypeArgumentsForJavaImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES) { firDiagnostic ->
         TypeMismatchWhenFlexibilityChangesImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

@@ -5324,6 +5324,14 @@ internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullabilityMismatchBasedOnJavaAnnotations
 
+internal class NullabilityMismatchBasedOnExplicitTypeArgumentsForJavaImpl(
+    override val actualType: KaType,
+    override val expectedType: KaType,
+    override val messageSuffix: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullabilityMismatchBasedOnExplicitTypeArgumentsForJava
+
 internal class TypeMismatchWhenFlexibilityChangesImpl(
     override val actualType: KaType,
     override val expectedType: KaType,

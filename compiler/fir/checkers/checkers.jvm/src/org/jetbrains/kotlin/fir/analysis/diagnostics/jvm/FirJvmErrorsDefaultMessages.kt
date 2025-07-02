@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE_REPEATED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NO_REFLECTION_IN_CLASS_PATH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR
@@ -142,6 +143,13 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type ''{0}''.{2}",
             RENDER_TYPE,
             NOT_RENDERED,
+            OPTIONAL_SENTENCE,
+        )
+        map.put(
+            NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA,
+            "Java type mismatch because of nullable type argument ''{0}'', as not-null ''{1}'' was expected.{2}",
+            RENDER_TYPE,
+            RENDER_TYPE,
             OPTIONAL_SENTENCE,
         )
         map.put(

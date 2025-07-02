@@ -153,22 +153,24 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
         // Don't report anything if the original types didn't match.
         actualType.isSubtypeOf(context.session.typeContext, expectedType)
     ) {
+        var resultingFactory = factory
         val suffix = buildString {
             when {
                 actualType.isEnhancedTypeForWarningDeprecation || expectedType.isEnhancedTypeForWarningDeprecation -> {
                     appendDeprecationWarningSuffix(LanguageFeature.SupportJavaErrorEnhancementOfArgumentsOfWarningLevelEnhanced)
                 }
-                actualType.isMadeFlexibleSynthetically() || expectedType.isMadeFlexibleSynthetically() -> {
+                actualType.isExplicitTypeArgumentMadeFlexibleSynthetically() || expectedType.isExplicitTypeArgumentMadeFlexibleSynthetically() -> {
                     appendDeprecationWarningSuffix(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)
+                    resultingFactory = FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
                 }
             }
         }
-        reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, suffix)
+        reporter.reportOn(source, resultingFactory, actualTypeForComparison, expectedTypeForComparison, suffix)
     }
 }
 
-private fun ConeKotlinType.isMadeFlexibleSynthetically(): Boolean =
-    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically != null
+private fun ConeKotlinType.isExplicitTypeArgumentMadeFlexibleSynthetically(): Boolean =
+    attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.relevantFeature == LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible
 
 context(context: CheckerContext)
 private fun getEnhancedTypesForComparison(
