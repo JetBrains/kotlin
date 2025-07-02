@@ -1030,6 +1030,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbra
 	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
 	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Property;
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public final fun isStatic ()Z
 	public final fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V

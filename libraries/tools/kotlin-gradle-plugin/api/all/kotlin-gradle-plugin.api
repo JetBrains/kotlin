@@ -6328,6 +6328,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions;
 	public fun getDebuggable ()Z
 	public final fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanHome ()Lorg/gradle/api/provider/Provider;
@@ -6364,6 +6365,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeLink : org/j
 	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Provider;
 	public final fun getEntryPoint ()Ljava/lang/String;
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Provider;
 	public final fun getExportLibraries ()Lorg/gradle/api/file/FileCollection;
 	protected final fun getFriendModule ()Lorg/gradle/api/file/FileCollection;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
