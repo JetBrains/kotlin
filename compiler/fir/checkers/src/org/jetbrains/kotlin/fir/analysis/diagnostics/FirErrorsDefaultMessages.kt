@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODULE_DATA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OF_OPTIONAL_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_QUOTED
@@ -2463,7 +2464,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, "Type checking has run into a recursive problem. Easiest workaround: specify the types of your declarations explicitly.")
 
-        map.put(RETURN_VALUE_NOT_USED, "Unused return value.")
+        map.put(RETURN_VALUE_NOT_USED, "Unused return value{0}.", OF_OPTIONAL_NAME)
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized.")
         map.put(

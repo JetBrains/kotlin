@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.text.MessageFormat
 
@@ -373,6 +374,10 @@ object FirDiagnosticRenderers {
 
     val FOR_OPTIONAL_OPERATOR = Renderer { it: String? ->
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
+    }
+
+    val OF_OPTIONAL_NAME = Renderer { name: Name? ->
+        name?.asString()?.takeIf { it.isNotBlank() }?.let { " of '$it'" } ?: ""
     }
 
     val SYMBOL_WITH_CONTAINING_DECLARATION = Renderer { symbol: FirBasedSymbol<*> ->

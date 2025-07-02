@@ -3474,6 +3474,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ReturnValueNotUsed : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ReturnValueNotUsed::class
+        val functionName: Name?
     }
 
     interface UnsafeCall : KaFirDiagnostic<PsiElement> {

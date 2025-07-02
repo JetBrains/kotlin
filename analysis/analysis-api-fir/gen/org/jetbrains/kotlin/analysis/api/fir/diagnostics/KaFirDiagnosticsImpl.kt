@@ -4165,6 +4165,7 @@ internal class TypecheckerHasRunIntoRecursiveProblemImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.TypecheckerHasRunIntoRecursiveProblem
 
 internal class ReturnValueNotUsedImpl(
+    override val functionName: Name?,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ReturnValueNotUsed

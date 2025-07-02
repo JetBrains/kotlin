@@ -83,9 +83,12 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         // Special case for `x[y] = z` assigment:
         if ((expression is FirFunctionCall) && expression.origin == FirFunctionCallOrigin.Operator && resolvedSymbol?.name?.asString() == "set") return false
 
+        val functionName = resolvedSymbol?.name
+
         reporter.reportOn(
             expression.source,
-            FirErrors.RETURN_VALUE_NOT_USED
+            FirErrors.RETURN_VALUE_NOT_USED,
+            functionName
         )
         return true
     }
