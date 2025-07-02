@@ -1,10 +1,10 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] annotationsOnParenthesizedTypes.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface AnnotationsOnParenthesizedTypes : R|kotlin/Any| {
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun [ResolvedTo(EXPECT_ACTUAL_MATCHING)] R|B<@R|A|()  C>|.receiverArgument(): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun [ResolvedTo(ANNOTATION_ARGUMENTS)] R|B<@R|A|()  C>|.receiverArgument(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun parameter([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|@R|A|()  C|): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun parameter([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|@R|A|()  C|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun parameterArgument([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: R|B<@R|A|()  C>|): R|kotlin/Unit| { LAZY_BLOCK }
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun parameterArgument([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|B<@R|A|()  C>|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public abstract [ResolvedTo(BODY_RESOLVE)] fun returnValue(): R|@R|A|()  C|
 

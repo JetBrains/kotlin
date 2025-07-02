@@ -18,9 +18,9 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] lambda.kt
 
     }
     public final inline [ResolvedTo(CONTRACTS)] fun use([ResolvedTo(CONTRACTS)] f: R|(Tuple) -> kotlin/Int|): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bar(): R|kotlin/Int| { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test([ResolvedTo(EXPECT_ACTUAL_MATCHING)] list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|kotlin/Int| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test([ResolvedTo(ANNOTATION_ARGUMENTS)] list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] val simple: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
     public final [ResolvedTo(CONTRACTS)] val simpleWithArrow: <implicit> = LAZY_EXPRESSION
