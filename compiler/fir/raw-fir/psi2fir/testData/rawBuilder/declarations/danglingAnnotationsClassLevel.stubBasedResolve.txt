@@ -26,7 +26,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationsClassLevel.kt
             [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Inner] @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {

@@ -22,5 +22,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] destructuring.kt
         public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] first: R|kotlin/Int| = this@R|/Some|.R|/Some.first|, [ResolvedTo(BODY_RESOLVE)] second: R|kotlin/Double| = this@R|/Some|.R|/Some.second|, [ResolvedTo(BODY_RESOLVE)] third: R|kotlin/String| = this@R|/Some|.R|/Some.third|): R|Some|
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] some: R|Some|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bar([ResolvedTo(EXPECT_ACTUAL_MATCHING)] some: R|Some|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] some: R|Some|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar([ResolvedTo(ANNOTATION_ARGUMENTS)] some: R|Some|): R|kotlin/Unit| { LAZY_BLOCK }

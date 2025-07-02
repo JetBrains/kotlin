@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvi
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -209,6 +210,11 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: Nothing?) {
         suppressOrThrowError(lazyExpression)
         super.visitLazyExpression(lazyExpression, data)
+    }
+
+    override fun visitLazyContractDescription(lazyContractDescription: FirLazyContractDescription, data: Nothing?) {
+        suppressOrThrowError(lazyContractDescription)
+        super.visitLazyContractDescription(lazyContractDescription, data)
     }
 
     private fun suppressOrThrowError(element: FirElement) {

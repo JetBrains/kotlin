@@ -18,9 +18,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameters.kt
             LAZY_super<R|AbstractList<kotlin/Int>|>
         }
 
-        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun get([ResolvedTo(EXPECT_ACTUAL_MATCHING)] index: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun get([ResolvedTo(ANNOTATION_ARGUMENTS)] index: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
 
-        public open override infix [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun concat([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|List<kotlin/Int>|): R|List<kotlin/Int>| { LAZY_BLOCK }
+        public open override infix [ResolvedTo(ANNOTATION_ARGUMENTS)] fun concat([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|List<kotlin/Int>|): R|List<kotlin/Int>| { LAZY_BLOCK }
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] From : R|To|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(EXPECT_ACTUAL_MATCHING)] from: R|List<From>|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] to: R|List<To>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] From : R|To|, [ResolvedTo(ANNOTATION_ARGUMENTS)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(ANNOTATION_ARGUMENTS)] from: R|List<From>|, [ResolvedTo(ANNOTATION_ARGUMENTS)] to: R|List<To>|): R|kotlin/Unit| { LAZY_BLOCK }

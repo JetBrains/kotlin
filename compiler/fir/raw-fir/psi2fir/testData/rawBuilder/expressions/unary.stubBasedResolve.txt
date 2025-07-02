@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] unary.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/X.i] i: R|kotlin/Int|): R|X| {
             super<R|kotlin/Any|>()
@@ -9,8 +9,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] unary.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test2([ResolvedTo(EXPECT_ACTUAL_MATCHING)] x: R|X|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test3([ResolvedTo(EXPECT_ACTUAL_MATCHING)] arr: R|kotlin/Array<kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test2([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|X|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test3([ResolvedTo(ANNOTATION_ARGUMENTS)] arr: R|kotlin/Array<kotlin/Int>|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Y.arr] arr: R|kotlin/Array<kotlin/Int>|): R|Y| {
             super<R|kotlin/Any|>()
@@ -20,4 +20,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] unary.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] get(): R|kotlin/Array<kotlin/Int>|
 
     }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test4([ResolvedTo(EXPECT_ACTUAL_MATCHING)] y: R|Y|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test4([ResolvedTo(ANNOTATION_ARGUMENTS)] y: R|Y|): R|kotlin/Unit| { LAZY_BLOCK }
