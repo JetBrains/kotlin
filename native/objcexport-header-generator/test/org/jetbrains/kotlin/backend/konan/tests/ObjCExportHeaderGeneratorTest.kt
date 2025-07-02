@@ -649,6 +649,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("objCNameWithReceiver"))
     }
 
+    @Test
+    @TodoAnalysisApi
+    fun `test - block with explicit parameter names`() {
+        doTest(headersTestDataDir.resolve("blockWithExplicitParameterNames"), Configuration(objcExportBlockExplicitParameterNames = true))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()
