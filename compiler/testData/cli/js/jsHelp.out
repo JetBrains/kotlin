@@ -26,6 +26,8 @@ where possible options include:
   -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
   -P plugin:<pluginId>:<optionName>=<value>
                              Pass an option to a plugin.
+  --Xdata-flow-based-exhaustiveness
+                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -help (-h)                 Print a synopsis of standard options.
   -X                         Print a synopsis of advanced options.
   -version                   Display the compiler version.

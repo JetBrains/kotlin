@@ -2609,6 +2609,37 @@
                         }
                     },
                     {
+                        "name": "-Xdata-flow-based-exhaustiveness",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable `when` exhaustiveness improvements that rely on data-flow analysis.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "1.4.0",
+                            "stabilizedVersion": "1.4.0",
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xdirect-java-actualization",
                         "shortName": null,
                         "deprecatedName": null,
