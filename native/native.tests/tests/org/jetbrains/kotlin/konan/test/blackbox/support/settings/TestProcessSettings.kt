@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.BinaryOptionWithValue
 import org.jetbrains.kotlin.backend.konan.GC
 import org.jetbrains.kotlin.backend.konan.GCSchedulerType
 import org.jetbrains.kotlin.backend.konan.parseBinaryOptions
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -178,6 +179,9 @@ class ExplicitBinaryOptions(private val rawOptions: List<String>) {
     val options: List<BinaryOptionWithValue<*>> by lazy {
         parseBinaryOptions(rawOptions.toTypedArray(), { println(it) }, { error(it) })
     }
+
+    inline fun <reified T> getOrNull(key: CompilerConfigurationKey<T>): T? =
+        options.singleOrNull { it.compilerConfigurationKey == key }?.value as? T
 }
 
 enum class Allocator(val compilerFlag: String?) {
