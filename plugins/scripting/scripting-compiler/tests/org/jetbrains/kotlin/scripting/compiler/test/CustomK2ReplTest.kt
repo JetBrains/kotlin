@@ -314,6 +314,32 @@ class CustomK2ReplTest {
             }
         )
     }
+
+    @Test
+    fun testPropertyTypesCanBeRedeclared() {
+        evalAndCheckSnippetsWithReplReceiver1(
+            sequenceOf(
+                "val x = 42",
+                "x",
+                "val x = true",
+                "x"
+            ),
+            sequenceOf(null, 42, null, true),
+        )
+    }
+
+    @Test
+    fun testFunctionWithTheSameSignatureCanBeRedeclared() {
+        evalAndCheckSnippetsWithReplReceiver1(
+            sequenceOf(
+                "fun x() = 42",
+                "x()",
+                "fun x() = true",
+                "x()"
+            ),
+            sequenceOf(null, 42, null, true),
+        )
+    }
 }
 
 private val baseCompilationConfiguration: ScriptCompilationConfiguration =

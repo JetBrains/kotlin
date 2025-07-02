@@ -27,13 +27,13 @@ class FirReplHistoryScope(
 ) : FirContainingNamesAwareScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        for (function in functions[name].orEmpty()) {
+        for (function in functions[name].orEmpty().asReversed()) {
             processor(function)
         }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        for (property in properties[name].orEmpty()) {
+        for (property in properties[name].orEmpty().asReversed()) {
             processor(property)
         }
     }
