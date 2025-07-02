@@ -3,7 +3,7 @@
 
 class Wrapper(x: Int)
 
-// CHECK-LABEL: define internal fastcc ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String"
+// CHECK-LABEL: define internal fastcc {{(noundef )?}}ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String"
 fun f(x: Int, s: String): String {
     // https://youtrack.jetbrains.com/issue/KT-64880/K-N-EnterFrame-runtime-function-should-be-always-inlined-in-OPT-mode
     // Remove `|call fastcc void @EnterFrame` below, after KT-64880 is fixed
@@ -12,8 +12,8 @@ fun f(x: Int, s: String): String {
     // after `OptimizeTLSDataLoads` optimizaion phase.
     // - in case of no-inline, several `call .. @EnterFrame` may remain in function code.
 
-    // CHECK: {{_ZN6kotlin2mm14ThreadRegistry22currentThreadDataNode_E|call fastcc void @EnterFrame}}
-    // CHECK-NOT: _ZN6kotlin2mm14ThreadRegistry22currentThreadDataNode_E
+    // CHECK-BIGBINARY-OPT: {{_ZN6kotlin2mm14ThreadRegistry22currentThreadDataNode_E|call fastcc void @EnterFrame}}
+    // CHECK-BIGBINARY-OPT-NOT: _ZN6kotlin2mm14ThreadRegistry22currentThreadDataNode_E
     if (x < 0) throw IllegalStateException()
     if (x > 0) return f(x - 1, s)
     val b = Wrapper(2)
