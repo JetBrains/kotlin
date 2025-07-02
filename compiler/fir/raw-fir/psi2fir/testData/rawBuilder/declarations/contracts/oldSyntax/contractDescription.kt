@@ -41,6 +41,19 @@ class MyClass {
     }
 }
 
+fun annotated() {
+    @Anno contract {
+    }
+}
+
+fun parenthesized() {
+    (contract { })
+}
+
+fun labeled() {
+    label@ contract { }
+}
+
 // should not have raw description
 
 fun test_5() {
