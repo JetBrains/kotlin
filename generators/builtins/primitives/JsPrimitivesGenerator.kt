@@ -9,6 +9,16 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import java.io.PrintWriter
 
 class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(writer) {
+    private val intrinsifiedOverrideComment = """
+        NOTE: This method is treated as an intrinsic when called directly: the compiler will emit different code for calls to it
+        depending on whether Longs are represented as JS objects or as BigInt.
+        However, since it's an override, it still has to have a body, so that virtual dispatch works correctly with type-erased
+        boxed Longs.
+        
+        TODO(KT-70480): Make bodiless when we drop the ES5 target.
+        """.trimIndent()
+
+    private val makeBodilessAfterBootstrapAdvanceComment = "TODO: Make bodiless after bootstrap advance"
 
     override fun FileBuilder.modifyGeneratedFile() {
         suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
@@ -23,6 +33,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     }
 
     override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
+        // TODO(KT-70480): Remove this when we drop ES5 support
         if (thisKind == PrimitiveType.LONG) {
             annotations += "Suppress(\"NOTHING_TO_INLINE\")"
             primaryConstructor {
@@ -47,6 +58,11 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     override fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             if (thisKind == otherKind) {
+                additionalComments = if (methodName == "compareTo") {
+                    intrinsifiedOverrideComment
+                } else {
+                    makeBodilessAfterBootstrapAdvanceComment
+                }
                 val implMethod = when (methodName) {
                     "compareTo" -> "compare"
                     "plus" -> "add"
@@ -70,7 +86,10 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
             when (methodName) {
                 "inc" -> "this + 1L"
                 "dec" -> "this - 1L"
-                "unaryMinus" -> "this.inv() + 1L"
+                "unaryMinus" -> {
+                    additionalComments = makeBodilessAfterBootstrapAdvanceComment
+                    "this.inv() + 1L"
+                }
                 "unaryPlus" -> {
                     modifySignature { isInline = true }
                     "this"
@@ -87,7 +106,9 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     }
 
     override fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {
+        // TODO: Remove this override after bootstrap advance
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = makeBodilessAfterBootstrapAdvanceComment
             val implMethod = when (methodName) {
                 "shl" -> "shiftLeft"
                 "shr" -> "shiftRight"
@@ -101,10 +122,11 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = makeBodilessAfterBootstrapAdvanceComment
             if (methodName == "inv") {
-                "Long(low.inv(), high.inv())".setAsExpressionBody()
+                "invert()".setAsExpressionBody()
             } else {
-                "Long(this.low $methodName other.low, this.high $methodName other.high)".setAsExpressionBody()
+                "bitwise${methodName.replaceFirstChar(Char::uppercaseChar)}(other)".setAsExpressionBody()
             }
             annotations += "OptIn(BoxedLongImplementation::class)"
         }
@@ -112,17 +134,15 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = intrinsifiedOverrideComment
             var assumesBoxedImplementation = false
             when (otherKind) {
                 PrimitiveType.CHAR,
                 PrimitiveType.BYTE,
-                PrimitiveType.SHORT -> {
-                    assumesBoxedImplementation = true
-                    "low.to${otherKind.capitalized}()"
-                }
+                PrimitiveType.SHORT,
                 PrimitiveType.INT -> {
                     assumesBoxedImplementation = true
-                    "low"
+                    "convertTo${otherKind.capitalized}()"
                 }
                 PrimitiveType.LONG -> "this"
                 PrimitiveType.FLOAT -> "toDouble().toFloat()"
@@ -140,6 +160,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = intrinsifiedOverrideComment
             "other is Long && equalsLong(other)".setAsExpressionBody()
             annotations += "OptIn(BoxedLongImplementation::class)"
         }
@@ -147,6 +168,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = "TODO(KT-70480): Make bodiless when we drop the ES5 target."
             "this.toStringImpl(radix = 10)".setAsExpressionBody()
             annotations += "OptIn(BoxedLongImplementation::class)"
         }
@@ -154,6 +176,7 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
 
     override fun MethodBuilder.modifyGeneratedHashCode(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
+            additionalComments = intrinsifiedOverrideComment
             "hashCode(this)".setAsExpressionBody()
             annotations += "OptIn(BoxedLongImplementation::class)"
         } else {
@@ -173,6 +196,8 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
                     (in our standard library, and also in user projects if they use Dukat for generating external declarations).
                     Because `kotlin.Number` is a supertype of `Long` too, there has to be a way for JS to know how to handle Longs.
                     See KT-50202
+                    
+                    TODO(KT-70480): Remove this when we drop ES5 support
                 """.trimIndent()
                 annotations += "JsName(\"valueOf\")"
                 expectActual = ExpectActualModifier.Unspecified

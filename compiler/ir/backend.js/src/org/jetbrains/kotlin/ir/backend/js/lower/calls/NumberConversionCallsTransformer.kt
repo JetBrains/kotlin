@@ -65,6 +65,16 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
         }
 
+        irBuiltIns.longType.let {
+            add(it, ConversionNames.TO_BYTE, intrinsics.longToByte)
+            add(it, ConversionNames.TO_CHAR, intrinsics.longToChar)
+            add(it, ConversionNames.TO_DOUBLE, intrinsics.longToNumber)
+            add(it, ConversionNames.TO_FLOAT, intrinsics.longToNumber)
+            add(it, ConversionNames.TO_INT, intrinsics.longToInt)
+            add(it, ConversionNames.TO_SHORT, intrinsics.longToShort)
+            add(it, ConversionNames.TO_LONG, ::useDispatchReceiver)
+        }
+
         for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {
             add(type, ConversionNames.TO_CHAR, intrinsics.jsNumberToChar)
         }

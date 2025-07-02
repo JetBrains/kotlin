@@ -80,6 +80,30 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(type, OperatorNames.DIV, withLongCoercion(::transformDiv))
             add(type, OperatorNames.REM, withLongCoercion(::transformRem))
         }
+
+        irBuiltIns.longType.let { type ->
+            add(type, OperatorNames.UNARY_PLUS) { it.dispatchReceiver!! }
+            add(type, OperatorNames.UNARY_MINUS, intrinsics.longUnaryMinus)
+
+            add(type, OperatorNames.ADD, intrinsics.longAdd)
+            add(type, OperatorNames.SUB, intrinsics.longSubtract)
+            add(type, OperatorNames.MUL, intrinsics.longMultiply)
+            add(type, OperatorNames.DIV, intrinsics.longDivide)
+            add(type, OperatorNames.REM, intrinsics.longModulo)
+
+            add(type, OperatorNames.SHL, intrinsics.longShiftLeft)
+            add(type, OperatorNames.SHR, intrinsics.longShiftRight)
+            add(type, OperatorNames.SHRU, intrinsics.longShiftRightUnsigned)
+            add(type, OperatorNames.AND, intrinsics.longAnd)
+            add(type, OperatorNames.OR, intrinsics.longOr)
+            add(type, OperatorNames.XOR, intrinsics.longXor)
+            add(type, OperatorNames.INV, intrinsics.longInv)
+
+            add(type, OperatorNameConventions.RANGE_TO, ::transformRangeTo)
+            add(type, OperatorNameConventions.RANGE_UNTIL, ::transformRangeUntil)
+
+            add(type, OperatorNameConventions.HASH_CODE, ::transformHashCode)
+        }
     }
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
@@ -95,11 +119,17 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
     private fun transformRangeTo(call: IrFunctionAccessExpression): IrExpression {
         if (call.arguments.size != 2) return call
-        return with(call.symbol.owner.parameters[1].type) {
-            when {
-                isByte() || isShort() || isInt() ->
+        val lhsType = call.symbol.owner.parameters[0].type
+        val rhsType = call.symbol.owner.parameters[1].type
+        return when {
+            lhsType.isLong() -> when {
+                rhsType.isLong() -> irCall(call, intrinsics.jsLongRangeToLong)
+                else -> irCall(call, intrinsics.jsLongRangeToNumber)
+            }
+            else -> when {
+                rhsType.isByte() || rhsType.isShort() || rhsType.isInt() ->
                     irCall(call, intrinsics.jsNumberRangeToNumber)
-                isLong() ->
+                rhsType.isLong() ->
                     irCall(call, intrinsics.jsNumberRangeToLong)
                 else -> call
             }
@@ -265,22 +295,8 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
 
                         // Replace {Byte, Short, Int}.OP with corresponding Long.OP
                         val declaration = call.symbol.owner as IrSimpleFunction
-                        val nonDispatchParameters = declaration.nonDispatchParameters
-                        val replacement = intrinsics
-                            .longClassSymbol
-                            .owner
-                            .declarations
-                            .filterIsInstance<IrSimpleFunction>()
-                            .single { member ->
-                                member.name == declaration.name &&
-                                        member.hasShape(
-                                            dispatchReceiver = true,
-                                            regularParameters = nonDispatchParameters.size,
-                                            parameterTypes = nonDispatchParameters.mapTo(mutableListOf(null)) { it.type }
-                                        )
-                            }.symbol
-
-                        actualCall = irCall(call, replacement)
+                        val longOp = memberToTransformer[SimpleMemberKey(irBuiltIns.longType, declaration.name)]!!
+                        actualCall = longOp(call) as IrFunctionAccessExpression
                     }
                 }
             }
