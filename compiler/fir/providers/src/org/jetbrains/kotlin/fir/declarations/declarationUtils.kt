@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
@@ -199,6 +200,12 @@ fun FirClass.collectEnumEntries(session: FirSession): List<FirEnumEntry> {
 fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntrySymbol> {
     return fir.collectEnumEntries(session).map { it.symbol }
 }
+
+context(holder: SessionHolder)
+fun FirEnumEntrySymbol.getComplementary(): List<FirEnumEntrySymbol>? = resolvedReturnType
+    .toRegularClassSymbol(holder.session)
+    ?.collectEnumEntries(holder.session)
+    ?.filter { it != this }
 
 /**
  * Returns the FirClassLikeDeclaration that the
