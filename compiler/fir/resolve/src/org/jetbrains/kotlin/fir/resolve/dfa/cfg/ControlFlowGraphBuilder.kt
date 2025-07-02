@@ -223,7 +223,7 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Utils -----------------------------------
 
-    private inline fun <T, E : T, EnterNode, ExitNode> enterGraph(
+    private inline fun <T : FirElement, E : T?, EnterNode, ExitNode> enterGraph(
         fir: E,
         name: String,
         kind: ControlFlowGraph.Kind,

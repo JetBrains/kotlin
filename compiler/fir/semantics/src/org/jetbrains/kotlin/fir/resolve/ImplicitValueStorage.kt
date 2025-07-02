@@ -129,7 +129,7 @@ class ImplicitValueStorage private constructor(
 }
 
 internal interface ImplicitValueMapper {
-    operator fun <S, T : ImplicitValue<S>> invoke(value: T): T
+    operator fun <S, T : ImplicitValue<S>> invoke(value: T): T where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*>
 }
 
 fun Set<ImplicitReceiverValue<*>>.singleWithoutDuplicatingContextReceiversOrNull(): ImplicitReceiverValue<*>? {
