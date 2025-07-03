@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalOrSelf
@@ -35,9 +36,16 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
+        toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
+
+    private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
+        toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) != ReturnValueCheckerMode.DISABLED) return
@@ -131,25 +139,7 @@ private fun ConeKotlinType.isIgnorable(): Boolean {
     return false
 }
 
-private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.MustUseReturnValue
-
-private fun FirAnnotation.isIgnorableValue(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.IgnorableReturnValue
-
-
-private fun FirExpression.isLocalPropertyOrParameterOrThis(): Boolean {
-    if (this is FirThisReceiverExpression) return true
-    if (this !is FirPropertyAccessExpression) return false
-    return when (calleeReference.symbol) {
-        is FirValueParameterSymbol -> true
-        is FirPropertySymbol -> calleeReference.toResolvedPropertySymbol()?.isLocal == true
-        else -> false
-    }
-}
-
-private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean =
-    hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)
+private fun FirCallableSymbol<*>.isExcluded(session: FirSession): Boolean = session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(resolvedAnnotationClassIds)
 
 private fun FirCallableSymbol<*>.isSubjectToCheck(): Boolean {
     // TODO KT-71195 : treating everything in kotlin. seems to be the easiest way to handle builtins, FunctionN, etc..
