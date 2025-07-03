@@ -22876,6 +22876,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("notExposingPrivateInNoInlineDefault.kt")
+      public void testNotExposingPrivateInNoInlineDefault() {
+        runTest("compiler/testData/diagnostics/tests/inline/notExposingPrivateInNoInlineDefault.kt");
+      }
+
+      @Test
       @TestMetadata("notInlinableWithLabel.kt")
       public void testNotInlinableWithLabel() {
         runTest("compiler/testData/diagnostics/tests/inline/notInlinableWithLabel.kt");
