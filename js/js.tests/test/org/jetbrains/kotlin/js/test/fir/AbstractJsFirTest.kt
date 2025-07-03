@@ -180,13 +180,29 @@ open class AbstractFirJsES6TypeScriptExportTest(
     }
 }
 
-open class AbstractFirJsLineNumberTest : AbstractFirJsTest(
+open class AbstractFirJsLineNumberTest(
+    testGroupOutputDirPrefix: String = "firLineNumbers/"
+) : AbstractFirJsTest(
     pathToTestDir = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/lineNumbers/",
-    testGroupOutputDirPrefix = "firLineNumbers/"
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureLineNumberTests(::createFirJsLineNumberHandler)
+    }
+}
+
+open class AbstractFirJsLineNumberWithInlinedFunInKlibTest : AbstractFirJsLineNumberTest(
+    testGroupOutputDirPrefix = "firLineNumbersInlined/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            configureLineNumberTests(::createFirJsLineNumberHandler)
+            defaultDirectives {
+                LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            }
+        }
     }
 }
 
