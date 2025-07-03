@@ -126,7 +126,7 @@ private class IrFileValidator(
         mutableListOf(IrPrivateDeclarationOverrideChecker)
     private val propertyReferenceCheckers: MutableList<IrPropertyReferenceChecker> = mutableListOf()
     private val localDelegatedPropertyReferenceCheckers: MutableList<IrLocalDelegatedPropertyReferenceChecker> = mutableListOf()
-    private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf(IrExpressionTypeChecker)
+    private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf()
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
     private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
 
@@ -181,6 +181,9 @@ private class IrFileValidator(
         }
         if (config.checkFunctionBody) {
             functionCheckers.add(IrFunctionBodyChecker)
+        }
+        if (config.checkUnboundSymbols) {
+            expressionCheckers.add(IrExpressionTypeChecker)
         }
     }
 
