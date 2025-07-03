@@ -92,7 +92,9 @@ bitcode {
         testsGroup("main_test") {
             testedModules.addAll("main")
             // TODO(KT-53776): Some tests depend on allocator being legacy.
-            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
@@ -229,7 +231,9 @@ bitcode {
 
         testsGroup("common_alloc_test") {
             testedModules.addAll("common_alloc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("std_alloc") {
@@ -253,7 +257,9 @@ bitcode {
         testsGroup("custom_alloc_test") {
             testedModules.addAll("custom_alloc")
             // TODO(KT-53776): Some tests depend on GC not being noop.
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("legacy_alloc") {
@@ -268,7 +274,9 @@ bitcode {
 
         testsGroup("std_legacy_alloc_test") {
             testedModules.addAll("legacy_alloc")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("exceptionsSupport") {
@@ -326,7 +334,9 @@ bitcode {
 
         testsGroup("mm_test") {
             testedModules.addAll("mm")
-            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("common_gc") {
@@ -340,7 +350,9 @@ bitcode {
 
         testsGroup("common_gc_test") {
             testedModules.addAll("common_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("noop_gc") {
@@ -362,12 +374,16 @@ bitcode {
 
         testsGroup("stms_gc_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         testsGroup("stms_gc_custom_test") {
             testedModules.addAll("same_thread_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("pmcs_gc") {
@@ -382,12 +398,16 @@ bitcode {
 
         testsGroup("pmcs_gc_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         testsGroup("pmcs_gc_custom_test") {
             testedModules.addAll("pmcs_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("concurrent_ms_gc") {
@@ -401,12 +421,16 @@ bitcode {
 
         testsGroup("cms_gc_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         testsGroup("cms_gc_custom_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("common_gcScheduler") {
@@ -420,7 +444,9 @@ bitcode {
 
         testsGroup("common_gcScheduler_test") {
             testedModules.addAll("common_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "manual_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "manual_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("manual_gcScheduler") {
@@ -442,7 +468,9 @@ bitcode {
 
         testsGroup("adaptive_gcScheduler_test") {
             testedModules.addAll("adaptive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("aggressive_gcScheduler") {
@@ -456,7 +484,9 @@ bitcode {
 
         testsGroup("aggressive_gcScheduler_test") {
             testedModules.addAll("aggressive_gcScheduler")
-            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc", "breakpad")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc", "common_gcScheduler", "objc")
+            if (target.family == Family.OSX)
+                testSupportModules.add("breakpad")
         }
 
         module("impl_externalCallsChecker") {
