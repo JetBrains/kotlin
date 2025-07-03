@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSigna
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -38,6 +40,7 @@ class NonLinkingIrInlineFunctionDeserializer(
     private val detachedSymbolTable = SymbolTable(signaturer = null, irFactory)
 
     private val moduleDeserializers = hashMapOf<KotlinLibrary, ModuleDeserializer>()
+    private val modules = hashMapOf<KotlinLibrary, IrModuleFragment>()
 
     fun deserializeInlineFunction(function: IrFunction): IrFunction? {
         check(function.isInline) { "Non-inline function: ${function.render()}" }
@@ -69,7 +72,9 @@ class NonLinkingIrInlineFunctionDeserializer(
                     fileEntry = deserializedFile.fileEntry,
                     symbol = IrFileSymbolImpl(function.getPackageFragment().symbol.descriptor),
                     packageFqName = deserializedFile.packageFqName
-                )
+                ).apply {
+                    module = modules.getOrPut(library) { IrModuleFragmentImpl(function.module) }
+                }
             }
         }
         return deserializedFunction
