@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolMatchingPsi
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
@@ -149,48 +148,33 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
 
         // With the `BINARIES` origin, deserialized FIR declarations don't have associated PSI elements. Hence, we cannot use `*ByPsi*
         // functions, as they check the candidate's associated PSI.
-        val classCandidate = when (KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin) {
-            KotlinDeserializedDeclarationsOrigin.BINARIES -> findBinaryClassLikeCandidate(classId)
-            KotlinDeserializedDeclarationsOrigin.STUBS -> findStubClassLikeCandidate(classId, declaration)
+        val classLikeSymbol = when (KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin) {
+            KotlinDeserializedDeclarationsOrigin.BINARIES -> findBinaryClassLikeSymbol(classId)
+            KotlinDeserializedDeclarationsOrigin.STUBS -> findStubClassLikeSymbol(classId, declaration)
         }
 
-        if (
-            classCandidate != null &&
-            firElementByPsiElementChooser.isMatchingClassLikeDeclaration(classId, declaration, classCandidate.fir)
+        classLikeSymbol?.let { return it.fir }
+
+        errorWithFirSpecificEntries(
+            "We should be able to find a symbol for class-like declaration",
+            psi = declaration,
         ) {
-            return classCandidate.fir
-        }
+            withEntry("classId", classId) { it.asString() }
 
-        if (classCandidate != null) {
-            // In many cases, analysis still works if we return the wrong candidate FIR declaration, since it's likely to have the same
-            // shape as the actual sought declaration. We don't log an error here because we already have enough data to implement KT-72998
-            // and want to avoid spamming our users with errors.
-            return classCandidate.fir
-        } else {
-            @Suppress("SENSELESS_COMPARISON")
-            errorWithFirSpecificEntries(
-                "We should be able to find a symbol for $classId (has candidate: ${classCandidate != null})",
-                psi = declaration,
-            ) {
-                withEntry("classId", classId) { it.asString() }
-                withPsiEntry("candidatePsi", classCandidate?.fir?.psi)
-                withFirEntry("candidateFir", classCandidate?.fir)
-
-                val contextualModule = session.llFirModuleData.ktModule
-                val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
-                withEntry("ktModule", moduleForFile) { it.moduleDescription }
-            }
+            val contextualModule = session.llFirModuleData.ktModule
+            val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
+            withEntry("ktModule", moduleForFile) { it.moduleDescription }
         }
     }
 
-    private fun findBinaryClassLikeCandidate(classId: ClassId): FirClassLikeSymbol<*>? =
+    private fun findBinaryClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? =
         when (val symbolProvider = session.symbolProvider) {
             is LLModuleWithDependenciesSymbolProvider ->
                 symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId)
             else -> symbolProvider.getClassLikeSymbolByClassId(classId)
         }
 
-    private fun findStubClassLikeCandidate(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
+    private fun findStubClassLikeSymbol(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
         when (val symbolProvider = session.symbolProvider) {
             is LLModuleWithDependenciesSymbolProvider ->
                 symbolProvider.getDeserializedClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
