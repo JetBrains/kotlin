@@ -35,6 +35,7 @@ internal fun FirBasedSymbol<*>.hasPsi(element: PsiElement): Boolean = fir.psi ==
  * If the symbol provider is not an [LLPsiAwareSymbolProvider], the function falls back to [FirSymbolProvider.getClassLikeSymbolByClassId],
  * but still ensures that the resulting symbol matches [declaration].
  */
+@ModuleSpecificSymbolProviderAccess
 internal fun FirSymbolProvider.getClassLikeSymbolMatchingPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
     if (this is LLPsiAwareSymbolProvider) {
         return getClassLikeSymbolByPsi(classId, declaration)

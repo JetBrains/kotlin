@@ -108,7 +108,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     )
 
     private val classLikeCache =
-        LLPsiAwareClassLikeSymbolCache(session, searchScope, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
+        LLPsiAwareClassLikeSymbolCache(session, ::computeClassLikeSymbolByClassId) { declaration: KtClassLikeDeclaration, _ ->
             computeClassLikeSymbolByPsi(declaration)
         }
 
@@ -117,9 +117,11 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration = null)
     }
 
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
         getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration)
 
+    @OptIn(ModuleSpecificSymbolProviderAccess::class)
     private fun getClassLikeSymbolByClassIdAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
@@ -142,6 +144,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         }
     }
 
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
         return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { it }

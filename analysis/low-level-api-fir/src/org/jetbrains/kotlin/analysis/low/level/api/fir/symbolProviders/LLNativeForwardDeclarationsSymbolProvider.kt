@@ -71,19 +71,19 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
         return classCache.getValue(classId, context = null)
     }
 
-    @FirSymbolProviderInternals
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? =
         classCache.getValue(classId, classLikeDeclaration)
 
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (declaration !is KtClassLikeDeclaration) return null
 
-        // We cannot use `getClassLikeSymbolByClassId(classId, declaration)` here. We don't know whether `declaration` is in the scope of
-        // this symbol provider, and thus shouldn't blindly generate a forward declaration class for it. It's possible to add a scope check
-        // later if the performance becomes a problem.
+        // Not all declarations in the module's scope are forward declarations. As such, we don't know whether `declaration` is in the scope
+        // of this specific symbol provider, and thus shouldn't blindly generate a forward declaration class for it.
         return getClassLikeSymbolByClassId(classId)?.takeIf { it.hasPsi(declaration) }
     }
 

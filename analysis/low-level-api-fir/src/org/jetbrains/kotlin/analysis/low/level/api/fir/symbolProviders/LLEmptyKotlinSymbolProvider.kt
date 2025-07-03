@@ -42,9 +42,10 @@ internal class LLEmptyKotlinSymbolProvider(session: FirSession) : LLKotlinSymbol
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? = null
 
-    @FirSymbolProviderInternals
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? = null
 
+    @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? = null
 
     @FirSymbolProviderInternals

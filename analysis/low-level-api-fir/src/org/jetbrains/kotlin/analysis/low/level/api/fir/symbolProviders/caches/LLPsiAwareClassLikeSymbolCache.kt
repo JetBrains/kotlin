@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKnownClassDeclarationSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.hasPsi
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -36,17 +36,14 @@ import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
  * The cache is used by symbol providers to implement [LLPsiAwareSymbolProvider][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLPsiAwareSymbolProvider].
  */
 internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassLikeSymbol<*>?, CONTEXT>(
-    private val searchScope: GlobalSearchScope,
     private val mainCache: FirCache<ClassId, V, CONTEXT>,
     private val ambiguityCache: FirCache<E, V, CONTEXT>,
 ) {
     constructor(
         session: LLFirSession,
-        searchScope: GlobalSearchScope,
         computeSymbolByClassId: (ClassId, CONTEXT) -> V,
         computeSymbolByPsi: (E, CONTEXT) -> V,
     ) : this(
-        searchScope,
         session.firCachesFactory.createCache<ClassId, V, CONTEXT> { classId, context ->
             computeSymbolByClassId(classId, context)
         },
@@ -62,6 +59,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      * only used to compute a symbol if it's not already cached. Furthermore, [getSymbolByClassId] must follow the contracts of
      * [LLKnownClassDeclarationSymbolProvider.getClassLikeSymbolByClassId].
      */
+    @ModuleSpecificSymbolProviderAccess
     fun getSymbolByClassId(
         classId: ClassId,
         context: CONTEXT,
@@ -77,11 +75,11 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
     fun getCachedSymbolByClassId(classId: ClassId): V? = mainCache.getValueIfComputed(classId)
 
     /**
-     * Returns the already cached or newly computed symbol for exactly the given [declaration], after ensuring that it is of type [T] and
-     * contained in the [searchScope]. The creation of a [CONTEXT] with [createContext] is deferred until the checks are passed.
+     * Returns the already cached or newly computed symbol for exactly the given [declaration], after ensuring that it is of type [T].
      *
      * [getSymbolByPsi] is a common implementation for [LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi].
      */
+    @ModuleSpecificSymbolProviderAccess
     inline fun <reified T : E> getSymbolByPsi(
         classId: ClassId,
         declaration: PsiElement,
@@ -89,30 +87,20 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
     ): V? {
         if (declaration !is T) return null
 
-        // Avoid the scope check and the creation of the context if the symbol is already cached.
+        // Avoid the creation of the context if the symbol is already cached.
         getCachedSymbolByPsi(classId, declaration)?.let { return it }
 
-        if (declaration.containingFile.virtualFile !in searchScope) {
-            return null
-        }
-
-        @OptIn(RequiresDeclarationInScope::class)
-        return getSymbolByPsiInScope(classId, declaration, createContext(declaration))
+        return getSymbolByPsi(classId, declaration, createContext(declaration))
     }
-
-    @RequiresOptIn("This function requires that the declaration is contained in the search scope.")
-    annotation class RequiresDeclarationInScope
 
     /**
      * Returns the already cached or newly computed symbol for exactly the given [declaration].
      *
-     * This function should only be called if it can be guaranteed that [declaration] is contained in the [searchScope]. If not,
-     * [getSymbolByPsi] should be used instead. Essentially, to calculate a symbol from a known [declaration], we need to make sure that
-     * [declaration] is contained in the [searchScope]. Furthermore, the same applies when accessing [ambiguityCache], as otherwise we might
-     * load symbols for declarations that aren't in the scope of the symbol provider.
+     * In contrast to [getSymbolByPsi], this function skips [getCachedSymbolByPsi] and the [declaration] type check, allowing more
+     * flexibility on the client side.
      */
-    @RequiresDeclarationInScope
-    fun getSymbolByPsiInScope(classId: ClassId, declaration: E, context: CONTEXT): V? {
+    @ModuleSpecificSymbolProviderAccess
+    fun getSymbolByPsi(classId: ClassId, declaration: E, context: CONTEXT): V? {
         // Fast path: Query the cache normally. The *vast majority* of class IDs will not have ambiguities, hence most symbols will be
         // contained in the main cache.
         val symbol = getSymbolByClassId(classId, context)

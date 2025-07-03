@@ -12,23 +12,25 @@ import org.jetbrains.kotlin.name.ClassId
 /**
  * A [FirSymbolProvider][org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider] that is able to provide class-like symbols for
  * specific PSI elements.
+ *
+ * This interface only needs to be implemented by symbol providers whose scope might contain multiple PSI elements with the same [ClassId]
+ * (class ID ambiguities). Furthermore, such a symbol provider must also be eligible for [ModuleSpecificSymbolProviderAccess]. For example,
+ * combined symbol providers cannot be accessed in such a manner (they are always dependency symbol providers), and thus don't need to
+ * implement [LLPsiAwareSymbolProvider].
  */
-interface LLPsiAwareSymbolProvider {
+internal interface LLPsiAwareSymbolProvider {
     /**
-     * Returns a [FirClassLikeSymbol] for the specific [declaration], or `null` if there is no symbol that matches [declaration], including
-     * when [declaration] is outside the scope of this symbol provider. Symbols without associated PSI are not considered as results.
+     * Returns a [FirClassLikeSymbol] for the specific [declaration], or `null` if there is no symbol that matches [declaration]. Symbols
+     * without associated PSI are not considered as results.
+     *
+     * As per the contract of [ModuleSpecificSymbolProviderAccess], the given [declaration] must be in the scope of the symbol provider's
+     * module.
      *
      * In contrast to [getClassLikeSymbolByClassId][org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider.getClassLikeSymbolByClassId],
      * this function is aware of the requested PSI and is able to return a specific symbol for it.
      *
-     * ### Implementation notes
-     *
-     * Care should be taken not to pass [declaration] blindly to functions which accept a *known* declaration, such as the functions defined
-     * by [LLKotlinSymbolProvider] for known declarations. In contrast to these functions, [getClassLikeSymbolByPsi] does not require the
-     * caller to make sure that the symbol provider can and should provide a symbol for that PSI element.
-     *
-     * As [getClassLikeSymbolByPsi] can be called with any kind of [PsiElement] from any source, the implementation needs to check its
-     * applicability, e.g. with a global search scope check.
+     * @see getClassLikeSymbolMatchingPsi
      */
+    @ModuleSpecificSymbolProviderAccess
     fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>?
 }
