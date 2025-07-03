@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=usePrivateTopLevelFunFromVarargAndDefaultArgument.kt */
+
+/* TARGET declaration */ private fun funOK(): String
+internal inline fun internalInlineFun(): String
+    val tmp0: Array<out String> =
+        /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+        /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+public fun box(): String
+    val tmp0: Array<out String> =
+        /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+        /* ACCESSOR use-site */ access$funOK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt()
+/* ACCESSOR declaration */ internal fun access$funOK$tUsePrivateTopLevelFunFromVarargAndDefaultArgumentKt(): String
+    /* TARGET use-site */ funOK()
