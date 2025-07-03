@@ -113,14 +113,19 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
         val targets = unwrappedTargets
         val manager = candidateTarget.manager
 
-        if (targets.any { manager.areElementsEquivalent(unwrappedCandidate, it) }) {
-            return true
+        for (target in targets) {
+            if (manager.areElementsEquivalent(unwrappedCandidate, target)) {
+                return true
+            }
+
+            if (target.isConstructorOf(unwrappedCandidate) ||
+                target is KtObjectDeclaration && target.isCompanion() && target.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
+            ) {
+                return true
+            }
         }
 
-        return targets.any {
-            it.isConstructorOf(unwrappedCandidate) ||
-                    it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
-        }
+        return false
     }
 
     private fun KtSimpleNameReference.isAccessorReference(): Boolean {
