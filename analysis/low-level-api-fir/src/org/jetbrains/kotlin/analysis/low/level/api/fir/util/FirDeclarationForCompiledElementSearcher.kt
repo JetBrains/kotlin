@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLPsiAwareSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolMatchingPsi
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -194,12 +194,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         when (val symbolProvider = session.symbolProvider) {
             is LLModuleWithDependenciesSymbolProvider ->
                 symbolProvider.getDeserializedClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
-
-            is LLPsiAwareSymbolProvider -> symbolProvider.getClassLikeSymbolByPsi(classId, declaration)
-
-            // TODO (KT-72998): Error out as we should find deserialized symbols via at least `getClassLikeSymbolByPsi`. This first requires
-            //  builtins symbol providers, as well as the composite provider they're embedded in, to become `LLPsiAwareSymbolProvider`s.
-            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
+            else -> symbolProvider.getClassLikeSymbolMatchingPsi(classId, declaration)
         }
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
