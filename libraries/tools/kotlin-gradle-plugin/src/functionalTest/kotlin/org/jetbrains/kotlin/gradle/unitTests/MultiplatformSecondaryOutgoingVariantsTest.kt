@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -13,6 +14,9 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.bundling.Zip
+import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -27,6 +31,9 @@ import org.jetbrains.kotlin.gradle.targets.NON_PACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.toAttribute
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
@@ -243,6 +250,77 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun testConsumableConfigurationProducerTasksWhenNonPackedKlibsAreNotUsed() {
+        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
+        val consumableConfigurations = (project.getKlibApiConfigurations() + project.getKlibRuntimeConfigurations())
+            .associateBy { it.name }
+        @Suppress("DuplicatedCode")
+        run {
+            assertEquals(6, consumableConfigurations.size)
+            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName<Jar>("jsJar"))
+            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName<Jar>("jsJar"))
+            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName<Jar>("wasmJsJar"))
+            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName<Jar>("wasmWasiJar"))
+        }
+        val compileKlibTask = project.tasks.getByName<KotlinNativeCompile>("compileKotlinLinuxX64")
+        val cinteropProcessTask = project.tasks.getByName<CInteropProcess>("cinteropDummyLinuxX64")
+        consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
+        consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
+    }
+
+    @Test
+    fun testConsumableConfigurationProducerTasksWhenNonPackedKlibsAreUsed() {
+        val project = buildKmpProjectWithKlibTargets()
+        val consumableConfigurations = (project.getKlibApiConfigurations() + project.getKlibRuntimeConfigurations())
+            .associateBy { it.name }
+        @Suppress("DuplicatedCode")
+        run {
+            assertEquals(6, consumableConfigurations.size)
+            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName<Jar>("jsJar"))
+            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName<Jar>("jsJar"))
+            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName<Jar>("wasmJsJar"))
+            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName<Jar>("wasmWasiJar"))
+        }
+        val jsCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinJs")
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("jsApiElements", jsCompileTask)
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("jsRuntimeElements", jsCompileTask)
+
+        val wasmJsCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinWasmJs")
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("wasmJsApiElements", wasmJsCompileTask)
+
+        val wasmWasiCompileTask = project.tasks.getByName<Kotlin2JsCompile>("compileKotlinWasmWasi")
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("wasmWasiApiElements", wasmWasiCompileTask)
+
+        val compiledKlibPackagingTask = project.tasks.getByName<Zip>("linuxX64Klib")
+        val cinteropKlibPackagingTask = project.tasks.getByName<Zip>("linuxX64Cinterop-dummyKlib")
+        consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compiledKlibPackagingTask, cinteropKlibPackagingTask)
+        consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropKlibPackagingTask)
+
+        val compileKlibTask = project.tasks.getByName<KotlinNativeCompile>("compileKotlinLinuxX64")
+        val cinteropProcessTask = project.tasks.getByName<CInteropProcess>("cinteropDummyLinuxX64")
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
+        consumableConfigurations.assertSecondaryKlibVariantProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
+
+        compiledKlibPackagingTask.assertProducerTasks(compileKlibTask)
+        cinteropKlibPackagingTask.assertProducerTasks(cinteropProcessTask)
+    }
+
+    private fun Task.assertProducerTasks(vararg tasks: Task) {
+        assertEquals<Set<Task>>(tasks.toSet(), taskDependencies.getDependencies(null))
+    }
+
+    private fun Map<String, Configuration>.assertProducerTasks(configurationName: String, vararg tasks: Task) {
+        val buildDependencyTasks = getValue(configurationName).artifacts.buildDependencies.getDependencies(null)
+        assertEquals<Set<Task>>(tasks.toSet(), buildDependencyTasks)
+    }
+
+    private fun Map<String, Configuration>.assertSecondaryKlibVariantProducerTasks(configurationName: String, vararg tasks: Task) {
+        val buildDependencyTasks =
+            getValue(configurationName).outgoing.variants.getByName(NON_PACKED_KLIB_VARIANT_NAME).artifacts.buildDependencies.getDependencies(null)
+        assertEquals<Set<Task>>(tasks.toSet(), buildDependencyTasks)
     }
 
     /**

@@ -40,7 +40,7 @@ internal fun createCInteropApiElementsKlibArtifact(
         val packTask = compilation.maybeCreateKlibPackingTask(settings.classifier, interopTask)
         packTask.map { it.archiveFile.get().asFile }
     } else {
-        interopTask.flatMap { it.klibFile }
+        interopTask.map { it.klibFile }
     }
     configuration.outgoing.registerKlibArtifact(packedArtifactFile, settings.classifier)
 }

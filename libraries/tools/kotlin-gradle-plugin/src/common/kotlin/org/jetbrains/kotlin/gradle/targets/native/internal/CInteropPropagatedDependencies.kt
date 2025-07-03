@@ -106,7 +106,6 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
                 compilation.maybeCreateKlibPackingTask(
                     interopTask.settings.classifier,
                     interopTask.klibDirectory,
-                    interopTask
                 )
             }
         }
