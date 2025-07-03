@@ -7582,6 +7582,36 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         public void testUsePrivateTopLevelConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
         }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVararg.kt")
+        public void testUsePrivateTopLevelFunFromVararg() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVarargAndDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromVarargAndDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunFromVarargAndDefaultArgument.kt");
+        }
       }
 
       @Nested
@@ -7772,6 +7802,36 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         public void testUsePrivateTopLevelConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelConstValFromInternalInline.kt");
         }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVararg.kt")
+        public void testUsePrivateTopLevelFunFromVararg() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVarargAndDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromVarargAndDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunFromVarargAndDefaultArgument.kt");
+        }
       }
 
       @Nested
@@ -7832,6 +7892,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromAnonymousFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromAnonymousFunAsDefaultArgument.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateTopLevelFunFromDefaultArguments.kt")
         public void testUsePrivateTopLevelFunFromDefaultArguments() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromDefaultArguments.kt");
@@ -7844,6 +7910,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         }
 
         @Test
+        @TestMetadata("usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromInternalInlineFunAsDefaultArgument.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateTopLevelFunFromLambdaInsideInternalInline.kt")
         public void testUsePrivateTopLevelFunFromLambdaInsideInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsideInternalInline.kt");
@@ -7853,6 +7925,24 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @TestMetadata("usePrivateTopLevelFunFromLambdaInsidePublicInline.kt")
         public void testUsePrivateTopLevelFunFromLambdaInsidePublicInline() {
           runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromLambdaInsidePublicInline.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromReferenceAsDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromReferenceAsDefaultArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVararg.kt")
+        public void testUsePrivateTopLevelFunFromVararg() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromVararg.kt");
+        }
+
+        @Test
+        @TestMetadata("usePrivateTopLevelFunFromVarargAndDefaultArgument.kt")
+        public void testUsePrivateTopLevelFunFromVarargAndDefaultArgument() {
+          runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunFromVarargAndDefaultArgument.kt");
         }
 
         @Test
