@@ -24,28 +24,32 @@ import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 internal class NpmResolverPluginApplier(
     private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,
+    private val requiredNpmDependenciesPredicate: (RequiresNpmDependencies) -> Boolean,
 ) {
     fun apply(project: Project) {
         val nodeJsRoot = nodeJsRootApply(project)
         singleNodeJsApply(project)
         nodeJsRoot.resolver.addProject(project)
         project.whenEvaluated {
-            project.tasks.implementing(RequiresNpmDependencies::class)
+            project.tasks
+                .implementing(RequiresNpmDependencies::class)
+                .matching { task ->
+                    task as RequiresNpmDependencies
+                    task.enabled && requiredNpmDependenciesPredicate(task)
+                }
                 .configureEach { task ->
-                    if (task.enabled) {
-                        task as RequiresNpmDependencies
-                        // KotlinJsTest delegates npm dependencies to testFramework,
-                        // which can be defined after this configure action
-                        if (task.compilation.wasmTarget == null && task !is KotlinJsTest) {
-                            nodeJsRoot.taskRequirements.addTaskRequirements(task)
+                    task as RequiresNpmDependencies
+                    // KotlinJsTest delegates npm dependencies to testFramework,
+                    // which can be defined after this configure action
+                    if (task !is KotlinJsTest) {
+                        nodeJsRoot.taskRequirements.addTaskRequirements(task)
 
-                            if (task.requiredNpmDependencies.isNotEmpty()) {
-                                task.dependsOn(
-                                    nodeJsRoot.npmInstallTaskProvider,
-                                )
+                        if (task.requiredNpmDependencies.isNotEmpty()) {
+                            task.dependsOn(
+                                nodeJsRoot.npmInstallTaskProvider,
+                            )
 
-                                task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
-                            }
+                            task.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
                         }
                     }
                 }
