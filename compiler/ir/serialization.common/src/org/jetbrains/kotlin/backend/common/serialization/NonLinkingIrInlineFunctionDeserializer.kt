@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -69,7 +70,9 @@ class NonLinkingIrInlineFunctionDeserializer(
                     fileEntry = deserializedFile.fileEntry,
                     symbol = IrFileSymbolImpl(function.getPackageFragment().symbol.descriptor),
                     packageFqName = deserializedFile.packageFqName
-                )
+                ).apply {
+                    module = IrModuleFragmentImpl(function.module)
+                }
             }
         }
         return deserializedFunction
