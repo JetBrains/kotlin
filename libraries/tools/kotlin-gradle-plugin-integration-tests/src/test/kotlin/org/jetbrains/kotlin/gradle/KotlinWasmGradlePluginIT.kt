@@ -253,6 +253,16 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                         .size == 1
                 }
             }
+
+            build("wasmJsBrowserDistribution") {
+                assertTasksUpToDate(":kotlinWasmNpmInstall")
+                assertTasksAreNotInTaskGraph(":kotlinNpmInstall")
+            }
+
+            build("jsBrowserDistribution") {
+                assertTasksUpToDate(":kotlinNpmInstall")
+                assertTasksAreNotInTaskGraph(":kotlinWasmNpmInstall")
+            }
         }
     }
 
