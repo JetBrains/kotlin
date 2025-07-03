@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -185,16 +184,9 @@ internal fun buildSerializedClassFields(
     val outerClasses = irClass.getOuterClasses(takeOnlyInner = false)
     require(outerClasses.first().parent is IrFile) { "Local classes are not supported: ${irClass.render()}" }
 
-    val typeParameterSigs = mutableListOf<Int>()
     var protoClass = protoDeclaration.irClass
     val protoClasses = mutableListOf(protoClass)
-    val firstNotInnerClassIndex = outerClasses.indexOfLast { !it.isInner }
     for (classIndex in outerClasses.indices) {
-        if (classIndex >= firstNotInnerClassIndex /* owner's type parameters are always accessible */) {
-            (0 until protoClass.typeParameterCount).mapTo(typeParameterSigs) {
-                BinarySymbolData.decode(protoClass.getTypeParameter(it).base.symbol).signatureId
-            }
-        }
         if (classIndex < outerClasses.size - 1) {
             protoClass = protoClass.findClass(outerClasses[classIndex + 1], fileReader, symbolDeserializer)
             protoClasses += protoClass
@@ -226,7 +218,6 @@ internal fun buildSerializedClassFields(
     return SerializedClassFields(
             SerializedFileReference(fileDeserializationState.file),
             signature,
-            typeParameterSigs.toIntArray(),
             outerThisIndex,
             Array(fields.size) {
                 val field = fields[it]
@@ -243,13 +234,9 @@ internal fun buildSerializedClassFields(
                             field.alignment
                     )
                 } else {
-                    val protoField = protoFieldsMap[field.name] ?: error("No proto for ${field.name}")
-                    val nameAndType = BinaryNameAndType.decode(protoField.nameType)
                     var flags = 0
                     if (field.isConst)
                         flags = flags or SerializedClassFieldInfo.FLAG_IS_CONST
-                    val classifier = field.type.classifierOrNull
-                            ?: error("Fields of type ${field.type.render()} are not supported")
                     val primitiveBinaryType = field.type.computePrimitiveBinaryTypeOrNull()
 
                     SerializedClassFieldInfo(
@@ -274,26 +261,9 @@ internal class ClassFieldsDeserializer(
                 ?: error("No signature for ${irClass.render()}")
         val serializedClassFields = classesFields[signature]
                 ?: error("No class fields for ${irClass.render()}, sig = ${signature.render()}")
-        val fileDeserializationState = with(deserializer) { serializedClassFields.file.deserializationState }
-        val declarationDeserializer = fileDeserializationState.declarationDeserializer
-        val symbolDeserializer = declarationDeserializer.symbolDeserializer
 
-        if (irClass.getPackageFragment() is IrExternalPackageFragment) {
-            val outerClasses = irClass.getOuterClasses(takeOnlyInner = true)
-            require(outerClasses.first().firstNonClassParent is IrExternalPackageFragment) {
-                "Local classes are not supported: ${irClass.render()}"
-            }
-
-            var endToEndTypeParameterIndex = 0
-            outerClasses.forEach { outerClass ->
-                outerClass.typeParameters.forEach { parameter ->
-                    val sigIndex = serializedClassFields.typeParameterSigs[endToEndTypeParameterIndex++]
-                    deserializer.referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
-                }
-            }
-            require(endToEndTypeParameterIndex == serializedClassFields.typeParameterSigs.size) {
-                "Not all type parameters have been referenced"
-            }
+        check(irClass.getPackageFragment() !is IrExternalPackageFragment) {
+            "Unexpected external package fragment: ${irClass.render()}"
         }
 
         fun getByClassId(classId: ClassId): IrClassSymbol {
@@ -358,13 +328,6 @@ private fun IrClass.getOuterClasses(takeOnlyInner: Boolean): List<IrClass> {
     return outerClasses
 }
 
-private val IrClass.firstNonClassParent: IrDeclarationParent
-    get() {
-        var parent = parent
-        while (parent is IrClass) parent = parent.parent
-        return parent
-    }
-
 class SerializedInlineFunctionReference(val file: SerializedFileReference, val functionSignature: Int, val body: Int,
                                         val startOffset: Int, val endOffset: Int, val defaultValues: IntArray)
 
@@ -416,7 +379,7 @@ class SerializedClassFieldInfo(val name: String, val binaryType: Int, val flags:
     }
 }
 
-class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature, val typeParameterSigs: IntArray,
+class SerializedClassFields(val file: SerializedFileReference, val classSignature: IdSignature,
                             val outerThisIndex: Int, val fields: Array<SerializedClassFieldInfo>)
 
 internal object ClassFieldsSerializer {
@@ -452,14 +415,13 @@ internal object ClassFieldsSerializer {
                 it.fields.forEach { +it.name }
             }
         }
-        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (6 + it.typeParameterSigs.size + it.fields.size * 4) }
+        val size = stringTable.sizeBytes + classFields.sumOf { Int.SIZE_BYTES * (5 + it.fields.size * 4) }
         val stream = ByteArrayStream(ByteArray(size))
         stringTable.serialize(stream)
         classFields.forEach {
             stream.writeInt(stringTable.indices[it.file.fqName]!!)
             stream.writeInt(stringTable.indices[it.file.path]!!)
             stream.writeInt(protoIdSignatureMap[it.classSignature]!!)
-            stream.writeIntArray(it.typeParameterSigs)
             stream.writeInt(it.outerThisIndex)
             stream.writeInt(it.fields.size)
             it.fields.forEach { field ->
@@ -501,7 +463,6 @@ internal object ClassFieldsSerializer {
             val fileFqName = stringTable[stream.readInt()]
             val filePath = stringTable[stream.readInt()]
             val signatureIndex = stream.readInt()
-            val typeParameterSigs = stream.readIntArray()
             val outerThisIndex = stream.readInt()
             val fieldsCount = stream.readInt()
             val fields = Array(fieldsCount) {
@@ -519,7 +480,7 @@ internal object ClassFieldsSerializer {
             val idSignatureDeserializer = IdSignatureDeserializer(libFile, fileSignature, interner)
             val classSignature = idSignatureDeserializer.deserializeIdSignature(signatureIndex)
             result.add(SerializedClassFields(
-                    SerializedFileReference(fileFqName, filePath), classSignature, typeParameterSigs, outerThisIndex, fields)
+                    SerializedFileReference(fileFqName, filePath), classSignature, outerThisIndex, fields)
             )
         }
     }
