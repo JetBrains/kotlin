@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
@@ -79,21 +80,24 @@ internal class LLModuleWithDependenciesSymbolProvider(
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolMatchingPsi(classId, declaration) }
             ?: dependencyProvider.getClassLikeSymbolByPsi(classId, declaration)
 
+    fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { provider ->
+            when (provider) {
+                is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
+                is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
+                else -> null
+            }
+        }
+
     fun getDeserializedClassLikeSymbolByPsiWithoutDependencies(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
         when (provider) {
-            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolMatchingPsi(classId, classLikeDeclaration)
-
-            // Symbols deserialized from metadata don't have associated PSI elements. Hence, we cannot use `getClassLikeSymbolMatchingPsi`,
-            // as it requires the resulting symbol to have `classLikeDeclaration` as its PSI.
-            //
-            // The core problem comes down to a conceptual irregularity: If the found symbol doesn't have PSI, how can we get a
-            // `KtClassLikeDeclaration` to find it with in the first place? However, to avoid breaking existing functionality in Standalone,
-            // this needs to be properly investigated.
-            is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
-
+            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByPsi(classId, classLikeDeclaration)
+            is AbstractFirDeserializedSymbolProvider -> error(
+                "Deserialized symbols with '${KotlinDeserializedDeclarationsOrigin.BINARIES}' origin don't have associated PSI elements."
+            )
             else -> null
         }
     }

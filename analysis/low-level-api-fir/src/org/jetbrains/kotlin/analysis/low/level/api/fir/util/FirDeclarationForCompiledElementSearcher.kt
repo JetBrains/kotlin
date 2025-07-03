@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
@@ -21,9 +23,11 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
@@ -143,15 +147,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     private fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
         val classId = declaration.getClassId() ?: errorWithFirSpecificEntries("Non-local class should have classId", psi = declaration)
 
-        val classCandidate = when (val symbolProvider = session.symbolProvider) {
-            is LLModuleWithDependenciesSymbolProvider ->
-                symbolProvider.getDeserializedClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
-
-            is LLPsiAwareSymbolProvider -> symbolProvider.getClassLikeSymbolByPsi(classId, declaration)
-
-            // TODO (KT-72998): Error out as we should find deserialized symbols via at least `getClassLikeSymbolByPsi`. This first requires
-            //  builtins symbol providers, as well as the composite provider they're embedded in, to become `LLPsiAwareSymbolProvider`s.
-            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
+        // With the `BINARIES` origin, deserialized FIR declarations don't have associated PSI elements. Hence, we cannot use `*ByPsi*
+        // functions, as they check the candidate's associated PSI.
+        val classCandidate = when (KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin) {
+            KotlinDeserializedDeclarationsOrigin.BINARIES -> findBinaryClassLikeCandidate(classId)
+            KotlinDeserializedDeclarationsOrigin.STUBS -> findStubClassLikeCandidate(classId, declaration)
         }
 
         if (
@@ -182,6 +182,25 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             }
         }
     }
+
+    private fun findBinaryClassLikeCandidate(classId: ClassId): FirClassLikeSymbol<*>? =
+        when (val symbolProvider = session.symbolProvider) {
+            is LLModuleWithDependenciesSymbolProvider ->
+                symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId)
+            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
+        }
+
+    private fun findStubClassLikeCandidate(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
+        when (val symbolProvider = session.symbolProvider) {
+            is LLModuleWithDependenciesSymbolProvider ->
+                symbolProvider.getDeserializedClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
+
+            is LLPsiAwareSymbolProvider -> symbolProvider.getClassLikeSymbolByPsi(classId, declaration)
+
+            // TODO (KT-72998): Error out as we should find deserialized symbols via at least `getClassLikeSymbolByPsi`. This first requires
+            //  builtins symbol providers, as well as the composite provider they're embedded in, to become `LLPsiAwareSymbolProvider`s.
+            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
+        }
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
