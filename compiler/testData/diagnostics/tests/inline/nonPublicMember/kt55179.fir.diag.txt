@@ -10,7 +10,9 @@
 
 /kt55179.fir.kt:(337,346): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
-/kt55179.fir.kt:(351,354): error: 'private-in-file' type 'Foo' is accessed from 'internal' inline declaration.
+/kt55179.fir.kt:(351,354): error: 'private-in-file' type 'Foo.Companion' is accessed from 'internal' inline declaration.
+
+/kt55179.fir.kt:(351,354): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
 /kt55179.fir.kt:(355,363): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'fun buildFoo(): Foo'.
 

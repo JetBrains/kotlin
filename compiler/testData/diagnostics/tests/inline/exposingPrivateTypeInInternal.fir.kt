@@ -82,8 +82,8 @@ class C3 {
     internal inline fun internal() {
         <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>Companion<!>
-        C3
-        C3TA
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>C3<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>C3TA<!>
     }
 }
 
