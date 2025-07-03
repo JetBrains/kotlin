@@ -210,11 +210,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @throws IllegalArgumentException if the string doesn't represent a duration in any of the supported formats.
          * @sample samples.time.Durations.parse
          */
-        public fun parse(value: String): Duration = try {
-            parseDuration(value, strictIso = false)
-        } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid duration string format: '$value'.", e)
-        }
+        public fun parse(value: String): Duration =
+            parseDuration(value, strictIso = false).getOrElse { e ->
+                throw IllegalArgumentException("Invalid duration string format: '$value'.", e)
+            }
 
         /**
          * Parses a string that represents a duration in a restricted ISO-8601 composite representation
@@ -231,11 +230,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @throws IllegalArgumentException if the string doesn't represent a duration in ISO-8601 format.
          * @sample samples.time.Durations.parseIsoString
          */
-        public fun parseIsoString(value: String): Duration = try {
-            parseDuration(value, strictIso = true)
-        } catch (e: IllegalArgumentException) {
-            throw IllegalArgumentException("Invalid ISO duration string format: '$value'.", e)
-        }
+        public fun parseIsoString(value: String): Duration =
+            parseDuration(value, strictIso = true).getOrElse { e ->
+                throw IllegalArgumentException("Invalid ISO duration string format: '$value'.", e)
+            }
 
         /**
          * Parses a string that represents a duration and returns the parsed [Duration] value,
@@ -248,11 +246,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *   @sample samples.time.Durations.parse
          */
-        public fun parseOrNull(value: String): Duration? = try {
-            parseDuration(value, strictIso = false)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
+        public fun parseOrNull(value: String): Duration? =
+            parseDuration(value, strictIso = false).getOrNull()
 
         /**
          * Parses a string that represents a duration in restricted ISO-8601 composite representation
@@ -261,11 +256,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *
          * @sample samples.time.Durations.parseIsoString
          */
-        public fun parseIsoStringOrNull(value: String): Duration? = try {
-            parseDuration(value, strictIso = true)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
+        public fun parseIsoStringOrNull(value: String): Duration? =
+            parseDuration(value, strictIso = true).getOrNull()
     }
 
     // arithmetic operators
@@ -902,9 +894,9 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 
-private fun parseDuration(value: String, strictIso: Boolean): Duration {
+private fun parseDuration(value: String, strictIso: Boolean): Result<Duration> {
     var length = value.length
-    if (length == 0) throw IllegalArgumentException("The string is empty")
+    if (length == 0) return Result.failure { IllegalArgumentException("The string is empty") }
     var index = 0
     var result = Duration.ZERO
     val infinityString = "Infinity"
@@ -915,25 +907,25 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
     val isNegative = hasSign && value.startsWith('-')
     when {
         length <= index ->
-            throw IllegalArgumentException("No components")
+            return Result.failure { IllegalArgumentException("No components") }
         value[index] == 'P' -> {
-            if (++index == length) throw IllegalArgumentException()
+            if (++index == length) return Result.failure { IllegalArgumentException() }
             val nonDigitSymbols = "+-."
             var isTimeComponent = false
             var prevUnit: DurationUnit? = null
             while (index < length) {
                 if (value[index] == 'T') {
-                    if (isTimeComponent || ++index == length) throw IllegalArgumentException()
+                    if (isTimeComponent || ++index == length) return Result.failure { IllegalArgumentException() }
                     isTimeComponent = true
                     continue
                 }
                 val component = value.substringWhile(index) { it in '0'..'9' || it in nonDigitSymbols }
-                if (component.isEmpty()) throw IllegalArgumentException()
+                if (component.isEmpty()) return Result.failure { IllegalArgumentException() }
                 index += component.length
-                val unitChar = value.getOrElse(index) { throw IllegalArgumentException("Missing unit for value $component") }
+                val unitChar = value.getOrElse(index) { return Result.failure { IllegalArgumentException("Missing unit for value $component") } }
                 index++
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
-                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                if (prevUnit != null && prevUnit <= unit) return Result.failure { IllegalArgumentException("Unexpected order of duration components") }
                 prevUnit = unit
                 val dotIndex = component.indexOf('.')
                 if (unit == DurationUnit.SECONDS && dotIndex > 0) {
@@ -946,7 +938,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             }
         }
         strictIso ->
-            throw IllegalArgumentException()
+            return Result.failure { IllegalArgumentException() }
         value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
             result = Duration.INFINITE
         }
@@ -957,7 +949,7 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             var allowSpaces = !hasSign
             if (hasSign && value[index] == '(' && value.last() == ')') {
                 allowSpaces = true
-                if (++index == --length) throw IllegalArgumentException("No components")
+                if (++index == --length) return Result.failure { IllegalArgumentException("No components") }
             }
             while (index < length) {
                 if (afterFirst && allowSpaces) {
@@ -965,26 +957,26 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 }
                 afterFirst = true
                 val component = value.substringWhile(index) { it in '0'..'9' || it == '.' }
-                if (component.isEmpty()) throw IllegalArgumentException()
+                if (component.isEmpty()) return Result.failure { IllegalArgumentException() }
                 index += component.length
                 val unitName = value.substringWhile(index) { it in 'a'..'z' }
                 index += unitName.length
                 val unit = durationUnitByShortName(unitName)
-                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                if (prevUnit != null && prevUnit <= unit) return Result.failure { IllegalArgumentException("Unexpected order of duration components") }
                 prevUnit = unit
                 val dotIndex = component.indexOf('.')
                 if (dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
                     result += whole.toLong().toDuration(unit)
                     result += component.substring(dotIndex).toDouble().toDuration(unit)
-                    if (index < length) throw IllegalArgumentException("Fractional component must be last")
+                    if (index < length) return Result.failure { IllegalArgumentException("Fractional component must be last") }
                 } else {
                     result += component.toLong().toDuration(unit)
                 }
             }
         }
     }
-    return if (isNegative) -result else result
+    return Result.success(if (isNegative) -result else result)
 }
 
 
