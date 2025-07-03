@@ -908,6 +908,30 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
       }
 
       @Test
+      @TestMetadata("exposingPrivateTypeInInternal.kt")
+      public void testExposingPrivateTypeInInternal() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInInternalAfter.kt")
+      public void testExposingPrivateTypeInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInInternalAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublic.kt")
+      public void testExposingPrivateTypeInPublic() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublic.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPrivateTypeInPublicAfter.kt")
+      public void testExposingPrivateTypeInPublicAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPrivateTypeInPublicAfter.kt");
+      }
+
+      @Test
       @TestMetadata("usageIsNotInlinable.kt")
       public void testUsageIsNotInlinable() {
         runTest("compiler/testData/diagnostics/tests/inline/usageIsNotInlinable.kt");
