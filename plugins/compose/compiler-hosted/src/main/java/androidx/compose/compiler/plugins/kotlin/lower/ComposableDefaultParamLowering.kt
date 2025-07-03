@@ -105,7 +105,7 @@ class ComposableDefaultParamLowering(
 
         declaration.transformIfNeeded()
 
-        return super.visitSimpleFunction(declaration)
+        return declaration
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -149,6 +149,9 @@ class ComposableDefaultParamLowering(
 
     private fun IrSimpleFunction.transformIfNeeded(): IrSimpleFunction {
         if (this in originalToTransformed) return originalToTransformed[this]!!
+
+        // Visit function to ensure that calls in the body are transformed
+        super.visitSimpleFunction(this)
 
         val wrapper = makeDefaultParameterWrapper(this)
         originalToTransformed[this] = wrapper
