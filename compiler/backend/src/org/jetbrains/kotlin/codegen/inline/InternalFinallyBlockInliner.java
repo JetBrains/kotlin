@@ -254,6 +254,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
                 //Copying finally body before non-local return instruction
                 insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
+                instructions.resetLabels(); // we do not need mapping from old to new labels except `labelsInsideFinallyOldToNew`
 
                 // apply line number for inlined copy of finally block if needed
                 AbstractInsnNode copiedFinallyStart = finallyBlockCopy.instructions.getFirst();
@@ -396,8 +397,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     assert inlineFun.instructions.indexOf(tryCatchBlockNode.start) <= inlineFun.instructions.indexOf(tryCatchBlockNode.end);
 
                     TryCatchBlockNode additionalTryCatchBlock =
-                            new TryCatchBlockNode((LabelNode) tryCatchBlockNode.start.getLabel().info,
-                                                  (LabelNode) tryCatchBlockNode.end.getLabel().info,
+                            new TryCatchBlockNode(getNewLabel(tryCatchBlockNode.start, labelsInsideFinallyOldToNew),
+                                                  getNewLabel(tryCatchBlockNode.end, labelsInsideFinallyOldToNew),
                                                   getNewOrOldLabel(tryCatchBlockNode.handler, labelsInsideFinallyOldToNew),
                                                   tryCatchBlockNode.type);
 
@@ -432,9 +433,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                                                                                    " " +
                                                                                    endNode.getType();
 
-                    getTryBlocksMetaInfo()
-                            .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info,
-                                                               (LabelNode) startNode.getStartLabel().getLabel().info), false);
+                    getTryBlocksMetaInfo().split(endNode,
+                                                 new SimpleInterval(
+                                                         getNewLabel(endNode.getNode().end, labelsInsideFinallyOldToNew),
+                                                         getNewLabel(startNode.getStartLabel(), labelsInsideFinallyOldToNew)),
+                                                 false);
                 }
             }
         }
@@ -447,8 +450,10 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 for (TryCatchBlockNodePosition endBlockPosition : singleCluster.getBlocks()) {
                     TryCatchBlockNodeInfo endNode = endBlockPosition.getNodeInfo();
                     getTryBlocksMetaInfo()
-                            .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info,
-                                                               (LabelNode) insertedBlockEnd.getLabel().info), false);
+                            .split(endNode, new SimpleInterval(
+                                    getNewLabel(endNode.getNode().end, labelsInsideFinallyOldToNew),
+                                    insertedBlockEnd),
+                               false);
                 }
 
                 handler2Cluster.clear();
@@ -474,6 +479,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
     private static LabelNode getNewOrOldLabel(LabelNode oldHandler, @NotNull Map<LabelNode, LabelNode> labelsInsideFinallyOldToNew) {
         return labelsInsideFinallyOldToNew.getOrDefault(oldHandler, oldHandler);
+    }
+
+    private static LabelNode getNewLabel(LabelNode old, @NotNull Map<LabelNode, LabelNode> oldToNew) {
+        assert oldToNew.containsKey(old);
+        return oldToNew.get(old);
     }
 
     private static boolean hasFinallyBlocks(List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo) {
