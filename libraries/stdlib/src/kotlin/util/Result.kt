@@ -102,10 +102,13 @@ public value class Result<out T> @PublishedApi internal constructor(
             Result(createFailure(exception))
     }
 
-    internal class Failure(
-        @JvmField
+    internal interface Failure : Serializable {
         val exception: Throwable
-    ) : Serializable {
+    }
+
+    internal class EagerFailure(
+        override val exception: Throwable
+    ) : Failure {
         override fun equals(other: Any?): Boolean = other is Failure && exception == other.exception
         override fun hashCode(): Int = exception.hashCode()
         override fun toString(): String = "Failure($exception)"
@@ -119,7 +122,7 @@ public value class Result<out T> @PublishedApi internal constructor(
 @PublishedApi
 @SinceKotlin("1.3")
 internal fun createFailure(exception: Throwable): Any =
-    Result.Failure(exception)
+    Result.EagerFailure(exception)
 
 /**
  * Throws exception if the result is failure. This internal function minimizes
