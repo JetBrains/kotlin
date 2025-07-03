@@ -299,12 +299,6 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingC
         }
 
     }
-
-    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
-        }
-    }
 }
 
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
@@ -330,6 +324,12 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext
                 // Pipeline that is similar to `llvm-lto`.
                 add("lto<$optimizationFlag>")
             }
+
+    override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        }
+    }
 }
 
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :
