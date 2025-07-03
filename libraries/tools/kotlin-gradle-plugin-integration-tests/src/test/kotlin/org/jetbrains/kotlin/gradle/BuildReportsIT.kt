@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
@@ -25,6 +26,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.streams.asSequence
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -747,20 +749,20 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReport = readJsonReport(jsonReportFile)
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
 
-                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
+                val compilerMetrics = listOf(
+                    GradleBuildTime.COMPILER_INITIALIZATION,
+                    GradleBuildTime.CODE_ANALYSIS,
+                    GradleBuildTime.TRANSLATION_TO_IR,
+                    GradleBuildTime.CODE_GENERATION,
+                    GradleBuildTime.IR_LOWERING,
+                    GradleBuildTime.BACKEND,
+                )
                 val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.asMapMs().keys.filter { it in compilerMetrics }
 
+                // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
+                val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
                 assertEquals(
-                    listOf(
-                        GradleBuildTime.COMPILER_INITIALIZATION,
-                        GradleBuildTime.CODE_ANALYSIS,
-                        GradleBuildTime.TRANSLATION_TO_IR,
-                        GradleBuildTime.IR_PRE_LOWERING,
-                        GradleBuildTime.IR_SERIALIZATION,
-                        GradleBuildTime.KLIB_WRITING,
-                        GradleBuildTime.IR_LOWERING,
-                        GradleBuildTime.BACKEND,
-                    ),
+                    expected,
                     reportedCompilerMetrics.sorted()
                 )
             }
