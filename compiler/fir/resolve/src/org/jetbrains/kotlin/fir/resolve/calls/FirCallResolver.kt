@@ -372,8 +372,8 @@ class FirCallResolver(
             reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
         )
 
-        when {
-            referencedSymbol is FirClassLikeSymbol<*> -> {
+        when (referencedSymbol) {
+            is FirClassLikeSymbol<*> -> {
                 val extraDiagnostic =
                     runIf(reducedCandidates.singleOrNull()?.doesResolutionResultOverrideOtherToPreserveCompatibility() == true) {
                         ConeResolutionResultOverridesOtherToPreserveCompatibility
@@ -398,7 +398,7 @@ class FirCallResolver(
                     annotations = qualifiedAccess.annotations
                 )
             }
-            referencedSymbol is FirTypeParameterSymbol && referencedSymbol.fir.isReified && diagnostic == null -> {
+            is FirTypeParameterSymbol if referencedSymbol.fir.isReified && diagnostic == null -> {
                 return buildResolvedReifiedParameterReference {
                     source = nameReference.source
                     symbol = referencedSymbol
