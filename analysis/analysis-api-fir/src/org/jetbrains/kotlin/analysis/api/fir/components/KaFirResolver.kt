@@ -132,9 +132,6 @@ internal class KaFirResolver(
 
         if (wholeQualifier !is FirResolvedQualifier) return false
 
-        val wholeQualifierNameExpression = (wholeQualifier.psi as? KtElement)?.getQualifiedElementSelector() as? KtSimpleNameExpression
-        if (wholeQualifierNameExpression != element) return false
-
         return wholeQualifier.resolvedToCompanionObject
     }
 

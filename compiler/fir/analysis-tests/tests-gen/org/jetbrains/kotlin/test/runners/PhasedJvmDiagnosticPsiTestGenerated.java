@@ -35755,6 +35755,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("sealedCompanionFunctionSameNameAsInheritor.kt")
+      public void testSealedCompanionFunctionSameNameAsInheritor() {
+        runTest("compiler/testData/diagnostics/tests/resolve/sealedCompanionFunctionSameNameAsInheritor.kt");
+      }
+
+      @Test
       @TestMetadata("smartcastToMoreSpecificProperty.kt")
       public void testSmartcastToMoreSpecificProperty() {
         runTest("compiler/testData/diagnostics/tests/resolve/smartcastToMoreSpecificProperty.kt");

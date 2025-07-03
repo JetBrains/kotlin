@@ -304,20 +304,12 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol, notFunctionAsOperatorDiagnostics
         )
-        is FirRegularClassSymbol -> buildResolvedQualifierForClass(
+        is FirClassLikeSymbol -> buildResolvedQualifierForClass(
             symbol,
             sourceElement = info.fakeSourceForImplicitInvokeCallReceiver,
+            explicitParent = info.explicitReceiver as? FirResolvedQualifier,
             nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
         )
-        is FirTypeAliasSymbol -> {
-            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType()
-            val expansionRegularClassSymbol = type.lookupTag.toSymbol(session) ?: return null
-            buildResolvedQualifierForClass(
-                expansionRegularClassSymbol,
-                sourceElement = symbol.fir.source,
-                nonFatalDiagnostics = notFunctionAsOperatorDiagnostics,
-            )
-        }
         else -> throw AssertionError()
     }
 }

@@ -332,6 +332,7 @@ fun createKPropertyType(
 fun BodyResolveComponents.buildResolvedQualifierForClass(
     symbol: FirClassLikeSymbol<*>,
     sourceElement: KtSourceElement?,
+    explicitParent: FirResolvedQualifier?,
     // Note: we need type arguments here, see e.g. testIncompleteConstructorCall in diagnostic group
     typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
     diagnostic: ConeDiagnostic? = null,
@@ -347,7 +348,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         diagnostic,
         nonFatalDiagnostics,
         annotations,
-        explicitParent = null,
+        explicitParent,
     )
 }
 
@@ -368,15 +369,6 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         FirErrorResolvedQualifierBuilder().apply { this.diagnostic = diagnostic }
     }
 
-    // If we resolve to some qualifier, the parent can't have implicitly resolved to the companion object.
-    // In a case like
-    // class Foo { companion object { class Bar } }
-    // Foo.Bar will be unresolved.
-    if (explicitParent?.resolvedToCompanionObject == true) {
-        explicitParent.replaceResolvedToCompanionObject(false)
-        explicitParent.resultType = session.builtinTypes.unitType.coneType
-    }
-
     return builder.apply {
         this.source = sourceElement
         this.packageFqName = packageFqName
@@ -395,6 +387,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
+        this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -404,6 +397,28 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
+}
+
+fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
+    if (condition) {
+        replaceResolvedToCompanionObject(false)
+    }
+}
+
+internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
+    bodyResolveComponents: BodyResolveComponents,
+    source: KtSourceElement?,
+): FirResolvedQualifier {
+    val resolvedQualifier = buildResolvedQualifier {
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        resolvedToCompanionObject = false
+        symbol = this@toImplicitResolvedQualifierReceiver
+        this.source = source
+    }.apply {
+        setTypeOfQualifier(bodyResolveComponents)
+    }
+    return resolvedQualifier
 }
 
 fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {

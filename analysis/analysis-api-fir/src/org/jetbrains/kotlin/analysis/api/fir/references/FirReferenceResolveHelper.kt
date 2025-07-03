@@ -622,7 +622,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KaSymbolByFirBuilder,
     ): Collection<KaSymbol> {
         val referencedSymbol = if (fir.resolvedToCompanionObject) {
-            (fir.symbol?.fir as? FirRegularClass)?.companionObjectSymbol
+            fir.symbol?.fullyExpandedClass(session)?.companionObjectSymbol
         } else {
             fir.symbol
         }
