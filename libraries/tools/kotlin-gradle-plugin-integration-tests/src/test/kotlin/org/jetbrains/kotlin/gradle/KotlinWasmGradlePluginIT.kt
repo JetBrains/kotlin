@@ -486,27 +486,29 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun testDifferentBinaryenVersions(gradleVersion: GradleVersion) {
         project("wasm-browser-several-modules", gradleVersion) {
+            val binaryenVersionForFoo = "123"
+            val binaryenVersionForBar = "119"
             subProject("foo").let {
                 it.buildScriptInjection {
-                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("119")
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForFoo)
                 }
             }
 
             subProject("bar").let {
                 it.buildScriptInjection {
-                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set("118")
+                    project.extensions.getByType(BinaryenEnvSpec::class.java).version.set(binaryenVersionForBar)
                 }
             }
 
             build(":foo:compileProductionExecutableKotlinWasmJsOptimize") {
                 assertOutputContains(
-                    Path("binaryen-version_119").resolve("bin").resolve("wasm-opt").pathString
+                    Path("binaryen-version_$binaryenVersionForFoo").resolve("bin").resolve("wasm-opt").pathString
                 )
             }
 
             build(":bar:compileProductionExecutableKotlinWasmJsOptimize") {
                 assertOutputContains(
-                    Path("binaryen-version_118").resolve("bin").resolve("wasm-opt").pathString
+                    Path("binaryen-version_$binaryenVersionForBar").resolve("bin").resolve("wasm-opt").pathString
                 )
             }
         }
