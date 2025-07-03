@@ -679,4 +679,32 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
             }
         """.trimIndent()
     )
+
+    @Test
+    fun callingOtherMethodWithDefault() {
+        assumeTrue(useFir)
+        defaultParams(
+            unchecked = "",
+            checked = """
+            @Composable fun Main() {
+                Impl.B()
+            }
+
+            interface A {
+                @Composable
+                fun A(
+                    default: () -> Float = { 0f },
+                ) { }
+            }
+
+            interface B {
+                @Composable
+                fun B(param: String = "") = Impl.A()
+            }
+
+            interface Combined : A, B
+            object Impl : Combined
+        """
+        )
+    }
 }
