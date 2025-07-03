@@ -228,6 +228,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     coneTypeOrNull = session.builtinTypes.unitType.coneType
                     this.symbol = symbol
                     isFullyQualified = segments.isNotEmpty()
+                    resolvedToCompanionObject = false
                 }
 
                 // Resolve enum entry by name from the declarations of the receiver.

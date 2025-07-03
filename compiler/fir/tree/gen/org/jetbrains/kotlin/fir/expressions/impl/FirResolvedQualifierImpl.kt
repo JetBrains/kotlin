@@ -38,6 +38,7 @@ internal class FirResolvedQualifierImpl(
     override val symbol: FirClassLikeSymbol<*>?,
     override var explicitParent: FirResolvedQualifier?,
     override var isNullableLHSForCallableReference: Boolean,
+    override var resolvedToCompanionObject: Boolean,
     override var canBeValue: Boolean,
     override val isFullyQualified: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
@@ -47,7 +48,6 @@ internal class FirResolvedQualifierImpl(
         get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, isLocal = false)
 }
-    override var resolvedToCompanionObject: Boolean = (symbol?.fir as? FirRegularClass)?.companionObjectSymbol != null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

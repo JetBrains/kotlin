@@ -96,14 +96,10 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
             ?: return null
 
     for (representativeClass in representativeClass.getParentChainForContextSensitiveResolution(session)) {
-        val additionalQualifier = buildResolvedQualifier {
-            symbol = representativeClass
-            packageFqName = representativeClass.classId.packageFqName
-            relativeClassFqName = representativeClass.classId.relativeClassName
-            source = originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
-        }.apply {
-            setTypeOfQualifier(this@runContextSensitiveResolutionForPropertyAccess)
-        }
+        val additionalQualifier = representativeClass.toImplicitResolvedQualifierReceiver(
+            this,
+            originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
+        )
 
         val newAccess = buildPropertyAccessExpression {
             explicitReceiver = additionalQualifier

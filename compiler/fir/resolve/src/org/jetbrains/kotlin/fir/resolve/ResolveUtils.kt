@@ -395,6 +395,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
+        this.resolvedToCompanionObject = symbol?.fullyExpandedClass(session)?.resolvedCompanionObjectSymbol != null
     }.build().apply {
         if (symbol?.classId?.isLocal == true) {
             resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
@@ -404,6 +405,22 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
             setTypeOfQualifier(this@buildResolvedQualifierForClass)
         }
     }
+}
+
+internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
+    bodyResolveComponents: BodyResolveComponents,
+    source: KtSourceElement?,
+): FirResolvedQualifier {
+    val resolvedQualifier = buildResolvedQualifier {
+        packageFqName = classId.packageFqName
+        relativeClassFqName = classId.relativeClassName
+        resolvedToCompanionObject = false
+        symbol = this@toImplicitResolvedQualifierReceiver
+        this.source = source
+    }.apply {
+        setTypeOfQualifier(bodyResolveComponents)
+    }
+    return resolvedQualifier
 }
 
 fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
