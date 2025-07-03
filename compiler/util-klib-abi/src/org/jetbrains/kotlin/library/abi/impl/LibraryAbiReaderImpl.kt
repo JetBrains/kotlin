@@ -6,7 +6,13 @@
 package org.jetbrains.kotlin.library.abi.impl
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
-import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
+import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFile
+import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
+import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.deserializeFqName
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.CLASS_SYMBOL
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
@@ -34,6 +40,7 @@ import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
+import kotlin.jvm.java
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
