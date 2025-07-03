@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
-import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  *
  * This class does not implement [LLPsiAwareSymbolProvider] because for specific-module symbol provider access, only own symbol providers
  * should be considered, but not dependencies. [LLModuleWithDependenciesSymbolProvider] must consider dependencies for all its overridden
- * symbol provider functions. As such, the class offers alternative functions like [getDeserializedClassLikeSymbolByPsiWithoutDependencies].
+ * symbol provider functions. As such, the class offers alternative functions like [getClassLikeSymbolByPsiWithoutDependencies].
  *
  * ### Module content inclusion
  *
@@ -76,31 +75,18 @@ internal class LLModuleWithDependenciesSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+        getClassLikeSymbolByClassIdWithoutDependencies(classId)
             ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
 
-    fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { provider ->
-            when (provider) {
-                is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
-                is AbstractFirDeserializedSymbolProvider -> provider.getClassLikeSymbolByClassId(classId)
-                else -> null
-            }
-        }
+    fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
     @ModuleSpecificSymbolProviderAccess
-    fun getDeserializedClassLikeSymbolByPsiWithoutDependencies(
+    fun getClassLikeSymbolByPsiWithoutDependencies(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
-    ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
-        when (provider) {
-            is LLKotlinStubBasedLibrarySymbolProvider -> provider.getClassLikeSymbolByPsi(classId, classLikeDeclaration)
-            is AbstractFirDeserializedSymbolProvider -> error(
-                "Deserialized symbols with '${KotlinDeserializedDeclarationsOrigin.BINARIES}' origin don't have associated PSI elements."
-            )
-            else -> null
-        }
-    }
+    ): FirClassLikeSymbol<*>? =
+        providers.firstNotNullOfOrNull { it.getClassLikeSymbolMatchingPsi(classId, classLikeDeclaration) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {

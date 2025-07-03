@@ -171,7 +171,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     private fun findBinaryClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? =
         when (val symbolProvider = session.symbolProvider) {
             is LLModuleWithDependenciesSymbolProvider ->
-                symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId)
+                symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)
             else -> symbolProvider.getClassLikeSymbolByClassId(classId)
         }
 
@@ -184,7 +184,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     private fun findStubClassLikeSymbol(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
         when (val symbolProvider = session.symbolProvider) {
             is LLModuleWithDependenciesSymbolProvider ->
-                symbolProvider.getDeserializedClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
+                symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
             else -> symbolProvider.getClassLikeSymbolMatchingPsi(classId, declaration)
         }
 
