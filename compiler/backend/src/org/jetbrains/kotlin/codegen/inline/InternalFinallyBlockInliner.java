@@ -31,6 +31,7 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.linkWithLabel;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.*;
@@ -229,9 +230,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                             !(currentIns instanceof JumpInsnNode) ||
                             labelsInsideFinally.contains(((JumpInsnNode) currentIns).label);
 
-                    copyInstruction(finallyBlockCopy, currentIns, isInsOrJumpInsideFinally, originalDepthIndex, varsInsideFinally);
+                    copyInstruction(finallyBlockCopy, currentIns, isInsOrJumpInsideFinally, originalDepthIndex);
                     currentIns = currentIns.getNext();
                 }
+                Map<LabelNode, LabelNode> labelsInsideFinallyOldToNew = labelsInsideFinally.stream()
+                        .collect(Collectors.toMap(l -> l, l -> (LabelNode) l.getLabel().info));
 
                 if (generateAloadAstore) {
                     finallyBlockCopy.visitVarInsn(nonLocalReturnType.getOpcode(Opcodes.ILOAD), nextTempNonLocalVarIndex);
@@ -241,16 +244,17 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 finallyBlockCopy.visitLabel(insertedBlockEnd.getLabel());
 
                 // after all finally-blocks are inlined, the resulting interval is removed from current local vars
-                // then, we need to add new intervals there
+                // then, we need to add new intervals there. As `varsInsideFinally` contains copies of intervals, we can just remap them
                 varsInsideFinally.forEach(i -> {
                     i.remapLabel(finallyInfo.closestLabelBeforeStart, newFinallyStart);
+                    labelsInsideFinallyOldToNew.forEach(i::remapLabel);
                     i.remapLabel(finallyInfo.closestLabelAfterEnd, insertedBlockEnd);
                 });
                 newLocalVarIntervals.addAll(varsInsideFinally);
 
                 //Copying finally body before non-local return instruction
                 insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
-                instructions.resetLabels();
+                instructions.resetLabels(); // we do not need mapping from old to new labels except `labelsInsideFinallyOldToNew`
 
                 // apply line number for inlined copy of finally block if needed
                 AbstractInsnNode copiedFinallyStart = finallyBlockCopy.instructions.getFirst();
@@ -266,7 +270,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
                 updateExceptionTable(
                         properFinallySplit ? nestedUnsplitBlocksWithoutFinally : clusterBlocks, newFinallyStart, newFinallyEnd,
-                        tryCatchBlockInlinedInFinally, labelsInsideFinally, insertedBlockEnd
+                        tryCatchBlockInlinedInFinally, labelsInsideFinallyOldToNew, insertedBlockEnd
                 );
                 nestedUnsplitBlocksWithoutFinally.clear();
             }
@@ -318,18 +322,12 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull MethodNode finallyBlockCopy,
             @NotNull AbstractInsnNode currentIns,
             boolean isInsOrJumpInsideFinally,
-            int depthShift,
-            List<LocalVarNodeWrapper> varsInsideFinally
+            int depthShift
     ) {
         if (isInsOrJumpInsideFinally) {
             if (isFinallyMarker(currentIns.getNext())) {
                 Integer constant = getConstant(currentIns);
                 finallyBlockCopy.visitLdcInsn(constant + depthShift);
-            } else if (currentIns instanceof LabelNode) {
-                LabelNode currentLabel = (LabelNode) currentIns;
-                finallyBlockCopy.visitLabel(currentLabel.getLabel());
-                LabelNode newLabel = (LabelNode) finallyBlockCopy.instructions.getLast();
-                varsInsideFinally.forEach(v -> v.remapLabel(currentLabel, newLabel));
             } else {
                 currentIns.accept(finallyBlockCopy); //VISIT
             }
@@ -373,6 +371,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         return labelsInsideFinally;
     }
 
+    // a temporary checker of code refactoring correctness (after extra resetLabels()), to be removed soon
     private static LabelNode checkLabelNode(LabelNode labelNode) {
         Label label = labelNode.getLabel();
         if (label.info != null && label.info != labelNode) {
@@ -386,7 +385,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull LabelNode newFinallyStart,
             @NotNull LabelNode newFinallyEnd,
             @NotNull List<TryCatchBlockNodePosition> tryCatchBlockPresentInFinally,
-            @NotNull Set<LabelNode> labelsInsideFinally,
+            @NotNull Map<LabelNode, LabelNode> labelsInsideFinallyOldToNew,
             @NotNull LabelNode insertedBlockEnd
     ) {
 
@@ -409,7 +408,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     TryCatchBlockNode additionalTryCatchBlock =
                             new TryCatchBlockNode(checkLabelNode(tryCatchBlockNode.start),
                                                   checkLabelNode(tryCatchBlockNode.end),
-                                                  getNewOrOldLabel(tryCatchBlockNode.handler, labelsInsideFinally),
+                                                  getNewOrOldLabel(tryCatchBlockNode.handler, labelsInsideFinallyOldToNew),
                                                   tryCatchBlockNode.type);
 
 
@@ -483,12 +482,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         sortTryCatchBlocks(tryBlocksMetaInfo.getAllIntervals());
     }
 
-    private static LabelNode getNewOrOldLabel(LabelNode oldHandler, @NotNull Set<LabelNode> labelsInsideFinally) {
-        if (labelsInsideFinally.contains(oldHandler)) {
-            return (LabelNode) oldHandler.getLabel().info;
-        }
-
-        return oldHandler;
+    private static LabelNode getNewOrOldLabel(LabelNode oldHandler, @NotNull Map<LabelNode, LabelNode> labelsInsideFinallyOldToNew) {
+        return labelsInsideFinallyOldToNew.getOrDefault(oldHandler, oldHandler);
     }
 
     private static boolean hasFinallyBlocks(List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo) {
