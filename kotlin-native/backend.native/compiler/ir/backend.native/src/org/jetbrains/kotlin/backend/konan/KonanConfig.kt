@@ -295,6 +295,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (genericSafeCasts) BridgesPolicy.BOX_UNBOX_CASTS else BridgesPolicy.BOX_UNBOX_ONLY
     }
 
+    val llvmModuleOptThreads: Int by lazy {
+        configuration.get(KonanConfigKeys.LLVM_MODULE_OPT_THREADS) ?: 1
+    }
+
     val llvmModulePasses: String? by lazy {
         configuration.get(KonanConfigKeys.LLVM_MODULE_PASSES)
     }

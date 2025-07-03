@@ -44,6 +44,7 @@ data class LlvmPipelineConfig(
         val objCPasses: Boolean,
         val inlineThreshold: Int?,
         val timePasses: Boolean = false,
+        val moduleOptThreads: Int = 1,
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
@@ -173,6 +174,7 @@ internal fun createLTOFinalPipelineConfig(
             objcPasses,
             inlineThreshold,
             timePasses = timePasses,
+            moduleOptThreads = config.llvmModuleOptThreads,
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
@@ -187,6 +189,7 @@ abstract class LlvmOptimizationPipeline(
 
     abstract val pipelineName: String
     abstract val passes: List<String>
+    open val threads: Int = 1
     val optimizationFlag = when (config.sizeLevel) {
         LlvmSizeLevel.NONE -> "O${config.optimizationLevel.value}"
         LlvmSizeLevel.DEFAULT -> "Os"
@@ -244,9 +247,15 @@ abstract class LlvmOptimizationPipeline(
                 """.trimIndent()
             }
             if (passDescription.isEmpty()) return
-            val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
-            require(errorCode == null) {
-                LLVMGetErrorMessage(errorCode)!!.toKString()
+            if (threads == 1) {
+                val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
+                require(errorCode == null) {
+                    LLVMGetErrorMessage(errorCode)!!.toKString()
+                }
+            } else {
+                LLVMRunPassesParallel(
+                        llvmModule, passDescription, options,
+                        config.targetTriple, targetMachineOptions, threads)
             }
             if (config.timePasses) {
                 LLVMPrintAllTimersToStdOut()
@@ -305,6 +314,7 @@ class ModuleOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingCont
         LlvmOptimizationPipeline(config, logger) {
     override val pipelineName = "New PM Module LLVM optimizations"
     override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
+    override val threads = config.moduleOptThreads
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, logger: LoggingContext? = null) :

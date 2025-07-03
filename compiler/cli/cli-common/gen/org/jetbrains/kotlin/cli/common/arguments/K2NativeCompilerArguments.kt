@@ -954,6 +954,16 @@ The default value is 1.""",
         }
 
     @Argument(
+        value = "-Xllvm-module-opt-threads",
+        description = "Number of threads to use for ModuleOptimizationPipeline.",
+    )
+    var llvmModuleOptThreads: String = "1"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xllvm-module-passes",
         description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.",
     )
