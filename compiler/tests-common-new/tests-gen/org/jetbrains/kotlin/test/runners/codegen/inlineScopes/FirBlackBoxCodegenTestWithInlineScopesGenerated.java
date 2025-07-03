@@ -13820,6 +13820,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("unsafeTransform.kt")
+    public void testUnsafeTransform() {
+      runTest("compiler/testData/codegen/box/coroutines/unsafeTransform.kt");
+    }
+
+    @Test
     @TestMetadata("varCaptuedInCoroutineIntrinsic.kt")
     public void testVarCaptuedInCoroutineIntrinsic() {
       runTest("compiler/testData/codegen/box/coroutines/varCaptuedInCoroutineIntrinsic.kt");

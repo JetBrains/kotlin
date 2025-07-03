@@ -302,6 +302,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 val function = expression.invokeFunction
                 if (function.isSuspend) {
                     expression.invokeFunction = transformToView(function).single()
+                    return expression
                 }
                 return super.visitRichFunctionReference(expression)
             }

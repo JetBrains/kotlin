@@ -13969,6 +13969,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     }
 
     @Test
+    @TestMetadata("unsafeTransform.kt")
+    public void testUnsafeTransform() {
+      runTest("compiler/testData/codegen/box/coroutines/unsafeTransform.kt");
+    }
+
+    @Test
     @TestMetadata("varCaptuedInCoroutineIntrinsic.kt")
     public void testVarCaptuedInCoroutineIntrinsic() {
       runTest("compiler/testData/codegen/box/coroutines/varCaptuedInCoroutineIntrinsic.kt");
