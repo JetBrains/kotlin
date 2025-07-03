@@ -9441,6 +9441,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("otherAnnotations.kt")
+      public void testOtherAnnotations() {
+        runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations.kt");
+      }
+
+      @Test
+      @TestMetadata("packageInfoJava.kt")
+      public void testPackageInfoJava() {
+        runTest("compiler/testData/diagnostics/tests/crv/packageInfoJava.kt");
+      }
+
+      @Test
       @TestMetadata("receiverInFunctionalCall.kt")
       public void testReceiverInFunctionalCall() {
         runTest("compiler/testData/diagnostics/tests/crv/receiverInFunctionalCall.kt");
@@ -9501,6 +9513,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("basic.kt")
       public void testBasic() {
         runTest("compiler/testData/diagnostics/tests/crvFull/basic.kt");
+      }
+
+      @Test
+      @TestMetadata("jInterop.kt")
+      public void testJInterop() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/jInterop.kt");
       }
 
       @Test

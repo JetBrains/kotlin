@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -316,29 +315,14 @@ class FirStatusResolver(
         containingProperty: FirProperty?,
     ): Boolean {
         if (declaration !is FirCallableDeclaration) return false
-        val analysisMode = session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode)
-        if (analysisMode == ReturnValueCheckerMode.DISABLED) return false
 
-        if (isLocal) {
-            return declaration is FirFunction
-        }
-
-        if (declaration.hasAnnotation(StandardClassIds.Annotations.IgnorableReturnValue, session)) return false
-        if (declaration.hasAnnotation(StandardClassIds.Annotations.MustUseReturnValue, session)) return true
-        if (analysisMode == ReturnValueCheckerMode.FULL) return true
-
-        fun List<ClassId>?.hasMurv() = this?.any { it == StandardClassIds.Annotations.MustUseReturnValue } ?: false
-
-        // Checking the most probable places for annotation one-by-one to avoid computing unnecessary empty annotations lists:
-        if (containingClass?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        if (session.firProvider.getFirCallableContainerFile(declaration.symbol)?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        if (containingProperty?.symbol?.resolvedAnnotationClassIds.hasMurv()) return true
-        // Outer classes:
-        fun FirClassLikeSymbol<*>.hasMurvOrOuter(): Boolean {
-            if (this.resolvedAnnotationClassIds.hasMurv()) return true
-            return this.getContainingDeclaration(session)?.hasMurvOrOuter() ?: false
-        }
-        return containingClass?.getContainingDeclaration(session)?.symbol?.hasMurvOrOuter() ?: false
+        return session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForCallable(
+            session,
+            declaration.symbol,
+            isLocal,
+            containingClass?.symbol,
+            containingProperty?.symbol
+        )
     }
 
     private fun resolveVisibility(

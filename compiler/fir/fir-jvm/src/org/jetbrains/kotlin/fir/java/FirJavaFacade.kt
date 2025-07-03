@@ -186,7 +186,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol)
+            declarationList = FirLazyJavaDeclarationList(javaClass, classSymbol, javaPackage)
         }.apply {
             if (originalStatus.modality == Modality.SEALED) {
                 setSealedClassInheritors {
@@ -211,7 +211,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
 }
 
 /** @see FirJavaDeclarationList */
-private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol) : FirJavaDeclarationList {
+private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularClassSymbol, javaPackage: JavaPackage?) : FirJavaDeclarationList {
     /**
      * [LazyThreadSafetyMode.PUBLICATION] is used here to avoid any potential problems with deadlocks
      * as we cannot control how Java resolution will access [declarations].
@@ -254,6 +254,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 dispatchReceiver,
                 moduleData,
                 classSymbol,
+                javaPackage
             )
 
             declarations += firJavaMethod
@@ -284,6 +285,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 classTypeParameters,
                 parentClassSymbol,
                 moduleData,
+                javaPackage
             )
         }
 
@@ -296,6 +298,7 @@ private class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirR
                 classTypeParameters,
                 parentClassSymbol,
                 moduleData,
+                javaPackage,
             )
         }
 
@@ -559,12 +562,22 @@ private fun convertJavaMethodToFir(
     dispatchReceiver: ConeClassLikeType,
     moduleData: FirModuleData,
     containingClassSymbol: FirRegularClassSymbol,
+    javaPackage: JavaPackage?,
 ): FirJavaMethod {
     val session = moduleData.session
     val methodName = javaMethod.name
     val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
     val methodSymbol = FirNamedFunctionSymbol(methodId)
     val returnType = javaMethod.returnType
+    val methodStatus = FirResolvedDeclarationStatusImpl(
+        javaMethod.visibility,
+        javaMethod.modality,
+        javaMethod.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
+    ).apply {
+        isStatic = javaMethod.isStatic
+        hasStableParameterNames = false
+    }
+
     return buildJavaMethod {
         this.containingClassSymbol = containingClassSymbol
         this.moduleData = moduleData
@@ -582,14 +595,7 @@ private fun convertJavaMethodToFir(
 
         annotationList = FirLazyJavaAnnotationList(javaMethod, moduleData)
 
-        status = FirResolvedDeclarationStatusImpl(
-            javaMethod.visibility,
-            javaMethod.modality,
-            javaMethod.visibility.toEffectiveVisibility(dispatchReceiver.lookupTag)
-        ).apply {
-            isStatic = javaMethod.isStatic
-            hasStableParameterNames = false
-        }
+        status = methodStatus
 
         if (!javaMethod.isStatic) {
             dispatchReceiverType = dispatchReceiver
@@ -601,6 +607,13 @@ private fun convertJavaMethodToFir(
         if (containingClass.isRecord && valueParameters.isEmpty() && containingClass.recordComponents.any { it.name == methodName }) {
             isJavaRecordComponent = true
         }
+        // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
+        methodStatus.hasMustUseReturnValue = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
+            session,
+            methodSymbol,
+            containingClassSymbol,
+            javaPackage?.annotations?.mapNotNull { it.classId }
+        )
     }
 }
 
@@ -627,34 +640,36 @@ private fun convertJavaConstructorToFir(
     classTypeParameters: List<FirTypeParameter>,
     outerClassSymbol: FirRegularClassSymbol?,
     moduleData: FirModuleData,
+    javaPackage: JavaPackage?,
 ): FirJavaConstructor {
     val session = moduleData.session
     val constructorSymbol = FirConstructorSymbol(constructorId)
+    val javaFirClass = classSymbol.fir as FirJavaClass
+    val visibility = javaConstructor?.visibility ?: javaFirClass.originalStatus.visibility
+    val classIsInner = javaClass.outerClass != null && !javaClass.isStatic
+    val methodStatus = FirResolvedDeclarationStatusImpl(
+        visibility,
+        Modality.FINAL,
+        visibility.toEffectiveVisibility(classSymbol)
+    ).apply {
+        isInner = classIsInner
+        hasStableParameterNames = false
+    }
+
     return buildJavaConstructor {
-        val javaFirClass = classSymbol.fir as FirJavaClass
         containingClassSymbol = classSymbol
         source = javaConstructor?.toSourceElement() ?: javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
         this.moduleData = moduleData
         isFromSource = javaClass.isFromSource
         symbol = constructorSymbol
-        isInner = javaClass.outerClass != null && !javaClass.isStatic
-        val isThisInner = this.isInner
-        val visibility = javaConstructor?.visibility ?: javaFirClass.originalStatus.visibility
-        status = FirResolvedDeclarationStatusImpl(
-            visibility,
-            Modality.FINAL,
-            visibility.toEffectiveVisibility(classSymbol)
-        ).apply {
-            isInner = isThisInner
-            hasStableParameterNames = false
-        }
+        isInner = classIsInner
+        status = methodStatus
         // TODO get rid of dependency on PSI KT-63046
         isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }
-
-        dispatchReceiverType = if (isThisInner)
+        dispatchReceiverType = if (classIsInner)
             outerClassSymbol?.fir?.let { outerFirJavaClass ->
                 outerFirJavaClass as FirJavaClass
 
@@ -676,6 +691,13 @@ private fun convertJavaConstructorToFir(
         }
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+        // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
+        methodStatus.hasMustUseReturnValue = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
+            session,
+            constructorSymbol,
+            classSymbol,
+            javaPackage?.annotations?.mapNotNull { it.classId }
+        )
     }
 }
 
