@@ -312,6 +312,16 @@ fun main() {
             ) {
                 model()
             }
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirNativeStandaloneTestWithInlinedFunInKlibGenerated",
+                annotations = listOf(
+                    *standalone(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    klibIrInliner(),
+                )
+            ) {
+                model()
+            }
         }
         val binaryLibraryKinds = mapOf(
             "Static" to binaryLibraryKind("STATIC"),
