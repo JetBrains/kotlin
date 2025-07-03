@@ -235,6 +235,10 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
+            testClass<AbstractFirJsCodegenInlineWithInlinedFunInKlibTest> {
+                model("boxInline")
+            }
+
             testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
                 model("boxInline")
             }
