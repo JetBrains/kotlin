@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.services
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -35,8 +32,6 @@ abstract class LLFirElementByPsiElementChooser {
     abstract fun isMatchingTypeParameter(psi: KtTypeParameter, fir: FirTypeParameter): Boolean
 
     abstract fun isMatchingEnumEntry(psi: KtEnumEntry, fir: FirEnumEntry): Boolean
-
-    abstract fun isMatchingClassLikeDeclaration(classId: ClassId, psi: KtClassLikeDeclaration, fir: FirClassLikeDeclaration): Boolean
 
     abstract fun isMatchingCallableDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean
 

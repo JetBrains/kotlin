@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -25,9 +22,6 @@ internal class LLRealFirElementByPsiElementChooser : LLFirElementByPsiElementCho
     override fun isMatchingTypeParameter(psi: KtTypeParameter, fir: FirTypeParameter): Boolean = fir.realPsi === psi
 
     override fun isMatchingEnumEntry(psi: KtEnumEntry, fir: FirEnumEntry): Boolean = fir.realPsi === psi
-
-    override fun isMatchingClassLikeDeclaration(classId: ClassId, psi: KtClassLikeDeclaration, fir: FirClassLikeDeclaration): Boolean =
-        fir.realPsi === psi
 
     override fun isMatchingCallableDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean = fir.realPsi === psi
 }

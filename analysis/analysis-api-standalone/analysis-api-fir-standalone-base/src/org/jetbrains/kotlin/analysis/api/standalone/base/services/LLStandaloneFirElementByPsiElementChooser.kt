@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -54,12 +52,6 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         if (fir.realPsi != null) return fir.realPsi === psi
 
         return fir.name == psi.nameAsName
-    }
-
-    override fun isMatchingClassLikeDeclaration(classId: ClassId, psi: KtClassLikeDeclaration, fir: FirClassLikeDeclaration): Boolean {
-        if (fir.realPsi != null) return fir.realPsi === psi
-
-        return fir.classId == classId
     }
 
     // TODO: Use structural type comparison? We can potentially ignore components which don't factor into overload resolution, such as type
