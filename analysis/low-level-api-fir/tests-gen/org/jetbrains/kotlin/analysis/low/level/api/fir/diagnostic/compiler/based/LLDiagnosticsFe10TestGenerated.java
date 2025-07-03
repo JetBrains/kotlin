@@ -292,12 +292,6 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
-    @TestMetadata("classVsClassIsCheck.kt")
-    public void testClassVsClassIsCheck() {
-      runTest("compiler/testData/diagnostics/tests/classVsClassIsCheck.kt");
-    }
-
-    @Test
     @TestMetadata("companionObjectInEnumAccess.kt")
     public void testCompanionObjectInEnumAccess() {
       runTest("compiler/testData/diagnostics/tests/companionObjectInEnumAccess.kt");
@@ -6238,6 +6232,42 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("checkCastToNullableType.kt")
       public void testCheckCastToNullableType() {
         runTest("compiler/testData/diagnostics/tests/cast/checkCastToNullableType.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheck.kt")
+      public void testClassVsClassIsCheck() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheck.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckAndIntersectionType.kt")
+      public void testClassVsClassIsCheckAndIntersectionType() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckAndIntersectionType.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckJava.kt")
+      public void testClassVsClassIsCheckJava() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckJava.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckNullable.kt")
+      public void testClassVsClassIsCheckNullable() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckNullable.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckTypealias.kt")
+      public void testClassVsClassIsCheckTypealias() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckTypealias.kt");
+      }
+
+      @Test
+      @TestMetadata("classVsClassIsCheckWithTypeParameter.kt")
+      public void testClassVsClassIsCheckWithTypeParameter() {
+        runTest("compiler/testData/diagnostics/tests/cast/classVsClassIsCheckWithTypeParameter.kt");
       }
 
       @Test
