@@ -37,8 +37,8 @@ internal object GradleDeprecatedPropertyChecker : KotlinGradleProjectChecker {
         DeprecatedProperty(
             "kotlin.native.useEmbeddableCompilerJar",
             "This property is no longer needed. The embeddable compiler jar is always used for Kotlin/Native projects." +
-                    " It was removed in 2.2.10, see https://kotl.in/KT-51301 for details."
-        ), // Since 2.2.10
+                    " It was removed in 2.2.20, see https://kotl.in/KT-51301 for details."
+        ), // Since 2.2.20
         DeprecatedProperty(
             propertyName = "kotlin.incremental.useClasspathSnapshot",
             details = "History based incremental compilation approach for JVM platform is removed." +
