@@ -73,6 +73,8 @@ class C2 {
     }
 }
 
+typealias C3TA = C3
+
 class C3 {
     private companion object {
         fun foo() {}
@@ -80,6 +82,9 @@ class C3 {
 
     internal inline fun internal() {
         <!LESS_VISIBLE_CONTAINING_CLASS_IN_INLINE_ERROR, PRIVATE_CLASS_MEMBER_FROM_INLINE!>foo<!>() // already an error, should be an error
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>Companion<!>
+        C3
+        C3TA
     }
 }
 
