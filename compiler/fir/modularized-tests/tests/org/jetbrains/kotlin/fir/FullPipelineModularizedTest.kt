@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 
 // This is used for API version configuration for both frontends
@@ -22,6 +24,12 @@ internal val LANGUAGE_VERSION_K2: String = when (val versionMacro = System.getPr
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
+        args.internalArguments += ManualLanguageFeatureSetting(
+            LanguageFeature.AllowEagerSupertypeAccessibilityChecks,
+            LanguageFeature.State.ENABLED,
+            "-XXLanguage:+${LanguageFeature.AllowEagerSupertypeAccessibilityChecks.name}",
+        )
+
         args.languageVersion = LANGUAGE_VERSION_K2
         args.debugLevelCompilerChecks = ENABLE_SLOW_ASSERTIONS
 
