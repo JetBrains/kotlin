@@ -33,7 +33,7 @@ public class JavaMain {
 
 // FILE: JavaImplicitConstructor.java
 import kotlin.MustUseReturnValue;
-// TODO: implicit constructors are not saving hasMustUseReturnValue flag through transformations for some reason
+
 @MustUseReturnValue
 public class JavaImplicitConstructor {}
 

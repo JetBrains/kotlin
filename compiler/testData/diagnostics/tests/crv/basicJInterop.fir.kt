@@ -33,13 +33,13 @@ public class JavaMain {
 
 // FILE: JavaImplicitConstructor.java
 import kotlin.MustUseReturnValue;
-// TODO: implicit constructors are not saving hasMustUseReturnValue flag through transformations for some reason
+
 @MustUseReturnValue
 public class JavaImplicitConstructor {}
 
 // FILE: KtFile.kt
 fun simple() {
-    JavaImplicitConstructor()
+    <!RETURN_VALUE_NOT_USED!>JavaImplicitConstructor()<!>
     <!RETURN_VALUE_NOT_USED!>JavaMain()<!>
     <!RETURN_VALUE_NOT_USED!>JavaMain().prop<!>
     <!RETURN_VALUE_NOT_USED!>JavaMain().checkedMethod()<!>
