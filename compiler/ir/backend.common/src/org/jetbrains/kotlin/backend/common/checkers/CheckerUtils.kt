@@ -116,6 +116,7 @@ private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
     listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
+    if (!isBound) return true
     for (excludedFqName in FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS) {
         if (hasEqualFqName(excludedFqName)) return true
         val owner = owner
@@ -189,6 +190,7 @@ internal fun checkFunctionUseSite(
     inlineFunctionUseSiteChecker: InlineFunctionUseSiteChecker,
     context: CheckerContext,
 ) {
+    if (!expression.symbol.isBound) return
     val function = expression.symbol.owner
     if (!function.isInline || inlineFunctionUseSiteChecker.isPermitted(expression)) return
     val message = buildString {
