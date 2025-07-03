@@ -138,8 +138,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
 
         val generateDts = configuration.getBoolean(JSConfigurationKeys.GENERATE_DTS)
         val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
-        val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS) &&
-                configuration.get(WasmConfigurationKeys.WASM_TARGET) != WasmTarget.WASI
+        val useDebuggerCustomFormatters = configuration.getBoolean(JSConfigurationKeys.USE_DEBUGGER_CUSTOM_FORMATTERS)
 
         val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
 
