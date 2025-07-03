@@ -188,6 +188,8 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
 
     private fun IrPropertyReference.getReceiverOrNull(): IrExpression? {
         return getReceiverParameterOrNull()?.indexInParameters?.let(arguments::get)
+        // In POJOs there is no getter, and thus there are no receiver parameters anywhere.
+            ?: if (field?.owner?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) arguments.singleOrNull() else null
     }
 
     private fun IrPropertyReference.getReceiverParameterOrNull(): IrValueParameter? = getter?.owner?.getReceiverParameterOrNull()

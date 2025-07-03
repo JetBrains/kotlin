@@ -56316,6 +56316,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("java2kotlinDelegation.kt")
+    public void testJava2kotlinDelegation() {
+      runTest("compiler/testData/codegen/box/regressions/java2kotlinDelegation.kt");
+    }
+
+    @Test
     @TestMetadata("kt10143.kt")
     public void testKt10143() {
       runTest("compiler/testData/codegen/box/regressions/kt10143.kt");
