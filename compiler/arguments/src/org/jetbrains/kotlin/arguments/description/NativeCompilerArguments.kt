@@ -928,6 +928,7 @@ The default value is 1.""".asReleaseDependent()
         description = "Number of threads to use for ModuleOptimizationPipeline.".asReleaseDependent()
         valueType = IntType.defaultOne
 
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
         stubLifecycle()
     }
 
