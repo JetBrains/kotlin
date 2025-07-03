@@ -58,7 +58,7 @@ private class A {
 }
 
 inline fun internal4() {
-    A.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>B<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
+    A.<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>B<!>.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>()// should be an error
 }
 
 class C2 {
@@ -83,8 +83,8 @@ class C3 {
     inline fun internal() {
         <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>foo<!>() // already an error, should be an error
         <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>Companion<!>
-        C3
-        C3TA
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3<!>
+        <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR, NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>C3TA<!>
     }
 }
 
