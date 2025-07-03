@@ -40240,6 +40240,18 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     }
 
     @Test
+    @TestMetadata("overrideResolution.kt")
+    public void testOverrideResolution() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("overrideResolutionWithInlinedFunInKlib.kt")
+    public void testOverrideResolutionWithInlinedFunInKlib() {
+      runTest("compiler/testData/codegen/box/reified/overrideResolutionWithInlinedFunInKlib.kt");
+    }
+
+    @Test
     @TestMetadata("recursiveNewArray.kt")
     public void testRecursiveNewArray() {
       runTest("compiler/testData/codegen/box/reified/recursiveNewArray.kt");
