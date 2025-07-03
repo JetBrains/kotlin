@@ -47,6 +47,15 @@ fun main() {
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
+                annotations = listOf(
+                    klibIrInliner(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model(targetBackend = TargetBackend.NATIVE)
+            }
         }
 
         // Codegen box tests.
