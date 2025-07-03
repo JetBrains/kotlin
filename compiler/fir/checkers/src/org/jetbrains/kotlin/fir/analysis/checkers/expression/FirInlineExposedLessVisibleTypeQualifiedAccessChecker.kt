@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.forEachType
 
-object FirInlineExposedLessVisibleTypeQualifierAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
+object FirInlineExposedLessVisibleTypeQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Platform) {
     context(c: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val inlineFunctionBodyContext = c.inlineFunctionBodyContext ?: return
