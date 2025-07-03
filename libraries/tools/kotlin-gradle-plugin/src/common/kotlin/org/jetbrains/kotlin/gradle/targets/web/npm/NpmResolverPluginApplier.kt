@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 internal class NpmResolverPluginApplier(
     private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,
+    private val requiredNpmDependenciesPredicate: (RequiresNpmDependencies) -> Boolean,
 ) {
     fun apply(project: Project) {
         val nodeJsRoot = nodeJsRootApply(project)
@@ -32,11 +33,11 @@ internal class NpmResolverPluginApplier(
         project.whenEvaluated {
             project.tasks.implementing(RequiresNpmDependencies::class)
                 .configureEach { task ->
-                    if (task.enabled) {
-                        task as RequiresNpmDependencies
+                    task as RequiresNpmDependencies
+                    if (requiredNpmDependenciesPredicate(task) && task.enabled) {
                         // KotlinJsTest delegates npm dependencies to testFramework,
                         // which can be defined after this configure action
-                        if (task.compilation.wasmTarget == null && task !is KotlinJsTest) {
+                        if (task !is KotlinJsTest) {
                             nodeJsRoot.taskRequirements.addTaskRequirements(task)
 
                             if (task.requiredNpmDependencies.isNotEmpty()) {
