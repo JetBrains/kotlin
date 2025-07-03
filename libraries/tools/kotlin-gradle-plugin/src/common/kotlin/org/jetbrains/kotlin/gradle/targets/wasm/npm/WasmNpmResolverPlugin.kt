@@ -23,6 +23,11 @@ abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverP
         NpmResolverPluginApplier(
             { WasmNodeJsRootPlugin.Companion.apply(project.rootProject) },
             { WasmNodeJsPlugin.Companion.apply(project) },
+            /**
+             * For wasm we don't need to add NPM dependencies
+             * We install all npm dependencies in [org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinToolingSetupTask]
+             */
+            { false },
         ).apply(project)
     }
 

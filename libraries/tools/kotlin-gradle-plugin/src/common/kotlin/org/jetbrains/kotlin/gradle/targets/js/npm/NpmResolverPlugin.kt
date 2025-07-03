@@ -26,6 +26,7 @@ class NpmResolverPlugin : CommonNpmResolverPlugin {
         NpmResolverPluginApplier(
             { NodeJsRootPlugin.apply(project.rootProject) },
             { NodeJsPlugin.apply(project) },
+            { it.compilation.wasmTarget == null },
         ).apply(project)
     }
 
