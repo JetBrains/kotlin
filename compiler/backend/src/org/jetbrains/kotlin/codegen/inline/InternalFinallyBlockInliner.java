@@ -254,7 +254,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
                 //Copying finally body before non-local return instruction
                 insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
-                instructions.resetLabels(); // we do not need mapping from old to new labels except `labelsInsideFinallyOldToNew`
 
                 // apply line number for inlined copy of finally block if needed
                 AbstractInsnNode copiedFinallyStart = finallyBlockCopy.instructions.getFirst();
@@ -371,15 +370,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         return labelsInsideFinally;
     }
 
-    // a temporary checker of code refactoring correctness (after extra resetLabels()), to be removed soon
-    private static LabelNode checkLabelNode(LabelNode labelNode) {
-        Label label = labelNode.getLabel();
-        if (label.info != null && label.info != labelNode) {
-            throw new IllegalStateException("Label was not properly reset: " + labelNode);
-        }
-        return labelNode;
-    }
-
     private void updateExceptionTable(
             @NotNull List<TryCatchBlockNodeInfo> updatingClusterBlocks,
             @NotNull LabelNode newFinallyStart,
@@ -406,8 +396,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     assert inlineFun.instructions.indexOf(tryCatchBlockNode.start) <= inlineFun.instructions.indexOf(tryCatchBlockNode.end);
 
                     TryCatchBlockNode additionalTryCatchBlock =
-                            new TryCatchBlockNode(checkLabelNode(tryCatchBlockNode.start),
-                                                  checkLabelNode(tryCatchBlockNode.end),
+                            new TryCatchBlockNode((LabelNode) tryCatchBlockNode.start.getLabel().info,
+                                                  (LabelNode) tryCatchBlockNode.end.getLabel().info,
                                                   getNewOrOldLabel(tryCatchBlockNode.handler, labelsInsideFinallyOldToNew),
                                                   tryCatchBlockNode.type);
 
@@ -443,8 +433,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                                                                                    endNode.getType();
 
                     getTryBlocksMetaInfo()
-                            .split(endNode, new SimpleInterval(checkLabelNode(endNode.getNode().end),
-                                                               checkLabelNode(startNode.getStartLabel())), false);
+                            .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info,
+                                                               (LabelNode) startNode.getStartLabel().getLabel().info), false);
                 }
             }
         }
@@ -457,8 +447,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 for (TryCatchBlockNodePosition endBlockPosition : singleCluster.getBlocks()) {
                     TryCatchBlockNodeInfo endNode = endBlockPosition.getNodeInfo();
                     getTryBlocksMetaInfo()
-                            .split(endNode, new SimpleInterval(checkLabelNode(endNode.getNode().end),
-                                                               checkLabelNode(insertedBlockEnd)), false);
+                            .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info,
+                                                               (LabelNode) insertedBlockEnd.getLabel().info), false);
                 }
 
                 handler2Cluster.clear();
