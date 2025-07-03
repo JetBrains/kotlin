@@ -78,9 +78,8 @@ val platformLibsCacheElements by configurations.creating {
 
 enabledTargets(platformManager).forEach { target ->
     val targetName = target.visibleName
-    val installLocation = layout.buildDirectory.dir("konan/libs/$targetName")
-    val installTasks = mutableListOf<TaskProvider<KonanInteropTask>>()
-    val cacheInstallLocation = layout.buildDirectory.dir("konan/cache/$targetName/$targetName-gSTATIC-system")
+
+    val libTasks = mutableListOf<TaskProvider<KonanInteropTask>>()
     val cacheTasks = mutableListOf<TaskProvider<KonanCacheTask>>()
 
     target.defFiles().forEach { df ->
@@ -99,7 +98,7 @@ enabledTargets(platformManager).forEach { target ->
             dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distStdlib")
 
             this.target.set(targetName)
-            this.outputDirectory.set(installLocation.map { it.dir("${fileNamePrefix}${df.name}") })
+            this.outputDirectory.set(layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${df.name}"))
             df.file?.let { this.defFile.set(it) }
             df.config.depends.forEach { defName ->
                 this.klibFiles.from(tasks.named(interopTaskName(defFileToLibName(targetName, defName), targetName)))
@@ -120,7 +119,7 @@ enabledTargets(platformManager).forEach { target ->
 
             usesService(compilePlatformLibsSemaphore)
         }
-        installTasks.add(libTask)
+        libTasks.add(libTask)
 
         if (target.name in cacheableTargetNames) {
             val cacheTask = tasks.register(cacheTaskName(targetName, df.name), KonanCacheTask::class.java) {
@@ -146,7 +145,7 @@ enabledTargets(platformManager).forEach { target ->
 
                 this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
                 this.target.set(targetName)
-                this.outputDirectory.set(cacheInstallLocation.map { it.dir("${artifactName}-cache") })
+                this.outputDirectory.set(layout.buildDirectory.dir("konan/cache/$targetName/$targetName-gSTATIC-system/${artifactName}-cache"))
 
                 usesService(cachePlatformLibsSemaphore)
             }
@@ -154,21 +153,33 @@ enabledTargets(platformManager).forEach { target ->
         }
     }
 
+    val installPlatformLibs = tasks.register("installPlatformLibs${targetName.capitalized}", Sync::class) {
+        libTasks.forEach { libTask ->
+            from(libTask) {
+                into(libTask.map { it.outputDirectory.get().asFile.name })
+            }
+        }
+        into(layout.buildDirectory.dir("platform/$targetName"))
+    }
     platformLibsElements.outgoing.variants.create(target.name).apply {
         attributes {
             attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
         }
-    }.artifact(installLocation) {
-        // TODO: If some platform library gets removed, this will keep its artifact from an earlier build.
-        builtBy(installTasks)
-    }
+    }.artifact(installPlatformLibs)
 
-    platformLibsCacheElements.outgoing.variants.create(target.name).apply {
-        attributes {
-            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
+    if (target.name in cacheableTargetNames) {
+        val installPlatformLibsCaches = tasks.register("installPlatformLibsCaches${targetName.capitalized}", Sync::class) {
+            cacheTasks.forEach { cacheTask ->
+                from(cacheTask) {
+                    into(cacheTask.map { it.outputDirectory.get().asFile.name })
+                }
+            }
+            into(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system"))
         }
-    }.artifact(cacheInstallLocation) {
-        // TODO: If some platform library gets removed, this will keep its artifact from an earlier build.
-        builtBy(cacheTasks)
+        platformLibsCacheElements.outgoing.variants.create(target.name).apply {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
+            }
+        }.artifact(installPlatformLibsCaches)
     }
 }
