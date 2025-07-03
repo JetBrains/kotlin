@@ -10782,37 +10782,6 @@
                                         }
                                     },
                                     {
-                                        "name": "Xlazy-ir-for-caches",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Use lazy IR for cached libraries.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                            "isNullable": {
-                                                "current": true,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": null,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": "{disable|enable}",
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.6.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        }
-                                    },
-                                    {
                                         "name": "Xomit-framework-binary",
                                         "shortName": null,
                                         "deprecatedName": null,

@@ -303,15 +303,6 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             report(ERROR, "Unsupported worker exception handling mode ${arguments.workerExceptionHandling}")
         }
     }
-    put(LAZY_IR_FOR_CACHES, when (arguments.lazyIrForCaches) {
-        null -> false
-        "enable" -> true
-        "disable" -> false
-        else -> {
-            report(ERROR, "Expected 'enable' or 'disable' for lazy IR usage for cached libraries")
-            false
-        }
-    })
 
     arguments.externalDependencies?.let { put(EXTERNAL_DEPENDENCIES, it) }
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
@@ -368,7 +359,6 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(BinaryOptions.gc, konanConfig.gc)
     put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
-    put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
     put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
     putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
     putIfNotNull(BinaryOptions.minidumpLocation, konanConfig.minidumpLocation)

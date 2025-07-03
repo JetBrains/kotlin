@@ -880,17 +880,6 @@ The default value is 1.""",
         }
 
     @Argument(
-        value = "-Xlazy-ir-for-caches",
-        valueDescription = "{disable|enable}",
-        description = "Use lazy IR for cached libraries.",
-    )
-    var lazyIrForCaches: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xomit-framework-binary",
         description = "Omit binary when compiling the framework.",
     )

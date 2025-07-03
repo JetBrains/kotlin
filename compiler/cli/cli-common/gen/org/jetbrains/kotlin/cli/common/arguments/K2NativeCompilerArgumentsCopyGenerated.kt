@@ -45,7 +45,6 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.includes = from.includes?.copyOf()
     to.incrementalCacheDir = from.incrementalCacheDir
     to.konanDataDir = from.konanDataDir
-    to.lazyIrForCaches = from.lazyIrForCaches
     to.libraries = from.libraries?.copyOf()
     to.libraryToAddToCache = from.libraryToAddToCache
     @Suppress("DEPRECATION")

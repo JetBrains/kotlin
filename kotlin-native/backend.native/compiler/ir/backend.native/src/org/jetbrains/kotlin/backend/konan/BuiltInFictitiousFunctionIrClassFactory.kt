@@ -38,67 +38,12 @@ internal val DECLARATION_ORIGIN_FUNCTION_CLASS by IrDeclarationOriginImpl
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.isFunctionInterfaceFile get() = packageFragmentDescriptor is FunctionInterfacePackageFragment
 
-abstract class KonanIrAbstractDescriptorBasedFunctionFactory : IrProvider, IrAbstractDescriptorBasedFunctionFactory()
-
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-internal class LazyIrFunctionFactory(
-        private val symbolTable: SymbolTable,
-        private val stubGenerator: DeclarationStubGenerator,
-        private val irBuiltIns: IrBuiltInsOverDescriptors,
-        private val reflectionTypes: KonanReflectionTypes
-) : KonanIrAbstractDescriptorBasedFunctionFactory() {
-
-    override fun getDeclaration(symbol: IrSymbol) =
-            (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->
-                buildClass(descriptor) {
-                    descriptorExtension.declareClass(descriptor) {
-                        createIrClass(descriptor)
-                    }
-                }
-            }
-
-    override fun functionClassDescriptor(arity: Int): FunctionClassDescriptor =
-            irBuiltIns.builtIns.getFunction(arity) as FunctionClassDescriptor
-
-    override fun kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
-            reflectionTypes.getKFunction(arity) as FunctionClassDescriptor
-
-    override fun suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
-            irBuiltIns.builtIns.getSuspendFunction(arity) as FunctionClassDescriptor
-
-    override fun kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
-            reflectionTypes.getKSuspendFunction(arity) as FunctionClassDescriptor
-
-    override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            buildClass(irBuiltIns.builtIns.getFunction(arity) as FunctionClassDescriptor, declarator)
-
-    override fun kFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            buildClass(reflectionTypes.getKFunction(arity) as FunctionClassDescriptor, declarator)
-
-    override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            buildClass(irBuiltIns.builtIns.getSuspendFunction(arity) as FunctionClassDescriptor, declarator)
-
-    override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            buildClass(reflectionTypes.getKSuspendFunction(arity) as FunctionClassDescriptor, declarator)
-
-    private val builtClassesMap = mutableMapOf<FunctionClassDescriptor, IrClass>()
-
-    private fun createIrClass(descriptor: ClassDescriptor): IrClass =
-            stubGenerator.generateClassStub(descriptor)
-
-    private fun createClass(descriptor: FunctionClassDescriptor, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            symbolTable.declarator { createIrClass(descriptor) }
-
-    private fun buildClass(descriptor: FunctionClassDescriptor, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
-            builtClassesMap.getOrPut(descriptor) { createClass(descriptor, declarator) }
-}
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class BuiltInFictitiousFunctionIrClassFactory(
         private val symbolTable: SymbolTable,
         private val irBuiltIns: IrBuiltInsOverDescriptors,
         private val reflectionTypes: KonanReflectionTypes
-) : KonanIrAbstractDescriptorBasedFunctionFactory() {
+) : IrProvider, IrAbstractDescriptorBasedFunctionFactory() {
 
     override fun getDeclaration(symbol: IrSymbol) =
             (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->

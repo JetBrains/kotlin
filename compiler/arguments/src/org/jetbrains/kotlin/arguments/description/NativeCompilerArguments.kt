@@ -965,17 +965,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xlazy-ir-for-caches"
-        description = "Use lazy IR for cached libraries.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "{disable|enable}".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xomit-framework-binary"
         description = "Omit binary when compiling the framework.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

@@ -84,8 +84,7 @@ internal fun PsiToIrContext.psiToIr(
             KonanStubGeneratorExtensions
     )
     val irBuiltInsOverDescriptors = generatorContext.irBuiltIns as IrBuiltInsOverDescriptors
-    val functionIrClassFactory: KonanIrAbstractDescriptorBasedFunctionFactory =
-            BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
+    val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
     val symbols = KonanSymbols(
             this,
