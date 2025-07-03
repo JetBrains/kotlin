@@ -342,6 +342,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     if (arguments.manifestNativeTargets != null)
         putIfNotNull(MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(arguments.manifestNativeTargets!!))
 
+    putIfNotNull(LLVM_MODULE_OPT_THREADS, arguments.llvmModuleOptThreads.toIntOrNull() ?: 1)
     putIfNotNull(LLVM_MODULE_PASSES, arguments.llvmModulePasses)
     putIfNotNull(LLVM_LTO_PASSES, arguments.llvmLTOPasses)
 }

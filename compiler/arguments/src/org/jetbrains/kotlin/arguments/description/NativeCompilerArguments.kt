@@ -924,6 +924,14 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
+        name = "Xllvm-module-opt-threads"
+        description = "Number of threads to use for ModuleOptimizationPipeline.".asReleaseDependent()
+        valueType = IntType.defaultOne
+
+        stubLifecycle()
+    }
+
+    compilerArgument {
         name = "Xllvm-module-passes"
         description = "Custom set of LLVM passes to run as the ModuleOptimizationPipeline.".asReleaseDependent()
         valueType = StringType.defaultNull
