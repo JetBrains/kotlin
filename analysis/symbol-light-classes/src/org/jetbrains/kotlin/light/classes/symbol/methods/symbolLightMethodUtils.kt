@@ -91,7 +91,7 @@ internal fun methodGeneration(
     var isRegularAccessorRequired = false
 
     // Explicit mode -> a boxed method is requested (even if it is a JVM name clash)
-    if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && (hasValueClassInParameterType || hasValueClassInReturnType)) {
+    if (exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT && (hasValueClassInParameterType || hasValueClassInReturnType || isAffectedByValueClass)) {
         isBoxedAccessorRequired = true
     }
 
