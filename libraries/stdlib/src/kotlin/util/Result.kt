@@ -9,7 +9,6 @@ package kotlin
 
 import kotlin.contracts.*
 import kotlin.internal.InlineOnly
-import kotlin.jvm.JvmField
 import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
 
@@ -100,6 +99,9 @@ public value class Result<out T> @PublishedApi internal constructor(
         @JvmName("failure")
         public inline fun <T> failure(exception: Throwable): Result<T> =
             Result(createFailure(exception))
+
+        public fun <T> failure(exceptionSupplier: () -> Throwable): Result<T> =
+            Result(createFailure(exceptionSupplier))
     }
 
     internal interface Failure : Serializable {
@@ -107,9 +109,18 @@ public value class Result<out T> @PublishedApi internal constructor(
     }
 
     internal class EagerFailure(
-        override val exception: Throwable
+        override val exception: Throwable,
     ) : Failure {
         override fun equals(other: Any?): Boolean = other is Failure && exception == other.exception
+        override fun hashCode(): Int = exception.hashCode()
+        override fun toString(): String = "Failure($exception)"
+    }
+
+    internal class LazyFailure(
+        exceptionSupplier: () -> Throwable,
+    ) : Failure {
+        override val exception: Throwable by lazy(exceptionSupplier)
+        override fun equals(other: Any?) = other is Failure && exception == other.exception
         override fun hashCode(): Int = exception.hashCode()
         override fun toString(): String = "Failure($exception)"
     }
@@ -123,6 +134,9 @@ public value class Result<out T> @PublishedApi internal constructor(
 @SinceKotlin("1.3")
 internal fun createFailure(exception: Throwable): Any =
     Result.EagerFailure(exception)
+
+internal fun createFailure(exceptionSupplier: () -> Throwable): Any =
+    Result.LazyFailure(exceptionSupplier)
 
 /**
  * Throws exception if the result is failure. This internal function minimizes
