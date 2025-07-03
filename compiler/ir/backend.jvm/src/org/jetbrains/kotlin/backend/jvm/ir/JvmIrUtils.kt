@@ -263,7 +263,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
     if (!returnType.isInlineClassType()) return false
     // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
     // it would lead to ambiguous call on Java side
-    return !parentAsClass.isFileClass || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+    // WARNING: Do not use parentAsClass here, otherwise, it leads to ICE in some obscure cases, see KT-78551
+    return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
 }
 
 val IrDeclaration.isStaticValueClassReplacement: Boolean
