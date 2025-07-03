@@ -1,0 +1,19 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=a.kt */
+
+/* TARGET declaration */ private fun funOK(): String
+internal inline fun internalInlineFun(): String
+    val tmp0: Array<out String> =
+        /* ACCESSOR use-site */ access$funOK$tAKt()
+        /* ACCESSOR use-site */ access$funOK$tAKt()
+/* ACCESSOR declaration */ internal fun access$funOK$tAKt(): String
+    /* TARGET use-site */ funOK()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    val tmp0: Array<out String> =
+        /* ACCESSOR use-site */ access$funOK$tAKt()
+        /* ACCESSOR use-site */ access$funOK$tAKt()
