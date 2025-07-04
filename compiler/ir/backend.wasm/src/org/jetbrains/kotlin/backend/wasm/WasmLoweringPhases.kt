@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.lower.DelegatedPropertyOptimizationLowering
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
@@ -68,6 +70,11 @@ private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
         )
     },
     name = "IrValidationAfterInliningAllFunctionsPhase",
+)
+
+private val dumpSyntheticAccessorsPhase = makeIrModulePhase<WasmBackendContext>(
+    ::DumpSyntheticAccessors,
+    name = "DumpSyntheticAccessorsPhase",
 )
 
 private val validateIrAfterLowering = makeIrModulePhase(
@@ -622,6 +629,7 @@ fun getWasmLowerings(
         // just because it goes so in Native.
         validateIrAfterInliningOnlyPrivateFunctionsPhase,
         inlineAllFunctionsPhase,
+        dumpSyntheticAccessorsPhase.takeIf { configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR] != null },
         validateIrAfterInliningAllFunctionsPhase,
         // END: Common Native/JS/Wasm prefix.
 

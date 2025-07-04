@@ -268,7 +268,7 @@ fun main() {
                     klibIrInliner(),
                 )
             ) {
-                model()
+                model(targetBackend = TargetBackend.NATIVE)
             }
         }
 

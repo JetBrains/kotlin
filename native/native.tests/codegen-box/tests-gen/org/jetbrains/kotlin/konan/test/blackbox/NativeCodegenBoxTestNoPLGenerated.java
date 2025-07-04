@@ -44664,6 +44664,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       public void testDifferingNumberOfGenericTypeParameters() {
         runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
       }
+
+      @Test
+      @TestMetadata("propertyDeclaration.kt")
+      public void testPropertyDeclaration() {
+        runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
+      }
     }
 
     @Nested

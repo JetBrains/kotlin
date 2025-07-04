@@ -163,7 +163,8 @@ class TestCompilationFactory {
         val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
         if (fileCheckStage != null)
             require(testCases.size == 1) { "FILECHECK-enabled test must be standalone" }
-        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage)
+        val hasSyntheticAccessorsDump = KlibBasedCompilerTestDirectives.DUMP_KLIB_SYNTHETIC_ACCESSORS in settings.get<RegisteredDirectives>()
+        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage, hasSyntheticAccessorsDump)
 
         val (
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,

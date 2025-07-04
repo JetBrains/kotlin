@@ -199,6 +199,7 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     jsArtifactsHandlersStep {
         useHandlers(
             ::JsSourceMapPathRewriter,
+            ::JsSyntheticAccessorsDumpHandler,
         )
     }
 

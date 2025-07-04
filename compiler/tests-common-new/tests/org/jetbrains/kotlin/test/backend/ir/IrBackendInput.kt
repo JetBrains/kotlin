@@ -56,11 +56,6 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
 
     abstract override val diagnosticReporter: BaseDiagnosticsCollector
 
-    sealed interface DeserializedFromKlib {
-        val klib: File
-        val moduleInfo: IrModuleInfo
-    }
-
     sealed class JsIrBackendInput : IrBackendInput()
 
     data class JsIrAfterFrontendBackendInput(
@@ -75,10 +70,10 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     ) : JsIrBackendInput()
 
     class JsIrDeserializedFromKlibBackendInput(
-        override val moduleInfo: IrModuleInfo,
-        override val klib: File,
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
         override val irPluginContext: IrPluginContext,
-    ) : DeserializedFromKlib, JsIrBackendInput() {
+    ) : JsIrBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
@@ -104,10 +99,10 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     ) : WasmBackendInput()
 
     class WasmDeserializedFromKlibBackendInput(
-        override val moduleInfo: IrModuleInfo,
-        override val klib: File,
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
         override val irPluginContext: IrPluginContext,
-    ) : DeserializedFromKlib, WasmBackendInput() {
+    ) : WasmBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module
@@ -160,10 +155,10 @@ abstract class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>()
     ) : NativeBackendInput()
 
     class NativeDeserializedFromKlibBackendInput(
-        override val moduleInfo: IrModuleInfo,
-        override val klib: File,
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
         override val irPluginContext: IrPluginContext,
-    ) : DeserializedFromKlib, NativeBackendInput() {
+    ) : NativeBackendInput() {
         override val diagnosticReporter: BaseDiagnosticsCollector = DiagnosticsCollectorStub()
         override val irModuleFragment: IrModuleFragment
             get() = moduleInfo.module

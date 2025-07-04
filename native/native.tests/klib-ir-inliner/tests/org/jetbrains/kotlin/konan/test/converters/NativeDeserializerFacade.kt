@@ -143,7 +143,6 @@ class NativeDeserializerFacade(
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
             partialLinkageSupport = createPartialLinkageSupportForLinker(
-                // TODO KT-77493: Disable PL after all tests for invisible references would be migrated to diagnostic tests
                 partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector
@@ -195,7 +194,7 @@ class NativeDeserializerFacade(
         sortedDependencies.forEach { klib: KotlinLibrary ->
             val descriptor: ModuleDescriptor = mapping(klib)
             val module: IrModuleFragment = if (klib != mainModuleLib)
-                irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+                irLinker.deserializeOnlyHeaderModule(descriptor, klib)
             else
                 irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL }, descriptor.name.asString())
 
