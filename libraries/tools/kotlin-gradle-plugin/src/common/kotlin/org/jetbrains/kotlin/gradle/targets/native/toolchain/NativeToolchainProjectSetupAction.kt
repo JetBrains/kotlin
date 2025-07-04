@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationOnCurrentHostSupported
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 
 internal val NativeToolchainProjectSetupAction = KotlinProjectSetupCoroutine {
@@ -21,7 +20,7 @@ internal val NativeToolchainProjectSetupAction = KotlinProjectSetupCoroutine {
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     if (kotlinTargets.flatMap { target -> target.compilations }
             .filterIsInstance<AbstractKotlinNativeCompilation>()
-            .any { it.target.enabledOnCurrentHostForKlibCompilation }
+            .any { it.crossCompilationOnCurrentHostSupported.getOrThrow() }
     ) {
         addKotlinNativeBundleConfiguration(project)
         KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)

@@ -195,17 +195,19 @@ class KotlinMetadataTargetConfigurator :
 
             configureMetadataDependenciesForCompilation(this@apply)
 
-            if (isHostSpecific) {
-                // This logic can be simplified, see KT-64523
-                val shouldBeDisabled = platformCompilations
-                    .filterIsInstance<KotlinNativeCompilation>()
-                    .none { it.target.enabledOnCurrentHostForKlibCompilation }
-                if (shouldBeDisabled) {
-                    // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
-                    compileTaskProvider.configure { it.enabled = false }
-                    // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
-                    // not resolved:
-                    compileDependencyFiles = project.files()
+            project.launch {
+                if (isHostSpecific) {
+                    // This logic can be simplified, see KT-64523
+                    val shouldBeDisabled = platformCompilations
+                        .filterIsInstance<KotlinNativeCompilation>()
+                        .none { it.crossCompilationOnCurrentHostSupported.await() }
+                    if (shouldBeDisabled) {
+                        // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
+                        compileTaskProvider.configure { it.enabled = false }
+                        // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
+                        // not resolved:
+                        compileDependencyFiles = project.files()
+                    }
                 }
             }
         }

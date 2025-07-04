@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -17,6 +18,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommoniz
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -118,8 +122,9 @@ internal val KonanTarget.isCurrentHost: Boolean
  *
  * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
  */
+@Deprecated("Use crossCompilationOnCurrentHostSupported instead")
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
-    provider: PropertiesProvider
+    provider: PropertiesProvider,
 ) = if (provider.enableKlibsCrossCompilation) {
     // If cross-compilation is enabled, allow compilation for all targets
     true
@@ -128,15 +133,17 @@ internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     HostManager().isEnabled(this)
 }
 
-internal val KotlinTarget.enabledOnCurrentHostForKlibCompilation: Boolean
+internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Future<Boolean>
     get() = when (this) {
-        is KotlinNativeTarget -> {
-            konanTarget.enabledOnCurrentHostForKlibCompilation(
-                project.kotlinPropertiesProvider
-            )
-        }
-        else -> true
+        is KotlinNativeCompilation -> target.crossCompilationOnCurrentHostSupported
+        else -> project.future { true }
     }
+
+// The same as `KotlinNativeTarget.publishable`, but with a fallback to `enabledOnCurrentHostForKlibCompilation`
+@Suppress("DEPRECATION")
+internal val KotlinNativeTarget.crossCompilationPublishable: Boolean
+    get() = crossCompilationOnCurrentHostSupported.lenient.getOrNull()
+        ?: konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation
     get() = HostManager().isEnabled(this)
