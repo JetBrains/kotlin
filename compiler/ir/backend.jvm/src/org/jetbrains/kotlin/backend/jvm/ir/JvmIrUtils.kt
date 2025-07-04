@@ -258,7 +258,10 @@ fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(languageVersionSettings: Lan
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
 private fun IrDeclaration.isFunctionWhichCanBeExposed(): Boolean {
     if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
+    // No sense in exposing suspend functions - they cannot be called from Java in normal way anyway
     if (isSuspend) return false
+    // Cannot expose open or abstract - @JvmName problem
+    if (isOverridable) return false
     if (parameters.any { it.type.isInlineClassType() }) return true
     if (!returnType.isInlineClassType()) return false
     // It is not explicitly annotated, global and returns inline class, do not expose it, since otherwise
