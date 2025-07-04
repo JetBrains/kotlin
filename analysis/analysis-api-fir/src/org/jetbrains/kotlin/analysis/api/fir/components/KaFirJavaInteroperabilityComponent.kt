@@ -122,6 +122,12 @@ internal class KaFirJavaInteroperabilityComponent(
 
         if (!rootModuleSession.moduleData.platform.has<JvmPlatform>() && !allowNonJvmPlatforms) return null
 
+        if (mode == KaTypeMappingMode.RETURN_TYPE_FUNCTIONS && !isAnnotationMethod && coneType.isUnit) {
+            // Here we approximate the JVM backend logic from `MethodSignatureMapper#hasVoidReturnType`.
+            // But we do it only in the special type mapping mode `RETURN_TYPE_FUNCTIONS` because it is not applicable in other cases.
+            return PsiTypes.voidType()
+        }
+
         val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
             mode = mappingMode,
