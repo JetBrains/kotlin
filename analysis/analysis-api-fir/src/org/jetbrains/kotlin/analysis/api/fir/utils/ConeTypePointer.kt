@@ -56,6 +56,10 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder)
 
+    // function types-specific attributes
+    private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
+    private val contextParameterNumber = coneType.contextParameterNumberForFunctionType
+
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
         val typeArguments = typeArgumentPointers.map { it.restore(session) ?: return null }
         val abbreviatedType = abbreviatedTypePointer?.let { it.restore(session) ?: return null }
@@ -63,6 +67,12 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
         val attributes = buildList {
             if (abbreviatedType != null) {
                 add(AbbreviatedTypeAttribute(abbreviatedType))
+            }
+            if (hasReceiverType) {
+                add(CompilerConeAttributes.ExtensionFunctionType)
+            }
+            if (contextParameterNumber != 0) {
+                add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameterNumber))
             }
         }
 
