@@ -73,7 +73,7 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByShortName(shortName: String): DurationUnit = when (shortName) {
+internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidDuration: Boolean = true): DurationUnit? = when (shortName) {
     "ns" -> DurationUnit.NANOSECONDS
     "us" -> DurationUnit.MICROSECONDS
     "ms" -> DurationUnit.MILLISECONDS
@@ -81,16 +81,20 @@ internal fun durationUnitByShortName(shortName: String): DurationUnit = when (sh
     "m" -> DurationUnit.MINUTES
     "h" -> DurationUnit.HOURS
     "d" -> DurationUnit.DAYS
-    else -> throw IllegalArgumentException("Unknown duration unit short name: $shortName")
+    else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Unknown duration unit short name: $shortName") else null
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): DurationUnit =
+internal fun durationUnitByIsoChar(
+    isoChar: Char,
+    isTimeComponent: Boolean,
+    throwExceptionOnInvalidDuration: Boolean = true,
+): DurationUnit? =
     when {
         !isTimeComponent -> {
             when (isoChar) {
                 'D' -> DurationUnit.DAYS
-                else -> throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar")
+                else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
             }
         }
         else -> {
@@ -98,7 +102,7 @@ internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): Dur
                 'H' -> DurationUnit.HOURS
                 'M' -> DurationUnit.MINUTES
                 'S' -> DurationUnit.SECONDS
-                else -> throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar")
+                else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
             }
         }
     }
