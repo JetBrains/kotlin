@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -123,7 +124,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression, data: Nothing?) {
-        visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+        if (context.containingDeclarations.lastOrNull().let {
+                it is FirValueParameterSymbol && it.isNoinline && it.resolvedDefaultValue == anonymousFunctionExpression
+            }
+        ) {
+            suppressInlineFunctionBodyContext {
+                visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+            }
+        } else {
+            visitAnonymousFunction(anonymousFunctionExpression.anonymousFunction, data)
+        }
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
