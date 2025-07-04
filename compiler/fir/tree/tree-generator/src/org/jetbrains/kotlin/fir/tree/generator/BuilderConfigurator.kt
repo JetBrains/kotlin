@@ -251,7 +251,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         builder(errorProperty) {
             parents += variableBuilder
             parents += typeParametersOwnerBuilder
-            defaultFalse("isLocal")
             default("bodyResolveState", "FirPropertyBodyResolveState.NOTHING_RESOLVED")
         }
 

@@ -156,7 +156,6 @@ class ValueParameter(
 
             symbol = propertySymbol
             dispatchReceiverType = currentDispatchReceiver
-            isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality(isClassOrObject = false)).apply {
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()

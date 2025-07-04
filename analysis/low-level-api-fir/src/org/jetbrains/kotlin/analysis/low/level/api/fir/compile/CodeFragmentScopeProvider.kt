@@ -89,7 +89,6 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
                 name = variableName
                 isVar = false
                 symbol = FirLocalPropertySymbol()
-                isLocal = true
             }
 
             variable.foreignValueMarker = true

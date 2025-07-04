@@ -12,3 +12,5 @@ enum class FirPropertyBodyResolveState {
     INITIALIZER_AND_GETTER_RESOLVED,
     ALL_BODIES_RESOLVED,
 }
+
+val FirProperty.isLocal: Boolean get() = symbol.isLocal

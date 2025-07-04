@@ -418,7 +418,6 @@ object FirFakeOverrideGenerator {
         name = baseProperty.name
         isVar = baseProperty.isVar
         this.symbol = newSymbol
-        isLocal = false
         status = baseProperty.status.copy(newVisibility, newModality, isExpect = isExpect, isOverride = true)
 
         resolvePhase = origin.resolvePhaseForCopy

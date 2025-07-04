@@ -86,7 +86,6 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             initializer = createComponentCall(container, entry.source, index)
             this.isVar = isVar
             source = entry.source
-            isLocal = localEntries
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             entry.extractAnnotationsTo(this, context.containerSymbol)
             if (!localEntries) {

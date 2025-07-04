@@ -57,7 +57,6 @@ fun generateTemporaryVariable(
         this.initializer = initializer
         symbol = FirLocalPropertySymbol()
         isVar = false
-        isLocal = true
         status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
         if (extractedAnnotations != null) {
             // LT extracts annotations ahead.

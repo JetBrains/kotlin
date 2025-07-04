@@ -94,7 +94,6 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         name = propertyName.identifier
         this.symbol = firPropertySymbol
         isVar = false
-        isLocal = false
     }
 }
 

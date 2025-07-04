@@ -219,7 +219,6 @@ fun generateEntriesGetter(
     return buildProperty {
         source = sourceElement
         isVar = false
-        isLocal = false
         this.origin = origin
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {

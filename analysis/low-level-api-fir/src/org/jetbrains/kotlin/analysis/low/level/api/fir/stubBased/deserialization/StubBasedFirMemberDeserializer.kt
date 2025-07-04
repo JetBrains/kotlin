@@ -361,7 +361,6 @@ internal class StubBasedFirMemberDeserializer(
             this.isVar = isVar
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
-            isLocal = false
             val visibility = property.visibility
             val resolvedStatus = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,

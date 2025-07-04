@@ -1456,7 +1456,6 @@ class LightTreeRawFirDeclarationBuilder(
                 )
 
                 if (isLocal) {
-                    this.isLocal = true
                     val delegateBuilder = delegate?.let {
                         FirWrappedDelegateExpressionBuilder().apply {
                             source = delegateSource?.fakeElement(KtFakeSourceElementKind.WrappedDelegate)
@@ -1477,8 +1476,6 @@ class LightTreeRawFirDeclarationBuilder(
                         explicitDeclarationSource = propertySource,
                     )
                 } else {
-                    this.isLocal = false
-
                     dispatchReceiverType = currentDispatchReceiverType()
                     withCapturedTypeParameters(true, propertySource, firTypeParameters) {
                         typeParameters += firTypeParameters

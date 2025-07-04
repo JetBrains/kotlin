@@ -194,7 +194,6 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         returnTypeRef = dynamicTypeRef
         isVar = true
-        isLocal = false
     }
 }
 

@@ -102,7 +102,6 @@ internal fun generateTemporaryVariable(
         this.initializer = initializer
         symbol = FirLocalPropertySymbol()
         isVar = false
-        isLocal = true
         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         (source.psi as? KtAnnotated)?.extractAnnotationsTo(this)
     }

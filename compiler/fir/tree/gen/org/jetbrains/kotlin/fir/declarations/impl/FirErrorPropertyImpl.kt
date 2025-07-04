@@ -47,7 +47,6 @@ internal class FirErrorPropertyImpl(
     override var backingField: FirBackingField?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
-    override val isLocal: Boolean,
     override var bodyResolveState: FirPropertyBodyResolveState,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorPropertySymbol,
