@@ -82,7 +82,7 @@ class JvmAbiOutputExtension(
                         var sourceMap: SourceMapCopier? = null
                         var sourceMapAnnotationPresent = false
 
-                        val writer = ClassWriter(0)
+                        val writer = ClassWriter(ClassWriter.COMPUTE_MAXS)
                         val remapper = ClassRemapper(writer, object : Remapper() {
                             override fun map(internalName: String): String =
                                 internalName.also { innerClassesToKeep.add(it) }
@@ -243,7 +243,6 @@ private class BodyStrippingMethodVisitor(visitor: MethodVisitor) : MethodVisitor
             visitCode()
             visitInsn(Opcodes.ACONST_NULL)
             visitInsn(Opcodes.ATHROW)
-            visitMaxs(0, 0)
             visitEnd()
         }
         // Only instructions, frames, try-catch, and locals follow after `visitCode`.
