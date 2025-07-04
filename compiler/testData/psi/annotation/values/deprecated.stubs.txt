@@ -16,6 +16,17 @@ Qualified.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=Deprecated]
             VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=NewClass]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=foo.bar.baz.NewClass]
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
                 REFERENCE_EXPRESSION[referencedName=level]
@@ -42,6 +53,15 @@ Simple.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=Deprecated]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=ReplaceWith]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=NewClass]
+                  VALUE_ARGUMENT[isSpread=false]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=foo.bar.baz.NewClass]
             VALUE_ARGUMENT[isSpread=false]
               DOT_QUALIFIED_EXPRESSION
                 REFERENCE_EXPRESSION[referencedName=DeprecationLevel]

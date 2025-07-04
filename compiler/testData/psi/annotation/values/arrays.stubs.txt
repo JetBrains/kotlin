@@ -79,8 +79,42 @@ WithExplicitArrays.kt:
                 REFERENCE_EXPRESSION[referencedName=Arrays]
           VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=intArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=longArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1L]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=floatArrayOf]
+                VALUE_ARGUMENT_LIST
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=doubleArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=2.2]
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=charArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
             VALUE_ARGUMENT[isSpread=false]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=booleanArrayOf]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
+                  VALUE_ARGUMENT[isSpread=false]
+                    BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]

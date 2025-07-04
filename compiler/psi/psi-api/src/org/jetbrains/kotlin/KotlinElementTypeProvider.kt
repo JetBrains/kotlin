@@ -110,6 +110,7 @@ interface KotlinElementTypeProvider {
     val referenceExpressionType: KtStubElementType<KotlinNameReferenceExpressionStub, KtNameReferenceExpression>
     val enumEntrySuperclassReferenceExpressionType: KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>
     val dotQualifiedExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression>
+    val callExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression>
     val classLiteralExpressionType: KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression>
     val collectionLiteralExpressionType: KtStubElementType<KotlinCollectionLiteralExpressionStub, KtCollectionLiteralExpression>
 

@@ -59,6 +59,14 @@ WithNested.kt:
             VALUE_ARGUMENT[isSpread=false]
               VALUE_ARGUMENT_NAME
                 REFERENCE_EXPRESSION[referencedName=nested]
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=Nested]
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+                  VALUE_ARGUMENT[isSpread=false]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
 
 
 WithQualifiedNested.kt:
@@ -77,3 +85,13 @@ WithQualifiedNested.kt:
               STRING_TEMPLATE
                 LITERAL_STRING_TEMPLATE_ENTRY[text=value]
             VALUE_ARGUMENT[isSpread=false]
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION[referencedName=foo]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]

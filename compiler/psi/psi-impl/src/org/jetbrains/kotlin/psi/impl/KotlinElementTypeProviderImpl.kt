@@ -221,6 +221,9 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val dotQualifiedExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtDotQualifiedExpression>, KtDotQualifiedExpression> =
         KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
 
+    override val callExpressionType: KtStubElementType<KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
+        KtStubElementTypes.CALL_EXPRESSION
+
     override val classLiteralExpressionType: KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
         KtStubElementTypes.CLASS_LITERAL_EXPRESSION
 

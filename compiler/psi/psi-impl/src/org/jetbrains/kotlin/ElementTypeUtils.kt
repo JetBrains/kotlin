@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -50,9 +50,10 @@ object ElementTypeUtils {
 
     private val expressionSet = listOf(
         REFERENCE_EXPRESSION,
+        CALL_EXPRESSION,
         DOT_QUALIFIED_EXPRESSION,
         LAMBDA_EXPRESSION,
-        FUN
+        FUN,
     )
 
     fun LighterASTNode.isExpression(): Boolean {
@@ -62,7 +63,9 @@ object ElementTypeUtils {
             is KtStringTemplateExpressionElementType,
             is KtClassLiteralExpressionElementType,
             is KtCollectionLiteralExpressionElementType,
-            in expressionSet -> true
+            in expressionSet,
+                -> true
+
             else -> false
         }
     }

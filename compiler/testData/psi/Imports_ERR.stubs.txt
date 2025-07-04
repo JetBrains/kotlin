@@ -12,16 +12,22 @@ PsiJetFileStubImpl[package=foo.bar.goo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
       REFERENCE_EXPRESSION[referencedName=foo]
       IMPORT_ALIAS[name=null]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
       IMPORT_ALIAS[name=null]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=false]
       REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
       IMPORT_ALIAS[name=null]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=true, isValid=false]
       REFERENCE_EXPRESSION[referencedName=foo]
@@ -46,8 +52,12 @@ PsiJetFileStubImpl[package=foo.bar.goo]
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=bar]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
       IMPORT_ALIAS[name=bar]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=foo]
       IMPORT_ALIAS[name=bar]
     IMPORT_DIRECTIVE[importedFqName=foo.bar, isAllUnder=true, isValid=false]
       DOT_QUALIFIED_EXPRESSION
@@ -58,6 +68,10 @@ PsiJetFileStubImpl[package=foo.bar.goo]
         REFERENCE_EXPRESSION[referencedName=foo]
         REFERENCE_EXPRESSION[referencedName=bar]
     IMPORT_DIRECTIVE[importedFqName=foo.bar, isAllUnder=false, isValid=false]
+      DOT_QUALIFIED_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=foo]
+          REFERENCE_EXPRESSION[referencedName=bar]
     IMPORT_DIRECTIVE[importedFqName=foo.bar, isAllUnder=true, isValid=false]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]

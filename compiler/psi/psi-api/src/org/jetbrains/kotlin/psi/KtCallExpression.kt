@@ -5,23 +5,29 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 
-open class KtCallExpression(node: ASTNode) : KtExpressionImpl(node), KtCallElement, KtReferenceExpression {
+open class KtCallExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtCallExpression>>, KtCallElement, KtReferenceExpression {
+    constructor(node: ASTNode) : super(node)
+
+    @KtImplementationDetail
+    constructor(stub: KotlinPlaceHolderStub<KtCallExpression>) : super(stub, KtStubBasedElementTypes.CALL_EXPRESSION)
+
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
         return visitor.visitCallExpression(this, data)
     }
 
     override fun getCalleeExpression(): KtExpression? {
-        return findChildByClass(KtExpression::class.java)
+        return getStubOrPsiChild(KtStubBasedElementTypes.REFERENCE_EXPRESSION) ?: findChildByClass(KtExpression::class.java)
     }
 
     override fun getValueArgumentList(): KtValueArgumentList? {
-        return findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_ARGUMENT_LIST)
     }
 
     override fun getTypeArgumentList(): KtTypeArgumentList? {
-        return findChildByType(KtNodeTypes.TYPE_ARGUMENT_LIST)
+        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST)
     }
 
     /**
@@ -30,7 +36,7 @@ open class KtCallExpression(node: ASTNode) : KtExpressionImpl(node), KtCallEleme
      * Most of users can simply ignore lists of more than one element.
      */
     override fun getLambdaArguments(): List<KtLambdaArgument> {
-        return findChildrenByType(KtNodeTypes.LAMBDA_ARGUMENT)
+        return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.LAMBDA_ARGUMENT)
     }
 
     override fun getValueArguments(): List<KtValueArgument> {
