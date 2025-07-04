@@ -253,15 +253,13 @@ private class ConeIntegerConstantOperatorTypePointer(
     private val isUnsigned = coneType.isUnsigned
     private val isMarkedNullable = coneType.isMarkedNullable
 
-    override fun restore(session: KaFirSession): ConeIntegerConstantOperatorType? {
+    override fun restore(session: KaFirSession): ConeIntegerConstantOperatorType {
         return ConeIntegerConstantOperatorTypeImpl(isUnsigned, isMarkedNullable)
     }
 }
 
 private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByFirBuilder) : ConeTypePointer<ConeErrorType> {
-    @Suppress("SpellCheckingInspection")
     private val isUninferredParameter = coneType.isUninferredParameter
-
     private val coneDiagnosticPointer = ConeDiagnosticPointer.create(coneType.diagnostic, builder)
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder) }
@@ -283,7 +281,7 @@ private class ConeErrorTypePointer(coneType: ConeErrorType, builder: KaSymbolByF
 }
 
 private object ConeDynamicTypePointer : ConeTypePointer<ConeDynamicType> {
-    override fun restore(session: KaFirSession): ConeDynamicType? {
+    override fun restore(session: KaFirSession): ConeDynamicType {
         return ConeDynamicType.create(session.firSession)
     }
 }
