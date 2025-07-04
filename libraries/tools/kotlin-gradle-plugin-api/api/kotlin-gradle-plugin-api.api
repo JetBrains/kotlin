@@ -1001,11 +1001,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompile
 	public abstract fun applyToCompilation (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/gradle/api/provider/Provider;
 	public abstract fun getCompilerPluginId ()Ljava/lang/String;
 	public abstract fun getPluginArtifact ()Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
+	public abstract fun getPluginArtifactForNative ()Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 	public abstract fun isApplicable (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Z
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin$DefaultImpls {
 	public static fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;Lorg/gradle/api/Project;)V
+	public static fun getPluginArtifactForNative (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerPluginSupportPlugin;)Lorg/jetbrains/kotlin/gradle/plugin/SubpluginArtifact;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinDependencyHandler : org/jetbrains/kotlin/gradle/plugin/HasProject {
