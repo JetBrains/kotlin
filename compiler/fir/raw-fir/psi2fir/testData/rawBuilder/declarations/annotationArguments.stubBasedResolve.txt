@@ -143,3 +143,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
+    @kotlin.Deprecated[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Qualified : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

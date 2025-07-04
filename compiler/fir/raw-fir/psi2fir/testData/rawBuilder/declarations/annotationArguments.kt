@@ -122,3 +122,6 @@ class Another
 
 @Arrays([bar?.foo("str"), baz.bar?.doo, 1 != 2])
 class WithIncorrectArguments
+
+@kotlin.Deprecated("Deprecated", kotlin.ReplaceWith("NewClass", "foo.bar.baz.NewClass"), level = kotlin.DeprecationLevel.HIDDEN)
+class Qualified
