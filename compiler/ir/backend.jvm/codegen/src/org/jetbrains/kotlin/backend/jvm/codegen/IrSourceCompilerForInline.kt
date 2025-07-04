@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -67,16 +64,12 @@ class IrSourceCompilerForInline(
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda, reifiedTypeParameters: ReifiedTypeParametersUsages): SMAPAndMethodNode {
         require(lambdaInfo is IrExpressionLambdaImpl)
-        val oldParent = lambdaInfo.function.parent
-        lambdaInfo.function.parent = lambdaInfo.function.parentsWithSelf.firstIsInstance<IrClass>() // todo
-        lambdaInfo.function.origin = IrDeclarationOrigin.INLINE_LAMBDA
         for (typeParameter in lambdaInfo.function.typeParameters) {
             if (typeParameter.isReified) {
                 reifiedTypeParameters.addUsedReifiedParameter(typeParameter.name.asString())
             }
         }
         return FunctionCodegen(lambdaInfo.function, codegen.classCodegen).generate(reifiedTypeParameters)
-            .also { lambdaInfo.function.parent = oldParent }
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {

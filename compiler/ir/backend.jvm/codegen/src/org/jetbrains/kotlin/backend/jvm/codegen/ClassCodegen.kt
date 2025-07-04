@@ -74,7 +74,7 @@ class ClassCodegen private constructor(
     // We need to avoid recursive calls to getOrCreate() from within the constructor to prevent lockups
     // in ConcurrentHashMap context.classCodegens.
     private val parentClassCodegen by lazy {
-        (parentFunction?.parentAsClass ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context, intrinsicExtensions) }
+        (parentFunction?.parentClassOrNull ?: irClass.parent as? IrClass)?.let { getOrCreate(it, context, intrinsicExtensions) }
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
