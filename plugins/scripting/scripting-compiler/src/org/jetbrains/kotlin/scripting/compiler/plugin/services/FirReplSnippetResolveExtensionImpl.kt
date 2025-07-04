@@ -108,8 +108,10 @@ class FirReplSnippetResolveExtensionImpl(
                     visibility = if (makePublic) Visibilities.Public else Visibilities.Local,
                     isStatic = true
                 )
-            //isLocal = !makePublic
-            symbol = this@createCopyForState.symbol.callableId?.let { FirRegularPropertySymbol(it) } ?: FirLocalPropertySymbol()
+            symbol = when {
+                !makePublic -> FirLocalPropertySymbol()
+                else -> FirRegularPropertySymbol(this@createCopyForState.symbol.callableIdForRendering)
+            }
         }.also {
             it.originalReplSnippetSymbol = snippet
             if (makePublic) {

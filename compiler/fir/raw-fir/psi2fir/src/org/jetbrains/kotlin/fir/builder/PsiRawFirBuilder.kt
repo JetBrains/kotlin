@@ -285,11 +285,9 @@ open class PsiRawFirBuilder(
         fun convertProperty(
             property: KtProperty,
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-            forceLocal: Boolean = false,
         ): FirProperty = property.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol,
             context,
-            forceLocal
         )
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
@@ -1460,7 +1458,11 @@ open class PsiRawFirBuilder(
                                                 }
                                             }
                                             is KtProperty -> {
-                                                val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                                val firProperty = declaration.toFirProperty(
+                                                    ownerRegularOrAnonymousObjectSymbol = null,
+                                                    context,
+                                                    isFromReplSnippet = true
+                                                )
                                                 firProperty.accept(snippetDeclarationVisitor)
                                                 statements.add(firProperty)
                                             }
@@ -2294,14 +2296,14 @@ open class PsiRawFirBuilder(
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             context: Context<T>,
-            forceLocal: Boolean = false,
+            isFromReplSnippet: Boolean = false,
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
                 (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
-            val propertySymbol = if (isLocal || forceLocal) {
+            val propertySymbol = if (isLocal || isFromReplSnippet) {
                 FirLocalPropertySymbol()
             } else {
                 FirRegularPropertySymbol(callableIdForName(propertyName))
