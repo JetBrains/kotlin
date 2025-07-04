@@ -7,10 +7,17 @@ import { Style } from "./Style.mjs";
 import { DARK_THEME, LIGHT_THEME } from "../theme/colors.mjs";
 
 export function color(colorRef) {
-    const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? DARK_THEME
-        : LIGHT_THEME;
-   return Style.create("color", theme[colorRef.description]);
+    let isDarkTheme = false;
+
+    if (typeof window !== 'undefined' && window.matchMedia) {
+        isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+        console.warn("Theme detection failed, defaulting to light theme");
+    }
+
+    const theme = isDarkTheme ? DARK_THEME : LIGHT_THEME;
+
+    return Style.create("color", theme[colorRef.description]);
 }
 
 export function paddingLeft(value) {
