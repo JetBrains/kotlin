@@ -1,11 +1,11 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] delegatedFieldNestedName.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Anno] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
+            super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Base<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {

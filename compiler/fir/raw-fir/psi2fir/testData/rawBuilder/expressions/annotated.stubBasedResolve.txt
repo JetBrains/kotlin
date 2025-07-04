@@ -1,7 +1,7 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] annotated.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
         }
 
     }
