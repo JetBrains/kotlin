@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.createInlinableParameterContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -302,12 +303,14 @@ abstract class AbstractDiagnosticCollectorVisitor(
     private inline fun <T> withInlineFunctionBodyIfApplicable(function: FirFunction, isInline: Boolean, block: () -> T): T {
         return try {
             if (isInline) {
-                context = context.setInlineFunctionBodyContext(createInlineFunctionBodyContext(function, context.session))
+                val bodyContext = createInlineFunctionBodyContext(function, context.session)
+                val parameterContext = createInlinableParameterContext(function, context.session)
+                context = context.setInlineFunctionBodyContext(bodyContext).setInlinableParameterContext(parameterContext)
             }
             block()
         } finally {
             if (isInline) {
-                context = context.unsetInlineFunctionBodyContext()
+                context = context.unsetInlinableParameterContext().unsetInlineFunctionBodyContext()
             }
         }
     }
