@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.RenderingInternals
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -359,7 +360,7 @@ private fun CFGNode<*>.firstGraphDeclaration(): FirDeclaration? {
     return owner.enterNode.previousNodes.firstNotNullOfOrNull { it.firstGraphDeclaration() }
 }
 
-@OptIn(SymbolInternals::class)
+@OptIn(SymbolInternals::class, RenderingInternals::class)
 private fun FirBasedSymbol<*>.getDebugFqName(): FqName {
     return when (val fir = this.fir) {
         is FirFile -> fir.packageFqName.child(Name.identifier(fir.name))

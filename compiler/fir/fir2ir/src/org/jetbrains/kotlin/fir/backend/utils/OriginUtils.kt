@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -182,7 +183,7 @@ fun FirVariableAssignment.getIrPrefixPostfixOriginIfAny(): IrStatementOrigin? {
 private fun FirVariableAssignment.getCallableNameFromIntClassIfAny(): Name? {
     val calleeReferenceSymbol = calleeReference?.toResolvedCallableSymbol() ?: return null
     val rValue = rValue
-    if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId?.isLocal != false) {
+    if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId.isLocal) {
         val callableId = rValue.calleeReference.toResolvedCallableSymbol()?.callableId
         if (callableId?.classId == StandardClassIds.Int) {
             return callableId.callableName

@@ -404,7 +404,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             this.isVar = isVar
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
-            isLocal = false
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,

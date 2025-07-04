@@ -139,7 +139,6 @@ public class PropertyBuildingContext(
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             }
-            isLocal = false
             bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
         }
     }

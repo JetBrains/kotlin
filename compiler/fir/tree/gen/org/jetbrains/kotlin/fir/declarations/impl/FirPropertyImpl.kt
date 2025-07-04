@@ -54,7 +54,6 @@ internal class FirPropertyImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirPropertySymbol,
     override val delegateFieldSymbol: FirDelegateFieldSymbol?,
-    override val isLocal: Boolean,
     override var bodyResolveState: FirPropertyBodyResolveState,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirProperty() {

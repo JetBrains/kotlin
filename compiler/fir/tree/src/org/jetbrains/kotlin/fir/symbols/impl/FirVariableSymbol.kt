@@ -56,8 +56,7 @@ sealed class FirVariableSymbol<out E : FirVariable> : FirCallableSymbol<E>() {
 }
 
 sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbolMarker {
-    val isLocal: Boolean
-        get() = fir.isLocal
+    abstract val isLocal: Boolean
 
     open val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.getter?.symbol
@@ -102,12 +101,23 @@ sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbo
 class FirLocalPropertySymbol() : FirPropertySymbol() {
     override val callableId: CallableId?
         get() = null
+
+    override val isLocal: Boolean
+        get() = true
+}
+
+class FirLocalPropertySymbolWithCallableId(override val callableId: CallableId) : FirPropertySymbol() {
+    override val isLocal: Boolean
+        get() = true
 }
 
 /**
  * Used for top-level and member properties, including member properties of local classes / anonymous objects
  */
-open class FirRegularPropertySymbol(override val callableId: CallableId) : FirPropertySymbol()
+open class FirRegularPropertySymbol(override val callableId: CallableId) : FirPropertySymbol() {
+    override val isLocal: Boolean
+        get() = false
+}
 
 class FirIntersectionOverridePropertySymbol(
     callableId: CallableId,
@@ -219,6 +229,9 @@ class FirErrorPropertySymbol(
 ) : FirPropertySymbol(), FirErrorCallableSymbol<FirProperty> {
     override val callableId: CallableId
         get() = CALLABLE_ID
+
+    override val isLocal: Boolean
+        get() = false
 
     companion object {
         val NAME: Name = Name.special("<error property>")

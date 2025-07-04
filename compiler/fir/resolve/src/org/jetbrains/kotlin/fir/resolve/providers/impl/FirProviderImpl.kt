@@ -172,6 +172,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             data: FirRecorderData,
             map: MutableMap<CallableId, List<S>>
         ) {
+            // TODO: KT-78984: we shouldn't call this function for symbols with callableId == null
             val callableId = symbol.callableId
                 ?: return // For scripts, we can come here with local variables like <local>/<destruct>
             map.merge(callableId, listOf(symbol)) { a, b -> a + b }

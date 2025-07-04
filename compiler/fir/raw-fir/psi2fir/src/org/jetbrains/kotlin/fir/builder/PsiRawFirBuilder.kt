@@ -286,11 +286,9 @@ open class PsiRawFirBuilder(
         fun convertProperty(
             property: KtProperty,
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
-            forceLocal: Boolean = false,
         ): FirProperty = property.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol,
             context,
-            forceLocal
         )
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
@@ -817,7 +815,6 @@ open class PsiRawFirBuilder(
                     }
                     isVar = isMutable
                     symbol = propertySymbol
-                    isLocal = false
                     val defaultAccessorSource = propertySource.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
                     backingField = FirDefaultPropertyBackingField(
                         moduleData = baseModuleData,
@@ -1476,7 +1473,11 @@ open class PsiRawFirBuilder(
                                                 }
                                             }
                                             is KtProperty -> {
-                                                val firProperty = convertProperty(declaration, null, forceLocal = true)
+                                                val firProperty = declaration.toFirProperty(
+                                                    ownerRegularOrAnonymousObjectSymbol = null,
+                                                    context,
+                                                    isFromReplSnippet = true
+                                                )
                                                 firProperty.accept(snippetDeclarationVisitor)
                                                 statements.add(firProperty)
                                             }
@@ -2310,14 +2311,15 @@ open class PsiRawFirBuilder(
         private fun <T> KtProperty.toFirProperty(
             ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>?,
             context: Context<T>,
-            forceLocal: Boolean = false,
+            isFromReplSnippet: Boolean = false,
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
                 (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
-            val propertySymbol = if (isLocal) {
+            val propertySymbol = if (isLocal || isFromReplSnippet) {
+                // TODO: KT-75301: consider setting some special visibility for isFromReplSnippet == true case
                 FirLocalPropertySymbol()
             } else {
                 FirRegularPropertySymbol(callableIdForName(propertyName))
@@ -2349,7 +2351,6 @@ open class PsiRawFirBuilder(
                         propertyAnnotations += annotationEntry.convert<FirAnnotationCall>()
                     }
                     if (this@toFirProperty.isLocal) {
-                        isLocal = true
                         symbol = propertySymbol
 
                         extractTypeParametersTo(this, symbol)
@@ -2388,7 +2389,6 @@ open class PsiRawFirBuilder(
                             )
                         }
                     } else {
-                        isLocal = forceLocal
                         symbol = propertySymbol
                         dispatchReceiverType = currentDispatchReceiverType()
                         extractTypeParametersTo(this, symbol)
@@ -2827,7 +2827,6 @@ open class PsiRawFirBuilder(
                             }
                             isVar = false
                             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-                            isLocal = true
                             this.name = name
                             symbol = FirLocalPropertySymbol()
                             for (annotationEntry in ktParameter.annotationEntries) {
@@ -2891,7 +2890,6 @@ open class PsiRawFirBuilder(
                         delegate = null
                         isVar = false
                         symbol = FirLocalPropertySymbol()
-                        isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                         receiverParameter = ktSubjectExpression.receiverTypeReference?.let {
                             createReceiverParameter({ it.toFirType() }, moduleData, symbol)
@@ -2915,7 +2913,6 @@ open class PsiRawFirBuilder(
                     delegate = null
                     isVar = false
                     symbol = FirLocalPropertySymbol()
-                    isLocal = true
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 }
             }

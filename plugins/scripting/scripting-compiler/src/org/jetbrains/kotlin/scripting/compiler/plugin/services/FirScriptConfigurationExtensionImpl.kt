@@ -102,7 +102,6 @@ class FirScriptConfiguratorExtensionImpl(
                             name = baseCtorParameter.name
                             symbol = FirRegularPropertySymbol(CallableId(name))
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                            isLocal = false
                             isVar = false
                         }
                     )
@@ -133,7 +132,6 @@ class FirScriptConfiguratorExtensionImpl(
                     name = Name.identifier(propertyName)
                     symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                    isLocal = true
                     isVar = false
                 }
             )
@@ -149,7 +147,6 @@ class FirScriptConfiguratorExtensionImpl(
                     name = Name.identifier(it)
                     symbol = FirLocalPropertySymbol()
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                    isLocal = true
                     isVar = false
                 }
             )
@@ -194,7 +191,6 @@ class FirScriptConfiguratorExtensionImpl(
                         )
 
                         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                        isLocal = false
                         isVar = false
                     }.also {
                         resultPropertyName = it.name

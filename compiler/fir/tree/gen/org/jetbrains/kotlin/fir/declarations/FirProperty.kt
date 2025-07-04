@@ -50,7 +50,6 @@ abstract class FirProperty : FirVariable(), FirTypeParametersOwner, FirControlFl
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirPropertySymbol
     abstract val delegateFieldSymbol: FirDelegateFieldSymbol?
-    abstract val isLocal: Boolean
     abstract val bodyResolveState: FirPropertyBodyResolveState
     abstract override val typeParameters: List<FirTypeParameter>
 

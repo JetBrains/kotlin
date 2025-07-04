@@ -135,3 +135,5 @@ fun CallableId.withClassId(classId: ClassId): CallableId {
 }
 
 val CallableId?.packageName: FqName get() = this?.packageName ?: PACKAGE_FQ_NAME_FOR_LOCAL
+
+val CallableId?.isLocal: Boolean get() = this == null || this.isLocal

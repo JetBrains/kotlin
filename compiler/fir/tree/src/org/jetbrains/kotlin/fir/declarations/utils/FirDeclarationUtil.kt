@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.isLocal
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -59,7 +60,7 @@ val FirDeclaration.isNonLocal: Boolean
 val FirBasedSymbol<*>.isNonLocal: Boolean
     get() = when (this) {
         is FirFileSymbol -> true
-        is FirCallableSymbol -> callableId?.isLocal == false
+        is FirCallableSymbol -> !callableId.isLocal
         is FirClassLikeSymbol -> !classId.isLocal
         else -> false
     }

@@ -525,7 +525,6 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +declaredSymbol(propertySymbolType)
         +referencedSymbol("delegateFieldSymbol", delegateFieldSymbolType, nullable = true)
-        +field("isLocal", boolean)
         +field("bodyResolveState", propertyBodyResolveStateType, withReplace = true)
         +typeParameters
     }

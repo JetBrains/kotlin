@@ -306,7 +306,6 @@ internal fun FirProperty.copyToFreeProperty(approximator: AbstractTypeApproximat
         getter = property.getter?.copyToFreeAccessor(approximator, newPropertySymbol)
         setter = property.setter?.copyToFreeAccessor(approximator, newPropertySymbol)
         isVar = property.isVar
-        isLocal = property.isLocal
         status = property.status
         dispatchReceiverType = property.dispatchReceiverType
         attributes = property.attributes.copy()

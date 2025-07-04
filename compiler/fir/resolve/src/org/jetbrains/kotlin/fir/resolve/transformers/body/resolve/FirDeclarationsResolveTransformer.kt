@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -1578,9 +1579,9 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private val FirVariable.isLocal: Boolean
-        get() = when (this) {
-            is FirProperty -> this.isLocal
-            is FirValueParameter -> true
+        get() = when (val symbol = symbol) {
+            is FirValueParameterSymbol -> true
+            is FirPropertySymbol -> symbol.isLocal
             else -> false
         }
 
