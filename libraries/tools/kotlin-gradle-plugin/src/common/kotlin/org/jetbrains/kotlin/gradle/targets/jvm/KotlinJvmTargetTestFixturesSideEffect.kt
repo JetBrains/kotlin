@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.jvm
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.internal.component.external.model.TestFixturesSupport.TEST_FIXTURE_SOURCESET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
+import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.javaSourceSets
 
 private const val JAVA_TEST_FIXTURES_PLUGIN_ID = "java-test-fixtures"
@@ -33,13 +37,25 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
         testCompilation.associateWith(testFixturesCompilation)
         if (target is KotlinJvmTarget) {
             // Only applicable for KMP
-            val testFixturesApiElements = target.project.configurations.getByName(testFixturesSourceSet.apiElementsConfigurationName)
-            testFixturesApiElements.extendsFrom(
-                target.project.configurations.getByName(mainCompilation.apiConfigurationName)
+            setupDependenciesCrossInclusionForJava(
+                testFixturesCompilation as KotlinJvmCompilation,
+                testFixturesSourceSet
             )
-            testFixturesApiElements.extendsFrom(
-                target.project.configurations.getByName(testFixturesCompilation.apiConfigurationName)
-            )
+
+            // Publishing
+            listOfNotNull(
+                testFixturesCompilation.apiConfigurationName
+            ).forEach { configurationName ->
+                target.project.addExtendsFromRelation(testFixturesSourceSet.apiElementsConfigurationName, configurationName)
+            }
+
+            listOfNotNull(
+                testFixturesCompilation.implementationConfigurationName,
+                testFixturesCompilation.runtimeOnlyConfigurationName
+            ).forEach { configurationName ->
+                target.project.addExtendsFromRelation(testFixturesSourceSet.runtimeElementsConfigurationName, configurationName)
+            }
+
             (testFixturesSourceSet.output.classesDirs as? ConfigurableFileCollection)?.from(
                 testFixturesCompilation.output.classesDirs
             ) ?: target.project.logger.warn(

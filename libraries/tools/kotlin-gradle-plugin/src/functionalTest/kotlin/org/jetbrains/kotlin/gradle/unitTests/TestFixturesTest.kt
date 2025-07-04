@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.api.tasks.testing.Test as TestTask
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -74,7 +77,7 @@ class TestFixturesTest {
     }
 
     @Test
-    fun kt75808testFixtureDependenciesAreExposedCorrectly() {
+    fun kt77466testFixturesDependenciesAreCorrectlyPropagatedToCompilation() {
         val project = buildProjectWithMPP(
             preApplyCode = { plugins.apply("java-test-fixtures") }
         ) {
@@ -83,28 +86,142 @@ class TestFixturesTest {
             }
 
             dependencies {
-                "testFixturesApi"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-                "jvmTestFixturesApi"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+                "testFixturesApi"("example:A:1.0.0")
+                "jvmTestFixturesApi"("example:B:1.0.0")
+                "testFixturesImplementation"("example:C:1.0.0")
+                "jvmTestFixturesImplementation"("example:D:1.0.0")
+                "testFixturesCompileOnly"("example:E:1.0.0")
+                "jvmTestFixturesCompileOnly"("example:F:1.0.0")
             }
         }
 
         project.evaluate()
 
-        val testFixturesApiElements = project.configurations.getByName("testFixturesApiElements")
-        val allDeps = testFixturesApiElements.allDependencies
-        assertEquals(2, testFixturesApiElements.allDependencies.count())
-        assertTrue(
-            actual = allDeps.any { dependency ->
-                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-coroutines-core"
-            },
-            message = "Outgoing configuration does not contain 'org.jetbrains.kotlinx:kotlinx-coroutines-core' dependency"
+        val expectedDeps = setOf(
+            Triple("example", "A", "1.0.0"),
+            Triple("example", "B", "1.0.0"),
+            Triple("example", "C", "1.0.0"),
+            Triple("example", "D", "1.0.0"),
+            Triple("example", "E", "1.0.0"),
+            Triple("example", "F", "1.0.0"),
         )
-        assertTrue(
-            actual = allDeps.any { dependency ->
-                dependency.group == "org.jetbrains.kotlinx" && dependency.name == "kotlinx-serialization-json"
-            },
-            message = "Outgoing configuration does not contain 'org.jetbrains.kotlinx:kotlinx-serialization-json' dependency"
+
+        project.configurations
+            .getByName(project.javaSourceSets["testFixtures"].compileClasspathConfigurationName)
+            .assertDependenciesPresent(expectedDeps)
+
+        project.configurations
+            .getByName(
+                project.multiplatformExtension.targets.getByName("jvm").compilations.getByName("testFixtures").compileDependencyConfigurationName
+            )
+            .assertDependenciesPresent(expectedDeps)
+    }
+
+    @Test
+    fun kt77466testFixturesDependenciesAreCorrectlyPropagatedToRuntime() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+
+            dependencies {
+                "testFixturesApi"("example:A:1.0.0")
+                "jvmTestFixturesApi"("example:B:1.0.0")
+                "testFixturesImplementation"("example:C:1.0.0")
+                "jvmTestFixturesImplementation"("example:D:1.0.0")
+                "testFixturesRuntimeOnly"("example:E:1.0.0")
+                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            }
+        }
+
+        project.evaluate()
+
+        val expectedDeps = setOf(
+            Triple("example", "A", "1.0.0"),
+            Triple("example", "B", "1.0.0"),
+            Triple("example", "C", "1.0.0"),
+            Triple("example", "D", "1.0.0"),
+            Triple("example", "E", "1.0.0"),
+            Triple("example", "F", "1.0.0"),
         )
+
+        project.configurations
+            .getByName(project.javaSourceSets["testFixtures"].runtimeClasspathConfigurationName)
+            .assertDependenciesPresent(expectedDeps)
+
+        project.configurations
+            .getByName(
+                project.multiplatformExtension.targets.getByName("jvm").compilations.getByName("testFixtures").runtimeDependencyConfigurationName!!
+            )
+            .assertDependenciesPresent(expectedDeps)
+    }
+
+    @Test
+    fun kt75808testFixtureDependenciesAreCorrectlyPropagatedToApiElements() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+
+            dependencies {
+                "testFixturesApi"("example:A:1.0.0")
+                "jvmTestFixturesApi"("example:B:1.0.0")
+                "testFixturesImplementation"("example:C:1.0.0")
+                "jvmTestFixturesImplementation"("example:D:1.0.0")
+                "testFixturesRuntimeOnly"("example:E:1.0.0")
+                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            }
+        }
+
+        project.evaluate()
+
+        val expectedDeps = setOf(
+            Triple("example", "A", "1.0.0"),
+            Triple("example", "B", "1.0.0"),
+        )
+
+        project.configurations
+            .getByName(project.javaSourceSets["testFixtures"].apiElementsConfigurationName)
+            .assertDependenciesPresent(expectedDeps, shouldIncludeProjectDependencies = false)
+    }
+
+    @Test
+    fun kt75808testFixtureDependenciesAreCorrectlyPropagatedToRuntimeElements() {
+        val project = buildProjectWithMPP(
+            preApplyCode = { plugins.apply("java-test-fixtures") }
+        ) {
+            kotlin {
+                jvm()
+            }
+
+            dependencies {
+                "testFixturesApi"("example:A:1.0.0")
+                "jvmTestFixturesApi"("example:B:1.0.0")
+                "testFixturesImplementation"("example:C:1.0.0")
+                "jvmTestFixturesImplementation"("example:D:1.0.0")
+                "testFixturesRuntimeOnly"("example:E:1.0.0")
+                "jvmTestFixturesRuntimeOnly"("example:F:1.0.0")
+            }
+        }
+
+        project.evaluate()
+
+        val expectedDeps = setOf(
+            Triple("example", "A", "1.0.0"),
+            Triple("example", "B", "1.0.0"),
+            Triple("example", "C", "1.0.0"),
+            Triple("example", "D", "1.0.0"),
+            Triple("example", "E", "1.0.0"),
+            Triple("example", "F", "1.0.0"),
+        )
+
+        project.configurations
+            .getByName(project.javaSourceSets["testFixtures"].runtimeElementsConfigurationName)
+            .assertDependenciesPresent(expectedDeps)
     }
 
     @Test
@@ -153,6 +270,29 @@ class TestFixturesTest {
         }
         assert(mainResourcesEntries.size == 1) {
             "Expected to see the main resources entry once, but got:\n${testClasspath.joinToString(separator = "\n")}"
+        }
+    }
+
+
+    private fun Configuration.assertDependenciesPresent(
+        expectedDeps: Set<Triple<String, String, String>>,
+        shouldIncludeProjectDependencies: Boolean = true
+    ) {
+        val kotlinTestFixturesAllDeps = allDependencies
+        assertEquals(
+            expectedDeps.size + if (shouldIncludeProjectDependencies) 2 else 0,
+            kotlinTestFixturesAllDeps.size,
+            message = "Actual content of configuration: ${kotlinTestFixturesAllDeps.joinToString { "${it.group}:${it.name}" }}"
+        )
+        expectedDeps.forEach { expectedDependency ->
+            assertTrue(
+                actual = kotlinTestFixturesAllDeps.any { dependency ->
+                    dependency.group == expectedDependency.first &&
+                            dependency.name == expectedDependency.second &&
+                            dependency.version == expectedDependency.third
+                },
+                message = "Outgoing configuration does not contain ''$expectedDependency' dependency"
+            )
         }
     }
 }

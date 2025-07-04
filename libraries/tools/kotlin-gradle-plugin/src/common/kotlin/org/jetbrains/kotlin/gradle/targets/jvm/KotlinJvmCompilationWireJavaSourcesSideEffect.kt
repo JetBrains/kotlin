@@ -103,6 +103,7 @@ internal val KotlinTarget.kotlinSourceSetDslName: String
         else -> KOTLIN_DSL_NAME
     }
 
+// see https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph
 internal fun setupDependenciesCrossInclusionForJava(
     compilation: KotlinJvmCompilation,
     javaSourceSet: SourceSet,
