@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.lang.Boolean.getBoolean
 
@@ -155,6 +157,16 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCod
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
         }
+    }
+}
+
+open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        @OptIn(TestInfrastructureInternals::class)
+        builder.useModuleStructureTransformers(
+            SplittingModuleTransformerForBoxTests()
+        )
     }
 }
 

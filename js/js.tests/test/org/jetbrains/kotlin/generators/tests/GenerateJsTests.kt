@@ -239,6 +239,13 @@ fun main(args: Array<String>) {
                 model("boxInline")
             }
 
+            testClass<AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest> {
+                // Test directive `// CHECK_STATE_MACHINE` works incorrectly for non-jvm multi-module tests:
+                //   it adds same helper source files to each module
+                // The easiest way to avoid such tests is to exclude the whole folder, despite only half of tests have such directive
+                model("boxInline", excludeDirs = listOf("suspend"))
+            }
+
             testClass<AbstractFirJsES6CodegenInlineTest>(annotations = listOf(*es6())) {
                 model("boxInline")
             }
