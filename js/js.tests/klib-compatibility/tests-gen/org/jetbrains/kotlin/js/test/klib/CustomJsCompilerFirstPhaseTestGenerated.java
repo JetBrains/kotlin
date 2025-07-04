@@ -45505,6 +45505,17 @@ public class CustomJsCompilerFirstPhaseTestGenerated extends AbstractCustomJsCom
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @HeavyTest()
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
     @HeavyTest()
