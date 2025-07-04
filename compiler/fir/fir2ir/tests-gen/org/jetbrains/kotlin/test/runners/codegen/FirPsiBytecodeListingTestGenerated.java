@@ -2805,4 +2805,38 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
       runTest("compiler/testData/codegen/bytecodeListing/valueClasses/nullabilityAnnotationsOnInlineClassMembers.kt");
     }
   }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/bytecodeListing/versionOverload")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VersionOverload {
+    @Test
+    public void testAllFilesPresentInVersionOverload() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/versionOverload"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("constructor.kt")
+    public void testConstructor() {
+      runTest("compiler/testData/codegen/bytecodeListing/versionOverload/constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() {
+      runTest("compiler/testData/codegen/bytecodeListing/versionOverload/dataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleCall.kt")
+    public void testSimpleCall() {
+      runTest("compiler/testData/codegen/bytecodeListing/versionOverload/simpleCall.kt");
+    }
+
+    @Test
+    @TestMetadata("withJvmOverloads.kt")
+    public void testWithJvmOverloads() {
+      runTest("compiler/testData/codegen/bytecodeListing/versionOverload/withJvmOverloads.kt");
+    }
+  }
 }
