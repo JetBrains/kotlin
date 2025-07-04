@@ -154,6 +154,10 @@ fun main(args: Array<String>) {
             testClass<AbstractFirJsES6BoxTest>(annotations = listOf(*es6())) {
                 model(pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractJsOldArtifactNewCompilerTest> {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
