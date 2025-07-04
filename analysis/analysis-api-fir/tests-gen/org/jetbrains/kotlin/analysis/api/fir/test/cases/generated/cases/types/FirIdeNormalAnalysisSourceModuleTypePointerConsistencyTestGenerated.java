@@ -118,6 +118,30 @@ public class FirIdeNormalAnalysisSourceModuleTypePointerConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("functionTypeSuspend.kt")
+  public void testFunctionTypeSuspend() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/functionTypeSuspend.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithContextParameter.kt")
+  public void testFunctionTypeWithContextParameter() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/functionTypeWithContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithContextParametersAndReceiver.kt")
+  public void testFunctionTypeWithContextParametersAndReceiver() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/functionTypeWithContextParametersAndReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("functionTypeWithReceiver.kt")
+  public void testFunctionTypeWithReceiver() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/functionTypeWithReceiver.kt");
+  }
+
+  @Test
   @TestMetadata("implicitFlexibleDnnType.kt")
   public void testImplicitFlexibleDnnType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/implicitFlexibleDnnType.kt");
