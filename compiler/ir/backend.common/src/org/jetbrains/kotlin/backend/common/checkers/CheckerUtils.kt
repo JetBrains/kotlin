@@ -36,6 +36,7 @@ val EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION = listOf(
 ).mapTo(hashSetOf(), ::FqName)
 
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
+    if (type.classifierOrNull?.isBound != true) return
     if (context.withinAnnotationUsageSubTree && context.file.packageFqName in EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION) return
 
     val isCorrectArrayOf = (type.isArray() || type.isNullableArray())
