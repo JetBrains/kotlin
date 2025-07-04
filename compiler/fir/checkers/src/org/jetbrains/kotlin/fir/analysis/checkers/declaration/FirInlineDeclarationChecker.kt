@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker.InlinableParameterContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.isDataClassCopy
 import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
@@ -59,10 +58,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     class InlineFunctionBodyContext(
         val inlineFunction: FirFunction,
         val inlineFunEffectiveVisibility: EffectiveVisibility,
-        inlinableParameters: List<FirValueParameterSymbol>,
         val session: FirSession,
     ) {
-        val inlinableParameterContext: InlinableParameterContext = InlinableParameterContext(inlineFunction, inlinableParameters, session)
         private val isEffectivelyPrivateApiFunction: Boolean = inlineFunEffectiveVisibility.privateApi
 
         private fun accessedDeclarationEffectiveVisibility(
@@ -430,12 +427,9 @@ internal fun FirValueParameter.isInlinable(session: FirSession): Boolean {
 }
 
 fun createInlineFunctionBodyContext(function: FirFunction, session: FirSession): FirInlineDeclarationChecker.InlineFunctionBodyContext {
-    val inlineableParameters = function.valueParameters.mapNotNull { p -> p.takeIf { it.isInlinable(session) }?.symbol }
-
     return FirInlineDeclarationChecker.InlineFunctionBodyContext(
         function,
         function.publishedApiEffectiveVisibility ?: function.effectiveVisibility,
-        inlineableParameters,
         session,
     )
 }

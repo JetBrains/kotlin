@@ -15,28 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCall
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.expressions.unwrapErrorExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -44,11 +25,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {
-        val inlineFunctionBodyContext = context.inlineFunctionBodyContext ?: return
+        val inlinableParameterContext = context.inlinableParameterContext ?: return
+        val inlineFunctionBodyContext = context.inlineFunctionBodyContext
         if (expression !is FirQualifiedAccessExpression && expression !is FirDelegatedConstructorCall) return
         val targetSymbol = expression.toResolvedCallableSymbol() ?: return
-        inlineFunctionBodyContext.check(expression, targetSymbol)
-        inlineFunctionBodyContext.inlinableParameterContext.check(expression, targetSymbol)
+        inlineFunctionBodyContext?.check(expression, targetSymbol)
+        inlinableParameterContext.check(expression, targetSymbol)
     }
 
     class InlinableParameterContext(
@@ -211,4 +193,9 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             return call.arguments.any { it.unwrapErrorExpression().unwrapArgument() == this }
         }
     }
+}
+
+fun createInlinableParameterContext(function: FirFunction, session: FirSession): FirInlineBodyResolvableExpressionChecker.InlinableParameterContext {
+    val inlinableParameters = function.valueParameters.mapNotNull { p -> p.takeIf { it.isInlinable(session) }?.symbol }
+    return FirInlineBodyResolvableExpressionChecker.InlinableParameterContext(function, inlinableParameters, session)
 }

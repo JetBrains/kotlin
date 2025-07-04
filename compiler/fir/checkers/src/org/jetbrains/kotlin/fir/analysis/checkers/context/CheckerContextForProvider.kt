@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 
 /**
@@ -55,6 +56,8 @@ abstract class CheckerContextForProvider(
     abstract fun exitContractBody(): CheckerContextForProvider
 
     abstract fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): CheckerContextForProvider
+
+    abstract fun setInlinableParameterContext(context: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?): CheckerContextForProvider
 
     abstract fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider
 
