@@ -50,6 +50,24 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("exceptionFromGlobalInitializer.kt")
+  public void testExceptionFromGlobalInitializer() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/exceptionFromGlobalInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("exceptionFromGlobalInitializerNewProposal.kt")
+  public void testExceptionFromGlobalInitializerNewProposal() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/exceptionFromGlobalInitializerNewProposal.kt");
+  }
+
+  @Test
+  @TestMetadata("exceptionFromGlobalInitializerNoJsTag.kt")
+  public void testExceptionFromGlobalInitializerNoJsTag() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/exceptionFromGlobalInitializerNoJsTag.kt");
+  }
+
+  @Test
   @TestMetadata("exceptionFromMain.kt")
   public void testExceptionFromMain() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/exceptionFromMain.kt");
