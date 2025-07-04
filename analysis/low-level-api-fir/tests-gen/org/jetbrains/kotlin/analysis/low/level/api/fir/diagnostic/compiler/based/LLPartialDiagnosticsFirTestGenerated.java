@@ -9759,5 +9759,51 @@ public class LLPartialDiagnosticsFirTestGenerated extends AbstractLLPartialDiagn
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/smartcasts/tryWithLambdaInside.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("futureDependency.kt")
+      public void testFutureDependency() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/futureDependency.kt");
+      }
+
+      @Test
+      @TestMetadata("noDefaultExpression.kt")
+      public void testNoDefaultExpression() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/noDefaultExpression.kt");
+      }
+
+      @Test
+      @TestMetadata("nonAscending.kt")
+      public void testNonAscending() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/nonAscending.kt");
+      }
+
+      @Test
+      @TestMetadata("nonOptionalAfterOptional.kt")
+      public void testNonOptionalAfterOptional() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/nonOptionalAfterOptional.kt");
+      }
+
+      @Test
+      @TestMetadata("overridableFunction.kt")
+      public void testOverridableFunction() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/overridableFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("withJvmOverloads.kt")
+      public void testWithJvmOverloads() {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/versionOverloads/withJvmOverloads.kt");
+      }
+    }
   }
 }

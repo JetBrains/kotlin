@@ -43899,6 +43899,16 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VersionOverloads {
+    @Test
+    public void testAllFilesPresentInVersionOverloads() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/volatile")
   @TestDataPath("$PROJECT_ROOT")
   public class Volatile {

@@ -47994,6 +47994,21 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @ClassicPipeline()
+    @UseExtTestCaseGroupProvider()
+    @UsePartialLinkage(mode = Mode.DISABLED)
+    @Tag("no-partial-linkage-may-be-skipped")
+    @Tag("codegen-box")
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
     @ClassicPipeline()

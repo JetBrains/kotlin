@@ -47052,6 +47052,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("klibIrInliner")
+    @UseExtTestCaseGroupProvider()
+    public class VersionOverloads {
+      @Test
+      public void testAllFilesPresentInVersionOverloads() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/volatile")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klibIrInliner")

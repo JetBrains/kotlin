@@ -62573,6 +62573,40 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/versionOverloads")
+  @TestDataPath("$PROJECT_ROOT")
+  public class VersionOverloads {
+    @Test
+    public void testAllFilesPresentInVersionOverloads() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/versionOverloads"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() {
+      runTest("compiler/testData/codegen/box/versionOverloads/dataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("simpleCall.kt")
+    public void testSimpleCall() {
+      runTest("compiler/testData/codegen/box/versionOverloads/simpleCall.kt");
+    }
+
+    @Test
+    @TestMetadata("withJvmOverloads.kt")
+    public void testWithJvmOverloads() {
+      runTest("compiler/testData/codegen/box/versionOverloads/withJvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("withLambda.kt")
+    public void testWithLambda() {
+      runTest("compiler/testData/codegen/box/versionOverloads/withLambda.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/volatile")
   @TestDataPath("$PROJECT_ROOT")
   public class Volatile {
