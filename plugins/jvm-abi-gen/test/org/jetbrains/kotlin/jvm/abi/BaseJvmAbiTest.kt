@@ -19,7 +19,7 @@ import java.io.File
 import kotlin.io.path.createTempDirectory
 
 abstract class BaseJvmAbiTest : TestCase() {
-    private lateinit var workingDir: File
+    protected lateinit var workingDir: File
 
     override fun setUp() {
         super.setUp()
