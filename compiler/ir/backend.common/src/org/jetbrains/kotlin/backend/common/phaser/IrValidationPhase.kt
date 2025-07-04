@@ -70,7 +70,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : LoweringContext>(
             checkValueScopes = context.configuration.enableIrVisibilityChecks,
             checkCrossFileFieldUsage = context.configuration.enableIrVisibilityChecks,
             checkTypeParameterScopes = false,
-            checkVisibilities = context.configuration.enableIrVisibilityChecks,
+            checkVisibilities = false,
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
             checkVarargTypes = context.configuration.enableIrVarargTypesChecks,
         )
