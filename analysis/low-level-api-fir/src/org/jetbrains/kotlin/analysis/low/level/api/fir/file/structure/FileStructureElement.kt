@@ -173,8 +173,8 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
                 if (current is KtCallExpression) fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                        return it
-                    }
+                    return it
+                }
                 current = current.parent
             }
 
