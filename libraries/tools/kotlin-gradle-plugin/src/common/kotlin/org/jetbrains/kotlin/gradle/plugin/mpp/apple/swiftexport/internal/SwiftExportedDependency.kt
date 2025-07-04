@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 import org.gradle.api.Named
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import org.gradle.api.tasks.Input
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
-import javax.inject.Inject
 
 /**
  * A sealed interface representing a dependency to be exported to Swift.
@@ -46,7 +46,7 @@ internal interface SwiftExportedProjectDependency : SwiftExportedDependency {
     /**
      * The path of the Gradle project (e.g., ":shared:core").
      */
-    @get:Input
+    @get:Internal
     val projectPath: String
 
     @Internal
@@ -62,16 +62,19 @@ internal val SwiftExportedDependency.inheritedName
         is SwiftExportedProjectDependency -> projectPath
     }
 
-internal abstract class DefaultSwiftExportedExternalDependency @Inject constructor(
-    initialCoordinates: ModuleVersionIdentifier
-) : SwiftExportedExternalDependency {
-    @get:Internal
-    override val coordinates: ModuleVersionIdentifier = initialCoordinates
-}
+internal sealed class DefaultSwiftExportedDependency(objectFactory: ObjectFactory) : SwiftExportedModuleMetadata {
 
-internal abstract class DefaultSwiftExportedProjectDependency @Inject constructor(
-    initialPath: String
-) : SwiftExportedProjectDependency {
-    @get:Input
-    override val projectPath: String = initialPath
+    override val moduleName: Property<String> = objectFactory.property(String::class.java)
+
+    override val flattenPackage: Property<String> = objectFactory.property(String::class.java)
+
+    internal class External(
+        objectFactory: ObjectFactory,
+        override val coordinates: ModuleVersionIdentifier,
+    ) : DefaultSwiftExportedDependency(objectFactory), SwiftExportedExternalDependency
+
+    internal class Project(
+        objectFactory: ObjectFactory,
+        override val projectPath: String,
+    ) : DefaultSwiftExportedDependency(objectFactory), SwiftExportedProjectDependency
 }

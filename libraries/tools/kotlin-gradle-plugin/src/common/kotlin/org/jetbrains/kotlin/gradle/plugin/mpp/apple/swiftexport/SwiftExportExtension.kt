@@ -16,8 +16,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.DefaultSwiftExportedExternalDependency
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.DefaultSwiftExportedProjectDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.DefaultSwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedExternalDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedProjectDependency
@@ -241,7 +240,7 @@ private fun ObjectFactory.ExternalDependency(
     dependencyId: ModuleVersionIdentifier,
     configure: SwiftExportedModuleMetadata.() -> Unit = {},
 ): SwiftExportedExternalDependency {
-    return newInstance(DefaultSwiftExportedExternalDependency::class.java, dependencyId).also {
+    return DefaultSwiftExportedDependency.External(this, dependencyId).also {
         it.configure()
     }
 }
@@ -250,7 +249,7 @@ private fun ObjectFactory.ProjectDependency(
     path: String,
     configure: SwiftExportedModuleMetadata.() -> Unit = {},
 ): SwiftExportedProjectDependency {
-    return newInstance(DefaultSwiftExportedProjectDependency::class.java, path).also {
+    return DefaultSwiftExportedDependency.Project(this, path).also {
         it.configure()
     }
 }
