@@ -9,8 +9,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -105,6 +107,19 @@ abstract class KotlinNativeTarget @Inject constructor(
                 )
             )
         }
+
+    internal val compilationSupported: Provider<Boolean> = project.provider {
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = hostManager.isEnabled(konanTarget)
+
+        // Supported hosts can always compile
+        if (isSupportedHost) return@provider true
+
+        // Unsupported hosts require cross-compilation enabled and no cinterops
+        crossCompilationEnabled && binaries.toList().all { binary ->
+            binary.compilation.target.compilations.none { it.cinterops.isNotEmpty() }
+        }
+    }
 
     // User-visible constants
     val DEBUG = NativeBuildType.DEBUG
