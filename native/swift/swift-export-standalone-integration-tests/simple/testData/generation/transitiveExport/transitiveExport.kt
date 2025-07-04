@@ -1,10 +1,16 @@
 // KIND: STANDALONE
 // MODULE: state
-// FILE: state.kt
+// FILE: inner_state.kt
+package oh.my.state.inner
 
+class InnerState(val bytes: ByteArray? = null)
+
+// FILE: state.kt
 package oh.my.state
 
-class State(val bytes: ByteArray? = null)
+import oh.my.state.inner.*
+
+class State(val innerState: InnerState? = null)
 
 // MODULE: feature
 // FILE: features.kt
@@ -16,10 +22,9 @@ class FeatureB
 
 // MODULE: anotherFeature(state)
 // FILE: main.kt
-import oh.my.state.State
 
 class FeatureC() {
-    val state: State = State()
+    val state: oh.my.state.State = TODO()
 }
 
 // MODULE: main(feature,anotherFeature)

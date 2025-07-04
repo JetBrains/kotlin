@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.util.*
 import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.SirAndKaSession
@@ -18,11 +19,15 @@ import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.withSessions
+import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
+import org.jetbrains.kotlin.swiftexport.standalone.builders.constructFunctionBridgeRequests
+import org.jetbrains.kotlin.swiftexport.standalone.builders.constructPropertyAccessorsBridgeRequests
+import org.jetbrains.kotlin.swiftexport.standalone.builders.constructTypeBindingBridgeRequests
 import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
@@ -129,8 +134,10 @@ internal fun translateCrossReferencingModulesTransitively(
                 }
                 it.processedReferences += it.currentlyProcessing
                 it.currentlyProcessing = emptyList()
-                // We build bridges at every iteration as new references might appear.
-                it.bridgeRequests += it.sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
+                // Touch all declarations
+                it.sirSession.withSessions {
+                    deepTouch(sirModule)
+                }
                 forceComputeSupertypes(sirModule)
             }
     }
@@ -143,7 +150,7 @@ internal fun translateCrossReferencingModulesTransitively(
             config,
             it.moduleConfig,
             emptyMap(),
-            it.bridgeRequests
+            it.sirSession.withSessions { buildBridgeRequests(bridgeGenerator, sirModule) }
         )
     }
 }
@@ -223,3 +230,18 @@ internal class TranslationResult(
     val bridgesModuleName: String,
     val externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
 )
+
+private fun SirAndKaSession.deepTouch(container: SirDeclarationContainer) {
+    container
+        .allCallables()
+        .forEach {
+            it.allParameters
+            it.returnType
+        }
+    container
+        .allVariables()
+        .forEach { it.type }
+    container
+        .allContainers()
+        .forEach { deepTouch(it) }
+}

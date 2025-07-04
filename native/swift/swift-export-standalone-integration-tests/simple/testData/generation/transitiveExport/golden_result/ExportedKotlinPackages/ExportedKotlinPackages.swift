@@ -9,6 +9,8 @@ public enum oh {
         public enum kotlin {
         }
         public enum state {
+            public enum inner {
+            }
         }
     }
 }
