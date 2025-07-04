@@ -37,3 +37,6 @@ context -> FirRegularClassSymbol Another
 
 context -> FirRegularClassSymbol WithIncorrectArguments
 @Arrays(LAZY_EXPRESSION)
+
+context -> FirRegularClassSymbol Qualified
+@kotlin.Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION)

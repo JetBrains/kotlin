@@ -143,3 +143,9 @@ FILE: annotationArguments.kt
         }
 
     }
+    @kotlin.Deprecated(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? class Qualified : R|kotlin/Any| {
+        public? constructor(): R|Qualified| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
