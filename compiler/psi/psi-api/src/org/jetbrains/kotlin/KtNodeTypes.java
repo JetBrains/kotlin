@@ -132,7 +132,7 @@ public interface KtNodeTypes {
     IElementType PREFIX_EXPRESSION         = new KtNodeType("PREFIX_EXPRESSION", KtPrefixExpression.class);
     IElementType POSTFIX_EXPRESSION        = new KtNodeType("POSTFIX_EXPRESSION", KtPostfixExpression.class);
     IElementType LABELED_EXPRESSION        = new KtNodeType("LABELED_EXPRESSION", KtLabeledExpression.class);
-    IElementType CALL_EXPRESSION           = new KtNodeType("CALL_EXPRESSION", KtCallExpression.class);
+    IElementType CALL_EXPRESSION           = KtStubBasedElementTypes.CALL_EXPRESSION;
     IElementType ARRAY_ACCESS_EXPRESSION   = new KtNodeType("ARRAY_ACCESS_EXPRESSION", KtArrayAccessExpression.class);
     IElementType INDICES                   = new KtNodeType("INDICES", KtContainerNode.class);
     IElementType DOT_QUALIFIED_EXPRESSION  = KtStubBasedElementTypes.DOT_QUALIFIED_EXPRESSION;

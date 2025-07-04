@@ -270,6 +270,10 @@ internal object KtStubBasedElementTypes {
         provider.dotQualifiedExpressionType
 
     @JvmField
+    val CALL_EXPRESSION: KtStubElementType<KotlinPlaceHolderStub<KtCallExpression>, KtCallExpression> =
+        provider.callExpressionType
+
+    @JvmField
     val CLASS_LITERAL_EXPRESSION: KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression> =
         provider.classLiteralExpressionType
 

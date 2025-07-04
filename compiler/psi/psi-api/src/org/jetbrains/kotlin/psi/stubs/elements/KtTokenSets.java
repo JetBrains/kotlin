@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 
@@ -19,6 +20,12 @@ public interface KtTokenSets {
     TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, INTERSECTION_TYPE);
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
+
+    /**
+     * TokenSet containing all expression types that can be a child of [KtDotQualifiedExpression].
+     */
+    @KtImplementationDetail
+    TokenSet INSIDE_DOT_QUALIFIED_EXPRESSION = TokenSet.create(REFERENCE_EXPRESSION, CALL_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 
     // typeArguments? valueArguments : typeArguments : arrayAccess
     TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
@@ -33,6 +40,7 @@ public interface KtTokenSets {
             INTEGER_CONSTANT,
 
             REFERENCE_EXPRESSION,
+            CALL_EXPRESSION,
             DOT_QUALIFIED_EXPRESSION,
 
             STRING_TEMPLATE,

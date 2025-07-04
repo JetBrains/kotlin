@@ -12,6 +12,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.backingFieldType
 org.jetbrains.kotlin.KotlinElementTypeProvider.blockCodeFragmentType
 org.jetbrains.kotlin.KotlinElementTypeProvider.blockExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.booleanConstantType
+org.jetbrains.kotlin.KotlinElementTypeProvider.callExpressionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.characterConstantType
 org.jetbrains.kotlin.KotlinElementTypeProvider.classBodyType
 org.jetbrains.kotlin.KotlinElementTypeProvider.classInitializerType
@@ -376,6 +377,8 @@ org.jetbrains.kotlin.psi.KtCallElement:getTypeArguments()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArgumentList()
 org.jetbrains.kotlin.psi.KtCallElement:getValueArguments()
 org.jetbrains.kotlin.psi.KtCallExpression
+org.jetbrains.kotlin.psi.KtCallExpression:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtCallExpression:constructor(KotlinPlaceHolderStub<KtCallExpression>)
 org.jetbrains.kotlin.psi.KtCallableDeclaration
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getColon()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getContextReceivers()
@@ -2118,6 +2121,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ANNOTATION_TARGET
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BACKING_FIELD
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BLOCK_CODE_FRAGMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:BOOLEAN_CONSTANT
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CALL_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CHARACTER_CONSTANT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CLASS_BODY

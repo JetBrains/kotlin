@@ -162,6 +162,14 @@ PsiJetFileStubImpl[package=test]
               VALUE_ARGUMENT[isSpread=false]
                 VALUE_ARGUMENT_NAME
                   REFERENCE_EXPRESSION[referencedName=nested]
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=Nested]
+                  VALUE_ARGUMENT_LIST
+                    VALUE_ARGUMENT[isSpread=false]
+                      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
+                    VALUE_ARGUMENT[isSpread=false]
+                      STRING_TEMPLATE
+                        LITERAL_STRING_TEMPLATE_ENTRY[text=nested value]
   CLASS[classId=test/Simple, fqName=test.Simple, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Simple, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Simple]
