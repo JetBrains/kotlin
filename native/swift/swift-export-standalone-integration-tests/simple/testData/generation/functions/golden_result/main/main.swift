@@ -2,6 +2,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public init() {
@@ -171,6 +172,26 @@ public extension ExportedKotlinPackages.namespace2 {
 public extension ExportedKotlinPackages.operators {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+            public static var shared: ExportedKotlinPackages.operators.Foo.EmptyIterator {
+                get {
+                    return ExportedKotlinPackages.operators.Foo.EmptyIterator.__createClassWrapper(externalRCRef: operators_Foo_EmptyIterator_get())
+                }
+            }
+            private init() {
+                fatalError()
+            }
+            package override init(
+                __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+                options: KotlinRuntime.KotlinBaseConstructionOptions
+            ) {
+                super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            }
+            public func hasNext() -> Swift.Bool {
+                return operators_Foo_EmptyIterator_hasNext(self.__externalRCRef())
+            }
+            public func next() -> Swift.Int32 {
+                return operators_Foo_EmptyIterator_next(self.__externalRCRef())
+            }
         }
         public var value: Swift.Int32 {
             get {
@@ -401,8 +422,8 @@ public extension ExportedKotlinPackages.operators {
         public func inc() -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
-        public func iterator() -> Swift.Never {
-            fatalError()
+        public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: operators_Foo_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public func rangeTo(
             other: ExportedKotlinPackages.operators.Foo

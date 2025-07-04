@@ -119,6 +119,18 @@ int32_t OBJECT_NO_PACKAGE_variable_get(void * self);
 
 void OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
+
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
+
+int32_t OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_previous(void * self) __attribute((noreturn));
+
+int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
+
 void * SEALED_C_init_allocate();
 
 void SEALED_C_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -147,7 +159,21 @@ void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoint
 
 void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(void * __kt, float f);
 
+void * __root___GENERIC_CLASS_init_allocate();
+
+void __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___INHERITANCE_GENERIC_init_allocate();
+
+void __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate();
+
+void __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___OBJECT_NO_PACKAGE_get();
+
+void * __root___OBJECT_WITH_GENERIC_INHERITANCE_get();
 
 void * namespace_Foo_INSIDE_CLASS_init_allocate();
 

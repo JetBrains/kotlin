@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.sir.bridge
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.impl.*
-import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 
 /**
  * Marker interface for all possible bridge requests.
@@ -112,8 +111,12 @@ public interface BridgePrinter {
 }
 
 public interface SirTypeNamer {
+    public enum class KotlinNameType {
+        FQN, PARAMETRIZED
+    }
+
     public fun swiftFqName(type: SirType): String
-    public fun kotlinFqName(type: SirType): String
+    public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String
 }
 
 public fun createBridgeGenerator(namer: SirTypeNamer): BridgeGenerator =

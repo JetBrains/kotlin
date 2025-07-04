@@ -346,9 +346,47 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         return Foo_foo(self.__externalRCRef())
     }
 }
-open class INHERITANCE_GENERIC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class GENERIC_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public init() {
+        if Self.self != main.GENERIC_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GENERIC_CLASS ") }
+        let __kt = __root___GENERIC_CLASS_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+open class INHERITANCE_GENERIC: main.GENERIC_CLASS {
+    public override init() {
+        if Self.self != main.INHERITANCE_GENERIC.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INHERITANCE_GENERIC ") }
+        let __kt = __root___INHERITANCE_GENERIC_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___INHERITANCE_GENERIC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
 }
 public final class INHERITANCE_UNSUPPORTED_BASE: main.INHERITANCE_GENERIC {
+    public override init() {
+        if Self.self != main.INHERITANCE_UNSUPPORTED_BASE.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INHERITANCE_UNSUPPORTED_BASE ") }
+        let __kt = __root___INHERITANCE_UNSUPPORTED_BASE_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___INHERITANCE_UNSUPPORTED_BASE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
 }
 public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -470,6 +508,38 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
     }
 }
 public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
+        get {
+            return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
+        }
+    }
+    private init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func hasNext() -> Swift.Bool {
+        return OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self.__externalRCRef())
+    }
+    public func hasPrevious() -> Swift.Bool {
+        return OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self.__externalRCRef())
+    }
+    public func next() -> Swift.Never {
+        return OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef())
+    }
+    public func nextIndex() -> Swift.Int32 {
+        return OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self.__externalRCRef())
+    }
+    public func previous() -> Swift.Never {
+        return OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef())
+    }
+    public func previousIndex() -> Swift.Int32 {
+        return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())
+    }
 }
 open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class C: main.SEALED {

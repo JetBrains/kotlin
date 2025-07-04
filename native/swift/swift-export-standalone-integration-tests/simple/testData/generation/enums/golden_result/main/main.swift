@@ -45,5 +45,5 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
 public func enumId(
     e: ExportedKotlinPackages.kotlin.Enum
 ) -> ExportedKotlinPackages.kotlin.Enum {
-    fatalError()
+    return ExportedKotlinPackages.kotlin.Enum.__createClassWrapper(externalRCRef: __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(e.__externalRCRef()))
 }

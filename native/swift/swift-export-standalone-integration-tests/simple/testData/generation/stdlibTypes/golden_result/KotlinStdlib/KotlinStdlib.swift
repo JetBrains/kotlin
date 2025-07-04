@@ -53,8 +53,38 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 public extension ExportedKotlinPackages.kotlin.collections {
     open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        package init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public final func next() -> Swift.Int8 {
+            return kotlin_collections_ByteIterator_next(self.__externalRCRef())
+        }
+        open func nextByte() -> Swift.Int8 {
+            return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+        }
     }
     open class CharIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        package init() {
+            fatalError()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        }
+        public final func next() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_collections_CharIterator_next(self.__externalRCRef())
+        }
+        open func nextChar() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_collections_CharIterator_nextChar(self.__externalRCRef())
+        }
     }
 }
 public extension ExportedKotlinPackages.kotlin {
@@ -113,7 +143,7 @@ public extension ExportedKotlinPackages.kotlin {
             return kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value)
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
-            fatalError()
+            return ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: kotlin_ByteArray_iterator(self.__externalRCRef()))
         }
         public subscript(
             index: Swift.Int32
@@ -161,7 +191,7 @@ public extension ExportedKotlinPackages.kotlin {
             return kotlin_CharArray_set__TypesOfArguments__Swift_Int32_Swift_Unicode_UTF16_CodeUnit__(self.__externalRCRef(), index, value)
         }
         public func iterator() -> ExportedKotlinPackages.kotlin.collections.CharIterator {
-            fatalError()
+            return ExportedKotlinPackages.kotlin.collections.CharIterator.__createClassWrapper(externalRCRef: kotlin_CharArray_iterator(self.__externalRCRef()))
         }
         public subscript(
             index: Swift.Int32

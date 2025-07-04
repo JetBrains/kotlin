@@ -61,17 +61,17 @@ abstract class AbstractKotlinSirBridgeTest {
                         }
                     }
 
-                    override fun kotlinFqName(type: SirType): String {
-                        return when (type) {
+                    override fun kotlinFqName(sirType: SirType, nameType: SirTypeNamer.KotlinNameType): String {
+                        return when (sirType) {
                             is SirNominalType -> {
-                                require(type.typeDeclaration.origin is SirOrigin.ExternallyDefined)
-                                type.typeDeclaration.name
+                                require(sirType.typeDeclaration.origin is SirOrigin.ExternallyDefined)
+                                sirType.typeDeclaration.name
                             }
                             is SirFunctionalType -> {
                                 // todo: KT-72993
-                                (listOf("function") + type.parameterTypes.map { kotlinFqName(it) }).joinToString("_")
+                                (listOf("function") + sirType.parameterTypes.map { kotlinFqName(it, SirTypeNamer.KotlinNameType.FQN) }).joinToString("_")
                             }
-                            else -> error("Unsupported type: $type")
+                            else -> error("Unsupported type: $sirType")
                         }
                     }
                 })

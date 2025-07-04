@@ -59,7 +59,7 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
                     "get", "set" -> AsSubscriptAccessor(kaSymbol)
 
                     // Unsupported; iterators
-                    "iterator" -> AsIsWithAdditions(kaSymbol)
+                    "iterator", "next", "hasNext" -> AsIsWithAdditions(kaSymbol)
 
                     // Misc
                     "contains" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "~=")) }

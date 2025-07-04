@@ -214,6 +214,26 @@ public fun namespace2_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     return _result
 }
 
+@ExportedBridge("operators_Foo_EmptyIterator_get")
+public fun operators_Foo_EmptyIterator_get(): kotlin.native.internal.NativePtr {
+    val _result = operators.Foo.EmptyIterator
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_EmptyIterator_hasNext")
+public fun operators_Foo_EmptyIterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo.EmptyIterator
+    val _result = __self.hasNext()
+    return _result
+}
+
+@ExportedBridge("operators_Foo_EmptyIterator_next")
+public fun operators_Foo_EmptyIterator_next(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo.EmptyIterator
+    val _result = __self.next()
+    return _result
+}
+
 @ExportedBridge("operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__")
 public fun operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
@@ -307,6 +327,13 @@ public fun operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableR
 public fun operators_Foo_invoke(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
     val _result = __self.invoke()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("operators_Foo_iterator")
+public fun operators_Foo_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 

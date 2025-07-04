@@ -13,11 +13,13 @@ public typealias dataClassWithRef = main.DATA_CLASS_WITH_REF
 public typealias dataObjectWithPackage = main.DATA_OBJECT_WITH_PACKAGE
 public typealias deeper_closure_typealias = main.closure
 public typealias enumClass = main.ENUM
+public typealias generic = main.GENERIC_CLASS
 public typealias inheritanceSingleClass = main.INHERITANCE_SINGLE_CLASS
 public typealias never = Swift.Never
 public typealias nullable_class = ExportedKotlinPackages.typealiases.Foo?
 public typealias nullable_primitive = Swift.Int32?
 public typealias objectWithClassInheritance = main.OBJECT_WITH_CLASS_INHERITANCE
+public typealias objectWithGenericInheritance = main.OBJECT_WITH_GENERIC_INHERITANCE
 public typealias objectWithInterfaceInheritance = main.OBJECT_WITH_INTERFACE_INHERITANCE
 public typealias openClass = main.OPEN_CLASS
 public typealias outerInterface = any main.OUTSIDE_PROTO
@@ -220,6 +222,20 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
+public final class GENERIC_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public init() {
+        if Self.self != main.GENERIC_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GENERIC_CLASS ") }
+        let __kt = __root___GENERIC_CLASS_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
 public final class INHERITANCE_SINGLE_CLASS: main.OPEN_CLASS {
     public override init() {
         if Self.self != main.INHERITANCE_SINGLE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.INHERITANCE_SINGLE_CLASS ") }
@@ -251,6 +267,38 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
     }
 }
 public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
+        get {
+            return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
+        }
+    }
+    private init() {
+        fatalError()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func hasNext() -> Swift.Bool {
+        return OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self.__externalRCRef())
+    }
+    public func hasPrevious() -> Swift.Bool {
+        return OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self.__externalRCRef())
+    }
+    public func next() -> Swift.Never {
+        return OBJECT_WITH_GENERIC_INHERITANCE_next(self.__externalRCRef())
+    }
+    public func nextIndex() -> Swift.Int32 {
+        return OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self.__externalRCRef())
+    }
+    public func previous() -> Swift.Never {
+        return OBJECT_WITH_GENERIC_INHERITANCE_previous(self.__externalRCRef())
+    }
+    public func previousIndex() -> Swift.Int32 {
+        return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())
+    }
 }
 public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {

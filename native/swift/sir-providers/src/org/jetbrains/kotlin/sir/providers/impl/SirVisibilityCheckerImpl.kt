@@ -174,11 +174,6 @@ public class SirVisibilityCheckerImpl(
             return@withSessions SirAvailability.Hidden("Some super type isn't available")
         }
 
-        if (hasTypeParameter(this)) {
-            unsupportedDeclarationReporter.report(this@isExported, "generics are not supported yet.")
-            return@withSessions SirAvailability.Unavailable("Has type parameter(s)")
-        }
-
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline classes are not supported yet.")
             return@withSessions SirAvailability.Unavailable("Inline classes are not supported")

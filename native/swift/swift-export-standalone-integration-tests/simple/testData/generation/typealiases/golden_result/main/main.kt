@@ -7,6 +7,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(DATA_OBJECT_WITH_PACKAGE::class, "4main24DATA_OBJECT_WITH_PACKAGEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ENUM::class, "4main4ENUMC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(ENUM.INSIDE_ENUM::class, "4main4ENUMC11INSIDE_ENUMC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(GENERIC_CLASS::class, "4main13GENERIC_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(INHERITANCE_SINGLE_CLASS::class, "4main24INHERITANCE_SINGLE_CLASSC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_CLASS_INHERITANCE::class, "4main29OBJECT_WITH_CLASS_INHERITANCEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OBJECT_WITH_GENERIC_INHERITANCE::class, "4main31OBJECT_WITH_GENERIC_INHERITANCEC")
@@ -187,6 +188,48 @@ public fun ENUM_valueOf__TypesOfArguments__Swift_String__(value: kotlin.native.i
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasNext")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.hasNext()
+    return _result
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.hasPrevious()
+    return _result
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_next")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.next()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_nextIndex")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.nextIndex()
+    return _result
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previous")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_previous(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.previous()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_previousIndex")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.previousIndex()
+    return _result
+}
+
 @ExportedBridge("SEALED_O_get")
 public fun SEALED_O_get(): kotlin.native.internal.NativePtr {
     val _result = SEALED.O
@@ -225,6 +268,18 @@ public fun __root___DATA_OBJECT_WITH_PACKAGE_get(): kotlin.native.internal.Nativ
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___GENERIC_CLASS_init_allocate")
+public fun __root___GENERIC_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<GENERIC_CLASS<kotlin.Any?>>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, GENERIC_CLASS<kotlin.Any?>())
+}
+
 @ExportedBridge("__root___INHERITANCE_SINGLE_CLASS_init_allocate")
 public fun __root___INHERITANCE_SINGLE_CLASS_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = kotlin.native.internal.createUninitializedInstance<INHERITANCE_SINGLE_CLASS>()
@@ -240,6 +295,12 @@ public fun __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__
 @ExportedBridge("__root___OBJECT_WITH_CLASS_INHERITANCE_get")
 public fun __root___OBJECT_WITH_CLASS_INHERITANCE_get(): kotlin.native.internal.NativePtr {
     val _result = OBJECT_WITH_CLASS_INHERITANCE
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OBJECT_WITH_GENERIC_INHERITANCE_get")
+public fun __root___OBJECT_WITH_GENERIC_INHERITANCE_get(): kotlin.native.internal.NativePtr {
+    val _result = OBJECT_WITH_GENERIC_INHERITANCE
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -337,12 +398,12 @@ public fun typealiases_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
 
 @ExportedBridge("typealiases_inner_Bar_init_allocate")
 public fun typealiases_inner_Bar_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<typealiases.`inner`.Bar>()
+    val _result = kotlin.native.internal.createUninitializedInstance<typealiases.inner.Bar>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun typealiases_inner_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    kotlin.native.internal.initInstance(____kt, typealiases.`inner`.Bar())
+    kotlin.native.internal.initInstance(____kt, typealiases.inner.Bar())
 }

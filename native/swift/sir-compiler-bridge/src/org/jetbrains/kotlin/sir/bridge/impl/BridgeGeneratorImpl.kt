@@ -102,7 +102,12 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add(
                     request.allocationDescriptor(typeNamer).createFunctionBridge {
                         val args = argNames(this)
-                        "kotlin.native.internal.createUninitializedInstance<$name>(${args.joinToString()})"
+                        "kotlin.native.internal.createUninitializedInstance<${
+                            typeNamer.kotlinFqName(
+                                request.callable.producingType,
+                                SirTypeNamer.KotlinNameType.PARAMETRIZED
+                            )
+                        }>(${args.joinToString()})"
                     }
                 )
                 if (request.callable.origin is InnerInitSource) {
@@ -127,7 +132,12 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     add(
                         request.initializationDescriptor(typeNamer).createFunctionBridge {
                             val args = argNames(this)
-                            "kotlin.native.internal.initInstance(${args.first()}, ${name}(${args.drop(1).joinToString()}))"
+                            "kotlin.native.internal.initInstance(${args.first()}, ${
+                                typeNamer.kotlinFqName(
+                                    request.callable.producingType,
+                                    SirTypeNamer.KotlinNameType.PARAMETRIZED
+                                )
+                            }(${args.drop(1).joinToString()}))"
                         }
                     )
                 }
@@ -176,7 +186,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
 
     private fun generateTypeBindingBridge(request: TypeBindingBridgeRequest): TypeBindingBridge {
         val annotationName = "kotlin.native.internal.objc.BindClassToObjCName"
-        val kotlinType = typeNamer.kotlinFqName(SirNominalType(request.sirTypeDeclaration))
+        val kotlinType = typeNamer.kotlinFqName(SirNominalType(request.sirTypeDeclaration), SirTypeNamer.KotlinNameType.FQN)
         val swiftName = request.sirTypeDeclaration.let {
             it.attributes.firstIsInstanceOrNull<SirAttribute.ObjC>()?.name ?: it.mangledNameOrNull
         }
@@ -644,7 +654,12 @@ private sealed class Bridge(
         override val inKotlinSources = object : ValueConversion {
             // nulls are handled by AsOptionalWrapper, so safe to cast from nullable to non-nullable
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${typeNamer.kotlinFqName(swiftType)}"
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
+                    typeNamer.kotlinFqName(
+                        swiftType,
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED
+                    )
+                }"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
@@ -663,7 +678,12 @@ private sealed class Bridge(
     class AsExistential(swiftType: SirExistentialType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
-                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${typeNamer.kotlinFqName(swiftType)}"
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
+                    typeNamer.kotlinFqName(
+                        swiftType,
+                        SirTypeNamer.KotlinNameType.FQN
+                    )
+                }"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
@@ -700,7 +720,7 @@ private sealed class Bridge(
     ) : Bridge(swiftType, KotlinType.ObjCObjectUnretained, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String =
-                "interpretObjCPointer<${typeNamer.kotlinFqName(swiftType)}>($valueExpression)"
+                "interpretObjCPointer<${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}>($valueExpression)"
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
                 "$valueExpression.objcPtr()"
@@ -925,7 +945,18 @@ private sealed class Bridge(
                     val argsInClosure = parameters
                         .mapIndexed { idx, el -> "arg${idx}" to el }.takeIf { it.isNotEmpty() }
                     val defineArgs = argsInClosure
-                        ?.let { " ${it.joinToString { "${it.first}: ${typeNamer.kotlinFqName(it.second.swiftType)}" }} ->" }
+                        ?.let {
+                            " ${
+                                it.joinToString {
+                                    "${it.first}: ${
+                                        typeNamer.kotlinFqName(
+                                            it.second.swiftType,
+                                            SirTypeNamer.KotlinNameType.PARAMETRIZED
+                                        )
+                                    }"
+                                }
+                            } ->"
+                        }
                     val callArgs = argsInClosure
                         ?.let { it.joinToString { it.second.inKotlinSources.kotlinToSwift(typeNamer, it.first) } } ?: ""
                     return """run {    
@@ -1070,3 +1101,7 @@ private val kotlinKeywords = setOf(
 
 private val BridgeFunctionDescriptor.safeImportName: String
     get() = kotlinFqName.run { if (size <= 1) single() else joinToString("_") { it.replace("_", "__") } }
+
+private val SirInit.producingType: SirType get() = SirNominalType(
+        parent as? SirNamedDeclaration ?: error("Encountered an Init that produces non-named type: $parent")
+    )

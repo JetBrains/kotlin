@@ -152,7 +152,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
         KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(
             kotlinBaseInitDeclaration(),
-            SirObjectSyntheticInit(ktSymbol),
+            SirObjectSyntheticInit(ktSymbol = ktSymbol),
             buildVariable {
                 origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
                 visibility = SirVisibility.PUBLIC
@@ -194,7 +194,9 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 }
 
-internal class SirObjectSyntheticInit(ktSymbol: KaNamedClassSymbol) : SirInit() {
+internal class SirObjectSyntheticInit(
+    ktSymbol: KaNamedClassSymbol,
+) : SirInit() {
     override val origin: SirOrigin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
     override val visibility: SirVisibility = SirVisibility.PRIVATE
     override val isFailable: Boolean = false

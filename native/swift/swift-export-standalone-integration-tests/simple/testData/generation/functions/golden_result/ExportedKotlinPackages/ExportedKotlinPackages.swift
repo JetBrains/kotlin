@@ -1,3 +1,7 @@
+public enum kotlin {
+    public enum collections {
+    }
+}
 public enum namespace1 {
     public enum local_functions {
     }

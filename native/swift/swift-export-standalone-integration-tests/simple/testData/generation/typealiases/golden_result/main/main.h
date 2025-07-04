@@ -51,6 +51,18 @@ NSArray<id> * ENUM_entries_get();
 
 void * ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
 
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
+
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
+
+int32_t OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_previous(void * self) __attribute((noreturn));
+
+int32_t OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(void * self);
+
 void * SEALED_O_get();
 
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
@@ -63,11 +75,17 @@ void __root___DATA_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableR
 
 void * __root___DATA_OBJECT_WITH_PACKAGE_get();
 
+void * __root___GENERIC_CLASS_init_allocate();
+
+void __root___GENERIC_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___INHERITANCE_SINGLE_CLASS_init_allocate();
 
 void __root___INHERITANCE_SINGLE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 void * __root___OBJECT_WITH_CLASS_INHERITANCE_get();
+
+void * __root___OBJECT_WITH_GENERIC_INHERITANCE_get();
 
 void * __root___OBJECT_WITH_INTERFACE_INHERITANCE_get();
 
