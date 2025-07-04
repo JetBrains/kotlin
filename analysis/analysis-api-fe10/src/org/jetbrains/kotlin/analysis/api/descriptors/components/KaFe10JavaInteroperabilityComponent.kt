@@ -68,6 +68,10 @@ internal class KaFe10JavaInteroperabilityComponent(
 
         if (!analysisSession.useSiteModule.targetPlatform.has<JvmPlatform>()) return null
 
+        if (mode == KaTypeMappingMode.RETURN_TYPE_FUNCTIONS && !isAnnotationMethod && kotlinType.isUnit()) {
+            return PsiTypes.voidType()
+        }
+
         val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
             useSitePosition,
