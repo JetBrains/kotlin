@@ -70,7 +70,7 @@ private fun getBigIntHashCode(value: BigInt): Int {
 
     while (!bigNumber.isZero) {
         val chunk = (bigNumber and mask).toNumber().unsafeCast<Int>()
-        hashCode = 31 * hashCode + chunk
+        hashCode = hashCode xor chunk
         bigNumber = bigNumber shr shiftNumber
     }
 
