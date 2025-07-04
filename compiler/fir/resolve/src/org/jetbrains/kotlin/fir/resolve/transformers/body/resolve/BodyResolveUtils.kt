@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -44,9 +43,6 @@ internal fun remapArgumentsWithVararg(
     val varargArgument = buildVarargArgumentsExpression {
         coneElementTypeOrNull = varargElementType
         coneTypeOrNull = varargArrayType
-        var startOffset = Int.MAX_VALUE
-        var endOffset = 0
-        var firstVarargElementSource: KtSourceElement? = null
 
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping[arg]
@@ -66,9 +62,10 @@ internal fun remapArgumentsWithVararg(
                 } else {
                     arg
                 }
-                startOffset = minOf(startOffset, arg.source?.startOffset ?: Int.MAX_VALUE)
-                endOffset = maxOf(endOffset, arg.source?.endOffset ?: 0)
-                if (firstVarargElementSource == null) firstVarargElementSource = arg.source
+
+                if (source == null) {
+                    source = arg.source?.fakeElement(KtFakeSourceElementKind.VarargArgument)
+                }
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
@@ -78,8 +75,6 @@ internal fun remapArgumentsWithVararg(
                 break
             }
         }
-
-        source = firstVarargElementSource?.fakeElement(KtFakeSourceElementKind.VarargArgument, startOffset, endOffset)
     }
     newArgumentMapping[varargArgument] = varargParameter
 

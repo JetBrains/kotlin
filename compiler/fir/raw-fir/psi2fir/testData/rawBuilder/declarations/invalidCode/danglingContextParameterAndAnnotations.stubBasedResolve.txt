@@ -1,11 +1,11 @@
 FILE: [ResolvedTo(BODY_RESOLVE)] danglingContextParameterAndAnnotations.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Anno] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {

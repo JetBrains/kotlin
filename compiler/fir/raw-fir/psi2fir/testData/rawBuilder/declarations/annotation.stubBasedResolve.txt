@@ -1,7 +1,7 @@
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class base : R|kotlin/Annotation| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=base] constructor(): R|base| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class base : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=base] constructor(): R|base| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -54,13 +54,13 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation.kt
         public [ResolvedTo(CONTRACTS)] get(): <implicit>
     @R|base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val x: R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>| = LAZY_EXPRESSION
         public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/collections/Map<@R|base|()  kotlin/Int, kotlin/collections/List<@R|base|()  kotlin/Int>>|
-    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) @R|base|[Types]() public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class derived : R|base|, R|kotlin/Annotation| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=derived] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/derived.x] x: R|kotlin/Int|): R|derived| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) @R|base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class derived : R|base|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=derived] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/derived.x] x: R|kotlin/Int|): R|derived| {
+            super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
-            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=derived] get(): R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=derived] get(): R|kotlin/Int|
 
     }
     @R|derived|[Types](x = Int(1)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class correctDerived : R|kotlin/Any| {

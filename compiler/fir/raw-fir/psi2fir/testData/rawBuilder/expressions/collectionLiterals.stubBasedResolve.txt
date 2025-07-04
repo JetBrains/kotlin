@@ -32,21 +32,21 @@ FILE: [ResolvedTo(BODY_RESOLVE)] collectionLiterals.kt
         }
 
     }
-    @R|Ann1|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class First : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=First] constructor(): R|First| {
-            LAZY_super<R|kotlin/Any|>
+    @R|Ann1|[Types](arr = <implicitArrayOf>(Int(1), Int(2))) public final [ResolvedTo(BODY_RESOLVE)] class First : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] constructor(): R|First| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|Ann2|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Second : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Second] constructor(): R|Second| {
-            LAZY_super<R|kotlin/Any|>
+    @R|Ann2|[Types](arr = <implicitArrayOf>(Double(3.14))) public final [ResolvedTo(BODY_RESOLVE)] class Second : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] constructor(): R|Second| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @R|Ann3|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class Third : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Third] constructor(): R|Third| {
-            LAZY_super<R|kotlin/Any|>
+    @R|Ann3|[Types](arr = <implicitArrayOf>(String(Alpha), String(Omega))) public final [ResolvedTo(BODY_RESOLVE)] class Third : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Third] constructor(): R|Third| {
+            super<R|kotlin/Any|>()
         }
 
     }
