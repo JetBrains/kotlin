@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.GCScheduler
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LAUNCHER_FILE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.generateBoxFunctionLauncher
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -25,18 +26,19 @@ import java.io.File
 abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocationTest() {
 
     // The entry point to generated test classes.
-    protected fun runTest(@TestDataFile testPath: String) {
+    protected fun runTest(@TestDataFile testDir: String) {
         // KT-70162: Partial Linkage tests take a lot of time when aggressive scheduler is enabled.
         // There is no major profit from running these tests with this scheduler. On the other hand,
         // we have to significantly increase timeouts to make such configurations pass.
         // So let's just disable them instead of wasting CI times.
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
-        val configuration = NativeCompilerInvocationTestConfiguration(testPath, settings = testRunSettings)
+        val configuration = NativeCompilerInvocationTestConfiguration(settings = testRunSettings)
         val testStructureExtractor = NativePartialLinkageTestStructureExtractor(settings = testRunSettings)
         val artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(configuration = configuration)
 
         KlibCompilerInvocationTestUtils.runTest(
+            testDir = getAbsoluteFile(testDir),
             testConfiguration = configuration,
             testStructureExtractor = testStructureExtractor,
             artifactBuilder = artifactBuilder,

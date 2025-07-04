@@ -26,7 +26,6 @@ import java.io.File
  */
 object KlibCompilerInvocationTestUtils {
     interface TestConfiguration {
-        val testDir: File
         val buildDir: File
         val stdlibFile: File
         val targetBackend: TargetBackend
@@ -108,13 +107,14 @@ object KlibCompilerInvocationTestUtils {
     }
 
     fun <BA : BinaryArtifact> runTest(
+        testDir: File,
         testConfiguration: TestConfiguration,
         testStructureExtractor: TestStructureExtractor,
         artifactBuilder: ArtifactBuilder<BA>,
         binaryRunner: BinaryRunner<BA>,
         compilerEditionChange: KlibCompilerChangeScenario,
     ) {
-        val testStructure = testStructureExtractor.extractTestStructure(testDataPath = testConfiguration.testDir)
+        val testStructure = testStructureExtractor.extractTestStructure(testDataPath = testDir)
 
         if (testConfiguration.isIgnoredTest(testStructure.projectInfo)) {
             return testConfiguration.onIgnoredTest() // Ignore muted tests.
