@@ -1693,11 +1693,11 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTa
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportAdvancedConfiguration {
-	public abstract fun getFreeCompilerArgs ()Lorg/gradle/api/provider/ListProperty;
-	public abstract fun getSettings ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun getFreeCompilerArgs ()Ljava/util/List;
+	public abstract fun getSettings ()Ljava/util/Map;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension : org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
 	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;Lorg/gradle/api/artifacts/dsl/DependencyHandler;)V
 	public final fun configure (Lkotlin/jvm/functions/Function1;)V
 	public final fun configure (Lorg/gradle/api/Action;)V
@@ -1705,8 +1705,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/S
 	public final fun export (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 	public final fun export (Ljava/lang/Object;Lorg/gradle/api/Action;)V
 	public static synthetic fun export$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public abstract fun getFlattenPackage ()Lorg/gradle/api/provider/Property;
-	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public final fun linkTask (Lkotlin/jvm/functions/Function1;)V
 	public final fun linkTask (Lorg/gradle/api/Action;)V
 	public static synthetic fun linkTask$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V

@@ -24,7 +24,7 @@ internal object SwiftExportModuleNameChecker : KotlinGradleProjectChecker {
             SwiftExportDSLConstants.SWIFT_EXPORT_EXTENSION_NAME
         ) ?: return
 
-        extension.moduleName.orNull?.let {
+        extension.moduleName?.let {
             collector.validateSwiftExportModuleName(project, it)
         }
 

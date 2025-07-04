@@ -43,9 +43,21 @@ internal fun Project.registerSwiftExportTask(
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
     val buildConfiguration = buildType.configuration
 
-    val swiftApiModuleName = swiftExportExtension
-        .moduleName
-        .orElse(provider { project.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) } })
+    val swiftApiModuleName = provider {
+        swiftExportExtension.moduleName ?: project.name.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) }
+    }
+
+    val flattenPackage = provider {
+        swiftExportExtension.flattenPackage.orEmpty()
+    }
+
+    val settings = provider {
+        swiftExportExtension.advancedConfiguration.settings.toMap()
+    }
+
+    val freeCompilerArgs = provider {
+        swiftExportExtension.advancedConfiguration.freeCompilerArgs.toList()
+    }
 
     val taskNamePrefix = lowerCamelCaseName(
         target.disambiguationClassifier ?: target.name,
@@ -63,16 +75,16 @@ internal fun Project.registerSwiftExportTask(
             mainCompilation.internal.configurations.compileDependencyConfiguration
         ),
         mainCompilation = mainCompilation,
-        swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
+        swiftApiFlattenPackage = flattenPackage,
         exportedModules = swiftExportExtension.exportedModules,
-        customSetting = swiftExportExtension.advancedConfiguration.settings
+        customSetting = settings
     )
 
     val staticLibrary = registerSwiftExportCompilationAndGetBinary(
         buildType = buildType,
         target = target,
         mainCompilation = mainCompilation,
-        freeCompilerArgs = swiftExportExtension.advancedConfiguration.freeCompilerArgs,
+        freeCompilerArgs = freeCompilerArgs,
         swiftExportTask = swiftExportTask
     )
 

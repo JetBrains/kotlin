@@ -10,13 +10,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
@@ -59,16 +54,12 @@ interface SwiftExportAdvancedConfiguration {
     /**
      * Configure SwiftExportConfig.settings parameters
      */
-    @get:Input
-    @get:Optional
-    val settings: MapProperty<String, String>
+    val settings: MutableMap<String, String>
 
     /**
      * Specifies additional compiler arguments to be passed to the compiler.
      */
-    @get:Input
-    @get:Optional
-    val freeCompilerArgs: ListProperty<String>
+    val freeCompilerArgs: MutableList<String>
 }
 
 internal fun ObjectFactory.SwiftExportExtension(dependencies: DependencyHandler): SwiftExportExtension =
@@ -106,24 +97,7 @@ abstract class SwiftExportExtension @Inject constructor(
     objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
-) {
-
-    /**
-     * Configure name of the swift export module from this project.
-     */
-    @get:Input
-    @get:Optional
-    @ExperimentalSwiftExportDsl
-    abstract val moduleName: Property<String>
-
-    /**
-     * Configure package collapsing rule.
-     */
-    @get:Input
-    @get:Optional
-    @ExperimentalSwiftExportDsl
-    abstract val flattenPackage: Property<String>
-
+) : SwiftExportedModuleMetadata {
     /**
      * Configure Link task.
      */
@@ -197,7 +171,7 @@ abstract class SwiftExportExtension @Inject constructor(
     /**
      * Advanced configuration settings.
      */
-    internal val advancedConfiguration = objectFactory.newInstance(SwiftExportAdvancedConfiguration::class.java)
+    internal val advancedConfiguration: SwiftExportAdvancedConfiguration = DefaultSwiftExportAdvancedConfiguration()
 
     private val _swiftExportBinaries = objectFactory.domainObjectSet<AbstractNativeLibrary>()
 
@@ -242,4 +216,9 @@ abstract class SwiftExportExtension @Inject constructor(
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
         _swiftExportBinaries.configureEach(configure)
     }
+}
+
+private class DefaultSwiftExportAdvancedConfiguration : SwiftExportAdvancedConfiguration {
+    override val settings: MutableMap<String, String> = mutableMapOf()
+    override val freeCompilerArgs: MutableList<String> = mutableListOf()
 }

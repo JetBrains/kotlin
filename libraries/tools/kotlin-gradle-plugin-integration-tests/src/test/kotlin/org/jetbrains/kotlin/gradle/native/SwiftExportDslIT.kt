@@ -139,7 +139,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            moduleName.set("CustomShared")
+                            moduleName = "CustomShared"
                             export(project(":subproject")) {
                                 moduleName = "CustomSubproject"
                             }
@@ -217,7 +217,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                     applyMultiplatform {
                         iosArm64()
                         with(swiftExport) {
-                            flattenPackage.set("com.github.jetbrains.swiftexport")
+                            flattenPackage = "com.github.jetbrains.swiftexport"
                             export(project(":subproject")) {
                                 flattenPackage = "com.subproject.library"
                             }

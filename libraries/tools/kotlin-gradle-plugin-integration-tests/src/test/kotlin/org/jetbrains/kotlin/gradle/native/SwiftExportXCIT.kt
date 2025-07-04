@@ -44,8 +44,8 @@ class SwiftExportXCIT : KGPBaseTest() {
                             iosSimulatorArm64()
                             iosArm64()
                             with(swiftExport) {
-                                moduleName.set("Shared")
-                                flattenPackage.set("com.github.jetbrains.example")
+                                moduleName = "Shared"
+                                flattenPackage = "com.github.jetbrains.example"
 
                                 export(project(":subproject")) {
                                     moduleName = "Subproject"

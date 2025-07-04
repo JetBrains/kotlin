@@ -471,7 +471,7 @@ class SwiftExportUnitTests {
         val customSettings = mapOf("SWIFT_EXPORT_CUSTOM_SETTING" to "CUSTOM_VALUE")
         val project = swiftExportProject {
             configure {
-                settings.set(customSettings)
+                settings.putAll(customSettings)
             }
         }
         project.evaluate()
@@ -485,7 +485,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export invalid module name`() {
         val project = swiftExportProject {
-            moduleName.set("Shared.Module")
+            moduleName = "Shared.Module"
         }
         project.evaluate()
 
@@ -554,7 +554,7 @@ class SwiftExportUnitTests {
                 withName("invalid!name")
             }
         ) {
-            moduleName.set(validName)
+            moduleName = validName
         }
         project.evaluate()
 
