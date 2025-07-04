@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.js.internal.*
+
 internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
         return obj2 == null
@@ -46,7 +48,7 @@ internal fun hashCode(obj: dynamic): Int {
         "number" -> getNumberHashCode(obj)
         "boolean" -> getBooleanHashCode(obj.unsafeCast<Boolean>())
         "string" -> getStringHashCode(js("String")(obj))
-        "bigint" -> getBigIntHashCode(obj)
+        "bigint" -> getBigIntHashCode(obj.unsafeCast<BigInt>())
         "symbol" -> getSymbolHashCode(obj)
         else -> js("throw new Error('Unexpected typeof `' + typeOf + '`')")
     }
@@ -56,22 +58,20 @@ internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
-private fun getBigIntHashCode(value: dynamic): Int {
-    @Suppress("UNUSED_VARIABLE")
-    val shiftNumber = js("BigInt(32)");
-    @Suppress("UNUSED_VARIABLE")
-    val MASK = js("BigInt(0xffffffff)");
+private fun getBigIntHashCode(value: BigInt): Int {
+    val shiftNumber = BigInt(32)
 
-    @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    var bigNumber = if (value < 0) -value else value
+    // In Kotlin the 0xffffffff literal has the Long type, which is boxed, so we use a Double literal instead
+    val mask = BigInt(4294967295.0)
+
+    var bigNumber = value.abs()
     var hashCode = 0
-    val signum = if (value < 0) -1 else 1
+    val signum = if (value.isNegative) -1 else 1
 
-    while (bigNumber != 0) {
-        val chunk = js("Number(bigNumber & MASK)").unsafeCast<Int>()
+    while (!bigNumber.isZero) {
+        val chunk = (bigNumber and mask).toNumber().unsafeCast<Int>()
         hashCode = 31 * hashCode + chunk
-        @Suppress("UNUSED_VALUE")
-        bigNumber = js("bigNumber >> shiftNumber")
+        bigNumber = bigNumber shr shiftNumber
     }
 
     return hashCode * signum
