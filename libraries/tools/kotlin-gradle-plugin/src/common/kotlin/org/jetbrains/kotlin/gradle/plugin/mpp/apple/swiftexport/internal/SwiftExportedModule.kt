@@ -120,12 +120,12 @@ private fun Project.findAndCreateSwiftExportedModules(
             val componentId = artifact.artifact.id.componentIdentifier
 
             when (explicitModule) {
-                is SwiftExportedExternalDependency -> {
+                is SwiftExportedDependency.External -> {
                     // It's a regular external dependency. Match by group and name.
                     artifact.moduleVersion.group == explicitModule.coordinates.group &&
                             artifact.moduleVersion.name == explicitModule.coordinates.name
                 }
-                is SwiftExportedProjectDependency -> {
+                is SwiftExportedDependency.Project -> {
                     // For project dependencies, we match by project path.
                     if (componentId is ProjectComponentIdentifier) {
                         // Check if the artifact's project path matches the path stored in our module's name.
@@ -141,10 +141,8 @@ private fun Project.findAndCreateSwiftExportedModules(
         if (matchingArtifact != null) {
             result.add(
                 createFullyExportedSwiftExportedModule(
-                    explicitModule.moduleName.orElse(
-                        normalizedAndValidatedModuleName(explicitModule.inheritedName)
-                    ).get(),
-                    explicitModule.flattenPackage.orNull,
+                    explicitModule.moduleName ?: normalizedAndValidatedModuleName(explicitModule.inheritedName),
+                    explicitModule.flattenPackage,
                     matchingArtifact.artifact.file
                 )
             )

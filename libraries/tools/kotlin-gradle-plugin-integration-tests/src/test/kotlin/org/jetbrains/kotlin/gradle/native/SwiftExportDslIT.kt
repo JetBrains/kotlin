@@ -141,7 +141,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         with(swiftExport) {
                             moduleName.set("CustomShared")
                             export(project(":subproject")) {
-                                moduleName.set("CustomSubproject")
+                                moduleName = "CustomSubproject"
                             }
                         }
 
@@ -219,7 +219,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                         with(swiftExport) {
                             flattenPackage.set("com.github.jetbrains.swiftexport")
                             export(project(":subproject")) {
-                                flattenPackage.set("com.subproject.library")
+                                flattenPackage = "com.subproject.library"
                             }
                         }
 

@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.ModuleVersionIdentifier
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.*
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.DefaultSwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedExternalDependency
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedProjectDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.moduleVersionIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -41,16 +41,12 @@ interface SwiftExportedModuleMetadata {
     /**
      * Configure name of the swift export module from this project.
      */
-    @get:Input
-    @get:Optional
-    val moduleName: Property<String>
+    var moduleName: String?
 
     /**
      * Configure package collapsing rule.
      */
-    @get:Input
-    @get:Optional
-    val flattenPackage: Property<String>
+    var flattenPackage: String?
 }
 
 /**
@@ -107,10 +103,26 @@ See Gradle issue https://github.com/gradle/gradle/issues/32019
  */
 @KotlinGradlePluginDsl
 abstract class SwiftExportExtension @Inject constructor(
-    private val objectFactory: ObjectFactory,
+    objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
-) : SwiftExportedModuleMetadata {
+) {
+
+    /**
+     * Configure name of the swift export module from this project.
+     */
+    @get:Input
+    @get:Optional
+    @ExperimentalSwiftExportDsl
+    abstract val moduleName: Property<String>
+
+    /**
+     * Configure package collapsing rule.
+     */
+    @get:Input
+    @get:Optional
+    @ExperimentalSwiftExportDsl
+    abstract val flattenPackage: Property<String>
 
     /**
      * Configure Link task.
@@ -198,15 +210,11 @@ abstract class SwiftExportExtension @Inject constructor(
     private fun addDependencyToExportedModules(dependency: Provider<*>, configure: SwiftExportedModuleMetadata.() -> Unit) {
         val dependencyId = dependency.map { dep ->
             when (dep) {
-                is Project -> objectFactory.ProjectDependency(dep.path, configure)
-                is Dependency -> objectFactory.ExternalDependency(
-                    dep.moduleVersionIdentifier,
-                    configure
-                )
-                else -> objectFactory.ExternalDependency(
-                    dependencyHandler.create(dep).moduleVersionIdentifier,
-                    configure
-                )
+                is Project -> SwiftExportedDependency.Project(dep.path)
+                is Dependency -> SwiftExportedDependency.External(dep.moduleVersionIdentifier)
+                else -> SwiftExportedDependency.External(dependencyHandler.create(dep).moduleVersionIdentifier)
+            }.also {
+                it.configure()
             }
         }
 
@@ -233,23 +241,5 @@ abstract class SwiftExportExtension @Inject constructor(
 
     private fun forAllSwiftExportBinaries(configure: AbstractNativeLibrary.() -> Unit) {
         _swiftExportBinaries.configureEach(configure)
-    }
-}
-
-private fun ObjectFactory.ExternalDependency(
-    dependencyId: ModuleVersionIdentifier,
-    configure: SwiftExportedModuleMetadata.() -> Unit = {},
-): SwiftExportedExternalDependency {
-    return DefaultSwiftExportedDependency.External(this, dependencyId).also {
-        it.configure()
-    }
-}
-
-private fun ObjectFactory.ProjectDependency(
-    path: String,
-    configure: SwiftExportedModuleMetadata.() -> Unit = {},
-): SwiftExportedProjectDependency {
-    return DefaultSwiftExportedDependency.Project(this, path).also {
-        it.configure()
     }
 }

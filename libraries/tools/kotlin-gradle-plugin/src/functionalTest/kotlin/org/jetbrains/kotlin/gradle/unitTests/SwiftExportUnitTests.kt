@@ -437,7 +437,7 @@ class SwiftExportUnitTests {
         val project = swiftExportProject(
             swiftExport = {
                 export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
-                    moduleName.set("CustomDateTime")
+                    moduleName = "CustomDateTime"
                 }
             }
         )
@@ -496,7 +496,7 @@ class SwiftExportUnitTests {
     fun `test swift export invalid exported module name`() {
         val project = swiftExportProject {
             export("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2") {
-                moduleName.set("Custom.DateTime")
+                moduleName = "Custom.DateTime"
             }
         }
         project.evaluate()

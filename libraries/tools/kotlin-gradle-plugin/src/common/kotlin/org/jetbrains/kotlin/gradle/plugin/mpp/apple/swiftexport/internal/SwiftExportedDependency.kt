@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 import org.gradle.api.Named
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleVersionIdentifier
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportedModuleMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromGroupNameAndVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
@@ -21,36 +18,28 @@ import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
  * to be used in Gradle containers.
  */
 @ExperimentalSwiftExportDsl
-internal sealed interface SwiftExportedDependency : SwiftExportedModuleMetadata, Named
+internal sealed class SwiftExportedDependency : SwiftExportedModuleMetadata, Named {
 
-/**
- * Represents an external dependency identified by its Maven coordinates.
- */
-@ExperimentalSwiftExportDsl
-internal interface SwiftExportedExternalDependency : SwiftExportedDependency {
-    /**
-     * The Maven coordinates of the dependency.
-     */
-    @get:Internal
-    val coordinates: ModuleVersionIdentifier
+    override var moduleName: String? = null
+    override var flattenPackage: String? = null
 
-    @Internal
-    override fun getName(): String = coordinates.let { "${it.group}:${it.name}:${it.version}" }
-}
+    internal class External(
+        /**
+         * The Maven coordinates of the dependency.
+         */
+        val coordinates: ModuleVersionIdentifier,
+    ) : SwiftExportedDependency() {
+        override fun getName(): String = coordinates.let { "${it.group}:${it.name}:${it.version}" }
+    }
 
-/**
- * Represents an internal dependency on another project within the same build.
- */
-@ExperimentalSwiftExportDsl
-internal interface SwiftExportedProjectDependency : SwiftExportedDependency {
-    /**
-     * The path of the Gradle project (e.g., ":shared:core").
-     */
-    @get:Internal
-    val projectPath: String
-
-    @Internal
-    override fun getName(): String = projectPath
+    internal class Project(
+        /**
+         * The path of the Gradle project (e.g., ":shared:core").
+         */
+        val projectPath: String,
+    ) : SwiftExportedDependency() {
+        override fun getName(): String = projectPath
+    }
 }
 
 internal val Dependency.moduleVersionIdentifier
@@ -58,23 +47,6 @@ internal val Dependency.moduleVersionIdentifier
 
 internal val SwiftExportedDependency.inheritedName
     get() = when (this) {
-        is SwiftExportedExternalDependency -> coordinates.name
-        is SwiftExportedProjectDependency -> projectPath
+        is SwiftExportedDependency.External -> coordinates.name
+        is SwiftExportedDependency.Project -> projectPath
     }
-
-internal sealed class DefaultSwiftExportedDependency(objectFactory: ObjectFactory) : SwiftExportedModuleMetadata {
-
-    override val moduleName: Property<String> = objectFactory.property(String::class.java)
-
-    override val flattenPackage: Property<String> = objectFactory.property(String::class.java)
-
-    internal class External(
-        objectFactory: ObjectFactory,
-        override val coordinates: ModuleVersionIdentifier,
-    ) : DefaultSwiftExportedDependency(objectFactory), SwiftExportedExternalDependency
-
-    internal class Project(
-        objectFactory: ObjectFactory,
-        override val projectPath: String,
-    ) : DefaultSwiftExportedDependency(objectFactory), SwiftExportedProjectDependency
-}
