@@ -1,0 +1,6 @@
+/**
+ * Checks if the current iOS device supports a specific feature.
+ *
+ * @param feature The feature name to check. Supported features: "camera", "multitasking", "telephony"
+ * @return true if the device supports the specified feature, false otherwise
+ */

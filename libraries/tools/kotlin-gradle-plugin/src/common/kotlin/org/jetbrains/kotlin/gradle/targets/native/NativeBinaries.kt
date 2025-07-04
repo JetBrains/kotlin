@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.attributeOf
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
@@ -325,6 +326,11 @@ class Framework(
      * Specifies if the framework is linked as a static library (false by default).
      */
     var isStatic = false
+
+    /**
+     * Export KDocs to frameworks header file.
+     */
+    var exportKdoc = true
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(BITCODE_EMBEDDING_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)

@@ -323,6 +323,9 @@ internal constructor(
     @get:Input
     override val debuggable = true
 
+    @get:Input
+    val exportKdoc: Boolean = true
+
     @get:Internal
     override val baseName: String by lazy {
         if (compilation.isMain) project.name
@@ -489,7 +492,7 @@ internal constructor(
             args.metadataKlib = sharedCompilationData != null
             args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
-            args.exportKDoc = true
+            args.exportKDoc = exportKdoc
             args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
             args.nopack = produceUnpackagedKlib.get()
 
