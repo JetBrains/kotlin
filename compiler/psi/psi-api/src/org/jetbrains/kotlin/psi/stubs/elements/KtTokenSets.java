@@ -20,6 +20,8 @@ public interface KtTokenSets {
 
     TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 
+    TokenSet INSIDE_DOT_QUALIFIED_EXPRESSION = TokenSet.create(REFERENCE_EXPRESSION, CALL_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
+
     // typeArguments? valueArguments : typeArguments : arrayAccess
     TokenSet POSTFIX_OPERATIONS = TokenSet.create(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCLEXCL, KtTokens.DOT, KtTokens.SAFE_ACCESS);
 
@@ -33,6 +35,7 @@ public interface KtTokenSets {
             INTEGER_CONSTANT,
 
             REFERENCE_EXPRESSION,
+            CALL_EXPRESSION,
             DOT_QUALIFIED_EXPRESSION,
 
             STRING_TEMPLATE,

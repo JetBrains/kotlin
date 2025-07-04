@@ -159,6 +159,11 @@ PsiJetFileStubImpl[package=]
                         REFERENCE_EXPRESSION[referencedName=Foo]
                   VALUE_ARGUMENT_LIST
                     VALUE_ARGUMENT[isSpread=false]
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION[referencedName=listOf]
+                        VALUE_ARGUMENT_LIST
+                          VALUE_ARGUMENT[isSpread=false]
+                            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=10]
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
                   VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
