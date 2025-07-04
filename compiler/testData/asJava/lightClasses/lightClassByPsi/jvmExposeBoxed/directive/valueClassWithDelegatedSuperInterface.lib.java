@@ -1,11 +1,4 @@
 public abstract interface Interface /* pack.Interface*/ {
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public abstract pack.ValueClassImpl getPropertyWithValueClass();//  getPropertyWithValueClass()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  public abstract void functionWithValueParam(@org.jetbrains.annotations.NotNull() pack.ValueClassImpl);//  functionWithValueParam(pack.ValueClassImpl)
-
   public abstract int getPropertyWithValueClass-NoPZT8w();//  getPropertyWithValueClass-NoPZT8w()
 
   public abstract int getRegularVariable();//  getRegularVariable()

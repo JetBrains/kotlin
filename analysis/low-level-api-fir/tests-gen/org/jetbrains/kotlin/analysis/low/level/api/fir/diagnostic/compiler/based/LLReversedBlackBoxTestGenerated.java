@@ -33265,6 +33265,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("defaultInInterface.kt")
+        public void testDefaultInInterface() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/defaultInInterface.kt");
+        }
+
+        @Test
         @TestMetadata("getter.kt")
         public void testGetter() {
           runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/getter.kt");
@@ -33322,6 +33328,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         @TestMetadata("noArg2.kt")
         public void testNoArg2() {
           runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/noArg2.kt");
+        }
+
+        @Test
+        @TestMetadata("openClass.kt")
+        public void testOpenClass() {
+          runTest("compiler/testData/codegen/box/inlineClasses/jvmExposeBoxed/directive/openClass.kt");
         }
 
         @Test
