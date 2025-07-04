@@ -1,6 +1,7 @@
 package foo
 
-// CHECK_NOT_CALLED: abs
+// FUNCTION_CALLED_TIMES: abs count=1
+// ^ This single call is in the standard library, not here
 
 inline fun abs(a: Int): Int {
     if (a < 0) {
