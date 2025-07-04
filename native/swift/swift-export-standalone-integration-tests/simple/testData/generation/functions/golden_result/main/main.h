@@ -61,6 +61,12 @@ int32_t namespace1_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
 
 int32_t namespace2_foo__TypesOfArguments__Swift_Int32__(int32_t arg1);
 
+void * operators_Foo_EmptyIterator_get();
+
+_Bool operators_Foo_EmptyIterator_hasNext(void * self);
+
+int32_t operators_Foo_EmptyIterator_next(void * self);
+
 int32_t operators_Foo_compareTo__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
 _Bool operators_Foo_contains__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
@@ -86,6 +92,8 @@ void * operators_Foo_init_allocate();
 void operators_Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t value);
 
 void * operators_Foo_invoke(void * self);
+
+void * operators_Foo_iterator(void * self);
 
 void * operators_Foo_minus__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 

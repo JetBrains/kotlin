@@ -440,11 +440,25 @@ public fun OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(self:
     __self.variable = __newValue
 }
 
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasNext")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.hasNext()
+    return _result
+}
+
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious")
 public fun OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
     val _result = __self.hasPrevious()
     return _result
+}
+
+@ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_next")
+public fun OBJECT_WITH_GENERIC_INHERITANCE_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OBJECT_WITH_GENERIC_INHERITANCE
+    val _result = __self.next()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("OBJECT_WITH_GENERIC_INHERITANCE_nextIndex")

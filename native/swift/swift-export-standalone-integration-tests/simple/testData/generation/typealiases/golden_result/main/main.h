@@ -51,7 +51,11 @@ NSArray<id> * ENUM_entries_get();
 
 void * ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);
 
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
+
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
 
 int32_t OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(void * self);
 

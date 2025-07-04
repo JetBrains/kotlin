@@ -119,7 +119,11 @@ int32_t OBJECT_NO_PACKAGE_variable_get(void * self);
 
 void OBJECT_NO_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
+_Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
+
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasPrevious(void * self);
+
+void OBJECT_WITH_GENERIC_INHERITANCE_next(void * self) __attribute((noreturn));
 
 int32_t OBJECT_WITH_GENERIC_INHERITANCE_nextIndex(void * self);
 

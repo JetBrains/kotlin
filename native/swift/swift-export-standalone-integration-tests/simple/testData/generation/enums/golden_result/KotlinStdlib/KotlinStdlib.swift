@@ -43,6 +43,46 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             fatalError()
         }
+        public static func <(
+            this: ExportedKotlinPackages.kotlin.Enum,
+            other: ExportedKotlinPackages.kotlin.Enum
+        ) -> Swift.Bool {
+            this._compareTo(other: other) < 0
+        }
+        public static func <=(
+            this: ExportedKotlinPackages.kotlin.Enum,
+            other: ExportedKotlinPackages.kotlin.Enum
+        ) -> Swift.Bool {
+            this._compareTo(other: other) <= 0
+        }
+        public static func ==(
+            this: ExportedKotlinPackages.kotlin.Enum,
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            this.equals(other: other)
+        }
+        public static func >(
+            this: ExportedKotlinPackages.kotlin.Enum,
+            other: ExportedKotlinPackages.kotlin.Enum
+        ) -> Swift.Bool {
+            this._compareTo(other: other) > 0
+        }
+        public static func >=(
+            this: ExportedKotlinPackages.kotlin.Enum,
+            other: ExportedKotlinPackages.kotlin.Enum
+        ) -> Swift.Bool {
+            this._compareTo(other: other) >= 0
+        }
+        public final func _compareTo(
+            other: ExportedKotlinPackages.kotlin.Enum
+        ) -> Swift.Int32 {
+            return kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(self.__externalRCRef(), other.__externalRCRef())
+        }
+        public final func equals(
+            other: KotlinRuntime.KotlinBase?
+        ) -> Swift.Bool {
+            return kotlin_Enum_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        }
         public final func hashCode() -> Swift.Int32 {
             return kotlin_Enum_hashCode(self.__externalRCRef())
         }

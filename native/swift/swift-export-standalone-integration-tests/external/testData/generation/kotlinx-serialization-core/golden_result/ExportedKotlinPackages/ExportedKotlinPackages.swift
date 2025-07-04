@@ -1,7 +1,7 @@
 public enum kotlin {
     public enum collections {
     }
-    public enum time {
+    public enum ranges {
     }
 }
 public enum kotlinx {

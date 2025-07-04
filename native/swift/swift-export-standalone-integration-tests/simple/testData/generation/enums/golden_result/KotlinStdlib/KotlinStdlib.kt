@@ -12,6 +12,22 @@ public fun kotlin_Enum_Companion_get(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__")
+public fun kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<kotlin.Enum<*>>
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Enum<kotlin.Enum<*>>
+    val _result = __self.compareTo(__other)
+    return _result
+}
+
+@ExportedBridge("kotlin_Enum_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
+public fun kotlin_Enum_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<kotlin.Enum<*>>
+    val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
+    val _result = __self.equals(__other)
+    return _result
+}
+
 @ExportedBridge("kotlin_Enum_hashCode")
 public fun kotlin_Enum_hashCode(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<kotlin.Enum<*>>

@@ -35,7 +35,7 @@ public fun oh_my_state_inner_InnerState_bytes_get(self: kotlin.native.internal.N
 
 @ExportedBridge("oh_my_state_inner_InnerState_init_allocate")
 public fun oh_my_state_inner_InnerState_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = kotlin.native.internal.createUninitializedInstance<oh.my.state.`inner`.InnerState>()
+    val _result = kotlin.native.internal.createUninitializedInstance<oh.my.state.inner.InnerState>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -43,5 +43,5 @@ public fun oh_my_state_inner_InnerState_init_allocate(): kotlin.native.internal.
 public fun oh_my_state_inner_InnerState_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_ByteArray___(__kt: kotlin.native.internal.NativePtr, bytes: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __bytes = if (bytes == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(bytes) as kotlin.ByteArray
-    kotlin.native.internal.initInstance(____kt, oh.my.state.`inner`.InnerState(__bytes))
+    kotlin.native.internal.initInstance(____kt, oh.my.state.inner.InnerState(__bytes))
 }
