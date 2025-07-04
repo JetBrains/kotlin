@@ -32,6 +32,16 @@ enum class KlibCompilerChangeScenario {
     /** Always return [KlibCompilerEdition.CURRENT] */
     NoChange,
 
+    /** Always use the custom compiler ([KlibCompilerEdition.CUSTOM]) to build libraries. */
+    CustomCompilerForKlibs {
+        override fun getCompilerEditionForKlib(compilerCodename: String?) = KlibCompilerEdition.CUSTOM
+    },
+
+    /** Always use the custom compiler ([KlibCompilerEdition.CUSTOM]) to build binaries. */
+    CustomCompilerForBinaries {
+        override fun getCompilerEditionForBinary() = KlibCompilerEdition.CUSTOM
+    },
+
     @Deprecated("This compiler change scenario is currently not used. It might be removed in the future.")
     BwLatestWithCurrent {
         override fun getCompilerEditionForKlib(compilerCodename: String?) = when (parseCompilerCase(compilerCodename)) {
