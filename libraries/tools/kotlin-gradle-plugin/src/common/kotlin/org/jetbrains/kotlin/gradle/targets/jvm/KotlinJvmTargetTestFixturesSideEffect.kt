@@ -35,13 +35,50 @@ internal val ConfigureJavaTestFixturesSideEffect = KotlinTargetSideEffect { targ
         testCompilation.associateWith(testFixturesCompilation)
         if (target is KotlinJvmTarget) {
             // Only applicable for KMP
-            val testFixturesApiElements = target.project.configurations.getByName(testFixturesSourceSet.apiElementsConfigurationName)
-            testFixturesApiElements.extendsFrom(
-                target.project.configurations.getByName(mainCompilation.apiConfigurationName)
-            )
-            testFixturesApiElements.extendsFrom(
-                target.project.configurations.getByName(testFixturesCompilation.apiConfigurationName)
-            )
+            // Proper wiring diagram is available here: https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_configurations_graph
+            val configurationsContainer = target.project.configurations
+
+            // Publishing
+            configurationsContainer
+                .getByName(testFixturesSourceSet.apiElementsConfigurationName)
+                .extendsFrom(configurationsContainer.getByName(testFixturesCompilation.apiConfigurationName))
+            configurationsContainer
+                .getByName(testFixturesSourceSet.runtimeElementsConfigurationName)
+                .extendsFrom(
+                    configurationsContainer.getByName(testFixturesCompilation.apiConfigurationName),
+                    configurationsContainer.getByName(testFixturesCompilation.runtimeOnlyConfigurationName)
+                )
+
+            // Compilation
+            configurationsContainer
+                .getByName(testFixturesSourceSet.compileClasspathConfigurationName)
+                .extendsFrom(
+                    configurationsContainer.getByName(testFixturesCompilation.implementationConfigurationName),
+                    configurationsContainer.getByName(testFixturesCompilation.compileOnlyConfigurationName),
+                )
+            configurationsContainer
+                .getByName(testFixturesCompilation.compileDependencyConfigurationName)
+                .extendsFrom(
+                    configurationsContainer.getByName(testFixturesSourceSet.implementationConfigurationName),
+                    configurationsContainer.getByName(testFixturesSourceSet.compileOnlyConfigurationName),
+                )
+
+            // Runtime
+            configurationsContainer
+                .getByName(testFixturesSourceSet.runtimeClasspathConfigurationName)
+                .extendsFrom(
+                    configurationsContainer.getByName(testFixturesCompilation.implementationConfigurationName),
+                    configurationsContainer.getByName(testFixturesCompilation.runtimeOnlyConfigurationName),
+                )
+            testFixturesCompilation.runtimeDependencyConfigurationName?.let { runtimeConfigurationName ->
+                configurationsContainer
+                    .getByName(runtimeConfigurationName)
+                    .extendsFrom(
+                        configurationsContainer.getByName(testFixturesSourceSet.implementationConfigurationName),
+                        configurationsContainer.getByName(testFixturesSourceSet.runtimeOnlyConfigurationName),
+                    )
+            }
+
             (testFixturesSourceSet.output.classesDirs as? ConfigurableFileCollection)?.from(
                 testFixturesCompilation.output.classesDirs
             ) ?: target.project.reportDiagnostic(
