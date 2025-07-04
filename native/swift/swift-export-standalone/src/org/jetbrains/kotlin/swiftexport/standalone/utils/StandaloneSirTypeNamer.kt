@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.bridge.SirTypeNamer
+import org.jetbrains.kotlin.sir.bridge.SirTypeNamer.KotlinNameType
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -19,13 +20,18 @@ import org.jetbrains.kotlin.sir.util.swiftName
 internal object StandaloneSirTypeNamer : SirTypeNamer {
     override fun swiftFqName(type: SirType): String = type.swiftName
 
-    override fun kotlinFqName(type: SirType): String = when (type) {
+    override fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String = when (nameType) {
+        KotlinNameType.FQN -> kotlinFqName(sirType)
+        KotlinNameType.PARAMETRIZED -> kotlinParametrizedName(sirType)
+    }
+
+    private fun kotlinFqName(type: SirType): String = when (type) {
         is SirNominalType -> kotlinFqName(type)
         is SirExistentialType -> kotlinFqName(type)
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
     }
 
-    override fun kotlinParametrizedName(type: SirType): String =
+    private fun kotlinParametrizedName(type: SirType): String =
         (type as? SirNominalType)?.typeDeclaration?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName() ?: kotlinFqName(type)
 
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {

@@ -111,10 +111,12 @@ public interface BridgePrinter {
 }
 
 public interface SirTypeNamer {
-    public fun swiftFqName(type: SirType): String
-    public fun kotlinFqName(type: SirType): String
+    public enum class KotlinNameType {
+        FQN, PARAMETRIZED
+    }
 
-    public fun kotlinParametrizedName(type: SirType): String
+    public fun swiftFqName(type: SirType): String
+    public fun kotlinFqName(sirType: SirType, nameType: KotlinNameType): String
 }
 
 public fun createBridgeGenerator(namer: SirTypeNamer): BridgeGenerator =
