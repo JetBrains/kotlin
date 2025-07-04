@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
 import org.jetbrains.kotlin.backend.jvm.hasFixedName
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeParameter
 import org.jetbrains.kotlin.backend.jvm.originalOfSuspendForInline
@@ -42,6 +43,10 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class FunctionCodegen(private val irFunction: IrFunction, private val classCodegen: ClassCodegen) {
     private val context = classCodegen.context
+    private val IrFunction.parentIfClassOrNull: IrClass? get() = parent as? IrClass
+    private val IrClass?.isNotNullAndAnnotationClass: Boolean get() = this != null && this.isAnnotationClass
+    private val IrClass?.isNotNullAndJvmInterface: Boolean get() = this != null && this.isJvmInterface
+    private val IrClass?.isNotNullAndInterface: Boolean get() = this != null && this.isInterface
 
     fun generate(
         reifiedTypeParameters: ReifiedTypeParametersUsages = classCodegen.reifiedTypeParametersUsages
@@ -178,7 +183,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         when {
             visibility == DescriptorVisibilities.PUBLIC || visibility == DescriptorVisibilities.INTERNAL -> Opcodes.ACC_PUBLIC
             // TODO: maybe best to generate private default in interface as private
-            parentAsClass.isJvmInterface -> Opcodes.ACC_PUBLIC
+            parentIfClassOrNull.isNotNullAndJvmInterface -> Opcodes.ACC_PUBLIC
             visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
             else ->
                 throw IllegalStateException("Default argument stub should be public, internal, or package private: ${ir2string(this)}")
@@ -196,19 +201,19 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
 
         val isVararg = parameters.lastOrNull()?.varargElementType != null && !isBridge()
         val modalityFlag =
-            if (parentAsClass.isAnnotationClass) {
+            if (parentIfClassOrNull.isNotNullAndAnnotationClass) {
                 if (isStatic) 0 else Opcodes.ACC_ABSTRACT
             } else {
                 when ((this as? IrSimpleFunction)?.modality) {
                     Modality.FINAL -> when {
                         origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                         origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
-                        parentAsClass.isInterface && body != null -> 0
+                        parentIfClassOrNull.isNotNullAndInterface && body != null -> 0
                         else -> Opcodes.ACC_FINAL
                     }
                     Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
                     // TODO transform interface modality on lowering to DefaultImpls
-                    else -> if (parentAsClass.isJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
+                    else -> if (parentIfClassOrNull.isNotNullAndJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
                 }
             }
         val isSynthetic = origin.isSynthetic ||

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.util.eraseIfTypeParameter
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -52,8 +53,8 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
         }
         if (!isFromTypeUnboxed && isToTypeUnboxed) {
             val boxed = typeMapper.mapType(erasedTargetType, TypeMappingMode.CLASS_DECLARATION)
-            val irClass = codegen.irFunction.parentAsClass
-            if (irClass.isSingleFieldValueClass && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
+            val irClass = codegen.irFunction.parent
+            if (irClass is IrClass && irClass.isSingleFieldValueClass && irClass.symbol == irType.classifierOrNull && !irType.isNullable()) {
                 // Use getfield instead of unbox-impl inside inline classes
                 codegen.mv.getfield(boxed.internalName, irClass.inlineClassFieldName.asString(), target.descriptor)
             } else {

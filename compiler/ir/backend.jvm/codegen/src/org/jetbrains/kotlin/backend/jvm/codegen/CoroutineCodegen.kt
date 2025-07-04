@@ -76,7 +76,7 @@ private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
     this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
 
 internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
-    this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
+    this is IrSimpleFunction && hasContinuation() && parent is IrClass && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
                 it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
     }
