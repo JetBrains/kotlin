@@ -49,7 +49,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             val enabledOnCurrentHost = compilation.konanTarget.enabledOnCurrentHostForBinariesCompilation
             it.enabled = enabledOnCurrentHost
             it.definitionFile.set(params.settings.definitionFile)
-            it.kotlinNativeProvider.set(it.chooseKotlinNativeProvider(enabledOnCurrentHost, it.konanTarget))
+            it.kotlinNativeProvider.set(it.chooseKotlinNativeProvider(enabledOnCurrentHost, it.konanTarget, project))
 
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)

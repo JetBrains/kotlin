@@ -201,19 +201,19 @@ internal object KotlinToolingDiagnostics {
             get() = "Run the build with '--info' for more details."
     }
 
-    object CrossCompilationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String, interops: List<String>, hostname: String) =
             build {
                 title("Cross Compilation with Cinterop Not Supported")
                     .description {
                         """
-                    Cross compilation to target '$target' has been disabled because it contains cinterops: '${interops.joinToString(", ")}' which cannot be processed on host '$hostname'.
+                    Cross compilation to target '$target' has been disabled because it contains cinterops: '${interops.joinToString("', '")}' which cannot be processed on host '$hostname'.
                     Cinterop libraries require platform-specific native toolchains that aren't available on the current host system.
                     """.trimIndent()
                     }
                     .solutions {
                         listOf(
-                            "Remove the cinterops dependencies '${interops.joinToString(", ")}' from target '$target'",
+                            "Remove the cinterop dependencies '${interops.joinToString("', '")}' from target '$target'",
                             "Build on a compatible host platform for this target/cinterop combination",
                             "To disable klib cross compilation entirely, add '$KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION=false' to your Gradle properties"
                         )

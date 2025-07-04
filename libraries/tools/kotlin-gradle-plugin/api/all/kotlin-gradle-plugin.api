@@ -6038,7 +6038,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
 	public abstract fun getAdditionalCompilerOptions ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getBaseName ()Ljava/lang/String;
 	public fun getCompilerPluginClasspath ()Lorg/gradle/api/file/FileCollection;
