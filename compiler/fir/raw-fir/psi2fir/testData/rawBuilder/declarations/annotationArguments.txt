@@ -146,3 +146,9 @@ FILE: annotationArguments.kt
         }
 
     }
+    @kotlin.Deprecated(String(Deprecated), kotlin#.ReplaceWith#(String(NewClass), String(foo.bar.baz.NewClass)), level = kotlin#.DeprecationLevel#.HIDDEN#) public final? class Qualified : R|kotlin/Any| {
+        public? [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
