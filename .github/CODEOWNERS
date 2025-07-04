@@ -29,6 +29,7 @@
 /compiler/arguments.common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
 /compiler/arguments/ @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools
 /compiler/arguments/src/org/jetbrains/kotlin/arguments/description/WasmCompilerArguments.kt @JetBrains/kotlin-wasm
+/compiler/arguments/resources/kotlin-compiler-arguments.json @JetBrains/kotlin-frontend @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /compiler/android-tests/ @JetBrains/kotlin-jvm
 /compiler/backend/ @JetBrains/kotlin-jvm
 /compiler/backend.common.jvm/ @JetBrains/kotlin-jvm
@@ -105,6 +106,7 @@
 /compiler/testData/classpathOrder/ @JetBrains/kotlin-jvm
 /compiler/testData/cli/ @JetBrains/kotlin-frontend
 /compiler/testData/cli/js/ @JetBrains/kotlin-js @JetBrains/kotlin-frontend
+/compiler/testData/cli/js/js*Help.out @JetBrains/kotlin-js @JetBrains/kotlin-frontend  @JetBrains/kotlin-wasm
 /compiler/testData/cli/jvm/ @JetBrains/kotlin-jvm @JetBrains/kotlin-frontend
 /compiler/testData/cli/metadata/ @JetBrains/kotlin-frontend
 /compiler/testData/codegen/asmLike/ @JetBrains/kotlin-jvm
@@ -308,6 +310,7 @@
 /libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-idea-proto/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-integration-tests/ @JetBrains/kotlin-build-tools
+/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinWasmGradlePluginIT.kt @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-wasm-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/wasm-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-wasm
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
