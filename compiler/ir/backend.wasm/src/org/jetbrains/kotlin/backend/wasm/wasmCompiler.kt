@@ -229,7 +229,7 @@ fun compileWasm(
         )
     } else {
         jsUninstantiatedWrapper = null
-        jsWrapper = wasmCompiledModuleFragment.generateAsyncWasiWrapper("./$baseFileName.wasm", linkedModule.exports)
+        jsWrapper = wasmCompiledModuleFragment.generateAsyncWasiWrapper("./$baseFileName.wasm", linkedModule.exports, useDebuggerCustomFormatters)
     }
 
     return WasmCompilerResult(
@@ -247,9 +247,14 @@ fun compileWasm(
 }
 
 //language=js
-fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(wasmFilePath: String, exports: List<WasmExport<*>>): String = """
+fun WasmCompiledModuleFragment.generateAsyncWasiWrapper(
+    wasmFilePath: String,
+    exports: List<WasmExport<*>>,
+    useCustomFormatters: Boolean
+): String = """
 import { WASI } from 'wasi';
 import { argv, env } from 'node:process';
+${if (useCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
 const wasi = new WASI({ version: 'preview1', args: argv, env, });
 
