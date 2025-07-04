@@ -17,9 +17,8 @@ abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkage
 
 abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : AbstractJsCompilerInvocationTest(compilerType) {
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) {
+    fun runTest(@TestDataFile testDir: String) {
         val configuration = JsCompilerInvocationTestConfiguration(
-            testPath = testPath,
             buildDir = buildDir,
             compilerType = compilerType,
         )
@@ -27,6 +26,7 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
         val artifactBuilder = JsCompilerInvocationTestArtifactBuilder(configuration)
 
         KlibCompilerInvocationTestUtils.runTest(
+            testDir = File(testDir).absoluteFile,
             testConfiguration = configuration,
             testStructureExtractor = testStructureExtractor,
             artifactBuilder = artifactBuilder,

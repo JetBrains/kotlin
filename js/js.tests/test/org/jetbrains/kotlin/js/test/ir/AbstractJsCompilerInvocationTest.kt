@@ -127,11 +127,9 @@ internal object JsKlibTestSettings {
 }
 
 internal class JsCompilerInvocationTestConfiguration(
-    testPath: String,
     override val buildDir: File,
     val compilerType: CompilerType,
 ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-    override val testDir: File = File(testPath).absoluteFile
     override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/js/main").absoluteFile
     override val targetBackend get() = if (compilerType.es6Mode) TargetBackend.JS_IR_ES6 else TargetBackend.JS_IR
 
