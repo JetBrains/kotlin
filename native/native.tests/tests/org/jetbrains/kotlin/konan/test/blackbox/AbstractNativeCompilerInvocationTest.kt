@@ -47,10 +47,8 @@ abstract class AbstractNativeCompilerInvocationTest :
 }
 
 class NativeCompilerInvocationTestConfiguration(
-    testPath: String,
     val settings: Settings
 ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-    override val testDir = getAbsoluteFile(testPath)
     override val buildDir get() = settings.get<Binaries>().testBinariesDir
     override val stdlibFile get() = settings.get<KotlinNativeHome>().stdlibFile
     override val targetBackend get() = TargetBackend.NATIVE

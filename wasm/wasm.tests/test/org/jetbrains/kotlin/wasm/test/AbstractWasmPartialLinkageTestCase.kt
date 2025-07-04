@@ -43,14 +43,14 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
     }
 
     // The entry point to generated test classes.
-    fun runTest(@TestDataFile testPath: String) {
+    fun runTest(@TestDataFile testDir: String) {
         val configuration = WasmCompilerInvocationTestConfiguration(
-            testPath = testPath,
             buildDir = buildDir,
             compilerType = compilerType,
         )
 
         KlibCompilerInvocationTestUtils.runTest(
+            testDir = File(testDir).absoluteFile,
             testConfiguration = configuration,
             testStructureExtractor = WasmPartialLinkageTestStructureExtractor(buildDir),
             artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
@@ -61,11 +61,9 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
 }
 
 internal class WasmCompilerInvocationTestConfiguration(
-    testPath: String,
     override val buildDir: File,
     val compilerType: CompilerType,
 ) : KlibCompilerInvocationTestUtils.TestConfiguration {
-    override val testDir: File = File(testPath).absoluteFile
     override val stdlibFile: File get() = File("libraries/stdlib/build/classes/kotlin/wasmJs/main").absoluteFile
     override val targetBackend get() = TargetBackend.WASM
 
