@@ -22,7 +22,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
-import androidx.compose.compiler.plugins.kotlin.lower.ComposeRuntimeVersion
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCSerializationPlugin
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
