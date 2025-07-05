@@ -625,8 +625,10 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
     )
 
     @Test
-    fun testDefaultParametersInAbstractFunctions() = validateBytecode(
-        """
+    fun testDefaultParametersInAbstractFunctions() {
+        assumeTrue(useFir)
+        validateBytecode(
+            """
             import androidx.compose.runtime.*
 
             interface Test {
@@ -642,15 +644,16 @@ class ComposeBytecodeCodegenTest(useFir: Boolean) : AbstractCodegenTest(useFir) 
                 test.foo(0)
             }
         """,
-        validate = {
-            assertTrue(
-                it.contains(
-                    "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
-                ),
-                "default static functions should be generated in ComposeDefaultsImpl class"
-            )
-        }
-    )
+            validate = {
+                assertTrue(
+                    it.contains(
+                        "INVOKESTATIC test/Test%ComposeDefaultImpls.foo%default (ILtest/Test;Landroidx/compose/runtime/Composer;II)V"
+                    ),
+                    "default static functions should be generated in ComposeDefaultsImpl class"
+                )
+            }
+        )
+    }
 
     @Test
     fun testDefaultParametersInOpenFunctions() {

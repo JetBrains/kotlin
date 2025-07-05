@@ -17,11 +17,31 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.jetbrains.kotlin.config.*
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Test
+import org.junit.runners.Parameterized
 
-class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
+class ComposableDeclarationCheckerTests(
+    private val languageVersion: LanguageVersion
+) : AbstractComposeDiagnosticsTest(languageVersion.usesK2) {
+
+    companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "lv = {0}")
+        fun parameters() = arrayOf(
+            LanguageVersion.KOTLIN_1_9,
+            LanguageVersion.KOTLIN_2_0,
+            LanguageVersion.KOTLIN_2_1,
+            LanguageVersion.LATEST_STABLE
+        )
+    }
+
+    override fun CompilerConfiguration.updateConfiguration() {
+        this.languageVersionSettings = LanguageVersionSettingsImpl(languageVersion, ApiVersion.LATEST_STABLE)
+    }
+
     @Test
     fun testPropertyWithInitializer() {
         check(
@@ -372,7 +392,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = 0)
+                @Composable fun foo(x: Int = ${abstractDefaultParameter("0")})
             }
         """
         )
@@ -384,7 +404,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             interface A {
-                @Composable fun foo(x: Int = ${if (useFir) "0" else "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>"}) {}
+                @Composable fun foo(x: Int = ${openDefaultParameter("0")}) {}
             }
         """
         )
@@ -396,7 +416,7 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             abstract class A {
-                @Composable abstract fun foo(x: Int = 0)
+                @Composable abstract fun foo(x: Int = ${abstractDefaultParameter("0")})
             }
         """
         )
@@ -408,7 +428,20 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
             import androidx.compose.runtime.Composable
             open class A {
-                @Composable open fun foo(x: Int = ${if (useFir) "0" else "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>0<!>"}) {}
+                @Composable open fun foo(x: Int = ${openDefaultParameter("0")}) {}
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testInternalComposablesWithDefaultParameters() {
+        check(
+            """
+            import androidx.compose.runtime.Composable
+            internal abstract class A {
+                @Composable open fun foo(x: Int = ${internalDefaultParameter("0")}) {}
+                @Composable abstract fun bar(x: Int = ${internalDefaultParameter("0")})
             }
         """
         )
@@ -538,4 +571,27 @@ class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagno
             """
         )
     }
+
+    fun abstractDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_1) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
+
+    fun openDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_0) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else if (languageVersion < LanguageVersion.KOTLIN_2_2) {
+            "<!OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
+
+    fun internalDefaultParameter(value: String): String =
+        if (languageVersion < LanguageVersion.KOTLIN_2_0) {
+            "<!ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE!>$value<!>"
+        } else {
+            value
+        }
 }

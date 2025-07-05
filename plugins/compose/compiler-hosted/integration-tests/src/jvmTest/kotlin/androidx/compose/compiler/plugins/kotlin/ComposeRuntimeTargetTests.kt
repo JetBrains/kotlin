@@ -5,7 +5,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.lower.ComposeRuntimeVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4

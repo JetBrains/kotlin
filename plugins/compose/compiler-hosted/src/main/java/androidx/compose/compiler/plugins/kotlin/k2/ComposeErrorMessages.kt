@@ -127,5 +127,17 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.COMPOSE_APPLIER_DECLARATION_MISMATCH,
             "The composition target of an override must match the ancestor target"
         )
+
+        map.put(
+            ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Default parameters in abstract @Composable functions are not supported before language version 2.1 (configured version is {0})",
+            KtDiagnosticRenderers.TO_STRING
+        )
+
+        map.put(
+            ComposeErrors.OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+            "Default parameters in open @Composable functions are not supported before language version 2.2 (configured version is {0})",
+            KtDiagnosticRenderers.TO_STRING
+        )
     }
 }

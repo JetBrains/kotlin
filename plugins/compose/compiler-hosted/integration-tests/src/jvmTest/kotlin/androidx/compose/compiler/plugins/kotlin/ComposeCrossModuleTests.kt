@@ -1414,6 +1414,7 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     // Regression test for b/397855145
     @Test
     fun testB397855145() {
+        assumeTrue(useFir)
         compile(
             mapOf(
                 "lib" to mapOf(

@@ -1,3 +1,5 @@
+// K2_ONLY
+
 /*
  * Copyright 2024 The Android Open Source Project
  *

@@ -20,6 +20,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -98,6 +99,10 @@ object ComposeErrors : KtDiagnosticsContainer() {
     )
 
     val COMPOSABLE_INAPPLICABLE_TYPE by error1<PsiElement, ConeKotlinType>()
+
+    val OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
+
+    val ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE by error1<PsiElement, LanguageVersion>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = ComposeErrorMessages
 }

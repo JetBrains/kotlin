@@ -16,6 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.k2
 
+import androidx.compose.compiler.plugins.kotlin.ComposeLanguageFeature
+import androidx.compose.compiler.plugins.kotlin.supportsComposeFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -25,10 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
-import org.jetbrains.kotlin.fir.declarations.utils.isOpen
-import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -78,6 +77,40 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 declaration.source,
                 ComposeErrors.DEPRECATED_OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE
             )
+        }
+
+        val version = context.languageVersionSettings
+        if (
+            !version.supportsComposeFeature(ComposeLanguageFeature.DefaultParametersInAbstractFunctions) &&
+            declaration.effectiveVisibility.publicApi &&
+            declaration.isAbstract
+        ) {
+            declaration.valueParameters.forEach { parameter ->
+                if (parameter.defaultValue != null) {
+                    reporter.reportOn(
+                        parameter.defaultValue?.source,
+                        ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+                        version.languageVersion
+                    )
+                }
+            }
+        }
+
+        if (
+            !version.supportsComposeFeature(ComposeLanguageFeature.DefaultParametersInOpenFunctions) &&
+            declaration.effectiveVisibility.publicApi &&
+            declaration.isOpen &&
+            declaration.valueParameters.any { it.defaultValue != null }
+        ) {
+            declaration.valueParameters.forEach { parameter ->
+                if (parameter.defaultValue != null) {
+                    reporter.reportOn(
+                        parameter.defaultValue?.source,
+                        ComposeErrors.OPEN_COMPOSABLE_DEFAULT_PARAMETER_VALUE,
+                        version.languageVersion
+                    )
+                }
+            }
         }
 
         // Composable main functions are not allowed.

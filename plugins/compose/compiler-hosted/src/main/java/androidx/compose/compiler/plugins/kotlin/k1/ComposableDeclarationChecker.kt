@@ -137,7 +137,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         }
 
         if (
-            hasComposableAnnotation && descriptor.modality == Modality.OPEN
+            hasComposableAnnotation && descriptor.modality != Modality.FINAL
         ) {
             declaration.valueParameters.forEach {
                 val defaultValue = it.defaultValue
