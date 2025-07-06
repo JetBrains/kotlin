@@ -165,7 +165,7 @@ class FirScriptConfiguratorExtensionImpl(
                 when (val lastScriptBlockBody = lastScriptBlock?.body) {
                     is FirLazyBlock -> null
                     is FirSingleExpressionBlock -> lastScriptBlockBody.statement as? FirExpression
-                    else -> lastScriptBlockBody?.statements?.single()?.takeIf { it is FirExpression } as? FirExpression
+                    else -> lastScriptBlockBody?.statements?.singleOrNull()?.takeIf { it is FirExpression } as? FirExpression
                 }?.takeUnless { it is FirErrorExpression }
 
             if (lastExpression != null) {
