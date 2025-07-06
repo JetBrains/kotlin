@@ -154,7 +154,6 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
             module.mainModule,
             configuration,
             performanceManager,
-            exportedDeclarations = setOf(FqName("main")),
             generateTypeScriptFragment = generateDts,
             propertyLazyInitialization = propertyLazyInitialization,
         )
