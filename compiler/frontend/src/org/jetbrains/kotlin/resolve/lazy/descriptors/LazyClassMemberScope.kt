@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -29,11 +30,14 @@ import org.jetbrains.kotlin.diagnostics.reportOnDeclarationOrFail
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
+import org.jetbrains.kotlin.incremental.recordPackageLookup
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -566,6 +570,19 @@ open class LazyClassMemberScope(
 
     override fun recordLookup(name: Name, location: LookupLocation) {
         c.lookupTracker.record(location, thisDescriptor, name)
+    }
+
+    override fun recordSuperPackageLookup(location: LookupLocation) {
+        var tempSuperDescriptor: ClassDescriptor? = thisDescriptor
+        while (tempSuperDescriptor?.getSuperClassNotAny().apply { tempSuperDescriptor = this } != null) {
+            tempSuperDescriptor?.parents?.firstOrNull()?.apply {
+                c.lookupTracker.recordPackageLookup(
+                    location,
+                    DescriptorUtils.getFqName(this).toString(),
+                    tempSuperDescriptor?.name.toString()
+                )
+            }
+        }
     }
 
     // Do not add details here, they may compromise the laziness during debugging
