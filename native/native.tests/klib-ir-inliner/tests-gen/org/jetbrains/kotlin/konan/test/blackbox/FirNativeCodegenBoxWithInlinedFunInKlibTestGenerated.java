@@ -45360,6 +45360,18 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("accessorForFakeOverride.kt")
+      public void testAccessorForFakeOverride() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForFakeOverride.kt");
+      }
+
+      @Test
+      @TestMetadata("accessorForFakeOverrideWithInlinedFunInKlib.kt")
+      public void testAccessorForFakeOverrideWithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForFakeOverrideWithInlinedFunInKlib.kt");
+      }
+
+      @Test
       @TestMetadata("accessorForGenericConstructor.kt")
       public void testAccessorForGenericConstructor() {
         runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForGenericConstructor.kt");
