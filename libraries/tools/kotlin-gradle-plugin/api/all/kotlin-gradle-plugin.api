@@ -1880,6 +1880,14 @@ public final class org/jetbrains/kotlin/gradle/plugin/sources/android/configurat
 	public fun configureWithVariant (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lcom/android/build/gradle/api/BaseVariant;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion;
+	public fun <init> (Lorg/gradle/api/flow/FlowScope;Lorg/gradle/api/flow/FlowProviders;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion {
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/tooling/events/OperationCompletionListener {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion;
 	public fun <init> ()V
@@ -1920,6 +1928,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMe
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/ConfigurationMetricsBuildFusParameters : org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Parameters {
 	public abstract fun getConfigurationMetrics ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getKotlinVersion ()Lorg/gradle/api/provider/Property;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/DaemonReuseCounter : org/jetbrains/kotlin/gradle/plugin/statistics/IDaemonReuseCounterMXBean {

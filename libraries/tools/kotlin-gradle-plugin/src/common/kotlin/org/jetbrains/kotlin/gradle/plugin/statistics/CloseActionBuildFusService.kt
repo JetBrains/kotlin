@@ -9,7 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 
-abstract class CloseActionBuildFusService:
+abstract class CloseActionBuildFusService :
     BuildFusService<ConfigurationMetricsBuildFusParameters>() {
 
     companion object {
@@ -17,6 +17,7 @@ abstract class CloseActionBuildFusService:
             project: Project,
             buildUidService: Provider<BuildUidService>,
             generalConfigurationMetricsProvider: Provider<MetricContainer>,
+            kotlinPluginVersion: String,
         ): Provider<CloseActionBuildFusService> {
             return project.gradle.sharedServices.registerIfAbsent(serviceName, CloseActionBuildFusService::class.java) { spec ->
                 spec.parameters.generalConfigurationMetrics.set(generalConfigurationMetricsProvider)
@@ -25,12 +26,21 @@ abstract class CloseActionBuildFusService:
                 spec.parameters.buildId.value(buildUidService.map { it.buildId }).disallowChanges()
                 //init value to avoid `java.lang.IllegalStateException: GradleScopeServices has been closed` exception on close
                 spec.parameters.configurationMetrics.add(MetricContainer())
+                spec.parameters.kotlinVersion.value(kotlinPluginVersion).disallowChanges()
             }
         }
     }
 
     override fun close() {
         recordBuildFinished(buildFailed, buildId, parameters.configurationMetrics.orElse(emptyList()).get())
+        //There is no order in which BuildService are closed.
+        // To ensure ".profile" file is created only after ".kotlin-profile", call it manually from here
+        BuildFinishBuildService.collectAllFusReportsIntoOne(
+            buildId,
+            parameters.buildStatisticsConfiguration.get().sessionLoggerPath,
+            parameters.kotlinVersion.get(),
+            log
+        )
         super.close()
     }
 }

@@ -64,8 +64,8 @@ internal open class NonSynchronizedMetricsContainer : StatisticsValuesConsumer, 
     }
 
     open fun sendToConsumer(metricConsumer: StatisticsValuesConsumer) {
-            booleanMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
-            numericalMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
-            stringMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
+        booleanMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
+        numericalMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
+        stringMetrics.forEach { metricConsumer.report(it.key.name, it.value.getValue()!!, it.key.subprojectName) }
     }
 }

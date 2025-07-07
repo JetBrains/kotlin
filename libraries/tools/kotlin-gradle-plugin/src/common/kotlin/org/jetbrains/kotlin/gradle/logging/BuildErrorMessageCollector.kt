@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.logging
 
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.File
-import java.io.FileWriter
 
 /**
  * Collects build error messages and writes them to a file for error reporting.
@@ -16,7 +15,7 @@ import java.io.FileWriter
  *
  */
 
-class BuildErrorMessageCollector(val logger: KotlinLogger, private val kotlinPluginVersion: String? = null,) {
+class BuildErrorMessageCollector(val logger: KotlinLogger, private val kotlinPluginVersion: String? = null) {
     private val errors = ArrayList<String>()
 
     fun clear() {
@@ -39,17 +38,7 @@ class BuildErrorMessageCollector(val logger: KotlinLogger, private val kotlinPlu
         if (!hasErrors()) {
             return
         }
-        for (file in files) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-            FileWriter(file).use {
-                kotlinPluginVersion?.also { version -> it.append("kotlin version: $version\n") }
-                for (error in errors) {
-                    it.append("error message: $error\n\n")
-                }
-            }
-            logger.debug("${errors.count()} errors were stored into file ${file.absolutePath}")
-        }
+        errors.reportToIde(files, kotlinPluginVersion, logger = logger)
         clear()
     }
 }

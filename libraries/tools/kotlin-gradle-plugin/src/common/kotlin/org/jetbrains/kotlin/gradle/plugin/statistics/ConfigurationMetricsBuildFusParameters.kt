@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 
 interface ConfigurationMetricsBuildFusParameters : BuildFusService.Parameters {
     val configurationMetrics: ListProperty<MetricContainer>
+    val kotlinVersion: Property<String>
 }

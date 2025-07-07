@@ -59,7 +59,7 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
                     if (BUILD_SESSION_SEPARATOR == line) {
                         consumer.invoke(container)
                         container = MetricsContainer()
-                    } else {
+                    } else if (line.contains('=')) {
                         // format: metricName.hash=string representation
                         val lineParts = line.split('=')
                         if (lineParts.size == 2) {
@@ -143,6 +143,18 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
         return true
     }
 
+    fun populateFromMetricsContainer(metrics: MetricsContainer) = synchronized(metricsLock) {
+        metrics.booleanMetrics.forEach { (descriptor, metric) ->
+            report(BooleanMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+        metrics.stringMetrics.forEach { (descriptor, metric) ->
+            report(StringMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+        metrics.numericalMetrics.forEach { (descriptor, metric) ->
+            report(NumericalMetrics.valueOf(descriptor.name), metric.getValue() ?: return@forEach, descriptor.projectHash, null)
+        }
+    }
+
     fun flush(writer: BufferedWriter) {
         val allMetrics = TreeMap<MetricDescriptor, IMetricContainer<out Any>>()
         synchronized(metricsLock) {
@@ -175,5 +187,9 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : Sta
 
     fun getMetric(metric: BooleanMetrics): IMetricContainer<Boolean>? = synchronized(metricsLock) {
         booleanMetrics[MetricDescriptor(metric.name, null)]
+    }
+
+    fun isEmpty(): Boolean = synchronized(metricsLock) {
+        numericalMetrics.isEmpty() && booleanMetrics.isEmpty() && stringMetrics.isEmpty()
     }
 }

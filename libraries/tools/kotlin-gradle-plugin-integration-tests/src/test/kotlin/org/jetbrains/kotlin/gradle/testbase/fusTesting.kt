@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
 import kotlin.String
 import kotlin.emptyArray
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.pathString
 import kotlin.io.path.readLines
 
@@ -24,5 +24,5 @@ fun TestProject.collectFusEvents(
         ),
         deriveBuildOptions()
     )
-    return fusEventPath.resolve("kotlin-profile").listDirectoryEntries().single().readLines().toSet()
+    return fusEventPath.resolve("kotlin-profile").filterKotlinFusFiles().single().readLines().toSet()
 }

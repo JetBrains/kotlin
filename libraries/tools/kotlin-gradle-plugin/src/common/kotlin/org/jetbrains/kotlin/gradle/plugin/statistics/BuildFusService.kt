@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.fus.internal.detectedCiProperty
 import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsConfiguration.Companion.CUSTOM_LOGGER_ROOT_PATH
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -50,7 +48,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
     BuildService<T>,
     AutoCloseable, OperationCompletionListener {
     protected var buildFailed: Boolean = false
-    private val log = Logging.getLogger(this.javaClass)
+    internal val log = Logging.getLogger(this.javaClass)
     protected val buildId = parameters.buildId.get()
 
     init {
@@ -165,7 +163,7 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     generalConfigurationMetricsProvider
                 )
             } else {
-                CloseActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider)
+                CloseActionBuildFusService.registerIfAbsentImpl(project, buildUidService, generalConfigurationMetricsProvider, pluginVersion)
             }
             //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
             // buildService.get() call will cause parameters calculation and configuration cache storage.
@@ -235,11 +233,8 @@ class MetricContainer : Serializable {
     fun put(metric: NumericalMetrics, value: Long) = numericalMetrics.put(metric, value)
 }
 
-private val Project.buildServiceShouldBeCreated
+internal val Project.buildServiceShouldBeCreated
     get() = !isInIdeaSync.get() && kotlinPropertiesProvider.enableFusMetricsCollection && (isCustomLoggerRootPathIsProvided || !isCiBuild())
-
-private val Project.isCustomLoggerRootPathIsProvided
-    get() = PropertiesBuildService.registerIfAbsent(this).get().get(CUSTOM_LOGGER_ROOT_PATH, this) != null
 
 internal fun BuildFusService.Parameters.finalizeGeneralConfigurationMetrics() {
     if (generalMetricsFinalized.get()) return

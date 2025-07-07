@@ -8,21 +8,23 @@ package org.jetbrains.kotlin.statistics
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.*
 import java.io.File
+import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
 import java.util.UUID
 
 class BuildSessionLogger(
-    rootPath: File,
+    private val statisticsFolder: File,
     private val maxProfileFiles: Int = DEFAULT_MAX_PROFILE_FILES,
     private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE,
     forceValuesValidation: Boolean = false,
 ) : StatisticsValuesConsumer {
 
     companion object {
-        const val PROFILE_FILE_NAME_SUFFIX = ".profile"
+        const val FUS_KOTLIN_FILE_NAME_SUFFIX = ".kotlin-profile"
+        private const val FILE_NAME_BUILD_ID_PREFIX_SEPARATOR = "-"
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"
-        val STATISTICS_FILE_NAME_PATTERN = "[\\w-]*$PROFILE_FILE_NAME_SUFFIX".toRegex()
+        val STATISTICS_FILE_NAME_PATTERN = "[\\w-]*$FUS_KOTLIN_FILE_NAME_SUFFIX".toRegex()
 
         private const val DEFAULT_MAX_PROFILE_FILES = 1_000
         private const val DEFAULT_MAX_FILE_AGE = 30 * 24 * 3600 * 1000L //30 days
@@ -38,10 +40,9 @@ class BuildSessionLogger(
         }
     }
 
-    private val statisticsFolder: File = File(
-        rootPath,
-        STATISTICS_FOLDER_NAME
-    ).also { it.mkdirs() }
+    init {
+        statisticsFolder.mkdirs()
+    }
 
     private var buildSession: BuildSession? = null
 
@@ -67,10 +68,10 @@ class BuildSessionLogger(
      */
     private fun storeMetricsIntoFile(buildId: String) {
         try {
-            statisticsFolder.mkdirs()
-            val file = File(statisticsFolder, UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
-
-            file.outputStream().bufferedWriter().use { writer ->
+            val file = statisticsFolder.resolve(
+                getActiveBuildId() + FILE_NAME_BUILD_ID_PREFIX_SEPARATOR + UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX
+            )
+            FileWriter(file).buffered().use { writer ->
                 writer.write("Build: $buildId")
                 metricsContainer.flush(writer)
             }
