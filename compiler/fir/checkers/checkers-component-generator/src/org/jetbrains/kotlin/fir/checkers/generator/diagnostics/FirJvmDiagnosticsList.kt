@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
-import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -77,7 +76,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
-
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
