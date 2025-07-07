@@ -89,7 +89,6 @@ data class DumpIrTreeOptions(
     val declarationFlagsFilter: FlagsFilter = FlagsFilter.KEEP_ALL_FLAGS,
     val renderOriginForExternalDeclarations: Boolean = true,
     val printSignatures: Boolean = false,
-    val printTypeAbbreviations: Boolean = true,
     val printModuleName: Boolean = true,
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,

@@ -1425,32 +1425,11 @@ class IrSourcePrinterVisitor(
                 if (isMarkedNullable()) {
                     append('?')
                 }
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation())
-                }
             }
         }
 
     private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
         buildString(fn).trimEnd()
-
-    private fun IrTypeAbbreviation.renderTypeAbbreviation(): String =
-        buildString {
-            append("{ ")
-            append(renderTypeAnnotations(annotations))
-            append(typeAlias.renderTypeAliasFqn())
-            if (arguments.isNotEmpty()) {
-                append(
-                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                        it.renderTypeArgument()
-                    }
-                )
-            }
-            if (hasQuestionMark) {
-                append('?')
-            }
-            append(" }")
-        }
 
     private fun IrTypeArgument.renderTypeArgument(): String =
         when (this) {

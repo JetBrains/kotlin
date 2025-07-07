@@ -959,29 +959,7 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             } else if (isMarkedNullable()) {
                 append('?')
             }
-            if (options.printTypeAbbreviations)
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation(renderer, options))
-                }
         }
-    }
-
-private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
-    buildString {
-        append("{ ")
-        append(renderTypeAnnotations(annotations, renderer, options))
-        append(typeAlias.renderTypeAliasFqn(options))
-        if (arguments.isNotEmpty()) {
-            append(
-                arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                    it.renderTypeArgument(renderer, options)
-                }
-            )
-        }
-        if (hasQuestionMark) {
-            append('?')
-        }
-        append(" }")
     }
 
 private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
