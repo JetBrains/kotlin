@@ -705,7 +705,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE by error<PsiElement>()
         val NO_VALUE_FOR_PARAMETER by error<KtElement>(PositioningStrategy.VALUE_ARGUMENTS) {
-            parameter<FirValueParameterSymbol>("violatedParameter")
+            parameter<Name>("violatedParameter")
         }
 
         val NAMED_PARAMETER_NOT_FOUND by error<KtValueArgument>(PositioningStrategy.NAME_OF_NAMED_ARGUMENT) {

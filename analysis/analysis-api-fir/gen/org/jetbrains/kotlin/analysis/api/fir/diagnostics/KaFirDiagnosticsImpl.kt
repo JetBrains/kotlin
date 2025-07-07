@@ -1909,7 +1909,7 @@ internal class UnexpectedTrailingLambdaOnANewLineImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnexpectedTrailingLambdaOnANewLine
 
 internal class NoValueForParameterImpl(
-    override val violatedParameter: KaSymbol,
+    override val violatedParameter: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NoValueForParameter
