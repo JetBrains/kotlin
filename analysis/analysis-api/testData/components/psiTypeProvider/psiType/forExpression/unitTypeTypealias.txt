@@ -42,7 +42,7 @@ asPsiType(allowErrorTypes=false, mode=RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
+  PsiType: void
 
 asPsiType(allowErrorTypes=false, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
@@ -102,7 +102,7 @@ asPsiType(allowErrorTypes=true, mode=RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
 
 asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=false):
-  PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit
+  PsiType: void
 
 asPsiType(allowErrorTypes=true, mode=FUNCTION_RETURN_TYPE, isAnnotationMethod=true):
   PsiType: @org.jetbrains.annotations.NotNull() kotlin.Unit

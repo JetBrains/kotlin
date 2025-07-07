@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFe10JavaInteroperabilityComponent(
@@ -66,6 +67,10 @@ internal class KaFe10JavaInteroperabilityComponent(
         }
 
         if (!analysisSession.useSiteModule.targetPlatform.has<JvmPlatform>()) return null
+
+        if (mode == KaTypeMappingMode.FUNCTION_RETURN_TYPE && !isAnnotationMethod && kotlinType.isUnit()) {
+            return PsiTypes.voidType()
+        }
 
         val typeElement = asPsiTypeElement(
             simplifyType(kotlinType),
