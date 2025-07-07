@@ -33,22 +33,19 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeCompilerInvocati
         // So let's just disable them instead of wasting CI times.
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>() == GCScheduler.AGGRESSIVE)
 
-        val configuration = NativeCompilerInvocationTestConfiguration(settings = testRunSettings)
-        val testStructureExtractor = NativePartialLinkageTestStructureExtractor(settings = testRunSettings)
-        val artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(configuration = configuration)
+        val configuration = NativeCompilerInvocationTestConfiguration(testRunSettings)
 
         KlibCompilerInvocationTestUtils.runTest(
-            testDir = getAbsoluteFile(testDir),
+            testStructure = NativePartialLinkageTestStructureExtractor(testRunSettings).extractTestStructure(getAbsoluteFile(testDir)),
             testConfiguration = configuration,
-            testStructureExtractor = testStructureExtractor,
-            artifactBuilder = artifactBuilder,
+            artifactBuilder = NativeCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = this,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }
 }
 
-class NativePartialLinkageTestStructureExtractor(private val settings: Settings) : PartialLinkageTestStructureExtractor() {
+private class NativePartialLinkageTestStructureExtractor(private val settings: Settings) : PartialLinkageTestStructureExtractor() {
     override val buildDir: File
         get() = settings.get<Binaries>().testBinariesDir
 

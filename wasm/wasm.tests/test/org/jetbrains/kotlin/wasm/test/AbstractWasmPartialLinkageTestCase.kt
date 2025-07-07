@@ -50,9 +50,8 @@ abstract class AbstractWasmPartialLinkageTestCase(private val compilerType: Comp
         )
 
         KlibCompilerInvocationTestUtils.runTest(
-            testDir = File(testDir).absoluteFile,
+            testStructure = WasmPartialLinkageTestStructureExtractor(buildDir).extractTestStructure(File(testDir).absoluteFile),
             testConfiguration = configuration,
-            testStructureExtractor = WasmPartialLinkageTestStructureExtractor(buildDir),
             artifactBuilder = WasmCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = WasmCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
