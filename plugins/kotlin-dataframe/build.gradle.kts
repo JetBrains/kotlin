@@ -22,6 +22,10 @@ dependencies {
     testApi(projectTests(":compiler:fir:analysis-tests"))
     testApi(projectTests(":js:js.tests"))
     testApi(project(":compiler:fir:plugin-utils"))
+    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+
     dataframeRuntimeClasspath(libs.dataframe.core.dev)
     dataframeRuntimeClasspath(libs.dataframe.csv.dev)
 }

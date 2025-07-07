@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodege
 import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.compiler.plugins.AbstractPluginInteractionFirBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.dataframe.AbstractCompilerFacilityTestForDataFrame
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.dataframe.AbstractDataFrameDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
@@ -442,6 +443,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDataFrameBlackBoxCodegenTest> {
                 model("box")
+            }
+
+            testClass<AbstractCompilerFacilityTestForDataFrame> {
+                model("compilerFacility")
             }
         }
     }

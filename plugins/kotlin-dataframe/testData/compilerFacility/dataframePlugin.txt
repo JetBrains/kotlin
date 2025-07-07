@@ -1,0 +1,7 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    inner (local) class test/SourceKt$test$df$1$DataFrameOf_92 DataFrameOf_92
+    inner (local) class test/SourceKt$test$df$1$Scope0 Scope0
+    public method <init>(): void
+    public final static method run(p0: org.jetbrains.kotlinx.dataframe.DataFrame, p1: test.SourceKt$test$df$1$Scope0): org.jetbrains.kotlinx.dataframe.DataColumn
+}

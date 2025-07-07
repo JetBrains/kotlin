@@ -1,11 +1,13 @@
 package org.jetbrains.kotlinx.dataframe.plugin.extensions
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
@@ -169,7 +171,7 @@ class FunctionCallTransformer(
             if (symbol.resolvedReturnType.fullyExpandedClassId(session) != classId) return null
             // possibly null if explicit receiver type is typealias
             val argument = (callInfo.explicitReceiver?.resolvedType)?.typeArguments?.getOrNull(0)
-            val newDataFrameArgument = buildNewTypeArgument(argument, callInfo.name, hash)
+            val newDataFrameArgument = buildNewTypeArgument(argument, callInfo.name, hash, callInfo.callSite)
 
             val lookupTag = ConeClassLikeLookupTagImpl(classId)
             val typeRef = buildResolvedTypeRef {
@@ -216,8 +218,8 @@ class FunctionCallTransformer(
             hash: String,
         ): CallReturnType? {
             if (symbol.resolvedReturnType.fullyExpandedClassId(session) != Names.GROUP_BY_CLASS_ID) return null
-            val keys = buildNewTypeArgument(null, Name.identifier("Key"), hash)
-            val group = buildNewTypeArgument(null, Name.identifier("Group"), hash)
+            val keys = buildNewTypeArgument(null, Name.identifier("Key"), hash, callInfo.callSite)
+            val group = buildNewTypeArgument(null, Name.identifier("Group"), hash, callInfo.callSite)
             val lookupTag = ConeClassLikeLookupTagImpl(Names.GROUP_BY_CLASS_ID)
             val typeRef = buildResolvedTypeRef {
                 coneType = ConeClassLikeTypeImpl(
@@ -279,7 +281,7 @@ class FunctionCallTransformer(
         }
     }
 
-    private fun buildNewTypeArgument(argument: ConeTypeProjection?, name: Name, hash: String): FirRegularClass {
+    private fun buildNewTypeArgument(argument: ConeTypeProjection?, name: Name, hash: String, callSite: FirElement): FirRegularClass {
         val suggestedName = if (argument == null) {
             "${name.asTokenName()}_$hash"
         } else {
@@ -302,6 +304,7 @@ class FunctionCallTransformer(
         val dataFrameTypeId = nextName(suggestedName)
         val dataFrameType = buildRegularClass {
             moduleData = session.moduleData
+            source = callSite.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
@@ -514,6 +517,7 @@ class FunctionCallTransformer(
             val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope${i++}"), true)
             val scope = buildRegularClass {
                 moduleData = session.moduleData
+                source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)

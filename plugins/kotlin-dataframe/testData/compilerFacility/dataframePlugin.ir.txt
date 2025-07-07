@@ -1,0 +1,15 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+        VALUE_PARAMETER kind:Regular name:p0 index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test$lambda$0.DataFrameOf_92>
+        VALUE_PARAMETER kind:Regular name:p1 index:1 type:test.SourceKt.test$lambda$0.Scope0
+        EXPRESSION_BODY
+          BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=null
+            CALL 'public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<test.SourceKt.test$lambda$0.DataFrameOf_92I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in test.SourceKt.test$lambda$0.Scope0' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=GET_PROPERTY
+              ARG <this>(index:0): CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in test.SourceKt.test$lambda$0.Scope0' type=test.SourceKt.test$lambda$0.Scope0 origin=null
+              ARG <this>(index:1): GET_VAR 'p0: org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test$lambda$0.DataFrameOf_92> declared in <root>.CodeFragment.run' type=org.jetbrains.kotlinx.dataframe.DataFrame<test.SourceKt.test$lambda$0.DataFrameOf_92> origin=null
