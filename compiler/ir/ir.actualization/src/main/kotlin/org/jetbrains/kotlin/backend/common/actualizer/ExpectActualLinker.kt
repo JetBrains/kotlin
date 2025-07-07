@@ -53,8 +53,6 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
 
     override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol) = symbol.actualizeSymbol<IrReturnTargetSymbol>()
 
-    override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol) = symbol.actualizeSymbol()
-
     private inline fun <reified S : IrSymbol> S.actualizeMaybeFakeOverrideSymbol(): S {
         val actualizedSymbol = this.actualizeSymbol()
         return when (actualizedSymbol) {

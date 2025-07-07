@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 
 /**
  * Used to replace symbols that represent references to declarations other than the symbol's owner.
@@ -183,10 +182,4 @@ interface ReferencedSymbolRemapper {
      * - [IrSetValue.symbol]
      */
     fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol
-
-    /**
-     * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
-     * - [IrTypeAbbreviation.typeAlias]
-     */
-    fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
 }
