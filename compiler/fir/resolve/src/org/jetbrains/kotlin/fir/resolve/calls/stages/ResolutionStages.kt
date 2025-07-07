@@ -419,17 +419,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
         // implicit `this` expression passed as the first argument.
         if (candidate.callInfo.isImplicitInvoke) {
-            for (atom in candidate.argumentMapping.keys) {
-                checkImpl(atom, candidate)
-            }
-        }
-    }
-
-    private fun FirExpression.implicitlyReferencedSymbolOrNull(): FirBasedSymbol<*>? {
-        return when (this) {
-            is FirThisReceiverExpression if (isImplicit) -> calleeReference.symbol
-            is FirPropertyAccessExpression if (source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument) -> calleeReference.symbol
-            else -> null
+            candidate.argumentMapping.keys.forEach(::check)
         }
     }
 
@@ -559,6 +549,58 @@ object CheckDslScopeViolation : ResolutionStage() {
                 add(annotationClass.classId)
             }
         }
+    }
+}
+
+object CheckReceiverShadowedByContextParameter : ResolutionStage() {
+    context(sink: CheckerSink, context: ResolutionContext)
+    override suspend fun check(candidate: Candidate) {
+        fun check(atom: ConeResolutionAtom) {
+            checkImpl(atom, candidate)
+        }
+
+        candidate.dispatchReceiver?.let(::check)
+        candidate.chosenExtensionReceiver?.let(::check)
+
+        if (candidate.callInfo.isImplicitInvoke) {
+            candidate.arguments.drop(candidate.expectedContextParameterCountForInvoke ?: 0).forEach(::check)
+        }
+    }
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    private fun checkImpl(receiverValueToCheck: ConeResolutionAtom, candidate: Candidate) {
+        val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.unwrapSmartcastExpression().implicitlyReferencedSymbolOrNull() ?: return
+        val boundReceiverType =
+            (boundSymbolOfReceiverToCheck as? FirReceiverParameterSymbol)?.resolvedType
+                ?: (boundSymbolOfReceiverToCheck as? FirValueParameterSymbol)?.resolvedReturnType
+                ?: return
+        // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
+        val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
+        val memberOwnerOfReceiverToCheck = boundSymbolOfReceiverToCheck.containingDeclarationIfParameter()
+
+
+        // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.
+        // So from "[irrelevantValue1, .., irrelevantValue2, firstValueBoundToSymbol, ...]" we would leave a sub-list
+        // starting from `firstValueBoundToSymbol`
+        val closerOrOnTheSameLevelImplicitValues =
+            implicitValues.dropWhile {
+                memberOwnerOfReceiverToCheck != it.boundSymbol.containingDeclarationIfParameter()
+            }.filterIsInstance<ImplicitContextParameterValue>().ifEmpty { return }
+
+        val closerButNotSame = closerOrOnTheSameLevelImplicitValues.filter {
+            !it.isSameImplicitReceiverInstance(receiverValueToCheck.expression) && it.type.isSubtypeOf(boundReceiverType, context.session)
+        }
+        if (closerButNotSame.isNotEmpty()) {
+            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol))
+        }
+    }
+}
+
+private fun FirExpression.implicitlyReferencedSymbolOrNull(): FirBasedSymbol<*>? {
+    return when (this) {
+        is FirThisReceiverExpression if (isImplicit) -> calleeReference.symbol
+        is FirPropertyAccessExpression if (source?.kind == KtFakeSourceElementKind.ImplicitContextParameterArgument) -> calleeReference.symbol
+        else -> null
     }
 }
 
