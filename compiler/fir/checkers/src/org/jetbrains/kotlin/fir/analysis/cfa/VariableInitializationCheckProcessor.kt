@@ -170,9 +170,6 @@ abstract class VariableInitializationCheckProcessor {
 
         val info = getValue(node)
         when {
-            info.values.any { it[symbol]?.canBeRevisited() == true } -> {
-                reportValReassignment(node, symbol)
-            }
             scope != scopes[symbol] -> {
                 reportCapturedInitialization(node, symbol)
             }
@@ -182,6 +179,9 @@ abstract class VariableInitializationCheckProcessor {
                 // If we try to initialize non-static final field there, we will get exception at
                 // runtime, since we can initialize such fields only inside constructors.
                 reportNonInlineMemberValInitialization(node, symbol)
+            }
+            info.values.any { it[symbol]?.canBeRevisited() == true } -> {
+                reportValReassignment(node, symbol)
             }
         }
     }

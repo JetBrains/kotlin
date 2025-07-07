@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 // WITH_STDLIB
 
@@ -22,11 +23,11 @@ class Test2 {
 
 class Test3 {
     val x: String = throwException()
-    val o: String by <!UNREACHABLE_CODE!>lazy {
+    val o: String by <!UNREACHABLE_CODE!>lazy {<!>
         val a = "a"
         val b = 0
         a
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test4 {
@@ -64,11 +65,11 @@ class Test7 {
             val a = 0
             val b = 0
         }
-        val b: Int by <!UNREACHABLE_CODE!>lazy {
+        val b: Int by <!UNREACHABLE_CODE!>lazy {<!><!>
             val a = 0
             val b = 0
             b
-        }<!>
+        <!UNREACHABLE_CODE!><!UNREACHABLE_CODE!>}<!>
         val c = {
             val a = 0
             val b = 0
@@ -142,10 +143,10 @@ class Test10 {
         class D
     }<!>
 
-    val c: Int by <!UNREACHABLE_CODE!>lazy {
+    val c: Int by <!UNREACHABLE_CODE!>lazy {<!>
         class E
         1
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test11 {

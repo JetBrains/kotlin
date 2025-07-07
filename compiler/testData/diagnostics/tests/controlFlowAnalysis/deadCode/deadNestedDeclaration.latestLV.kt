@@ -15,66 +15,66 @@ class Test1 {
 
 class Test2 {
     val x: String = throwException()
-    val o = {
+    val o = <!UNREACHABLE_CODE!>{<!>
         val a = 0
         val b = 0
-    }
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test3 {
     val x: String = throwException()
-    val o: String by lazy {
+    val o: String by <!UNREACHABLE_CODE!>lazy {<!>
         val a = "a"
         val b = 0
         a
-    }
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test4 {
     val x: String = throwException()
     init {
-        val a = 0
-        val b = 0
+        <!UNREACHABLE_CODE!>val a = 0<!>
+        <!UNREACHABLE_CODE!>val b = 0<!>
     }
 }
 
 class Test5 {
-    <!UNREACHABLE_CODE!>val x: String =<!> throwException()
-    constructor(a: Int) <!UNREACHABLE_CODE!>{
-        val c = 0
-        val b = 0
-    }<!>
+    val x: String = throwException()
+    constructor(a: Int)<!UNREACHABLE_CODE!><!> {
+        <!UNREACHABLE_CODE!>val c = 0<!>
+        <!UNREACHABLE_CODE!>val b = 0<!>
+    }
 }
 
 class Test6 {
     val x: String = throwException()
-    val o = fun() {
+    val o = <!UNREACHABLE_CODE!>fun() {<!>
         val a = 0
         val b = 0
-    }
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test7 {
     val x: String = throwException()
-    val o = object {
+    val o = <!UNREACHABLE_CODE!>object {
         init {
             val a = 0
             val b = 0
         }
-        val a = fun() {
+        val a = fun() {<!>
             val a = 0
             val b = 0
-        }
-        val b: Int by lazy {
+        <!UNREACHABLE_CODE!>}
+        val b: Int by <!UNREACHABLE_CODE!>lazy {<!><!>
             val a = 0
             val b = 0
             b
-        }
-        val c = {
+        <!UNREACHABLE_CODE!><!UNREACHABLE_CODE!>}<!>
+        val c = {<!>
             val a = 0
             val b = 0
-        }
-    }
+        <!UNREACHABLE_CODE!>}
+    }<!>
 }
 
 class Test8 {
@@ -128,35 +128,35 @@ class Test9 {
 }
 
 class Test10 {
-    <!UNREACHABLE_CODE!>val x: String =<!> throwException()
-    init <!UNREACHABLE_CODE!>{
-        class A
-    }<!>
-    constructor(i: Int)<!UNREACHABLE_CODE!>{
-        class B
-    }<!>
-    <!UNREACHABLE_CODE!>val a = {
+    val x: String = throwException()
+    init {
+        <!UNREACHABLE_CODE!>class A<!>
+    }
+    constructor(i: Int)<!UNREACHABLE_CODE!><!>{
+        <!UNREACHABLE_CODE!>class B<!>
+    }
+    val a = <!UNREACHABLE_CODE!>{<!>
         class C
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 
-    <!UNREACHABLE_CODE!>val b = fun(){
+    val b = <!UNREACHABLE_CODE!>fun(){<!>
         class D
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 
-    <!UNREACHABLE_CODE!>val c: Int by lazy {
+    val c: Int by <!UNREACHABLE_CODE!>lazy {<!>
         class E
         1
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test11 {
     val x: String = throwException()
 
-    val a = object {
-        val b = {
+    val a = <!UNREACHABLE_CODE!>object {
+        val b = {<!>
             class A
-        }
-    }
+        <!UNREACHABLE_CODE!>}
+    }<!>
 }
 
 /* GENERATED_FIR_TAGS: anonymousFunction, anonymousObjectExpression, classDeclaration, functionDeclaration, init,
