@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLStubBasedTest.Companion.computeAstLoadingAware
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
@@ -27,12 +28,14 @@ abstract class AbstractLLStubBasedTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
         get() = super.additionalDirectives + listOf(Directives)
 
-    private object Directives : SimpleDirectivesContainer() {
+    protected object Directives : SimpleDirectivesContainer() {
         /**
          * This directive has to be in sync with [AbstractRawFirBuilderLazyBodiesByStubTest]
          * as [AbstractLLAnnotationArgumentsCalculatorTest] is supposed to work as an extension to the stub test.
          */
         val IGNORE_TREE_ACCESS by stringDirective("Disables the test. The YT issue number has to be provided")
+
+        val INCONSISTENT_DECLARATIONS by directive("Indicates that stub-based and AST-based have a different number of declarations")
     }
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
