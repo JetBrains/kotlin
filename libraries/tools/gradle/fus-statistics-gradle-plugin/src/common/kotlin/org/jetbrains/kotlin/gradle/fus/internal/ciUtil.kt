@@ -59,7 +59,7 @@ fun isAzurePipelines(): String? = isEnvironmentVariablePresent("TF_BUILD")
 
 fun isBuildkite(): String? = isEnvironmentVariablePresent("BUILDKITE")
 
-private fun isEnvironmentVariablePresent(name: String) = if ((System.getenv(name) ?: System.getProperty(name)) == "true") {
+private fun isEnvironmentVariablePresent(name: String) = if ((System.getenv(name) ?: System.getProperty(name)) != null) {
     name
 } else {
     null
