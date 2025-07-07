@@ -8,52 +8,59 @@
  *
  * Modifications:
  * - converted to Kotlin file
- * - use System.getenv method instead of System.getenv as minimal supported Gradle version for current Kotlin is 7.6
+ * - use System.getenv method instead of com.gradle.Utils.envVariable as minimal supported Gradle version for current Kotlin is 7.6
  * - use System.getProperty instead of com.gradle.Utils.sysProperty
+ * - return String? property name instead of Boolean value when CI variable is detected
+ * - add detectedCiProperty method to return detected CI property name or null
  *
  * Copyright [Original Gradle authors]
  */
 
 package org.jetbrains.kotlin.gradle.fus.internal
 
-fun isCiBuild() = isGenericCI()
-        || isJenkins()
-        || isHudson()
-        || isTeamCity()
-        || isCircleCI()
-        || isBamboo()
-        || isGitHubActions()
-        || isGitLab()
-        || isTravis()
-        || isBitrise()
-        || isGoCD()
-        || isAzurePipelines()
-        || isBuildkite()
+fun isCiBuild() = detectedCiProperty() != null
+fun detectedCiProperty() = isGenericCI()
+    ?: isJenkins()
+    ?: isHudson()
+    ?: isTeamCity()
+    ?: isCircleCI()
+    ?: isBamboo()
+    ?: isGitHubActions()
+    ?: isGitLab()
+    ?: isTravis()
+    ?: isBitrise()
+    ?: isGoCD()
+    ?: isAzurePipelines()
+    ?: isBuildkite()
 
+fun isGenericCI(): String? = isEnvironmentVariablePresent("CI")
 
-fun isGenericCI(): Boolean = (System.getenv("CI") ?: System.getProperty("CI")) == "true"
+fun isJenkins(): String? = isEnvironmentVariablePresent("JENKINS_URL")
 
-fun isJenkins(): Boolean = System.getenv("JENKINS_URL") == "true"
+fun isHudson(): String? = isEnvironmentVariablePresent("HUDSON_URL")
 
-fun isHudson(): Boolean = System.getenv("HUDSON_URL") == "true"
+fun isTeamCity(): String? = isEnvironmentVariablePresent("TEAMCITY_VERSION")
 
-fun isTeamCity(): Boolean = System.getenv("TEAMCITY_VERSION") == "true"
+fun isCircleCI(): String? = isEnvironmentVariablePresent("CIRCLE_BUILD_URL")
 
-fun isCircleCI(): Boolean = System.getenv("CIRCLE_BUILD_URL") == "true"
+fun isBamboo(): String? = isEnvironmentVariablePresent("bamboo_resultsUrl")
 
-fun isBamboo(): Boolean = System.getenv("bamboo_resultsUrl") == "true"
+fun isGitHubActions(): String? = isEnvironmentVariablePresent("GITHUB_ACTIONS")
 
-fun isGitHubActions(): Boolean = System.getenv("GITHUB_ACTIONS") == "true"
+fun isGitLab(): String? = isEnvironmentVariablePresent("GITLAB_CI")
 
-fun isGitLab(): Boolean = System.getenv("GITLAB_CI") == "true"
+fun isTravis(): String? = isEnvironmentVariablePresent("TRAVIS_JOB_ID")
 
-fun isTravis(): Boolean = System.getenv("TRAVIS_JOB_ID") == "true"
+fun isBitrise(): String? = isEnvironmentVariablePresent("BITRISE_BUILD_URL")
 
-fun isBitrise(): Boolean = System.getenv("BITRISE_BUILD_URL") == "true"
+fun isGoCD(): String? = isEnvironmentVariablePresent("GO_SERVER_URL")
 
-fun isGoCD(): Boolean = System.getenv("GO_SERVER_URL") == "true"
+fun isAzurePipelines(): String? = isEnvironmentVariablePresent("TF_BUILD")
 
-fun isAzurePipelines(): Boolean = System.getenv("TF_BUILD") == "true"
+fun isBuildkite(): String? = isEnvironmentVariablePresent("BUILDKITE")
 
-fun isBuildkite(): Boolean = System.getenv("BUILDKITE") == "true"
-
+private fun isEnvironmentVariablePresent(name: String) = if ((System.getenv(name) ?: System.getProperty(name)) == "true") {
+    name
+} else {
+    null
+}

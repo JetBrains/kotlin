@@ -52,7 +52,8 @@ private fun registerIfAbsent(
         )
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
     } else if (isCiBuild()) {
-        log.info("Fus metrics won't be collected for CI build.")
+        val ciProperty = detectedCiProperty()
+        log.info("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
     } else if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
         val fusService = project.gradle.sharedServices.registerIfAbsent(serviceName, BuildCloseFusStatisticsBuildService::class.java) {
