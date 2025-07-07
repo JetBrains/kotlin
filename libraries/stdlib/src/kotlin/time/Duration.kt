@@ -942,13 +942,10 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 val dotIndex = component.indexOf('.')
                 if (unit == DurationUnit.SECONDS && dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
-                    try {
-                        result += parseOverLongIsoComponent(whole).toDuration(unit)
-                        result += component.substring(dotIndex).toDouble().toDuration(unit)
-                    } catch (e: NumberFormatException) {
-                        if (throwExceptionOnParsingError) throw e
-                        return null
-                    }
+                    result += parseOverLongIsoComponent(whole, throwExceptionOnParsingError)?.toDuration(unit) ?: return null
+                    result += component.substring(dotIndex)
+                        .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
+                        .toDuration(unit)
                 } else {
                     try {
                         result += parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null
