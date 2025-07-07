@@ -386,13 +386,9 @@ class ComposableTypeRemapper(
     private fun IrType.hasComposableTypeArgument(): Boolean {
         when {
             this is IrSimpleType -> {
-                val argument = arguments.any {
+                return arguments.any {
                     it.typeOrNull?.hasComposableType() == true
                 }
-                val abbreviationArgument = abbreviation?.arguments?.any {
-                    it.typeOrNull?.hasComposableType() == true
-                } == true
-                return argument || abbreviationArgument
             }
         }
         return false
