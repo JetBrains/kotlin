@@ -952,7 +952,10 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 } else {
                     try {
                         result += parseOverLongIsoComponent(component).toDuration(unit)
-                    } catch (e: Exception) {
+                    } catch (e: NumberFormatException) {
+                        if (throwExceptionOnParsingError) throw e
+                        return null
+                    } catch (e: IllegalArgumentException) {
                         if (throwExceptionOnParsingError) throw e
                         return null
                     }
