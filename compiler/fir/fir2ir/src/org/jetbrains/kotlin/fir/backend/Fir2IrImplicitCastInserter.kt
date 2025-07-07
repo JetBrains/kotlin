@@ -157,27 +157,20 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents) : Fir2IrComponents by c {
         val argumentTypeLowerBound = argumentType.lowerBoundIfFlexible()
         if (argumentTypeLowerBound !is ConeIntersectionType) return null
 
+        val approximatedExpectedType = expectedType.approximateForIrOrSelf()
+
         // An intersection type like `Foo<Any?> & Foo<Bar>` is approximated to `Foo<out Any?>`.
         // However, atomic-fu relies on the fact that receivers don't have projections in their type arguments.
         // See plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/UncheckedCastTest.kt
         // TODO(KT-77692) Remove if fixed on the plugin side.
         if (!forReceiver) {
             val approximatedArgumentType = argumentTypeLowerBound.approximateForIrOrNull() ?: argumentTypeLowerBound
-            if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return null
+            if (approximatedArgumentType.isSubtypeOf(approximatedExpectedType, session)) return null
         }
 
-        return findComponentOfIntersectionForExpectedType(argumentTypeLowerBound, expectedType)?.let {
-            generateImplicitCast(this, it.toIrType())
-        }
-    }
-
-    private fun findComponentOfIntersectionForExpectedType(type: ConeIntersectionType, expectedType: ConeKotlinType): ConeKotlinType? {
-        for (componentType in type.intersectedTypes) {
-            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, expectedType)) {
-                return componentType
-            }
-        }
-        return null
+        return argumentTypeLowerBound.intersectedTypes
+            .firstOrNull { it.isSubtypeOf(approximatedExpectedType, session) }
+            ?.let { generateImplicitCast(this, it.toIrType()) }
     }
 
     fun implicitCastOrExpression(
