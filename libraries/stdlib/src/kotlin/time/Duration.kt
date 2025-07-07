@@ -951,10 +951,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                     }
                 } else {
                     try {
-                        result += parseOverLongIsoComponent(component).toDuration(unit)
-                    } catch (e: NumberFormatException) {
-                        if (throwExceptionOnParsingError) throw e
-                        return null
+                        result += parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null
                     } catch (e: IllegalArgumentException) {
                         if (throwExceptionOnParsingError) throw e
                         return null
@@ -1011,6 +1008,10 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
 
 
 private fun parseOverLongIsoComponent(value: String): Long {
+    return parseOverLongIsoComponent(value, throwException = true)!!
+}
+
+private fun parseOverLongIsoComponent(value: String, throwException: Boolean): Long? {
     val length = value.length
     var startIndex = 0
     if (length > 0 && value[0] in "+-") startIndex++
@@ -1028,7 +1029,8 @@ private fun parseOverLongIsoComponent(value: String): Long {
         }
     }
     // TODO: replace with just toLong after the minimum supported Android SDK has the same behavior as JDK 8
-    return if (value.startsWith("+") && length > 1 && value[1] in '0'..'9') value.drop(1).toLong() else value.toLong()
+    return (if (value.startsWith("+") && length > 1 && value[1] in '0'..'9') value.drop(1) else value)
+        .let { if (throwException) it.toLong() else it.toLongOrNull() }
 }
 
 
