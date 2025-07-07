@@ -935,8 +935,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 index += component.length
                 val unitChar = value.getOrElse(index) { return throwExceptionOrNull() }
                 index++
-                val unit = durationUnitByIsoChar(unitChar, isTimeComponent, throwExceptionOnParsingError)
-                if (unit == null) return null
+                val unit = durationUnitByIsoChar(unitChar, isTimeComponent, throwExceptionOnParsingError) ?: return null
                 if (prevUnit != null && prevUnit <= unit) return throwExceptionOrNull("Unexpected order of duration components")
                 prevUnit = unit
                 val dotIndex = component.indexOf('.')
@@ -983,8 +982,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 index += component.length
                 val unitName = value.substringWhile(index) { it in 'a'..'z' }
                 index += unitName.length
-                val unit = durationUnitByShortName(unitName, throwExceptionOnParsingError)
-                if (unit == null) return null
+                val unit = durationUnitByShortName(unitName, throwExceptionOnParsingError) ?: return null
                 if (prevUnit != null && prevUnit <= unit) return throwExceptionOrNull("Unexpected order of duration components")
                 prevUnit = unit
                 val dotIndex = component.indexOf('.')
