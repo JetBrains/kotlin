@@ -18,9 +18,6 @@ class KotlinBuildStatsConfiguration(
     internal val sessionLoggerRootPath: File,
 ) : Serializable {
     companion object {
-        // Property used for tests.
-        private const val CUSTOM_LOGGER_ROOT_PATH = "kotlin.session.logger.root.path"
-
         // Property used for tests. Build will fail fast if collected value doesn't fit regexp
         private const val FORCE_VALUES_VALIDATION = "kotlin_performance_profile_force_validation"
         private val logger = Logging.getLogger(KotlinBuildStatsConfiguration::class.java)
@@ -28,10 +25,7 @@ class KotlinBuildStatsConfiguration(
 
     constructor(project: Project) : this(
         PropertiesBuildService.registerIfAbsent(project).get().get(FORCE_VALUES_VALIDATION, project)?.toBoolean() ?: false,
-        PropertiesBuildService.registerIfAbsent(project).get().get(CUSTOM_LOGGER_ROOT_PATH, project)
-            ?.also {
-                logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
-            }?.let { File(it) } ?: project.gradle.gradleUserHomeDir
+        project.getFusDirectoryFromPropertyService()
     )
 }
 

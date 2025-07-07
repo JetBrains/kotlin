@@ -20,9 +20,10 @@ class BuildSessionLogger(
 ) : StatisticsValuesConsumer {
 
     companion object {
-        const val PROFILE_FILE_NAME_SUFFIX = ".profile"
+        const val FUS_KOTLIN_FILE_NAME_SUFFIX = ".kotlin-profile"
+        private const val FILE_NAME_BUILD_ID_PREFIX_SEPARATOR = "-"
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"
-        val STATISTICS_FILE_NAME_PATTERN = "[\\w-]*$PROFILE_FILE_NAME_SUFFIX".toRegex()
+        val STATISTICS_FILE_NAME_PATTERN = "[\\w-]*$FUS_KOTLIN_FILE_NAME_SUFFIX".toRegex()
 
         private const val DEFAULT_MAX_PROFILE_FILES = 1_000
         private const val DEFAULT_MAX_FILE_AGE = 30 * 24 * 3600 * 1000L //30 days
@@ -68,7 +69,7 @@ class BuildSessionLogger(
     private fun storeMetricsIntoFile(buildId: String) {
         try {
             statisticsFolder.mkdirs()
-            val file = File(statisticsFolder, UUID.randomUUID().toString() + PROFILE_FILE_NAME_SUFFIX)
+            val file = File(statisticsFolder, getActiveBuildId() + FILE_NAME_BUILD_ID_PREFIX_SEPARATOR + UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX)
 
             file.outputStream().bufferedWriter().use { writer ->
                 writer.write("Build: $buildId")

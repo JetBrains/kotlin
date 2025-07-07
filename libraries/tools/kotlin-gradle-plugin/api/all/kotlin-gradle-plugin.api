@@ -1884,6 +1884,44 @@ public final class org/jetbrains/kotlin/gradle/plugin/sources/android/configurat
 	public fun configureWithVariant (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Lcom/android/build/gradle/api/BaseVariant;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService : java/lang/AutoCloseable, org/gradle/api/services/BuildService {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Companion;
+	public fun <init> ()V
+	public fun close ()V
+	protected final fun getBuildId ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Companion {
+	public final fun registerIfAbsent (Lorg/gradle/api/Project;Lorg/gradle/api/provider/Provider;Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishBuildService$Parameters : org/gradle/api/services/BuildServiceParameters {
+	public abstract fun getBuildId ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCloseActionShouldBeRun ()Lorg/gradle/api/provider/Property;
+	public abstract fun getErrorDirs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getFusReportDirectory ()Lorg/gradle/api/provider/Property;
+	public abstract fun getKotlinVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowAction : org/gradle/api/flow/FlowAction {
+	public fun <init> ()V
+	public synthetic fun execute (Lorg/gradle/api/flow/FlowParameters;)V
+	public fun execute (Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowAction$Parameters;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowAction$Parameters : org/gradle/api/flow/FlowParameters {
+	public abstract fun getBuildFailed ()Lorg/gradle/api/provider/Property;
+	public abstract fun getFusBuildFinishServiceProperty ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion;
+	public fun <init> (Lorg/gradle/api/flow/FlowScope;Lorg/gradle/api/flow/FlowProviders;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFinishFlowProviderManager$Companion {
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/tooling/events/OperationCompletionListener {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/statistics/BuildFusService$Companion;
 	public fun <init> ()V
@@ -1949,6 +1987,10 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBu
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/FlowActionBuildFusService$Companion {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/statistics/FusUtilKt {
+	public static final fun getFusDirectoryFromPropertyService (Lorg/gradle/api/Project;)Ljava/io/File;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/statistics/GradleFileReportService : org/jetbrains/kotlin/build/report/statistics/file/ReadableFileReportService {

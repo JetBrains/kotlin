@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.statistics
 
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
+import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.FUS_KOTLIN_FILE_NAME_SUFFIX
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -79,7 +80,7 @@ class BuildSessionLoggerTest {
 
         for (i in 1..200) {
             File(statsFolder, "$i").createNewFile()
-            File(statsFolder, "${UUID.randomUUID()}.profile").createNewFile()
+            File(statsFolder, "${UUID.randomUUID()}$FUS_KOTLIN_FILE_NAME_SUFFIX").createNewFile()
         }
 
         logger.startBuildSession(buildId)
@@ -114,7 +115,7 @@ class BuildSessionLoggerTest {
 
         logger.startBuildSession(buildId)
         val reportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
-            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+            .resolve(UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX)
 
         reportFile.createNewFile()
         //FUS metrics file should contain "BUILD FINISHED", otherwise it will be skipped as invalid
@@ -127,11 +128,11 @@ class BuildSessionLoggerTest {
         )
 
         val invalidReportFile = rootFolder.resolve(BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME)
-            .resolve(UUID.randomUUID().toString() + BuildSessionLogger.Companion.PROFILE_FILE_NAME_SUFFIX)
+            .resolve(UUID.randomUUID().toString() + FUS_KOTLIN_FILE_NAME_SUFFIX)
 
         invalidReportFile.appendText(
             """
-            ${StringMetrics.USE_OLD_BACKEND.name}=true
+            5tetetr=true
             
             """.trimIndent()
         )
