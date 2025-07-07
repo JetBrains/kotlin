@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
@@ -34,15 +35,18 @@ import org.jetbrains.kotlin.load.java.sam.JvmSamConversionOracle
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverloadChecker
+import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.denotedClassDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparatorDelegate
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
@@ -50,6 +54,7 @@ import org.jetbrains.kotlin.resolve.sam.createSamConstructorFunction
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.util.ImplementationStatus
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -264,9 +269,33 @@ internal class KaFe10SymbolRelationProvider(
         }
 
     override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean = withValidityAssertion {
+        val thisContainingModule = this.containingModule
+        val otherContainingModule = other.containingModule
+        if (thisContainingModule != otherContainingModule) {
+            errorWithAttachment(
+                "Expected symbols to be from the same module"
+            ) {
+                withKaModuleEntry("This declaration module", thisContainingModule)
+                withKaModuleEntry("Other declaration module", otherContainingModule)
+            }
+        }
+
+        val containingModule = this.containingModule
         val thisDescriptor = this.getDescriptor() ?: return false
         val otherDescriptor = other.getDescriptor() ?: return false
-        !OverloadChecker(TypeSpecificityComparator.NONE).isOverloadable(thisDescriptor, otherDescriptor)
+
+        val targetPlatform = containingModule.targetPlatform
+        val typeSpecificityComparator = when {
+            targetPlatform.isJvm() -> JvmTypeSpecificityComparatorDelegate(
+                ClassicTypeSystemContextForCS(
+                    analysisContext.builtIns,
+                    analysisContext.kotlinTypeRefiner
+                )
+            )
+            else -> TypeSpecificityComparator.NONE
+        }
+
+        !OverloadChecker(typeSpecificityComparator).isOverloadable(thisDescriptor, otherDescriptor)
     }
 }
 
