@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameClasspathProvider
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
-import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
-import kotlin.script.experimental.jvm.util.classpathFromClassloader
 
 open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -38,12 +36,6 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
         builder.useCustomRuntimeClasspathProviders(::DataFrameClasspathProvider)
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
-    }
-
-    class DataFrameClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
-        override fun runtimeClassPaths(module: TestModule): List<File> {
-            return (classpathFromClassloader(javaClass.classLoader) ?: error("no classpath"))
-        }
     }
 
     class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
