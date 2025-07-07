@@ -274,12 +274,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * e.g. when adding infinite durations of different sign.
      */
     public operator fun plus(other: Duration): Duration {
+        return plus(other, throwException = true)!!
+    }
+
+    internal fun plus(other: Duration, throwException: Boolean = true): Duration? {
         when {
             this.isInfinite() -> {
                 if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
                     return this
                 else
-                    throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
+                    if (throwException) throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.") else null
             }
             other.isInfinite() -> return other
         }
