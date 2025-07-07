@@ -1,1 +1,1 @@
-IS_CONFLICTING: false
+ARE_CONFLICTING: false
