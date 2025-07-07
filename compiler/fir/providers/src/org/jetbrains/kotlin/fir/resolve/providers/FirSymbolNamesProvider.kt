@@ -81,6 +81,10 @@ abstract class FirSymbolNamesProvider {
      */
     abstract fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>?
 
+    // TODO: Document.
+    //  It cannot return synthetic function class names.
+    open fun getTopLevelClassIdsByShortName(shortName: Name): Set<ClassId>? = null
+
     /**
      * Whether the [FirSymbolProvider] supported by this [FirSymbolNamesProvider] may contain generated function types (see
      * [FunctionTypeKind]). Names of such function types cannot be included in [getTopLevelClassifierNamesInPackage], because they are

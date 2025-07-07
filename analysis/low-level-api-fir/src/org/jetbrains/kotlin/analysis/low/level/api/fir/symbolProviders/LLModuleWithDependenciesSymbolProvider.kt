@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinJvmClassIdProviderFactory
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
@@ -47,7 +49,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * responsibility, which is the burden of the Analysis API platform.
  */
 internal class LLModuleWithDependenciesSymbolProvider(
-    session: FirSession,
+    session: LLFirSession,
     val providers: List<FirSymbolProvider>,
     val dependencyProvider: LLDependenciesSymbolProvider,
 ) : FirSymbolProvider(session) {
@@ -60,14 +62,29 @@ internal class LLModuleWithDependenciesSymbolProvider(
      *
      * [symbolNamesProvider] needs to be lazy to avoid eager initialization of [LLDependenciesSymbolProvider.providers].
      */
-    override val symbolNamesProvider: FirSymbolNamesProvider by lazy {
-        FirCompositeCachedSymbolNamesProvider(
-            session,
+    override val symbolNamesProvider: FirSymbolNamesProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLModuleWithDependenciesSymbolNamesProvider(
             buildList {
                 providers.mapTo(this) { it.symbolNamesProvider }
                 dependencyProvider.providers.mapTo(this) { it.symbolNamesProvider }
             },
         )
+    }
+
+    private val classIdProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // TODO: The resolution scope SHOULD be equivalent to all combined content scopes of the individual symbol providers, but let's
+        //  double-check this.
+        val scope = KaResolutionScopeProvider.getInstance(session.project).getResolutionScope(session.ktModule)
+        KotlinJvmClassIdProviderFactory.getInstance(session.project).createProvider(scope)
+    }
+
+    private inner class LLModuleWithDependenciesSymbolNamesProvider(
+        providers: List<FirSymbolNamesProvider>,
+    ) : FirCompositeCachedSymbolNamesProvider(session, providers) {
+        // TODO: Caching here or on the platform side?
+        override fun getTopLevelClassIdsByShortName(shortName: Name): Set<ClassId>? {
+            return classIdProvider.getTopLevelClassIdsByShortName(shortName)
+        }
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =

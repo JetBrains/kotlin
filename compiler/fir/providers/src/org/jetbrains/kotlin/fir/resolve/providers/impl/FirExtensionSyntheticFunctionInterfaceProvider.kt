@@ -316,5 +316,8 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
          */
         @FirSymbolProviderInternals
         fun ClassId.mayBeSyntheticFunctionClassName(): Boolean = relativeClassName.asString().lastOrNull()?.isDigit() == true
+
+        @FirSymbolProviderInternals
+        fun Name.mayBeSyntheticFunctionClassName(): Boolean = asString().lastOrNull()?.isDigit() == true
     }
 }
