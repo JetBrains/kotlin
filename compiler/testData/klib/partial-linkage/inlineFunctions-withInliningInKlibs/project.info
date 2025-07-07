@@ -1,5 +1,3 @@
-IGNORE_BACKEND: NATIVE, JS_IR, WASM
-
 MODULES: lib1, lib2, lib3, main
 
 STEP 0:
