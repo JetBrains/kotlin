@@ -87,10 +87,11 @@ fun List<FirAnnotation>.computeTypeAttributes(
                 // ConeAttributes.create() will always take the last attribute of a given type,
                 // where ParameterName should prefer the first annotation.
                 if (parameterName == null) {
+                    // The name is only available at this stage when reading for metadata but can help cut down on memory use if known.
                     val knownName = annotation.getStringArgument(StandardNames.NAME, session)?.let { Name.identifier(it) }
                     parameterName = ParameterNameTypeAttribute(name = knownName, listOf(annotation))
                 } else {
-                    // Preserve repeated ParameterName annotations to check for repeated errors.
+                    // Preserve all ParameterName annotations to check for repeated errors.
                     parameterName = ParameterNameTypeAttribute(parameterName.name, parameterName.annotations + annotation)
                 }
             }
