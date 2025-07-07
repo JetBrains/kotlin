@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.descriptors.IrBasedTypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
@@ -126,7 +124,6 @@ abstract class TypeTranslator(
         return IrSimpleTypeBuilder().apply {
             this.kotlinType = approximatedType
             this.nullability = SimpleTypeNullability.fromHasQuestionMark(upperType.isMarkedNullable)
-            this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
 
             when (upperTypeDescriptor) {
                 is TypeParameterDescriptor -> {
@@ -174,22 +171,6 @@ abstract class TypeTranslator(
     private fun approximateUpperBounds(upperBounds: Collection<KotlinType>, variance: Variance): IrTypeProjection {
         val commonSupertype = commonSupertype(upperBounds)
         return translateType(approximate(commonSupertype.replaceArgumentsWithStarProjections()), variance)
-    }
-
-    private fun SimpleType.toIrTypeAbbreviation(): IrTypeAbbreviation? {
-        // Abbreviated type's classifier might not be TypeAliasDescriptor in case it's MockClassDescriptor (not found in dependencies).
-        val typeAliasDescriptor = constructor.declarationDescriptor as? TypeAliasDescriptor ?: return null
-
-        // There is possible situation when we have private top-level type alias visible outside its file which is illegal from klib POV.
-        // In that specific case don't generate type abbreviation
-        if (!isTypeAliasAccessibleHere(typeAliasDescriptor)) return null
-
-        return IrTypeAbbreviationImpl(
-            symbolTable.descriptorExtension.referenceTypeAlias(typeAliasDescriptor),
-            isMarkedNullable,
-            translateTypeArguments(this.arguments),
-            translateTypeAnnotations(this)
-        )
     }
 
     fun approximate(ktType: KotlinType): KotlinType {
