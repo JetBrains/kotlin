@@ -410,7 +410,8 @@ object LightTreePositioningStrategies {
                 KtNodeTypes.PROPERTY_ACCESSOR,
                 KtNodeTypes.CLASS,
                 KtNodeTypes.OBJECT_DECLARATION,
-                KtNodeTypes.CLASS_INITIALIZER ->
+                KtNodeTypes.CLASS_INITIALIZER,
+                    ->
                     true
                 else ->
                     false
@@ -685,7 +686,7 @@ object LightTreePositioningStrategies {
                         markRange(lastArgument, rightParenthesis, startOffset, endOffset, tree, node)
                     } else {
                         val leftParenthesis = tree.findLastChildByType(argumentList, LPAR)
-                        markRange(leftParenthesis?: nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
+                        markRange(leftParenthesis ?: nodeToStart, rightParenthesis, startOffset, endOffset, tree, node)
                     }
                 }
 
@@ -1141,8 +1142,8 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
             tree.findChildByType(node, KtNodeTypes.IMPORT_ALIAS)?.let {
-                tree.findChildByType(it, IDENTIFIER)?.let {
-                    return markElement(it, startOffset, endOffset, tree, node)
+                tree.findChildByType(it, IDENTIFIER)?.let { identifier ->
+                    return markElement(identifier, startOffset, endOffset, tree, node)
                 }
             }
             return IMPORT_LAST_NAME.mark(node, startOffset, endOffset, tree)
