@@ -10,7 +10,6 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.tasks.IncrementalSyncTask
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
@@ -23,6 +22,8 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
     @get:Inject
     abstract val objectFactory: ObjectFactory
 
+    private val rootDir = project.rootDir
+
     @TaskAction
     fun doCopy(inputChanges: InputChanges) {
         val destinationDir = destinationDirectory.get()
@@ -31,11 +32,21 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
             duplicatesStrategy = this@DefaultIncrementalSyncTask.duplicatesStrategy
             // Rewrite relative paths in sourcemaps in the target directory
             eachFile {
-                if (it.name.endsWith(".js.map") || it.name.endsWith(".wasm.map")) {
+                if (it.name.endsWith(".js.map")) {
                     it.filter(
                         mapOf(
                             RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
                             RewriteSourceMapFilterReader::targetSourceRoot.name to destinationDir
+                        ),
+                        RewriteSourceMapFilterReader::class.java
+                    )
+                }
+
+                if (it.name.endsWith(".wasm.map")) {
+                    it.filter(
+                        mapOf(
+                            RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
+                            RewriteSourceMapFilterReader::targetSourceRoot.name to rootDir
                         ),
                         RewriteSourceMapFilterReader::class.java
                     )

@@ -217,14 +217,14 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve(
                         "build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm.map"
                     ),
-                    "../../../../../src/wasmJsMain/kotlin/foo.kt"
+                    "src/wasmJsMain/kotlin/foo.kt"
                 )
 
                 assertFileContains(
                     projectPath.resolve(
                         "build/wasm/packages/redefined-wasm-module-name/kotlin/redefined-wasm-module-name.wasm.map"
                     ),
-                    "../../../../../src/wasmJsMain/kotlin/foo.kt"
+                    "src/wasmJsMain/kotlin/foo.kt"
                 )
 
                 assertTrue("Expected one wasm file") {
