@@ -1002,12 +1002,8 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                     }
                     if (index < length) return throwExceptionOrNull("Fractional component must be last")
                 } else {
-                    try {
-                        result += component.toLong().toDuration(unit)
-                    } catch (e: NumberFormatException) {
-                        if (throwExceptionOnParsingError) throw e
-                        return null
-                    }
+                    result += (if (throwExceptionOnParsingError) component.toLong() else (component.toLongOrNull() ?: return null))
+                        .toDuration(unit)
                 }
             }
         }
