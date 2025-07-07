@@ -106,14 +106,13 @@ fun IrSimpleTypeImpl(
     else
         nullability
     return when {
-        originalKotlinType != null || abbreviation != null -> {
+        originalKotlinType != null -> {
             IrSimpleTypeFullImpl(
                 classifier,
                 realNullability,
                 arguments.compactIfPossible(),
                 annotations.compactIfPossible(),
                 originalKotlinType,
-                abbreviation,
             )
         }
         annotations.isEmpty() && arguments.isEmpty() -> {
@@ -140,7 +139,6 @@ class IrSimpleTypeBuilder {
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
     var arguments: List<IrTypeArgument> = emptyList()
     var annotations: List<IrConstructorCall> = emptyList()
-    var abbreviation: IrTypeAbbreviation? = null
 
     var captureStatus: CaptureStatus? = null
     var capturedLowerType: IrType? = null
@@ -160,7 +158,6 @@ fun IrSimpleType.toBuilder(): IrSimpleTypeBuilder =
         b.nullability = nullability
         b.arguments = arguments
         b.annotations = annotations
-        b.abbreviation = abbreviation
     }
 
 fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
@@ -178,7 +175,6 @@ fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
             capturedTypeConstructor!!.typeParameter,
             nullability,
             annotations.compactIfPossible(),
-            abbreviation,
         ).apply {
             constructor.initSuperTypes(capturedTypeConstructor!!.superTypes)
         }
@@ -195,7 +191,6 @@ fun IrSimpleTypeBuilder.buildSimpleType(): IrSimpleType =
             nullability,
             arguments,
             annotations,
-            abbreviation,
             originalKotlinType = kotlinType
         )
     }

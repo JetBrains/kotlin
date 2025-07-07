@@ -466,8 +466,7 @@ internal abstract class IrExpectActualMatchingContext(
                 classifier = newClassifier ?: type.classifier,
                 type.nullability,
                 newArguments,
-                type.annotations,
-                type.abbreviation
+                type.annotations
             )
         }
 

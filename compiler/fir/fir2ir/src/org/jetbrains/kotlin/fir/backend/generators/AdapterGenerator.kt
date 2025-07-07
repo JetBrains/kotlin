@@ -349,8 +349,7 @@ class AdapterGenerator(
                                 parameterType.classifier,
                                 parameterType.nullability,
                                 listOf(makeTypeProjection(reifiedVarargElementType, Variance.OUT_VARIANCE)),
-                                parameterType.annotations,
-                                parameterType.abbreviation
+                                parameterType.annotations
                             )
                         } else {
                             reifiedVarargElementType = varargElementType!!
