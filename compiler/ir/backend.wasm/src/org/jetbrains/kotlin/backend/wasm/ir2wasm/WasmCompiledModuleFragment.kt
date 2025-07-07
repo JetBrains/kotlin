@@ -335,7 +335,7 @@ class WasmCompiledModuleFragment(
         canonicalFunctionTypes: Map<WasmFunctionType, WasmFunctionType>,
         additionalTypes: List<WasmTypeDeclaration>,
     ): List<RecursiveTypeGroup> {
-        val gcTypes = wasmCompiledFileFragments.flatMap { it.gcTypes.elements }
+        val gcTypes = wasmCompiledFileFragments.flatMapTo(mutableSetOf()) { it.gcTypes.elements }
 
         val recGroupTypes = sequence {
             yieldAll(additionalRecGroupTypes)
