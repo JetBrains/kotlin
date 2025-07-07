@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegac
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullablity
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
@@ -115,14 +114,13 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             symbol,
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
             annotations,
-            abbreviation
+            null
         )
     }
 
@@ -132,24 +130,15 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             symbol,
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
             annotations,
-            abbreviation
+            null
         )
     }
-
-    private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
-        IrTypeAbbreviationImpl(
-            deserializeIrSymbol(proto.typeAlias).checkSymbolType(TYPEALIAS_SYMBOL),
-            proto.hasQuestionMark,
-            proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) },
-            deserializeAnnotations(proto.annotationList)
-        )
 
     private val SIMPLE_DYNAMIC_TYPE = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
 
