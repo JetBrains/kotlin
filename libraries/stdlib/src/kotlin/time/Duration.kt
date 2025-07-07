@@ -277,11 +277,11 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         return plus(other, throwException = true)!!
     }
 
-    internal fun plus(other: Duration, throwException: Boolean = true): Duration? {
+    internal fun plus(other: Duration, throwException: Boolean): Duration? {
         when {
             this.isInfinite() -> {
-                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
-                    return this
+                return if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
+                    this
                 else
                     if (throwException) throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.") else null
             }
@@ -947,12 +947,10 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                         .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
                         .toDuration(unit)
                 } else {
-                    try {
-                        result += parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null
-                    } catch (e: IllegalArgumentException) {
-                        if (throwExceptionOnParsingError) throw e
-                        return null
-                    }
+                    result = result.plus(
+                        parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null,
+                        throwExceptionOnParsingError
+                    ) ?: return null
                 }
             }
         }
