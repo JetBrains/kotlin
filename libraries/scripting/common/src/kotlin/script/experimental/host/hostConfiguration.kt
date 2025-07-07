@@ -14,7 +14,8 @@ import kotlin.script.experimental.util.PropertiesCollection
 interface ScriptingHostConfigurationKeys
 
 /**
- * The container for script evaluation configuration
+ * The container for script evaluation configuration.
+ *
  * For usages see actual code examples
  */
 open class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
@@ -28,7 +29,7 @@ open class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<Scri
     class Builder internal constructor(baseScriptingHostConfigurations: Iterable<ScriptingHostConfiguration>) :
         ScriptingHostConfigurationKeys,
         PropertiesCollection.Builder(baseScriptingHostConfigurations)
-    
+
     companion object : ScriptingHostConfigurationKeys
 }
 

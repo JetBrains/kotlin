@@ -26,7 +26,7 @@ interface SourceCode {
     val name: String?
 
     /**
-     * The path or other script location identifier
+     * The path or another script location identifier
      */
     val locationId: String?
 
@@ -54,8 +54,8 @@ interface SourceCode {
 
     /**
      * The source code location including the path to the file
-     * @param codeLocationId the file path or other script location identifier (see [SourceCode.locationId])
-     * @param locationInText concrete location of the source code in file
+     * @param codeLocationId the file path or another script location identifier (see [SourceCode.locationId])
+     * @param locationInText concrete location of the source code in a file
      */
     data class LocationWithId(val codeLocationId: String, val locationInText: Location) : Serializable
 }
@@ -86,7 +86,7 @@ interface ExternalSourceCode : SourceCode {
 }
 
 /**
- * The source code [range] with the the optional [name]
+ * The source code [range] with the optional [name]
  */
 data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range) : Serializable {
     companion object { private const val serialVersionUID: Long = 1L }
@@ -168,7 +168,7 @@ fun merge(vararg contexts: ScriptEvaluationContextData?): ScriptEvaluationContex
 }
 
 /**
- * Command line arguments of the current process, could be provided by an evaluation host
+ * Command line arguments of the current process; could be provided by an evaluation host
  */
 val ScriptEvaluationContextDataKeys.commandLineArgs by PropertiesCollection.key<List<String>>()
 
