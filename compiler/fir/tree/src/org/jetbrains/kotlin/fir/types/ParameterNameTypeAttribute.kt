@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,28 +7,19 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import kotlin.reflect.KClass
 
 class ParameterNameTypeAttribute(
-    val annotation: FirAnnotation,
-    val others: List<FirAnnotation> = emptyList(),
+    val name: Name?,
+    val annotations: List<FirAnnotation>,
 ) : ConeAttribute<ParameterNameTypeAttribute>() {
-    val name: Name by lazy {
-        val expression = annotation.argumentMapping.mapping[StandardNames.NAME]
-        val argument = (expression as? FirLiteralExpression)?.value as? String
-        requireWithAttachment(argument != null, { "ParameterName argument not resolved to string." }) {
-            withFirEntry("annotation", annotation)
-        }
-        Name.identifier(argument)
+    init {
+        require(annotations.isNotEmpty())
     }
-
 
     override fun union(other: ParameterNameTypeAttribute?): ParameterNameTypeAttribute? = null
     override fun intersect(other: ParameterNameTypeAttribute?): ParameterNameTypeAttribute? = null
@@ -41,19 +32,11 @@ class ParameterNameTypeAttribute(
     override val keepInInferredDeclarationType: Boolean get() = true
 
     override fun toString(): String = buildString {
-        append(annotation.render())
-        for (other in others) {
-            append(" ")
-            append(other.render())
-        }
+        annotations.joinTo(this, separator = " ") { it.render() }
     }
 
     override fun renderForReadability(): String = buildString {
-        append(FirRenderer.forReadability().renderElementAsString(annotation, trim = true))
-        for (other in others) {
-            append(" ")
-            append(FirRenderer.forReadability().renderElementAsString(other, trim = true))
-        }
+        annotations.joinTo(this, separator = " ") { FirRenderer.forReadability().renderElementAsString(it, trim = true) }
     }
 
     override fun equals(other: Any?): Boolean {
@@ -62,11 +45,15 @@ class ParameterNameTypeAttribute(
 
         other as ParameterNameTypeAttribute
 
-        return name == other.name
+        return if (name != null) {
+            name == other.name
+        } else {
+            annotations.first() == other.annotations.first()
+        }
     }
 
     override fun hashCode(): Int {
-        return name.hashCode()
+        return name?.hashCode() ?: annotations.first().hashCode()
     }
 
     companion object {
@@ -77,6 +64,12 @@ class ParameterNameTypeAttribute(
 
 val ConeAttributes.parameterNameAttribute: ParameterNameTypeAttribute? by ConeAttributes.attributeAccessor<ParameterNameTypeAttribute>()
 
-val ConeKotlinType.parameterNameAnnotation: FirAnnotation? get() = attributes.parameterNameAttribute?.annotation
-
-val ConeKotlinType.parameterName: Name? get() = attributes.parameterNameAttribute?.name
+// Intentionally break binary compatibility but keep source compatibility to help compiler plugin migration.
+@get:JvmName("parameterNameDeprecated")
+@Deprecated(
+    message = "Parameter name access without a session is not supported.",
+    replaceWith = ReplaceWith("this.valueParameterName(session)"),
+    level = DeprecationLevel.ERROR,
+)
+val ConeKotlinType.parameterName: Name?
+    get() = throw UnsupportedOperationException("Parameter name access without a session is not supported.")

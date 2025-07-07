@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForType
-import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirCompileTimeConstantEvaluator
 import org.jetbrains.kotlin.analysis.api.fir.types.qualifiers.UsualClassTypeQualifierBuilder
 import org.jetbrains.kotlin.analysis.api.fir.utils.buildAbbreviatedType
 import org.jetbrains.kotlin.analysis.api.fir.utils.createPointer
@@ -25,13 +24,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
 
 internal class KaFirFunctionType(
     override val coneType: ConeClassLikeTypeImpl,
@@ -110,15 +107,9 @@ internal class KaFirFunctionType(
                 // Parameters have to be resolved to FirResolvePhase.ANNOTATION_ARGUMENTS
                 // as parameter names can be explicitly provided via @ParameterName annotations.
                 parameterConeType.ensureResolvedTypeDeclaration(builder.rootSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
-
-                // TODO: Replace with just `parameterConeType.parameterName` after KT-77401
-                val parameterNameAnnotation = parameterConeType?.parameterNameAnnotation
-                val nameArgument = parameterNameAnnotation?.argumentMapping?.mapping[StandardNames.NAME]
-                val name = (FirCompileTimeConstantEvaluator.evaluate(nameArgument, builder.rootSession)?.value as? String)?.let {
-                    Name.identifier(it)
-                }
-
+                val name = parameterConeType?.valueParameterName(builder.rootSession)
                 KaBaseFunctionValueParameter(name, parameterType)
+
             }
         }
 

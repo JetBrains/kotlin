@@ -464,7 +464,7 @@ private fun mapInapplicableCandidateError(
                 val symbol = rootCause.valueParameter.symbol
                 FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
                     qualifiedAccessSource ?: source,
-                    symbol.resolvedReturnType.parameterName ?: symbol.name,
+                    symbol.resolvedReturnType.valueParameterName(session) ?: symbol.name,
                     session
                 )
             }
