@@ -6,7 +6,7 @@ inline fun topLevelInlineFun() {
     <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
     localFun()
 
-    <!NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun localInlineFun() {
+    <!NOT_YET_SUPPORTED_IN_INLINE, NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION!>inline<!> fun localInlineFun() {
         <!NOT_YET_SUPPORTED_IN_INLINE!>fun<!> localFun() {}
         localFun()
     }

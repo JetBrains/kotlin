@@ -342,7 +342,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val oldInlinableParameterContext = context.inlinableParameterContext
         return try {
             if (isInline) {
-                val bodyContext = createInlineFunctionBodyContext(function, context.session)
+                val bodyContext = createInlineFunctionBodyContext(function, context.session, oldBodyContext)
                 val parameterContext = createInlinableParameterContext(function, context.session)
                 context = context.setInlineFunctionBodyContext(bodyContext).setInlinableParameterContext(parameterContext)
             }
