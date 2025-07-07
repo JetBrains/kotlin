@@ -63,6 +63,7 @@ SegregatedFinalizerQueue<typename Traits::ObjectFactory::FinalizerQueue> Sweep(
             } else {
                 objectFactoryIter.MoveAndAdvance(finalizerQueue.regular, it);
             }
+            sweepHandle.addMarkedObject();
             sweepHandle.addKeptObject(Traits::ObjectFactory::GetAllocatedHeapSize(objHeader));
         } else {
             objectFactoryIter.EraseAndAdvance(it);
