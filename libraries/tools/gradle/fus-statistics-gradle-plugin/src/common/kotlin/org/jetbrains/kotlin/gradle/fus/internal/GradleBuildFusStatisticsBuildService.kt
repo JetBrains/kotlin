@@ -51,7 +51,7 @@ private fun registerIfAbsent(
                     if (customPath.isBlank()) " and custom path is blank" else ""
         )
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}
-    } else if (isCiBuild()) {
+    } else if (customPath.isBlank() && isCiBuild()) {
         val ciProperty = detectedCiProperty()
         log.info("Fus metrics won't be collected for CI build. (CI build detected via environment variable $ciProperty)")
         project.gradle.sharedServices.registerIfAbsent(serviceName, NoConsentGradleBuildFusService::class.java) {}

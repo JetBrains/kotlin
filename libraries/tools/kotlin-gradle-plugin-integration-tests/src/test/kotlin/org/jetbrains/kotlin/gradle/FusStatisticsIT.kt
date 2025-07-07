@@ -589,6 +589,20 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("disable FUS on TC")
+    @GradleTest
+    @JvmGradlePluginTests
+    fun disableFusOnTeamCity(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject", gradleVersion,
+        ) {
+            build("assemble", "-Pkotlin.session.logger.root.path=$projectPath", "fus file should not be created") {
+                assertTrue(baseFusStatisticsDirectory.listDirectoryEntries().isEmpty())
+                assertOutputContains("Fus metrics won't be collected for CI build. (CI build detected via environment variable TEAMCITY_VERSION)")
+            }
+        }
+    }
+
     private fun getExpectedFusFilesCount(gradleVersion: GradleVersion, rounds: Int): Int {
         val expectedFiles = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_9)) {
             //every submodule will create a separate file. There are two modules in the project

@@ -19,7 +19,7 @@ class KotlinBuildStatsConfiguration(
 ) : Serializable {
     companion object {
         // Property used for tests.
-        private const val CUSTOM_LOGGER_ROOT_PATH = "kotlin.session.logger.root.path"
+        internal const val CUSTOM_LOGGER_ROOT_PATH = "kotlin.session.logger.root.path"
 
         // Property used for tests. Build will fail fast if collected value doesn't fit regexp
         private const val FORCE_VALUES_VALIDATION = "kotlin_performance_profile_force_validation"
