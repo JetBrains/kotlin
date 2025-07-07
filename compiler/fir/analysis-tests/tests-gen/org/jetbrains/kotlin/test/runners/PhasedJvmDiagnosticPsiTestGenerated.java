@@ -1266,6 +1266,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("localInsideInlineInsideLocal.kt")
+    public void testLocalInsideInlineInsideLocal() {
+      runTest("compiler/testData/diagnostics/tests/localInsideInlineInsideLocal.kt");
+    }
+
+    @Test
     @TestMetadata("localInterfaces.kt")
     public void testLocalInterfaces() {
       runTest("compiler/testData/diagnostics/tests/localInterfaces.kt");
