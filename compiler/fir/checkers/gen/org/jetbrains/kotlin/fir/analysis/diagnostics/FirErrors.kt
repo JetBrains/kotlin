@@ -474,8 +474,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val RESULT_TYPE_MISMATCH: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory2("RESULT_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val COMPARE_TO_TYPE_MISMATCH: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("COMPARE_TO_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.OPERATOR, KtExpression::class, getRendererFactory())
     val HAS_NEXT_FUNCTION_TYPE_MISMATCH: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("HAS_NEXT_FUNCTION_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
-    val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH: KtDiagnosticFactory3<Name, ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory3("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
-    val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH: KtDiagnosticFactory3<String, ConeKotlinType, ConeKotlinType> = KtDiagnosticFactory3("DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD, KtExpression::class, getRendererFactory())
+    val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Name> = KtDiagnosticFactory3("COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
+    val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH: KtDiagnosticFactory3<ConeKotlinType, ConeKotlinType, Name> = KtDiagnosticFactory3("DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH", ERROR, SourceElementPositioningStrategies.PROPERTY_DELEGATE_BY_KEYWORD, KtExpression::class, getRendererFactory())
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory1("OVERLOAD_RESOLUTION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED, PsiElement::class, getRendererFactory())

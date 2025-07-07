@@ -34,7 +34,7 @@ KtOperationReferenceExpression(97,98): '>'
           contextParameters = []
           callableId = /MyClass.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'MyClass' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'MyClass'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:

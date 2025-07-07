@@ -165,7 +165,7 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
                 }
             }
         }
-        reporter.reportOn(source, resultingFactory, actualTypeForComparison, expectedTypeForComparison, suffix)
+        reporter.reportOn(source, resultingFactory, expectedTypeForComparison, actualTypeForComparison, suffix)
     }
 }
 

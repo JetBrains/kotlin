@@ -120,7 +120,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Array<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -160,7 +160,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Iterable<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -200,7 +200,7 @@ KtBinaryExpression(40,49): 'list += 1'
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Sequence<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(40,44): 'list'
@@ -298,7 +298,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Array<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -338,7 +338,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Iterable<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -378,7 +378,7 @@ KtOperationReferenceExpression(45,47): '+='
       typeArgumentsMapping = {
         T -> (kotlin.Int)
       }
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Sequence<Int>' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Sequence<Int>'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstantExpression(48,49): '1'

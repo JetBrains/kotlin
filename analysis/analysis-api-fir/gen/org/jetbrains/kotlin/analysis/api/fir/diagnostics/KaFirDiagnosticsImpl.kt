@@ -1965,8 +1965,8 @@ internal class TypeMismatchImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeMismatch
 
 internal class ArgumentTypeMismatchImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     override val isMismatchDueToNullability: Boolean,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -2031,17 +2031,17 @@ internal class HasNextFunctionTypeMismatchImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextFunctionTypeMismatch
 
 internal class ComponentFunctionReturnTypeMismatchImpl(
-    override val componentFunctionName: Name,
-    override val destructingType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
+    override val componentFunctionName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionReturnTypeMismatch
 
 internal class DelegateSpecialFunctionReturnTypeMismatchImpl(
-    override val delegateFunction: String,
     override val expectedType: KaType,
     override val actualType: KaType,
+    override val delegateSpecialFunctionName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegateSpecialFunctionReturnTypeMismatch
@@ -5321,39 +5321,39 @@ internal class JavaTypeMismatchImpl(
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.JavaTypeMismatch
 
 internal class ReceiverNullabilityMismatchBasedOnJavaAnnotationsImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverNullabilityMismatchBasedOnJavaAnnotations
 
 internal class NullabilityMismatchBasedOnJavaAnnotationsImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullabilityMismatchBasedOnJavaAnnotations
 
 internal class NullabilityMismatchBasedOnExplicitTypeArgumentsForJavaImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     override val messageSuffix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullabilityMismatchBasedOnExplicitTypeArgumentsForJava
 
 internal class TypeMismatchWhenFlexibilityChangesImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeMismatchWhenFlexibilityChanges
 
 internal class JavaClassOnCompanionImpl(
-    override val actualType: KaType,
     override val expectedType: KaType,
+    override val actualType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JavaClassOnCompanion

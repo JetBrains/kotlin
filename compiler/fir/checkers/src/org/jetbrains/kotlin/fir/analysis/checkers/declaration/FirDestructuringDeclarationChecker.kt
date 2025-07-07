@@ -217,9 +217,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             reporter.reportOn(
                 typeMismatchSource,
                 FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-                componentCall.calleeReference.name,
+                expectedType,
                 componentType,
-                expectedType
+                componentCall.calleeReference.name,
             )
         }
     }

@@ -238,7 +238,7 @@ KtConstructorDelegationCall(170,179): 'super(ci)'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstructorDelegationReferenceExpression(170,175): 'super'
@@ -300,7 +300,7 @@ KtConstructorDelegationReferenceExpression(170,175): 'super'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(175,179): '(ci)'
@@ -370,7 +370,7 @@ KtConstructorDelegationCall(210,219): 'super(cs)'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Int'; actual 'String'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -432,7 +432,7 @@ KtConstructorDelegationReferenceExpression(210,215): 'super'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Int'; actual 'String'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -648,7 +648,7 @@ KtSuperTypeCallEntry(294,307): 'BaseClass(42)'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstructorCalleeExpression(294,303): 'BaseClass'
@@ -710,7 +710,7 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
     isInBestCandidates = false
 
 KtTypeReference(294,303): 'BaseClass'

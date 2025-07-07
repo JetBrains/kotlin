@@ -127,9 +127,9 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                     reporter.reportOn(
                         source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
-                        "getValue",
                         propertyType,
-                        returnType
+                        returnType,
+                        functionCall.calleeReference.name,
                     )
                 }
             }

@@ -730,8 +730,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
-            parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
         }
         val RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.WHOLE_ELEMENT) {
@@ -773,14 +773,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
         }
         val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
-            parameter<Name>("componentFunctionName")
-            parameter<ConeKotlinType>("destructingType")
-            parameter<ConeKotlinType>("expectedType")
-        }
-        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
-            parameter<String>("delegateFunction")
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Name>("componentFunctionName")
+        }
+        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+            parameter<Name>("delegateSpecialFunctionName")
         }
     }
 

@@ -1657,21 +1657,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Mismatching types
         map.put(
             TYPE_MISMATCH,
-            "Type mismatch: inferred type is ''{1}'', but ''{0}'' was expected.",
+            "Type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             ARGUMENT_TYPE_MISMATCH,
-            "Argument type mismatch: actual type is ''{0}'', but ''{1}'' was expected.",
+            "Argument type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             RETURN_TYPE_MISMATCH,
-            "Return type mismatch: expected ''{0}'', actual ''{1}''.",
+            "Return type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -1679,59 +1679,59 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INITIALIZER_TYPE_MISMATCH,
-            "Initializer type mismatch: expected ''{0}'', actual ''{1}''.",
+            "Initializer type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             ASSIGNMENT_TYPE_MISMATCH,
-            "Assignment type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Assignment type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             CONDITION_TYPE_MISMATCH,
-            "Condition type mismatch: inferred type is ''{0}'' but ''Boolean'' was expected.",
+            "Condition type mismatch: expected ''Boolean''; actual ''{0}''.",
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             THROWABLE_TYPE_MISMATCH,
-            "Throwable type mismatch: actual type is ''{0}''.",
+            "Throwable type mismatch: expected ''Throwable''; actual ''{0}''.",
             RENDER_TYPE,
             NOT_RENDERED,
         )
         map.put(
             RESULT_TYPE_MISMATCH,
-            "Function return type mismatch: actual type is ''{1}'', but ''{0}'' was expected.",
+            "Function return type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
         )
         map.put(
             COMPARE_TO_TYPE_MISMATCH,
-            "''compareTo()'' must return ''Int'', but returns ''{0}''.",
+            "''compareTo(...)'' return type mismatch: expected ''Int''; actual ''{0}''.",
             RENDER_TYPE,
         )
         map.put(
             HAS_NEXT_FUNCTION_TYPE_MISMATCH,
-            "The ''iterator().hasNext()'' function of the loop range must return ''Boolean'', but returns ''{0}''.",
+            "''hasNext()'' return type mismatch: expected ''Boolean''; actual ''{0}''.",
             RENDER_TYPE,
         )
         map.put(
             COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-            "Operator call ''{0}()'' returns ''{1}'', but ''{2}'' is expected.",
+            "''{2}()'' return type mismatch: expected ''{0}''; actual ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE,
             TO_STRING,
-            RENDER_TYPE,
-            RENDER_TYPE,
         )
         map.put(
             DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
-            "Function ''{0}'' of property delegate is expected to return ''{1}'', but returns ''{2}''.",
+            "''{2}()'' return type mismatch: expected ''{0}''; actual ''{1}''.",
+            RENDER_TYPE,
+            RENDER_TYPE,
             TO_STRING,
-            RENDER_TYPE,
-            RENDER_TYPE,
         )
 
         // Ambiguity
@@ -2356,19 +2356,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RETURN_TYPE_MISMATCH_ON_OVERRIDE,
-            "Return type of ''{0}'' is not a subtype of the return type of the overridden member {1}.",
+            "Return type of ''{0}'' is not a subtype of the return type of overridden function {1}.",
             DECLARATION_NAME,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' is not a subtype of overridden property {1}.",
+            "Type of ''{0}'' is not a subtype of the type of overridden ''val'' property {1}.",
             DECLARATION_NAME,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' doesn''t match the type of the overridden ''var'' property {1}.",
+            "Type of ''{0}'' doesn''t match the type of overridden ''var'' property {1}.",
             DECLARATION_NAME,
             SYMBOL_WITH_CONTAINING_DECLARATION,
         )

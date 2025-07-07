@@ -1637,8 +1637,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ArgumentTypeMismatch : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ArgumentTypeMismatch::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
         val isMismatchDueToNullability: Boolean
     }
 
@@ -1694,16 +1694,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ComponentFunctionReturnTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ComponentFunctionReturnTypeMismatch::class
-        val componentFunctionName: Name
-        val destructingType: KaType
         val expectedType: KaType
+        val actualType: KaType
+        val componentFunctionName: Name
     }
 
     interface DelegateSpecialFunctionReturnTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = DelegateSpecialFunctionReturnTypeMismatch::class
-        val delegateFunction: String
         val expectedType: KaType
         val actualType: KaType
+        val delegateSpecialFunctionName: Name
     }
 
     interface OverloadResolutionAmbiguity : KaFirDiagnostic<PsiElement> {
@@ -4430,35 +4430,35 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ReceiverNullabilityMismatchBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ReceiverNullabilityMismatchBasedOnJavaAnnotations::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
         val messageSuffix: String
     }
 
     interface NullabilityMismatchBasedOnJavaAnnotations : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullabilityMismatchBasedOnJavaAnnotations::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
         val messageSuffix: String
     }
 
     interface NullabilityMismatchBasedOnExplicitTypeArgumentsForJava : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NullabilityMismatchBasedOnExplicitTypeArgumentsForJava::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
         val messageSuffix: String
     }
 
     interface TypeMismatchWhenFlexibilityChanges : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = TypeMismatchWhenFlexibilityChanges::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
     }
 
     interface JavaClassOnCompanion : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JavaClassOnCompanion::class
-        val actualType: KaType
         val expectedType: KaType
+        val actualType: KaType
     }
 
     interface UpperBoundCannotBeArray : KaFirDiagnostic<PsiElement> {

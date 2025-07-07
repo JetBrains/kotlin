@@ -2,7 +2,7 @@
 // WITH_STDLIB
 
 fun foo(list: List<String>) {
-    bar(<!ARGUMENT_TYPE_MISMATCH("Array<String>; String")!>list.toTypedArray()<!>)
+    bar(<!ARGUMENT_TYPE_MISMATCH("String; Array<String>")!>list.toTypedArray()<!>)
 }
 
 fun bar(vararg args: String) {}

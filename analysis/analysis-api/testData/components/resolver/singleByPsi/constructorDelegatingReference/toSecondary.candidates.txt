@@ -42,7 +42,7 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           contextParameters = []
           callableId = null
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Int'; actual 'String'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:

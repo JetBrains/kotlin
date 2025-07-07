@@ -2377,18 +2377,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
         ComponentFunctionReturnTypeMismatchImpl(
-            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
     add(FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
         DelegateSpecialFunctionReturnTypeMismatchImpl(
-            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

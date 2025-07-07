@@ -52,7 +52,7 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -90,7 +90,7 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -128,7 +128,7 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -203,7 +203,7 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -241,7 +241,7 @@ KtBinaryExpression(18,23): '1 > 2'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstantExpression(18,19): '1'
@@ -283,7 +283,7 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -321,7 +321,7 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -359,7 +359,7 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -434,7 +434,7 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -472,7 +472,7 @@ KtOperationReferenceExpression(20,21): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstantExpression(22,23): '2'
@@ -514,7 +514,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -552,7 +552,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -590,7 +590,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -665,7 +665,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -703,7 +703,7 @@ KtBinaryExpression(28,46): '1.compareTo(2) > 0'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtDotQualifiedExpression(28,42): '1.compareTo(2)'
@@ -742,7 +742,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -780,7 +780,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -818,7 +818,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -893,7 +893,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -931,7 +931,7 @@ KtDotQualifiedExpression(28,42): '1.compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstantExpression(28,29): '1'
@@ -973,7 +973,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1011,7 +1011,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1049,7 +1049,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -1124,7 +1124,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1162,7 +1162,7 @@ KtCallExpression(30,42): 'compareTo(2)'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(30,39): 'compareTo'
@@ -1201,7 +1201,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1239,7 +1239,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1277,7 +1277,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -1352,7 +1352,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1390,7 +1390,7 @@ KtNameReferenceExpression(30,39): 'compareTo'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtValueArgumentList(39,42): '(2)'
@@ -1438,7 +1438,7 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Byte'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1476,7 +1476,7 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Double'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1514,7 +1514,7 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Float'; actual 'Int'.>
     isInBestCandidates = false
 
   KaApplicableCallCandidateInfo:
@@ -1589,7 +1589,7 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Long' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Long'; actual 'Int'.>
     isInBestCandidates = false
 
   KaInapplicableCallCandidateInfo:
@@ -1627,7 +1627,7 @@ KtOperationReferenceExpression(43,44): '>'
           contextParameters = []
           callableId = kotlin/Int.compareTo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Short'; actual 'Int'.>
     isInBestCandidates = false
 
 KtConstantExpression(45,46): '0'

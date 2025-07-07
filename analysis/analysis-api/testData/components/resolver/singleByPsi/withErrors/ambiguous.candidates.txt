@@ -31,7 +31,7 @@ KtCallExpression(98,109): 'function(1)'
           contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Char' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Char'; actual 'Int'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -66,7 +66,7 @@ KtCallExpression(98,109): 'function(1)'
           contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Boolean' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'Boolean'; actual 'Int'.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidateInfo:
@@ -101,5 +101,5 @@ KtCallExpression(98,109): 'function(1)'
           contextParameters = []
           callableId = /function
       typeArgumentsMapping = {}
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
     isInBestCandidates = true

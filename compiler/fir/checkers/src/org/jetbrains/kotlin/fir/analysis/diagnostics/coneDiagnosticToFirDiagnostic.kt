@@ -389,16 +389,16 @@ private fun mapInapplicableCandidateError(
             is UnitReturnTypeLambdaContradictsExpectedType -> {
                 FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
                     rootCause.sourceForFunctionExpression ?: rootCause.lambda.source ?: source,
-                    rootCause.lambda.typeRef.coneType.substituteTypeVariableTypes(
-                        diagnostic.candidate,
-                        typeContext,
-                    ),
                     rootCause.wholeLambdaExpectedType.substituteTypeVariableTypes(
                         diagnostic.candidate,
                         typeContext,
                     ),
+                    rootCause.lambda.typeRef.coneType.substituteTypeVariableTypes(
+                        diagnostic.candidate,
+                        typeContext,
+                    ),
                     false,
-                    session // not isMismatchDueToNullability
+                    session, // not isMismatchDueToNullability
                 )
             }
 
@@ -596,7 +596,12 @@ private fun diagnosticForArgumentTypeMismatch(
     return when {
         anonymousFunctionIfReturnExpression != null ->
             FirErrors.RETURN_TYPE_MISMATCH.createOn(
-                source, expectedType, actualType, anonymousFunctionIfReturnExpression, isMismatchDueToNullability, session
+                source,
+                expectedType,
+                actualType,
+                anonymousFunctionIfReturnExpression,
+                isMismatchDueToNullability,
+                session,
             )
         expectedType is ConeCapturedType && expectedType.isBasedOnStarOrOut() && receiverType != null ->
             FirErrors.MEMBER_PROJECTED_OUT.createOn(
@@ -608,10 +613,10 @@ private fun diagnosticForArgumentTypeMismatch(
             )
         else -> FirErrors.ARGUMENT_TYPE_MISMATCH.createOn(
             source,
-            actualType,
             expectedType,
+            actualType,
             isMismatchDueToNullability,
-            session
+            session,
         )
     }
 }

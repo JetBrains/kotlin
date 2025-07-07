@@ -60,7 +60,7 @@ abstract class CommonCodeWithPlatformSymbolsITBase(
             // common source file is recompiled, and the incorrect overload resolution happens:
             buildAndFail(taskToExecute) {
                 assertTasksFailed(taskToExecute)
-                assertOutputContains("Return type mismatch: expected 'String', actual '${platformSourceSet}OnlyType'.")
+                assertOutputContains("Return type mismatch: expected 'String'; actual '${platformSourceSet}OnlyType'.")
             }
 
             // but changed code is valid for full compilation:

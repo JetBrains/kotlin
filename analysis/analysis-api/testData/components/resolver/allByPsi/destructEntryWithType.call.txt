@@ -173,7 +173,7 @@ KtAnnotationEntry(159,178): '@Anno(0 + constant)'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtConstructorCalleeExpression(160,164): 'Anno'
   KaErrorCallInfo:
@@ -209,7 +209,7 @@ KtConstructorCalleeExpression(160,164): 'Anno'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtTypeReference(160,164): 'Anno'
   null
@@ -220,7 +220,7 @@ KtUserType(160,164): 'Anno'
 KtNameReferenceExpression(160,164): 'Anno'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtValueArgumentList(164,178): '(0 + constant)'
   null
@@ -374,7 +374,7 @@ KtAnnotationEntry(184,203): '@Anno(1 + constant)'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtConstructorCalleeExpression(185,189): 'Anno'
   KaErrorCallInfo:
@@ -410,7 +410,7 @@ KtConstructorCalleeExpression(185,189): 'Anno'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtTypeReference(185,189): 'Anno'
   null
@@ -421,7 +421,7 @@ KtUserType(185,189): 'Anno'
 KtNameReferenceExpression(185,189): 'Anno'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtValueArgumentList(189,203): '(1 + constant)'
   null
@@ -575,7 +575,7 @@ KtAnnotationEntry(209,228): '@Anno(2 + constant)'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtConstructorCalleeExpression(210,214): 'Anno'
   KaErrorCallInfo:
@@ -611,7 +611,7 @@ KtConstructorCalleeExpression(210,214): 'Anno'
             callableId = null
         typeArgumentsMapping = {}
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtTypeReference(210,214): 'Anno'
   null
@@ -622,7 +622,7 @@ KtUserType(210,214): 'Anno'
 KtNameReferenceExpression(210,214): 'Anno'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: expected 'String'; actual 'Int'.>
 
 KtValueArgumentList(214,228): '(2 + constant)'
   null
