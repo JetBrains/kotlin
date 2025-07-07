@@ -211,7 +211,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @sample samples.time.Durations.parse
          */
         public fun parse(value: String): Duration = try {
-            parseDuration(value, strictIso = false)
+            parseDuration(value, strictIso = false)!!
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Invalid duration string format: '$value'.", e)
         }
@@ -232,7 +232,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @sample samples.time.Durations.parseIsoString
          */
         public fun parseIsoString(value: String): Duration = try {
-            parseDuration(value, strictIso = true)
+            parseDuration(value, strictIso = true)!!
         } catch (e: IllegalArgumentException) {
             throw IllegalArgumentException("Invalid ISO duration string format: '$value'.", e)
         }
@@ -248,11 +248,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *   @sample samples.time.Durations.parse
          */
-        public fun parseOrNull(value: String): Duration? = try {
+        public fun parseOrNull(value: String): Duration? =
             parseDuration(value, strictIso = false)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
 
         /**
          * Parses a string that represents a duration in restricted ISO-8601 composite representation
@@ -261,11 +258,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *
          * @sample samples.time.Durations.parseIsoString
          */
-        public fun parseIsoStringOrNull(value: String): Duration? = try {
+        public fun parseIsoStringOrNull(value: String): Duration? =
             parseDuration(value, strictIso = true)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
     }
 
     // arithmetic operators
@@ -902,7 +896,7 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 
-private fun parseDuration(value: String, strictIso: Boolean): Duration {
+private fun parseDuration(value: String, strictIso: Boolean): Duration? {
     var length = value.length
     if (length == 0) throw IllegalArgumentException("The string is empty")
     var index = 0
