@@ -1585,7 +1585,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NoValueForParameter : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NoValueForParameter::class
-        val violatedParameter: KaSymbol
+        val violatedParameter: Name
     }
 
     interface NamedParameterNotFound : KaFirDiagnostic<KtValueArgument> {

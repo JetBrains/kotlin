@@ -2218,7 +2218,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NO_VALUE_FOR_PARAMETER) { firDiagnostic ->
         NoValueForParameterImpl(
-            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

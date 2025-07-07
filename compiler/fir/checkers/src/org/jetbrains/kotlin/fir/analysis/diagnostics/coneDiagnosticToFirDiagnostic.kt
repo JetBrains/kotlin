@@ -460,11 +460,14 @@ private fun mapInapplicableCandidateError(
                 rootCause.function.symbol,
                 session
             )
-            is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
-                qualifiedAccessSource ?: source,
-                rootCause.valueParameter.symbol,
-                session
-            )
+            is NoValueForParameter -> {
+                val symbol = rootCause.valueParameter.symbol
+                FirErrors.NO_VALUE_FOR_PARAMETER.createOn(
+                    qualifiedAccessSource ?: source,
+                    symbol.resolvedReturnType.parameterName ?: symbol.name,
+                    session
+                )
+            }
 
             is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
                 rootCause.argument.source ?: source,
