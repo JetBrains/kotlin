@@ -47,9 +47,27 @@ public class FirStandaloneNormalAnalysisSourceModuleHasConflictingSignatureWithT
   }
 
   @Test
+  @TestMetadata("contextParametersDifferentOrder.kt")
+  public void testContextParametersDifferentOrder() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/contextParametersDifferentOrder.kt");
+  }
+
+  @Test
   @TestMetadata("differentFunctionNamesWithSameSignature.kt")
   public void testDifferentFunctionNamesWithSameSignature() {
     runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/differentFunctionNamesWithSameSignature.kt");
+  }
+
+  @Test
+  @TestMetadata("differentNumberOfContextParameters.kt")
+  public void testDifferentNumberOfContextParameters() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/differentNumberOfContextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("dynamicParameterJS.kt")
+  public void testDynamicParameterJS() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/dynamicParameterJS.kt");
   }
 
   @Test
@@ -77,9 +95,27 @@ public class FirStandaloneNormalAnalysisSourceModuleHasConflictingSignatureWithT
   }
 
   @Test
+  @TestMetadata("functionsWithTypeParametersJS.kt")
+  public void testFunctionsWithTypeParametersJS() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/functionsWithTypeParametersJS.kt");
+  }
+
+  @Test
+  @TestMetadata("functionsWithTypeParametersNative.kt")
+  public void testFunctionsWithTypeParametersNative() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/functionsWithTypeParametersNative.kt");
+  }
+
+  @Test
   @TestMetadata("genericsWithDifferentBounds.kt")
   public void testGenericsWithDifferentBounds() {
     runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/genericsWithDifferentBounds.kt");
+  }
+
+  @Test
+  @TestMetadata("hiddenDeprecatedAndNonDeprecated.kt")
+  public void testHiddenDeprecatedAndNonDeprecated() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/hiddenDeprecatedAndNonDeprecated.kt");
   }
 
   @Test
@@ -113,9 +149,45 @@ public class FirStandaloneNormalAnalysisSourceModuleHasConflictingSignatureWithT
   }
 
   @Test
+  @TestMetadata("suspendAndNonSuspendContextParameter.kt")
+  public void testSuspendAndNonSuspendContextParameter() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/suspendAndNonSuspendContextParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("suspendAndNonSuspendFunctions.kt")
+  public void testSuspendAndNonSuspendFunctions() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/suspendAndNonSuspendFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("suspendAndNonSuspendLambdaParameter.kt")
+  public void testSuspendAndNonSuspendLambdaParameter() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/suspendAndNonSuspendLambdaParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("typealiasedContextParameter.kt")
+  public void testTypealiasedContextParameter() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/typealiasedContextParameter.kt");
+  }
+
+  @Test
   @TestMetadata("varargParameterAndArrayParameter.kt")
   public void testVarargParameterAndArrayParameter() {
     runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/varargParameterAndArrayParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameterAndArrayParameterJS.kt")
+  public void testVarargParameterAndArrayParameterJS() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/varargParameterAndArrayParameterJS.kt");
+  }
+
+  @Test
+  @TestMetadata("varargParameterAndArrayParameterNative.kt")
+  public void testVarargParameterAndArrayParameterNative() {
+    runTest("analysis/analysis-api/testData/components/relationProvider/hasConflictingSignatureWith/varargParameterAndArrayParameterNative.kt");
   }
 
   @Test
