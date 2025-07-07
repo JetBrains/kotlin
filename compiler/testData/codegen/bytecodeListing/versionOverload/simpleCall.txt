@@ -1,4 +1,19 @@
 @kotlin.Metadata
+public final class SimpleCallKt {
+    // source: 'simpleCall.kt'
+    public synthetic static method foo2$default(p0: int, p1: java.lang.String, p2: java.lang.String, p3: float, p4: kotlin.jvm.functions.Function0, p5: int, p6: java.lang.Object): void
+    public synthetic deprecated static method foo2$default(p0: int, p1: java.lang.String, p2: java.lang.String, p3: kotlin.jvm.functions.Function0, p4: int, p5: java.lang.Object): void
+    public final static method foo2(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo2(p0: int, p1: java.lang.String, p2: java.lang.String, p3: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo2(p0: int, p1: kotlin.jvm.functions.Function0): void
+    public synthetic static method mid2$default(p0: int, p1: int, p2: java.lang.String, p3: float, p4: kotlin.jvm.functions.Function0, p5: int, p6: java.lang.Object): void
+    public synthetic deprecated static method mid2$default(p0: int, p1: java.lang.String, p2: float, p3: kotlin.jvm.functions.Function0, p4: int, p5: java.lang.Object): void
+    public final static method mid2(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid2(p0: int, p1: java.lang.String, p2: float, p3: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid2(p0: int, p1: kotlin.jvm.functions.Function0): void
+}
+
+@kotlin.Metadata
 public final class X {
     // source: 'simpleCall.kt'
     public method <init>(): void
