@@ -1,3 +1,4 @@
+// INCONSISTENT_DECLARATIONS
 package util
 
 class Foo {
