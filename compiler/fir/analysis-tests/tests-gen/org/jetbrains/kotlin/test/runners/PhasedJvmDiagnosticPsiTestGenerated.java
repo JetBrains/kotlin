@@ -53297,6 +53297,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("receiverShadowedSubtype.kt")
+      public void testReceiverShadowedSubtype() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowedSubtype.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");

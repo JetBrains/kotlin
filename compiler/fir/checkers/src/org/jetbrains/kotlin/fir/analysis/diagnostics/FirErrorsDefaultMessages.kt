@@ -3151,7 +3151,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER,
-            "''{0}'' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using 'this' or 'contextOf'.",
+            "''{0}'' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using ''this'' or ''contextOf''.",
             SYMBOL
         )
 
