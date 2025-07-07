@@ -52,7 +52,6 @@ class IrCapturedType(
     typeParameter: IrTypeParameter,
     override val nullability: SimpleTypeNullability,
     override val annotations: List<IrConstructorCall>,
-    override val abbreviation: IrTypeAbbreviation?,
 ) : IrSimpleType(), CapturedTypeMarker {
     class Constructor(val argument: IrTypeArgument, val typeParameter: IrTypeParameter) : CapturedTypeConstructorMarker {
         var superTypes: List<IrType> = emptyList()

@@ -150,8 +150,7 @@ abstract class AbstractComposeLowering(
                 classifier,
                 isMarkedNullable(),
                 List(arguments.size) { IrStarProjectionImpl },
-                annotations,
-                abbreviation
+                annotations
             )
 
             else -> this

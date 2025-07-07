@@ -148,8 +148,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
                 newClassifier,
                 type.nullability,
                 newArguments,
-                type.annotations,
-                type.abbreviation
+                type.annotations
             )
         }
 

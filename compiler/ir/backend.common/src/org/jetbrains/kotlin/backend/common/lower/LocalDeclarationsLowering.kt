@@ -731,7 +731,6 @@ open class LocalDeclarationsLowering(
                     type.nullability,
                     newTypeArguments,
                     type.annotations,
-                    type.abbreviation,
                 )
                 return super.remapTypeOrNull(correctedType)
             }
