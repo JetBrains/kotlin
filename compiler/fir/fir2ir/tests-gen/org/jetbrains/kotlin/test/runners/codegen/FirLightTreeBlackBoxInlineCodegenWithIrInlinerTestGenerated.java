@@ -7294,6 +7294,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("usePrivateMethodFromInternalInlineFakeOverride.kt")
+        public void testUsePrivateMethodFromInternalInlineFakeOverride() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInlineFakeOverride.kt");
+        }
+
+        @Test
         @TestMetadata("usePrivateMethodFromLocalObjectInsideInternalInline.kt")
         public void testUsePrivateMethodFromLocalObjectInsideInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectInsideInternalInline.kt");
