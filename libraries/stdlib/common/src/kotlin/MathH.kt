@@ -343,8 +343,11 @@ public expect fun abs(x: Double): Double
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
  *
- * Special case:
+ * Special cases:
  *   - `sign(NaN)` is `NaN`
+ *   - `sign(-0.0)` is `-0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.signFun
  */
 @SinceKotlin("1.2")
 public expect fun sign(x: Double): Double
@@ -423,8 +426,11 @@ public expect val Double.absoluteValue: Double
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
  *
- * Special case:
+ * Special cases:
  *   - `NaN.sign` is `NaN`
+ *   - `(-0.0).sign` is `-0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.sign
  */
 @SinceKotlin("1.2")
 public expect val Double.sign: Double
@@ -835,8 +841,11 @@ public expect fun abs(x: Float): Float
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
  *
- * Special case:
+ * Special cases:
  *   - `sign(NaN)` is `NaN`
+ *   - `sign(-0.0)` is `-0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.signFun
  */
 @SinceKotlin("1.2")
 public expect fun sign(x: Float): Float
@@ -917,8 +926,11 @@ public expect val Float.absoluteValue: Float
  *   - zero if the value is zero,
  *   - `1.0` if the value is positive
  *
- * Special case:
+ * Special cases:
  *   - `NaN.sign` is `NaN`
+ *   - `(-0.0).sign` is `-0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.sign
  */
 @SinceKotlin("1.2")
 public expect val Float.sign: Float

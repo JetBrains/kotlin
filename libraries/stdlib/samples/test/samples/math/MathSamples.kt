@@ -106,6 +106,32 @@ class MathSamples {
             // NaN could not be rounded to Long
             assertFailsWith<IllegalArgumentException> { Double.NaN.roundToLong() }
         }
+
+        @Sample
+        fun sign() {
+            assertPrints(3.14.sign, "1.0")
+            assertPrints((-3.14).sign, "-1.0")
+            assertPrints(0.0.sign, "0.0")
+            assertPrints(Double.POSITIVE_INFINITY.sign, "1.0")
+            assertPrints(Double.NEGATIVE_INFINITY.sign, "-1.0")
+
+            // Special cases
+            assertPrints(Double.NaN.sign, "NaN")
+            assertPrints((-0.0).sign, "-0.0")
+        }
+
+        @Sample
+        fun signFun() {
+            assertPrints(sign(3.14), "1.0")
+            assertPrints(sign(-3.14), "-1.0")
+            assertPrints(sign(0.0), "0.0")
+            assertPrints(sign(Double.POSITIVE_INFINITY), "1.0")
+            assertPrints(sign(Double.NEGATIVE_INFINITY), "-1.0")
+
+            // Special cases
+            assertPrints(sign(Double.NaN), "NaN")
+            assertPrints(sign(-0.0), "-0.0")
+        }
     }
 
     class Floats {
@@ -202,6 +228,32 @@ class MathSamples {
             assertTrue(Float.NEGATIVE_INFINITY.roundToLong() == Long.MIN_VALUE)
             // NaN could not be rounded to Long
             assertFailsWith<IllegalArgumentException> { Float.NaN.roundToLong() }
+        }
+
+        @Sample
+        fun sign() {
+            assertPrints(3.14f.sign, "1.0")
+            assertPrints((-3.14f).sign, "-1.0")
+            assertPrints(0.0f.sign, "0.0")
+            assertPrints(Float.POSITIVE_INFINITY.sign, "1.0")
+            assertPrints(Float.NEGATIVE_INFINITY.sign, "-1.0")
+
+            // Special cases
+            assertPrints(Float.NaN.sign, "NaN")
+            assertPrints((-0.0f).sign, "-0.0")
+        }
+
+        @Sample
+        fun signFun() {
+            assertPrints(sign(3.14f), "1.0")
+            assertPrints(sign(-3.14f), "-1.0")
+            assertPrints(sign(0.0f), "0.0")
+            assertPrints(sign(Float.POSITIVE_INFINITY), "1.0")
+            assertPrints(sign(Float.NEGATIVE_INFINITY), "-1.0")
+
+            // Special cases
+            assertPrints(sign(Float.NaN), "NaN")
+            assertPrints(sign(-0.0f), "-0.0")
         }
     }
 }
