@@ -103,6 +103,12 @@ public class LightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("localInsideInlineInsideLocal.kt")
+  public void testLocalInsideInlineInsideLocal() {
+    runTest("compiler/testData/diagnostics/nativeTests/localInsideInlineInsideLocal.kt");
+  }
+
+  @Test
   @TestMetadata("nativeProtectedFunCall.kt")
   public void testNativeProtectedFunCall() {
     runTest("compiler/testData/diagnostics/nativeTests/nativeProtectedFunCall.kt");

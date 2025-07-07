@@ -134,6 +134,12 @@ public class FirLightTreeJsOldFrontendDiagnosticsTestGenerated extends AbstractF
   }
 
   @Test
+  @TestMetadata("localInsideInlineInsideLocal.kt")
+  public void testLocalInsideInlineInsideLocal() {
+    runTest("compiler/testData/diagnostics/testsWithJsStdLib/localInsideInlineInsideLocal.kt");
+  }
+
+  @Test
   @TestMetadata("moreThanOneOverriddenExternals.kt")
   public void testMoreThanOneOverriddenExternals() {
     runTest("compiler/testData/diagnostics/testsWithJsStdLib/moreThanOneOverriddenExternals.kt");
