@@ -1935,6 +1935,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING by warning<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
         val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE by error<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
         val NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY by error<KtDeclarationWithBody>(PositioningStrategy.DECLARATION_WITH_BODY)
+        val REDUNDANT_RETURN by warning<KtReturnExpression>(PositioningStrategy.RETURN_WITH_LABEL)
 
         val ANONYMOUS_INITIALIZER_IN_INTERFACE by error<KtAnonymousInitializer>(PositioningStrategy.DECLARATION_SIGNATURE)
     }

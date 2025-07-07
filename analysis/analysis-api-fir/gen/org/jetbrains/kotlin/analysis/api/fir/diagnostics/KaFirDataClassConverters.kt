@@ -5634,6 +5634,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.REDUNDANT_RETURN) { firDiagnostic ->
+        RedundantReturnImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE) { firDiagnostic ->
         AnonymousInitializerInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

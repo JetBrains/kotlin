@@ -3943,6 +3943,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NoReturnInFunctionWithBlockBody::class
     }
 
+    interface RedundantReturn : KaFirDiagnostic<KtReturnExpression> {
+        override val diagnosticClass get() = RedundantReturn::class
+    }
+
     interface AnonymousInitializerInInterface : KaFirDiagnostic<KtAnonymousInitializer> {
         override val diagnosticClass get() = AnonymousInitializerInInterface::class
     }

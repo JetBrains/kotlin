@@ -50,6 +50,13 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         }
 
         checkBuiltInSuspend(targetSymbol, source)
+
+        if (AllowReturnInExpressionBodyWithExplicitType.isEnabled() &&
+            targetSymbol.expressionBodyOrNull()?.statement.let { it is FirReturnExpression && it.result == expression } &&
+            targetSymbol.hasExplicitReturnType
+        ) {
+            reporter.reportOn(source, FirErrors.REDUNDANT_RETURN)
+        }
     }
 
     context(context: CheckerContext)
@@ -97,8 +104,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
         edgeCase: Boolean,
     ): KtDiagnosticFactory0? {
         // No expression body, all good
-        @OptIn(SymbolInternals::class)
-        if (targetSymbol.fir.body !is FirSingleExpressionBlock) return null
+        if (targetSymbol.expressionBodyOrNull() == null) return null
 
         val allowWithExplicitType = AllowReturnInExpressionBodyWithExplicitType.isEnabled()
 
@@ -116,6 +122,11 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKin
             edgeCase -> null
             else -> FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
         }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirFunctionSymbol<*>.expressionBodyOrNull(): FirSingleExpressionBlock? {
+        return fir.body as? FirSingleExpressionBlock
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

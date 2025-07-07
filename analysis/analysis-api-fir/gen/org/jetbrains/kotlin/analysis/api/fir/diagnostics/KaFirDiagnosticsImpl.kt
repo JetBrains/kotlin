@@ -4735,6 +4735,11 @@ internal class NoReturnInFunctionWithBlockBodyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclarationWithBody>(firDiagnostic, token), KaFirDiagnostic.NoReturnInFunctionWithBlockBody
 
+internal class RedundantReturnImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtReturnExpression>(firDiagnostic, token), KaFirDiagnostic.RedundantReturn
+
 internal class AnonymousInitializerInInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

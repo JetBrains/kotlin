@@ -955,6 +955,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING: KtDiagnosticFactory0 = KtDiagnosticFactory0("RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING", WARNING, SourceElementPositioningStrategies.RETURN_WITH_LABEL, KtReturnExpression::class, getRendererFactory())
     val RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE", ERROR, SourceElementPositioningStrategies.RETURN_WITH_LABEL, KtReturnExpression::class, getRendererFactory())
     val NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY: KtDiagnosticFactory0 = KtDiagnosticFactory0("NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY", ERROR, SourceElementPositioningStrategies.DECLARATION_WITH_BODY, KtDeclarationWithBody::class, getRendererFactory())
+    val REDUNDANT_RETURN: KtDiagnosticFactory0 = KtDiagnosticFactory0("REDUNDANT_RETURN", WARNING, SourceElementPositioningStrategies.RETURN_WITH_LABEL, KtReturnExpression::class, getRendererFactory())
     val ANONYMOUS_INITIALIZER_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANONYMOUS_INITIALIZER_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE, KtAnonymousInitializer::class, getRendererFactory())
 
     // Inline
