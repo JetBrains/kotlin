@@ -16,7 +16,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun case_1() {
     val fun_1 = fun(block: () -> Unit) {
-        <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!WRONG_INVOCATION_KIND!>callsInPlace(block, InvocationKind.EXACTLY_ONCE)<!> }
         return block()
     }
 

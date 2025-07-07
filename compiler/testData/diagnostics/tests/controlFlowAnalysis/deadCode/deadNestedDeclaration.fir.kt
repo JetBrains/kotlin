@@ -14,19 +14,19 @@ class Test1 {
 
 class Test2 {
     val x: String = throwException()
-    val o = <!UNREACHABLE_CODE!>{
+    val o = <!UNREACHABLE_CODE!>{<!>
         val a = 0
         val b = 0
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test3 {
     val x: String = throwException()
-    val o: String by <!UNREACHABLE_CODE!>lazy {
+    val o: String by <!UNREACHABLE_CODE!>lazy {<!>
         val a = "a"
         val b = 0
         a
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test4 {
@@ -47,10 +47,10 @@ class Test5 {
 
 class Test6 {
     val x: String = throwException()
-    val o = <!UNREACHABLE_CODE!>fun() {
+    val o = <!UNREACHABLE_CODE!>fun() {<!>
         val a = 0
         val b = 0
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test7 {
@@ -60,19 +60,19 @@ class Test7 {
             val a = 0
             val b = 0
         }
-        val a = fun() {
+        val a = fun() {<!>
             val a = 0
             val b = 0
-        }
-        val b: Int by <!UNREACHABLE_CODE!>lazy {
+        <!UNREACHABLE_CODE!>}
+        val b: Int by <!UNREACHABLE_CODE!>lazy {<!><!>
             val a = 0
             val b = 0
             b
-        }<!>
-        val c = {
+        <!UNREACHABLE_CODE!><!UNREACHABLE_CODE!>}<!>
+        val c = {<!>
             val a = 0
             val b = 0
-        }
+        <!UNREACHABLE_CODE!>}
     }<!>
 }
 
@@ -134,27 +134,27 @@ class Test10 {
     constructor(i: Int)<!UNREACHABLE_CODE!><!>{
         <!UNREACHABLE_CODE!>class B<!>
     }
-    val a = <!UNREACHABLE_CODE!>{
+    val a = <!UNREACHABLE_CODE!>{<!>
         class C
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 
-    val b = <!UNREACHABLE_CODE!>fun(){
+    val b = <!UNREACHABLE_CODE!>fun(){<!>
         class D
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 
-    val c: Int by <!UNREACHABLE_CODE!>lazy {
+    val c: Int by <!UNREACHABLE_CODE!>lazy {<!>
         class E
         1
-    }<!>
+    <!UNREACHABLE_CODE!>}<!>
 }
 
 class Test11 {
     val x: String = throwException()
 
     val a = <!UNREACHABLE_CODE!>object {
-        val b = {
+        val b = {<!>
             class A
-        }
+        <!UNREACHABLE_CODE!>}
     }<!>
 }
 

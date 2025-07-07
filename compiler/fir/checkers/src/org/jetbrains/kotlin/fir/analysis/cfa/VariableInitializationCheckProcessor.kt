@@ -170,8 +170,13 @@ abstract class VariableInitializationCheckProcessor {
         if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) return
 
         val info = getValue(node)
+        val isRevisited = info.values.any { it[symbol]?.canBeRevisited() == true }
+
+        // If the variable has an initializer, this is definitely a reassignment if revisited.
+        // Otherwise, prefer reporting captured or non-inline initialization before falling back
+        // to reporting reassignment.
         when {
-            info.values.any { it[symbol]?.canBeRevisited() == true } -> {
+            isRevisited && symbol.resolvedInitializer != null -> {
                 reportValReassignment(node, symbol)
             }
             scope != scopes[symbol] -> {
@@ -183,6 +188,9 @@ abstract class VariableInitializationCheckProcessor {
                 // If we try to initialize non-static final field there, we will get exception at
                 // runtime, since we can initialize such fields only inside constructors.
                 reportNonInlineMemberValInitialization(node, symbol)
+            }
+            isRevisited -> {
+                reportValReassignment(node, symbol)
             }
         }
     }

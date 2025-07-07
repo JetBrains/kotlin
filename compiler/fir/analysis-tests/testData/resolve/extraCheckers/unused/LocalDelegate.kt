@@ -18,7 +18,7 @@ fun test0() {
 fun test1() {
     var bool by delegate(true)
     use(bool)
-    invokeLater { <!ASSIGNED_VALUE_IS_NEVER_READ!>bool<!> = !bool }
+    invokeLater { bool = !bool }
 }
 
 fun test2() {
@@ -29,7 +29,7 @@ fun test2() {
 
 fun test3() {
     var bool by delegate(true)
-    invokeLater { <!ASSIGNED_VALUE_IS_NEVER_READ!>bool<!> = !bool }
+    invokeLater { bool = !bool }
 }
 
 fun test4() {
