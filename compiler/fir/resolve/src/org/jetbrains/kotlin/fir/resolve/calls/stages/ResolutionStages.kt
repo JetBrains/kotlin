@@ -376,11 +376,7 @@ object TypeVariablesInExplicitReceivers : ResolutionStage() {
     }
 }
 
-/**
- * See https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-dsl-marker/ for more details and
- * /compiler/testData/diagnostics/tests/resolve/dslMarker for the test files.
- */
-object CheckDslScopeViolation : ResolutionStage() {
+abstract class CheckShadowedImplicits(val checkContextParameters: Boolean) : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
     override suspend fun check(candidate: Candidate) {
         fun check(atom: ConeResolutionAtom) {
@@ -389,7 +385,9 @@ object CheckDslScopeViolation : ResolutionStage() {
 
         candidate.dispatchReceiver?.let(::check)
         candidate.chosenExtensionReceiver?.let(::check)
-        candidate.contextArguments?.forEach(::check)
+        if (checkContextParameters) {
+            candidate.contextArguments?.forEach(::check)
+        }
 
         // For value of builtin functional type with implicit extension receiver, the receiver is passed as the first argument rather than
         // an extension receiver of the `invoke` call. Hence, we need to specially handle this case.
@@ -419,25 +417,19 @@ object CheckDslScopeViolation : ResolutionStage() {
         // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
         // implicit `this` expression passed as the first argument.
         if (candidate.callInfo.isImplicitInvoke) {
-            candidate.argumentMapping.keys.forEach(::check)
+            if (checkContextParameters) {
+                candidate.argumentMapping.keys.forEach(::check)
+            } else {
+                candidate.arguments.drop(candidate.expectedContextParameterCountForInvoke ?: 0).forEach(::check)
+            }
         }
     }
 
-    /**
-     * Checks whether the implicit receiver (represented as an object of type `T`) violates DSL scope rules.
-     */
     context(sink: CheckerSink, context: ResolutionContext)
     private fun checkImpl(receiverValueToCheck: ConeResolutionAtom, candidate: Candidate) {
         val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.unwrapSmartcastExpression().implicitlyReferencedSymbolOrNull() ?: return
-        val dslMarkers =
-            getDslMarkersOfImplicitValue(
-                boundSymbolOfReceiverToCheck,
-                receiverValueToCheck.expression.resolvedType
-            ).ifEmpty { return }
-
         // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
         val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
-
         val memberOwnerOfReceiverToCheck = boundSymbolOfReceiverToCheck.containingDeclarationIfParameter()
 
         // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.
@@ -447,6 +439,39 @@ object CheckDslScopeViolation : ResolutionStage() {
             implicitValues.dropWhile {
                 memberOwnerOfReceiverToCheck != it.boundSymbol.containingDeclarationIfParameter()
             }.ifEmpty { return }
+
+        checkImpl(receiverValueToCheck, candidate, boundSymbolOfReceiverToCheck, closerOrOnTheSameLevelImplicitValues)
+    }
+
+    context(sink: CheckerSink, context: ResolutionContext)
+    abstract fun checkImpl(
+        receiverValueToCheck: ConeResolutionAtom,
+        candidate: Candidate,
+        boundSymbolOfReceiverToCheck: FirBasedSymbol<*>,
+        closerOrOnTheSameLevelImplicitValues: List<ImplicitValue<*>>
+    )
+}
+
+/**
+ * See https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-dsl-marker/ for more details and
+ * /compiler/testData/diagnostics/tests/resolve/dslMarker for the test files.
+ */
+object CheckDslScopeViolation : CheckShadowedImplicits(checkContextParameters = true) {
+    /**
+     * Checks whether the implicit receiver (represented as an object of type `T`) violates DSL scope rules.
+     */
+    context(sink: CheckerSink, context: ResolutionContext)
+    override fun checkImpl(
+        receiverValueToCheck: ConeResolutionAtom,
+        candidate: Candidate,
+        boundSymbolOfReceiverToCheck: FirBasedSymbol<*>,
+        closerOrOnTheSameLevelImplicitValues: List<ImplicitValue<*>>
+    ) {
+        val dslMarkers =
+            getDslMarkersOfImplicitValue(
+                boundSymbolOfReceiverToCheck,
+                receiverValueToCheck.expression.resolvedType
+            ).ifEmpty { return }
 
         if (closerOrOnTheSameLevelImplicitValues.any {
                 !it.isSameImplicitReceiverInstance(receiverValueToCheck.expression)
@@ -552,47 +577,38 @@ object CheckDslScopeViolation : ResolutionStage() {
     }
 }
 
-object CheckReceiverShadowedByContextParameter : ResolutionStage() {
+object CheckReceiverShadowedByContextParameter : CheckShadowedImplicits(checkContextParameters = false) {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) {
-        fun check(atom: ConeResolutionAtom) {
-            checkImpl(atom, candidate)
+    override fun checkImpl(
+        receiverValueToCheck: ConeResolutionAtom,
+        candidate: Candidate,
+        boundSymbolOfReceiverToCheck: FirBasedSymbol<*>,
+        closerOrOnTheSameLevelImplicitValues: List<ImplicitValue<*>>
+    ) {
+        val closerOrOnTheSameLevelContextParameters =
+            closerOrOnTheSameLevelImplicitValues.filterIsInstance<ImplicitContextParameterValue>().ifEmpty { return }
+        val potentialReceiverTypes =
+            computePotentialReceiverTypes(candidate, boundSymbolOfReceiverToCheck).ifEmpty { return }
+
+        val closerButNotSame = closerOrOnTheSameLevelContextParameters.any { implicitValue ->
+            !implicitValue.isSameImplicitReceiverInstance(receiverValueToCheck.expression) &&
+                    potentialReceiverTypes.any { candidate.system.isSubtypeConstraintCompatible(implicitValue.type, it) }
         }
-
-        candidate.dispatchReceiver?.let(::check)
-        candidate.chosenExtensionReceiver?.let(::check)
-
-        if (candidate.callInfo.isImplicitInvoke) {
-            candidate.arguments.drop(candidate.expectedContextParameterCountForInvoke ?: 0).forEach(::check)
+        if (closerButNotSame) {
+            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol))
         }
     }
 
-    context(sink: CheckerSink, context: ResolutionContext)
-    private fun checkImpl(receiverValueToCheck: ConeResolutionAtom, candidate: Candidate) {
-        val boundSymbolOfReceiverToCheck = receiverValueToCheck.expression.unwrapSmartcastExpression().implicitlyReferencedSymbolOrNull() ?: return
+    context(context: ResolutionContext)
+    fun computePotentialReceiverTypes(candidate: Candidate, boundSymbolOfReceiverToCheck: FirBasedSymbol<*>): List<ConeClassLikeType> {
         val boundReceiverType =
             (boundSymbolOfReceiverToCheck as? FirReceiverParameterSymbol)?.resolvedType
                 ?: (boundSymbolOfReceiverToCheck as? FirValueParameterSymbol)?.resolvedReturnType
-                ?: return
-        // Values are sorted in a quite reversed order, so the first element is the furthest in the scope tower
-        val implicitValues = context.bodyResolveContext.implicitValueStorage.implicitValues
-        val memberOwnerOfReceiverToCheck = boundSymbolOfReceiverToCheck.containingDeclarationIfParameter()
-
-
-        // Drop all the receivers/values that in the scope tower stay after ones introduced with `boundSymbolOfReceiverToCheck`.
-        // So from "[irrelevantValue1, .., irrelevantValue2, firstValueBoundToSymbol, ...]" we would leave a sub-list
-        // starting from `firstValueBoundToSymbol`
-        val closerOrOnTheSameLevelImplicitValues =
-            implicitValues.dropWhile {
-                memberOwnerOfReceiverToCheck != it.boundSymbol.containingDeclarationIfParameter()
-            }.filterIsInstance<ImplicitContextParameterValue>().ifEmpty { return }
-
-        val closerButNotSame = closerOrOnTheSameLevelImplicitValues.filter {
-            !it.isSameImplicitReceiverInstance(receiverValueToCheck.expression) && it.type.isSubtypeOf(boundReceiverType, context.session)
-        }
-        if (closerButNotSame.isNotEmpty()) {
-            sink.reportDiagnostic(ReceiverShadowedByContextParameter(candidate.symbol))
-        }
+                ?: return emptyList()
+        val original = (candidate.symbol as? FirCallableSymbol<*>)?.originalOrSelf()
+        return listOfNotNull(original?.dispatchReceiverType, original?.resolvedReceiverType)
+            .mapNotNull { it.upperBoundIfFlexible().toClassSymbol(context.session)?.constructStarProjectedType() }
+            .filter { candidate.system.isSubtypeConstraintCompatible(boundReceiverType, it) }
     }
 }
 

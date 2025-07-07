@@ -48,6 +48,7 @@ fun usageWithExtensionOutsideClass(): String {
     }
 }
 
+@Suppress("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER")
 fun usageWithExtensionAndContextOutsideClass(): String {
     var temp = ""
     with(A("d ")) {
