@@ -942,10 +942,15 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 val dotIndex = component.indexOf('.')
                 if (unit == DurationUnit.SECONDS && dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
-                    result += parseOverLongIsoComponent(whole, throwExceptionOnParsingError)?.toDuration(unit) ?: return null
-                    result += component.substring(dotIndex)
-                        .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
-                        .toDuration(unit)
+                    result = result.plus(
+                        parseOverLongIsoComponent(whole, throwExceptionOnParsingError)?.toDuration(unit) ?: return null,
+                        throwExceptionOnParsingError
+                    )?.plus(
+                        component.substring(dotIndex)
+                            .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
+                            .toDuration(unit),
+                        throwExceptionOnParsingError
+                    ) ?: return null
                 } else {
                     result = result.plus(
                         parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null,
@@ -985,15 +990,23 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 val dotIndex = component.indexOf('.')
                 if (dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
-                    result += (if (throwExceptionOnParsingError) whole.toLong() else (whole.toLongOrNull() ?: return null))
-                        .toDuration(unit)
-                    result += component.substring(dotIndex)
-                        .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
-                        .toDuration(unit)
+                    result = result.plus(
+                        (if (throwExceptionOnParsingError) whole.toLong() else (whole.toLongOrNull() ?: return null))
+                            .toDuration(unit),
+                        throwExceptionOnParsingError
+                    )?.plus(
+                        component.substring(dotIndex)
+                            .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
+                            .toDuration(unit),
+                        throwExceptionOnParsingError
+                    ) ?: return null
                     if (index < length) return throwExceptionOrNull("Fractional component must be last")
                 } else {
-                    result += (if (throwExceptionOnParsingError) component.toLong() else (component.toLongOrNull() ?: return null))
-                        .toDuration(unit)
+                    result = result.plus(
+                        (if (throwExceptionOnParsingError) component.toLong() else (component.toLongOrNull() ?: return null))
+                            .toDuration(unit),
+                        throwExceptionOnParsingError
+                    ) ?: return null
                 }
             }
         }
