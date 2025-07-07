@@ -7,6 +7,11 @@ val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumen
 tasks.withType<Test>().names.forEach { taskName ->
     tasks.named<Test>(taskName) {
         val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
+        val toolchainPath = testInputsCheck.isNative
+            .filter { it }
+            .flatMap {
+                project.providers.of(XcodeToolchainValueSource::class.java) {}
+            }
 
         // Disable checks on windows until we fix KTI-2322
         if (!disableInputsCheck && !OperatingSystem.current().isWindows) {
@@ -149,10 +154,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                                             listOf(
                                                 """permission java.io.FilePermission "/bin/bash", "execute";""",
                                                 """permission java.io.FilePermission "/usr/bin/xcrun", "execute";""",
-                                                """permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool", "execute";""",
-                                                """permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang", "read";""",
-                                                """permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld", "execute";""",
-                                                """permission java.io.FilePermission "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil", "execute";""",
+                                                """permission java.io.FilePermission "${toolchainPath.get()}/-", "read,execute";""",
                                             )
                                         )
                                     }
