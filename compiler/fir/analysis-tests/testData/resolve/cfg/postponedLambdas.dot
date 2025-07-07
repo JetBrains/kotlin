@@ -70,6 +70,7 @@ digraph postponedLambdas_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
+    17 -> {13} [color=green style=dashed];
     18 -> {19};
     19 -> {21};
     20 -> {21} [label="Postponed"];

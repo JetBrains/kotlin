@@ -212,6 +212,7 @@ digraph lambdas_kt {
     61 -> {62};
     62 -> {63};
     63 -> {64};
+    64 -> {55} [color=green style=dashed];
     65 -> {67};
     66 -> {67} [label="Postponed"];
     67 -> {68};

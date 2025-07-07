@@ -581,6 +581,7 @@ digraph smartCastInCatch_fir_kt {
     192 -> {193};
     192 -> {195} [color=red];
     193 -> {194};
+    194 -> {189} [color=green style=dashed];
     195 -> {196};
     196 -> {197};
     197 -> {198};

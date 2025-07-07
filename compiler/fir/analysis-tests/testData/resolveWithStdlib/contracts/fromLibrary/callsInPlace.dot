@@ -566,6 +566,7 @@ digraph callsInPlace_kt {
     179 -> {180};
     180 -> {181};
     181 -> {182};
+    182 -> {178} [color=green style=dashed];
     183 -> {184};
     184 -> {186};
     185 -> {186} [label="Postponed"];

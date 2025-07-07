@@ -630,6 +630,7 @@ digraph returns_kt {
     218 -> {219};
     219 -> {220};
     220 -> {221};
+    221 -> {215} [color=green style=dashed];
     222 -> {223};
     223 -> {225};
     224 -> {225} [label="Postponed"];

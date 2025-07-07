@@ -82,6 +82,7 @@ digraph lambdaAsReturnOfLambda_kt {
     17 -> {18} [style=dotted];
     18 -> {19} [style=dotted];
     19 -> {20} [style=dotted];
+    20 -> {5} [color=green style=dashed];
     21 -> {22};
     22 -> {24};
     23 -> {24} [label="Postponed"];
