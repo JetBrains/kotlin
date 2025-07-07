@@ -10,7 +10,6 @@ internal fun test(state: State) {
         "NOT_YET_SUPPORTED_IN_INLINE", // K1/JVM-only error
     )
     inline fun test3() {
-        @Suppress("NOT_YET_SUPPORTED_IN_INLINE") // K2/ANY error
         inline fun test2() {
             inline fun test1() {
                 loop@ for (i in 1..10) {

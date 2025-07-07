@@ -10,7 +10,6 @@ class State() {
 
 internal fun test(state: State) {
     inline fun test3() {
-        @Suppress("NOT_YET_SUPPORTED_IN_INLINE")
         inline fun test2() {
             inline fun test1() {
                 loop@ for (i in 1..10) {
