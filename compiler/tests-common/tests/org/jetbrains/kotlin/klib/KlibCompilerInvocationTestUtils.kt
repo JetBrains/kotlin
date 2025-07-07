@@ -107,15 +107,12 @@ object KlibCompilerInvocationTestUtils {
     }
 
     fun <BA : BinaryArtifact> runTest(
-        testDir: File,
+        testStructure: TestStructure,
         testConfiguration: TestConfiguration,
-        testStructureExtractor: TestStructureExtractor,
         artifactBuilder: ArtifactBuilder<BA>,
         binaryRunner: BinaryRunner<BA>,
         compilerEditionChange: KlibCompilerChangeScenario,
     ) {
-        val testStructure = testStructureExtractor.extractTestStructure(testDataPath = testDir)
-
         if (testConfiguration.isIgnoredTest(testStructure.projectInfo)) {
             return testConfiguration.onIgnoredTest() // Ignore muted tests.
         }

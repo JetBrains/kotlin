@@ -22,21 +22,18 @@ abstract class AbstractJsPartialLinkageTestCase(compilerType: CompilerType) : Ab
             buildDir = buildDir,
             compilerType = compilerType,
         )
-        val testStructureExtractor = JsPartialLinkageTestStructureExtractor(buildDir)
-        val artifactBuilder = JsCompilerInvocationTestArtifactBuilder(configuration)
 
         KlibCompilerInvocationTestUtils.runTest(
-            testDir = File(testDir).absoluteFile,
+            testStructure = JsPartialLinkageTestStructureExtractor(buildDir).extractTestStructure(File(testDir).absoluteFile),
             testConfiguration = configuration,
-            testStructureExtractor = testStructureExtractor,
-            artifactBuilder = artifactBuilder,
+            artifactBuilder = JsCompilerInvocationTestArtifactBuilder(configuration),
             binaryRunner = JsCompilerInvocationTestBinaryRunner,
             compilerEditionChange = KlibCompilerChangeScenario.NoChange,
         )
     }
 }
 
-internal class JsPartialLinkageTestStructureExtractor(
+private class JsPartialLinkageTestStructureExtractor(
     override val buildDir: File,
 ) : PartialLinkageTestStructureExtractor() {
     override val testModeConstructorParameters = mapOf("isJs" to "true")
