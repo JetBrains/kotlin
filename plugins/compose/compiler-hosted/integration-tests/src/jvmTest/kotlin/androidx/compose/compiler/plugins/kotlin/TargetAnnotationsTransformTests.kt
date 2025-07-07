@@ -314,6 +314,7 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """,
         additionalPaths = listOf(
             Classpath.composeUiJar(),
+            Classpath.composeUiUnitJar(),
             Classpath.composeUiGraphicsJar(),
             Classpath.composeUiTextJar(),
             Classpath.composeFoundationTextJar()

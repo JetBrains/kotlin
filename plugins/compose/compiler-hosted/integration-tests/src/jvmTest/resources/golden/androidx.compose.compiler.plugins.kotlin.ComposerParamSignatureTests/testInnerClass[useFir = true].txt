@@ -19,7 +19,8 @@ class C {
 // ------------------------------------------
 
 public abstract interface A {
-  public abstract b()V
+  public default b()V
+  public static synthetic access%b%jd(LA;)V
   public final static INNERCLASS A%DefaultImpls A DefaultImpls
 }
 public final class A%DefaultImpls {
