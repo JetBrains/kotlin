@@ -993,13 +993,11 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 val dotIndex = component.indexOf('.')
                 if (dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
-                    try {
-                        result += whole.toLong().toDuration(unit)
-                        result += component.substring(dotIndex).toDouble().toDuration(unit)
-                    } catch (e: NumberFormatException) {
-                        if (throwExceptionOnParsingError) throw e
-                        return null
-                    }
+                    result += (if (throwExceptionOnParsingError) whole.toLong() else (whole.toLongOrNull() ?: return null))
+                        .toDuration(unit)
+                    result += component.substring(dotIndex)
+                        .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return null) }
+                        .toDuration(unit)
                     if (index < length) return throwExceptionOrNull("Fractional component must be last")
                 } else {
                     result += (if (throwExceptionOnParsingError) component.toLong() else (component.toLongOrNull() ?: return null))
