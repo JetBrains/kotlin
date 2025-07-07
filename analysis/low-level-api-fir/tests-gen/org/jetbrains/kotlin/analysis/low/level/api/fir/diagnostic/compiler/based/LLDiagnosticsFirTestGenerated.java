@@ -2018,6 +2018,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("receiverShadowed.kt")
+      public void testReceiverShadowed() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowed.kt");
+      }
+
+      @Test
       @TestMetadata("smoke.kt")
       public void testSmoke() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/smoke.kt");
