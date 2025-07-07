@@ -1625,9 +1625,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val COMPONENT_FUNCTION_AMBIGUITY by error<PsiElement> {
             parameter<Name>("functionWithAmbiguityName")
             parameter<Collection<Symbol>>("candidates")
+            parameter<ConeKotlinType>("destructingType")
         }
         val COMPONENT_FUNCTION_ON_NULLABLE by error<KtExpression> {
             parameter<Name>("componentFunctionName")
+            parameter<ConeKotlinType>("destructingType")
         }
         val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<Name>("componentFunctionName")

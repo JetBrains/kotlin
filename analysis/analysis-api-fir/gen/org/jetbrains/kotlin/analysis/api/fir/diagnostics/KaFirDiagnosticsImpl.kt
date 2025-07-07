@@ -4029,12 +4029,14 @@ internal class ComponentFunctionMissingImpl(
 internal class ComponentFunctionAmbiguityImpl(
     override val functionWithAmbiguityName: Name,
     override val candidates: List<KaSymbol>,
+    override val destructingType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionAmbiguity
 
 internal class ComponentFunctionOnNullableImpl(
     override val componentFunctionName: Name,
+    override val destructingType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionOnNullable

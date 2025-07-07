@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBIGUOUS_CALLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
@@ -2762,18 +2761,20 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             COMPONENT_FUNCTION_AMBIGUITY,
-            "Function ''{0}()'' is ambiguous for this expression: {1}.",
+            "Operator call ''{0}()'' is ambiguous for destructuring of type ''{2}''. Applicable candidates:{1}",
             TO_STRING,
-            AMBIGUOUS_CALLS
+            SYMBOLS_ON_NEXT_LINES,
+            RENDER_TYPE,
         )
         map.put(
             COMPONENT_FUNCTION_ON_NULLABLE,
-            "Non-nullable value required to call ''{0}()'' function of destructuring declaration initializer.",
-            TO_STRING
+            "Operator call ''{0}()'' cannot be applied to destructuring of nullable type ''{1}''.",
+            TO_STRING,
+            RENDER_TYPE,
         )
         map.put(
             COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
-            "Function ''{0}()'' returns ''{1}'', but ''{2}'' is expected.",
+            "Operator call ''{0}()'' returns ''{1}'', but ''{2}'' is expected.",
             TO_STRING,
             RENDER_TYPE,
             RENDER_TYPE

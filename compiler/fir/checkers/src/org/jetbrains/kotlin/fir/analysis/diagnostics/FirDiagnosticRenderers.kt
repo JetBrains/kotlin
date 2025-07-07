@@ -314,12 +314,6 @@ object FirDiagnosticRenderers {
     // TODO: properly implement
     val RENDER_TYPE_WITH_ANNOTATIONS = RENDER_TYPE
 
-    val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->
-        candidates.joinToString(separator = "\n", prefix = "\n") { symbol ->
-            SYMBOL.render(symbol)
-        }
-    }
-
     private const val WHEN_MISSING_LIMIT = 7
 
     val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->

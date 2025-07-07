@@ -3360,11 +3360,13 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ComponentFunctionAmbiguity::class
         val functionWithAmbiguityName: Name
         val candidates: List<KaSymbol>
+        val destructingType: KaType
     }
 
     interface ComponentFunctionOnNullable : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ComponentFunctionOnNullable::class
         val componentFunctionName: Name
+        val destructingType: KaType
     }
 
     interface ComponentFunctionReturnTypeMismatch : KaFirDiagnostic<KtExpression> {

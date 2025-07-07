@@ -151,7 +151,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source,
                     FirErrors.COMPONENT_FUNCTION_AMBIGUITY,
                     diagnostic.name,
-                    diagnostic.candidates.map { it.symbol })
+                    diagnostic.candidates.map { it.symbol },
+                    destructuringDeclarationType,
+                )
             }
             is ConeAmbiguityError -> {
                 reporter.reportOn(
@@ -166,7 +168,8 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     reporter.reportOn(
                         source,
                         FirErrors.COMPONENT_FUNCTION_ON_NULLABLE,
-                        (diagnostic.candidate.symbol as FirNamedFunctionSymbol).callableId.callableName
+                        (diagnostic.candidate.symbol as FirNamedFunctionSymbol).callableId.callableName,
+                        destructuringDeclarationType
                     )
                 } else {
                     reportDefaultDiagnostics(diagnostic, componentCall)
