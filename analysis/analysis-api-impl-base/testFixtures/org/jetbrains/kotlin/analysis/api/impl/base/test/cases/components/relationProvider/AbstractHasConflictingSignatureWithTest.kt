@@ -18,20 +18,19 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractHasConflictingSignatureWithTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            copyAwareAnalyzeForTest(mainFile) { contextFile ->
-                val currentDeclaration = testServices.expressionMarkerProvider
-                    .getBottommostElementOfTypeAtCaret<KtFunction>(contextFile, "1")
+            val currentDeclaration = testServices.expressionMarkerProvider
+                .getBottommostElementOfTypeAtCaret<KtFunction>(mainFile, "1")
+            val otherDeclaration = testServices.expressionMarkerProvider
+                .getBottommostElementOfTypeAtCaret<KtFunction>(mainFile, "2")
 
-                val otherDeclaration = testServices.expressionMarkerProvider
-                    .getBottommostElementOfTypeAtCaret<KtFunction>(contextFile, "2")
-
+            copyAwareAnalyzeForTest(mainFile) { _ ->
                 val currentSymbol = currentDeclaration.symbol as KaFunctionSymbol
                 val otherSymbol = otherDeclaration.symbol as KaFunctionSymbol
 
-                val isOverloadable = currentSymbol.hasConflictingSignatureWith(otherSymbol)
+                val hasConflictingSignature = currentSymbol.hasConflictingSignatureWith(otherSymbol)
 
                 buildString {
-                    appendLine("IS_CONFLICTING: $isOverloadable")
+                    appendLine("ARE_CONFLICTING: $hasConflictingSignature")
                 }
             }
         }

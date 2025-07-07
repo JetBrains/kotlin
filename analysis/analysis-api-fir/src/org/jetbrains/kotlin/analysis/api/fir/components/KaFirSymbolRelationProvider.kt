@@ -26,17 +26,18 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.getImplementationStatus
-import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.BothWays
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -49,9 +50,9 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -461,13 +462,54 @@ internal class KaFirSymbolRelationProvider(
         }
 
     override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean {
+        val thisContainingModule = this.containingModule
+        val otherContainingModule = other.containingModule
+        if (thisContainingModule != otherContainingModule) {
+            errorWithAttachment(
+                "Expected symbols to be from the same module"
+            ) {
+                withKaModuleEntry("This declaration module", thisContainingModule)
+                withKaModuleEntry("Other declaration module", otherContainingModule)
+            }
+        }
+
+        val containingModule = this.containingModule
+
         val thisFirSymbol = this.firSymbol
         val otherFirSymbol = other.firSymbol
 
-        if (hasLowPriorityAnnotation(thisFirSymbol.resolvedAnnotationsWithClassIds) != hasLowPriorityAnnotation(otherFirSymbol.resolvedAnnotationsWithClassIds)) {
+        val thisHasLowPriority = hasLowPriorityAnnotation(thisFirSymbol.resolvedAnnotationsWithClassIds)
+        val otherHasLowPriority = hasLowPriorityAnnotation(otherFirSymbol.resolvedAnnotationsWithClassIds)
+        if (thisHasLowPriority != otherHasLowPriority) {
             return false
         }
 
-        return analysisSession.firSession.declarationOverloadabilityHelper.isConflicting(thisFirSymbol, otherFirSymbol, false)
+        if (!containingModule.targetPlatform.isJvm()) {
+            if (thisFirSymbol.typeParameterSymbols.isEmpty() != otherFirSymbol.typeParameterSymbols.isEmpty()) {
+                return false
+            }
+
+            val thisVarargParameterPosition = this.valueParameters.indexOfFirst { it.isVararg }
+            val otherVarargParameterPosition = other.valueParameters.indexOfFirst { it.isVararg }
+            if (thisVarargParameterPosition != otherVarargParameterPosition) {
+                return false
+            }
+        }
+
+        val overloadabilityHelper = analysisSession.firSession.declarationOverloadabilityHelper
+
+        return if (analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
+            return overloadabilityHelper.isConflicting(
+                thisFirSymbol,
+                otherFirSymbol,
+                ignoreContextParameters = true
+            ) && overloadabilityHelper.getContextParameterShadowing(thisFirSymbol, otherFirSymbol) == BothWays
+        } else {
+            overloadabilityHelper.isConflicting(
+                thisFirSymbol,
+                otherFirSymbol,
+                ignoreContextParameters = false
+            )
+        }
     }
 }

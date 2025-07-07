@@ -214,12 +214,12 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
     public val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
 
     /**
-     * Returns whether [this] declaration has a conflicting JVM signature with [other].
+     * Returns whether [this] declaration has a conflicting signature with [other].
      *
      * Note that it doesn't consider function names or their visibility, only their signatures.
      * In other words, it calculates whether two functions would conflict with each other when named equally and positioned in the same scope.
      *
-     * Example:
+     * Example for JVM platform:
      * ```kotlin
      * fun foo(vararg x: Int) {}
      *
@@ -227,6 +227,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * ```
      *
      * Two functions `foo` and `bar` have the same JVM signature (as vararg parameter is transformed into a regular `IntArray` parameter).
+     * However, these two functions can coexist on non-JVM platforms.
      *
      * ``kotlin
      * fun foo() {}
@@ -236,7 +237,10 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * }
      * ```
      *
-     * These two functions `foo` and `bar` also have conflicting signatures.
+     * These two functions `foo` and `bar` have signatures, which are conflicting on every platform.
+     *
+     * Both declarations must be from the same module; otherwise, an exception is thrown.
+     * It's required to properly handle various platform-specific signature checks.
      */
     @KaIdeApi
     public fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean
