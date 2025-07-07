@@ -3,33 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
-
 package org.jetbrains.kotlin.generators.kotlinpoet
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
-inline fun arrayTypeNameOf(typeParameter: TypeName) = Array::class.asTypeName().parameterizedBy(typeParameter)
-inline fun listTypeNameOf(typeParameter: TypeName) = List::class.asTypeName().parameterizedBy(typeParameter)
+fun arrayTypeNameOf(typeParameter: TypeName): ParameterizedTypeName = Array::class.asTypeName().parameterizedBy(typeParameter)
+fun listTypeNameOf(typeParameter: TypeName): ParameterizedTypeName = List::class.asTypeName().parameterizedBy(typeParameter)
 
-inline fun <reified T> arrayTypeNameOf() = Array::class.parameterizedBy(T::class)
-inline fun <reified T> listTypeNameOf() = List::class.parameterizedBy(T::class)
-
-inline fun TypeName.toNullable() = copy(nullable = true)
+inline fun <reified T> arrayTypeNameOf(): ParameterizedTypeName = Array::class.parameterizedBy(T::class)
+inline fun <reified T> listTypeNameOf(): ParameterizedTypeName = List::class.parameterizedBy(T::class)
 
 inline fun TypeSpec.Builder.function(name: String, funSpec: FunSpec.Builder.() -> Unit): TypeSpec.Builder = apply {
     addFunction(
         FunSpec.builder(name).apply(funSpec).build()
-    )
-}
-
-inline fun PropertySpec.Builder.setter(
-    parameterName: String,
-    funSpec: FunSpec.Builder.() -> Unit,
-): PropertySpec.Builder = apply {
-    setter(
-        FunSpec.setterBuilder().addParameter(parameterName, typeNameOf<Any>()).apply(funSpec).build()
     )
 }
 
@@ -65,4 +52,4 @@ inline fun <reified T : Annotation> FunSpec.Builder.annotation(
 
 
 inline fun FunSpec.Builder.annotation(typeName: ClassName, annotationSpec: AnnotationSpec.Builder.() -> Unit): FunSpec.Builder =
-addAnnotation(AnnotationSpec.builder(typeName).apply(annotationSpec).build())
+    addAnnotation(AnnotationSpec.builder(typeName).apply(annotationSpec).build())
