@@ -96,7 +96,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
@@ -372,21 +371,7 @@ open class IrFileSerializer(
         if (type.nullability != SimpleTypeNullability.NOT_SPECIFIED) {
             proto.setNullability(serializeNullability(type.nullability))
         }
-        type.abbreviation?.let { ta ->
-            proto.setAbbreviation(serializeIrTypeAbbreviation(ta))
-        }
         type.arguments.forEach {
-            proto.addArgument(serializeTypeArgument(it))
-        }
-        return proto.build()
-    }
-
-    private fun serializeIrTypeAbbreviation(typeAbbreviation: IrTypeAbbreviation): ProtoTypeAbbreviation {
-        val proto = ProtoTypeAbbreviation.newBuilder()
-            .addAllAnnotation(serializeAnnotations(typeAbbreviation.annotations))
-            .setTypeAlias(serializeIrSymbol(typeAbbreviation.typeAlias))
-            .setHasQuestionMark(typeAbbreviation.hasQuestionMark)
-        typeAbbreviation.arguments.forEach {
             proto.addArgument(serializeTypeArgument(it))
         }
         return proto.build()
@@ -430,8 +415,6 @@ open class IrFileSerializer(
      * - [IrTypeDeduplicationKey.annotations] is just a list of [IrConstructorCall]s that cannot be
      *   fully compared: The [IrConstructorCallImpl.equals] function resolves to [Any.equals], which
      *   compares only object references.
-     * - [IrTypeDeduplicationKey.abbreviation] is just another IR node: [IrTypeAbbreviation]. And it also
-     *   cannot be fully compared.
      *
      * However, [IrTypeDeduplicationKey] can be used as a good approximation to store lesser number of records
      * in [protoTypeMap] and overall speed-up the process of types serialization.
@@ -442,7 +425,6 @@ open class IrFileSerializer(
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentDeduplicationKey>?,
         val annotations: List<IrConstructorCall>,
-        val abbreviation: IrTypeAbbreviation?,
     )
 
     private data class IrTypeArgumentDeduplicationKey(
@@ -464,7 +446,6 @@ open class IrFileSerializer(
                 nullability = (type as? IrSimpleType)?.nullability,
                 arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentDeduplicationKey },
                 annotations = type.annotations,
-                abbreviation = (type as? IrSimpleType)?.abbreviation
             )
         }
 

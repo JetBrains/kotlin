@@ -91,7 +91,9 @@ message IrSimpleTypeLegacy {
   required int64 classifier = 2;
   required bool has_question_mark = 3;
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
-  optional IrTypeAbbreviation abbreviation = 5;
+
+  // Previously used fields:
+  //optional IrTypeAbbreviation abbreviation = 5;
 }
 
 enum IrSimpleTypeNullability {
@@ -105,14 +107,9 @@ message IrSimpleType {
   required int64 classifier = 2;
   optional IrSimpleTypeNullability nullability = 3 [default=NOT_SPECIFIED];
   repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
-  optional IrTypeAbbreviation abbreviation = 5;
-}
 
-message IrTypeAbbreviation {
-  repeated IrConstructorCall annotation = 1;
-  required int64 type_alias = 2;
-  required bool has_question_mark = 3;
-  repeated int64 argument = 4 [packed=true]; // 0 - STAR, otherwise [63..2 - IrType index | 1..0 - Variance]
+  // Previously used fields:
+  //optional IrTypeAbbreviation abbreviation = 5;
 }
 
 message IrDynamicType {

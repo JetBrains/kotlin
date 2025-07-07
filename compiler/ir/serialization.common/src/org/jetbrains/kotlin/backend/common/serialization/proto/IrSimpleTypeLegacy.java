@@ -92,19 +92,6 @@ public final class IrSimpleTypeLegacy extends
             input.popLimit(limit);
             break;
           }
-          case 42: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000004) == 0x00000004)) {
-              subBuilder = abbreviation_.toBuilder();
-            }
-            abbreviation_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(abbreviation_);
-              abbreviation_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000004;
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -245,27 +232,11 @@ public final class IrSimpleTypeLegacy extends
   }
   private int argumentMemoizedSerializedSize = -1;
 
-  public static final int ABBREVIATION_FIELD_NUMBER = 5;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation_;
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  public boolean hasAbbreviation() {
-    return ((bitField0_ & 0x00000004) == 0x00000004);
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation getAbbreviation() {
-    return abbreviation_;
-  }
-
   private void initFields() {
     annotation_ = java.util.Collections.emptyList();
     classifier_ = 0L;
     hasQuestionMark_ = false;
     argument_ = java.util.Collections.emptyList();
-    abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -283,12 +254,6 @@ public final class IrSimpleTypeLegacy extends
     }
     for (int i = 0; i < getAnnotationCount(); i++) {
       if (!getAnnotation(i).isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
-    if (hasAbbreviation()) {
-      if (!getAbbreviation().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -315,9 +280,6 @@ public final class IrSimpleTypeLegacy extends
     }
     for (int i = 0; i < argument_.size(); i++) {
       output.writeInt64NoTag(argument_.get(i));
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeMessage(5, abbreviation_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -353,10 +315,6 @@ public final class IrSimpleTypeLegacy extends
             .computeInt32SizeNoTag(dataSize);
       }
       argumentMemoizedSerializedSize = dataSize;
-    }
-    if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, abbreviation_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -460,8 +418,6 @@ public final class IrSimpleTypeLegacy extends
       bitField0_ = (bitField0_ & ~0x00000004);
       argument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
-      abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -503,10 +459,6 @@ public final class IrSimpleTypeLegacy extends
         bitField0_ = (bitField0_ & ~0x00000008);
       }
       result.argument_ = argument_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000004;
-      }
-      result.abbreviation_ = abbreviation_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -539,9 +491,6 @@ public final class IrSimpleTypeLegacy extends
         }
         
       }
-      if (other.hasAbbreviation()) {
-        mergeAbbreviation(other.getAbbreviation());
-      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -558,12 +507,6 @@ public final class IrSimpleTypeLegacy extends
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
-          
-          return false;
-        }
-      }
-      if (hasAbbreviation()) {
-        if (!getAbbreviation().isInitialized()) {
           
           return false;
         }
@@ -870,66 +813,6 @@ public final class IrSimpleTypeLegacy extends
       argument_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
       
-      return this;
-    }
-
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public boolean hasAbbreviation() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation getAbbreviation() {
-      return abbreviation_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public Builder setAbbreviation(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      abbreviation_ = value;
-
-      bitField0_ |= 0x00000010;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public Builder setAbbreviation(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.Builder builderForValue) {
-      abbreviation_ = builderForValue.build();
-
-      bitField0_ |= 0x00000010;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public Builder mergeAbbreviation(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation value) {
-      if (((bitField0_ & 0x00000010) == 0x00000010) &&
-          abbreviation_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance()) {
-        abbreviation_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.newBuilder(abbreviation_).mergeFrom(value).buildPartial();
-      } else {
-        abbreviation_ = value;
-      }
-
-      bitField0_ |= 0x00000010;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-     */
-    public Builder clearAbbreviation() {
-      abbreviation_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation.getDefaultInstance();
-
-      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
