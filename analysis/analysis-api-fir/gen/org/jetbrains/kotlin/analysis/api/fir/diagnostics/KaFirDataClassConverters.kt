@@ -5459,6 +5459,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER) { firDiagnostic ->
+        ReceiverShadowedByContextParameterImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.TOPLEVEL_TYPEALIASES_ONLY) { firDiagnostic ->
         ToplevelTypealiasesOnlyImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -1896,6 +1896,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DSL_SCOPE_VIOLATION by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirBasedSymbol<*>>("calleeSymbol")
         }
+        val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FirBasedSymbol<*>>("calleeSymbol")
+        }
     }
 
     val TYPE_ALIAS by object : DiagnosticGroup("Type alias") {
