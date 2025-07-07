@@ -58,7 +58,7 @@ internal constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): T {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         @Suppress("UNCHECKED_CAST") return storage.get(index) as T
     }
 
@@ -74,7 +74,7 @@ internal constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: T): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 

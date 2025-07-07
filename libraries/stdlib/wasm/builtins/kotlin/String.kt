@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.wasm.internal.*
-import kotlin.math.min
 
 /**
  * The `String` class represents character strings. All string literals in Kotlin programs, such as `"abc"`, are
@@ -39,7 +38,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {
-        rangeCheck(index, this.length)
+        if (index < 0 || index >= this.length) throwOOB()
         return chars.get(index)
     }
 

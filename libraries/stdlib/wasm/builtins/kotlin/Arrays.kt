@@ -59,7 +59,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Byte {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -75,7 +75,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Byte): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -143,7 +143,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Char {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -159,7 +159,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Char): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -227,7 +227,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Short {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -243,7 +243,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Short): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -311,7 +311,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Int {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -327,7 +327,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Int): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -395,7 +395,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Long {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -411,7 +411,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Long): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -479,7 +479,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Float {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -495,7 +495,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Float): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -563,7 +563,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Double {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index)
     }
 
@@ -579,7 +579,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Double): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value)
     }
 
@@ -647,7 +647,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun get(index: Int): Boolean {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         return storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
     }
 
@@ -663,7 +663,7 @@ public actual constructor(size: Int) {
      * where the behavior is unspecified.
      */
     public actual operator fun set(index: Int, value: Boolean): Unit {
-        rangeCheck(index, storage.len())
+        if (index < 0 || index >= storage.len()) throwOOB()
         storage.set(index, value.reinterpretAsByte())
     }
 
@@ -687,3 +687,8 @@ private class BooleanArrayIterator constructor(val array: BooleanArray) : Boolea
 @WasmNoOpCast
 private fun Boolean.reinterpretAsByte(): Byte =
     implementedAsIntrinsic
+
+
+internal fun throwOOB(): Nothing {
+    throw IndexOutOfBoundsException()
+}
