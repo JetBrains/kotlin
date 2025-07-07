@@ -33,7 +33,6 @@ data class FieldWithSymbol(
 
 private val additionalSymbolFields = listOf(
     FieldWithSymbol(classifierSymbol, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-    FieldWithSymbol(typeAliasSymbol, "typeAlias", SymbolFieldRole.REFERENCED, irTypeAbbreviationType)
 )
 
 private val Element.fieldsWithSymbols: List<FieldWithSymbol>

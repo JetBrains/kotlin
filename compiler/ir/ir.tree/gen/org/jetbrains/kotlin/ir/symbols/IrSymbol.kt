@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -263,7 +262,5 @@ interface IrLocalDelegatedPropertySymbol : IrDeclarationWithAccessorsSymbol, IrB
  * A symbol whose [owner] is [IrTypeAlias].
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol]
- *
- * @see IrTypeAbbreviation.typeAlias
  */
 interface IrTypeAliasSymbol : IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias>, TypeAliasSymbolMarker
