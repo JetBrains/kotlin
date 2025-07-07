@@ -119,8 +119,7 @@ class IrDeclarationDeserializer(
             symbol,
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
-            annotations,
-            null
+            annotations
         )
     }
 
@@ -135,8 +134,7 @@ class IrDeclarationDeserializer(
             symbol,
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
-            annotations,
-            null
+            annotations
         )
     }
 

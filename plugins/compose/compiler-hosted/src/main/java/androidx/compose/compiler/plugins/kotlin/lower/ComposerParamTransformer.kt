@@ -214,8 +214,7 @@ class ComposerParamTransformer(
                 }
                 add(type.arguments.last())
             },
-            annotations = type.annotations,
-            abbreviation = type.abbreviation
+            annotations = type.annotations
         )
 
         // Transform receiver arguments
