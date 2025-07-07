@@ -80,8 +80,6 @@ interface SymbolRemapper : DeclaredSymbolRemapper, ReferencedSymbolRemapper {
         override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnTargetSymbol = symbol
 
         override fun getReferencedValueParameter(symbol: IrValueParameterSymbol): IrValueSymbol = symbol
-
-        override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = symbol
     }
 
     companion object {

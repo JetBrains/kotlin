@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.mpp.TypeRefMarker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -79,7 +78,6 @@ abstract class IrSimpleType : IrType(), SimpleTypeMarker, TypeArgumentListMarker
      */
     abstract val nullability: SimpleTypeNullability
     abstract val arguments: List<IrTypeArgument>
-    abstract val abbreviation: IrTypeAbbreviation?
 
     override val variance: Variance
         get() = Variance.INVARIANT
@@ -98,10 +96,4 @@ interface IrStarProjection : IrTypeArgument
 interface IrTypeProjection : IrTypeArgument {
     val variance: Variance
     val type: IrType
-}
-
-interface IrTypeAbbreviation : IrAnnotationContainer {
-    val typeAlias: IrTypeAliasSymbol
-    val hasQuestionMark: Boolean
-    val arguments: List<IrTypeArgument>
 }

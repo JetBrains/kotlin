@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.ir.generator.model.symbol
 import org.jetbrains.kotlin.generators.tree.AbstractField.SymbolFieldRole
 import org.jetbrains.kotlin.generators.tree.ClassOrElementRef
 import org.jetbrains.kotlin.ir.generator.IrSymbolTree.classifierSymbol
-import org.jetbrains.kotlin.ir.generator.IrSymbolTree.typeAliasSymbol
 import org.jetbrains.kotlin.ir.generator.irSimpleTypeType
-import org.jetbrains.kotlin.ir.generator.irTypeAbbreviationType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -33,7 +31,6 @@ data class FieldWithSymbol(
 
 private val additionalSymbolFields = listOf(
     FieldWithSymbol(classifierSymbol, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-    FieldWithSymbol(typeAliasSymbol, "typeAlias", SymbolFieldRole.REFERENCED, irTypeAbbreviationType)
 )
 
 private val Element.fieldsWithSymbols: List<FieldWithSymbol>

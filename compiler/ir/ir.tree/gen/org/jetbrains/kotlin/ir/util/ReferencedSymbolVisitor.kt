@@ -76,7 +76,5 @@ interface ReferencedSymbolVisitor {
 
     fun visitReferencedValueParameter(container: IrElement, symbol: IrValueParameterSymbol) { visitReferencedSymbol(container, symbol) }
 
-    fun visitReferencedTypeAlias(container: IrElement, symbol: IrTypeAliasSymbol) { visitReferencedSymbol(container, symbol) }
-
     fun visitReferencedSymbol(container: IrElement, symbol: IrSymbol)
 }
