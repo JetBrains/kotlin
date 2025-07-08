@@ -45,6 +45,7 @@ dependencies {
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
+    interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(testFixtures(project(":kotlin-build-common")))
     nativeInteropRuntimeApi(kotlinStdlib())
