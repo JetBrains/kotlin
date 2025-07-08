@@ -214,6 +214,7 @@ private fun File.toRelativeStringOrNull(base: File): String? {
  * @throws FileAlreadyExistsException if the destination file already exists and [overwrite] argument is set to `false`.
  * @throws IOException if any errors occur while copying.
  */
+@IgnorableReturnValue
 public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File {
     if (!this.exists()) {
         throw NoSuchFileException(file = this, reason = "The source file doesn't exist.")

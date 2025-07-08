@@ -301,6 +301,7 @@ public abstract class Random {
 
         override fun nextFloat(): Float = defaultRandom.nextFloat()
 
+        @IgnorableReturnValue
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray =
