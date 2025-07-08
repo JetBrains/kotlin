@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.JsInlineFunctionResolver
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils
@@ -96,6 +98,8 @@ class JsIrBackendContext(
     override val irFactory: IrFactory = symbolTable.irFactory
 
     override var inVerbosePhase: Boolean = false
+
+    override val inlineResolver: InlineFunctionResolver = JsInlineFunctionResolver(this)
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false

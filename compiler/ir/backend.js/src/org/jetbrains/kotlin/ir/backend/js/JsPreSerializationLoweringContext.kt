@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.types.Variance
 
 class JsPreSerializationLoweringContext(
@@ -19,6 +21,7 @@ class JsPreSerializationLoweringContext(
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
+    override val irMangler: KotlinMangler.IrMangler = JsManglerIr
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns) }
 

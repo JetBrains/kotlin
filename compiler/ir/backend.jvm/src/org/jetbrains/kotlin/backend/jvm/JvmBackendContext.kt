@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -178,4 +179,6 @@ class JvmBackendContext(
         val newBinding = newFunction.parameters.map { remappedParameters[it] ?: RegularMapping(it) }.distinct()
         newFunction.parameterTemplateStructureOfThisNewMfvcBidingFunction = newBinding
     }
+
+    override val inlineResolver: InlineFunctionResolver = JvmInlineFunctionResolver(this)
 }

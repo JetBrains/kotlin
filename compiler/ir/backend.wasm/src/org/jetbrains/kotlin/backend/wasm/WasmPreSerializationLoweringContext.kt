@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 class WasmPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
+    override val irMangler: KotlinMangler.IrMangler = JsManglerIr
     override val symbols: WasmSymbols by lazy {
         WasmSymbols(irBuiltIns, configuration)
     }

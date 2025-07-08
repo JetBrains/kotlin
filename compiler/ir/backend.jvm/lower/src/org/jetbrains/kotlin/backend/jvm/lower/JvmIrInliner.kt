@@ -6,17 +6,13 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
+import org.jetbrains.kotlin.backend.jvm.JvmInlineFunctionResolver
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
-import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
-import org.jetbrains.kotlin.backend.common.InlineMode
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental
-import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
 
 @PhaseDescription(
     name = "FunctionInliningPhase",
@@ -38,11 +34,5 @@ class JvmIrInliner(context: JvmBackendContext) : FileLoweringPass {
         if (enabled) {
             inliner.lower(irFile)
         }
-    }
-}
-
-class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver() {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
-        return symbol.owner.resolveFakeOverrideOrSelf().takeIf { it.isInlineFunctionCall(context) }
     }
 }

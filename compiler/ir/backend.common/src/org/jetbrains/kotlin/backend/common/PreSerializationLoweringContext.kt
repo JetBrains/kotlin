@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 /**
  * This backend context is used in the first compilation stage. Namely, it is passed to lowerings
@@ -20,6 +21,11 @@ abstract class PreSerializationLoweringContext(
     override val configuration: CompilerConfiguration,
     val diagnosticReporter: DiagnosticReporter,
 ) : LoweringContext {
+    abstract val irMangler: KotlinMangler.IrMangler
+
+    override val inlineResolver: InlineFunctionResolver by lazy {
+        PreSerializationInlineFunctionResolver(this, irMangler)
+    }
 
     override val irFactory: IrFactory
         get() = IrFactoryImpl

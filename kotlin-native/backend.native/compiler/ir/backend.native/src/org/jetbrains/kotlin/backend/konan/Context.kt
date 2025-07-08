@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -63,6 +64,7 @@ internal class Context(
         ExternalDeclarationFileNameProvider(moduleDeserializerProvider)
     }
 
+    override val inlineResolver: InlineFunctionResolver = NativeInlineFunctionResolver(this)
     private val inlineFunctionDeserializers = ConcurrentHashMap<KonanPartialModuleDeserializer, InlineFunctionDeserializer>()
 
     fun getInlineFunctionDeserializer(function: IrFunction): InlineFunctionDeserializer {

@@ -37,6 +37,7 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irBuiltIns: IrBuiltIns
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
+    val inlineResolver: InlineFunctionResolver
 
     val allowExternalInlining: Boolean
         get() = false

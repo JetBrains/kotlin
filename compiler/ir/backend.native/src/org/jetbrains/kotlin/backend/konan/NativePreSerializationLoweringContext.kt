@@ -9,15 +9,18 @@ import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 
 class NativePreSerializationLoweringContext(
         irBuiltIns: IrBuiltIns,
         configuration: CompilerConfiguration,
         diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
+    override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
     private val konanSymbols = KonanSymbols(this, irBuiltIns, configuration)
 
     override val symbols: Symbols = konanSymbols
