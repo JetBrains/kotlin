@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
@@ -52,6 +53,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
             IrType::isInt to "intClass",
             IrType::isFloat to "floatClass",
             IrType::isDouble to "doubleClass",
+            { type: IrType -> type.isLong() && context.configuration.compileLongAsBigint } to "longClass",
             IrType::isArray to "arrayClass",
             IrType::isString to "stringClass",
             IrType::isBooleanArray to "booleanArrayClass",
@@ -282,4 +284,3 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
         })
     }
 }
-

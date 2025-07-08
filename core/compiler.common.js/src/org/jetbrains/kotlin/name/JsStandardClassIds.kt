@@ -13,6 +13,7 @@ object JsStandardClassIds {
     val BASE_JS_INTERNAL_PACKAGE = BASE_JS_PACKAGE.child(Name.identifier("internal"))
     val BASE_REFLECT_JS_INTERNAL_PACKAGE = BASE_REFLECT_PACKAGE.child(Name.identifier("js")).child(Name.identifier("internal"))
     val BOXED_LONG_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("boxedLong"))
+    val LONG_AS_BIGINT_PACKAGE = BASE_JS_INTERNAL_PACKAGE.child(Name.identifier("longAsBigInt"))
 
     @JvmField
     val Promise = "Promise".jsId()

@@ -12,13 +12,17 @@ internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
     "number" -> when {
         jsTypeOf(b) == "number" ->
             doubleCompareTo(a, b)
+        jsTypeOf(b) == "bigint" ->
+            primitiveCompareTo(a, b)
         b is Long ->
+            // This branch is only taken when compiling to ES5, when Long is represented as a regular class
+            // TODO(KT-70480): Remove this branch when we drop the ES5 target.
             doubleCompareTo(a, b.toDouble())
         else ->
             primitiveCompareTo(a, b)
     }
 
-    "string", "boolean" -> primitiveCompareTo(a, b)
+    "string", "boolean", "bigint" -> primitiveCompareTo(a, b)
 
     else -> compareToDoNotIntrinsicify(a, b)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class, InternalSymbolFinderAPI::class)
-class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
+class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration: CompilerConfiguration) {
     // TODO: Should we drop operator intrinsics in favor of IrDynamicOperatorExpression?
     val symbolFinder = irBuiltIns.symbolFinder
 
@@ -64,7 +66,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val jsDelete = getInternalFunction("jsDelete")
 
-    val longUnaryMinus = getLongHelper("negate")
+    val longUnaryMinus = getLongHelper("negate")!!
 
     // Binary operations:
 
@@ -85,11 +87,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val jsIn = getInternalFunction("jsInIntrinsic")
 
-    val longAdd = getLongHelper("add")
-    val longSubtract = getLongHelper("subtract")
-    val longMultiply = getLongHelper("multiply")
-    val longDivide = getLongHelper("divide")
-    val longModulo = getLongHelper("modulo")
+    val longAdd = getLongHelper("add")!!
+    val longSubtract = getLongHelper("subtract")!!
+    val longMultiply = getLongHelper("multiply")!!
+    val longDivide = getLongHelper("divide")!!
+    val longModulo = getLongHelper("modulo")!!
 
     // Bit operations:
 
@@ -102,13 +104,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsBitShiftRU = getInternalFunction("jsBitShiftRU")
     val jsBitShiftL = getInternalFunction("jsBitShiftL")
 
-    val longAnd = getLongHelper("bitwiseAnd")
-    val longOr = getLongHelper("bitwiseOr")
-    val longXor = getLongHelper("bitwiseXor")
-    val longInv = getLongHelper("invert")
-    val longShiftLeft = getLongHelper("shiftLeft")
-    val longShiftRight = getLongHelper("shiftRight")
-    val longShiftRightUnsigned = getLongHelper("shiftRightUnsigned")
+    val longAnd = getLongHelper("bitwiseAnd")!!
+    val longOr = getLongHelper("bitwiseOr")!!
+    val longXor = getLongHelper("bitwiseXor")!!
+    val longInv = getLongHelper("invert")!!
+    val longShiftLeft = getLongHelper("shiftLeft")!!
+    val longShiftRight = getLongHelper("shiftRight")!!
+    val longShiftRightUnsigned = getLongHelper("shiftRightUnsigned")!!
 
     // Type checks:
 
@@ -122,18 +124,22 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsNumberToDouble = getInternalFunction("numberToDouble")
     val jsNumberToInt = getInternalFunction("numberToInt")
     val jsNumberToShort = getInternalFunction("numberToShort")
-    val jsNumberToLong = getLongHelper("numberToLong")
+    val jsNumberToLong = getLongHelper("numberToLong")!!
     val jsNumberToChar = getInternalFunction("numberToChar")
     val jsToByte = getInternalFunction("toByte")
     val jsToShort = getInternalFunction("toShort")
 
-    val longFromInt = getLongHelper("fromInt")
+    val longFromInt = getLongHelper("fromInt")!!
 
-    val longToByte = getLongHelper("convertToByte")
-    val longToNumber = getLongHelper("toNumber")
-    val longToShort = getLongHelper("convertToShort")
-    val longToInt = getLongHelper("convertToInt")
-    val longToChar = getLongHelper("convertToChar")
+    val longToByte = getLongHelper("convertToByte")!!
+    val longToNumber = getLongHelper("toNumber")!!
+    val longToShort = getLongHelper("convertToShort")!!
+    val longToInt = getLongHelper("convertToInt")!!
+    val longToChar = getLongHelper("convertToChar")!!
+
+    val longFromTwoInts = getLongHelper("longFromTwoInts")
+    val longLowBits = getLongHelper("lowBits")
+    val longHighBits = getLongHelper("highBits")
 
     // RTTI:
     enum class RuntimeMetadataKind(val namePart: String, val isSpecial: Boolean = false) {
@@ -203,7 +209,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsEmptyObject = getInternalFunction("emptyObject")
     val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
 
-    val longEquals = getLongHelper("equalsLong")
+    val longEquals = getLongHelper("equalsLong")!!
 
     val jsImul = getInternalFunction("imul")
 
@@ -270,10 +276,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val longToFloat: IrSimpleFunctionSymbol =
         symbolFinder.findBuiltInClassMemberFunctions(longClassSymbol, OperatorNameConventions.TO_FLOAT).single()
 
-    val longCompareToLong: IrSimpleFunctionSymbol = getLongHelper("compare")
+    val longCompareToLong: IrSimpleFunctionSymbol? = getLongHelper("compare")
 
     val jsLongToString: IrSimpleFunctionSymbol = getInternalFunction("jsLongToString")
-    val longToStringImpl: IrSimpleFunctionSymbol = getLongHelper("toStringImpl")
+    val longToStringImpl: IrSimpleFunctionSymbol = getLongHelper("toStringImpl")!!
 
     val charClassSymbol = irBuiltIns.charClass
 
@@ -438,8 +444,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
     val jsCreateMutableMapFrom = getInternalCollectionFunction("createMutableMapFrom")
 
     // Helpers:
-    private fun getLongHelper(name: String): IrSimpleFunctionSymbol =
-        symbolFinder.findFunctions(Name.identifier(name), JsStandardClassIds.BOXED_LONG_PACKAGE).single()
+    private fun getLongHelper(name: String): IrSimpleFunctionSymbol? {
+        val packageName = if (configuration.compileLongAsBigint) {
+            JsStandardClassIds.LONG_AS_BIGINT_PACKAGE
+        } else {
+            JsStandardClassIds.BOXED_LONG_PACKAGE
+        }
+        return symbolFinder.findFunctions(Name.identifier(name), packageName).singleOrNull()
+    }
 
     private fun getInternalFunction(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), JsStandardClassIds.BASE_JS_PACKAGE).single()

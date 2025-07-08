@@ -7,6 +7,9 @@
 
 package kotlin.js
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+import kotlin.js.internal.boxedLong.toStringImpl
+
 @RequiresOptIn(message = "Here be dragons! This is a compiler intrinsic, proceed with care!")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
@@ -229,4 +232,8 @@ internal fun <T> jsYield(suspendFunction: () -> T): T
  * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
  */
 @JsIntrinsic
-internal fun jsLongToString(value: Long, radix: Int): String
+internal fun jsLongToString(value: Long, radix: Int): String {
+    // TODO: Make bodiless after bootstrap advance
+    @OptIn(BoxedLongImplementation::class)
+    return value.toStringImpl(radix)
+}

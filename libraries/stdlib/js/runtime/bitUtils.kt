@@ -25,7 +25,7 @@ private val lowIndex = run {
 }
 private val highIndex = 1 - lowIndex
 
-@OptIn(BoxedLongImplementation::class)
+@OptIn(BoxedLongImplementation::class) // Long constructor is intrinsified when BigInt-backed Longs are enabled.
 internal fun doubleToRawBits(value: Double): Long {
     bufFloat64[0] = value
     return Long(bufInt32[lowIndex], bufInt32[highIndex])
@@ -33,7 +33,7 @@ internal fun doubleToRawBits(value: Double): Long {
 
 @PublishedApi
 @OptIn(BoxedLongImplementation::class)
-internal fun doubleFromBits(value: Long): Double {
+internal fun doubleFromBits(value: Long): Double { // Long `high` and `low` properties are intrinsified when BigInt-backed Longs are enabled.
     bufInt32[lowIndex] = value.low
     bufInt32[highIndex] = value.high
     return bufFloat64[0]
