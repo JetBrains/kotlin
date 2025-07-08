@@ -59,6 +59,7 @@ private fun inlineOnlyPrivateFunctionsPhase(irMangler: IrMangler) = makeIrModule
     { context: LoweringContext ->
         FunctionInlining(
             context,
+            inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS,
             PreSerializationInlineFunctionResolver(context, InlineMode.PRIVATE_INLINE_FUNCTIONS, irMangler),
         )
     },
@@ -101,6 +102,7 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
             context,
+            inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
             PreSerializationInlineFunctionResolver(context, InlineMode.ALL_INLINE_FUNCTIONS, irMangler),
         )
     },

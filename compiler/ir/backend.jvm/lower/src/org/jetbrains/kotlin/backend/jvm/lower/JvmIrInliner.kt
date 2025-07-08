@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
+import org.jetbrains.kotlin.ir.inline.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf
@@ -25,6 +26,7 @@ class JvmIrInliner(context: JvmBackendContext) : FileLoweringPass {
     @OptIn(JvmIrInlineExperimental::class)
     val inliner = FunctionInlining(
         context,
+        inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
         inlineFunctionResolver = JvmInlineFunctionResolver(context),
         regenerateInlinedAnonymousObjects = true,
         insertAdditionalImplicitCasts = false,

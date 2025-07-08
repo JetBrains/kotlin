@@ -150,6 +150,7 @@ internal class PreCodegenInliner(
                     if (functionsToInline.isNotEmpty()) {
                         val inliner = FunctionInlining(
                                 context,
+                                inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
                                 inlineFunctionResolver = object : InlineFunctionResolver() {
                                     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
                                         return symbol.owner.takeIf { it in functionsToInline }

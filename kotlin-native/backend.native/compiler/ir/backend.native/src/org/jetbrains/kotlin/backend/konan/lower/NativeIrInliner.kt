@@ -15,5 +15,6 @@ internal fun NativeIrInliner(
         inlineMode: InlineMode,
 ) = FunctionInlining(
         context = context,
+        inlineMode,
         NativeInlineFunctionResolver(context, inlineMode),
 )

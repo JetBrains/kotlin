@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 @PhaseDescription("FunctionInlining")
 class FunctionInlining @JvmIrInlineExperimental constructor(
     val context: LoweringContext,
+    private val inlineMode: InlineMode,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean,
     private val regenerateInlinedAnonymousObjects: Boolean,
@@ -46,9 +47,11 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
     @OptIn(JvmIrInlineExperimental::class)
     constructor(
         context: LoweringContext,
+        inlineMode: InlineMode,
         inlineFunctionResolver: InlineFunctionResolver,
     ) : this(
         context,
+        inlineMode,
         inlineFunctionResolver,
         insertAdditionalImplicitCasts = true,
         regenerateInlinedAnonymousObjects = false,

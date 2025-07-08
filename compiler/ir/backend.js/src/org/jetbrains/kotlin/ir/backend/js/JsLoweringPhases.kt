@@ -201,6 +201,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
             context,
+            inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS,
             JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
         )
     },
@@ -227,6 +228,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
     { context: JsIrBackendContext ->
         FunctionInlining(
             context,
+            inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
             JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
         )
     },
