@@ -113,6 +113,8 @@ class WasmTypeTransformer(
     }
 }
 
+private val internalReftypesFqName: FqName = FqName("kotlin.wasm.internal.reftypes")
+
 fun isBuiltInWasmRefType(type: IrType): Boolean {
     return type.classOrNull?.owner?.packageFqName == internalReftypesFqName
 }
