@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -76,6 +78,17 @@ open class KotlinNativeCompilation @Inject internal constructor(
     val cinterops = compilation.project.container(DefaultCInteropSettings::class.java, DefaultCInteropSettingsFactory(compilation))
 
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
+
+    internal val compilationSupported: Provider<Boolean> = project.provider {
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = HostManager().isEnabled(konanTarget)
+
+        // Supported hosts can always compile
+        if (isSupportedHost) return@provider true
+
+        // Unsupported hosts require cross-compilation enabled and no cinterops
+        crossCompilationEnabled && target.compilations.none { it.cinterops.isNotEmpty() }
+    }
 
     // Naming
     final override val processResourcesTaskName: String

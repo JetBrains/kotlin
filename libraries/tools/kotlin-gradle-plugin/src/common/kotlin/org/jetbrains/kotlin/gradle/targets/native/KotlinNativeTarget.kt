@@ -117,7 +117,7 @@ abstract class KotlinNativeTarget @Inject constructor(
 
         // Unsupported hosts require cross-compilation enabled and no cinterops
         crossCompilationEnabled && binaries.toList().all { binary ->
-            binary.compilation.target.compilations.none { it.cinterops.isNotEmpty() }
+            binary.compilation.compilationSupported.get()
         }
     }
 
