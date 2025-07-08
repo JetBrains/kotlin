@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.KlibSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.reportWarning
@@ -59,7 +60,7 @@ class SyntheticAccessorLowering(private val context: LoweringContext, isExecuted
     /**
      * Lower a single inline [IrFunction] from an [IrFile] that is not being lowered right now.
      *
-     * Note: This function is supposed to be used in [InlineFunctionResolver] implementations that allow
+     * Note: This function is supposed to be used in [org.jetbrains.kotlin.backend.common.InlineFunctionResolver] implementations that allow
      * deserializing bodiless inline functions and lowering them on demand. Example: [NativeInlineFunctionResolver].
      *
      * All the generated accessors are cached. This helps to avoid accidentally generating their duplicates on the next invocation

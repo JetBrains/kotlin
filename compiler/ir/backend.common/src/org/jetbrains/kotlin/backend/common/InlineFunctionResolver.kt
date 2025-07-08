@@ -3,9 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.inline
+package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -97,7 +96,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     }
 }
 
-internal class PreSerializationInlineFunctionResolver(
+class PreSerializationInlineFunctionResolver(
     context: LoweringContext,
     irMangler: KotlinMangler.IrMangler,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context) {

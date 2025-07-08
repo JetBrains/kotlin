@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.ir.inline
 
+import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.PreSerializationInlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
+import org.jetbrains.kotlin.backend.common.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering

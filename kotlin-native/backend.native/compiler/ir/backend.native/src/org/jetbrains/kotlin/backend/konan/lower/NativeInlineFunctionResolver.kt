@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.CallInlinerStrategy
+import org.jetbrains.kotlin.backend.common.InlineFunctionResolverReplacingCoroutineIntrinsics
+import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering

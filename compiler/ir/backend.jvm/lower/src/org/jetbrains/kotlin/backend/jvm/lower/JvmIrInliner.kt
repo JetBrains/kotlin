@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
-import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
-import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
+import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.JvmIrInlineExperimental
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideOrSelf

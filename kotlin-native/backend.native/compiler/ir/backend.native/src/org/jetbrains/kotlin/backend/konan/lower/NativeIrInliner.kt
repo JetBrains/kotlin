@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
-import org.jetbrains.kotlin.ir.inline.InlineMode
+import org.jetbrains.kotlin.backend.common.InlineMode
 
 internal fun NativeIrInliner(
         context: Context,
