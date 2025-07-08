@@ -1,6 +1,5 @@
 // ISSUE: KT-77103
 // WITH_STDLIB
-// LANGUAGE: -IrInlinerBeforeKlibSerialization
 // NO_CHECK_LAMBDA_INLINING
 
 // FILE: 1.kt
@@ -8,8 +7,9 @@ inline fun foo(block: () -> Unit) {}
 
 fun app() {
     foo {
+        val localDelegatedProperty1 by lazy { false }
         fun bar() {
-            val localDelegatedProperty by lazy { false }
+            val localDelegatedProperty2 by lazy { false }
         }
     }
 }
