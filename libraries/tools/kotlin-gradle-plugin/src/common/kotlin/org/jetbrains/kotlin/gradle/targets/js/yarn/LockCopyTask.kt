@@ -28,6 +28,20 @@ abstract class YarnLockStoreTask : LockStoreTask() {
     @get:Internal
     val yarnLockAutoReplace: Provider<Boolean>
         get() = lockFileAutoReplace
+
+    override fun copy() {
+        val isEmptyYarnLock = inputFile.getOrNull()?.let { regularFile ->
+            regularFile.asFile.useLines { lines ->
+                lines.all { it.startsWith("#") || it.isBlank() }
+            }
+        } ?: true
+
+        if (isEmptyYarnLock) {
+            return
+        }
+
+        super.copy()
+    }
 }
 
 enum class YarnLockMismatchReport {
@@ -36,7 +50,7 @@ enum class YarnLockMismatchReport {
     FAIL;
 
     fun toLockFileMismatchReport(): LockFileMismatchReport =
-        when(this) {
+        when (this) {
             NONE -> LockFileMismatchReport.NONE
             WARNING -> LockFileMismatchReport.WARNING
             FAIL -> LockFileMismatchReport.FAIL
@@ -44,7 +58,7 @@ enum class YarnLockMismatchReport {
 }
 
 fun LockFileMismatchReport.fromLockFileMismatchReport(): YarnLockMismatchReport =
-    when(this) {
+    when (this) {
         LockFileMismatchReport.NONE -> YarnLockMismatchReport.NONE
         LockFileMismatchReport.WARNING -> YarnLockMismatchReport.WARNING
         LockFileMismatchReport.FAIL -> YarnLockMismatchReport.FAIL
