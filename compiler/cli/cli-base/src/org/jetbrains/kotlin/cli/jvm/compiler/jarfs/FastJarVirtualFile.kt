@@ -46,8 +46,8 @@ internal class FastJarVirtualFile(
         return handler.fileSystem
     }
 
-    override fun getContainingLibraryPath(): String {
-        return handler.file.path
+    override fun getContainingLibraryPath(): Path {
+        return handler.file.toPath()
     }
 
     override fun getPath(): String {
