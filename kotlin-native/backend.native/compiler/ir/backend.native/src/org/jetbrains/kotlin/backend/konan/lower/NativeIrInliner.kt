@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineMode
 
 internal fun NativeIrInliner(
-        generationState: NativeGenerationState,
+        context: Context,
         inlineMode: InlineMode,
 ) = FunctionInlining(
-        context = generationState.context,
-        NativeInlineFunctionResolver(generationState, inlineMode),
+        context = context,
+        NativeInlineFunctionResolver(context, inlineMode),
 )

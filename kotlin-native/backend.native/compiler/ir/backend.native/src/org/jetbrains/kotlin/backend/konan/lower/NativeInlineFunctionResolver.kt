@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.ir.util.file
 private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
-        val generationState: NativeGenerationState,
+        context: Context,
         inlineMode: InlineMode,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(
-        context = generationState.context,
+        context = context,
         inlineMode = inlineMode,
-        callInlinerStrategy = NativeCallInlinerStrategy(generationState.context)
+        callInlinerStrategy = NativeCallInlinerStrategy(context)
 ) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
@@ -66,7 +66,7 @@ internal class NativeInlineFunctionResolver(
 
         ArrayConstructorLowering(context).lower(body, function)
 
-        NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
+        NativeIrInliner(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS).lower(body, function)
         OuterThisInInlineFunctionsSpecialAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
         SyntheticAccessorLowering(context).lowerWithoutAddingAccessorsToParents(function)
     }

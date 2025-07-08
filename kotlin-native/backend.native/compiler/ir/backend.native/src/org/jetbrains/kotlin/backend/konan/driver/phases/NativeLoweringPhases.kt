@@ -333,7 +333,7 @@ private val builtinOperatorPhase = createFileLoweringPhase(
  */
 private val inlineOnlyPrivateFunctionsPhase = createFileLoweringPhase(
         lowering = { generationState: NativeGenerationState ->
-            NativeIrInliner(generationState, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
+            NativeIrInliner(generationState.context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS)
         },
         name = "InlineOnlyPrivateFunctions",
 )
@@ -355,7 +355,7 @@ private val syntheticAccessorGenerationPhase = createFileLoweringPhase(
  */
 internal val inlineAllFunctionsPhase = createFileLoweringPhase(
         lowering = { generationState: NativeGenerationState ->
-            NativeIrInliner(generationState, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
+            NativeIrInliner(generationState.context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS)
         },
         name = "InlineAllFunctions",
 )
