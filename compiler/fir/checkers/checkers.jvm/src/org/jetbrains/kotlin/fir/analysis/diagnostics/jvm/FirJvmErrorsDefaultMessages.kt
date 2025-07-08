@@ -160,7 +160,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES,
-            "Argument type mismatch: expected ''{0}''; actual ''{1}''."
+            "Return type mismatch: expected ''{0}''; actual ''{1}''."
                 .toDeprecationWarningMessage(LanguageFeature.ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces),
             RENDER_TYPE,
             RENDER_TYPE,

@@ -54,9 +54,10 @@ object FirJavaSamConstructorNullabilityChecker : FirFunctionCallChecker(MppCheck
                 if (reportError) {
                     reporter.reportOn(
                         returnedExpression.source,
-                        FirErrors.ARGUMENT_TYPE_MISMATCH,
+                        FirErrors.RETURN_TYPE_MISMATCH,
                         expectedReturnType,
                         returnedExpressionType,
+                        lambda.anonymousFunction,
                         true,
                     )
                 } else {

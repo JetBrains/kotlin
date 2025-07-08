@@ -16,11 +16,11 @@ import java.util.function.Supplier
 
 fun test(){
     Supplier<String> {
-        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
+        <!RETURN_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam : Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH!>JavaBox(null).a<!>
+        <!RETURN_TYPE_MISMATCH!>JavaBox(null).a<!>
     }
 
     val sam2 = object : Supplier<String> {
